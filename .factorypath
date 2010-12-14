@@ -1,0 +1,6 @@
+<factorypath>
+    <factorypathentry kind="WKSPJAR" id="/Bee/target/bee2.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="WKSPJAR" id="/Ezbean/target/ezbean-0.7.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="F:\Application\Maven Repository\asm\asm\3.3\asm-3.3.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="EXTJAR" id="F:\Application\Java\lib\tools.jar" enabled="true" runInBatchMode="false"/>
+</factorypath>
