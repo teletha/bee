@@ -19,8 +19,6 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import bee.Wildcard;
-
 /**
  * @version 2010/12/23 1:25:49
  */
@@ -100,6 +98,16 @@ public class WildcardTest {
     @Test
     public void escapeEscape() throws Exception {
         assertTrue(match("i\\i", "i\\\\i"));
+    }
+
+    @Test
+    public void escapeComplex() throws Exception {
+        assertFalse(match("complex", "comple\\*"));
+        assertTrue(match("comple*", "comple\\*"));
+        assertFalse(match("complex", "comple\\\\*"));
+        assertTrue(match("comple\\x", "comple\\\\*"));
+        assertFalse(match("comple\\\\", "comple\\\\\\*"));
+        assertTrue(match("comple\\*", "comple\\\\\\*"));
     }
 
     @Test

@@ -72,104 +72,69 @@ public class Wildcard {
         } else {
             char[] buffer = value.toCharArray();
 
-            // Compiling the specified pattern.
+            int[] bit = new int[buffer.length];
+            ArrayList<int[]> bits = new ArrayList();
+
+            int offset = 0;
+            int size = buffer.length - 1;
             boolean escape = false;
+            boolean head = buffer[0] != '*';
+            boolean tail = true;
 
-            int current = 0;
-            int[] pattern = new int[buffer.length];
-            ArrayList<int[]> patterns = new ArrayList();
-            ArrayList<int[][]> all = new ArrayList();
-
-            compile: for (int i = 0, size = buffer.length - 1; i <= size; i++) {
+            for (int i = 0; i <= size; i++) {
                 char c = buffer[i];
 
-                // If the previous charcter is escape, we must put the current charcter
-                // unconditionaly.
                 if (escape) {
                     escape = false;
-                    pattern[current++] = c;
-
-                    continue; // compilation loop
-                }
-
-                switch (c) {
-                case '\\': // escape character
-                    escape = true;
-                    continue compile;
-
-                case '*': // wildcard character
-                    int[] chars = new int[current];
-                    System.arraycopy(pattern, 0, chars, 0, current);
-                    patterns.add(chars);
-
-                    // reset
-                    current = 0;
-                    break;
-
-                default: // others
-                    pattern[current++] = c;
-                    break;
+                    bit[offset++] = c; // parse escaped character
+                } else if (c == '\\') {
+                    escape = true; // escape next character
+                } else if (c != '*') {
+                    bit[offset++] = c; // parse character
+                } else if (i == size) {
+                    tail = false; // skip wildcard at tail
+                } else if (i != 0) {
+                    bits.add(Arrays.copyOfRange(bit, 0, offset)); // retrieve as pattern
+                    offset = 0; // reset
                 }
             }
+            bits.add(Arrays.copyOfRange(bit, 0, offset)); // retrieve as pattern
 
-            int[] chars = new int[current];
-            System.arraycopy(pattern, 0, chars, 0, current);
-            patterns.add(chars);
+            // Make compiled pattern set.
+            size = bits.size();
 
-            for (int i = 0, size = patterns.size() - 1; i <= size; i++) {
-                pattern = patterns.get(i);
+            this.types = new int[size];
+            this.patterns = new int[size][];
+            this.tables = new int[size][];
 
-                if (pattern.length == 0) {
-                    continue;
-                }
+            // match at head
+            if (head) types[0] |= 1;
 
-                // make compiled pattern
-                int[][] format = new int[3][];
-                format[0] = new int[2];
-                format[1] = pattern;
+            // match at tail
+            if (tail) types[size - 1] |= 2;
 
-                // match at head
-                if (i == 0) {
-                    format[0][0] |= 1;
-                }
+            for (int i = 0; i < size; i++) {
+                patterns[i] = bits.get(i);
 
-                // match at tail
-                if (i == size) {
-                    format[0][0] |= 2;
-                }
+                if (types[i] == 0) {
+                    int length = patterns[i].length;
 
-                if (format[0][0] == 0) {
                     // make jump table for matching if needed
-                    if (pattern.length == 1) {
-                        format[0][0] = 4;
+                    if (length == 1) {
+                        types[i] = 4;
                     } else {
-                        format[2] = new int[96];
-                        Arrays.fill(format[2], pattern.length + 1);
+                        tables[i] = new int[96];
+                        Arrays.fill(tables[i], length + 1);
 
-                        for (int j = pattern.length - 1; 0 <= j; j--) {
-                            int c = pattern[j];
+                        for (int j = length - 1; 0 <= j; j--) {
+                            int c = patterns[i][j];
 
                             if (32 <= c && c < 128) {
-                                format[2][c - 32] = j + 1;
+                                tables[i][c - 32] = j + 1;
                             }
                         }
                     }
                 }
-
-                all.add(format);
-            }
-
-            // Make compiled pattern set.
-            this.types = new int[all.size()];
-            this.patterns = new int[all.size()][];
-            this.tables = new int[all.size()][];
-
-            for (int i = 0; i < types.length; i++) {
-                int[][] format = all.get(i);
-
-                this.types[i] = format[0][0];
-                this.patterns[i] = format[1];
-                this.tables[i] = format[2];
             }
         }
     }
