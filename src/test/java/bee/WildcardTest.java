@@ -178,6 +178,5 @@ public class WildcardTest {
      */
     private boolean match(String value, String pattern) {
         return new Wildcard(pattern).match(value);
-        // return WildcardHelper.match(value, WildcardHelper.compilePattern(pattern));
     }
 }
