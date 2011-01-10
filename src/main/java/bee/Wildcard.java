@@ -214,10 +214,10 @@ public class Wildcard {
                         while (current < patternPosition) {
                             if (input[start + current] != pattern[current++]) {
                                 // unmatching, retreat start position
-                                int next = input[start - 1] - 32;
+                                int next = input[start - 1];
 
-                                if (0 <= next && next < 96) {
-                                    start -= tables[x][next];
+                                if (32 <= next && next < 128) {
+                                    start -= tables[x][next - 32];
                                 } else {
                                     start--;
                                 }
