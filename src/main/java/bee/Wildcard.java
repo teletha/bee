@@ -103,34 +103,39 @@ public class Wildcard {
             // Make compiled pattern set.
             size = bits.size();
 
-            this.types = new int[size];
-            this.patterns = new int[size][];
-            this.tables = new int[size][];
+            if (size == 0) {
+                types = null;
+                patterns = tables = null;
+            } else {
+                this.types = new int[size];
+                this.patterns = new int[size][];
+                this.tables = new int[size][];
 
-            // match at head
-            if (head) types[0] |= 1;
+                // match at head
+                if (head) types[0] |= 1;
 
-            // match at tail
-            if (tail) types[size - 1] |= 2;
+                // match at tail
+                if (tail) types[size - 1] |= 2;
 
-            for (int i = 0; i < size; i++) {
-                patterns[i] = bits.get(i);
+                for (int i = 0; i < size; i++) {
+                    patterns[i] = bits.get(i);
 
-                if (types[i] == 0) {
-                    int length = patterns[i].length;
+                    if (types[i] == 0) {
+                        int length = patterns[i].length;
 
-                    // make jump table for matching if needed
-                    if (length == 1) {
-                        types[i] = 4;
-                    } else {
-                        tables[i] = new int[96];
-                        Arrays.fill(tables[i], length + 1);
+                        // make jump table for matching if needed
+                        if (length == 1) {
+                            types[i] = 4;
+                        } else {
+                            tables[i] = new int[96];
+                            Arrays.fill(tables[i], length + 1);
 
-                        for (int j = length - 1; 0 <= j; j--) {
-                            int c = patterns[i][j];
+                            for (int j = length - 1; 0 <= j; j--) {
+                                int c = patterns[i][j];
 
-                            if (32 <= c && c < 128) {
-                                tables[i][c - 32] = j + 1;
+                                if (32 <= c && c < 128) {
+                                    tables[i][c - 32] = j + 1;
+                                }
                             }
                         }
                     }

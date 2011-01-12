@@ -32,6 +32,9 @@ public class WildcardTest {
     @Test
     public void wildcard() throws Exception {
         assertTrue(match("test.java", "*"));
+        assertTrue(match("test.java", "**"));
+        assertTrue(match("test.java", "***"));
+        assertTrue(match("test.java", "****"));
     }
 
     @Test
