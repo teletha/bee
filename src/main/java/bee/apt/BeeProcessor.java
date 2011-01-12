@@ -50,7 +50,7 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public Set<String> getSupportedOptions() {
-        return Collections.singleton("*");
+        return Collections.EMPTY_SET;
     }
 
     /**
@@ -66,7 +66,7 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_6;
+        return SourceVersion.RELEASE_7;
     }
 
     /**
@@ -121,6 +121,18 @@ public class BeeProcessor implements Processor {
                         break;
 
                     case METHOD:
+                        ExecutableElement executableElement = (ExecutableElement) element;
+                        TypeAnnotationValidator validator = I.find(TypeAnnotationValidator.class, annotationClass);
+
+                        if (validator != null) {
+                            try {
+                                validator.validate(null, element.getAnnotation(annotationClass));
+                            } catch (InvalidValue e) {
+                                process.getMessager().printMessage(Kind.ERROR, e.getMessage(), element);
+                            } catch (Exception e) {
+                                process.getMessager().printMessage(Kind.ERROR, e.getMessage(), element);
+                            }
+                        }
                         break;
 
                     case PACKAGE:
@@ -135,6 +147,7 @@ public class BeeProcessor implements Processor {
                     }
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 process.getMessager().printMessage(Kind.ERROR, e.getMessage());
             }
         }

@@ -18,11 +18,16 @@ package bee;
 /**
  * @version 2010/04/02 3:48:35
  */
-@Product(artifact = "test", version = "1.0")
+
 public class BeeProject extends Project {
 
     public BeeProject() {
-        super("test");
+
         addSource("src/main/java");
+    }
+
+    @Product(artifact = "test", version = "1.0")
+    public void test() {
+
     }
 }

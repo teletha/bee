@@ -15,7 +15,14 @@
  */
 package bee.apt;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import bee.Product;
+import bee.Project;
+import bee.compiler.JavaCompiler;
 
 /**
  * @version 2010/06/10 15:18:26
@@ -28,6 +35,34 @@ public class ProductValidator implements TypeAnnotationValidator<Product> {
      */
     @Override
     public void validate(Class type, Product annotation) throws InvalidValue {
-        throw new InvalidValue(annotation.artifact());
+        File project = new File("src/project/Project.java");
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String time = format.format(new Date(project.lastModified()));
+        System.out.println(time);
+
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourcePath(project.getParentFile());
+
+        ClassLoader loader = compiler.compile();
+
+        try {
+            Class<? extends Project> projectClass = (Class<? extends Project>) loader.loadClass("Project");
+
+            Project projectinstance = projectClass.newInstance();
+
+            for (Method method : projectClass.getMethods()) {
+                Product product = method.getAnnotation(Product.class);
+
+                if (product != null) {
+
+                    method.invoke(projectinstance);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new InvalidValue(e.getMessage());
+        }
     }
 }

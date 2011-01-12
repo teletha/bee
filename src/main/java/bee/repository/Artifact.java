@@ -42,10 +42,13 @@ public class Artifact {
         this.group = group;
         this.artifact = artifact;
         this.version = new Version(version);
+        
+        
     }
 
     public File locate() throws NoSuchArtifactException {
         donwload();
+        
         return new File(Repository.getLocation(), toPath(".jar"));
     }
 

@@ -16,13 +16,10 @@
 package bee;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import ezbean.I;
 import ezbean.Manageable;
-import ezbean.model.ClassUtil;
 
 /**
  * @version 2010/04/02 3:47:44
@@ -31,40 +28,40 @@ import ezbean.model.ClassUtil;
 public abstract class Project {
 
     /** The base directory. */
-    public final File base;
+    public File base;
 
     /** The target directory. */
-    public final File target;
+    public File target;
 
     /** The source directory. */
-    public final File source;
+    public File source;
 
     /** The source directory. */
-    public final List<File> sources;
+    public List<File> sources;
 
     /** The source class directory. */
-    public final File sourceClasses;
+    public File sourceClasses;
 
     /** The test directory. */
-    public final List<File> tests;
+    public List<File> tests;
 
     /** The test class directory. */
-    public final File testClasses;
+    public File testClasses;
 
     /** The project directory. */
-    public final List<File> projects;
+    public List<File> projects;
 
     /** The project class directory. */
-    public final File projectClasses;
+    public File projectClasses;
 
     /** The group id. */
-    public final String groupId;
+    public String groupId;
 
     /** The artifact id. */
-    public final String artifactId;
+    public String artifactId;
 
     /** The version number. */
-    public final Version version;
+    public Version version;
 
     /** The project name. */
     private String name;
@@ -75,7 +72,7 @@ public abstract class Project {
     /** The initialization flag for this project. */
     private boolean initialized = false;
 
-    private final boolean isHost;
+    private boolean isHost;
 
     /**
      * <p>
@@ -83,34 +80,37 @@ public abstract class Project {
      * </p>
      */
     protected Project() {
-        String artifactId = getClass().getSimpleName().toLowerCase().replace('_', '-');
-
-        if (artifactId.endsWith("project")) {
-            artifactId = artifactId.substring(0, artifactId.length() - 7);
-        }
-
-        this.artifactId = artifactId;
-        this.groupId = getClass().getPackage().getName().replace('_', '-');
-        this.version = new Version(getClass().getAnnotation(ProjectVersion.class));
-
-        File archive = ClassUtil.getArchive(getClass());
-
-        isHost = archive.isFile();
-        base = archive.isFile() ? new File("") : new File(archive, "../../");
-        source = new File(base, "src");
-        target = new File(base, "target");
-
-        // source files
-        sources = Collections.unmodifiableList(Arrays.asList(new File(source, "main").listFiles(I.make(DirectoryFilter.class))));
-        sourceClasses = new File(target, "classes");
-
-        // test files
-        tests = Collections.unmodifiableList(Arrays.asList(new File(source, "test").listFiles(I.make(DirectoryFilter.class))));
-        testClasses = new File(target, "test-classes");
-
-        // project files
-        projects = Collections.unmodifiableList(Arrays.asList(new File(source, "project").listFiles(I.make(DirectoryFilter.class))));
-        projectClasses = new File(target, "project-classes");
+        // String artifactId = getClass().getSimpleName().toLowerCase().replace('_', '-');
+        //
+        // if (artifactId.endsWith("project")) {
+        // artifactId = artifactId.substring(0, artifactId.length() - 7);
+        // }
+        //
+        // this.artifactId = artifactId;
+        // this.groupId = getClass().getPackage().getName().replace('_', '-');
+        // this.version = new Version(getClass().getAnnotation(ProjectVersion.class));
+        //
+        // File archive = ClassUtil.getArchive(getClass());
+        //
+        // isHost = archive.isFile();
+        // base = archive.isFile() ? new File("") : new File(archive, "../../");
+        // source = new File(base, "src");
+        // target = new File(base, "target");
+        //
+        // // source files
+        // sources = Collections.unmodifiableList(Arrays.asList(new File(source,
+        // "main").listFiles(I.make(DirectoryFilter.class))));
+        // sourceClasses = new File(target, "classes");
+        //
+        // // test files
+        // tests = Collections.unmodifiableList(Arrays.asList(new File(source,
+        // "test").listFiles(I.make(DirectoryFilter.class))));
+        // testClasses = new File(target, "test-classes");
+        //
+        // // project files
+        // projects = Collections.unmodifiableList(Arrays.asList(new File(source,
+        // "project").listFiles(I.make(DirectoryFilter.class))));
+        // projectClasses = new File(target, "project-classes");
     }
 
     public final <T extends Task> T createTask(Class<T> task) {
