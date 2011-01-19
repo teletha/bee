@@ -48,6 +48,9 @@ public class PathSet implements Iterable<Path> {
     /** The actual filter set. */
     private Set<Pattern> filters = new CopyOnWriteArraySet();
 
+    /** The actual filter set for file only matcher. */
+    private Set<PatternMatch> files = new CopyOnWriteArraySet();
+
     private FilenameFilter filter;
 
     /**
@@ -66,6 +69,7 @@ public class PathSet implements Iterable<Path> {
 
     public PathSet include(String... patterns) {
         for (String pattern : patterns) {
+            add(pattern);
             filters.add(new Pattern(pattern));
         }
         return this;
@@ -108,12 +112,46 @@ public class PathSet implements Iterable<Path> {
         }
     }
 
+    private void add(String pattern) {
+        // normalize pattern
+        pattern = pattern.replace(File.separatorChar, '/')
+                .replaceAll("\\*{3,}", "**")
+                .replaceAll("\\*\\*([^/])", "**/*$1")
+                .replaceAll("([^/])\\*\\*", "$1*/**")
+                .replace("/$", "/**")
+                .replace("^/", "")
+                .replaceAll("\\*\\*/\\*\\*", "**");
+
+        // separate pattern
+        String[] patterns = pattern.split("/");
+
+        // find all pattern for any
+        int size = patterns.length - 1;
+
+        if (size == 0) {
+            // top level file only
+        } else if (patterns[size].equals("**")) {
+            // directory only
+        } else if (size == 1 && patterns[0].equals("**")) {
+            // file only
+            files.add(new FilePathMatcher(patterns[1]));
+        } else {
+            // both
+        }
+    }
+
     /**
      * @version 2010/12/19 12:09:00
      */
     private final class Traveler implements FileVisitor<Path> {
 
         private final FileVisitor<Path> delegator;
+
+        /** The pattern matcher for file. */
+        private final FilePathMatcher[] files;
+
+        /** The pattern matcher for directory. */
+        private final ArrayList<DirectoryPathMatcher> directories = new ArrayList();
 
         private final ArrayList<Pattern> current;
 
@@ -132,6 +170,8 @@ public class PathSet implements Iterable<Path> {
             // copy
             current = new ArrayList(filters.size());
             current.addAll(filters);
+
+            files = PathSet.this.files.toArray(new FilePathMatcher[0]);
         }
 
         /**
@@ -144,14 +184,14 @@ public class PathSet implements Iterable<Path> {
                 String name = dir.getName().toString();
 
                 for (Pattern pattern : current) {
-                    if (!pattern.useless) {
+                    if (pattern.use) {
                         if (pattern.matchRoute(name)) {
                             depth++;
                             return CONTINUE;
                         }
                     }
                 }
-                return SKIP_SUBTREE;
+                return CONTINUE;
             }
 
             depth++;
@@ -164,19 +204,19 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            int size = current.size();
+            int size = files.length;
 
             if (size == 0) {
                 return delegator.visitFile(file, attrs);
             } else {
                 String name = file.getName().toString();
 
-                for (int i = 0; i < size; i++) {
-                    if (current.get(i).matchName(name)) {
-                        return delegator.visitFile(file, attrs);
+                for (FilePathMatcher matcher : files) {
+                    if (matcher.match(name)) {
+                        delegator.visitFile(file, attrs);
+                        break;
                     }
                 }
-
                 return CONTINUE;
             }
         }
@@ -219,7 +259,7 @@ public class PathSet implements Iterable<Path> {
 
         private int depth = 0;
 
-        private boolean useless = false;
+        private boolean use = false;
 
         /**
          * @param pattern
@@ -263,5 +303,52 @@ public class PathSet implements Iterable<Path> {
         private boolean isUseless() {
             return false;
         }
+    }
+
+    /**
+     * @version 2011/01/19 11:57:54
+     */
+    private static interface PatternMatch {
+
+        boolean match(String name);
+    }
+
+    /**
+     * @version 2011/01/19 11:57:56
+     */
+    private static final class FilePathMatcher implements PatternMatch {
+
+        /** The file name pattern. */
+        private final Wildcard pattern;
+
+        /**
+         * @param pattern
+         */
+        private FilePathMatcher(String pattern) {
+            this.pattern = new Wildcard(pattern);
+        }
+
+        /**
+         * @see bee.PathSet.PatternMatch#match(java.lang.String)
+         */
+        @Override
+        public boolean match(String name) {
+            return pattern.match(name);
+        }
+    }
+
+    /**
+     * @version 2011/01/19 11:59:50
+     */
+    private static final class DirectoryPathMatcher implements PatternMatch {
+
+        /**
+         * @see bee.PathSet.PatternMatch#match(java.lang.String)
+         */
+        @Override
+        public boolean match(String name) {
+            return false;
+        }
+
     }
 }
