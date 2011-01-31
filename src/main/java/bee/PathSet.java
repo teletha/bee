@@ -27,8 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
@@ -49,7 +47,10 @@ public class PathSet implements Iterable<Path> {
     private Set<Pattern> filters = new CopyOnWriteArraySet();
 
     /** The actual filter set for file only matcher. */
-    private Set<PatternMatch> files = new CopyOnWriteArraySet();
+    private Set<FilePathMatcher> files = new CopyOnWriteArraySet();
+
+    /** The actual filter set for file only matcher. */
+    private Set<DirectoryPathMatcher> direcories = new CopyOnWriteArraySet();
 
     private FilenameFilter filter;
 
@@ -70,7 +71,6 @@ public class PathSet implements Iterable<Path> {
     public PathSet include(String... patterns) {
         for (String pattern : patterns) {
             add(pattern);
-            filters.add(new Pattern(pattern));
         }
         return this;
     }
@@ -148,16 +148,18 @@ public class PathSet implements Iterable<Path> {
         private final FileVisitor<Path> delegator;
 
         /** The pattern matcher for file. */
-        private final FilePathMatcher[] files;
+        private final FilePathMatcher[] file;
 
-        /** The pattern matcher for directory. */
-        private final ArrayList<DirectoryPathMatcher> directories = new ArrayList();
+        /** The pattern matcher size for file. */
+        private final int fileSize;
 
-        private final ArrayList<Pattern> current;
+        private boolean fileUnconditional = false;
 
-        private final ArrayList<Pattern> remover = new ArrayList();
+        /** The pattern matcher for file. */
+        private final DirectoryPathMatcher[] directory;
 
-        private final ArrayDeque<ArrayList<Pattern>> useless = new ArrayDeque();
+        /** The pattern matcher size for file. */
+        private final int directorySize;
 
         private int depth = 0;
 
@@ -167,11 +169,10 @@ public class PathSet implements Iterable<Path> {
         private Traveler(FileVisitor<Path> delegator) {
             this.delegator = delegator;
 
-            // copy
-            current = new ArrayList(filters.size());
-            current.addAll(filters);
-
-            files = PathSet.this.files.toArray(new FilePathMatcher[0]);
+            fileSize = PathSet.this.files.size();
+            file = PathSet.this.files.toArray(new FilePathMatcher[fileSize]);
+            directory = PathSet.this.direcories.toArray(new DirectoryPathMatcher[0]);
+            directorySize = directory.length;
         }
 
         /**
@@ -183,14 +184,6 @@ public class PathSet implements Iterable<Path> {
             if (depth != 0) {
                 String name = dir.getName().toString();
 
-                for (Pattern pattern : current) {
-                    if (pattern.use) {
-                        if (pattern.matchRoute(name)) {
-                            depth++;
-                            return CONTINUE;
-                        }
-                    }
-                }
                 return CONTINUE;
             }
 
@@ -203,18 +196,15 @@ public class PathSet implements Iterable<Path> {
          *      java.nio.file.attribute.BasicFileAttributes)
          */
         @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            int size = files.length;
-
-            if (size == 0) {
-                return delegator.visitFile(file, attrs);
+        public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+            if (fileUnconditional || fileSize == 0) {
+                return delegator.visitFile(path, attrs);
             } else {
-                String name = file.getName().toString();
+                String name = path.getName().toString();
 
-                for (FilePathMatcher matcher : files) {
+                for (FilePathMatcher matcher : file) {
                     if (matcher.match(name)) {
-                        delegator.visitFile(file, attrs);
-                        break;
+                        return delegator.visitFile(path, attrs);
                     }
                 }
                 return CONTINUE;
@@ -256,8 +246,6 @@ public class PathSet implements Iterable<Path> {
 
         /** The pattern for file name. */
         private final Wildcard filePattern;
-
-        private int depth = 0;
 
         private boolean use = false;
 
