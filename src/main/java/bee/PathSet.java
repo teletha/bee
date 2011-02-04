@@ -132,6 +132,7 @@ public class PathSet implements Iterable<Path> {
             // top level file only
         } else if (patterns[size].equals("**")) {
             // directory only
+            direcories.add(new DirectoryPathMatcher(patterns));
         } else if (size == 1 && patterns[0].equals("**")) {
             // file only
             files.add(new FilePathMatcher(patterns[1]));
@@ -161,6 +162,8 @@ public class PathSet implements Iterable<Path> {
         /** The pattern matcher size for file. */
         private final int directorySize;
 
+        private boolean directoryUndonditional = false;
+
         private int depth = 0;
 
         /**
@@ -171,6 +174,7 @@ public class PathSet implements Iterable<Path> {
 
             fileSize = PathSet.this.files.size();
             file = PathSet.this.files.toArray(new FilePathMatcher[fileSize]);
+            fileUnconditional = fileSize == 0;
             directory = PathSet.this.direcories.toArray(new DirectoryPathMatcher[0]);
             directorySize = directory.length;
         }
@@ -180,9 +184,17 @@ public class PathSet implements Iterable<Path> {
          *      java.nio.file.attribute.BasicFileAttributes)
          */
         @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
             if (depth != 0) {
-                String name = dir.getName().toString();
+                if (directoryUndonditional) {
+                    return delegator.preVisitDirectory(path, attrs);
+                } else {
+                    String name = path.getName().toString();
+
+                    for (DirectoryPathMatcher matcher : directory) {
+
+                    }
+                }
 
                 return CONTINUE;
             }
@@ -197,7 +209,7 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-            if (fileUnconditional || fileSize == 0) {
+            if (fileUnconditional) {
                 return delegator.visitFile(path, attrs);
             } else {
                 String name = path.getName().toString();
@@ -330,6 +342,20 @@ public class PathSet implements Iterable<Path> {
      */
     private static final class DirectoryPathMatcher implements PatternMatch {
 
+        /** The file name pattern. */
+        private final Wildcard[] pattern;
+
+        /**
+         * @param pattern
+         */
+        private DirectoryPathMatcher(String[] patterns) {
+            this.pattern = new Wildcard[patterns.length];
+
+            for (int i = 0; i < patterns.length; i++) {
+                this.pattern[i] = new Wildcard(patterns[i]);
+            }
+        }
+
         /**
          * @see bee.PathSet.PatternMatch#match(java.lang.String)
          */
@@ -337,6 +363,5 @@ public class PathSet implements Iterable<Path> {
         public boolean match(String name) {
             return false;
         }
-
     }
 }
