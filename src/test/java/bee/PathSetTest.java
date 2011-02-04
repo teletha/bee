@@ -60,6 +60,12 @@ public class PathSetTest {
         set1.assertMatching(6);
     }
 
+    @Test
+    public void directory() throws Exception {
+        set1.set.include("use**");
+        set1.assertMatching(6);
+    }
+
     /**
      * @version 2011/01/19 11:14:21
      */
