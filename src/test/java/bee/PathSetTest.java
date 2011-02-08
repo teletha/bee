@@ -61,9 +61,15 @@ public class PathSetTest {
     }
 
     @Test
-    public void directory() throws Exception {
+    public void directory1() throws Exception {
         set1.set.include("use**");
         set1.assertMatching(6);
+    }
+
+    @Test
+    public void directory2() throws Exception {
+        set1.set.include("use/**");
+        set1.assertMatching(3);
     }
 
     /**
