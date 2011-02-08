@@ -18,7 +18,6 @@ package bee;
 import static java.nio.file.FileVisitResult.*;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -43,16 +42,11 @@ public class PathSet implements Iterable<Path> {
     /** The base path. */
     private final Path base;
 
-    /** The actual filter set. */
-    private Set<Pattern> filters = new CopyOnWriteArraySet();
-
     /** The actual filter set for file only matcher. */
     private Set<FilePathMatcher> files = new CopyOnWriteArraySet();
 
     /** The actual filter set for file only matcher. */
     private Set<DirectoryPathMatcher> direcories = new CopyOnWriteArraySet();
-
-    private FilenameFilter filter;
 
     /**
      * @param base
@@ -105,8 +99,11 @@ public class PathSet implements Iterable<Path> {
     }
 
     public void scan(FileVisitor<Path> vistor) {
+        boolean unsort = files.isEmpty() && direcories.isEmpty();
+
         try {
-            Files.walkFileTree(base, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new Traveler(vistor));
+            Files.walkFileTree(base, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, unsort ? vistor
+                    : new Traveler(vistor));
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -151,20 +148,12 @@ public class PathSet implements Iterable<Path> {
         /** The pattern matcher for file. */
         private final FilePathMatcher[] file;
 
-        /** The pattern matcher size for file. */
-        private final int fileSize;
-
-        private boolean fileUnconditional = false;
-
         /** The pattern matcher for file. */
         private final DirectoryPathMatcher[] directory;
 
-        /** The pattern matcher size for file. */
-        private final int directorySize;
-
-        private boolean directoryUndonditional = false;
-
         private int depth = 0;
+
+        private final boolean[] unconditional = new boolean[64];
 
         /**
          * @param delegator
@@ -172,35 +161,8 @@ public class PathSet implements Iterable<Path> {
         private Traveler(FileVisitor<Path> delegator) {
             this.delegator = delegator;
 
-            fileSize = PathSet.this.files.size();
-            file = PathSet.this.files.toArray(new FilePathMatcher[fileSize]);
-            fileUnconditional = fileSize == 0;
-            directory = PathSet.this.direcories.toArray(new DirectoryPathMatcher[0]);
-            directorySize = directory.length;
-        }
-
-        /**
-         * @see java.nio.file.FileVisitor#preVisitDirectory(java.lang.Object,
-         *      java.nio.file.attribute.BasicFileAttributes)
-         */
-        @Override
-        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
-            if (depth != 0) {
-                if (directoryUndonditional) {
-                    return delegator.preVisitDirectory(path, attrs);
-                } else {
-                    String name = path.getName().toString();
-
-                    for (DirectoryPathMatcher matcher : directory) {
-
-                    }
-                }
-
-                return CONTINUE;
-            }
-
-            depth++;
-            return CONTINUE;
+            file = PathSet.this.files.toArray(new FilePathMatcher[PathSet.this.files.size()]);
+            directory = PathSet.this.direcories.toArray(new DirectoryPathMatcher[PathSet.this.direcories.size()]);
         }
 
         /**
@@ -209,7 +171,7 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-            if (fileUnconditional) {
+            if (unconditional[depth]) {
                 return delegator.visitFile(path, attrs);
             } else {
                 String name = path.getName().toString();
@@ -232,91 +194,49 @@ public class PathSet implements Iterable<Path> {
         }
 
         /**
+         * @see java.nio.file.FileVisitor#preVisitDirectory(java.lang.Object,
+         *      java.nio.file.attribute.BasicFileAttributes)
+         */
+        @Override
+        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
+            if (depth != 0) {
+                if (unconditional[depth]) {
+                    return delegator.preVisitDirectory(path, attrs);
+                } else {
+                    String name = path.getName().toString();
+
+                    for (DirectoryPathMatcher matcher : directory) {
+                        if (matcher.pattern.match(name)) {
+                            unconditional[depth + 1] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            depth++;
+            return CONTINUE;
+        }
+
+        /**
          * @see java.nio.file.FileVisitor#postVisitDirectory(java.lang.Object, java.io.IOException)
          */
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            depth--;
 
             if (depth != 0) {
-                // System.out.println(dir);
+                depth--;
+
+                unconditional[depth + 1] = false;
             }
             return CONTINUE;
         }
     }
 
     /**
-     * @version 2010/12/20 23:52:12
-     */
-    private static class Pattern {
-
-        /** The normalized pattern for output. */
-        private final String pattern;
-
-        /** The pattern for directory route. */
-        private final Wildcard[] directoryPattern;
-
-        /** The pattern for file name. */
-        private final Wildcard filePattern;
-
-        private boolean use = false;
-
-        /**
-         * @param pattern
-         */
-        private Pattern(String pattern) {
-            // normalize pattern
-            this.pattern = pattern.replace(File.separatorChar, '/')
-                    .replaceAll("\\*{3,}", "**")
-                    .replaceAll("\\*\\*([^/])", "**/*$1")
-                    .replaceAll("([^/])\\*\\*", "$1*/**")
-                    .replace("/$", "/**")
-                    .replace("^/", "");
-
-            // separate pattern
-            String[] patterns = this.pattern.split("/");
-
-            // find all pattern for any
-            for (int i = 0; i < patterns.length; i++) {
-                if (patterns[i].equals("**")) {
-                    patterns[i] = null;
-                }
-            }
-
-            // analyze pattern
-            directoryPattern = new Wildcard[patterns.length - 1];
-            filePattern = new Wildcard(patterns[directoryPattern.length]);
-
-            for (int i = 0; i < directoryPattern.length; i++) {
-                directoryPattern[i] = new Wildcard(patterns[i]);
-            }
-        }
-
-        private boolean matchRoute(String name) {
-            return true;
-        }
-
-        private boolean matchName(String name) {
-            return filePattern.match(name);
-        }
-
-        private boolean isUseless() {
-            return false;
-        }
-    }
-
-    /**
-     * @version 2011/01/19 11:57:54
-     */
-    private static interface PatternMatch {
-
-        boolean match(String name);
-    }
-
-    /**
      * @version 2011/01/19 11:57:56
      */
-    private static final class FilePathMatcher implements PatternMatch {
+    private static final class FilePathMatcher {
 
         /** The file name pattern. */
         private final Wildcard pattern;
@@ -329,9 +249,9 @@ public class PathSet implements Iterable<Path> {
         }
 
         /**
-         * @see bee.PathSet.PatternMatch#match(java.lang.String)
+         * @param name
+         * @return
          */
-        @Override
         public boolean match(String name) {
             return pattern.match(name);
         }
@@ -340,28 +260,19 @@ public class PathSet implements Iterable<Path> {
     /**
      * @version 2011/01/19 11:59:50
      */
-    private static final class DirectoryPathMatcher implements PatternMatch {
+    private static final class DirectoryPathMatcher {
 
         /** The file name pattern. */
-        private final Wildcard[] pattern;
+        private final Wildcard pattern;
 
         /**
          * @param pattern
          */
         private DirectoryPathMatcher(String[] patterns) {
-            this.pattern = new Wildcard[patterns.length];
-
-            for (int i = 0; i < patterns.length; i++) {
-                this.pattern[i] = new Wildcard(patterns[i]);
+            if (patterns.length != 2) {
+                throw new IllegalArgumentException("You can specify the single directory pattern only.");
             }
-        }
-
-        /**
-         * @see bee.PathSet.PatternMatch#match(java.lang.String)
-         */
-        @Override
-        public boolean match(String name) {
-            return false;
+            this.pattern = new Wildcard(patterns[0]);
         }
     }
 }
