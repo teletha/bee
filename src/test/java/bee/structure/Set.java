@@ -20,6 +20,9 @@ package bee.structure;
  */
 public abstract class Set<T> {
 
+    /**
+     * @return
+     */
     public T[] toArray() {
         return null;
     }

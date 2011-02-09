@@ -37,6 +37,9 @@ public class PathSetTest {
     @Rule
     public static final MatchSet set1 = new MatchSet("01");
 
+    @Rule
+    public static final MatchSet set2 = new MatchSet("02");
+
     @Test
     public void all() throws Exception {
         set1.assertMatching(9);
@@ -70,6 +73,24 @@ public class PathSetTest {
     public void directory2() throws Exception {
         set1.set.include("use/**");
         set1.assertMatching(3);
+    }
+
+    @Test
+    public void directoryWildcard1() throws Exception {
+        set2.set.include("a/**/a/**");
+        set2.assertMatching(8);
+    }
+
+    @Test
+    public void directoryWildcard2() throws Exception {
+        set2.set.include("**/b/a/**");
+        set2.assertMatching(8);
+    }
+
+    @Test
+    public void directoryWildcard3() throws Exception {
+        set2.set.include("**/b/b/**");
+        set2.assertMatching(6);
     }
 
     /**
@@ -125,7 +146,6 @@ public class PathSetTest {
          */
         @Override
         public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attributes) throws IOException {
-            System.out.println(path);
             return FileVisitResult.CONTINUE;
         }
 
@@ -135,7 +155,7 @@ public class PathSetTest {
          */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) throws IOException {
-
+            System.out.println(path);
             counter++;
             return FileVisitResult.CONTINUE;
         }
