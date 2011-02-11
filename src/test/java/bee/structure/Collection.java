@@ -31,4 +31,8 @@ public interface Collection<T> {
      * @return
      */
     boolean add(T item);
+
+    boolean remove(T item);
+
+    boolean has(T item);
 }

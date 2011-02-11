@@ -48,6 +48,9 @@ public class PathSet implements Iterable<Path> {
     /** The actual filter set for file only matcher. */
     private Set<DirectoryPathMatcher> direcories = new CopyOnWriteArraySet();
 
+    /** The actual filter set for file only matcher. */
+    private Set<BothPathMatcher> boths = new CopyOnWriteArraySet();
+
     /**
      * @param base
      */
@@ -135,6 +138,7 @@ public class PathSet implements Iterable<Path> {
             files.add(new Wildcard(patterns[1]));
         } else {
             // both
+            boths.add(new BothPathMatcher(patterns));
         }
     }
 
@@ -151,15 +155,9 @@ public class PathSet implements Iterable<Path> {
         /** The pattern matcher for file. */
         private final DirectoryPathMatcher[] directory;
 
-        private int depth = 0;
+        private int depth = -1;
 
-        private final boolean[] unconditional = new boolean[64];
-
-        private final int[][] steps;
-
-        private int currentDepth = -1;
-
-        private int unconditionalDepth = 1000;
+        private int unconditional = 1000;
 
         private int length = 0;
 
@@ -172,7 +170,6 @@ public class PathSet implements Iterable<Path> {
             file = PathSet.this.files.toArray(new Wildcard[PathSet.this.files.size()]);
             directory = PathSet.this.direcories.toArray(new DirectoryPathMatcher[PathSet.this.direcories.size()]);
 
-            steps = new int[directory.length][64];
             length = directory.length;
         }
 
@@ -182,7 +179,7 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-            if (unconditionalDepth <= currentDepth) {
+            if (unconditional <= depth) {
                 return delegator.visitFile(path, attrs);
             } else {
                 String name = path.getName().toString();
@@ -210,28 +207,27 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
-            currentDepth++;
+            depth++;
 
-            if (unconditionalDepth < currentDepth) {
-                delegator.preVisitDirectory(path, attrs);
-            } else {
-                String name = path.getName().toString();
-                System.out.println(path);
-                for (int i = 0; i < length; i++) {
-                    switch (directory[i].enter(currentDepth, name)) {
-                    case 1: // unconditionaly match
-                        length = i + 1;
-                        System.out.println("set unconditional " + currentDepth);
-                        unconditionalDepth = currentDepth;
-                        break;
+            if (unconditional < depth) {
+                return delegator.preVisitDirectory(path, attrs); // unconditionaly
+            }
 
-                    default:
-                        break;
-                    }
+            String name = path.getName().toString();
+
+            for (int i = 0; i < length; i++) {
+                switch (directory[i].enter(depth, name)) {
+                case 1: // unconditionaly match
+                    length = i + 1;
+                    System.out.println("set unconditional " + depth);
+                    unconditional = depth;
+                    break;
+
+                default:
+                    break;
                 }
             }
 
-            depth++;
             return CONTINUE;
         }
 
@@ -240,25 +236,25 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            if (unconditionalDepth < currentDepth) {
+            if (unconditional < depth) {
                 delegator.postVisitDirectory(dir, exc);
-            } else if (unconditionalDepth == currentDepth) {
-                unconditionalDepth = 1000; // reset
+            } else if (unconditional == depth) {
+                unconditional = 1000; // reset
 
                 for (int i = 0; i < length; i++) {
-                    directory[i].exit(currentDepth);
+                    directory[i].exit(depth);
                 }
                 delegator.postVisitDirectory(dir, exc);
 
                 length = directory.length;
             } else {
                 for (int i = 0; i < length; i++) {
-                    directory[i].exit(currentDepth);
+                    directory[i].exit(depth);
                 }
                 delegator.postVisitDirectory(dir, exc);
             }
 
-            currentDepth--;
+            depth--;
             return CONTINUE;
         }
     }
@@ -268,8 +264,95 @@ public class PathSet implements Iterable<Path> {
      */
     private static final class DirectoryPathMatcher {
 
-        /** The file name pattern. */
-        private final Wildcard pattern;
+        private Wildcard[] wildcards;
+
+        private int current = 0;
+
+        private int[] steps = new int[64];
+
+        private final boolean root;
+
+        /**
+         * @param pattern
+         */
+        private DirectoryPathMatcher(String[] patterns) {
+            this.wildcards = new Wildcard[patterns.length];
+
+            for (int i = 0; i < patterns.length; i++) {
+                wildcards[i] = patterns[i].equals("**") ? null : new Wildcard(patterns[i]);
+            }
+            this.root = wildcards[0] != null;
+        }
+
+        private int enter(int depth, String name) {
+            if (root && current == 0 && depth != 1) {
+                return 0;
+            }
+
+            steps[depth] = current;
+
+            Wildcard wildcard = wildcards[current];
+
+            if (wildcard == null) {
+                // The current is directory wildcard pattern, so next pattern must be existed and
+                // not null.
+                System.out.println("enter wild   " + current + "   " + wildcards[current + 1].match(name) + "   " + name);
+                wildcard = wildcards[current + 1];
+
+                if (wildcard.match(name)) {
+                    // Step into next pattern.
+                    current += 2;
+
+                    if (current == wildcards.length - 1) {
+                        // Make unconditionaly match
+                        return 1;
+                    }
+                } else {
+                    // Try subdirectory.
+                }
+            } else {
+                // The current is direct-child-directory pattern.
+                System.out.println("enter normal   " + current + "   " + wildcard.match(name) + "  " + name);
+
+                if (wildcard.match(name)) {
+                    // Step int next pattern.
+                    current += 1;
+
+                    if (current == wildcards.length - 1) {
+                        // Make unconditionaly match.
+                        return 1;
+                    }
+                } else {
+                    // Reset current pattern.
+                    int back = depth;
+
+                    if (depth != 0) {
+                        back--;
+
+                        current = steps[back];
+                        System.out.println(root + "   " + depth + "  " + current);
+                        return enter(back, name);
+                    }
+
+                    System.out.println("reset " + steps[back]);
+                    current = steps[back];
+                }
+            }
+
+            return 0;
+        }
+
+        private void exit(int depth) {
+            System.out.println("exit  " + current + "  " + steps[depth]);
+            current = steps[depth];
+            steps[depth] = 0;
+        }
+    }
+
+    /**
+     * @version 2011/01/19 11:59:50
+     */
+    private static final class BothPathMatcher {
 
         private Wildcard[] wildcards;
 
@@ -277,21 +360,25 @@ public class PathSet implements Iterable<Path> {
 
         private int[] steps = new int[64];
 
+        private final boolean root;
+
         /**
          * @param pattern
          */
-        private DirectoryPathMatcher(String[] patterns) {
-
-            this.pattern = new Wildcard(patterns[0]);
+        private BothPathMatcher(String[] patterns) {
             this.wildcards = new Wildcard[patterns.length];
 
             for (int i = 0; i < patterns.length; i++) {
                 wildcards[i] = patterns[i].equals("**") ? null : new Wildcard(patterns[i]);
             }
-
+            this.root = wildcards[0] != null;
         }
 
         private int enter(int depth, String name) {
+            if (root && current == 0 && depth != 1) {
+                return 0;
+            }
+
             steps[depth] = current;
 
             Wildcard wildcard = wildcards[current];
@@ -327,8 +414,18 @@ public class PathSet implements Iterable<Path> {
                     }
                 } else {
                     // Reset current pattern.
-                    System.out.println("reset " + steps[depth]);
-                    current = steps[depth];
+                    int back = depth;
+
+                    if (depth != 0) {
+                        back--;
+
+                        current = steps[back];
+
+                        return enter(back, name);
+                    }
+
+                    System.out.println("reset " + steps[back]);
+                    current = steps[back];
                 }
             }
 

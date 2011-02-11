@@ -23,6 +23,8 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -76,21 +78,46 @@ public class PathSetTest {
     }
 
     @Test
-    public void directoryWildcard1() throws Exception {
-        set2.set.include("a/**/a/**");
-        set2.assertMatching(8);
+    public void directoryWildcard() throws Exception {
+        set2.set.include("**/a/**/a/**");
+        set2.assertMatching(8, 1, 2, 3, 4, 5, 6, 9, 10);
     }
 
     @Test
-    public void directoryWildcard2() throws Exception {
+    public void directoryDirectWithWildcard1() throws Exception {
         set2.set.include("**/b/a/**");
+        set2.assertMatching(8, 5, 6, 9, 10, 11, 12, 13, 14);
+    }
+
+    @Test
+    public void directoryDirectWithWildcard2() throws Exception {
+        set2.set.include("**/b/b/**");
+        set2.assertMatching(6, 7, 8, 13, 14, 15, 16);
+    }
+
+    @Test
+    public void directoryRoot() throws Exception {
+        set2.set.include("b/b/**");
+        set2.assertMatching(4, 13, 14, 15, 16);
+    }
+
+    @Test
+    public void directoryDouble() throws Exception {
+        set2.set.include("**/b/a/**");
+        set2.set.include("**/a/b/**");
+        set2.assertMatching(12, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
+    }
+
+    @Test
+    public void directoryA() throws Exception {
+        set2.set.include("*/a/**");
         set2.assertMatching(8);
     }
 
     @Test
-    public void directoryWildcard3() throws Exception {
-        set2.set.include("**/b/b/**");
-        set2.assertMatching(6);
+    public void both() throws Exception {
+        set2.set.include("**/a/**.txt");
+        set2.assertMatching(7);
     }
 
     /**
@@ -104,14 +131,14 @@ public class PathSetTest {
         private String path;
 
         /** The matching file counter. */
-        private int counter = 0;
+        private List<Integer> numbers = new ArrayList();
 
         /**
          * @see ezunit.ReusableRule#before(java.lang.reflect.Method)
          */
         @Override
         protected void before(Method method) throws Exception {
-            counter = 0;
+            numbers.clear();
             set = new PathSet(path);
         }
 
@@ -126,9 +153,23 @@ public class PathSetTest {
             try {
                 set.scan(this);
 
-                assertEquals(expected, counter);
+                assertEquals(expected, numbers.size());
             } finally {
-                counter = 0;
+                numbers.clear();
+            }
+        }
+
+        private void assertMatching(int expected, int... list) {
+            try {
+                set.scan(this);
+
+                assertEquals(expected, numbers.size());
+
+                for (int i : list) {
+                    assertTrue(numbers.contains(i));
+                }
+            } finally {
+                numbers.clear();
             }
         }
 
@@ -156,7 +197,12 @@ public class PathSetTest {
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) throws IOException {
             System.out.println(path);
-            counter++;
+
+            String name = path.getName().toString();
+            int index = name.lastIndexOf('.');
+            Integer number = Integer.parseInt(name.substring(0, index));
+            numbers.add(number);
+
             return FileVisitResult.CONTINUE;
         }
 
