@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nameless Production Committee.
+ * Copyright (C) 2011 Nameless Production Committee.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,21 +35,21 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import ezbean.I;
 
 /**
- * @version 2010/12/19 12:04:07
+ * @version 2011/02/15 15:51:49
  */
 public class PathSet implements Iterable<Path> {
 
     /** The base path. */
     private final Path base;
 
-    /** The actual filter set for file only matcher. */
-    private Set<Wildcard> files = new CopyOnWriteArraySet();
+    /** The actual filter set for directory only matcher. */
+    private Set<Wildcard> excludeDirectory = new CopyOnWriteArraySet();
+
+    /** The actual filter set for directory only matcher. */
+    private Set<Wildcard> excludeFile = new CopyOnWriteArraySet();
 
     /** The actual filter set for file only matcher. */
-    private Set<DirectoryPathMatcher> direcories = new CopyOnWriteArraySet();
-
-    /** The actual filter set for file only matcher. */
-    private Set<BothPathMatcher> boths = new CopyOnWriteArraySet();
+    private Set<Wildcard> includers = new CopyOnWriteArraySet();
 
     /**
      * @param base
@@ -65,18 +65,63 @@ public class PathSet implements Iterable<Path> {
         this.base = base;
     }
 
+    /**
+     * <p>
+     * Specify the file name patterns that you want to include.
+     * </p>
+     * 
+     * @param patterns A include file patterns.
+     * @return {@link PathSet} instance to chain API.
+     */
     public PathSet include(String... patterns) {
         for (String pattern : patterns) {
-            add(pattern);
+            includers.add(new Wildcard(pattern));
         }
         return this;
     }
 
+    /**
+     * <p>
+     * Specify the directory name patterns that you want to exclude.
+     * </p>
+     * 
+     * @param patterns A exclude directory patterns.
+     * @return {@link PathSet} instance to chain API.
+     */
     public PathSet exclude(String... patterns) {
+        for (String pattern : patterns) {
+            String[] parsed = pattern.replace(File.separatorChar, '/')
+                    .replaceAll("\\*{3,}", "**")
+                    .replaceAll("\\*\\*([^/])", "**/*$1")
+                    .replaceAll("([^/])\\*\\*", "$1*/**")
+                    .replace("/$", "/**")
+                    .replace("^/", "")
+                    .replaceAll("\\*\\*/\\*\\*", "**")
+                    .split("/");
+
+            if (parsed.length == 2) {
+                if (parsed[0].equals("**")) {
+                    excludeFile.add(new Wildcard(parsed[1]));
+                } else if (parsed[1].equals("**")) {
+                    excludeDirectory.add(new Wildcard(parsed[0]));
+                }
+            }
+        }
         return this;
     }
 
+    /**
+     * <p>
+     * Exclude the default
+     * </p>
+     * 
+     * @param patterns A exclude directory patterns.
+     * @return {@link PathSet} instance to chain API.
+     */
     public PathSet excludeDefault(boolean exclusion) {
+        if (exclusion) {
+            exclude("**/.*", ".*/**", "CVS/**", "SCCS/**");
+        }
         return this;
     }
 
@@ -102,75 +147,49 @@ public class PathSet implements Iterable<Path> {
     }
 
     public void scan(FileVisitor<Path> vistor) {
-        boolean unsort = files.isEmpty() && direcories.isEmpty();
+        boolean unsort = includers.isEmpty() && excludeDirectory.isEmpty() && excludeFile.isEmpty();
 
         try {
             Files.walkFileTree(base, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, unsort ? vistor
-                    : new Traveler(vistor));
+                    : new Traveler(vistor, excludeDirectory, excludeFile, includers));
         } catch (IOException e) {
             throw I.quiet(e);
         }
     }
 
-    private void add(String pattern) {
-        // normalize pattern
-        pattern = pattern.replace(File.separatorChar, '/')
-                .replaceAll("\\*{3,}", "**")
-                .replaceAll("\\*\\*([^/])", "**/*$1")
-                .replaceAll("([^/])\\*\\*", "$1*/**")
-                .replace("/$", "/**")
-                .replace("^/", "")
-                .replaceAll("\\*\\*/\\*\\*", "**");
-
-        // separate pattern
-        String[] patterns = pattern.split("/");
-
-        // find all pattern for any
-        int size = patterns.length - 1;
-
-        if (size == 0) {
-            // top level file only
-        } else if (patterns[size].equals("**")) {
-            // directory only
-            direcories.add(new DirectoryPathMatcher(patterns));
-        } else if (size == 1 && patterns[0].equals("**")) {
-            // file only
-            files.add(new Wildcard(patterns[1]));
-        } else {
-            // both
-            boths.add(new BothPathMatcher(patterns));
-        }
-    }
-
     /**
-     * @version 2010/12/19 12:09:00
+     * @version 2011/02/15 15:49:01
      */
     private final class Traveler implements FileVisitor<Path> {
 
+        /** The simple directory exclude patterns. */
+        private final Wildcard[] excludeDirectory;
+
+        /** The simple file exclude patterns. */
+        private final Wildcard[] excludeFile;
+
+        /** We should exclude something? */
+        private final boolean exclude;
+
+        /** The simple file include patterns. */
+        private final Wildcard[] includeFile;
+
+        /** We should include some files? */
+        private final boolean include;
+
+        /** The actual file visitor. */
         private final FileVisitor<Path> delegator;
-
-        /** The pattern matcher for file. */
-        private final Wildcard[] file;
-
-        /** The pattern matcher for file. */
-        private final DirectoryPathMatcher[] directory;
-
-        private int depth = -1;
-
-        private int unconditional = 1000;
-
-        private int length = 0;
 
         /**
          * @param delegator
          */
-        private Traveler(FileVisitor<Path> delegator) {
+        private Traveler(FileVisitor<Path> delegator, Set<Wildcard> excludeDirectory, Set<Wildcard> excludeFile, Set<Wildcard> includers) {
             this.delegator = delegator;
-
-            file = PathSet.this.files.toArray(new Wildcard[PathSet.this.files.size()]);
-            directory = PathSet.this.direcories.toArray(new DirectoryPathMatcher[PathSet.this.direcories.size()]);
-
-            length = directory.length;
+            this.excludeDirectory = excludeDirectory.toArray(new Wildcard[excludeDirectory.size()]);
+            this.excludeFile = excludeFile.toArray(new Wildcard[excludeFile.size()]);
+            this.includeFile = includers.toArray(new Wildcard[includers.size()]);
+            this.exclude = this.excludeDirectory.length != 0;
+            this.include = this.includeFile.length != 0;
         }
 
         /**
@@ -179,17 +198,24 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-            if (unconditional <= depth) {
-                return delegator.visitFile(path, attrs);
-            } else {
-                String name = path.getName().toString();
+            String name = path.getName().toString();
 
-                for (Wildcard wildcard : file) {
+            // Exclude has high priority.
+            for (Wildcard wildcard : excludeFile) {
+                if (wildcard.match(name)) {
+                    return CONTINUE;
+                }
+            }
+
+            if (include) {
+                for (Wildcard wildcard : includeFile) {
                     if (wildcard.match(name)) {
                         return delegator.visitFile(path, attrs);
                     }
                 }
                 return CONTINUE;
+            } else {
+                return delegator.visitFile(path, attrs);
             }
         }
 
@@ -207,28 +233,18 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
-            depth++;
+            if (exclude) {
+                String name = path.getName().toString();
 
-            if (unconditional < depth) {
-                return delegator.preVisitDirectory(path, attrs); // unconditionaly
-            }
-
-            String name = path.getName().toString();
-
-            for (int i = 0; i < length; i++) {
-                switch (directory[i].enter(depth, name)) {
-                case 1: // unconditionaly match
-                    length = i + 1;
-                    System.out.println("set unconditional " + depth);
-                    unconditional = depth;
-                    break;
-
-                default:
-                    break;
+                for (Wildcard wildcard : excludeDirectory) {
+                    if (wildcard.match(name)) {
+                        return SKIP_SUBTREE;
+                    }
                 }
             }
 
-            return CONTINUE;
+            // delegate
+            return delegator.preVisitDirectory(path, attrs);
         }
 
         /**
@@ -236,206 +252,7 @@ public class PathSet implements Iterable<Path> {
          */
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            if (unconditional < depth) {
-                delegator.postVisitDirectory(dir, exc);
-            } else if (unconditional == depth) {
-                unconditional = 1000; // reset
-
-                for (int i = 0; i < length; i++) {
-                    directory[i].exit(depth);
-                }
-                delegator.postVisitDirectory(dir, exc);
-
-                length = directory.length;
-            } else {
-                for (int i = 0; i < length; i++) {
-                    directory[i].exit(depth);
-                }
-                delegator.postVisitDirectory(dir, exc);
-            }
-
-            depth--;
             return CONTINUE;
-        }
-    }
-
-    /**
-     * @version 2011/01/19 11:59:50
-     */
-    private static final class DirectoryPathMatcher {
-
-        private Wildcard[] wildcards;
-
-        private int current = 0;
-
-        private int[] steps = new int[64];
-
-        private final boolean root;
-
-        /**
-         * @param pattern
-         */
-        private DirectoryPathMatcher(String[] patterns) {
-            this.wildcards = new Wildcard[patterns.length];
-
-            for (int i = 0; i < patterns.length; i++) {
-                wildcards[i] = patterns[i].equals("**") ? null : new Wildcard(patterns[i]);
-            }
-            this.root = wildcards[0] != null;
-        }
-
-        private int enter(int depth, String name) {
-            if (root && current == 0 && depth != 1) {
-                return 0;
-            }
-
-            steps[depth] = current;
-
-            Wildcard wildcard = wildcards[current];
-
-            if (wildcard == null) {
-                // The current is directory wildcard pattern, so next pattern must be existed and
-                // not null.
-                System.out.println("enter wild   " + current + "   " + wildcards[current + 1].match(name) + "   " + name);
-                wildcard = wildcards[current + 1];
-
-                if (wildcard.match(name)) {
-                    // Step into next pattern.
-                    current += 2;
-
-                    if (current == wildcards.length - 1) {
-                        // Make unconditionaly match
-                        return 1;
-                    }
-                } else {
-                    // Try subdirectory.
-                }
-            } else {
-                // The current is direct-child-directory pattern.
-                System.out.println("enter normal   " + current + "   " + wildcard.match(name) + "  " + name);
-
-                if (wildcard.match(name)) {
-                    // Step int next pattern.
-                    current += 1;
-
-                    if (current == wildcards.length - 1) {
-                        // Make unconditionaly match.
-                        return 1;
-                    }
-                } else {
-                    // Reset current pattern.
-                    int back = depth;
-
-                    if (depth != 0) {
-                        back--;
-
-                        current = steps[back];
-                        System.out.println(root + "   " + depth + "  " + current);
-                        return enter(back, name);
-                    }
-
-                    System.out.println("reset " + steps[back]);
-                    current = steps[back];
-                }
-            }
-
-            return 0;
-        }
-
-        private void exit(int depth) {
-            System.out.println("exit  " + current + "  " + steps[depth]);
-            current = steps[depth];
-            steps[depth] = 0;
-        }
-    }
-
-    /**
-     * @version 2011/01/19 11:59:50
-     */
-    private static final class BothPathMatcher {
-
-        private Wildcard[] wildcards;
-
-        private int current = 0;
-
-        private int[] steps = new int[64];
-
-        private final boolean root;
-
-        /**
-         * @param pattern
-         */
-        private BothPathMatcher(String[] patterns) {
-            this.wildcards = new Wildcard[patterns.length];
-
-            for (int i = 0; i < patterns.length; i++) {
-                wildcards[i] = patterns[i].equals("**") ? null : new Wildcard(patterns[i]);
-            }
-            this.root = wildcards[0] != null;
-        }
-
-        private int enter(int depth, String name) {
-            if (root && current == 0 && depth != 1) {
-                return 0;
-            }
-
-            steps[depth] = current;
-
-            Wildcard wildcard = wildcards[current];
-
-            if (wildcard == null) {
-                // The current is directory wildcard pattern, so next pattern must be existed and
-                // not null.
-                System.out.println("enter wild   " + current + "   " + wildcards[current + 1].match(name));
-                wildcard = wildcards[current + 1];
-
-                if (wildcard.match(name)) {
-                    // Step into next pattern.
-                    current += 2;
-
-                    if (current == wildcards.length - 1) {
-                        // Make unconditionaly match
-                        return 1;
-                    }
-                } else {
-                    // Try subdirectory.
-                }
-            } else {
-                // The current is direct-child-directory pattern.
-                System.out.println("enter normal   " + current + "   " + wildcard.match(name));
-
-                if (wildcard.match(name)) {
-                    // Step int next pattern.
-                    current += 1;
-
-                    if (current == wildcards.length - 1) {
-                        // Make unconditionaly match.
-                        return 1;
-                    }
-                } else {
-                    // Reset current pattern.
-                    int back = depth;
-
-                    if (depth != 0) {
-                        back--;
-
-                        current = steps[back];
-
-                        return enter(back, name);
-                    }
-
-                    System.out.println("reset " + steps[back]);
-                    current = steps[back];
-                }
-            }
-
-            return 0;
-        }
-
-        private void exit(int depth) {
-            System.out.println("exit  " + current + "  " + steps[depth]);
-            current = steps[depth];
-            steps[depth] = 0;
         }
     }
 }

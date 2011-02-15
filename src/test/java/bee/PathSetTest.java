@@ -32,7 +32,7 @@ import org.junit.Test;
 import ezunit.ReusableRule;
 
 /**
- * @version 2010/06/14 17:43:01
+ * @version 2011/02/15 15:48:47
  */
 public class PathSetTest {
 
@@ -48,80 +48,43 @@ public class PathSetTest {
     }
 
     @Test
-    public void extension() throws Exception {
+    public void include() throws Exception {
         set1.set.include("**.txt");
         set1.assertMatching(6);
     }
 
     @Test
-    public void extensions() throws Exception {
+    public void includes() throws Exception {
         set1.set.include("**.txt", "**.file");
         set1.assertMatching(9);
     }
 
     @Test
-    public void duplicatedFiles() throws Exception {
-        set1.set.include("**.txt", "**/02.*");
+    public void includeDuplicatedFiles() throws Exception {
+        set1.set.include("**.txt", "02.*");
         set1.assertMatching(6);
     }
 
     @Test
-    public void directory1() throws Exception {
-        set1.set.include("use**");
+    public void excludeDirectory() throws Exception {
+        set1.set.exclude("use/**");
         set1.assertMatching(6);
     }
 
     @Test
-    public void directory2() throws Exception {
-        set1.set.include("use/**");
+    public void excludeDirectoryWildcard() throws Exception {
+        set1.set.exclude("use*/**");
         set1.assertMatching(3);
     }
 
     @Test
-    public void directoryWildcard() throws Exception {
-        set2.set.include("**/a/**/a/**");
-        set2.assertMatching(8, 1, 2, 3, 4, 5, 6, 9, 10);
-    }
-
-    @Test
-    public void directoryDirectWithWildcard1() throws Exception {
-        set2.set.include("**/b/a/**");
-        set2.assertMatching(8, 5, 6, 9, 10, 11, 12, 13, 14);
-    }
-
-    @Test
-    public void directoryDirectWithWildcard2() throws Exception {
-        set2.set.include("**/b/b/**");
-        set2.assertMatching(6, 7, 8, 13, 14, 15, 16);
-    }
-
-    @Test
-    public void directoryRoot() throws Exception {
-        set2.set.include("b/b/**");
-        set2.assertMatching(4, 13, 14, 15, 16);
-    }
-
-    @Test
-    public void directoryDouble() throws Exception {
-        set2.set.include("**/b/a/**");
-        set2.set.include("**/a/b/**");
-        set2.assertMatching(12, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
-    }
-
-    @Test
-    public void directoryA() throws Exception {
-        set2.set.include("*/a/**");
-        set2.assertMatching(8);
-    }
-
-    @Test
-    public void both() throws Exception {
-        set2.set.include("**/a/**.txt");
-        set2.assertMatching(7);
+    public void excludeFile() throws Exception {
+        set1.set.exclude("**01.file");
+        set1.assertMatching(6);
     }
 
     /**
-     * @version 2011/01/19 11:14:21
+     * @version 2011/02/15 15:48:53
      */
     private static final class MatchSet extends ReusableRule implements FileVisitor<Path> {
 
@@ -149,6 +112,13 @@ public class PathSetTest {
             this.path = testcaseDirectory.getAbsolutePath() + "/match/" + path;
         }
 
+        /**
+         * <p>
+         * Assert the count of the matching files.
+         * </p>
+         * 
+         * @param expected
+         */
         private void assertMatching(int expected) {
             try {
                 set.scan(this);
@@ -159,6 +129,13 @@ public class PathSetTest {
             }
         }
 
+        /**
+         * <p>
+         * Assert the count of the matching files.
+         * </p>
+         * 
+         * @param expected
+         */
         private void assertMatching(int expected, int... list) {
             try {
                 set.scan(this);
@@ -196,8 +173,6 @@ public class PathSetTest {
          */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) throws IOException {
-            System.out.println(path);
-
             String name = path.getName().toString();
             int index = name.lastIndexOf('.');
             Integer number = Integer.parseInt(name.substring(0, index));

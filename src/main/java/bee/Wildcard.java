@@ -186,8 +186,7 @@ public class Wildcard {
                     // no break
                 case 2: // ============= Match characters at tail ============= //
                     // In general, tail matching is used most frequently in any situations. So we
-                    // should
-                    // optimize code for the tail matching.
+                    // should optimize code for the tail matching.
                     inputPosition = inputSize;
 
                     while (0 < patternPosition) {
