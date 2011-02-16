@@ -43,13 +43,16 @@ public class PathSet implements Iterable<Path> {
     private final Path base;
 
     /** The actual filter set for directory only matcher. */
-    private Set<Wildcard> excludeDirectory = new CopyOnWriteArraySet();
+    private Set<Wildcard> includeFile = new CopyOnWriteArraySet();
+
+    /** The actual filter set for directory only matcher. */
+    private Set<Wildcard> includeDirectory = new CopyOnWriteArraySet();
 
     /** The actual filter set for directory only matcher. */
     private Set<Wildcard> excludeFile = new CopyOnWriteArraySet();
 
-    /** The actual filter set for file only matcher. */
-    private Set<Wildcard> includers = new CopyOnWriteArraySet();
+    /** The actual filter set for directory only matcher. */
+    private Set<Wildcard> excludeDirectory = new CopyOnWriteArraySet();
 
     /**
      * @param base
@@ -74,10 +77,7 @@ public class PathSet implements Iterable<Path> {
      * @return {@link PathSet} instance to chain API.
      */
     public PathSet include(String... patterns) {
-        for (String pattern : patterns) {
-            includers.add(new Wildcard(pattern));
-        }
-        return this;
+        return parse(patterns, includeFile, includeDirectory);
     }
 
     /**
@@ -89,6 +89,15 @@ public class PathSet implements Iterable<Path> {
      * @return {@link PathSet} instance to chain API.
      */
     public PathSet exclude(String... patterns) {
+        return parse(patterns, excludeFile, excludeDirectory);
+    }
+
+    /**
+     * <p>
+     * Helper method to parse the specified patterns and store it for the suitable collection.
+     * </p>
+     */
+    private PathSet parse(String[] patterns, Set<Wildcard> forFile, Set<Wildcard> forDirectory) {
         for (String pattern : patterns) {
             String[] parsed = pattern.replace(File.separatorChar, '/')
                     .replaceAll("\\*{3,}", "**")
@@ -99,14 +108,18 @@ public class PathSet implements Iterable<Path> {
                     .replaceAll("\\*\\*/\\*\\*", "**")
                     .split("/");
 
-            if (parsed.length == 2) {
+            if (parsed.length != 2) {
+                throw new IllegalArgumentException("The pattern '" + pattern + "' is too complicated. PathSet accepts the following patterns only:\r\n  **/file.name\r\n  dir name/**");
+            } else {
                 if (parsed[0].equals("**")) {
-                    excludeFile.add(new Wildcard(parsed[1]));
+                    forFile.add(new Wildcard(parsed[1]));
                 } else if (parsed[1].equals("**")) {
-                    excludeDirectory.add(new Wildcard(parsed[0]));
+                    forDirectory.add(new Wildcard(parsed[0]));
                 }
             }
         }
+
+        // API chain
         return this;
     }
 
@@ -115,14 +128,10 @@ public class PathSet implements Iterable<Path> {
      * Exclude the default
      * </p>
      * 
-     * @param patterns A exclude directory patterns.
      * @return {@link PathSet} instance to chain API.
      */
-    public PathSet excludeDefault(boolean exclusion) {
-        if (exclusion) {
-            exclude("**/.*", ".*/**", "CVS/**", "SCCS/**");
-        }
-        return this;
+    public PathSet excludeDefaults() {
+        return exclude("**/.*", ".*/**", "CVS/**", "SCCS/**");
     }
 
     public void copyTo(Path dist) {
@@ -147,11 +156,11 @@ public class PathSet implements Iterable<Path> {
     }
 
     public void scan(FileVisitor<Path> vistor) {
-        boolean unsort = includers.isEmpty() && excludeDirectory.isEmpty() && excludeFile.isEmpty();
+        boolean unsort = includeFile.isEmpty() && includeDirectory.isEmpty() && excludeDirectory.isEmpty() && excludeFile.isEmpty();
 
         try {
             Files.walkFileTree(base, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, unsort ? vistor
-                    : new Traveler(vistor, excludeDirectory, excludeFile, includers));
+                    : new Traveler(vistor, excludeDirectory, excludeFile, includeFile, includeDirectory));
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -162,34 +171,56 @@ public class PathSet implements Iterable<Path> {
      */
     private final class Traveler implements FileVisitor<Path> {
 
-        /** The simple directory exclude patterns. */
-        private final Wildcard[] excludeDirectory;
-
-        /** The simple file exclude patterns. */
-        private final Wildcard[] excludeFile;
-
-        /** We should exclude something? */
-        private final boolean exclude;
+        private final boolean hasInclude;
 
         /** The simple file include patterns. */
         private final Wildcard[] includeFile;
 
-        /** We should include some files? */
-        private final boolean include;
+        /** The simple directory include patterns. */
+        private final Wildcard[] includeDirectory;
+
+        /** We should exclude something? */
+        private final int includeFileSize;
+
+        /** We should exclude something? */
+        private final boolean hasIncludeDirectory;
+
+        /** The simple file exclude patterns. */
+        private final Wildcard[] excludeFile;
+
+        /** The simple directory exclude patterns. */
+        private final Wildcard[] excludeDirectory;
+
+        /** We should exclude something? */
+        private final int excludeFileSize;
+
+        /** We should exclude something? */
+        private final boolean hasExcludeDirectory;
 
         /** The actual file visitor. */
         private final FileVisitor<Path> delegator;
 
+        /** The current depth of file system. */
+        private int depth = 0;
+
+        /** The last depth that we should include all files. */
+        private int depthForDirectoryIncluding = Integer.MAX_VALUE;
+
         /**
          * @param delegator
          */
-        private Traveler(FileVisitor<Path> delegator, Set<Wildcard> excludeDirectory, Set<Wildcard> excludeFile, Set<Wildcard> includers) {
+        private Traveler(FileVisitor<Path> delegator, Set<Wildcard> excludeDirectory, Set<Wildcard> excludeFile, Set<Wildcard> includeFile, Set<Wildcard> includeDirectory) {
             this.delegator = delegator;
-            this.excludeDirectory = excludeDirectory.toArray(new Wildcard[excludeDirectory.size()]);
+            this.includeFile = includeFile.toArray(new Wildcard[includeFile.size()]);
             this.excludeFile = excludeFile.toArray(new Wildcard[excludeFile.size()]);
-            this.includeFile = includers.toArray(new Wildcard[includers.size()]);
-            this.exclude = this.excludeDirectory.length != 0;
-            this.include = this.includeFile.length != 0;
+            this.includeDirectory = includeDirectory.toArray(new Wildcard[includeDirectory.size()]);
+            this.excludeDirectory = excludeDirectory.toArray(new Wildcard[excludeDirectory.size()]);
+
+            includeFileSize = this.includeFile.length;
+            excludeFileSize = this.excludeFile.length;
+            hasIncludeDirectory = this.includeDirectory.length != 0;
+            hasExcludeDirectory = this.excludeDirectory.length != 0;
+            hasInclude = includeFileSize != 0 || hasIncludeDirectory;
         }
 
         /**
@@ -197,25 +228,36 @@ public class PathSet implements Iterable<Path> {
          *      java.nio.file.attribute.BasicFileAttributes)
          */
         @Override
-        public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-            String name = path.getName().toString();
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            String name = file.getName().toString();
 
-            // Exclude has high priority.
-            for (Wildcard wildcard : excludeFile) {
-                if (wildcard.match(name)) {
-                    return CONTINUE;
+            // Check excluding because of excluding pattern has high priority.
+            for (int i = 0; i < excludeFileSize; i++) {
+                if (excludeFile[i].match(name)) {
+                    return CONTINUE; // Discard the current file.
                 }
             }
 
-            if (include) {
-                for (Wildcard wildcard : includeFile) {
-                    if (wildcard.match(name)) {
-                        return delegator.visitFile(path, attrs);
+            if (!hasInclude) {
+                // We must pick up all files.
+                return delegator.visitFile(file, attrs);
+            } else {
+                // We must pick up the specified files and the others are discarded.
+
+                // Chech whether the current directory is unconditional including or not.
+                if (depthForDirectoryIncluding <= depth) {
+                    return delegator.visitFile(file, attrs);
+                }
+
+                // Check file including because some files are discarded.
+                for (int i = 0; i < includeFileSize; i++) {
+                    if (includeFile[i].match(name)) {
+                        return delegator.visitFile(file, attrs);
                     }
                 }
+
+                // Any pattern doesn't match the curretn file, so we must discard it.
                 return CONTINUE;
-            } else {
-                return delegator.visitFile(path, attrs);
             }
         }
 
@@ -232,9 +274,11 @@ public class PathSet implements Iterable<Path> {
          *      java.nio.file.attribute.BasicFileAttributes)
          */
         @Override
-        public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
-            if (exclude) {
-                String name = path.getName().toString();
+        public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) throws IOException {
+            depth++;
+
+            if (hasExcludeDirectory) {
+                String name = directory.getName().toString();
 
                 for (Wildcard wildcard : excludeDirectory) {
                     if (wildcard.match(name)) {
@@ -243,15 +287,33 @@ public class PathSet implements Iterable<Path> {
                 }
             }
 
+            if (hasIncludeDirectory) {
+                String name = directory.getName().toString();
+
+                for (Wildcard wildcard : includeDirectory) {
+                    if (wildcard.match(name)) {
+                        depthForDirectoryIncluding = depth; // record depth
+
+                        // delegate
+                        return delegator.preVisitDirectory(directory, attrs);
+                    }
+                }
+            }
+
             // delegate
-            return delegator.preVisitDirectory(path, attrs);
+            return delegator.preVisitDirectory(directory, attrs);
         }
 
         /**
          * @see java.nio.file.FileVisitor#postVisitDirectory(java.lang.Object, java.io.IOException)
          */
         @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+        public FileVisitResult postVisitDirectory(Path directory, IOException exc) throws IOException {
+            if (depth == depthForDirectoryIncluding) {
+                depthForDirectoryIncluding = Integer.MAX_VALUE; // reset
+            }
+
+            depth--;
             return CONTINUE;
         }
     }

@@ -48,20 +48,38 @@ public class PathSetTest {
     }
 
     @Test
-    public void include() throws Exception {
+    public void includeFile() throws Exception {
         set1.set.include("**.txt");
         set1.assertMatching(6);
     }
 
     @Test
-    public void includes() throws Exception {
+    public void includeFileWildcard() throws Exception {
+        set1.set.include("**/02.*");
+        set1.assertMatching(3);
+    }
+
+    @Test
+    public void includeFiles() throws Exception {
         set1.set.include("**.txt", "**.file");
         set1.assertMatching(9);
     }
 
     @Test
     public void includeDuplicatedFiles() throws Exception {
-        set1.set.include("**.txt", "02.*");
+        set1.set.include("**.txt", "02.**");
+        set1.assertMatching(6);
+    }
+
+    @Test
+    public void includeDirectory() throws Exception {
+        set1.set.include("use/**");
+        set1.assertMatching(3);
+    }
+
+    @Test
+    public void includeDirectoryWildcard() throws Exception {
+        set1.set.include("use*/**");
         set1.assertMatching(6);
     }
 
@@ -81,6 +99,12 @@ public class PathSetTest {
     public void excludeFile() throws Exception {
         set1.set.exclude("**01.file");
         set1.assertMatching(6);
+    }
+
+    @Test
+    public void excludeFileWildcard() throws Exception {
+        set1.set.exclude("**/01.*");
+        set1.assertMatching(3);
     }
 
     /**
