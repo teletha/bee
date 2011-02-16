@@ -29,7 +29,8 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 
-import ezunit.ReusableRule;
+import ezunit.CleanRoom;
+import ezunit.Ezunit;
 
 /**
  * @version 2011/02/15 15:48:47
@@ -107,33 +108,87 @@ public class PathSetTest {
         set1.assertMatching(3);
     }
 
+    @Test
+    public void delete() {
+        set1.assertExist("01.file", "use");
+        set1.set.delete();
+        set1.assertNotExist("01.file", "use");
+    }
+
+    @Test
+    public void deleteExclude() {
+        set1.assertExist("01.file", "use", "useless");
+        set1.set.exclude("use/**").delete();
+        set1.assertExist("use");
+        set1.assertNotExist("01.file", "useless");
+    }
+
+    @Test
+    public void deleteExcludeFile() {
+        set1.assertExist("01.file", "use", "useless");
+        set1.set.exclude("**/*.txt").delete();
+        set1.assertExist("use", "useless");
+        set1.assertNotExist("01.file");
+    }
+
+    @Test
+    public void copy() throws Exception {
+        set1.assertExist("01.file", "use", "useless/01.txt");
+        set2.assertNotExist("01.file", "use", "useless/01.txt");
+        set1.set.copyTo(set2.root);
+        set1.assertExist("01.file", "use", "useless/01.txt");
+        set2.assertExist("01.file", "use", "useless/01.txt");
+    }
+
     /**
      * @version 2011/02/15 15:48:53
      */
-    private static final class MatchSet extends ReusableRule implements FileVisitor<Path> {
+    private static final class MatchSet extends CleanRoom implements FileVisitor<Path> {
 
         /** The target file set. */
-        private PathSet set;
+        private final PathSet set;
 
-        private String path;
+        /** The root directory. */
+        private final Path root;
 
         /** The matching file counter. */
         private List<Integer> numbers = new ArrayList();
+
+        /**
+         * 
+         */
+        private MatchSet(String path) {
+            super(Ezunit.locatePackage(PathSetTest.class) + "/match/" + path);
+
+            root = locateDirectory("").toPath();
+            set = new PathSet(root);
+        }
 
         /**
          * @see ezunit.ReusableRule#before(java.lang.reflect.Method)
          */
         @Override
         protected void before(Method method) throws Exception {
+            super.before(method);
+
+            set.reset();
             numbers.clear();
-            set = new PathSet(path);
         }
 
-        /**
-         * 
-         */
-        private MatchSet(String path) {
-            this.path = testcaseDirectory.getAbsolutePath() + "/match/" + path;
+        private void assertExist(String... paths) {
+            for (String path : paths) {
+                try {
+                    locateFile(path);
+                } catch (AssertionError e) {
+                    locateDirectory(path);
+                }
+            }
+        }
+
+        private void assertNotExist(String... paths) {
+            for (String path : paths) {
+                locateAbsent(path);
+            }
         }
 
         /**
@@ -148,27 +203,6 @@ public class PathSetTest {
                 set.scan(this);
 
                 assertEquals(expected, numbers.size());
-            } finally {
-                numbers.clear();
-            }
-        }
-
-        /**
-         * <p>
-         * Assert the count of the matching files.
-         * </p>
-         * 
-         * @param expected
-         */
-        private void assertMatching(int expected, int... list) {
-            try {
-                set.scan(this);
-
-                assertEquals(expected, numbers.size());
-
-                for (int i : list) {
-                    assertTrue(numbers.contains(i));
-                }
             } finally {
                 numbers.clear();
             }
