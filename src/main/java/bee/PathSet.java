@@ -155,6 +155,14 @@ public class PathSet implements Iterable<Path> {
         return Collections.EMPTY_LIST.iterator();
     }
 
+    /**
+     * <p>
+     * Scan the file system from the specified base directory and its children. If you specify the
+     * include/exclude patterns, this method recognize it.
+     * </p>
+     * 
+     * @param vistor A file visitor that all accepted files and directories are passed.
+     */
     public void scan(FileVisitor<Path> vistor) {
         boolean unsort = includeFile.isEmpty() && includeDirectory.isEmpty() && excludeDirectory.isEmpty() && excludeFile.isEmpty();
 
@@ -171,31 +179,32 @@ public class PathSet implements Iterable<Path> {
      */
     private final class Traveler implements FileVisitor<Path> {
 
+        /** The flag for includ patterns for files and directories. */
         private final boolean hasInclude;
 
         /** The simple file include patterns. */
         private final Wildcard[] includeFile;
 
+        /** We should exclude something? */
+        private final int includeFileSize;
+
         /** The simple directory include patterns. */
         private final Wildcard[] includeDirectory;
 
         /** We should exclude something? */
-        private final int includeFileSize;
-
-        /** We should exclude something? */
-        private final boolean hasIncludeDirectory;
+        private final int includeDirectorySize;
 
         /** The simple file exclude patterns. */
         private final Wildcard[] excludeFile;
+
+        /** We should exclude something? */
+        private final int excludeFileSize;
 
         /** The simple directory exclude patterns. */
         private final Wildcard[] excludeDirectory;
 
         /** We should exclude something? */
-        private final int excludeFileSize;
-
-        /** We should exclude something? */
-        private final boolean hasExcludeDirectory;
+        private final int excludeDirectorySize;
 
         /** The actual file visitor. */
         private final FileVisitor<Path> delegator;
@@ -218,9 +227,9 @@ public class PathSet implements Iterable<Path> {
 
             includeFileSize = this.includeFile.length;
             excludeFileSize = this.excludeFile.length;
-            hasIncludeDirectory = this.includeDirectory.length != 0;
-            hasExcludeDirectory = this.excludeDirectory.length != 0;
-            hasInclude = includeFileSize != 0 || hasIncludeDirectory;
+            includeDirectorySize = this.includeDirectory.length;
+            excludeDirectorySize = this.excludeDirectory.length;
+            hasInclude = includeFileSize + includeDirectorySize != 0;
         }
 
         /**
@@ -277,30 +286,26 @@ public class PathSet implements Iterable<Path> {
         public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) throws IOException {
             depth++;
 
-            if (hasExcludeDirectory) {
-                String name = directory.getName().toString();
+            // Cache directory name for reuse.
+            String name = directory.getName().toString();
 
-                for (Wildcard wildcard : excludeDirectory) {
-                    if (wildcard.match(name)) {
-                        return SKIP_SUBTREE;
-                    }
+            // Check excluding because of excluding pattern has high priority.
+            for (int i = 0; i < excludeDirectorySize; i++) {
+                if (excludeDirectory[i].match(name)) {
+                    return SKIP_SUBTREE; // Discard the current directory.
                 }
             }
 
-            if (hasIncludeDirectory) {
-                String name = directory.getName().toString();
+            // Check directory including to reduce the evaluation on files.
+            for (int i = 0; i < includeDirectorySize; i++) {
+                if (includeDirectory[i].match(name)) {
+                    depthForDirectoryIncluding = depth; // record depth
 
-                for (Wildcard wildcard : includeDirectory) {
-                    if (wildcard.match(name)) {
-                        depthForDirectoryIncluding = depth; // record depth
-
-                        // delegate
-                        return delegator.preVisitDirectory(directory, attrs);
-                    }
+                    break;
                 }
             }
 
-            // delegate
+            // delegation
             return delegator.preVisitDirectory(directory, attrs);
         }
 
@@ -314,6 +319,8 @@ public class PathSet implements Iterable<Path> {
             }
 
             depth--;
+
+            // no delegation
             return CONTINUE;
         }
     }
