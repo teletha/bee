@@ -25,6 +25,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -134,8 +135,68 @@ public class PathSet implements Iterable<Path> {
         return exclude("**/.*", ".*/**", "CVS/**", "SCCS/**");
     }
 
-    public void copyTo(Path dist) {
+    /**
+     * <p>
+     * Copy all file in this {@link PathSet} to the specified path.
+     * </p>
+     */
+    public boolean copyTo(Path dist) {
+        Copy copy = new Copy(base, dist);
 
+        // Scan file system
+        scan(copy);
+
+        // API definition
+        return copy.success;
+    }
+
+    /**
+     * @version 2011/02/16 12:19:34
+     */
+    private static final class Copy extends SimpleFileVisitor<Path> {
+
+        /** The source location. */
+        private final Path from;
+
+        /** The target location. */
+        private final Path to;
+
+        /** The sccess flag. */
+        private boolean success = true;
+
+        /**
+         * @param from
+         * @param to
+         */
+        private Copy(Path from, Path to) {
+            this.from = from;
+            this.to = to;
+        }
+
+        /**
+         * @see java.nio.file.SimpleFileVisitor#preVisitDirectory(java.lang.Object,
+         *      java.nio.file.attribute.BasicFileAttributes)
+         */
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            // System.out.println(dir + "   " + to.resolve(from.relativize(dir)));
+            to.resolve(from.relativize(dir)).createDirectory();
+            return CONTINUE;
+        }
+
+        /**
+         * @see java.nio.file.SimpleFileVisitor#visitFile(java.lang.Object,
+         *      java.nio.file.attribute.BasicFileAttributes)
+         */
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+
+            Path target = to.resolve(from.relativize(file));
+
+            file.copyTo(target);
+
+            return CONTINUE;
+        }
     }
 
     public void moveTo(Path dist) {
@@ -143,8 +204,57 @@ public class PathSet implements Iterable<Path> {
         delete();
     }
 
-    public void delete() {
+    /**
+     * <p>
+     * Delete all file in this {@link PathSet}.
+     * </p>
+     */
+    public boolean delete() {
+        Delete delete = new Delete();
 
+        // Scan file system
+        scan(delete);
+
+        // API definition
+        return delete.success;
+    }
+
+    /**
+     * @version 2011/02/16 11:55:42
+     */
+    private static final class Delete extends SimpleFileVisitor<Path> {
+
+        /** The sccess flag. */
+        private boolean success = true;
+
+        /**
+         * @see java.nio.file.SimpleFileVisitor#postVisitDirectory(java.lang.Object,
+         *      java.io.IOException)
+         */
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            try {
+                System.out.println("delete  " + dir);
+                dir.delete();
+            } catch (Exception e) {
+                success = false;
+            }
+            return CONTINUE;
+        }
+
+        /**
+         * @see java.nio.file.SimpleFileVisitor#visitFile(java.lang.Object,
+         *      java.nio.file.attribute.BasicFileAttributes)
+         */
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            try {
+                file.delete();
+            } catch (Exception e) {
+                success = false;
+            }
+            return CONTINUE;
+        }
     }
 
     /**
@@ -164,20 +274,34 @@ public class PathSet implements Iterable<Path> {
      * @param vistor A file visitor that all accepted files and directories are passed.
      */
     public void scan(FileVisitor<Path> vistor) {
-        boolean unsort = includeFile.isEmpty() && includeDirectory.isEmpty() && excludeDirectory.isEmpty() && excludeFile.isEmpty();
-
         try {
-            Files.walkFileTree(base, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, unsort ? vistor
-                    : new Traveler(vistor, excludeDirectory, excludeFile, includeFile, includeDirectory));
+            Files.walkFileTree(base, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new Traveler(vistor, excludeDirectory, excludeFile, includeFile, includeDirectory));
         } catch (IOException e) {
             throw I.quiet(e);
         }
     }
 
     /**
+     * <p>
+     * Reset the current settings except for base directory.
+     * </p>
+     * 
+     * @return {@link PathSet} instance to chain API.
+     */
+    public PathSet reset() {
+        includeFile.clear();
+        excludeFile.clear();
+        includeDirectory.clear();
+        excludeDirectory.clear();
+
+        // API chain
+        return this;
+    }
+
+    /**
      * @version 2011/02/15 15:49:01
      */
-    private final class Traveler implements FileVisitor<Path> {
+    private static final class Traveler implements FileVisitor<Path> {
 
         /** The flag for includ patterns for files and directories. */
         private final boolean hasInclude;
@@ -286,6 +410,9 @@ public class PathSet implements Iterable<Path> {
         public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attrs) throws IOException {
             depth++;
 
+            // Skip root directory.
+            if (depth == 1) return CONTINUE;
+
             // Cache directory name for reuse.
             String name = directory.getName().toString();
 
@@ -320,8 +447,11 @@ public class PathSet implements Iterable<Path> {
 
             depth--;
 
-            // no delegation
-            return CONTINUE;
+            // Skip root directory.
+            if (depth == 1) return CONTINUE;
+
+            // delegation
+            return delegator.postVisitDirectory(directory, exc);
         }
     }
 }
