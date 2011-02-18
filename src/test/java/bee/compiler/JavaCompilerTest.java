@@ -22,8 +22,8 @@ import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 
-import bee.apt.BeeProcessor;
 import ezunit.CleanRoom;
+import ezunit.Ezunit;
 
 /**
  * @version 2010/12/19 10:21:32
@@ -31,21 +31,20 @@ import ezunit.CleanRoom;
 public class JavaCompilerTest {
 
     @Rule
-    public static final CleanRoom cleanRoom = new CleanRoom("src/project");
+    public static final CleanRoom clean = new CleanRoom(Ezunit.locatePackage(JavaCompilerTest.class) + "/source1");
 
     @Test
     public void compile() throws Exception {
-        File output = cleanRoom.locateDirectory("out");
-        File classFile = new File(output, "Project.class");
+        File output = clean.locateDirectory("out");
+        File sourceFile = clean.locateFile("Main.jawa");
+        File classFile = new File(output, "source1/Main.class");
 
+        assertTrue(sourceFile.exists());
         assertFalse(classFile.exists());
 
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourcePath(cleanRoom.locateDirectory(""));
-
+        compiler.addSourceDirectory(clean.root);
         compiler.setOutput(output);
-        compiler.addProcessor(BeeProcessor.class);
-
         compiler.compile();
 
         assertTrue(classFile.exists());

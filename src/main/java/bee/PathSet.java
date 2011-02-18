@@ -27,7 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collections;
+import java.util.ArrayDeque;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -262,7 +262,83 @@ public class PathSet implements Iterable<Path> {
      */
     @Override
     public Iterator<Path> iterator() {
-        return Collections.EMPTY_LIST.iterator();
+        Counter counter = new Counter();
+        scan(counter);
+
+        // Executors.newSingleThreadExecutor().execute(counter);
+
+        return counter.queue.iterator();
+    }
+
+    /**
+     * @version 2011/02/18 16:17:29
+     */
+    private class Counter extends SimpleFileVisitor<Path> implements Iterator<Path>, Runnable {
+
+        /** The pass point. */
+        private ArrayDeque<Path> queue = new ArrayDeque();
+
+        /** The next element. */
+        private Path next;
+
+        /** The flag for termination. */
+        private boolean finish = false;
+
+        /**
+         * @see java.lang.Runnable#run()
+         */
+        @Override
+        public void run() {
+            scan(this);
+
+            finish = true;
+        }
+
+        /**
+         * @see java.util.Iterator#hasNext()
+         */
+        @Override
+        public boolean hasNext() {
+            if (finish) {
+                if (!queue.isEmpty()) {
+                    next = queue.poll();
+
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                if (queue.isEmpty()) {
+                    next = queue.poll();
+                }
+                return true;
+            }
+        }
+
+        /**
+         * @see java.util.Iterator#next()
+         */
+        @Override
+        public Path next() {
+            return next;
+        }
+
+        /**
+         * @see java.util.Iterator#remove()
+         */
+        @Override
+        public void remove() {
+        }
+
+        /**
+         * @see java.nio.file.SimpleFileVisitor#visitFile(java.lang.Object,
+         *      java.nio.file.attribute.BasicFileAttributes)
+         */
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            queue.add(file);
+            return CONTINUE;
+        }
     }
 
     /**

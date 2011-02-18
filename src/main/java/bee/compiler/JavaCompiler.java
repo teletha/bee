@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.security.SecureClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import bee.FileSet;
+import bee.PathSet;
 import ezbean.I;
 import ezbean.model.ClassUtil;
 
@@ -60,7 +61,7 @@ public class JavaCompiler {
     private final javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     /** The source directories. */
-    private final Set<File> sources = new HashSet();
+    private final Set<PathSet> sources = new HashSet();
 
     /** The classpath list. */
     private final Set<File> classpaths = new HashSet();
@@ -77,22 +78,56 @@ public class JavaCompiler {
     /** The target version. */
     private SourceVersion targetVersion = SourceVersion.RELEASE_7;
 
-    public void addSourcePath(File file) {
-        if (file != null) {
-            sources.add(file);
-        }
-    }
-
     public void addClassPath(File file) {
 
     }
 
     /**
      * <p>
+     * Add the source code directory.
+     * </p>
+     * 
+     * @param path A path to your source code directory.
+     */
+    public void addSourceDirectory(String path) {
+        if (path != null) {
+            addSourceDirectory(new File(path));
+        }
+    }
+
+    /**
+     * <p>
+     * Add the source code directory.
+     * </p>
+     * 
+     * @param directory Your source code directory.
+     */
+    public void addSourceDirectory(File directory) {
+        if (directory != null) {
+            if (!directory.isDirectory()) {
+                directory = directory.getParentFile();
+            }
+            addSourceDirectory(directory.toPath());
+        }
+    }
+
+    /**
+     * <p>
+     * Add the source code directory.
+     * </p>
+     * 
+     * @param directory Your source code directory.
+     */
+    public void addSourceDirectory(Path directory) {
+        if (directory != null) {
+            sources.add(new PathSet(directory));
+        }
+    }
+
+    /**
+     * <p>
      * Add the specified annotation processor to compile process. This method bybpasses the default
      * discovery process.
-     * </p>
-     * <p>
      * </p>
      * <p>
      * Names of the annotation processors to run. This bypasses the default discovery process.
@@ -279,13 +314,12 @@ public class JavaCompiler {
         List<File> sources = new ArrayList();
 
         // Java Sources
-        for (File source : this.sources) {
-            FileSet set = new FileSet(source);
-
-            for (File file : set) {
-                sources.add(file);
+        for (PathSet set : this.sources) {
+            for (Path path : set) {
+                sources.add(new File(path.toString()));
             }
         }
+        System.out.println(sources);
 
         // Invocation
         ErrorListener listener = new ErrorListener();
