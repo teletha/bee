@@ -135,6 +135,13 @@ public class Wildcard {
 
                                 if (32 <= c && c < 128) {
                                     tables[i][c - 32] = j + 1;
+
+                                    // for ignore case
+                                    if (65 <= c && c <= 90) {
+                                        tables[i][c] = j + 1;
+                                    } else if (97 <= c && c <= 122) {
+                                        tables[i][c - 64] = j + 1;
+                                    }
                                 }
                             }
                         }
@@ -174,7 +181,10 @@ public class Wildcard {
                 matching: switch (types[x]) {
                 case 1: // ============= Match characters at head ============= //
                     while (inputPosition < patternPosition) {
-                        if (input[inputPosition] != pattern[inputPosition++]) {
+                        int ic = input[inputPosition];
+                        int pc = pattern[inputPosition++];
+
+                        if (ic != pc && (ic < 65 || 90 < ic || ic + 32 != pc) && (ic < 97 || 122 < ic || ic - 32 != pc)) {
                             return false; // unmatching
                         }
                     }
@@ -190,7 +200,10 @@ public class Wildcard {
                     inputPosition = inputSize;
 
                     while (0 < patternPosition) {
-                        if (input[--inputPosition] != pattern[--patternPosition]) {
+                        int ic = input[--inputPosition];
+                        int pc = pattern[--patternPosition];
+
+                        if (ic != pc && (ic < 65 || 90 < ic || ic + 32 != pc) && (ic < 97 || 122 < ic || ic - 32 != pc)) {
                             return false; // unmatching
                         }
                     }
@@ -200,7 +213,10 @@ public class Wildcard {
                     int only = pattern[0]; // cache it
 
                     for (int i = inputSize - 1; inputPosition <= i; i--) {
-                        if (input[i] == only) {
+                        int ic = input[i];
+                        int pc = only;
+
+                        if (ic == pc || (65 <= 65 && ic <= 90 && ic + 32 == pc) || (97 <= ic && ic <= 122 && ic - 32 == pc)) {
                             // matching, advance input position
                             inputPosition = i + 1;
                             break matching;
@@ -216,7 +232,10 @@ public class Wildcard {
                         int current = 0;
 
                         while (current < patternPosition) {
-                            if (input[start + current] != pattern[current++]) {
+                            int ic = input[start + current];
+                            int pc = pattern[current++];
+
+                            if (ic != pc && (ic < 65 || 90 < ic || ic + 32 != pc) && (ic < 97 || 122 < ic || ic - 32 != pc)) {
                                 // unmatching, retreat start position
                                 int next = input[start - 1];
 

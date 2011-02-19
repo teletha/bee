@@ -172,6 +172,30 @@ public class WildcardTest {
         assertTrue(match("天使ちゃんまじ天使", "天*使ちゃん*"));
     }
 
+    @Test
+    public void ignoreCaseUpper() throws Exception {
+        assertTrue(match("abcd", "*CD"));
+        assertTrue(match("abcd", "AB*"));
+        assertTrue(match("abcd", "*B*"));
+        assertTrue(match("abcd", "*BC*"));
+    }
+
+    @Test
+    public void ignoreCaseLower() throws Exception {
+        assertTrue(match("ABCD", "*cd"));
+        assertTrue(match("ABCD", "ab*"));
+        assertTrue(match("ABCD", "*b*"));
+        assertTrue(match("ABCD", "*bc*"));
+    }
+
+    @Test
+    public void ignoreCaseMix() throws Exception {
+        assertTrue(match("aBcD", "*Cd"));
+        assertTrue(match("aBcD", "Ab*"));
+        assertTrue(match("aBcD", "*b*"));
+        assertTrue(match("aBcD", "*bC*"));
+    }
+
     /**
      * Helper method to match.
      * 
