@@ -24,6 +24,7 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Rule;
@@ -56,7 +57,7 @@ public class PathSetTest {
 
     @Test
     public void includeFileWildcard() throws Exception {
-        set1.set.include("**/02.*");
+        set1.set.include("*/02.*");
         set1.assertMatching(3);
     }
 
@@ -74,25 +75,25 @@ public class PathSetTest {
 
     @Test
     public void includeDirectory() throws Exception {
-        set1.set.include("use/**");
+        set1.set.include("**/use/*");
         set1.assertMatching(3);
     }
 
     @Test
     public void includeDirectoryWildcard() throws Exception {
-        set1.set.include("use*/**");
+        set1.set.include("**/use*/**");
         set1.assertMatching(6);
     }
 
     @Test
     public void excludeDirectory() throws Exception {
-        set1.set.exclude("use/**");
+        set1.set.exclude("**/use/*");
         set1.assertMatching(6);
     }
 
     @Test
     public void excludeDirectoryWildcard() throws Exception {
-        set1.set.exclude("use*/**");
+        set1.set.exclude("**/use*/**");
         set1.assertMatching(3);
     }
 
@@ -140,6 +141,16 @@ public class PathSetTest {
         set2.assertExist("01.file", "use", "useless/01.txt");
     }
 
+    @Test
+    public void iterate() throws Exception {
+        HashSet<Path> set = new HashSet();
+
+        for (Path path : set1.set) {
+            set.add(path);
+        }
+        assertEquals(9, set.size());
+    }
+
     /**
      * @version 2011/02/15 15:48:53
      */
@@ -161,7 +172,7 @@ public class PathSetTest {
             super(Ezunit.locatePackage(PathSetTest.class) + "/match/" + path);
 
             root = locateDirectory("").toPath();
-            set = new PathSet(root);
+            set = new PathSet3(root);
         }
 
         /**

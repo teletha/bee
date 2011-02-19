@@ -27,11 +27,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayDeque;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executors;
 
 import ezbean.I;
 
@@ -41,7 +42,7 @@ import ezbean.I;
 public class PathSet implements Iterable<Path> {
 
     /** The base path. */
-    private final Path base;
+    protected final Path base;
 
     /** The actual filter set for directory only matcher. */
     private Set<Wildcard> includeFile = new CopyOnWriteArraySet();
@@ -263,11 +264,11 @@ public class PathSet implements Iterable<Path> {
     @Override
     public Iterator<Path> iterator() {
         Counter counter = new Counter();
-        scan(counter);
+        // scan(counter);
 
-        // Executors.newSingleThreadExecutor().execute(counter);
+        Executors.newSingleThreadExecutor().execute(counter);
 
-        return counter.queue.iterator();
+        return counter;
     }
 
     /**
@@ -276,13 +277,15 @@ public class PathSet implements Iterable<Path> {
     private class Counter extends SimpleFileVisitor<Path> implements Iterator<Path>, Runnable {
 
         /** The pass point. */
-        private ArrayDeque<Path> queue = new ArrayDeque();
+        private ArrayBlockingQueue<Path> queue = new ArrayBlockingQueue(20);
 
         /** The next element. */
         private Path next;
 
         /** The flag for termination. */
         private boolean finish = false;
+
+        private Thread thread = Thread.currentThread();
 
         /**
          * @see java.lang.Runnable#run()
@@ -292,6 +295,8 @@ public class PathSet implements Iterable<Path> {
             scan(this);
 
             finish = true;
+
+            thread.interrupt();
         }
 
         /**
@@ -300,18 +305,27 @@ public class PathSet implements Iterable<Path> {
         @Override
         public boolean hasNext() {
             if (finish) {
-                if (!queue.isEmpty()) {
+                if (queue.isEmpty()) {
+                    return false;
+                } else {
                     next = queue.poll();
 
                     return true;
-                } else {
-                    return false;
                 }
             } else {
                 if (queue.isEmpty()) {
+                    try {
+                        next = queue.take();
+
+                        return true;
+                    } catch (InterruptedException e) {
+                        return false;
+                    }
+                } else {
                     next = queue.poll();
+
+                    return true;
                 }
-                return true;
             }
         }
 
