@@ -146,6 +146,11 @@ public class WildcardTest {
     }
 
     @Test
+    public void missBoth() throws Exception {
+        assertFalse(match("abcdefghijklmn", "*00*"));
+    }
+
+    @Test
     public void noneAsciiWildcardSingleCharcter() throws Exception {
         assertTrue(match("あいうえお", "あ*お"));
     }
@@ -194,6 +199,20 @@ public class WildcardTest {
         assertTrue(match("aBcD", "Ab*"));
         assertTrue(match("aBcD", "*b*"));
         assertTrue(match("aBcD", "*bC*"));
+    }
+
+    @Test
+    public void slash() throws Exception {
+        assertTrue(match("a/b/c/d", "*d"));
+        assertTrue(match("a/b/c/d", "*c*"));
+        assertTrue(match("a/b/c/d", "a*/*"));
+        assertTrue(match("a/b/c/d", "*/c/*"));
+
+    }
+
+    @Test
+    public void testname() throws Exception {
+        assertTrue(match("F:\\aa\\02.test", "**\\02.*"));
     }
 
     /**

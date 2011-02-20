@@ -70,6 +70,7 @@ public class Wildcard {
             types = null;
             patterns = tables = null;
         } else {
+            value = value.replace("**", "*");
             char[] buffer = value.toCharArray();
 
             int[] bit = new int[buffer.length];
@@ -88,7 +89,7 @@ public class Wildcard {
                     escape = false;
                     bit[offset++] = c; // parse escaped character
                 } else if (c == '\\') {
-                    escape = true; // escape next character
+                    bit[offset++] = c; // parse character
                 } else if (c != '*') {
                     bit[offset++] = c; // parse character
                 } else if (i == size) {
@@ -236,7 +237,12 @@ public class Wildcard {
                             int pc = pattern[current++];
 
                             if (ic != pc && (ic < 65 || 90 < ic || ic + 32 != pc) && (ic < 97 || 122 < ic || ic - 32 != pc)) {
-                                // unmatching, retreat start position
+                                // unmatching, but no remaining
+                                if (start == 0) {
+                                    return false;
+                                }
+
+                                // , retreat start position
                                 int next = input[start - 1];
 
                                 if (32 <= next && next < 128) {
