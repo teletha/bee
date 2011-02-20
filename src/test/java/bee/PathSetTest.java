@@ -57,7 +57,7 @@ public class PathSetTest {
 
     @Test
     public void includeFileWildcard() throws Exception {
-        set1.set.include("*/02.*");
+        set1.set.include("**02.*");
         set1.assertMatching(3);
     }
 
@@ -75,25 +75,25 @@ public class PathSetTest {
 
     @Test
     public void includeDirectory() throws Exception {
-        set1.set.include("**/use/*");
+        set1.set.include("use/**");
         set1.assertMatching(3);
     }
 
     @Test
     public void includeDirectoryWildcard() throws Exception {
-        set1.set.include("**/use*/**");
+        set1.set.include("use*/**");
         set1.assertMatching(6);
     }
 
     @Test
     public void excludeDirectory() throws Exception {
-        set1.set.exclude("**/use/*");
+        set1.set.exclude("use/**");
         set1.assertMatching(6);
     }
 
     @Test
     public void excludeDirectoryWildcard() throws Exception {
-        set1.set.exclude("**/use*/**");
+        set1.set.exclude("use*/**");
         set1.assertMatching(3);
     }
 
@@ -105,7 +105,7 @@ public class PathSetTest {
 
     @Test
     public void excludeFileWildcard() throws Exception {
-        set1.set.exclude("**/01.*");
+        set1.set.exclude("**01.*");
         set1.assertMatching(3);
     }
 
@@ -172,7 +172,7 @@ public class PathSetTest {
             super(Ezunit.locatePackage(PathSetTest.class) + "/match/" + path);
 
             root = locateDirectory("").toPath();
-            set = new PathSet3(root);
+            set = new PathSet4(root);
         }
 
         /**

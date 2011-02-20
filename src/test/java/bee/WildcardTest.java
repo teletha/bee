@@ -35,6 +35,7 @@ public class WildcardTest {
         assertTrue(match("test.java", "**"));
         assertTrue(match("test.java", "***"));
         assertTrue(match("test.java", "****"));
+        assertTrue(match("test.java", "***st**"));
     }
 
     @Test
@@ -203,16 +204,12 @@ public class WildcardTest {
 
     @Test
     public void slash() throws Exception {
-        assertTrue(match("a/b/c/d", "*d"));
-        assertTrue(match("a/b/c/d", "*c*"));
-        assertTrue(match("a/b/c/d", "a*/*"));
-        assertTrue(match("a/b/c/d", "*/c/*"));
-
+        assertTrue(match("directory/file", "directory/file"));
     }
 
     @Test
-    public void testname() throws Exception {
-        assertTrue(match("F:\\aa\\02.test", "**\\02.*"));
+    public void slashWildcard() throws Exception {
+        assertTrue(match("directory/file", "directory/*"));
     }
 
     /**

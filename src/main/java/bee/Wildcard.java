@@ -242,7 +242,7 @@ public class Wildcard {
                                     return false;
                                 }
 
-                                // , retreat start position
+                                // unmatching, retreat start position
                                 int next = input[start - 1];
 
                                 if (32 <= next && next < 128) {

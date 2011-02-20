@@ -19,10 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.concurrent.Callable;
@@ -37,15 +35,15 @@ import ezunit.AbstractMicroBenchmarkTest;
 public class PathSetBench extends AbstractMicroBenchmarkTest {
 
     @Test
-    public void pathset() {
+    public void pathset1() {
         benchmark(new Callable<Integer>() {
 
-            private PathSet set = new PathSet3(new File("").getAbsoluteFile().getParent());
+            private PathSet set = new PathSet(new File("").getAbsoluteFile().toString());
 
             private Counter counter = new Counter();
 
             {
-                set.include("*.java");
+                set.include("**.java");
                 // set.exclude("target/**");
                 // set.exclude("src/**");
             }
@@ -62,19 +60,50 @@ public class PathSetBench extends AbstractMicroBenchmarkTest {
     }
 
     @Test
-    public void pathmatcher() {
+    public void pathset3() {
         benchmark(new Callable<Integer>() {
 
-            private Path path = Paths.get(new File("").getAbsoluteFile().getParent());
+            private PathSet set = new PathSet3(new File("").getAbsoluteFile().toString());
 
-            private Counter2 counter = new Counter2();
+            private Counter counter = new Counter();
+
+            {
+                set.include("**.java");
+                // set.exclude("target/**");
+                // set.exclude("src/**");
+            }
 
             /**
              * @see java.util.concurrent.Callable#call()
              */
             @Override
             public Integer call() throws Exception {
-                Files.walkFileTree(path, counter);
+                set.scan(counter);
+                return counter.counter;
+            }
+        });
+    }
+
+    @Test
+    public void pathset4() {
+        benchmark(new Callable<Integer>() {
+
+            private PathSet set = new PathSet4(new File("").getAbsoluteFile().toString());
+
+            private Counter counter = new Counter();
+
+            {
+                set.include("**.java");
+                // set.exclude("target/**");
+                // set.exclude("src/**");
+            }
+
+            /**
+             * @see java.util.concurrent.Callable#call()
+             */
+            @Override
+            public Integer call() throws Exception {
+                set.scan(counter);
                 return counter.counter;
             }
         });

@@ -59,7 +59,7 @@ public class PathSet3 extends PathSet {
     @Override
     public PathSet include(String... patterns) {
         for (String pattern : patterns) {
-            includes.add(new Wildcard(pattern));
+            includes.add(new Wildcard(pattern.replace('/', '\\')));
         }
         return this;
     }
@@ -70,7 +70,7 @@ public class PathSet3 extends PathSet {
     @Override
     public PathSet exclude(String... patterns) {
         for (String pattern : patterns) {
-            excludes.add(new Wildcard(pattern));
+            excludes.add(new Wildcard(pattern.replace('/', '\\')));
         }
         return this;
     }
@@ -81,7 +81,7 @@ public class PathSet3 extends PathSet {
     @Override
     public void scan(FileVisitor<Path> vistor) {
         try {
-            Files.walkFileTree(base, new Delegater(vistor, includes, excludes));
+            Files.walkFileTree(base, new Delegater(vistor, includes, excludes, base));
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -110,14 +110,17 @@ public class PathSet3 extends PathSet {
 
         private final boolean i;
 
+        private final int base;
+
         /**
          * @param delegeter
          */
-        public Delegater(FileVisitor<Path> delegeter, ArrayList<Wildcard> includes, ArrayList<Wildcard> excludes) {
+        public Delegater(FileVisitor<Path> delegeter, ArrayList<Wildcard> includes, ArrayList<Wildcard> excludes, Path base) {
             this.delegeter = delegeter;
             this.includes = includes.toArray(new Wildcard[includes.size()]);
             this.excludes = excludes.toArray(new Wildcard[excludes.size()]);
             this.i = this.includes.length != 0;
+            this.base = base.toString().length() + 1;
         }
 
         /**
@@ -126,7 +129,8 @@ public class PathSet3 extends PathSet {
          */
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            String name = file.toString();
+            String name = file.toString().substring(base);
+
             for (Wildcard matcher : excludes) {
                 if (matcher.match(name)) {
                     return FileVisitResult.CONTINUE;

@@ -32,7 +32,7 @@ import ezbean.I;
 /**
  * @version 2011/02/19 14:01:36
  */
-public class PathSet2 extends PathSet {
+public class PathSet4 extends PathSet {
 
     private ArrayList<PathMatcher> includes = new ArrayList();
 
@@ -43,14 +43,14 @@ public class PathSet2 extends PathSet {
     /**
      * @param base
      */
-    public PathSet2(Path base) {
+    public PathSet4(Path base) {
         super(base);
     }
 
     /**
      * @param base
      */
-    public PathSet2(String base) {
+    public PathSet4(String base) {
         super(base);
     }
 
@@ -71,6 +71,7 @@ public class PathSet2 extends PathSet {
     @Override
     public PathSet exclude(String... patterns) {
         for (String pattern : patterns) {
+
             excludes.add(system.getPathMatcher("glob:" + pattern));
         }
         return this;
@@ -82,7 +83,7 @@ public class PathSet2 extends PathSet {
     @Override
     public void scan(FileVisitor<Path> vistor) {
         try {
-            Files.walkFileTree(base, new Delegater(vistor, includes, excludes));
+            Files.walkFileTree(base, new Delegater(vistor, includes, excludes, base));
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -111,14 +112,35 @@ public class PathSet2 extends PathSet {
 
         private final boolean i;
 
+        private final int base;
+
         /**
          * @param delegeter
          */
-        public Delegater(FileVisitor<Path> delegeter, ArrayList<PathMatcher> includes, ArrayList<PathMatcher> excludes) {
+        public Delegater(FileVisitor<Path> delegeter, ArrayList<PathMatcher> includes, ArrayList<PathMatcher> excludes, Path base) {
             this.delegeter = delegeter;
             this.includes = includes.toArray(new PathMatcher[includes.size()]);
             this.excludes = excludes.toArray(new PathMatcher[excludes.size()]);
             this.i = this.includes.length != 0;
+            this.base = base.getNameCount();
+        }
+
+        /**
+         * @see java.nio.file.SimpleFileVisitor#preVisitDirectory(java.lang.Object,
+         *      java.nio.file.attribute.BasicFileAttributes)
+         */
+        @Override
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            return delegeter.preVisitDirectory(dir, attrs);
+        }
+
+        /**
+         * @see java.nio.file.SimpleFileVisitor#postVisitDirectory(java.lang.Object,
+         *      java.io.IOException)
+         */
+        @Override
+        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+            return delegeter.postVisitDirectory(dir, exc);
         }
 
         /**
@@ -127,18 +149,19 @@ public class PathSet2 extends PathSet {
          */
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Path relative = file.subpath(base, file.getNameCount());
+
             for (PathMatcher matcher : excludes) {
-                if (matcher.matches(file)) {
+                if (matcher.matches(relative)) {
                     return FileVisitResult.CONTINUE;
                 }
             }
 
             for (PathMatcher matcher : includes) {
-                if (matcher.matches(file)) {
+                if (matcher.matches(relative)) {
                     return delegeter.visitFile(file, attrs);
                 }
             }
-
             return i ? FileVisitResult.CONTINUE : delegeter.visitFile(file, attrs);
 
         }
