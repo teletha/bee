@@ -70,7 +70,9 @@ public class Wildcard {
             types = null;
             patterns = tables = null;
         } else {
-            value = value.replace("**", "*");
+            value = value.replaceAll("\\*{2,}", "*"); // normalize
+
+            // start parsing
             char[] buffer = value.toCharArray();
 
             int[] bit = new int[buffer.length];
@@ -89,7 +91,7 @@ public class Wildcard {
                     escape = false;
                     bit[offset++] = c; // parse escaped character
                 } else if (c == '\\') {
-                    bit[offset++] = c; // parse character
+                    escape = true; // escape next character
                 } else if (c != '*') {
                     bit[offset++] = c; // parse character
                 } else if (i == size) {
