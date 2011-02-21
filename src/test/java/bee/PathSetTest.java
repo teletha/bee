@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -142,6 +143,7 @@ public class PathSetTest {
     }
 
     @Test
+    @Ignore
     public void iterate() throws Exception {
         HashSet<Path> set = new HashSet();
 
@@ -172,7 +174,7 @@ public class PathSetTest {
             super(Ezunit.locatePackage(PathSetTest.class) + "/match/" + path);
 
             root = locateDirectory("").toPath();
-            set = new PathSet4(root);
+            set = new PathSet(root);
         }
 
         /**
@@ -242,7 +244,7 @@ public class PathSetTest {
          */
         @Override
         public FileVisitResult visitFile(Path path, BasicFileAttributes attributes) throws IOException {
-            String name = path.getName().toString();
+            String name = path.getFileName().toString();
             int index = name.lastIndexOf('.');
             Integer number = Integer.parseInt(name.substring(0, index));
             numbers.add(number);
