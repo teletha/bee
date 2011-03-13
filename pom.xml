@@ -19,15 +19,10 @@
   <groupId>bee</groupId>
   <artifactId>bee</artifactId>
   <name>Bee</name>
-  <version>0.0.4</version>
+  <version>0.1</version>
   <description>Build system for Java.</description>
 
   <dependencies>
-    <dependency>
-      <groupId>ezbean</groupId>
-      <artifactId>ezbean</artifactId>
-      <version>0.8</version>
-    </dependency>
     <dependency>
       <groupId>sun.jdk</groupId>
       <artifactId>tools</artifactId>
@@ -38,22 +33,13 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.7</version>
+      <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-
-
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <configuration>
@@ -83,7 +69,7 @@
           <charset>UTF-8</charset>
           <encoding>UTF-8</encoding>
           <links>
-            <link>http://java.sun.com/javase/6/docs/api/</link>
+            <link>http://download.oracle.com/javase/7/docs/api/</link>
           </links>
         </configuration>
       </plugin>
@@ -102,13 +88,18 @@
       <plugin>
         <groupId>com.mycila.maven-license-plugin</groupId>
         <artifactId>maven-license-plugin</artifactId>
-        <version>1.5.0</version>
+        <version>1.9.0</version>
         <configuration>
-          <header>src/etc/header.txt</header>
+          <header>license.txt</header>
           <encoding>UTF-8</encoding>
           <excludes>
             <exclude>**/*.txt</exclude>
           </excludes>
+          <mapping>
+            <java>SLASHSTAR_STYLE</java>
+          </mapping>
+          <useDefaultMapping>true</useDefaultMapping>
+          <strictCheck>true</strictCheck>
         </configuration>
       </plugin>
     </plugins>
