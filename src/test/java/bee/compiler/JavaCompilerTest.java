@@ -17,13 +17,13 @@ package bee.compiler;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import ezunit.CleanRoom;
-import ezunit.Ezunit;
 
 /**
  * @version 2010/12/19 10:21:32
@@ -31,22 +31,22 @@ import ezunit.Ezunit;
 public class JavaCompilerTest {
 
     @Rule
-    public static final CleanRoom clean = new CleanRoom(Ezunit.locatePackage(JavaCompilerTest.class) + "/source1");
+    public static final CleanRoom clean = new CleanRoom("source1");
 
     @Test
     public void compile() throws Exception {
-        File output = clean.locateDirectory("out");
-        File sourceFile = clean.locateFile("Main.jawa");
-        File classFile = new File(output, "source1/Main.class");
+        Path output = clean.locateDirectory("out");
+        Path sourceFile = clean.locateFile("Main.jawa");
+        Path classFile = output.resolve("source1/Main.class");
 
-        assertTrue(sourceFile.exists());
-        assertFalse(classFile.exists());
+        assertTrue(Files.exists(sourceFile));
+        assertTrue(Files.notExists(classFile));
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(clean.root);
         compiler.setOutput(output);
         compiler.compile();
 
-        assertTrue(classFile.exists());
+        assertTrue(Files.exists(classFile));
     }
 }

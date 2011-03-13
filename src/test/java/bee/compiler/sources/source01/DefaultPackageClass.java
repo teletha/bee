@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package source1;
+package bee.compiler.sources.source01;
+
 
 /**
- * @version 2011/02/18 15:50:04
+ * @version 2011/03/13 15:51:30
  */
-public class Main {
+public class DefaultPackageClass {
 
 }

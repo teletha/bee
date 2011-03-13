@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
 import java.util.ArrayList;
@@ -48,7 +49,6 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import bee.PathSet;
 import ezbean.I;
 import ezbean.model.ClassUtil;
 
@@ -61,16 +61,16 @@ public class JavaCompiler {
     private final javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     /** The source directories. */
-    private final Set<PathSet> sources = new HashSet();
+    private final Set<Path> sources = new HashSet();
 
     /** The classpath list. */
-    private final Set<File> classpaths = new HashSet();
+    private final Set<Path> classpaths = new HashSet();
 
     /** The annotation processors. */
     private final List<Class> processors = new ArrayList();
 
     /** The output directory. */
-    private File output;
+    private Path output;
 
     /** The source version. */
     private SourceVersion sourceVersion = SourceVersion.RELEASE_7;
@@ -78,7 +78,7 @@ public class JavaCompiler {
     /** The target version. */
     private SourceVersion targetVersion = SourceVersion.RELEASE_7;
 
-    public void addClassPath(File file) {
+    public void addClassPath(Path file) {
 
     }
 
@@ -91,23 +91,7 @@ public class JavaCompiler {
      */
     public void addSourceDirectory(String path) {
         if (path != null) {
-            addSourceDirectory(new File(path));
-        }
-    }
-
-    /**
-     * <p>
-     * Add the source code directory.
-     * </p>
-     * 
-     * @param directory Your source code directory.
-     */
-    public void addSourceDirectory(File directory) {
-        if (directory != null) {
-            if (!directory.isDirectory()) {
-                directory = directory.getParentFile();
-            }
-            addSourceDirectory(directory.toPath());
+            addSourceDirectory(I.locate(path));
         }
     }
 
@@ -120,7 +104,10 @@ public class JavaCompiler {
      */
     public void addSourceDirectory(Path directory) {
         if (directory != null) {
-            sources.add(new PathSet(directory));
+            if (!Files.isDirectory(directory)) {
+                directory = directory.getParent();
+            }
+            sources.add(directory);
         }
     }
 
@@ -158,7 +145,7 @@ public class JavaCompiler {
      * 
      * @param directory Your output directory. <code>null</code> value will reset to default.
      */
-    public void setOutput(File directory) {
+    public void setOutput(Path directory) {
         this.output = directory;
     }
 
@@ -274,16 +261,20 @@ public class JavaCompiler {
 
         // Output Directory
         if (output != null) {
-            if (output.isFile()) {
-                output = output.getParentFile();
+            if (Files.isRegularFile(output)) {
+                output = output.getParent();
             }
 
-            if (!output.exists()) {
-                output.mkdirs();
+            if (Files.notExists(output)) {
+                try {
+                    Files.createDirectories(output);
+                } catch (IOException e) {
+                    throw I.quiet(e);
+                }
             }
 
             args.add("-d");
-            args.add(output.getAbsolutePath());
+            args.add(output.toAbsolutePath().toString());
         }
 
         // Annotation Processing Tools
@@ -297,7 +288,7 @@ public class JavaCompiler {
                 Class processor = this.processors.get(i);
 
                 processors.append(processor.getName());
-                processorPaths.append('"').append(ClassUtil.getArchive(processor).getAbsolutePath()).append('"');
+                processorPaths.append('"').append(ClassUtil.getArchive(processor).toAbsolutePath()).append('"');
 
                 if (i < end - 1) {
                     processors.append(',');
@@ -314,10 +305,9 @@ public class JavaCompiler {
         List<File> sources = new ArrayList();
 
         // Java Sources
-        for (PathSet set : this.sources) {
-            for (Path path : set) {
-                sources.add(new File(path.toString()));
-            }
+        for (Path path : this.sources) {
+            sources.add(new File(path.toString()));
+
         }
         System.out.println(sources);
 
