@@ -69,6 +69,9 @@ public class JavaCompiler {
     /** The annotation processors. */
     private final List<Class> processors = new ArrayList();
 
+    /** The annotation processor's locations. */
+    private final Set<Path> processorPaths = new HashSet();
+
     /** The output directory. */
     private Path output;
 
@@ -125,6 +128,7 @@ public class JavaCompiler {
     public void addProcessor(Class<? extends Processor> processor) {
         if (processor != null && !processors.contains(processor)) {
             processors.add(processor);
+            processorPaths.add(ClassUtil.getArchive(processor).toAbsolutePath());
         }
     }
 
@@ -257,68 +261,89 @@ public class JavaCompiler {
      * </p>
      */
     public ClassLoader compile() {
-        List<String> args = new ArrayList();
+        // Build options
+        ArrayList<String> options = new ArrayList();
 
-        // Output Directory
-        if (output != null) {
-            if (Files.isRegularFile(output)) {
-                output = output.getParent();
-            }
-
-            if (Files.notExists(output)) {
-                try {
+        try {
+            // =============================================
+            // Output Directory
+            // =============================================
+            if (output != null) {
+                // Create direcotry if needed.
+                if (Files.notExists(output)) {
                     Files.createDirectories(output);
-                } catch (IOException e) {
-                    throw I.quiet(e);
+                }
+
+                // Output must be not file but directory.
+                if (!Files.isDirectory(output)) {
+                    output = output.getParent();
+                }
+
+                options.add("-d");
+                options.add(output.toAbsolutePath().toString());
+            }
+
+            // =============================================
+            // Annotation Processing Tools
+            // =============================================
+            if (processors.size() == 0) {
+                options.add("-proc:none");
+            } else {
+                StringBuilder processors = new StringBuilder();
+                StringBuilder processorPaths = new StringBuilder();
+
+                for (int i = 0, end = this.processors.size(); i < end; i++) {
+                    Class processor = this.processors.get(i);
+
+                    processors.append(processor.getName());
+
+                    if (i < end - 1) {
+                        processors.append(',');
+                    }
+                }
+
+                for (int i = 0, end = this.processorPaths.size(); i < end; i++) {
+                    Path processorPath = this.processorPaths.get(i);
+
+                    processorPaths.append('"').append(ClassUtil.getArchive(processor).toAbsolutePath()).append('"');
+
+                    if (i < end - 1) {
+                        processors.append(',');
+                        processorPaths.append(',');
+                    }
+                }
+
+                options.add("-processor");
+                options.add(processors.toString());
+                options.add("-processorpath");
+                options.add(processorPaths.toString());
+                System.out.println(options);
+            }
+
+            // =============================================
+            // Java Source Files
+            // =============================================
+            List<File> sources = new ArrayList();
+
+            for (Path directory : this.sources) {
+                for (Path file : I.walk(directory, "**.java")) {
+                    sources.add(file.toFile());
                 }
             }
 
-            args.add("-d");
-            args.add(output.toAbsolutePath().toString());
+            // Invocation
+            ErrorListener listener = new ErrorListener();
+            Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.getEncoding()));
+
+            CompilationTask task = compiler.getTask(null, manager, listener, options, null, manager.getJavaFileObjectsFromFiles(sources));
+            boolean result = task.call();
+
+            return manager;
+        } catch (IOException e) {
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw I.quiet(e);
         }
-
-        // Annotation Processing Tools
-        if (processors.size() == 0) {
-            args.add("-proc:none");
-        } else {
-            StringBuilder processors = new StringBuilder();
-            StringBuilder processorPaths = new StringBuilder();
-
-            for (int i = 0, end = this.processors.size(); i < end; i++) {
-                Class processor = this.processors.get(i);
-
-                processors.append(processor.getName());
-                processorPaths.append('"').append(ClassUtil.getArchive(processor).toAbsolutePath()).append('"');
-
-                if (i < end - 1) {
-                    processors.append(',');
-                    processorPaths.append(',');
-                }
-            }
-
-            args.add("-processor");
-            args.add(processors.toString());
-            args.add("-processorpath");
-            args.add(processorPaths.toString());
-        }
-
-        List<File> sources = new ArrayList();
-
-        // Java Sources
-        for (Path path : this.sources) {
-            sources.add(new File(path.toString()));
-
-        }
-        System.out.println(sources);
-
-        // Invocation
-        ErrorListener listener = new ErrorListener();
-        Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.getEncoding()));
-
-        CompilationTask task = compiler.getTask(null, manager, listener, args, null, manager.getJavaFileObjectsFromFiles(sources));
-        boolean result = task.call();
-        System.out.println(result);
-        return manager;
     }
 
     /**

@@ -39,6 +39,7 @@ public class BeeProcessor implements Processor {
 
     // initialization
     static {
+        System.out.println("1");
         I.load(ClassUtil.getArchive(BeeProcessor.class));
     }
 
@@ -83,10 +84,11 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
+        System.out.println(annotations);
         for (TypeElement annotationType : annotations) {
             try {
                 Class annotationClass = Class.forName(annotationType.getQualifiedName().toString());
-
+                System.out.println(annotationClass);
                 for (Element element : round.getElementsAnnotatedWith(annotationType)) {
                     switch (element.getKind()) {
                     case ANNOTATION_TYPE:

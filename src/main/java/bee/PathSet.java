@@ -13,12 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler.sources.source01;
+package bee;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
 
 /**
- * @version 2011/03/13 15:51:30
+ * @version 2011/03/13 23:52:56
  */
-public class DefaultPackageClass {
+public class PathSet {
 
+    /** The base directory. */
+    private final Path base;
+
+    /** The patterns. */
+    private final ArrayList<String> patterns = new ArrayList();
+
+    /**
+     * @param base
+     */
+    public PathSet(Path base, String... patterns) {
+        this.base = base;
+
+        for (String pattern : patterns) {
+            this.patterns.add(pattern);
+        }
+    }
 }
