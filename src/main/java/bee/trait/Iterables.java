@@ -15,31 +15,35 @@
  */
 package bee.trait;
 
-import java.util.List;
+import java.util.Iterator;
+
+import ezbean.I;
 
 /**
- * @version 2011/03/14 19:22:09
+ * @version 2011/03/15 12:00:36
  */
 @Trait
-public class Lists {
+public class Iterables {
 
     /**
      * <p>
-     * Join the list items by the specified character.
+     * Join the {@link Iterable} items by the specified character.
      * </p>
      * 
-     * @param list A target list to join items.
+     * @param iterable A target {@link Iterable} list to join items.
      * @param separator A separator character.
      * @return A joined string.
      */
-    public static final String join(List list, char separator) {
+    public static final String join(Iterable iterable, char separator) {
         StringBuilder builder = new StringBuilder();
+        Iterator iterator = iterable.iterator();
 
-        for (int start = 0, end = list.size(); start < end; start++) {
-            builder.append(list.get(start));
+        if (iterator.hasNext()) {
+            builder.append(I.transform(iterator.next(), String.class));
 
-            if (start < end - 1) {
+            while (iterator.hasNext()) {
                 builder.append(separator);
+                builder.append(I.transform(iterator.next(), String.class));
             }
         }
 

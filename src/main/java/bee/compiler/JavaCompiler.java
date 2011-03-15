@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.processing.Processor;
@@ -49,6 +50,7 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import bee.trait.Iterables;
 import ezbean.I;
 import ezbean.model.ClassUtil;
 
@@ -71,6 +73,9 @@ public class JavaCompiler {
 
     /** The annotation processor's locations. */
     private final Set<Path> processorPaths = new HashSet();
+
+    /** The annotation processor's options. */
+    private final Map<String, String> processorOptions = new HashMap();
 
     /** The output directory. */
     private Path output;
@@ -129,6 +134,21 @@ public class JavaCompiler {
         if (processor != null && !processors.contains(processor)) {
             processors.add(processor);
             processorPaths.add(ClassUtil.getArchive(processor).toAbsolutePath());
+        }
+    }
+
+    /**
+     * <p>
+     * Options to pass to annotation processors. These are not interpreted by javac directly, but
+     * are made available for use by individual processors.
+     * </p>
+     * 
+     * @param key A key name.
+     * @param value A passing value.
+     */
+    public void addProcessorOption(String key, String value) {
+        if (key != null && value != null && key.length() != 0 && value.length() != 0) {
+            processorOptions.put(key, value);
         }
     }
 
@@ -289,35 +309,16 @@ public class JavaCompiler {
             if (processors.size() == 0) {
                 options.add("-proc:none");
             } else {
-                StringBuilder processors = new StringBuilder();
-                StringBuilder processorPaths = new StringBuilder();
-
-                for (int i = 0, end = this.processors.size(); i < end; i++) {
-                    Class processor = this.processors.get(i);
-
-                    processors.append(processor.getName());
-
-                    if (i < end - 1) {
-                        processors.append(',');
-                    }
-                }
-
-                for (int i = 0, end = this.processorPaths.size(); i < end; i++) {
-                    Path processorPath = this.processorPaths.get(i);
-
-                    processorPaths.append('"').append(ClassUtil.getArchive(processor).toAbsolutePath()).append('"');
-
-                    if (i < end - 1) {
-                        processors.append(',');
-                        processorPaths.append(',');
-                    }
-                }
-
                 options.add("-processor");
-                options.add(processors.toString());
+                options.add(Iterables.join(processors, ','));
                 options.add("-processorpath");
-                options.add(processorPaths.toString());
-                System.out.println(options);
+                options.add(Iterables.join(processorPaths, ','));
+
+                addProcessorOption("test", Iterables.join(sources, ';'));
+
+                for (Entry<String, String> entry : processorOptions.entrySet()) {
+                    options.add("-A" + entry.getKey() + '=' + entry.getValue());
+                }
             }
 
             // =============================================

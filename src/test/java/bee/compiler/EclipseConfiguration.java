@@ -13,30 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee;
+package bee.compiler;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
+
+import ezbean.I;
+import ezbean.xml.XMLWriter;
 
 /**
- * @version 2011/03/13 23:52:56
+ * @version 2011/03/15 17:47:48
  */
-public class PathSet {
+public class EclipseConfiguration {
 
-    /** The base directory. */
-    private final Path base;
+    public static void main(String[] args) throws Exception {
+        Path factory = I.locate(".factoypath");
+        System.out.println(factory.toAbsolutePath());
 
-    /** The patterns. */
-    private final ArrayList<String> patterns = new ArrayList();
-
-    /**
-     * @param base
-     */
-    public PathSet(Path base, String... patterns) {
-        this.base = base;
-
-        for (String pattern : patterns) {
-            this.patterns.add(pattern);
-        }
+        XMLWriter writer = new XMLWriter(Files.newBufferedWriter(factory, I.getEncoding()));
+        writer.startDocument();
+        writer.start("factorypath");
+        writer.start("factorypathentry");
+        writer.end();
+        writer.endDocument();
     }
 }
