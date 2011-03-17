@@ -27,13 +27,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
+import java.util.jar.Pack200;
+import java.util.jar.Pack200.Packer;
 
 import ezbean.I;
 
 /**
  * @version 2011/03/15 18:21:32
  */
-public class JavaArchiver {
+public class Jar {
+
+    /** The packer. */
+    private final Packer packer = Pack200.newPacker();
 
     /** The path entries. */
     private final List<Entry> entries = new ArrayList();
@@ -61,37 +66,37 @@ public class JavaArchiver {
      */
     public void pack(Path location) {
         if (location != null) {
-            OutputStream output = null;
-
             try {
+                // Location must exist
                 if (Files.notExists(location)) {
                     Files.createDirectories(location.getParent());
                     Files.createFile(location);
                 }
 
+                // Location must be file.
                 if (!Files.isRegularFile(location)) {
                     throw new IllegalArgumentException("'" + location + "' must be regular file.");
                 }
 
-                output = Files.newOutputStream(location);
-
-                JarOutputStream stream = null;
+                OutputStream output = Files.newOutputStream(location);
+                JarOutputStream jar = new JarOutputStream(output);
 
                 try {
-                    stream = new JarOutputStream(output);
-
+                    // Start packing
                     for (Entry entry : entries) {
-                        entry.output = stream;
-                        I.walk(entry.base, entry, entry.patterns);
+                        I.walk(entry.base, new Scanner(jar, entry.base), entry.patterns);
                     }
+
+                    // Finish packing.
+                    jar.finish();
                 } finally {
-                    stream.finish();
-                    stream.close();
+
+                    jar.close();
+                    output.close();
+                    System.out.println("close jar");
                 }
             } catch (IOException e) {
                 throw I.quiet(e);
-            } finally {
-                I.quiet(output);
             }
         }
     }
@@ -99,7 +104,7 @@ public class JavaArchiver {
     /**
      * @version 2011/03/15 18:07:46
      */
-    private static class Entry extends SimpleFileVisitor<Path> {
+    private static class Entry {
 
         /** The base directory. */
         private final Path base;
@@ -107,14 +112,34 @@ public class JavaArchiver {
         /** The patterns. */
         private final String[] patterns;
 
-        private JarOutputStream output;
-
         /**
          * @param base
          */
         public Entry(Path base, String... patterns) {
             this.base = base;
             this.patterns = patterns;
+        }
+
+    }
+
+    /**
+     * @version 2011/03/17 15:43:50
+     */
+    private static class Scanner extends SimpleFileVisitor<Path> {
+
+        /** The actual jar stream. */
+        private final JarOutputStream jar;
+
+        /** The current scanning information. */
+        private final Path base;
+
+        /**
+         * @param jar
+         * @param base
+         */
+        private Scanner(JarOutputStream jar, Path base) {
+            this.jar = jar;
+            this.base = base;
         }
 
         /**
@@ -134,18 +159,26 @@ public class JavaArchiver {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
             JarEntry entry = new JarEntry(base.relativize(file).toString());
-            output.putNextEntry(entry);
+            entry.setTime(Files.getLastModifiedTime(file).toMillis());
 
-            InputStream input = null;
+            // create file entry
+            jar.putNextEntry(entry);
+
+            InputStream input = Files.newInputStream(file);
 
             try {
-                input = Files.newInputStream(file);
-                I.copy(input, output, false);
+                // copy data
+                I.copy(input, jar, false);
+
             } finally {
-                I.quiet(input);
-                output.closeEntry();
+                System.out.println("close " + file);
+                input.close();
             }
 
+            // finish
+            jar.closeEntry();
+
+            // continue
             return FileVisitResult.CONTINUE;
         }
     }

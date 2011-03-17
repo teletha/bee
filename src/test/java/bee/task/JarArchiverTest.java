@@ -15,17 +15,13 @@
  */
 package bee.task;
 
-import static org.junit.Assert.*;
-
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import ezunit.CleanRoom;
+import ezunit.CleanRoom.VirtualFile;
 
 /**
  * @version 2011/03/15 18:30:55
@@ -37,17 +33,15 @@ public class JarArchiverTest {
 
     @Test
     public void jar() throws Exception {
-        Path file = room.locateFile("resources/file");
-        Path path = room.locateAbsent("test.jar");
-        assertTrue(Files.notExists(path));
+        System.out.println(1);
+        Path file = room.locateFile("directory/file");
+        Path path = room.locateFile("out.jar");
 
-        JavaArchiver jar = new JavaArchiver();
+        VirtualFile virtual = room.locateVirtualFile("out.jar");
+        virtual.willHave("file");
+
+        Jar jar = new Jar();
         jar.add(file.getParent());
         jar.pack(path);
-
-        assertTrue(Files.exists(path));
-
-        FileSystem system = FileSystems.newFileSystem(path, null);
-        assertTrue(Files.exists(system.getPath("file")));
     }
 }
