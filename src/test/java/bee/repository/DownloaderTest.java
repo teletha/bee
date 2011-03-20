@@ -53,7 +53,7 @@ public class DownloaderTest {
     public static void setup() {
         home = Repository.getLocation();
 
-        Repository.setLocation(room.locateDirectory(""));
+        Repository.setLocation(room.locateDirectory("").toFile());
     }
 
     @AfterClass

@@ -15,7 +15,6 @@
  */
 package bee.task;
 
-import bee.Bee;
 import bee.Task;
 
 /**
@@ -25,7 +24,6 @@ public class Eclipse extends Task {
 
     @Command
     public void test() {
-        String line = Bee.read("入力しる: ", "aaaaa");
-        Bee.write(line);
+
     }
 }

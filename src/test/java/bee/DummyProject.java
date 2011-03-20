@@ -47,8 +47,8 @@ public class DummyProject extends ReusableRule {
     public DummyProject(Class<? extends Project> clazz) {
         this.projectClass = clazz;
 
-        Path project = testcaseRoot.toPath().resolve(clazz.getPackage().getName().replace('.', '/'));
-        Path root = testcaseDirectory.toPath();
+        Path project = testcaseRoot.resolve(clazz.getPackage().getName().replace('.', '/'));
+        Path root = testcaseDirectory;
         Path source = root.resolve("source");
         Path test = root.resolve("test");
 

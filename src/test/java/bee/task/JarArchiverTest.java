@@ -15,13 +15,15 @@
  */
 package bee.task;
 
+import static org.junit.Assert.*;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import ezunit.CleanRoom;
-import ezunit.CleanRoom.VirtualFile;
 
 /**
  * @version 2011/03/15 18:30:55
@@ -32,16 +34,34 @@ public class JarArchiverTest {
     public static final CleanRoom room = new CleanRoom();
 
     @Test
-    public void jar() throws Exception {
-        System.out.println(1);
-        Path file = room.locateFile("directory/file");
-        Path path = room.locateFile("out.jar");
-
-        VirtualFile virtual = room.locateVirtualFile("out.jar");
-        virtual.willHave("file");
+    public void file() throws Exception {
+        Path file = room.locateFile("root/file");
+        Path output = room.locateAbsent("out");
 
         Jar jar = new Jar();
         jar.add(file.getParent());
-        jar.pack(path);
+        jar.pack(output);
+
+        Path archive = room.locateArchive(output);
+        assertTrue(Files.exists(archive.resolve("file")));
+        assertTrue(Files.isRegularFile(archive.resolve("file")));
+    }
+
+    @Test
+    public void directory() throws Exception {
+        Path file1 = room.locateFile("root/file");
+        room.locateFile("root/directory/file");
+        Path output = room.locateAbsent("out");
+
+        Jar jar = new Jar();
+        jar.add(file1.getParent());
+        jar.pack(output);
+
+        Path archive = room.locateArchive(output);
+        assertTrue(Files.exists(archive.resolve("file")));
+        assertTrue(Files.exists(archive.resolve("directory")));
+        assertTrue(Files.isDirectory(archive.resolve("directory")));
+        assertTrue(Files.exists(archive.resolve("directory/file")));
+        assertTrue(Files.isRegularFile(archive.resolve("directory/file")));
     }
 }

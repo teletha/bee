@@ -17,7 +17,6 @@ package bee.compiler;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,13 +32,11 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import javax.tools.StandardLocation;
 
 import org.junit.Rule;
 import org.junit.Test;
 
 import bee.compiler.source01.MainClass;
-import ezbean.I;
 
 /**
  * @version 2010/12/19 10:21:32
@@ -146,12 +143,7 @@ public class JavaCompilerTest {
             for (TypeElement annotation : annotations) {
                 for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
                     System.out.println(element.getAnnotation(SuppressWarnings.class).value()[0]);
-                    try {
-                        System.out.println(filer.getResource(StandardLocation.CLASS_OUTPUT, "", "bee/apt/compiler/source01/MainClass.class")
-                                .getName());
-                    } catch (IOException e) {
-                        throw I.quiet(e);
-                    }
+
                 }
             }
             return false;

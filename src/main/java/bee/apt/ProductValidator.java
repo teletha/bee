@@ -42,7 +42,7 @@ public class ProductValidator implements TypeAnnotationValidator<Product> {
         System.out.println(time);
 
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourcePath(project.getParentFile());
+        compiler.addSourceDirectory(project.getParentFile().toPath());
 
         ClassLoader loader = compiler.compile();
 

@@ -18,6 +18,7 @@ package bee;
 /**
  * @version 2010/11/23 23:35:54
  */
+@SuppressWarnings("unused")
 public class BeeTest {
 
     public static void main(String[] args) {

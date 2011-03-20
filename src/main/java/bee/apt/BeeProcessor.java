@@ -39,7 +39,6 @@ public class BeeProcessor implements Processor {
 
     // initialization
     static {
-        System.out.println("1");
         I.load(ClassUtil.getArchive(BeeProcessor.class));
     }
 
@@ -84,11 +83,12 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
-        System.out.println(annotations);
         for (TypeElement annotationType : annotations) {
+            process.getMessager()
+                    .printMessage(Kind.ERROR, annotationType.getQualifiedName(), annotationType.getEnclosingElement());
             try {
                 Class annotationClass = Class.forName(annotationType.getQualifiedName().toString());
-                System.out.println(annotationClass);
+
                 for (Element element : round.getElementsAnnotatedWith(annotationType)) {
                     switch (element.getKind()) {
                     case ANNOTATION_TYPE:
@@ -96,18 +96,7 @@ public class BeeProcessor implements Processor {
                     case ENUM:
                     case INTERFACE:
                         TypeElement type = (TypeElement) element;
-                        TypeAnnotationValidator typeAnnotationValidator = I.find(TypeAnnotationValidator.class, annotationClass);
 
-                        Class annotatedClass = Class.forName(type.getQualifiedName().toString());
-                        if (typeAnnotationValidator != null) {
-                            try {
-                                typeAnnotationValidator.validate(annotatedClass, element.getAnnotation(annotationClass));
-                            } catch (InvalidValue e) {
-                                process.getMessager().printMessage(Kind.ERROR, e.getMessage(), element);
-                            } catch (Exception e) {
-                                process.getMessager().printMessage(Kind.ERROR, e.getMessage(), element);
-                            }
-                        }
                         break;
 
                     case CONSTRUCTOR:
@@ -124,17 +113,7 @@ public class BeeProcessor implements Processor {
 
                     case METHOD:
                         ExecutableElement executableElement = (ExecutableElement) element;
-                        TypeAnnotationValidator validator = I.find(TypeAnnotationValidator.class, annotationClass);
 
-                        if (validator != null) {
-                            try {
-                                validator.validate(null, element.getAnnotation(annotationClass));
-                            } catch (InvalidValue e) {
-                                process.getMessager().printMessage(Kind.ERROR, e.getMessage(), element);
-                            } catch (Exception e) {
-                                process.getMessager().printMessage(Kind.ERROR, e.getMessage(), element);
-                            }
-                        }
                         break;
 
                     case PACKAGE:
