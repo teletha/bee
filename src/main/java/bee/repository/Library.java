@@ -15,12 +15,11 @@
  */
 package bee.repository;
 
-import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.List;
 
-import bee.Platform;
 import bee.Version;
 
 /**
@@ -48,8 +47,8 @@ public class Library {
         this.version = new Version(version);
     }
 
-    public File getJar() {
-        return get(".jar");
+    public Path getJar() {
+        return null;
     }
 
     /**
@@ -58,17 +57,8 @@ public class Library {
      * @param repositories
      * @return
      */
-    public File load(List<Repository> repositories) {
-        // Locate local jar file.
-        File file = new File(Platform.Repository, toPath("jar"));
-
-        // Check exstence.
-        if (!file.exists()) {
-
-        }
-
-        // API defintion
-        return file;
+    public Path load(List<Repository> repositories) {
+        return null;
     }
 
     /**
@@ -78,8 +68,8 @@ public class Library {
      * 
      * @return A location.
      */
-    File toInternal(String extension) {
-        return new File(Platform.Repository, toPath(extension));
+    Path toInternal(String extension) {
+        return null;
     }
 
     /**

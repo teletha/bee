@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,6 +32,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import ezbean.I;
 
 /**
  * @version 2010/09/05 20:42:30
@@ -85,6 +89,8 @@ public class Downloader {
         /** The list of repository. */
         private final List<Repository> repositories;
 
+        private Library library;
+
         /**
          * @param artifact
          * @param repositories
@@ -122,9 +128,9 @@ public class Downloader {
                 connection = (HttpURLConnection) library.toExternal("-project.jar", repository).openConnection();
 
                 if (connection.getResponseCode() == 200) {
-                    File file = library.toInternal("-project.jar");
+                    Path file = library.toInternal("-project.jar");
 
-                    download(connection.getInputStream(), file);
+                    // download(connection.getInputStream(), file);
                 } else {
 
                 }
@@ -170,8 +176,8 @@ public class Downloader {
          * @throws FileNotFoundException
          * @throws IOException
          */
-        private File download(String suffix, Repository repository) {
-            File file = library.toInternal(suffix);
+        private Path download(String suffix, Repository repository) {
+            Path file = library.toInternal(suffix);
 
             InputStream input = null;
             OutputStream output = null;
@@ -189,7 +195,7 @@ public class Downloader {
                     byte[] buffer = new byte[8192];
 
                     input = connection.getInputStream();
-                    output = new FileOutputStream(file);
+                    output = Files.newOutputStream(file);
 
                     while ((size = input.read(buffer)) != -1) {
                         output.write(buffer, 0, size);
@@ -199,7 +205,7 @@ public class Downloader {
                 close(output);
 
                 // clean up
-                file.delete();
+                I.delete(file);
             } finally {
                 close(input);
                 close(output);
@@ -210,7 +216,7 @@ public class Downloader {
             }
 
             // API definition
-            if (file.exists()) {
+            if (Files.exists(file)) {
                 return file;
             } else {
                 throw new Error(library + " can't download from the following repositories: " + repositories);

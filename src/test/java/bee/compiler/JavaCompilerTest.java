@@ -36,6 +36,7 @@ import javax.lang.model.element.TypeElement;
 import org.junit.Rule;
 import org.junit.Test;
 
+import bee.apt.BeeProcessor;
 import bee.compiler.source01.MainClass;
 
 /**
@@ -97,7 +98,7 @@ public class JavaCompilerTest {
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(source01.root);
         compiler.setOutput(source01.output);
-        compiler.addProcessor(APT.class);
+        compiler.addProcessor(BeeProcessor.class);
         compiler.compile();
 
         assertTrue(Files.exists(source));

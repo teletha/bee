@@ -25,12 +25,10 @@ import ezbean.xml.XMLWriter;
 /**
  * @version 2011/03/15 17:47:48
  */
-@SuppressWarnings("conf")
 public class EclipseConfiguration {
 
     public static void main(String[] args) throws Exception {
         Path factory = I.locate(".factorypath");
-        System.out.println(factory.toAbsolutePath());
 
         Path jar = I.locate("bee2.jar").toAbsolutePath();
         Path classes = I.locate("target/classes");
@@ -42,7 +40,7 @@ public class EclipseConfiguration {
         XMLWriter writer = new XMLWriter(Files.newBufferedWriter(factory, I.getEncoding()));
         writer.startDocument();
         writer.start("factorypath");
-        writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Development\\Bee\\bee2.jar", "enabled", "true", "runInBatchMode", "false");
+        writer.element("factorypathentry", "kind", "EXTJAR", "id", jar.toAbsolutePath().toString(), "enabled", "true", "runInBatchMode", "false");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Development\\Ezbean\\target\\ezbean-0.8.2.jar", "enabled", "true", "runInBatchMode", "false");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Application\\Maven Repository\\asm\\asm\\3.3\\asm-3.3.jar", "enabled", "true", "runInBatchMode", "false");
         writer.end();

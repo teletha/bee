@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 /**
  * @version 2010/04/27 22:25:04
  */
+@SuppressWarnings("")
 public class Platform {
 
     /** The executable file for Java. */

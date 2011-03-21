@@ -19,7 +19,6 @@ import static java.nio.file.FileVisitResult.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -31,6 +30,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import ezbean.Disposable;
 import ezbean.I;
 
 /**
@@ -86,7 +86,7 @@ public abstract class ZipArchiver {
                         I.walk(entry.base, archiver, entry.patterns);
                     }
                 } finally {
-                    I.quiet(archiver);
+                    archiver.dispose();
                 }
             } catch (IOException e) {
                 throw I.quiet(e);
@@ -97,7 +97,7 @@ public abstract class ZipArchiver {
     /**
      * @version 2011/03/20 15:43:35
      */
-    private static class Archiver extends ZipOutputStream implements FileVisitor<Path> {
+    private static class Archiver extends ZipOutputStream implements FileVisitor<Path>, Disposable {
 
         /** The base path. */
         private Path base;
@@ -130,13 +130,7 @@ public abstract class ZipArchiver {
             putNextEntry(entry);
 
             // copy data
-            InputStream input = Files.newInputStream(file);
-
-            try {
-                I.copy(input, this, false);
-            } finally {
-                I.quiet(input);
-            }
+            I.copy(Files.newInputStream(file), this, true);
             closeEntry();
 
             // API definition
@@ -159,6 +153,26 @@ public abstract class ZipArchiver {
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
             // API definition
             return CONTINUE;
+        }
+
+        /**
+         * @see java.util.zip.ZipOutputStream#close()
+         */
+        @Override
+        public void close() throws IOException {
+            // super.close();
+        }
+
+        /**
+         * @see ezbean.Disposable#dispose()
+         */
+        @Override
+        public void dispose() {
+            try {
+                super.close();
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
         }
 
         /**
