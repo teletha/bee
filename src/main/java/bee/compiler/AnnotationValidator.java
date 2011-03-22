@@ -13,13 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler.source01;
+package bee.compiler;
 
-import javax.annotation.Resource;
+import java.lang.annotation.Annotation;
+
+import ezbean.Extensible;
 
 /**
- * @version 2011/03/13 15:51:30
+ * @version 2011/03/22 11:28:28
  */
-@Resource
-public class MainClass {
+public interface AnnotationValidator<A extends Annotation> extends Extensible {
+
+    /**
+     * <p>
+     * Validate an annotation value.
+     * </p>
+     * 
+     * @param annotation An target annotation to validate.
+     * @param annotatedClass An annotated class.
+     * @param validator A current validation context.
+     */
+    void validate(A annotation, Class annotatedClass, Validator validator);
 }

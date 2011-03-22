@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler.source01;
+package bee.compiler;
 
-import javax.annotation.Resource;
+import java.lang.annotation.Annotation;
+
+import ezbean.Extensible;
 
 /**
- * @version 2011/03/13 15:51:30
+ * @version 2011/03/22 12:32:27
  */
-@Resource
-public class MainClass {
+public interface ASTTransformer<A extends Annotation> extends Extensible {
+
+    void transform(A annotation);
 }

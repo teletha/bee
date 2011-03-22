@@ -19,24 +19,10 @@ import static org.junit.Assert.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
-import javax.lang.model.element.TypeElement;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-import bee.apt.BeeProcessor;
 import bee.compiler.source01.MainClass;
 
 /**
@@ -83,71 +69,5 @@ public class JavaCompilerTest {
 
         assertTrue(Files.exists(source));
         assertTrue(Files.exists(bytecode));
-    }
-
-    @Test
-    public void processor() throws Exception {
-        Path source = source01.locateSourceCode(MainClass.class);
-        Path bytecode = source01.locateByteCode(MainClass.class);
-        assertTrue(Files.exists(source));
-        assertTrue(Files.notExists(bytecode));
-
-        Files.deleteIfExists(source01.output);
-        assertTrue(Files.notExists(source01.output));
-        System.out.println(source01.output);
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(source01.root);
-        compiler.setOutput(source01.output);
-        compiler.addProcessor(BeeProcessor.class);
-        compiler.compile();
-
-        assertTrue(Files.exists(source));
-        assertTrue(Files.exists(bytecode));
-    }
-
-    /**
-     * @version 2011/03/14 17:16:49
-     */
-    @SupportedSourceVersion(SourceVersion.RELEASE_7)
-    @SupportedAnnotationTypes("java.lang.SuppressWarnings")
-    public static class APT extends AbstractProcessor {
-
-        private ProcessingEnvironment environment;
-
-        private Filer filer;
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public synchronized void init(ProcessingEnvironment processingEnv) {
-            super.init(processingEnv);
-
-            this.environment = processingEnv;
-            this.filer = environment.getFiler();
-
-            for (Entry<String, String> entry : environment.getOptions().entrySet()) {
-                if (entry.getKey().equals("test")) {
-                    for (String path : entry.getValue().split(";")) {
-                        System.out.println(path);
-                        System.out.println(Paths.get(path).toAbsolutePath());
-                    }
-                }
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-            for (TypeElement annotation : annotations) {
-                for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
-                    System.out.println(element.getAnnotation(SuppressWarnings.class).value()[0]);
-
-                }
-            }
-            return false;
-        }
     }
 }

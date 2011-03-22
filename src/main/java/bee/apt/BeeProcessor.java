@@ -15,10 +15,16 @@
  */
 package bee.apt;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.processing.Completion;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
@@ -28,15 +34,16 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.tools.Diagnostic.Kind;
+import javax.tools.FileObject;
 
+import bee.compiler.AnnotationValidator;
 import ezbean.I;
+import ezbean.Modules;
 import ezbean.model.ClassUtil;
 
 /**
  * @version 2010/04/23 16:09:16
  */
-@SuppressWarnings("a")
 public class BeeProcessor implements Processor {
 
     /** The processing environment. */
@@ -55,7 +62,7 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Collections.singleton(SuppressWarnings.class.getName());
+        return Collections.singleton("*");
     }
 
     /**
@@ -84,9 +91,29 @@ public class BeeProcessor implements Processor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
         Messager messager = environment.getMessager();
 
-        for (TypeElement annotation : annotations) {
-            for (Element element : round.getElementsAnnotatedWith(annotation)) {
-                messager.printMessage(Kind.ERROR, element.getSimpleName() + "ダメs", element);
+        for (TypeElement annotationType : annotations) {
+            for (Element element : round.getElementsAnnotatedWith(annotationType)) {
+                Class annotatedClass = Modules.load(element.toString());
+                Class annotationClass = Modules.load(annotationType.toString());
+                Annotation annotation = element.getAnnotation(annotationClass);
+                AnnotationValidator validator = I.find(AnnotationValidator.class, annotationClass);
+
+                Filer filer = environment.getFiler();
+                try {
+                    FileObject file = filer.createClassFile(annotatedClass.getName());
+                    Path path = Paths.get(file.toUri());
+                    System.out.println(path);
+                    Files.createDirectories(path.getParent());
+                    Files.createFile(path);
+                    System.out.println(Files.size(path));
+                } catch (IOException e) {
+                    throw I.quiet(e);
+                }
+
+                if (validator != null) {
+                    validator.validate(annotation, annotatedClass, null);
+                }
+
             }
         }
         return true;

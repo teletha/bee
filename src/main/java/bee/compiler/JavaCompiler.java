@@ -69,10 +69,13 @@ public class JavaCompiler {
     private final Set<Path> classpaths = new HashSet();
 
     /** The annotation processors. */
-    private final List<Class> processors = new ArrayList();
+    private final List<Processor> processors = new ArrayList();
+
+    /** The annotation processor classes. */
+    private final List<Class> processorClasses = new ArrayList();
 
     /** The annotation processor's locations. */
-    private final Set<Path> processorPaths = new HashSet();
+    private final Set<Path> processorClassPaths = new HashSet();
 
     /** The annotation processor's options. */
     private final Map<String, String> processorOptions = new HashMap();
@@ -131,9 +134,26 @@ public class JavaCompiler {
      * @param processor
      */
     public void addProcessor(Class<? extends Processor> processor) {
+        if (processor != null && !processorClasses.contains(processor)) {
+            processorClasses.add(processor);
+            processorClassPaths.add(ClassUtil.getArchive(processor).toAbsolutePath());
+        }
+    }
+
+    /**
+     * <p>
+     * Add the specified annotation processor to compile process. This method bybpasses the default
+     * discovery process.
+     * </p>
+     * <p>
+     * Names of the annotation processors to run. This bypasses the default discovery process.
+     * </p>
+     * 
+     * @param processor
+     */
+    public void addProcessor(Processor processor) {
         if (processor != null && !processors.contains(processor)) {
             processors.add(processor);
-            processorPaths.add(ClassUtil.getArchive(processor).toAbsolutePath());
         }
     }
 
@@ -306,13 +326,13 @@ public class JavaCompiler {
             // =============================================
             // Annotation Processing Tools
             // =============================================
-            if (processors.size() == 0) {
+            if (processors.size() == 0 && processorClasses.size() == 0) {
                 options.add("-proc:none");
             } else {
                 options.add("-processor");
-                options.add(Iterables.join(processors, ','));
+                options.add(Iterables.join(processorClasses, ','));
                 options.add("-processorpath");
-                options.add(Iterables.join(processorPaths, ','));
+                options.add(Iterables.join(processorClassPaths, ','));
 
                 addProcessorOption("test", Iterables.join(sources, ';'));
 
@@ -337,6 +357,14 @@ public class JavaCompiler {
             Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.getEncoding()));
 
             CompilationTask task = compiler.getTask(null, manager, listener, options, null, manager.getJavaFileObjectsFromFiles(sources));
+
+            // =============================================
+            // Annotation Processing Tools
+            // =============================================
+            if (processors.size() != 0) {
+                task.setProcessors(processors);
+            }
+
             boolean result = task.call();
 
             return manager;
@@ -357,7 +385,7 @@ public class JavaCompiler {
          */
         @Override
         public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-            System.out.println(diagnostic);
+            System.out.println(diagnostic + " @");
         }
     }
 
