@@ -20,14 +20,12 @@ import java.awt.Frame;
 import java.awt.Label;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
+import java.nio.file.Files;
 
 import javax.swing.UIManager;
 
-import ezbean.I;
-
 /**
- * @version 2010/04/24 2:31:07
+ * @version 2011/03/23 18:55:51
  */
 public class Launcher {
 
@@ -40,15 +38,13 @@ public class Launcher {
         }
     }
 
-    private static File bee;
-
     /**
      * <p>
      * Launch Bee.
      * </p>
      */
     public static final void main(String... args) {
-        if (Platform.Bee.exists()) {
+        if (Files.exists(Platform.Bee)) {
             launch(args);
         } else {
             install();
@@ -61,7 +57,7 @@ public class Launcher {
      * </p>
      */
     public static final void install() {
-
+        System.out.println(Platform.Java);
     }
 
     /**
@@ -70,7 +66,7 @@ public class Launcher {
      * </p>
      */
     public static final void launch(String... command) {
-        Bee bee = I.make(Bee.class);
+        System.out.println(Platform.Bee);
     }
 
     /**

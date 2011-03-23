@@ -19,7 +19,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import bee.ui.UserInterface;
 import ezbean.I;
 import ezbean.model.Codec;
 import ezbean.model.Model;
@@ -27,10 +26,10 @@ import ezbean.model.Model;
 /**
  * @version 2010/11/23 23:24:52
  */
-public class CommandlineUserInterface implements UserInterface {
+class CommandlineUserInterface implements UserInterface {
 
     /**
-     * @see bee.ui.UserInterface#ask(java.lang.String)
+     * @see bee.UserInterface#ask(java.lang.String)
      */
     @Override
     public String ask(String message) {
@@ -63,7 +62,7 @@ public class CommandlineUserInterface implements UserInterface {
     }
 
     /**
-     * @see bee.ui.UserInterface#ask(java.lang.String, java.lang.Object)
+     * @see bee.UserInterface#ask(java.lang.String, java.lang.Object)
      */
     @Override
     public <T> T ask(String message, T defaultAnswer) {
@@ -94,10 +93,42 @@ public class CommandlineUserInterface implements UserInterface {
     }
 
     /**
-     * @see bee.ui.UserInterface#talk(String, Object...)
+     * @see bee.UserInterface#ask(java.lang.String, bee.Validator)
+     */
+    @Override
+    public <T> T ask(String question, Validator<T> validator) {
+        return null;
+    }
+
+    /**
+     * @see bee.UserInterface#ask(java.lang.String, java.lang.Object, bee.Validator)
+     */
+    @Override
+    public <T> T ask(String question, T defaultAnswer, Validator<T> validator) {
+        return null;
+    }
+
+    /**
+     * @see bee.UserInterface#talk(String, Object...)
      */
     @Override
     public void talk(String message, Object... params) {
+        System.out.format(message.concat("%n"), params);
+    }
+
+    /**
+     * @see bee.UserNotifier#warn(java.lang.String, java.lang.Object[])
+     */
+    @Override
+    public void warn(String message, Object... params) {
+        System.out.format(message.concat("%n"), params);
+    }
+
+    /**
+     * @see bee.UserNotifier#error(java.lang.String, java.lang.Object[])
+     */
+    @Override
+    public void error(String message, Object... params) {
         System.out.format(message.concat("%n"), params);
     }
 }

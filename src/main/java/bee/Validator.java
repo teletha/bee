@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nameless Production Committee.
+ * Copyright (C) 2011 Nameless Production Committee.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.ui;
+package bee;
 
 /**
- * @version 2010/11/24 23:54:03
+ * @version 2011/03/23 16:59:45
  */
 public interface Validator<T> {
-
-    T validate(T value);
 }

@@ -15,20 +15,14 @@
  */
 package bee.compiler;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import javax.annotation.Resource;
-
 import org.junit.Rule;
 import org.junit.Test;
 
-import bee.apt.BeeProcessor;
-import bee.compiler.source01.MainClass;
+import bee.UserNotifier;
 import ezunit.PrivateModule;
 
 /**
- * @version 2011/03/22 11:56:05
+ * @version 2011/03/23 18:46:45
  */
 public class AnnotationValidatorTest {
 
@@ -40,27 +34,35 @@ public class AnnotationValidatorTest {
 
     @Test
     public void byClass() throws Exception {
+        ByClass.invoked = false;
+
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(source.root);
         compiler.setOutput(source.output);
         compiler.addProcessor(BeeProcessor.class);
         compiler.compile();
-        Path path = source.locateByteCode(MainClass.class);
-        System.out.println(Files.size(path));
+
+        assert ByClass.invoked;
     }
 
     /**
-     * @version 2011/03/22 11:57:48
+     * @version 2011/03/23 18:46:42
      */
-    private static final class Check implements AnnotationValidator<Resource> {
+    private static final class ByClass implements AnnotationValidator<SourceAnnotation> {
+
+        private static boolean invoked = false;
 
         /**
          * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
-         *      java.lang.Class, bee.compiler.Validator)
+         *      bee.UserNotifier)
          */
         @Override
-        public void validate(Resource annotation, Class annotatedClass, Validator validator) {
-            System.out.println("invoked " + annotation + "  " + (annotatedClass == MainClass.class));
+        public void validate(SourceAnnotation annotation, UserNotifier notifier) {
+            assert annotation != null;
+            assert notifier != null;
+            assert annotation.value().equals("Main");
+
+            invoked = true;
         }
     }
 }

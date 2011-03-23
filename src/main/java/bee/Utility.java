@@ -13,12 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler;
-
+package bee;
 
 /**
- * @version 2011/03/22 11:31:38
+ * @version 2011/03/23 19:21:10
  */
-public class Validator {
+public class Utility {
 
+    /**
+     * <p>
+     * Retrieve an extension-like value from the specified expression.
+     * </p>
+     * 
+     * @param name A target.
+     * @return A extension-like value.
+     */
+    public static final String getExtension(String name) {
+        // Check null
+        if (name == null) {
+            return "";
+        }
+
+        // Search last separator.
+        int index = name.lastIndexOf('.');
+
+        // API definition
+        return index == -1 ? name : name.substring(index + 1);
+    }
 }

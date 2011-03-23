@@ -17,10 +17,11 @@ package bee.compiler;
 
 import java.lang.annotation.Annotation;
 
+import bee.UserNotifier;
 import ezbean.Extensible;
 
 /**
- * @version 2011/03/22 11:28:28
+ * @version 2011/03/23 16:56:19
  */
 public interface AnnotationValidator<A extends Annotation> extends Extensible {
 
@@ -30,8 +31,7 @@ public interface AnnotationValidator<A extends Annotation> extends Extensible {
      * </p>
      * 
      * @param annotation An target annotation to validate.
-     * @param annotatedClass An annotated class.
-     * @param validator A current validation context.
+     * @param notifier An error messenger.
      */
-    void validate(A annotation, Class annotatedClass, Validator validator);
+    void validate(A annotation, UserNotifier notifier);
 }

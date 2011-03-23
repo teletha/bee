@@ -16,48 +16,50 @@
 package bee;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map.Entry;
+
+import ezbean.I;
 
 /**
  * @version 2010/04/27 22:25:04
  */
-@SuppressWarnings("")
 public class Platform {
 
     /** The executable file for Java. */
-    public static final File Java;
+    public static final Path Java;
 
     /** The executable file for Bee. */
-    public static final File Bee;
+    public static final Path Bee;
 
     // initialization
     static {
-        File bin = null;
-        File java = null;
-        File bee = null;
+        Path bin = null;
+        Path java = null;
+        Path bee = null;
 
         // Search Java SDK from path.
         root: for (Entry<String, String> entry : System.getenv().entrySet()) {
-            System.out.println(entry);
             // On UNIX systems the alphabetic case of name is typically significant, while on
             // Microsoft Windows systems it is typically not.
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
                 for (String value : entry.getValue().split(File.pathSeparator)) {
-                    File directory = new File(value);
-                    File linux = new File(directory, "javac");
-                    File windows = new File(directory, "javac.exe");
+                    Path directory = I.locate(value);
+                    Path linux = directory.resolve("javac");
+                    Path windows = directory.resolve("javac.exe");
 
-                    if (linux.exists()) {
+                    if (Files.exists(linux)) {
                         bin = directory;
                         java = linux;
-                        bee = new File(directory, "bee");
+                        bee = directory.resolve("bee");
 
                         break root;
-                    } else if (windows.exists()) {
+                    } else if (Files.exists(windows)) {
                         bin = directory;
                         java = windows;
-                        bee = new File(directory, "bee.bat");
+                        bee = directory.resolve("bee.bat");
 
                         break root;
                     }

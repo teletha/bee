@@ -13,30 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.apt;
+package bee.compiler;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import static javax.tools.Diagnostic.Kind.*;
+
 import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.processing.Completion;
-import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.tools.FileObject;
 
-import bee.compiler.AnnotationValidator;
+import bee.UserNotifier;
 import ezbean.I;
 import ezbean.Modules;
 import ezbean.model.ClassUtil;
@@ -48,6 +44,9 @@ public class BeeProcessor implements Processor {
 
     /** The processing environment. */
     private ProcessingEnvironment environment;
+
+    /** The message notifier. */
+    private Notifier notifier;
 
     /**
      * @see javax.annotation.processing.Processor#getSupportedOptions()
@@ -79,6 +78,7 @@ public class BeeProcessor implements Processor {
     @Override
     public void init(ProcessingEnvironment environment) {
         this.environment = environment;
+        this.notifier = new Notifier(environment.getMessager());
 
         I.load(ClassUtil.getArchive(BeeProcessor.class));
     }
@@ -89,31 +89,15 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
-        Messager messager = environment.getMessager();
-
         for (TypeElement annotationType : annotations) {
             for (Element element : round.getElementsAnnotatedWith(annotationType)) {
-                Class annotatedClass = Modules.load(element.toString());
                 Class annotationClass = Modules.load(annotationType.toString());
-                Annotation annotation = element.getAnnotation(annotationClass);
                 AnnotationValidator validator = I.find(AnnotationValidator.class, annotationClass);
 
-                Filer filer = environment.getFiler();
-                try {
-                    FileObject file = filer.createClassFile(annotatedClass.getName());
-                    Path path = Paths.get(file.toUri());
-                    System.out.println(path);
-                    Files.createDirectories(path.getParent());
-                    Files.createFile(path);
-                    System.out.println(Files.size(path));
-                } catch (IOException e) {
-                    throw I.quiet(e);
-                }
-
                 if (validator != null) {
-                    validator.validate(annotation, annotatedClass, null);
+                    notifier.element = element;
+                    validator.validate(element.getAnnotation(annotationClass), notifier);
                 }
-
             }
         }
         return true;
@@ -127,5 +111,54 @@ public class BeeProcessor implements Processor {
     @Override
     public Iterable<? extends Completion> getCompletions(Element element, AnnotationMirror annotation, ExecutableElement member, String userText) {
         return Collections.emptyList();
+    }
+
+    /**
+     * @version 2011/03/23 17:02:50
+     */
+    private static class Notifier implements UserNotifier {
+
+        /** The actual notifier. */
+        private Messager notifier;
+
+        /** The current processing element. */
+        private Element element;
+
+        /** The current processing annotation. */
+        private AnnotationMirror annotation;
+
+        /** The current processing annotation value. */
+        private AnnotationValue value;
+
+        /**
+         * Private constructor.
+         */
+        private Notifier(Messager notifier) {
+            this.notifier = notifier;
+        }
+
+        /**
+         * @see bee.UserNotifier#talk(java.lang.String, java.lang.Object[])
+         */
+        @Override
+        public void talk(String message, Object... params) {
+            notifier.printMessage(NOTE, String.format(message, params), element);
+        }
+
+        /**
+         * @see bee.UserNotifier#warn(java.lang.String, java.lang.Object[])
+         */
+        @Override
+        public void warn(String message, Object... params) {
+            notifier.printMessage(WARNING, String.format(message, params), element);
+        }
+
+        /**
+         * @see bee.UserNotifier#error(java.lang.String, java.lang.Object[])
+         */
+        @Override
+        public void error(String message, Object... params) {
+            notifier.printMessage(ERROR, String.format(message, params), element);
+        }
     }
 }

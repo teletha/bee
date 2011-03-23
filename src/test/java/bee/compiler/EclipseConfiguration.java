@@ -18,6 +18,8 @@ package bee.compiler;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import javax.annotation.Resource;
+
 import bee.task.Jar;
 import ezbean.I;
 import ezbean.xml.XMLWriter;
@@ -25,6 +27,7 @@ import ezbean.xml.XMLWriter;
 /**
  * @version 2011/03/15 17:47:48
  */
+@Resource
 public class EclipseConfiguration {
 
     public static void main(String[] args) throws Exception {

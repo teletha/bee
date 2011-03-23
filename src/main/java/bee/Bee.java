@@ -16,11 +16,12 @@
 package bee;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map.Entry;
 
-import bee.ui.UserInterface;
 import ezbean.ClassLoadListener;
 import ezbean.I;
 import ezbean.Manageable;
@@ -108,10 +109,7 @@ public class Bee implements ClassLoadListener<Project> {
      * @return
      */
     public static final Project createProject(String home, UserInterface ui) {
-        if (home == null || home.length() == 0) {
-            home = ".";
-        }
-        return createProject(Paths.get(home), ui);
+        return createProject(home == null ? null : Paths.get(home), ui);
     }
 
     /**
@@ -124,7 +122,7 @@ public class Bee implements ClassLoadListener<Project> {
      * @return
      */
     public static final Project createProject(File home, UserInterface ui) {
-        return createProject(home.toPath(), ui);
+        return createProject(home == null ? null : home.toPath(), ui);
     }
 
     /**
@@ -137,6 +135,26 @@ public class Bee implements ClassLoadListener<Project> {
      * @return
      */
     public static final Project createProject(Path home, UserInterface ui) {
+        // Use current directory if user doesn't specify.
+        if (home == null) {
+            home = I.locate("");
+        }
+
+        // We need absolute path.
+        home = home.toAbsolutePath();
+
+        // We need present directory path.
+        if (Files.notExists(home)) {
+            try {
+                Files.createDirectories(home);
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        } else if (!Files.isDirectory(home)) {
+            home = home.getParent();
+        }
+
+        // validate user interface
         if (ui == null) {
             ui = new CommandlineUserInterface();
         }
@@ -145,20 +163,10 @@ public class Bee implements ClassLoadListener<Project> {
         Path sourceFile = home.resolve("src/project/Project.java");
         Path classFile = home.resolve("target/project-classes/Project.class");
 
-        if (sourceFile.notExists()) {
+        if (Files.notExists(sourceFile)) {
             // Generate new project.
             String gropuId = ui.ask("Project Name");
-            String artifactId = null;
-
-            int index = gropuId.lastIndexOf('.');
-
-            if (index == -1) {
-                artifactId = gropuId;
-            } else {
-                artifactId = gropuId.substring(index + 1);
-            }
-            artifactId = ui.ask("Artifact Name", artifactId);
-
+            String artifactId = ui.ask("Artifact Name", Utility.getExtension(gropuId));
             String version = ui.ask("Initial version number", "0.1");
 
             ui.talk("Group : %s", gropuId);
@@ -166,12 +174,12 @@ public class Bee implements ClassLoadListener<Project> {
             ui.talk("Version : %s", version);
         }
 
-        if (classFile.notExists()) {
+        if (Files.notExists(classFile)) {
             System.out.println("not");
         }
 
         // load project classes
-        I.load(new File(classFile.getParent().toUri()));
+        I.load(classFile.getParent());
 
         return null;
     }
@@ -185,5 +193,20 @@ public class Bee implements ClassLoadListener<Project> {
      */
     public static void main(String[] args) {
         createProject("", null);
+    }
+
+    /**
+     * @version 2011/03/23 19:08:33
+     */
+    private static class Conversation {
+
+        @Question()
+        public void one(String answer) {
+
+        }
+    }
+
+    private static @interface Question {
+
     }
 }

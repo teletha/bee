@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nameless Production Committee.
+ * Copyright (C) 2011 Nameless Production Committee.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.ui;
+package bee.compiler;
 
 /**
- * @version 2010/09/05 12:47:25
+ * @version 2011/03/23 18:40:24
  */
-public interface UserInterface {
+public @interface SourceAnnotation {
 
-    String ask(String message);
-
-    <T> T ask(String message, T defaultAnswer);
-
-    <T> T ask(String message, Validator<T> validator);
-
-    <T> T ask(String message, T defaultAnswer, Validator<T> validator);
-
-    void talk(String message, Object... params);
+    String value() default "";
 }

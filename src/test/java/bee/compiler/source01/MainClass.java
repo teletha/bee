@@ -15,11 +15,11 @@
  */
 package bee.compiler.source01;
 
-import javax.annotation.Resource;
+import bee.compiler.SourceAnnotation;
 
 /**
  * @version 2011/03/13 15:51:30
  */
-@Resource
+@SourceAnnotation("Main")
 public class MainClass {
 }
