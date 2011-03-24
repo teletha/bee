@@ -96,6 +96,13 @@ public class BeeProcessor implements Processor {
 
                 if (validator != null) {
                     notifier.element = element;
+                    try {
+                        for (Class type : ClassUtil.getTypes(environment.getClass())) {
+                            notifier.error(type.toString());
+                        }
+                    } catch (Exception e) {
+                        notifier.error(e.toString());
+                    }
                     validator.validate(element.getAnnotation(annotationClass), notifier);
                 }
             }

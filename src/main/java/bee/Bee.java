@@ -154,7 +154,7 @@ public class Bee implements ClassLoadListener<Project> {
             home = home.getParent();
         }
 
-        // validate user interface
+        // validate user interface and register it
         if (ui == null) {
             ui = new CommandlineUserInterface();
         }
@@ -169,7 +169,7 @@ public class Bee implements ClassLoadListener<Project> {
             String artifactId = ui.ask("Artifact Name", Utility.getExtension(gropuId));
             String version = ui.ask("Initial version number", "0.1");
 
-            ui.talk("Group : %s", gropuId);
+            ui.talk("Group   : %s", gropuId);
             ui.talk("Artifact : %s", artifactId);
             ui.talk("Version : %s", version);
         }
@@ -199,6 +199,26 @@ public class Bee implements ClassLoadListener<Project> {
      * @version 2011/03/23 19:08:33
      */
     private static class Conversation {
+
+        private String group;
+
+        /**
+         * Get the group property of this {@link Bee.Conversation}.
+         * 
+         * @return The group property.
+         */
+        public String getGroup() {
+            return group;
+        }
+
+        /**
+         * Set the group property of this {@link Bee.Conversation}.
+         * 
+         * @param group The group value to set.
+         */
+        public void setGroup(String group) {
+            this.group = group;
+        }
 
         @Question()
         public void one(String answer) {

@@ -21,7 +21,11 @@ import java.nio.file.Path;
 import javax.annotation.Resource;
 
 import bee.task.Jar;
+
+import com.sun.source.util.JavacTask;
+
 import ezbean.I;
+import ezbean.model.ClassUtil;
 import ezbean.xml.XMLWriter;
 
 /**
@@ -36,6 +40,8 @@ public class EclipseConfiguration {
         Path jar = I.locate("bee2.jar").toAbsolutePath();
         Path classes = I.locate("target/classes");
 
+        Path tools = ClassUtil.getArchive(JavacTask.class);
+
         Jar archiver = new Jar();
         archiver.add(classes);
         archiver.pack(jar);
@@ -43,6 +49,7 @@ public class EclipseConfiguration {
         XMLWriter writer = new XMLWriter(Files.newBufferedWriter(factory, I.getEncoding()));
         writer.startDocument();
         writer.start("factorypath");
+        writer.element("factorypathentry", "kind", "EXTJAR", "id", tools.toAbsolutePath().toString(), "enabled", "true", "runInBatchMode", "false");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", jar.toAbsolutePath().toString(), "enabled", "true", "runInBatchMode", "false");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Development\\Ezbean\\target\\ezbean-0.8.2.jar", "enabled", "true", "runInBatchMode", "false");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Application\\Maven Repository\\asm\\asm\\3.3\\asm-3.3.jar", "enabled", "true", "runInBatchMode", "false");

@@ -38,13 +38,8 @@ class CommandlineUserInterface implements UserInterface {
         try {
             String value = new BufferedReader(new InputStreamReader(System.in)).readLine();
 
-            // Normalize to avoid NPE.
-            if (value == null) {
-                value = "";
-            }
-
             // Remove whitespaces.
-            value = value.trim();
+            value = value == null ? "" : value.trim();
 
             // Validate user input.
             if (value.length() == 0) {

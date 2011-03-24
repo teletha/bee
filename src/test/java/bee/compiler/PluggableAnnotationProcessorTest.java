@@ -30,6 +30,8 @@ import javax.lang.model.element.TypeElement;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.sun.source.util.Trees;
+
 /**
  * @version 2011/03/22 10:03:04
  */
@@ -85,6 +87,7 @@ public class PluggableAnnotationProcessorTest {
         @Override
         public synchronized void init(ProcessingEnvironment environment) {
             initialized = instance = true;
+            System.out.println(Trees.instance(environment));
         }
 
         /**
@@ -92,6 +95,7 @@ public class PluggableAnnotationProcessorTest {
          */
         @Override
         public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment environment) {
+
             return true;
         }
     }

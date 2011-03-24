@@ -13,17 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler.source01;
+package bee.compiler;
 
-import bee.compiler.SourceAnnotation;
+import javax.annotation.Resource;
+
+import bee.UserNotifier;
 
 /**
- * @version 2011/03/13 15:51:30
+ * @version 2011/03/24 18:53:17
  */
-@SourceAnnotation("Main")
-public class MainClass {
+public class AAAAA implements AnnotationValidator<Resource> {
 
-    @SourceAnnotation("Method")
-    public void method(String param) {
+    /**
+     * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
+     *      bee.UserNotifier)
+     */
+    @Override
+    public void validate(Resource annotation, UserNotifier notifier) {
     }
+
 }
