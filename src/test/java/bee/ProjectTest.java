@@ -13,23 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler;
+package bee;
 
-import javax.annotation.Resource;
-
-import bee.UserNotifier;
+import org.junit.Test;
 
 /**
- * @version 2011/03/24 18:53:17
+ * @version 2011/06/10 15:41:16
  */
-public class AAAAA implements AnnotationValidator<Resource> {
+public class ProjectTest {
 
-    /**
-     * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
-     *      AST, bee.UserNotifier)
-     */
-    @Override
-    public void validate(Resource annotation, AST ast, UserNotifier notifier) {
+    @Test
+    public void project() throws Exception {
+        Project project = new PrivateProject("p01");
+        assert project.getArtifactId().equals("p01");
+        assert project.getGroupId().equals("projects");
     }
-
 }

@@ -2,7 +2,7 @@
  * Copyright (C) 2010 Nameless Production Committee.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
+ * you may not use this Path except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *      http://www.apache.org/licenses/LICENSE-2.0
@@ -15,8 +15,10 @@
  */
 package bee;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
+
+import javax.lang.model.SourceVersion;
 
 import ezbean.I;
 import ezbean.Manageable;
@@ -27,41 +29,41 @@ import ezbean.Manageable;
 @Manageable(lifestyle = ProjectBuildProcess.class)
 public abstract class Project {
 
-    /** The base directory. */
-    public File base;
+    /** The root directory. */
+    public Path root;
+
+    /** The source directory. */
+    public Path source;
 
     /** The target directory. */
-    public File target;
+    public Path target;
 
     /** The source directory. */
-    public File source;
-
-    /** The source directory. */
-    public List<File> sources;
+    public List<Path> sources;
 
     /** The source class directory. */
-    public File sourceClasses;
+    public Path sourceClasses;
 
     /** The test directory. */
-    public List<File> tests;
+    public List<Path> tests;
 
     /** The test class directory. */
-    public File testClasses;
+    public Path testClasses;
 
     /** The project directory. */
-    public List<File> projects;
+    public List<Path> projects;
 
     /** The project class directory. */
-    public File projectClasses;
+    public Path projectClasses;
 
     /** The group id. */
-    public String groupId;
+    private String groupId;
 
     /** The artifact id. */
-    public String artifactId;
+    private String artifactId;
 
     /** The version number. */
-    public Version version;
+    private Version version;
 
     /** The project name. */
     private String name;
@@ -80,6 +82,8 @@ public abstract class Project {
      * </p>
      */
     protected Project() {
+        System.out.println(I.make(UserInterface.class));
+
         // String artifactId = getClass().getSimpleName().toLowerCase().replace('_', '-');
         //
         // if (artifactId.endsWith("project")) {
@@ -90,27 +94,93 @@ public abstract class Project {
         // this.groupId = getClass().getPackage().getName().replace('_', '-');
         // this.version = new Version(getClass().getAnnotation(ProjectVersion.class));
         //
-        // File archive = ClassUtil.getArchive(getClass());
+        // Path archive = ClassUtil.getArchive(getClass());
         //
-        // isHost = archive.isFile();
-        // base = archive.isFile() ? new File("") : new File(archive, "../../");
-        // source = new File(base, "src");
-        // target = new File(base, "target");
+        // isHost = archive.isPath();
+        // base = archive.isPath() ? new Path("") : new Path(archive, "../../");
+        // source = new Path(base, "src");
+        // target = new Path(base, "target");
         //
-        // // source files
-        // sources = Collections.unmodifiableList(Arrays.asList(new File(source,
-        // "main").listFiles(I.make(DirectoryFilter.class))));
-        // sourceClasses = new File(target, "classes");
+        // // source Paths
+        // sources = Collections.unmodifiableList(Arrays.asList(new Path(source,
+        // "main").listPaths(I.make(DirectoryFilter.class))));
+        // sourceClasses = new Path(target, "classes");
         //
-        // // test files
-        // tests = Collections.unmodifiableList(Arrays.asList(new File(source,
-        // "test").listFiles(I.make(DirectoryFilter.class))));
-        // testClasses = new File(target, "test-classes");
+        // // test Paths
+        // tests = Collections.unmodifiableList(Arrays.asList(new Path(source,
+        // "test").listPaths(I.make(DirectoryFilter.class))));
+        // testClasses = new Path(target, "test-classes");
         //
-        // // project files
-        // projects = Collections.unmodifiableList(Arrays.asList(new File(source,
-        // "project").listFiles(I.make(DirectoryFilter.class))));
-        // projectClasses = new File(target, "project-classes");
+        // // project Paths
+        // projects = Collections.unmodifiableList(Arrays.asList(new Path(source,
+        // "project").listPaths(I.make(DirectoryFilter.class))));
+        // projectClasses = new Path(target, "project-classes");
+    }
+
+    /**
+     * @return
+     */
+    Path findProjectSouce() {
+        return null;
+    }
+
+    /**
+     * Get the groupId property of this {@link Project}.
+     * 
+     * @return The groupId property.
+     */
+    public String getGroupId() {
+        return groupId;
+    }
+
+    /**
+     * Set the groupId property of this {@link Project}.
+     * 
+     * @param groupId The groupId value to set.
+     */
+    void setGroupId(String groupId) {
+        for (String part : groupId.split("\\.")) {
+            if (SourceVersion.isKeyword(part)) {
+                throw new IllegalArgumentException("Group Id contains Java keyword [" + part + "]");
+            }
+        }
+        this.groupId = groupId;
+    }
+
+    /**
+     * Get the artifactId property of this {@link Project}.
+     * 
+     * @return The artifactId property.
+     */
+    public String getArtifactId() {
+        return artifactId;
+    }
+
+    /**
+     * Set the artifactId property of this {@link Project}.
+     * 
+     * @param artifactId The artifactId value to set.
+     */
+    void setArtifactId(String artifactId) {
+        this.artifactId = artifactId;
+    }
+
+    /**
+     * Get the version property of this {@link Project}.
+     * 
+     * @return The version property.
+     */
+    public Version getVersion() {
+        return version;
+    }
+
+    /**
+     * Set the version property of this {@link Project}.
+     * 
+     * @param version The version value to set.
+     */
+    void setVersion(Version version) {
+        this.version = version;
     }
 
     public final <T extends Task> T createTask(Class<T> task) {
@@ -125,16 +195,16 @@ public abstract class Project {
      * @param directoryPaths
      */
     protected final void addSource(String... directoryPaths) {
-        File[] files = new File[directoryPaths.length];
+        Path[] Paths = new Path[directoryPaths.length];
 
-        for (int i = 0; i < files.length; i++) {
-            files[i] = I.locate(directoryPaths[i]);
+        for (int i = 0; i < Paths.length; i++) {
+            Paths[i] = I.locate(directoryPaths[i]);
         }
 
-        addSource(files);
+        addSource(Paths);
     }
 
-    protected void addSource(File... directories) {
+    protected void addSource(Path... directories) {
         checkInitialization();
     }
 
@@ -142,7 +212,7 @@ public abstract class Project {
         checkInitialization();
     }
 
-    protected void addTest(File... directories) {
+    protected void addTest(Path... directories) {
         checkInitialization();
     }
 
@@ -150,7 +220,7 @@ public abstract class Project {
         checkInitialization();
     }
 
-    protected void setTestOutput(File directory) {
+    protected void setTestOutput(Path directory) {
         checkInitialization();
     }
 

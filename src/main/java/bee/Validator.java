@@ -19,4 +19,6 @@ package bee;
  * @version 2011/03/23 16:59:45
  */
 public interface Validator<T> {
+
+    void validate(T value);
 }

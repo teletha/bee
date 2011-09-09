@@ -31,10 +31,17 @@ import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.util.Elements;
 
 import bee.UserNotifier;
+
+import com.sun.source.tree.ClassTree;
+import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.VariableTree;
+import com.sun.source.util.TreePathScanner;
+import com.sun.source.util.Trees;
+
 import ezbean.I;
-import ezbean.Modules;
 import ezbean.model.ClassUtil;
 
 /**
@@ -47,6 +54,12 @@ public class BeeProcessor implements Processor {
 
     /** The message notifier. */
     private Notifier notifier;
+
+    /** The abstract syntax tree. */
+    private Trees tree;
+
+    /** The utility. */
+    private Elements util;
 
     /**
      * @see javax.annotation.processing.Processor#getSupportedOptions()
@@ -79,6 +92,8 @@ public class BeeProcessor implements Processor {
     public void init(ProcessingEnvironment environment) {
         this.environment = environment;
         this.notifier = new Notifier(environment.getMessager());
+        this.tree = Trees.instance(environment);
+        this.util = environment.getElementUtils();
 
         I.load(ClassUtil.getArchive(BeeProcessor.class));
     }
@@ -89,9 +104,15 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
+        ASTScanner scanner = new ASTScanner();
+
+        for (Element element : round.getRootElements()) {
+            scanner.scan(tree.getPath(element), tree);
+        }
+
         for (TypeElement annotationType : annotations) {
             for (Element element : round.getElementsAnnotatedWith(annotationType)) {
-                Class annotationClass = Modules.load(annotationType.toString());
+                Class annotationClass = I.load(annotationType.toString());
                 AnnotationValidator validator = I.find(AnnotationValidator.class, annotationClass);
 
                 if (validator != null) {
@@ -103,7 +124,7 @@ public class BeeProcessor implements Processor {
                     } catch (Exception e) {
                         notifier.error(e.toString());
                     }
-                    validator.validate(element.getAnnotation(annotationClass), notifier);
+                    validator.validate(element.getAnnotation(annotationClass), new AST(element, util), notifier);
                 }
             }
         }
@@ -118,6 +139,40 @@ public class BeeProcessor implements Processor {
     @Override
     public Iterable<? extends Completion> getCompletions(Element element, AnnotationMirror annotation, ExecutableElement member, String userText) {
         return Collections.emptyList();
+    }
+
+    /**
+     * @version 2011/09/08 11:08:25
+     */
+    private static class ASTScanner extends TreePathScanner<Object, Trees> {
+
+        /**
+         * @see com.sun.source.util.TreeScanner#visitClass(com.sun.source.tree.ClassTree,
+         *      java.lang.Object)
+         */
+        @Override
+        public Object visitClass(ClassTree classTree, Trees trees) {
+            System.out.println("class   " + classTree);
+            return super.visitClass(classTree, trees);
+        }
+
+        /**
+         * @see com.sun.source.util.TreeScanner#visitMethod(com.sun.source.tree.MethodTree,
+         *      java.lang.Object)
+         */
+        @Override
+        public Object visitMethod(MethodTree arg0, Trees arg1) {
+            return super.visitMethod(arg0, arg1);
+        }
+
+        /**
+         * @see com.sun.source.util.TreeScanner#visitVariable(com.sun.source.tree.VariableTree,
+         *      java.lang.Object)
+         */
+        @Override
+        public Object visitVariable(VariableTree arg0, Trees arg1) {
+            return super.visitVariable(arg0, arg1);
+        }
     }
 
     /**

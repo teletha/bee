@@ -31,7 +31,8 @@ public interface AnnotationValidator<A extends Annotation> extends Extensible {
      * </p>
      * 
      * @param annotation An target annotation to validate.
+     * @param ast An annotated source tree.
      * @param notifier An error messenger.
      */
-    void validate(A annotation, UserNotifier notifier);
+    void validate(A annotation, AST ast, UserNotifier notifier);
 }

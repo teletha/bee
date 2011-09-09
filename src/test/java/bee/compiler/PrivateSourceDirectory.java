@@ -42,8 +42,8 @@ public class PrivateSourceDirectory extends CleanRoom {
      * @param clazz
      */
     public PrivateSourceDirectory(String type) {
-        super(I.locate("src/test/java", getCaller().getPackage().getName().replace('.', '/'), type).toAbsolutePath());
-
+        super(I.locate("src/test/java/" + getCaller().getPackage().getName().replace('.', '/') + "/" + type)
+                .toAbsolutePath());
         this.input = root;
         this.output = locateDirectory("out");
         this.packageName = getCaller().getPackage().getName().replace('.', '/') + '/' + type;

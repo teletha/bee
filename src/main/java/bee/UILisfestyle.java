@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler;
+package bee;
 
-import javax.annotation.Resource;
-
-import bee.UserNotifier;
+import ezbean.Lifestyle;
 
 /**
- * @version 2011/03/24 18:53:17
+ * @version 2011/07/11 16:58:39
  */
-public class AAAAA implements AnnotationValidator<Resource> {
+public class UILisfestyle implements Lifestyle<UserInterface> {
+
+    static final ThreadLocal<UserInterface> local = new ThreadLocal();
 
     /**
-     * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
-     *      AST, bee.UserNotifier)
+     * @see ezbean.Lifestyle#resolve()
      */
     @Override
-    public void validate(Resource annotation, AST ast, UserNotifier notifier) {
+    public UserInterface resolve() {
+        return local.get();
     }
 
 }

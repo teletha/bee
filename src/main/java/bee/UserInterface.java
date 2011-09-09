@@ -84,4 +84,14 @@ public interface UserInterface extends UserNotifier {
      * @return An answer.
      */
     <T> T ask(String question, T defaultAnswer, Validator<T> validator);
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her answer.
+     * </p>
+     * 
+     * @param question Your question class.
+     * @return An answer.
+     */
+    <T> T ask(Class<T> question);
 }

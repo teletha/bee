@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nameless Production Committee.
+ * Copyright (C) 2011 Nameless Production Committee.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,10 @@
  */
 package bee;
 
+
 /**
- * @version 2010/05/20 18:47:39
+ * @version 2011/06/08 13:43:08
  */
-public class MavenProject {
-
-    /**
-     * 
-     */
-    public MavenProject() {
-
-    }
+public class Conversation {
 
 }

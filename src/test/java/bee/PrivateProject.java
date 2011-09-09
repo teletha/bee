@@ -13,23 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler;
-
-import javax.annotation.Resource;
-
-import bee.UserNotifier;
+package bee;
 
 /**
- * @version 2011/03/24 18:53:17
+ * @version 2011/06/10 15:41:30
  */
-public class AAAAA implements AnnotationValidator<Resource> {
+public class PrivateProject extends Project {
 
     /**
-     * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
-     *      AST, bee.UserNotifier)
+     * 
      */
-    @Override
-    public void validate(Resource annotation, AST ast, UserNotifier notifier) {
+    public PrivateProject(String name) {
     }
-
 }

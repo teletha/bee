@@ -36,12 +36,6 @@
       <version>4.8.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.seasar.aptina</groupId>
-      <artifactId>aptina-unit</artifactId>
-      <version>1.0.0</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>

@@ -18,10 +18,13 @@ package bee;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 
 import ezbean.I;
+import ezbean.model.ClassUtil;
 import ezbean.model.Codec;
 import ezbean.model.Model;
+import ezbean.model.Property;
 
 /**
  * @version 2010/11/23 23:24:52
@@ -91,8 +94,41 @@ class CommandlineUserInterface implements UserInterface {
      * @see bee.UserInterface#ask(java.lang.String, bee.Validator)
      */
     @Override
-    public <T> T ask(String question, Validator<T> validator) {
-        return null;
+    public <T> T ask(String message, Validator<T> validator) {
+        System.out.print(message.concat(" : "));
+
+        try {
+            String value = new BufferedReader(new InputStreamReader(System.in)).readLine();
+
+            // Remove whitespaces.
+            value = value == null ? "" : value.trim();
+
+            // Validate user input.
+            if (value.length() == 0) {
+                talk("Your input is empty, plese retry.");
+
+                // Retry!
+                return ask(message, validator);
+            }
+
+            // Convert user input.
+            T input = (T) I.transform(value, ClassUtil.getParameter(validator.getClass(), Validator.class)[0]);
+
+            // Validate user input in detail.
+            try {
+                validator.validate(input);
+            } catch (Exception e) {
+                talk("Your input is invlid because " + e.getLocalizedMessage() + ", plese retry.");
+
+                // Retry!
+                return ask(message, validator);
+            }
+
+            // API definition
+            return input;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -125,5 +161,25 @@ class CommandlineUserInterface implements UserInterface {
     @Override
     public void error(String message, Object... params) {
         System.out.format(message.concat("%n"), params);
+    }
+
+    /**
+     * @see bee.UserInterface#ask(java.lang.Class)
+     */
+    @Override
+    public <T> T ask(Class<T> question) {
+        T t = I.make(question);
+        Model<T> model = Model.load(question);
+
+        for (Property property : model.properties) {
+            try {
+                Field field = question.getDeclaredField(property.name);
+
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+
+        return null;
     }
 }

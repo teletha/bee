@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map.Entry;
 
-import ezbean.ClassLoadListener;
+import ezbean.ClassListener;
 import ezbean.I;
 import ezbean.Manageable;
 import ezbean.Singleton;
@@ -32,7 +32,7 @@ import ezbean.model.ClassUtil;
  * @version 2010/04/02 3:44:35
  */
 @Manageable(lifestyle = Singleton.class)
-public class Bee implements ClassLoadListener<Project> {
+public class Bee implements ClassListener<Project> {
 
     /** The executable file for Java. */
     public static final File Java;
@@ -121,19 +121,6 @@ public class Bee implements ClassLoadListener<Project> {
      * @param ui
      * @return
      */
-    public static final Project createProject(File home, UserInterface ui) {
-        return createProject(home == null ? null : home.toPath(), ui);
-    }
-
-    /**
-     * <p>
-     * Create project.
-     * </p>
-     * 
-     * @param home
-     * @param ui
-     * @return
-     */
     public static final Project createProject(Path home, UserInterface ui) {
         // Use current directory if user doesn't specify.
         if (home == null) {
@@ -158,28 +145,9 @@ public class Bee implements ClassLoadListener<Project> {
         if (ui == null) {
             ui = new CommandlineUserInterface();
         }
+        UILisfestyle.local.set(ui);
 
         // search Project from the specified file system
-        Path sourceFile = home.resolve("src/project/Project.java");
-        Path classFile = home.resolve("target/project-classes/Project.class");
-
-        if (Files.notExists(sourceFile)) {
-            // Generate new project.
-            String gropuId = ui.ask("Project Name");
-            String artifactId = ui.ask("Artifact Name", Utility.getExtension(gropuId));
-            String version = ui.ask("Initial version number", "0.1");
-
-            ui.talk("Group   : %s", gropuId);
-            ui.talk("Artifact : %s", artifactId);
-            ui.talk("Version : %s", version);
-        }
-
-        if (Files.notExists(classFile)) {
-            System.out.println("not");
-        }
-
-        // load project classes
-        I.load(classFile.getParent());
 
         return null;
     }
@@ -195,41 +163,4 @@ public class Bee implements ClassLoadListener<Project> {
         createProject("", null);
     }
 
-    /**
-     * @version 2011/03/23 19:08:33
-     */
-    private static class Conversation {
-
-        private String group;
-
-        /**
-         * Get the group property of this {@link Bee.Conversation}.
-         * 
-         * @return The group property.
-         */
-        public String getGroup() {
-            return group;
-        }
-
-        /**
-         * Set the group property of this {@link Bee.Conversation}.
-         * 
-         * @param group The group value to set.
-         */
-        public void setGroup(String group) {
-            this.group = group;
-        }
-
-        @Question()
-        public void one(String answer) {
-
-        }
-    }
-
-    /**
-     * @version 2011/03/23 19:35:13
-     */
-    private static @interface Question {
-
-    }
 }
