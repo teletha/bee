@@ -124,7 +124,7 @@ public class BeeProcessor implements Processor {
                     } catch (Exception e) {
                         notifier.error(e.toString());
                     }
-                    validator.validate(element.getAnnotation(annotationClass), new AST(element, util), notifier);
+                    validator.validate(element.getAnnotation(annotationClass), new Source(element, util), notifier);
                 }
             }
         }

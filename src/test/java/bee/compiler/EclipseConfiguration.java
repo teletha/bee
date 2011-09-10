@@ -34,7 +34,7 @@ import ezbean.xml.XMLWriter;
 @Resource
 public class EclipseConfiguration {
 
-    public static void main(String[] args) throws Exception {
+    public static void mains(String[] args) throws Exception {
         Path factory = I.locate(".factorypath");
 
         Path jar = I.locate("bee2.jar").toAbsolutePath();
@@ -50,8 +50,9 @@ public class EclipseConfiguration {
         writer.startDocument();
         writer.start("factorypath");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", tools.toAbsolutePath().toString(), "enabled", "true", "runInBatchMode", "false");
-        writer.element("factorypathentry", "kind", "EXTJAR", "id", jar.toAbsolutePath().toString(), "enabled", "true", "runInBatchMode", "false");
-        writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Development\\Ezbean\\target\\ezbean-0.8.2.jar", "enabled", "true", "runInBatchMode", "false");
+        // writer.element("factorypathentry", "kind", "EXTJAR", "id",
+        // jar.toAbsolutePath().toString(), "enabled", "true", "runInBatchMode", "false");
+        writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Development\\Ezbean\\target\\ezbean-0.8.3.jar", "enabled", "true", "runInBatchMode", "false");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", "F:\\Application\\Maven Repository\\asm\\asm\\3.3\\asm-3.3.jar", "enabled", "true", "runInBatchMode", "false");
         writer.end();
         writer.endDocument();

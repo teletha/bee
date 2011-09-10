@@ -21,7 +21,7 @@ import javax.lang.model.util.Elements;
 /**
  * @version 2011/09/08 11:56:07
  */
-public class AST {
+public class Source {
 
     /** The actual tree. */
     private final Element element;
@@ -32,7 +32,7 @@ public class AST {
     /**
      * @param element
      */
-    AST(Element element, Elements util) {
+    Source(Element element, Elements util) {
         this.element = element;
         this.util = util;
     }
@@ -52,11 +52,11 @@ public class AST {
      * concatenated together (including line terminators) and returned.
      * </p>
      * 
-     * @return A documentation comment of the source code, or <code>null</code> if there is none
+     * @return A documentation comment of the source code, or empty string if there is none
      */
     public String getDocument() {
         String doc = util.getDocComment(element);
 
-        return doc == null ? null : doc.trim();
+        return doc == null ? "" : doc.trim();
     }
 }

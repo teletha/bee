@@ -53,14 +53,13 @@ public class AnnotationValidatorTest {
         private static boolean invoked = false;
 
         /**
-         * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation, AST,
-         *      bee.UserNotifier)
+         * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
+         *      Source, bee.UserNotifier)
          */
         @Override
-        public void validate(SourceAnnotation annotation, AST ast, UserNotifier notifier) {
+        public void validate(SourceAnnotation annotation, Source code, UserNotifier notifier) {
             assert annotation != null;
             assert notifier != null;
-            System.out.println(ast.getDocument());
 
             invoked = true;
         }

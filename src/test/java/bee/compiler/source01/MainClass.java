@@ -18,12 +18,33 @@ package bee.compiler.source01;
 import bee.compiler.SourceAnnotation;
 
 /**
+ * Test Class
+ * 
  * @version 2011/03/13 15:51:30
  */
 @SourceAnnotation("Main")
 public class MainClass {
 
-    @SourceAnnotation("Method")
-    public void method(String param) {
+    /**
+     * Constructor
+     */
+    @SourceAnnotation
+    private MainClass(Object parent) {
+    }
+
+    /**
+     * Method
+     * 
+     * @param message
+     */
+    @SourceAnnotation("Method1")
+    public void documented(String message) {
+    }
+
+    /*
+     * Non Javadoc
+     */
+    @SourceAnnotation("Method2")
+    public void not(String value, int type) {
     }
 }

@@ -26,10 +26,10 @@ public class AAAAA implements AnnotationValidator<Resource> {
 
     /**
      * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
-     *      AST, bee.UserNotifier)
+     *      Source, bee.UserNotifier)
      */
     @Override
-    public void validate(Resource annotation, AST ast, UserNotifier notifier) {
+    public void validate(Resource annotation, Source ast, UserNotifier notifier) {
     }
 
 }
