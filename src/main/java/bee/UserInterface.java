@@ -55,40 +55,6 @@ public interface UserInterface extends UserNotifier {
      * <p>
      * Ask user about your question and return his/her answer.
      * </p>
-     * <p>
-     * Validator validates a his/her awnser. If it is invalid, UserInterface will display reason of
-     * invalidity and continue to ask user.
-     * </p>
-     * 
-     * @param <T> Anwser type.
-     * @param question Your question message.
-     * @param validator A validator for anwser.
-     * @return An answer.
-     */
-    <T> T ask(String question, Validator<T> validator);
-
-    /**
-     * <p>
-     * Ask user about your question and return his/her answer.
-     * </p>
-     * <p>
-     * UserInterface can display a default answer and user can use it with simple action. Validator
-     * validates a his/her awnser. If it is invalid, UserInterface will display reason of invalidity
-     * and continue to ask user.
-     * </p>
-     * 
-     * @param <T> Anwser type.
-     * @param question Your question message.
-     * @param defaultAnswer A default anwser.
-     * @param validator A validator for anwser.
-     * @return An answer.
-     */
-    <T> T ask(String question, T defaultAnswer, Validator<T> validator);
-
-    /**
-     * <p>
-     * Ask user about your question and return his/her answer.
-     * </p>
      * 
      * @param question Your question class.
      * @return An answer.

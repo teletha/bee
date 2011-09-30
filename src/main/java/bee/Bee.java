@@ -143,11 +143,18 @@ public class Bee implements ClassListener<Project> {
 
         // validate user interface and register it
         if (ui == null) {
-            ui = new CommandlineUserInterface();
+            ui = new CommandLineUserInterface();
         }
-        UILisfestyle.local.set(ui);
+        UserInterfaceLisfestyle.local.set(ui);
 
-        // search Project from the specified file system
+        // search Project from the specified file systems
+        Path project = home.resolve("src/project/Project.java");
+
+        if (Files.exists(project)) {
+
+        } else {
+            System.out.println(ui.ask(ProjectQuestion.class));
+        }
 
         return null;
     }
@@ -163,4 +170,78 @@ public class Bee implements ClassListener<Project> {
         createProject("", null);
     }
 
+    protected static class ProjectQuestion {
+
+        @Question(message = "Your project name")
+        private String project;
+
+        @Question(message = "Your artifact name")
+        private String artifact;
+
+        @Question(message = "Your product version")
+        private String version;
+
+        /**
+         * Get the project property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @return The project property.
+         */
+        public String getProject() {
+            return project;
+        }
+
+        /**
+         * Set the project property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @param project The project value to set.
+         */
+        public void setProject(String project) {
+            this.project = project;
+        }
+
+        /**
+         * Get the artifact property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @return The artifact property.
+         */
+        public String getArtifact() {
+            return artifact;
+        }
+
+        /**
+         * Set the artifact property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @param artifact The artifact value to set.
+         */
+        public void setArtifact(String artifact) {
+            this.artifact = artifact;
+        }
+
+        /**
+         * Get the version property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @return The version property.
+         */
+        public String getVersion() {
+            return version;
+        }
+
+        /**
+         * Set the version property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @param version The version value to set.
+         */
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        /**
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            return "ProjectQuestion [project=" + project + ", artifact=" + artifact + ", version=" + version + "]";
+        }
+
+    }
 }

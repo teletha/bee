@@ -15,13 +15,25 @@
  */
 package bee;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * @version 2011/06/08 14:49:48
  */
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface Question {
 
-    boolean optional() default false;
-
-    String message() default "";
+    /**
+     * <p>
+     * Human readable question message.
+     * </p>
+     * 
+     * @return
+     */
+    String message();
 
 }

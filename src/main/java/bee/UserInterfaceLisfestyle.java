@@ -20,7 +20,7 @@ import ezbean.Lifestyle;
 /**
  * @version 2011/07/11 16:58:39
  */
-public class UILisfestyle implements Lifestyle<UserInterface> {
+public class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
 
     static final ThreadLocal<UserInterface> local = new ThreadLocal();
 
