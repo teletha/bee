@@ -17,8 +17,8 @@ package bee.compiler;
 
 import java.lang.annotation.Annotation;
 
+import kiss.Extensible;
 import bee.UserNotifier;
-import ezbean.Extensible;
 
 /**
  * @version 2011/03/23 16:56:19

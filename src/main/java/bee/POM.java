@@ -15,8 +15,8 @@
  */
 package bee;
 
-import ezbean.xml.Rule;
-import ezbean.xml.XMLScanner;
+import kiss.xml.Rule;
+import kiss.xml.XMLScanner;
 
 /**
  * @version 2010/05/20 18:05:07

@@ -26,7 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
-import ezunit.CleanRoom;
+import testament.CleanRoom;
 
 /**
  * @version 2010/09/19 13:08:00

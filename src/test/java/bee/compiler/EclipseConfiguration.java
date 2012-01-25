@@ -20,13 +20,12 @@ import java.nio.file.Path;
 
 import javax.annotation.Resource;
 
+import kiss.I;
+import kiss.model.ClassUtil;
+import kiss.xml.XMLWriter;
 import bee.task.Jar;
 
 import com.sun.source.util.JavacTask;
-
-import ezbean.I;
-import ezbean.model.ClassUtil;
-import ezbean.xml.XMLWriter;
 
 /**
  * @version 2011/03/15 17:47:48
@@ -46,7 +45,7 @@ public class EclipseConfiguration {
         archiver.add(classes);
         archiver.pack(jar);
 
-        XMLWriter writer = new XMLWriter(Files.newBufferedWriter(factory, I.getEncoding()));
+        XMLWriter writer = new XMLWriter(Files.newBufferedWriter(factory, I.$encoding));
         writer.startDocument();
         writer.start("factorypath");
         writer.element("factorypathentry", "kind", "EXTJAR", "id", tools.toAbsolutePath().toString(), "enabled", "true", "runInBatchMode", "false");

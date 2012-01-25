@@ -18,11 +18,12 @@ package bee;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
 
+import kiss.I;
+
 import org.junit.Rule;
 
-import ezbean.I;
-import ezunit.PrivateModule;
-import ezunit.ReusableRule;
+import testament.PrivateModule;
+import testament.ReusableRule;
 
 /**
  * @version 2010/11/19 22:51:09
@@ -56,7 +57,7 @@ public class DummyProject extends ReusableRule {
     }
 
     /**
-     * @see ezunit.ReusableRule#before(java.lang.reflect.Method)
+     * @see hub.ReusableRule#before(java.lang.reflect.Method)
      */
     @Override
     protected void before(Method method) throws Exception {

@@ -18,11 +18,10 @@ package bee;
 import java.io.File;
 import java.io.FileReader;
 
+import kiss.I;
+
 import org.junit.Test;
 import org.xml.sax.InputSource;
-
-
-import ezbean.I;
 
 /**
  * @version 2010/05/20 18:09:51

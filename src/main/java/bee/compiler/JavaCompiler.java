@@ -50,9 +50,9 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import kiss.I;
+import kiss.model.ClassUtil;
 import bee.trait.Iterables;
-import ezbean.I;
-import ezbean.model.ClassUtil;
 
 /**
  * @version 2010/12/19 10:20:21
@@ -354,7 +354,7 @@ public class JavaCompiler {
 
             // Invocation
             ErrorListener listener = new ErrorListener();
-            Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.getEncoding()));
+            Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.$encoding));
 
             CompilationTask task = compiler.getTask(null, manager, listener, options, null, manager.getJavaFileObjectsFromFiles(sources));
 

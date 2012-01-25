@@ -20,7 +20,7 @@
   <artifactId>bee</artifactId>
   <name>Bee</name>
   <version>0.1</version>
-  <description>Build system for Java.</description>
+  <description>Enhanced Build And Test System for Java.</description>
 
   <dependencies>
     <dependency>
@@ -31,10 +31,14 @@
       <systemPath>${java.home}/../lib/tools.jar</systemPath>
     </dependency>
     <dependency>
+      <groupId>npc</groupId>
+      <artifactId>sinobu</artifactId>
+      <version>0.9.1</version>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.9</version>
-      <scope>test</scope>
+      <version>4.10</version>
     </dependency>
   </dependencies>
 

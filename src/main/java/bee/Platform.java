@@ -20,7 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map.Entry;
 
-import ezbean.I;
+import kiss.I;
 
 /**
  * @version 2010/04/27 22:25:04

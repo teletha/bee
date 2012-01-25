@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import ezbean.Disposable;
-import ezbean.I;
+import kiss.Disposable;
+import kiss.I;
 
 /**
  * @version 2011/03/17 14:01:01

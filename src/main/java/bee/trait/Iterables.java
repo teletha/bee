@@ -17,7 +17,7 @@ package bee.trait;
 
 import java.util.Iterator;
 
-import ezbean.I;
+import kiss.I;
 
 /**
  * @version 2011/03/15 12:00:36

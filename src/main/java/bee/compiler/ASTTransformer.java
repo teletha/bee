@@ -17,7 +17,7 @@ package bee.compiler;
 
 import java.lang.annotation.Annotation;
 
-import ezbean.Extensible;
+import kiss.Extensible;
 
 /**
  * @version 2011/03/22 12:32:27

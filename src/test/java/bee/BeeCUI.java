@@ -15,23 +15,12 @@
  */
 package bee;
 
-import ezbean.Lifestyle;
-
 /**
- * @version 2010/09/26 8:09:04
+ * @version 2010/11/23 23:35:54
  */
-class ProjectBuildProcess<M> implements Lifestyle<M> {
+public class BeeCUI {
 
-    /** The actual storage. */
-    final InheritableThreadLocal<M> local = new InheritableThreadLocal();
-
-    /**
-     * @see ezbean.Lifestyle#resolve()
-     */
-    @Override
-    public M resolve() {
-        M object = local.get();
-
-        return object == null ? null : object;
+    public static void main(String[] args) {
+        Bee.createProject("", null);
     }
 }

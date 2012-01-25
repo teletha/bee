@@ -15,14 +15,14 @@
  */
 package bee.compiler;
 
-import static ezunit.Ezunit.*;
+import static testament.Ezunit.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import ezbean.I;
-import ezunit.CleanRoom;
+import kiss.I;
+import testament.CleanRoom;
 
 /**
  * @version 2011/03/13 15:53:47

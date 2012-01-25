@@ -22,11 +22,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map.Entry;
 
-import ezbean.ClassListener;
-import ezbean.I;
-import ezbean.Manageable;
-import ezbean.Singleton;
-import ezbean.model.ClassUtil;
+import javax.lang.model.SourceVersion;
+
+import kiss.ClassListener;
+import kiss.I;
+import kiss.Manageable;
+import kiss.Singleton;
+import kiss.model.ClassUtil;
+import bee.compiler.JavaCompiler;
 
 /**
  * @version 2010/04/02 3:44:35
@@ -148,12 +151,25 @@ public class Bee implements ClassListener<Project> {
         UserInterfaceLisfestyle.local.set(ui);
 
         // search Project from the specified file systems
-        Path project = home.resolve("src/project/Project.java");
+        Project project;
+        Path source = home.resolve("src/project/Project.java");
 
-        if (Files.exists(project)) {
-
+        if (Files.notExists(source)) {
+            project = ui.ask(Project.class);
         } else {
-            System.out.println(ui.ask(ProjectQuestion.class));
+            // compile Project source
+            Path output = I.locate("target/project-classes");
+
+            JavaCompiler compiler = new JavaCompiler();
+            compiler.addSourceDirectory(source.getParent());
+            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+            compiler.addClassPath(ClassUtil.getArchive(I.class));
+            compiler.setOutput(output);
+            compiler.compile();
+
+            // load compiled source
+            I.load(output);
+
         }
 
         return null;
@@ -170,13 +186,16 @@ public class Bee implements ClassListener<Project> {
         createProject("", null);
     }
 
+    /**
+     * @version 2011/09/30 16:12:02
+     */
     protected static class ProjectQuestion {
 
         @Question(message = "Your project name")
         private String project;
 
-        @Question(message = "Your artifact name")
-        private String artifact;
+        @Question(message = "Your product name")
+        private String product;
 
         @Question(message = "Your product version")
         private String version;
@@ -196,25 +215,34 @@ public class Bee implements ClassListener<Project> {
          * @param project The project value to set.
          */
         public void setProject(String project) {
+            for (String part : project.split("\\.")) {
+                if (SourceVersion.isKeyword(part)) {
+                    throw new IllegalArgumentException("Project Name contains Java keyword [ " + part + " ]");
+                }
+            }
             this.project = project;
+
+            if (product == null) {
+                this.product = project;
+            }
         }
 
         /**
-         * Get the artifact property of this {@link Bee.ProjectQuestion}.
+         * Get the product property of this {@link Bee.ProjectQuestion}.
          * 
-         * @return The artifact property.
+         * @return The product property.
          */
-        public String getArtifact() {
-            return artifact;
+        public String getProduct() {
+            return product;
         }
 
         /**
-         * Set the artifact property of this {@link Bee.ProjectQuestion}.
+         * Set the product property of this {@link Bee.ProjectQuestion}.
          * 
-         * @param artifact The artifact value to set.
+         * @param product The product value to set.
          */
-        public void setArtifact(String artifact) {
-            this.artifact = artifact;
+        public void setProduct(String product) {
+            this.product = product;
         }
 
         /**
@@ -240,8 +268,7 @@ public class Bee implements ClassListener<Project> {
          */
         @Override
         public String toString() {
-            return "ProjectQuestion [project=" + project + ", artifact=" + artifact + ", version=" + version + "]";
+            return "ProjectQuestion [project=" + project + ", artifact=" + product + ", version=" + version + "]";
         }
-
     }
 }

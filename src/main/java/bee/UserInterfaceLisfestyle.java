@@ -15,7 +15,7 @@
  */
 package bee;
 
-import ezbean.Lifestyle;
+import kiss.Lifestyle;
 
 /**
  * @version 2011/07/11 16:58:39

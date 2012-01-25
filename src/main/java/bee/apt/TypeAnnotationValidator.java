@@ -17,7 +17,7 @@ package bee.apt;
 
 import java.lang.annotation.Annotation;
 
-import ezbean.Extensible;
+import kiss.Extensible;
 
 /**
  * @version 2010/06/02 16:14:19

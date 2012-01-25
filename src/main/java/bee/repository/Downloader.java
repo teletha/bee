@@ -33,7 +33,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import ezbean.I;
+import kiss.I;
 
 /**
  * @version 2010/09/05 20:42:30
@@ -142,7 +142,7 @@ public class Downloader {
                     connection.disconnect();
                 }
             }
-
+            return null;
         }
 
         private void download(InputStream input, File out) {

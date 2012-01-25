@@ -18,8 +18,8 @@ package bee.compiler;
 import org.junit.Rule;
 import org.junit.Test;
 
+import testament.PrivateModule;
 import bee.UserNotifier;
-import ezunit.PrivateModule;
 
 /**
  * @version 2011/03/23 18:46:45
@@ -53,8 +53,8 @@ public class AnnotationValidatorTest {
         private static boolean invoked = false;
 
         /**
-         * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation,
-         *      Source, bee.UserNotifier)
+         * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation, Source,
+         *      bee.UserNotifier)
          */
         @Override
         public void validate(SourceAnnotation annotation, Source code, UserNotifier notifier) {

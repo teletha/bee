@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 
-import ezbean.I;
-import ezbean.model.Codec;
-import ezbean.model.Model;
-import ezbean.model.Property;
+import kiss.I;
+import kiss.model.Codec;
+import kiss.model.Model;
+import kiss.model.Property;
 
 /**
  * @version 2010/11/23 23:24:52
@@ -91,7 +91,7 @@ class CommandLineUserInterface implements UserInterface {
                 Codec<T> codec = I.find(Codec.class, defaultAnswer.getClass());
 
                 if (codec == null) {
-                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).getCodec();
+                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).codec;
                 }
 
                 return input.length() == 0 ? defaultAnswer : codec.decode(input);

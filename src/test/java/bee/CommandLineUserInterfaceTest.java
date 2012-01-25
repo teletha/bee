@@ -18,7 +18,7 @@ package bee;
 import org.junit.Rule;
 import org.junit.Test;
 
-import ezunit.CommandLineUser;
+import testament.CommandLineUser;
 
 /**
  * @version 2011/09/22 15:10:39

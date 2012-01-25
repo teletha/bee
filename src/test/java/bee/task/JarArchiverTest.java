@@ -23,7 +23,7 @@ import java.nio.file.Path;
 import org.junit.Rule;
 import org.junit.Test;
 
-import ezunit.CleanRoom;
+import testament.CleanRoom;
 
 /**
  * @version 2011/03/15 18:30:55

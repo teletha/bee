@@ -33,6 +33,8 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 
+import kiss.I;
+import kiss.model.ClassUtil;
 import bee.UserNotifier;
 
 import com.sun.source.tree.ClassTree;
@@ -40,9 +42,6 @@ import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
-
-import ezbean.I;
-import ezbean.model.ClassUtil;
 
 /**
  * @version 2010/04/23 16:09:16
@@ -110,25 +109,29 @@ public class BeeProcessor implements Processor {
             scanner.scan(tree.getPath(element), tree);
         }
 
-        for (TypeElement annotationType : annotations) {
-            for (Element element : round.getElementsAnnotatedWith(annotationType)) {
-                Class annotationClass = I.load(annotationType.toString());
-                AnnotationValidator validator = I.find(AnnotationValidator.class, annotationClass);
+        try {
+            for (TypeElement annotationType : annotations) {
+                for (Element element : round.getElementsAnnotatedWith(annotationType)) {
+                    Class annotationClass = Class.forName(annotationType.toString());
+                    AnnotationValidator validator = I.find(AnnotationValidator.class, annotationClass);
 
-                if (validator != null) {
-                    notifier.element = element;
-                    try {
-                        for (Class type : ClassUtil.getTypes(environment.getClass())) {
-                            notifier.error(type.toString());
+                    if (validator != null) {
+                        notifier.element = element;
+                        try {
+                            for (Class type : ClassUtil.getTypes(environment.getClass())) {
+                                notifier.error(type.toString());
+                            }
+                        } catch (Exception e) {
+                            notifier.error(e.toString());
                         }
-                    } catch (Exception e) {
-                        notifier.error(e.toString());
+                        validator.validate(element.getAnnotation(annotationClass), new Source(element, util), notifier);
                     }
-                    validator.validate(element.getAnnotation(annotationClass), new Source(element, util), notifier);
                 }
             }
+            return true;
+        } catch (ClassNotFoundException e) {
+            throw I.quiet(e);
         }
-        return true;
     }
 
     /**

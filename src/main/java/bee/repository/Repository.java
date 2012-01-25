@@ -28,7 +28,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
-import ezbean.I;
+import kiss.I;
 
 /**
  * @version 2010/09/05 20:52:29
