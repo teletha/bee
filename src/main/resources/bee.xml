@@ -1,0 +1,17 @@
+<ivysettings>
+  <settings defaultResolver="bee" />
+  <caches defaultCacheDir="${user.home}/.bee/cache" />
+  <resolvers>
+    <filesystem name="local">
+      <ivy pattern="${user.home}/.bee/honeycomb/[organisation]/[module]/ivy-[revision].xml" />
+      <artifact pattern="${user.home}/.bee/honeycomb/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]" />
+    </filesystem>
+    <chain name="bee" returnFirst="true">
+      <ibiblio name="central" m2compatible="true" />
+      <ibiblio name="java.net" root="http://download.java.net/maven/2" m2compatible="true" />
+      <ibiblio name="glassfish" root="http://download.java.net/maven/glassfish" m2compatible="true" />
+      <ibiblio name="jboss" root="http://repository.jboss.org/maven2" m2compatible="true" />
+      <ibiblio name="codehaus" root="http://repository.codehaus.org" m2compatible="true" />
+    </chain>
+  </resolvers>
+</ivysettings>
