@@ -15,8 +15,15 @@
  */
 package bee.compiler;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
 import javax.lang.model.util.Elements;
+import javax.tools.StandardLocation;
+
+import kiss.I;
 
 /**
  * @version 2011/09/08 11:56:07
@@ -29,12 +36,26 @@ public class Source {
     /** The element util. */
     private final Elements util;
 
+    /** The file util. */
+    private final Filer filer;
+
     /**
      * @param element
      */
-    Source(Element element, Elements util) {
+    Source(Element element, Elements util, Filer filer) {
         this.element = element;
         this.util = util;
+        this.filer = filer;
+    }
+
+    public Path getSourceFile() {
+        try {
+            System.out.println(filer.getResource(StandardLocation.CLASS_OUTPUT, "", util.getPackageOf(element)
+                    .getQualifiedName()).toUri());
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+        return null;
     }
 
     /**
