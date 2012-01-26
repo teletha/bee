@@ -15,19 +15,27 @@
  */
 package bee;
 
+import static bee.Bee.*;
+
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import javax.swing.UIManager;
+
+import kiss.I;
+import kiss.model.ClassUtil;
+import bee.task.Jar;
 
 /**
  * @version 2011/03/23 18:55:51
  */
-public class Launcher {
+public class BeeInstaller {
 
     // initialization
     static {
@@ -44,7 +52,37 @@ public class Launcher {
      * </p>
      */
     public static final void main(String... args) {
-        if (Files.exists(Platform.Bee)) {
+        try {
+            Path bee = JavaHome.resolve("lib/bee.jar");
+            Path current = ClassUtil.getArchive(BeeInstaller.class);
+
+            if (Files.isDirectory(current)) {
+                // The current directory is class files store.
+                // We should pack them as jar file.
+                // This process is mainly used by Bee developers.
+                Jar jar = new Jar();
+                jar.add(current);
+
+                for (String location : System.getProperty("java.class.path").split(File.pathSeparator)) {
+                    Path path = I.locate(location);
+
+                    if (Files.isRegularFile(path) && !path.startsWith(JavaHome)) {
+                        jar.add(path);
+                    }
+                }
+
+                jar.pack(bee);
+            } else if (Files.getLastModifiedTime(bee).toMillis() != Files.getLastModifiedTime(current).toMillis()) {
+                // The current bee.jar is newer.
+                // We should copy it to JDK directory.
+                // This process is mainly used by Bee users while install phase.
+                I.copy(current, bee);
+            }
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+
+        if (Files.exists(Bee)) {
             launch(args);
         } else {
             install();
@@ -57,7 +95,20 @@ public class Launcher {
      * </p>
      */
     public static final void install() {
-        System.out.println(Platform.Java);
+        Path destination = JavaHome.resolveSibling("lib/bee.jar");
+        Path current = ClassUtil.getArchive(BeeInstaller.class);
+
+        if (Files.isDirectory(current)) {
+            // The current directory is class files store.
+            // We should pack them as jar file.
+            // This process is mainly used by Bee developers.
+            Jar jar = new Jar();
+            jar.add(current);
+            jar.pack(destination);
+        } else {
+            // The current jar is
+        }
+
     }
 
     /**
@@ -66,7 +117,7 @@ public class Launcher {
      * </p>
      */
     public static final void launch(String... command) {
-        System.out.println(Platform.Bee);
+        System.out.println("launch ");
     }
 
     /**

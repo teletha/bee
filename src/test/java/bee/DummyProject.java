@@ -52,7 +52,7 @@ public class DummyProject extends ReusableRule {
         Path root = testcaseDirectory;
         Path source = root.resolve("source");
         Path test = root.resolve("test");
-
+        System.out.println(root.relativize(project).toString());
         moduleForProject = new PrivateModule(root.relativize(project).toString(), true, false);
     }
 

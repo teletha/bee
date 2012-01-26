@@ -17,6 +17,7 @@ package bee.compiler;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
@@ -30,6 +31,9 @@ import kiss.I;
  */
 public class Source {
 
+    /** The root tree. */
+    private final Element root;
+
     /** The actual tree. */
     private final Element element;
 
@@ -40,22 +44,33 @@ public class Source {
     private final Filer filer;
 
     /**
+     * @param root
      * @param element
+     * @param util
+     * @param filer
      */
-    Source(Element element, Elements util, Filer filer) {
+    Source(Element root, Element element, Elements util, Filer filer) {
+        this.root = root;
         this.element = element;
         this.util = util;
         this.filer = filer;
     }
 
-    public Path getSourceFile() {
+    /**
+     * <p>
+     * Compute class file path.
+     * </p>
+     * 
+     * @return A path to class file.
+     */
+    public Path getClassFile() {
         try {
-            System.out.println(filer.getResource(StandardLocation.CLASS_OUTPUT, "", util.getPackageOf(element)
-                    .getQualifiedName()).toUri());
+            String fqcn = root.toString().replace('.', '/').concat(".class");
+
+            return Paths.get(filer.getResource(StandardLocation.CLASS_OUTPUT, "", fqcn).toUri());
         } catch (IOException e) {
             throw I.quiet(e);
         }
-        return null;
     }
 
     /**

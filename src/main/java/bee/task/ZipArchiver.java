@@ -28,6 +28,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import kiss.Disposable;
@@ -124,17 +125,22 @@ public abstract class ZipArchiver {
          */
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            ZipEntry entry = new ZipEntry(base.relativize(file).toString().replace(File.separatorChar, '/'));
-            entry.setSize(attrs.size());
-            entry.setTime(attrs.lastModifiedTime().toMillis());
-            putNextEntry(entry);
+            try {
+                ZipEntry entry = new ZipEntry(base.relativize(file).toString().replace(File.separatorChar, '/'));
+                entry.setSize(attrs.size());
+                entry.setTime(attrs.lastModifiedTime().toMillis());
+                putNextEntry(entry);
 
-            // copy data
-            I.copy(Files.newInputStream(file), this, true);
-            closeEntry();
+                // copy data
+                I.copy(Files.newInputStream(file), this, true);
+                closeEntry();
 
-            // API definition
-            return CONTINUE;
+                // API definition
+                return CONTINUE;
+            } catch (ZipException e) {
+                // ignore
+                return CONTINUE;
+            }
         }
 
         /**

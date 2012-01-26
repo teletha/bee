@@ -38,38 +38,41 @@ import bee.compiler.JavaCompiler;
 public class Bee implements ClassListener<Project> {
 
     /** The executable file for Java. */
-    public static final File Java;
+    public static final Path Java;
 
     /** The executable file for Bee. */
-    public static final File Bee;
+    public static final Path Bee;
 
+    /** The root directory for Java. */
+    public static final Path JavaHome;
+
+    // initialization
     static {
-        // Scan Platform
-        File bin = null;
-        File java = null;
-        File bee = null;
+        Path bin = null;
+        Path java = null;
+        Path bee = null;
 
-        // Search Java SDK from path.
+        // Search Java SDK from path. Don't use java.home system property to avoid JRE.
         root: for (Entry<String, String> entry : System.getenv().entrySet()) {
             // On UNIX systems the alphabetic case of name is typically significant, while on
             // Microsoft Windows systems it is typically not.
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
                 for (String value : entry.getValue().split(File.pathSeparator)) {
-                    File directory = new File(value);
-                    File linux = new File(directory, "javac");
-                    File windows = new File(directory, "javac.exe");
+                    Path directory = I.locate(value);
+                    Path linux = directory.resolve("javac");
+                    Path windows = directory.resolve("javac.exe");
 
-                    if (linux.exists()) {
+                    if (Files.exists(linux)) {
                         bin = directory;
                         java = linux;
-                        bee = new File(directory, "bee");
+                        bee = directory.resolve("bee");
 
                         break root;
-                    } else if (windows.exists()) {
+                    } else if (Files.exists(windows)) {
                         bin = directory;
                         java = windows;
-                        bee = new File(directory, "bee.bat");
+                        bee = directory.resolve("bee.bat");
 
                         break root;
                     }
@@ -81,8 +84,9 @@ public class Bee implements ClassListener<Project> {
             throw new Error("Java SDK is not found in your environment path.");
         }
 
-        Java = java;
         Bee = bee;
+        Java = java;
+        JavaHome = java.getParent().getParent();
 
         I.load(ClassUtil.getArchive(Bee.class));
     }

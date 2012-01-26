@@ -21,9 +21,9 @@ import kiss.Extensible;
 import bee.UserNotifier;
 
 /**
- * @version 2011/03/23 16:56:19
+ * @version 2012/01/26 9:44:26
  */
-public interface AnnotationValidator<A extends Annotation> extends Extensible {
+public abstract class AnnotationValidator<A extends Annotation> implements Extensible {
 
     /**
      * <p>
@@ -31,8 +31,8 @@ public interface AnnotationValidator<A extends Annotation> extends Extensible {
      * </p>
      * 
      * @param annotation An target annotation to validate.
-     * @param ast An annotated source tree.
+     * @param source An annotated source tree.
      * @param notifier An error messenger.
      */
-    void validate(A annotation, Source ast, UserNotifier notifier);
+    protected abstract void validate(A annotation, Source source, UserNotifier notifier);
 }
