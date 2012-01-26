@@ -23,6 +23,7 @@ import javax.lang.model.SourceVersion;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
+import bee.license.License;
 
 /**
  * @version 2010/04/02 3:47:44
@@ -38,6 +39,9 @@ public class Project {
 
     @Question(message = "Your product version")
     private String version;
+
+    @Question(message = "What is your product's license?")
+    private License license;
 
     /** The root directory. */
     public Path root;
@@ -139,8 +143,26 @@ public class Project {
      * 
      * @param version The version value to set.
      */
-    public void setVersion(String version) {
+    protected void setVersion(String version) {
         this.version = version;
+    }
+
+    /**
+     * Get the license property of this {@link Project}.
+     * 
+     * @return The license property.
+     */
+    public License getLicense() {
+        return license;
+    }
+
+    /**
+     * Set the license property of this {@link Project}.
+     * 
+     * @param license The license value to set.
+     */
+    protected void setLicense(License license) {
+        this.license = license;
     }
 
     /**

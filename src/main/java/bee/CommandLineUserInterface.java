@@ -19,7 +19,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.List;
 
+import kiss.Extensible;
 import kiss.I;
 import kiss.model.Codec;
 import kiss.model.Model;
@@ -70,6 +72,8 @@ class CommandLineUserInterface implements UserInterface {
         }
         System.out.print(" : ");
 
+        // selectable question
+
         try {
             String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
 
@@ -102,6 +106,105 @@ class CommandLineUserInterface implements UserInterface {
     }
 
     /**
+     * @param message
+     * @param defaultAnswer
+     * @param answerType
+     * @return
+     */
+    private <T> T ask(String message, T defaultAnswer, Class<T> answerType) {
+        System.out.print(message);
+
+        if (defaultAnswer != null) {
+            System.out.print(" [" + defaultAnswer + "]");
+        }
+        System.out.print(" : ");
+
+        // selectable question
+        if (Extensible.class.isAssignableFrom(answerType)) {
+            return (T) select(I.find((Class<Extensible>) answerType));
+        }
+
+        try {
+            String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
+
+            // Remove whitespaces.
+            input = input == null ? "" : input.trim();
+
+            // Validate user input.
+            if (defaultAnswer == null) {
+                if (input.length() == 0) {
+                    talk("Your input is empty, plese retry.");
+
+                    // Retry!
+                    return ask(message, null);
+                }
+
+                // API definition
+                return (T) input;
+            } else {
+                Codec<T> codec = I.find(Codec.class, defaultAnswer.getClass());
+
+                if (codec == null) {
+                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).codec;
+                }
+
+                return input.length() == 0 ? defaultAnswer : codec.decode(input);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> T select(List<T> items) {
+        int counter = 1;
+
+        System.out.println("");
+
+        for (T item : items) {
+            System.out.println(counter + "  " + item.getClass().getSimpleName());
+        }
+
+        try {
+            String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
+
+            // Remove whitespaces.
+            input = input == null ? "" : input.trim();
+
+            try {
+                int select = Integer.valueOf(input);
+
+                if (select < 1) {
+                    System.out.print("Your input is less than 1, plese retry.");
+                    overwrite("Your input is less than 100, plese retry.");
+
+                    // Retry!
+                    return select(items);
+                }
+
+                if (items.size() < select) {
+                    talk("Your input is over, plese retry.");
+
+                    // Retry!
+                    return select(items);
+                }
+                return items.get(select - 1);
+            } catch (NumberFormatException e) {
+                talk("Your input is not number, plese retry.");
+
+                // Retry!
+                return select(items);
+            }
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    private void overwrite(String message) {
+        System.out.print("\r");
+        System.out.println(message);
+    }
+
+    /**
      * @see bee.UserInterface#ask(java.lang.Class)
      */
     @Override
@@ -119,7 +222,7 @@ class CommandLineUserInterface implements UserInterface {
                     boolean loop = true;
 
                     while (loop) {
-                        Object input = ask(question.message(), model.get(instance, property));
+                        Object input = ask(question.message(), model.get(instance, property), property.model.type);
 
                         if (input != null) {
                             try {

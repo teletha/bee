@@ -86,7 +86,7 @@ public class BeeInstaller {
             if (Bee.getFileName().toString().endsWith(".bat")) {
                 // windows
                 bat.add("@echo off");
-                bat.add("java -cp \"" + bee.toString() + "\" " + Bee.class.getName());
+                bat.add("java -cp \"" + bee.toString() + "\" " + Bee.class.getName() + " %*");
             } else {
                 // linux
                 // TODO

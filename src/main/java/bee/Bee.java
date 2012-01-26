@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map.Entry;
 
 import javax.lang.model.SourceVersion;
@@ -30,6 +31,7 @@ import kiss.Manageable;
 import kiss.Singleton;
 import kiss.model.ClassUtil;
 import bee.compiler.JavaCompiler;
+import bee.license.License;
 
 /**
  * @version 2010/04/02 3:44:35
@@ -187,6 +189,7 @@ public class Bee implements ClassListener<Project> {
      * @param args
      */
     public static void main(String[] args) {
+        System.out.println(Arrays.toString(args));
         createProject("", null);
     }
 
@@ -203,6 +206,9 @@ public class Bee implements ClassListener<Project> {
 
         @Question(message = "Your product version")
         private String version;
+
+        @Question(message = "What is your product's license?")
+        private License license;
 
         /**
          * Get the project property of this {@link Bee.ProjectQuestion}.
@@ -265,6 +271,24 @@ public class Bee implements ClassListener<Project> {
          */
         public void setVersion(String version) {
             this.version = version;
+        }
+
+        /**
+         * Get the license property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @return The license property.
+         */
+        public License getLicense() {
+            return license;
+        }
+
+        /**
+         * Set the license property of this {@link Bee.ProjectQuestion}.
+         * 
+         * @param license The license value to set.
+         */
+        public void setLicense(License license) {
+            this.license = license;
         }
 
         /**
