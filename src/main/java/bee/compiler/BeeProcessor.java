@@ -98,6 +98,13 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
+        Element root = null;
+        Set<? extends Element> roots = round.getRootElements();
+
+        if (roots.size() == 1) {
+            root = roots.iterator().next();
+        }
+
         try {
             for (TypeElement annotationType : annotations) {
                 for (Element element : round.getElementsAnnotatedWith(annotationType)) {
@@ -107,7 +114,7 @@ public class BeeProcessor implements Processor {
                     if (validator != null) {
                         notifier.element = element;
 
-                        validator.validate(element.getAnnotation(annotationClass), new Source(element, util, filer), notifier);
+                        validator.validate(element.getAnnotation(annotationClass), new Source(root, element, util, filer), notifier);
                     }
                 }
             }

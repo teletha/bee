@@ -15,9 +15,35 @@
  */
 package bee.task;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import kiss.I;
+
 /**
- * @version 2011/03/15 18:21:32
+ * <p>
+ * Jar file is unwraped for fat style jar.
+ * </p>
+ * 
+ * @version 2012/01/26 16:26:58
  */
 public class Jar extends ZipArchiver {
 
+    /**
+     * @see bee.task.ZipArchiver#add(java.nio.file.Path, java.lang.String[])
+     */
+    @Override
+    public void add(Path base, String... patterns) {
+        if (Files.isRegularFile(base) && base.getFileName().toString().endsWith(".jar")) {
+            try {
+                // use ZipFS
+                base = FileSystems.newFileSystem(base, ClassLoader.getSystemClassLoader()).getPath("/");
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+        super.add(base, patterns);
+    }
 }
