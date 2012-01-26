@@ -25,6 +25,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.UIManager;
 
@@ -70,7 +72,6 @@ public class BeeInstaller {
                         jar.add(path);
                     }
                 }
-
                 jar.pack(bee);
             } else if (Files.getLastModifiedTime(bee).toMillis() != Files.getLastModifiedTime(current).toMillis()) {
                 // The current bee.jar is newer.
@@ -78,14 +79,21 @@ public class BeeInstaller {
                 // This process is mainly used by Bee users while install phase.
                 I.copy(current, bee);
             }
+
+            // create bat file
+            List<String> bat = new ArrayList();
+
+            if (Bee.getFileName().toString().endsWith(".bat")) {
+                // windows
+                bat.add("@echo off");
+                bat.add("java -cp \"" + bee.toString() + "\" " + Bee.class.getName());
+            } else {
+                // linux
+                // TODO
+            }
+            Files.write(Bee, bat, I.$encoding);
         } catch (Exception e) {
             throw I.quiet(e);
-        }
-
-        if (Files.exists(Bee)) {
-            launch(args);
-        } else {
-            install();
         }
     }
 
@@ -95,19 +103,6 @@ public class BeeInstaller {
      * </p>
      */
     public static final void install() {
-        Path destination = JavaHome.resolveSibling("lib/bee.jar");
-        Path current = ClassUtil.getArchive(BeeInstaller.class);
-
-        if (Files.isDirectory(current)) {
-            // The current directory is class files store.
-            // We should pack them as jar file.
-            // This process is mainly used by Bee developers.
-            Jar jar = new Jar();
-            jar.add(current);
-            jar.pack(destination);
-        } else {
-            // The current jar is
-        }
 
     }
 
