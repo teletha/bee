@@ -99,24 +99,6 @@ public class BeeInstaller {
 
     /**
      * <p>
-     * Install Bee.
-     * </p>
-     */
-    public static final void install() {
-
-    }
-
-    /**
-     * <p>
-     * Launch Bee.
-     * </p>
-     */
-    public static final void launch(String... command) {
-        System.out.println("launch ");
-    }
-
-    /**
-     * <p>
      * Show native message dialog.
      * </p>
      * 
