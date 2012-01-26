@@ -22,12 +22,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import kiss.I;
+
+import org.junit.Rule;
+
 import testament.CleanRoom;
+import testament.PrivateModule;
 
 /**
  * @version 2011/03/13 15:53:47
  */
 public class PrivateSourceDirectory extends CleanRoom {
+
+    @Rule
+    public static final PrivateModule module = new PrivateModule();
 
     /** The source directory. */
     final Path input;

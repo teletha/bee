@@ -334,8 +334,6 @@ public class JavaCompiler {
                 options.add("-processorpath");
                 options.add(Iterables.join(processorClassPaths, ','));
 
-                addProcessorOption("test", Iterables.join(sources, ';'));
-
                 for (Entry<String, String> entry : processorOptions.entrySet()) {
                     options.add("-A" + entry.getKey() + '=' + entry.getValue());
                 }

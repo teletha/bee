@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.annotation.processing.Completion;
+import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
@@ -37,12 +38,6 @@ import kiss.I;
 import kiss.model.ClassUtil;
 import bee.UserNotifier;
 
-import com.sun.source.tree.ClassTree;
-import com.sun.source.tree.MethodTree;
-import com.sun.source.tree.VariableTree;
-import com.sun.source.util.TreePathScanner;
-import com.sun.source.util.Trees;
-
 /**
  * @version 2010/04/23 16:09:16
  */
@@ -54,8 +49,8 @@ public class BeeProcessor implements Processor {
     /** The message notifier. */
     private Notifier notifier;
 
-    /** The abstract syntax tree. */
-    private Trees tree;
+    /** The file utility. */
+    private Filer filer;
 
     /** The utility. */
     private Elements util;
@@ -91,7 +86,7 @@ public class BeeProcessor implements Processor {
     public void init(ProcessingEnvironment environment) {
         this.environment = environment;
         this.notifier = new Notifier(environment.getMessager());
-        this.tree = Trees.instance(environment);
+        this.filer = environment.getFiler();
         this.util = environment.getElementUtils();
 
         I.load(ClassUtil.getArchive(BeeProcessor.class));
@@ -103,10 +98,11 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
-        ASTScanner scanner = new ASTScanner();
+        Element root = null;
+        Set<? extends Element> roots = round.getRootElements();
 
-        for (Element element : round.getRootElements()) {
-            scanner.scan(tree.getPath(element), tree);
+        if (roots.size() == 1) {
+            root = roots.iterator().next();
         }
 
         try {
@@ -117,14 +113,8 @@ public class BeeProcessor implements Processor {
 
                     if (validator != null) {
                         notifier.element = element;
-                        try {
-                            for (Class type : ClassUtil.getTypes(environment.getClass())) {
-                                notifier.error(type.toString());
-                            }
-                        } catch (Exception e) {
-                            notifier.error(e.toString());
-                        }
-                        validator.validate(element.getAnnotation(annotationClass), new Source(element, util), notifier);
+
+                        validator.validate(element.getAnnotation(annotationClass), new Source(root, element, util, filer), notifier);
                     }
                 }
             }
@@ -142,40 +132,6 @@ public class BeeProcessor implements Processor {
     @Override
     public Iterable<? extends Completion> getCompletions(Element element, AnnotationMirror annotation, ExecutableElement member, String userText) {
         return Collections.emptyList();
-    }
-
-    /**
-     * @version 2011/09/08 11:08:25
-     */
-    private static class ASTScanner extends TreePathScanner<Object, Trees> {
-
-        /**
-         * @see com.sun.source.util.TreeScanner#visitClass(com.sun.source.tree.ClassTree,
-         *      java.lang.Object)
-         */
-        @Override
-        public Object visitClass(ClassTree classTree, Trees trees) {
-            System.out.println("class   " + classTree);
-            return super.visitClass(classTree, trees);
-        }
-
-        /**
-         * @see com.sun.source.util.TreeScanner#visitMethod(com.sun.source.tree.MethodTree,
-         *      java.lang.Object)
-         */
-        @Override
-        public Object visitMethod(MethodTree arg0, Trees arg1) {
-            return super.visitMethod(arg0, arg1);
-        }
-
-        /**
-         * @see com.sun.source.util.TreeScanner#visitVariable(com.sun.source.tree.VariableTree,
-         *      java.lang.Object)
-         */
-        @Override
-        public Object visitVariable(VariableTree arg0, Trees arg1) {
-            return super.visitVariable(arg0, arg1);
-        }
     }
 
     /**

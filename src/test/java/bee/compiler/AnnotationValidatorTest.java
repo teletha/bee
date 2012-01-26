@@ -18,7 +18,6 @@ package bee.compiler;
 import org.junit.Rule;
 import org.junit.Test;
 
-import testament.PrivateModule;
 import bee.UserNotifier;
 
 /**
@@ -28,9 +27,6 @@ public class AnnotationValidatorTest {
 
     @Rule
     public static final PrivateSourceDirectory source = new PrivateSourceDirectory("source01");
-
-    @Rule
-    public static final PrivateModule module = new PrivateModule();
 
     @Test
     public void byClass() throws Exception {
@@ -48,7 +44,7 @@ public class AnnotationValidatorTest {
     /**
      * @version 2011/03/23 18:46:42
      */
-    private static final class ByClass implements AnnotationValidator<SourceAnnotation> {
+    private static final class ByClass extends AnnotationValidator<SourceAnnotation> {
 
         private static boolean invoked = false;
 
@@ -57,7 +53,7 @@ public class AnnotationValidatorTest {
          *      bee.UserNotifier)
          */
         @Override
-        public void validate(SourceAnnotation annotation, Source code, UserNotifier notifier) {
+        public void validate(SourceAnnotation annotation, Source source, UserNotifier notifier) {
             assert annotation != null;
             assert notifier != null;
 
