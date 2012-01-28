@@ -15,7 +15,7 @@
  */
 package bee.compiler;
 
-import static testament.Ezunit.*;
+import static antibug.Ezunit.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,8 +25,8 @@ import kiss.I;
 
 import org.junit.Rule;
 
-import testament.CleanRoom;
-import testament.PrivateModule;
+import antibug.CleanRoom;
+import antibug.PrivateModule;
 
 /**
  * @version 2011/03/13 15:53:47
