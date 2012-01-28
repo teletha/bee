@@ -22,8 +22,8 @@ import kiss.I;
 
 import org.junit.Rule;
 
-import testament.PrivateModule;
-import testament.ReusableRule;
+import antibug.PrivateModule;
+import antibug.ReusableRule;
 
 /**
  * @version 2010/11/19 22:51:09
