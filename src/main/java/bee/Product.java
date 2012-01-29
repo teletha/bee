@@ -46,7 +46,7 @@ public @interface Product {
      * 
      * @return An artifact name.
      */
-    String artifact() default "";
+    String name() default "";
 
     /**
      * <p>
@@ -55,7 +55,7 @@ public @interface Product {
      * 
      * @return A version number.
      */
-    String version();
+    String version() default "1.0";
 
     /**
      * The qualified identifier of this product. Default value is empty.
@@ -63,6 +63,4 @@ public @interface Product {
      * @return A qualified identifier.
      */
     String identifier() default "";
-
-    String[] dependency() default {};
 }
