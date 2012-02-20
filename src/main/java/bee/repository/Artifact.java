@@ -17,7 +17,7 @@ package bee.repository;
 
 import java.io.File;
 
-import bee.Version;
+import bee.project.Version;
 
 /**
  * @version 2010/09/19 13:38:36

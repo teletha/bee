@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee;
+package bee.project;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import bee.ProjectVersion;
 
 /**
  * @version 2010/05/21 10:31:17

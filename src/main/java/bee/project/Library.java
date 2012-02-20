@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.repository;
+package bee.project;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
-import bee.Version;
+import bee.repository.Repository;
 
 /**
  * @version 2010/09/09 20:10:56
  */
-public class Library {
+public class Library implements Comparable<Library> {
 
     /** The artifact name. */
     public final String artifact;
@@ -41,14 +41,26 @@ public class Library {
      * @param group
      * @param version
      */
-    public Library(String artifact, String group, String version) {
+    Library(String qualified) {
+        String[] values = qualified.split(":");
+        this.artifact = values[0];
+        this.group = values[1];
+        this.version = new Version(values[2]);
+    }
+
+    /**
+     * @param artifact
+     * @param group
+     * @param version
+     */
+    Library(String artifact, String group, String version) {
         this.artifact = artifact;
         this.group = group;
         this.version = new Version(version);
     }
 
-    public Path getJar() {
-        return null;
+    public Library atCompile() {
+        return this;
     }
 
     /**
@@ -80,7 +92,7 @@ public class Library {
      * @return A location.
      */
     URL toExternal(String extension) {
-        return toExternal(extension, Repository.builtin.get(0));
+        return null;
     }
 
     /**
@@ -151,6 +163,14 @@ public class Library {
             if (other.version != null) return false;
         } else if (!version.equals(other.version)) return false;
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(Library o) {
+        return toString().compareTo(o.toString());
     }
 
     /**
