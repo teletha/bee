@@ -15,6 +15,8 @@
  */
 package bee;
 
+import bee.project.Project;
+
 /**
  * @version 2011/06/10 15:41:30
  */

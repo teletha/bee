@@ -22,6 +22,8 @@ import kiss.I;
 
 import org.junit.Rule;
 
+import bee.project.Project;
+
 import antibug.PrivateModule;
 import antibug.ReusableRule;
 

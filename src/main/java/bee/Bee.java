@@ -32,6 +32,7 @@ import kiss.Singleton;
 import kiss.model.ClassUtil;
 import bee.compiler.JavaCompiler;
 import bee.license.License;
+import bee.project.Project;
 
 /**
  * @version 2010/04/02 3:44:35
