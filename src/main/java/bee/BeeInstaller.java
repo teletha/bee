@@ -32,7 +32,7 @@ import javax.swing.UIManager;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.task.Jar;
+import bee.task.JarArchiver;
 
 /**
  * @version 2011/03/23 18:55:51
@@ -62,7 +62,7 @@ public class BeeInstaller {
                 // The current directory is class files store.
                 // We should pack them as jar file.
                 // This process is mainly used by Bee developers.
-                Jar jar = new Jar();
+                JarArchiver jar = new JarArchiver();
                 jar.add(current);
 
                 for (String location : System.getProperty("java.class.path").split(File.pathSeparator)) {

@@ -29,7 +29,7 @@ import kiss.I;
  * 
  * @version 2012/01/26 16:26:58
  */
-public class Jar extends ZipArchiver {
+public class JarArchiver extends ZipArchiver {
 
     /**
      * @see bee.task.ZipArchiver#add(java.nio.file.Path, java.lang.String[])

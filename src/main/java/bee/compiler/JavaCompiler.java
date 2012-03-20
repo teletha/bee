@@ -52,7 +52,6 @@ import javax.tools.ToolProvider;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.trait.Iterables;
 
 /**
  * @version 2010/12/19 10:20:21
@@ -330,9 +329,9 @@ public class JavaCompiler {
                 options.add("-proc:none");
             } else {
                 options.add("-processor");
-                options.add(Iterables.join(processorClasses, ','));
+                options.add(I.join(processorClasses, ","));
                 options.add("-processorpath");
-                options.add(Iterables.join(processorClassPaths, ','));
+                options.add(I.join(processorClassPaths, ","));
 
                 for (Entry<String, String> entry : processorOptions.entrySet()) {
                     options.add("-A" + entry.getKey() + '=' + entry.getValue());

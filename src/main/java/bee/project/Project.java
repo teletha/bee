@@ -15,9 +15,11 @@
  */
 package bee.project;
 
-import java.nio.file.Path;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
+import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 
@@ -27,37 +29,46 @@ import kiss.Singleton;
 @Manageable(lifestyle = Singleton.class)
 public class Project {
 
-    /** The root directory. */
-    public Path root;
+    /** The products. */
+    private final List<Product> products = new ArrayList();
 
-    /** The source directory. */
-    public Path source;
+    /**
+     * 
+     */
+    protected Project() {
+    }
 
-    /** The target directory. */
-    public Path target;
+    /**
+     * Initialize project definition.
+     */
+    private void build() {
+        try {
+            for (Field field : getClass().getDeclaredFields()) {
+                if (Product.class.isAssignableFrom(field.getType())) {
+                    field.setAccessible(true);
 
-    /** The source directory. */
-    public List<Path> sources;
+                    // Product Definition
+                    Product product = (Product) field.get(this);
 
-    /** The source class directory. */
-    public Path sourceClasses;
+                    if (product != null) {
+                        products.add(product);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+    }
 
-    /** The test directory. */
-    public List<Path> tests;
-
-    /** The test class directory. */
-    public Path testClasses;
-
-    /** The project directory. */
-    public List<Path> projects;
-
-    /** The project class directory. */
-    public Path projectClasses;
-
-    /** The project description. */
-    private String description;
-
-    /** The initialization flag for this project. */
-    private boolean initialized = false;
-
+    /**
+     * <p>
+     * Launch project build process.
+     * </p>
+     * 
+     * @param definition
+     */
+    protected static final void launch(Class<? extends Project> definition) {
+        Project project = I.make(definition);
+        project.build();
+    }
 }

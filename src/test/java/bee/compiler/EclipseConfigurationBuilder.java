@@ -21,7 +21,7 @@ import java.nio.file.Path;
 import kiss.I;
 import kiss.model.ClassUtil;
 import kiss.xml.XMLWriter;
-import bee.task.Jar;
+import bee.task.JarArchiver;
 
 import com.sun.source.util.JavacTask;
 
@@ -38,7 +38,7 @@ public class EclipseConfigurationBuilder {
 
         Path tools = ClassUtil.getArchive(JavacTask.class);
 
-        Jar archiver = new Jar();
+        JarArchiver archiver = new JarArchiver();
         archiver.add(classes);
         archiver.pack(jar);
 

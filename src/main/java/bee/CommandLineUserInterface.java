@@ -95,7 +95,7 @@ class CommandLineUserInterface implements UserInterface {
                 Codec<T> codec = I.find(Codec.class, defaultAnswer.getClass());
 
                 if (codec == null) {
-                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).codec;
+                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).getCodec();
                 }
 
                 return input.length() == 0 ? defaultAnswer : codec.decode(input);
@@ -145,7 +145,7 @@ class CommandLineUserInterface implements UserInterface {
                 Codec<T> codec = I.find(Codec.class, defaultAnswer.getClass());
 
                 if (codec == null) {
-                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).codec;
+                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).getCodec();
                 }
 
                 return input.length() == 0 ? defaultAnswer : codec.decode(input);

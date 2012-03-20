@@ -20,12 +20,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Map.Entry;
 
 import javax.lang.model.SourceVersion;
 
-import kiss.ClassListener;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
@@ -38,7 +36,7 @@ import bee.project.Project;
  * @version 2010/04/02 3:44:35
  */
 @Manageable(lifestyle = Singleton.class)
-public class Bee implements ClassListener<Project> {
+public class Bee {
 
     /** The executable file for Java. */
     public static final Path Java;
@@ -95,21 +93,6 @@ public class Bee implements ClassListener<Project> {
     }
 
     /**
-     * @see ezbean.ClassLoadListener#load(java.lang.Class)
-     */
-    @Override
-    public void load(Class<Project> clazz) {
-
-    }
-
-    /**
-     * @see ezbean.ClassLoadListener#unload(java.lang.Class)
-     */
-    @Override
-    public void unload(Class<Project> clazz) {
-    }
-
-    /**
      * <p>
      * Create project.
      * </p>
@@ -158,28 +141,46 @@ public class Bee implements ClassListener<Project> {
         UserInterfaceLisfestyle.local.set(ui);
 
         // search Project from the specified file systems
-        Project project;
-        Path source = home.resolve("src/project/Project.java");
+        Path sources = home.resolve("src/project");
+        Path classes = home.resolve("target/project");
+        Path projectDefinitionSource = sources.resolve("Project.java");
+        Path projectDefinitionClass = classes.resolve("Project.class");
 
-        if (Files.notExists(source)) {
-            project = ui.ask(Project.class);
-        } else {
+        if (Files.notExists(projectDefinitionSource)) {
+            // create Project source
+
             // compile Project source
-            Path output = I.locate("target/project-classes");
-
-            JavaCompiler compiler = new JavaCompiler();
-            compiler.addSourceDirectory(source.getParent());
-            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
-            compiler.addClassPath(ClassUtil.getArchive(I.class));
-            compiler.setOutput(output);
-            compiler.compile();
-
-            // load compiled source
-            I.load(output);
-
+            compileProject(sources, classes);
+        } else if (Files.notExists(projectDefinitionClass)) {
+            // compile Project source
+            compileProject(sources, classes);
         }
 
-        return null;
+        // load Project definition class
+        I.load(classes);
+
+        try {
+            return (Project) I.make(Class.forName("Project"));
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Compile project definition.
+     * </p>
+     * 
+     * @param input
+     * @param output
+     */
+    private static final void compileProject(Path input, Path output) {
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourceDirectory(input);
+        compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+        compiler.addClassPath(ClassUtil.getArchive(I.class));
+        compiler.setOutput(output);
+        compiler.compile();
     }
 
     /**
@@ -190,8 +191,7 @@ public class Bee implements ClassListener<Project> {
      * @param args
      */
     public static void main(String[] args) {
-        System.out.println(Arrays.toString(args));
-        createProject("", null);
+        Tasks.execute(createProject("", null), "eclipse");
     }
 
     /**
