@@ -24,10 +24,11 @@ public class Project extends bee.project.Project {
     };
 
     /**
-     * @param args
+     * <p>
+     * Launch your project build process in console.
+     * </p>
      */
     public static void main(String[] args) {
-        Project project = new Project();
-
+        launch(Project.class);
     }
 }

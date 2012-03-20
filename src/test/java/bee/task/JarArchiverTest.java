@@ -38,7 +38,7 @@ public class JarArchiverTest {
         Path file = room.locateFile("root/file");
         Path output = room.locateAbsent("out");
 
-        Jar jar = new Jar();
+        JarArchiver jar = new JarArchiver();
         jar.add(file.getParent());
         jar.pack(output);
 
@@ -53,7 +53,7 @@ public class JarArchiverTest {
         room.locateFile("root/directory/file");
         Path output = room.locateAbsent("out");
 
-        Jar jar = new Jar();
+        JarArchiver jar = new JarArchiver();
         jar.add(file1.getParent());
         jar.pack(output);
 
