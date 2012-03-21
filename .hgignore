@@ -6,6 +6,6 @@ target
 syntax: regexp
 .classpath
 syntax: regexp
-.project
+\.project
 syntax: regexp
 src/test/modules

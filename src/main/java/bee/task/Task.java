@@ -15,19 +15,18 @@
  */
 package bee.task;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import bee.definition.Project;
 
 /**
- * @version 2010/09/05 13:00:53
+ * @version 2010/04/02 3:56:10
  */
-@Documented
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Command {
+public abstract class Task {
 
-    boolean defaults() default false;
+    /** The current processing project. */
+    protected Project project;
+
+    @Command
+    public void help() {
+
+    }
 }

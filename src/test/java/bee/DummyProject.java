@@ -22,7 +22,7 @@ import kiss.I;
 
 import org.junit.Rule;
 
-import bee.project.Project;
+import bee.definition.Project;
 
 import antibug.PrivateModule;
 import antibug.ReusableRule;

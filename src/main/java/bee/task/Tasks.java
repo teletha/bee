@@ -7,23 +7,28 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee;
+package bee.task;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import kiss.ClassListener;
+import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
-import bee.project.Project;
-import bee.task.Command;
+import kiss.Table;
+import kiss.model.ClassUtil;
+import bee.definition.Project;
 
 /**
  * @version 2012/03/20 16:27:09
  */
 @Manageable(lifestyle = Singleton.class)
-class Tasks implements ClassListener<Task> {
+public class Tasks implements ClassListener<Task> {
 
     /** The task repository. */
     private static Map<String, TaskInfo> infos = new HashMap();
@@ -66,46 +71,56 @@ class Tasks implements ClassListener<Task> {
         }
 
         // search task name
-        String task;
+        String taskName;
         int index = input.indexOf(' ');
 
         if (index == -1) {
-            task = input;
+            taskName = input;
         } else {
-            task = input.substring(0, index);
+            taskName = input.substring(0, index);
             input = input.substring(index + 1);
         }
 
         // analyze task name
-        String taskName = "";
+        String taskGroupName = "";
         String commandName = "";
-        index = task.indexOf(':');
+        index = taskName.indexOf(':');
 
         if (index == -1) {
-            taskName = task;
+            taskGroupName = taskName;
         } else {
-            taskName = task.substring(0, index);
-            commandName = task.substring(index + 1);
+            taskGroupName = taskName.substring(0, index);
+            commandName = taskName.substring(index + 1);
         }
 
         // search task
-        TaskInfo taskInfo = infos.get(taskName.toLowerCase());
+        TaskInfo taskInfo = infos.get(taskGroupName.toLowerCase());
 
         if (taskInfo == null) {
             return;
         }
 
         if (commandName.length() == 0) {
-            commandName = taskInfo.defaultCommandName;
+            commandName = taskInfo.defaults;
         }
 
         // search command
-        CommandInfo commandInfo = taskInfo.infos.get(commandName.toLowerCase());
+        Method command = taskInfo.infos.get(commandName.toLowerCase());
 
-        if (commandInfo == null) {
+        if (command == null) {
             return;
         }
 
+        // create task and initialize
+        Task task = I.make(taskInfo.task);
+        task.project = project;
+
+        // execute task
+        try {
+            command.invoke(task);
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
@@ -114,58 +129,41 @@ class Tasks implements ClassListener<Task> {
     private static class TaskInfo {
 
         /** The task definition. */
-        private final Class<Task> taskClass;
+        private final Class<Task> task;
 
         /** The default command name. */
-        private String defaultCommandName;
+        private String defaults;
 
         /** The command infos. */
-        private Map<String, CommandInfo> infos = new HashMap();
+        private Map<String, Method> infos = new HashMap();
 
         /**
          * @param taskClass
          */
         private TaskInfo(Class<Task> taskClass) {
-            this.taskClass = taskClass;
+            this.task = taskClass;
 
-            for (Method method : taskClass.getDeclaredMethods()) {
-                Command command = method.getAnnotation(Command.class);
+            Table<Method, Annotation> methods = ClassUtil.getAnnotations(taskClass);
 
-                if (command != null) {
-                    String name = method.getName().toLowerCase();
+            for (Entry<Method, List<Annotation>> info : methods.entrySet()) {
+                for (Annotation annotation : info.getValue()) {
+                    if (annotation.annotationType() == Command.class) {
+                        Command command = (Command) annotation;
+                        Method method = info.getKey();
 
-                    infos.put(name, new CommandInfo(method));
-                    defaultCommandName = name;
+                        // compute command name
+                        String name = method.getName().toLowerCase();
+
+                        // register
+                        infos.put(name, method);
+
+                        // check default
+                        if (command.defaults()) {
+                            defaults = name;
+                        }
+                    }
                 }
             }
-
-        }
-
-        /**
-         * <p>
-         * Execute task
-         * </p>
-         * 
-         * @param commandName
-         */
-        private void execute(String commandName) {
-
-        }
-    }
-
-    /**
-     * @version 2012/03/20 16:47:54
-     */
-    private static class CommandInfo {
-
-        /** The actual command. */
-        private final Method method;
-
-        /**
-         * @param method
-         */
-        private CommandInfo(Method method) {
-            this.method = method;
         }
     }
 }

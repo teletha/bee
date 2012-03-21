@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.project;
+package bee.definition;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
@@ -27,39 +26,57 @@ import bee.repository.Repository;
  */
 public class Library implements Comparable<Library> {
 
-    /** The artifact name. */
-    public final String artifact;
-
     /** The group name. */
     public final String group;
+
+    /** The artifact name. */
+    public final String name;
 
     /** The version identifier. */
     public final Version version;
 
     /**
-     * @param artifact
+     * @param name
      * @param group
      * @param version
      */
     Library(String qualified) {
         String[] values = qualified.split(":");
-        this.artifact = values[0];
-        this.group = values[1];
+        this.group = values[0];
+        this.name = values[1];
         this.version = new Version(values[2]);
     }
 
     /**
-     * @param artifact
      * @param group
+     * @param artifact
      * @param version
      */
-    Library(String artifact, String group, String version) {
-        this.artifact = artifact;
+    Library(String group, String artifact, String version) {
         this.group = group;
+        this.name = artifact;
         this.version = new Version(version);
     }
 
+    /**
+     * <p>
+     * This library is needed at compile phase.
+     * </p>
+     * 
+     * @return
+     */
     public Library atCompile() {
+        return this;
+    }
+
+    /**
+     * <p>
+     * This library is needed at compile phase.
+     * </p>
+     * 
+     * @return
+     */
+    public Library atTest() {
         return this;
     }
 
@@ -104,13 +121,14 @@ public class Library implements Comparable<Library> {
      * @return A location.
      */
     URL toExternal(String extension, Repository repository) {
-        try {
-            return new URL(repository.url, toPath(extension));
-        } catch (MalformedURLException e) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error(e);
-        }
+        // try {
+        // return new URL(repository.url, toPath(extension));
+        // } catch (MalformedURLException e) {
+        // // If this exception will be thrown, it is bug of this program. So we must rethrow the
+        // // wrapped error in here.
+        // throw new Error(e);
+        // }
+        return null;
     }
 
     /**
@@ -121,14 +139,14 @@ public class Library implements Comparable<Library> {
      * @param extension An extension value.
      * @return A path string.
      */
-    String toPath(String extension) {
+    public Path toLocalPath(String extension) {
         StringBuilder builder = new StringBuilder();
         builder.append(group).append('/');
-        builder.append(artifact).append('/');
+        builder.append(name).append('/');
         builder.append(version).append('/');
-        builder.append(artifact).append('-').append(version).append(extension);
+        builder.append(name).append('-').append(version).append(extension);
 
-        return builder.toString();
+        return Repository.Local.path.resolve(builder.toString());
     }
 
     /**
@@ -138,7 +156,7 @@ public class Library implements Comparable<Library> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((artifact == null) ? 0 : artifact.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((group == null) ? 0 : group.hashCode());
         result = prime * result + ((version == null) ? 0 : version.hashCode());
         return result;
@@ -153,9 +171,9 @@ public class Library implements Comparable<Library> {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         Library other = (Library) obj;
-        if (artifact == null) {
-            if (other.artifact != null) return false;
-        } else if (!artifact.equals(other.artifact)) return false;
+        if (name == null) {
+            if (other.name != null) return false;
+        } else if (!name.equals(other.name)) return false;
         if (group == null) {
             if (other.group != null) return false;
         } else if (!group.equals(other.group)) return false;
@@ -179,7 +197,7 @@ public class Library implements Comparable<Library> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(artifact).append('-').append(version);
+        builder.append(name).append('-').append(version);
 
         return builder.toString();
     }

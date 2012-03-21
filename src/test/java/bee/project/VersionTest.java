@@ -19,7 +19,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import bee.project.Version;
+import bee.definition.Version;
 
 /**
  * @version 2010/05/21 10:37:04

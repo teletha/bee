@@ -13,20 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee;
+package bee.projects.noconfig.project;
 
-import bee.project.Project;
-import bee.task.Command;
+import bee.definition.Project;
 
 /**
- * @version 2010/04/02 3:56:10
+ * @version 2010/10/06 7:40:09
  */
-public abstract class Task {
+public class NoConfigProject extends Project {
 
-    protected Project project;
-
-    @Command
-    public void help() {
-
-    }
 }

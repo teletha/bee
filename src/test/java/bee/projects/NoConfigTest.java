@@ -13,21 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.task;
+package bee.projects;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.Rule;
+import org.junit.Test;
+
+import bee.DummyProject;
+import bee.projects.noconfig.project.NoConfigProject;
 
 /**
- * @version 2010/09/05 13:00:53
+ * @version 2010/10/06 7:42:12
  */
-@Documented
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Command {
+public class NoConfigTest {
 
-    boolean defaults() default false;
+    @Rule
+    public static final DummyProject dummy = new DummyProject(NoConfigProject.class);
+
+    @Test
+    public void project() throws Exception {
+
+    }
 }
