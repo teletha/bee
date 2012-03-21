@@ -15,9 +15,11 @@
  */
 package bee.task;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import bee.definition.Library;
+import bee.definition.Scope;
 
 /**
  * @version 2010/04/02 3:58:58
@@ -33,8 +35,12 @@ public class Eclipse extends Task {
     public void eclipse() {
         Path path = project.root.resolve("classpath.xml");
 
-        for (Library library : project.dependencies) {
-            System.out.println(library.toLocalPath("jar"));
+        for (Library library : project.getDependency(Scope.COMPILE)) {
+            Path jar = library.getJar();
+
+            if (Files.exists(jar)) {
+                System.out.println(jar);
+            }
         }
     }
 }

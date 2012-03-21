@@ -15,12 +15,15 @@
  */
 package bee.definition;
 
+import static kiss.Element.*;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import kiss.Element;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
@@ -45,16 +48,70 @@ public class Project {
     public Version version;
 
     /** The libraries. */
-    private SortedSet<Library> libraries = new TreeSet();
-
-    /** The dependencies. */
-    public final Set<Library> dependencies = Collections.unmodifiableSet(libraries);
+    private final SortedSet<Library> libraries = new TreeSet();
 
     /**
      * 
      */
     protected Project() {
         root = ClassUtil.getArchive(getClass()).getParent().getParent();
+    }
+
+    /**
+     * <p>
+     * Resolve all dependencies for the specified scope.
+     * </p>
+     * 
+     * @param scope
+     * @return
+     */
+    public Set<Library> getDependency(Scope scope) {
+        Set<Library> set = new TreeSet();
+
+        for (Library library : libraries) {
+            resolveDependency(library, scope, set);
+        }
+        return set;
+    }
+
+    /**
+     * <p>
+     * Resolve dependency.
+     * </p>
+     * 
+     * @param library
+     * @param scope
+     * @param set
+     */
+    private void resolveDependency(Library library, Scope scope, Set<Library> set) {
+        if (set.add(library)) {
+            // analyze pom
+            Path pom = library.getPOM();
+
+            if (Files.exists(pom)) {
+                for (Element e : $(pom).find("dependency")) {
+                    String projectName = e.find("groupId").first().text();
+                    String productName = e.find("artifactId").first().text();
+                    String version = e.find("version").first().text();
+
+                    Library dependency = new Library(projectName, productName, version);
+
+                    switch (Scope.by(e.find("scope").text())) {
+                    case TEST:
+                        dependency.atTest();
+                        break;
+
+                    case COMPILE:
+                        dependency.atCompile();
+                        break;
+                    }
+
+                    if (dependency.scope == scope) {
+                        resolveDependency(dependency, scope, set);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -69,9 +126,9 @@ public class Project {
      */
     protected final Library require(String projectName, String productName, String version) {
         Library library = new Library(projectName, productName, version);
-
         libraries.add(library);
 
+        // API definition
         return library;
     }
 
