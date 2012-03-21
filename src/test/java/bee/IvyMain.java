@@ -12,6 +12,7 @@ package bee;
 import java.io.File;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.LogOptions;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
@@ -50,8 +51,7 @@ public class IvyMain {
         File ivyfile = File.createTempFile("ivy", ".xml");
         ivyfile.deleteOnExit();
 
-        String[] dep = null;
-        dep = new String[] {groupId, artifactId, version};
+        String[] dep = new String[] {groupId, artifactId, version};
 
         DefaultModuleDescriptor md = DefaultModuleDescriptor.newDefaultInstance(ModuleRevisionId.newInstance(dep[0], dep[1] + "-caller", "working"));
 
@@ -63,6 +63,7 @@ public class IvyMain {
 
         String[] confs = new String[] {"default"};
         ResolveOptions resolveOptions = new ResolveOptions().setConfs(confs);
+        resolveOptions.setLog(LogOptions.LOG_DEFAULT);
 
         // init resolve report
         ResolveReport report = ivy.resolve(ivyfile.toURL(), resolveOptions);

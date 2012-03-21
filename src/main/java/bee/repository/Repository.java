@@ -25,26 +25,36 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 import kiss.I;
+import bee.maven.Maven;
 
 /**
  * @version 2010/09/05 20:52:29
  */
 public class Repository {
 
+    public static Repository Local;
+
     /** The list of repositories. */
     static final List<Repository> builtin = new ArrayList<Repository>();
 
-    /** The bee repository firectory. */
+    /** The bee repository directory. */
     private static File repository;
 
     // built-in repositories
     static {
         // setup local repository
-        setLocation(new File(System.getProperty("user.home"), ".bee"));
+        if (Maven.Repository != null) {
+            builtin.add(new LocalRepository(Maven.Repository.toAbsolutePath()));
+        } else {
+            builtin.add(new LocalRepository(Paths.get(System.getProperty("user.home"), ".bee").toAbsolutePath()));
+        }
+        Local = builtin.iterator().next();
 
         // setup built-in external repositories
         // builtin.add(new MavenRepository("http://repo1.maven.org/maven2/"));
@@ -53,15 +63,15 @@ public class Repository {
     /** The identified url. */
     public final URL url;
 
+    /** The identified path. */
+    public final Path path;
+
     /**
      * @param url
      */
-    public Repository(String url) {
-        try {
-            this.url = new URL(url);
-        } catch (MalformedURLException e) {
-            throw I.quiet(e);
-        }
+    protected Repository(URL url) {
+        this.url = url;
+        this.path = I.locate(url);
     }
 
     public void load(Artifact artifact) throws NoSuchArtifactException {

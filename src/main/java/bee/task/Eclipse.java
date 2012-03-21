@@ -15,15 +15,26 @@
  */
 package bee.task;
 
-import bee.Task;
+import java.nio.file.Path;
+
+import bee.definition.Library;
 
 /**
  * @version 2010/04/02 3:58:58
  */
 public class Eclipse extends Task {
 
-    @Command
-    public void test() {
+    /**
+     * <p>
+     * Create eclipse's project file.
+     * </p>
+     */
+    @Command(defaults = true)
+    public void eclipse() {
+        Path path = project.root.resolve("classpath.xml");
 
+        for (Library library : project.dependencies) {
+            System.out.println(library.toLocalPath("jar"));
+        }
     }
 }

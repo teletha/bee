@@ -29,8 +29,9 @@ import kiss.Manageable;
 import kiss.Singleton;
 import kiss.model.ClassUtil;
 import bee.compiler.JavaCompiler;
+import bee.definition.Project;
 import bee.license.License;
-import bee.project.Project;
+import bee.task.Tasks;
 
 /**
  * @version 2010/04/02 3:44:35
