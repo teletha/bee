@@ -15,6 +15,8 @@
  */
 package bee.repository;
 
+import static kiss.Element.*;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,20 +27,22 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import kiss.I;
-import bee.maven.Maven;
 
 /**
  * @version 2010/09/05 20:52:29
  */
 public class Repository {
 
-    public static Repository Local;
+    /** The local repository. */
+    public static final Path Local;
 
     /** The list of repositories. */
     static final List<Repository> builtin = new ArrayList<Repository>();
@@ -49,15 +53,63 @@ public class Repository {
     // built-in repositories
     static {
         // setup local repository
-        if (Maven.Repository != null) {
-            builtin.add(new LocalRepository(Maven.Repository.toAbsolutePath()));
-        } else {
-            builtin.add(new LocalRepository(Paths.get(System.getProperty("user.home"), ".bee").toAbsolutePath()));
-        }
-        Local = builtin.iterator().next();
+        Local = searchLocalRepository();
 
         // setup built-in external repositories
         // builtin.add(new MavenRepository("http://repo1.maven.org/maven2/"));
+    }
+
+    /**
+     * <p>
+     * Search maven home directory.
+     * </p>
+     * 
+     * @return
+     */
+    private static Path searchMavenHome() {
+        for (Entry<String, String> entry : System.getenv().entrySet()) {
+            if (entry.getKey().equalsIgnoreCase("path")) {
+                for (String path : entry.getValue().split(File.pathSeparator)) {
+                    Path mvn = I.locate(path).resolve("mvn");
+
+                    if (Files.exists(mvn)) {
+                        return mvn.getParent().getParent();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * <p>
+     * Search maven local respository.
+     * </p>
+     * 
+     * @return
+     */
+    private static Path searchLocalRepository() {
+        Path local = Paths.get(System.getProperty("user.home"), ".m2");
+        Path home = searchMavenHome();
+
+        if (home == null) {
+            // maven is not found
+            return local;
+        } else {
+            // maven is here
+            Path conf = home.resolve("conf/settings.xml");
+
+            if (Files.exists(conf)) {
+                String path = $(conf).find("localRepository").text();
+
+                if (path.length() != 0) {
+                    return I.locate(path);
+                }
+            }
+
+            // user custom local repository is not found
+            return local;
+        }
     }
 
     /** The identified url. */

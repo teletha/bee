@@ -15,6 +15,7 @@ public class Project extends bee.definition.Project {
 
     {
         require("npc", "sinobu", "0.9.1");
+        require("org.apache.ivy", "ivy", "2.2.0");
         require("npc", "antibug", "0.2").atTest();
     }
 }

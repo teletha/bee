@@ -1,11 +1,8 @@
-
 syntax: regexp
-.settings
+\.settings
 syntax: regexp
 target
 syntax: regexp
-.classpath
+\.classpath
 syntax: regexp
 \.project
-syntax: regexp
-src/test/modules

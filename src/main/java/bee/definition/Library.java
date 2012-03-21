@@ -15,6 +15,7 @@
  */
 package bee.definition;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
@@ -34,6 +35,9 @@ public class Library implements Comparable<Library> {
 
     /** The version identifier. */
     public final Version version;
+
+    /** The scope. */
+    public Scope scope = Scope.COMPILE;
 
     /**
      * @param name
@@ -66,6 +70,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Library atCompile() {
+        scope = Scope.COMPILE;
         return this;
     }
 
@@ -77,6 +82,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Library atTest() {
+        scope = Scope.TEST;
         return this;
     }
 
@@ -133,20 +139,53 @@ public class Library implements Comparable<Library> {
 
     /**
      * <p>
-     * Helper method to build path string.
+     * Get jar file.
      * </p>
      * 
-     * @param extension An extension value.
-     * @return A path string.
+     * @return
      */
-    public Path toLocalPath(String extension) {
+    public Path getJar() {
+        return Repository.Local.resolve(localPath(".jar"));
+    }
+
+    /**
+     * <p>
+     * Get jar file.
+     * </p>
+     * 
+     * @return
+     */
+    public Path getSourceJar() {
+        return Repository.Local.resolve(localPath("-sources.jar"));
+    }
+
+    /**
+     * <p>
+     * Get jar file.
+     * </p>
+     * 
+     * @return
+     */
+    public Path getPOM() {
+        return Repository.Local.resolve(localPath(".pom"));
+    }
+
+    /**
+     * <p>
+     * Compute local relative path.
+     * </p>
+     * 
+     * @param suffix
+     * @return
+     */
+    private String localPath(String suffix) {
         StringBuilder builder = new StringBuilder();
-        builder.append(group).append('/');
+        builder.append(group.replace('.', File.separatorChar)).append('/');
         builder.append(name).append('/');
         builder.append(version).append('/');
-        builder.append(name).append('-').append(version).append(extension);
+        builder.append(name).append('-').append(version).append(suffix);
 
-        return Repository.Local.path.resolve(builder.toString());
+        return builder.toString();
     }
 
     /**
