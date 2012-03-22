@@ -39,7 +39,7 @@ public class Eclipse extends Task {
             Path jar = library.getJar();
 
             if (Files.exists(jar)) {
-                System.out.println(jar);
+                System.out.println("==== " + jar + " ====");
             }
         }
     }

@@ -26,6 +26,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import bee.definition.Repository;
+
 import antibug.CleanRoom;
 
 /**

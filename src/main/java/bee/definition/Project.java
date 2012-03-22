@@ -66,12 +66,12 @@ public class Project {
      * @return
      */
     public Set<Library> getDependency(Scope scope) {
-        Set<Library> set = new TreeSet();
-
-        for (Library library : libraries) {
-            resolveDependency(library, scope, set);
-        }
-        return set;
+        // Set<Library> set = new TreeSet();
+        //
+        // for (Library library : libraries) {
+        // resolveDependency(library, scope, set);
+        // }
+        return I.make(Repository.class).resolve(libraries, scope);
     }
 
     /**
@@ -93,6 +93,7 @@ public class Project {
                     String projectName = e.find("groupId").first().text();
                     String productName = e.find("artifactId").first().text();
                     String version = e.find("version").first().text();
+                    String optional = e.find("optional").text();
 
                     Library dependency = new Library(projectName, productName, version);
 
@@ -106,10 +107,12 @@ public class Project {
                         break;
                     }
 
-                    if (dependency.scope == scope) {
+                    if (dependency.scope == scope && !optional.equals("true")) {
                         resolveDependency(dependency, scope, set);
                     }
                 }
+            } else {
+                System.out.println("no  " + pom);
             }
         }
     }

@@ -17,6 +17,7 @@ package bee.repository;
 
 import java.io.File;
 
+import bee.definition.Repository;
 import bee.definition.Version;
 
 /**
