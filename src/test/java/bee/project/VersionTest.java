@@ -27,36 +27,6 @@ import bee.definition.Version;
 public class VersionTest {
 
     @Test
-    public void noParse() {
-        Version version = new Version(1, 4, 2, "test");
-        assertEquals(1, version.major);
-        assertEquals(4, version.minor);
-        assertEquals(2, version.increment);
-        assertEquals("test", version.identifier);
-        assertEquals("1.4.2-test", version.toString());
-    }
-
-    @Test
-    public void noParseNoIncrement() {
-        Version version = new Version(1, 0, -1, "test");
-        assertEquals(1, version.major);
-        assertEquals(0, version.minor);
-        assertEquals(0, version.increment);
-        assertEquals("test", version.identifier);
-        assertEquals("1.0-test", version.toString());
-    }
-
-    @Test
-    public void noParseNoIdentifier() {
-        Version version = new Version(1, 0, 0, null);
-        assertEquals(1, version.major);
-        assertEquals(0, version.minor);
-        assertEquals(0, version.increment);
-        assertEquals(null, version.identifier);
-        assertEquals("1.0", version.toString());
-    }
-
-    @Test
     public void parse() throws Exception {
         Version version = new Version("1.2.3-test");
         assertEquals(1, version.major);

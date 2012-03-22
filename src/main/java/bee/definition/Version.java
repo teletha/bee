@@ -18,8 +18,6 @@ package bee.definition;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import bee.ProjectVersion;
-
 /**
  * @version 2010/05/21 10:31:17
  */
@@ -39,6 +37,9 @@ public class Version {
     /** The version identifier. */
     public final String identifier;
 
+    /** The user expression. */
+    private final String qualifier;
+
     /**
      * @param qualifier
      */
@@ -49,38 +50,11 @@ public class Version {
             throw new IllegalArgumentException("Invalid qualifier");
         }
 
-        major = Integer.parseInt(matcher.group(1));
-        minor = Integer.parseInt(matcher.group(2));
-        increment = matcher.group(4) == null ? 0 : Integer.parseInt(matcher.group(4));
-        identifier = matcher.group(6) == null ? null : matcher.group(6);
-    }
-
-    /**
-     * @param major
-     * @param minor
-     * @param increment
-     * @param identifier
-     */
-    public Version(int major, int minor, int increment, String identifier) {
-        if (major < 0) {
-            throw new IllegalArgumentException("The major version number is negative.");
-        }
-
-        if (minor < 0) {
-            throw new IllegalArgumentException("The minor version number is negative.");
-        }
-
-        this.major = major;
-        this.minor = minor;
-        this.increment = Math.max(0, increment);
-        this.identifier = identifier;
-    }
-
-    /**
-     * @param version
-     */
-    Version(ProjectVersion version) {
-        this(version.major(), version.minor(), version.increment(), version.identifier());
+        this.major = Integer.parseInt(matcher.group(1));
+        this.minor = Integer.parseInt(matcher.group(2));
+        this.increment = matcher.group(4) == null ? 0 : Integer.parseInt(matcher.group(4));
+        this.identifier = matcher.group(6) == null ? null : matcher.group(6);
+        this.qualifier = qualifier;
     }
 
     /**
@@ -120,17 +94,6 @@ public class Version {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(major).append('.').append(minor);
-
-        if (increment != 0) {
-            builder.append('.').append(increment);
-        }
-
-        if (identifier != null) {
-            builder.append('-').append(identifier);
-        }
-
-        return builder.toString();
+        return qualifier;
     }
 }
