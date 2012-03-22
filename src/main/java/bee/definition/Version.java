@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 /**
  * @version 2010/05/21 10:31:17
  */
-public class Version {
+public class Version implements Comparable<Version> {
 
     private static final Pattern REGEX = Pattern.compile("(\\d+)\\.(\\d+)(\\.(\\d+))?(-(.*))?");
 
@@ -53,7 +53,7 @@ public class Version {
         this.major = Integer.parseInt(matcher.group(1));
         this.minor = Integer.parseInt(matcher.group(2));
         this.increment = matcher.group(4) == null ? 0 : Integer.parseInt(matcher.group(4));
-        this.identifier = matcher.group(6) == null ? null : matcher.group(6);
+        this.identifier = matcher.group(6) == null ? "" : matcher.group(6);
         this.qualifier = qualifier;
     }
 
@@ -87,6 +87,37 @@ public class Version {
         if (major != other.major) return false;
         if (minor != other.minor) return false;
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(Version version) {
+        if (major < version.major) {
+            return -1;
+        }
+
+        if (version.major < major) {
+            return 1;
+        }
+
+        if (minor < version.minor) {
+            return -1;
+        }
+
+        if (version.minor < minor) {
+            return 1;
+        }
+
+        if (increment < version.increment) {
+            return -1;
+        }
+
+        if (version.increment < increment) {
+            return 1;
+        }
+        return identifier.compareToIgnoreCase(version.identifier);
     }
 
     /**

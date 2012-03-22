@@ -20,8 +20,6 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
 
-import bee.repository.Repository;
-
 /**
  * @version 2010/09/09 20:10:56
  */
@@ -178,7 +176,7 @@ public class Library implements Comparable<Library> {
      * @param suffix
      * @return
      */
-    private String localPath(String suffix) {
+    String localPath(String suffix) {
         StringBuilder builder = new StringBuilder();
         builder.append(group.replace('.', File.separatorChar)).append('/');
         builder.append(name).append('/');
