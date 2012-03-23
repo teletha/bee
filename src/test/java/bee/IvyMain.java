@@ -34,19 +34,18 @@ public class IvyMain {
 
     public File resolveArtifact(String groupId, String artifactId, String version) throws Exception {
         // creates clear ivy settings
-        IvySettings ivySettings = new IvySettings();
+        IvySettings settings = new IvySettings();
         // url resolver for configuration of maven repo
         URLResolver resolver = new URLResolver();
         resolver.setM2compatible(true);
         resolver.setName("central");
-        // you can specify the url resolution pattern strategy
         resolver.addArtifactPattern("http://repo1.maven.org/maven2/" + "[organisation]/[module]/[revision]/[artifact](-[revision]).[ext]");
         // adding maven repo resolver
-        ivySettings.addResolver(resolver);
+        settings.addResolver(resolver);
         // set to the default resolver
-        ivySettings.setDefaultResolver(resolver.getName());
+        settings.setDefaultResolver(resolver.getName());
         // creates an Ivy instance with settings
-        Ivy ivy = Ivy.newInstance(ivySettings);
+        Ivy ivy = Ivy.newInstance(settings);
 
         File ivyfile = File.createTempFile("ivy", ".xml");
         ivyfile.deleteOnExit();

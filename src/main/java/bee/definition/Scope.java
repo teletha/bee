@@ -14,15 +14,40 @@ package bee.definition;
  */
 public enum Scope {
 
-    COMPILE,
+    /** Depend at anytime. */
+    Compile(1 | 2 | 4),
 
-    TEST,
+    /** Depend at test phase only. */
+    Test(1 | 2),
 
-    PROVIDED,
+    /** Depend at runtime phase only. */
+    Runtime(4);
 
-    RUNTIME,
+    /** The internal flag. */
+    private final int bit;
 
-    SYSTEM;
+    /**
+     * <p>
+     * Scope definition.
+     * </p>
+     * 
+     * @param bit
+     */
+    private Scope(int bit) {
+        this.bit = bit;
+    }
+
+    /**
+     * <p>
+     * Check whether this scope overlaps the specified scope or not.
+     * </p>
+     * 
+     * @param scope
+     * @return
+     */
+    public boolean contains(Scope scope) {
+        return (bit & scope.bit) == scope.bit;
+    }
 
     /**
      * <p>
@@ -33,9 +58,13 @@ public enum Scope {
      * @return
      */
     public static Scope by(String keyword) {
-        if (keyword == null || keyword.length() == 0) {
-            return COMPILE;
+        if (keyword == null || keyword.length() == 0 || keyword.equalsIgnoreCase("compile")) {
+            return Compile;
         }
-        return valueOf(keyword.toUpperCase());
+
+        if (keyword.equalsIgnoreCase("test")) {
+            return Test;
+        }
+        return Runtime;
     }
 }

@@ -15,7 +15,6 @@
  */
 package bee.definition;
 
-import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.List;
@@ -35,7 +34,7 @@ public class Library implements Comparable<Library> {
     public final Version version;
 
     /** The scope. */
-    public Scope scope = Scope.COMPILE;
+    public Scope scope = Scope.Compile;
 
     /**
      * @param name
@@ -68,7 +67,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Library atCompile() {
-        scope = Scope.COMPILE;
+        scope = Scope.Compile;
         return this;
     }
 
@@ -80,7 +79,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Library atTest() {
-        scope = Scope.TEST;
+        scope = Scope.Test;
         return this;
     }
 
@@ -178,7 +177,7 @@ public class Library implements Comparable<Library> {
      */
     String localPath(String suffix) {
         StringBuilder builder = new StringBuilder();
-        builder.append(group.replace('.', File.separatorChar)).append('/');
+        builder.append(group.replace('.', '/')).append('/');
         builder.append(name).append('/');
         builder.append(version).append('/');
         builder.append(name).append('-').append(version).append(suffix);
