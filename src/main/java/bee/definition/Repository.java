@@ -128,7 +128,9 @@ public class Repository {
         DependencyTree tree = new DependencyTree();
 
         for (Library library : libraries) {
-            tree.add(library, scope);
+            if (scope.contains(library.scope)) {
+                tree.add(library);
+            }
         }
 
         return new TreeSet(tree.libraries.values());
@@ -149,7 +151,7 @@ public class Repository {
          * 
          * @param library
          */
-        private void add(Library library, Scope scope) {
+        private void add(Library library) {
             String id = library.group + "-" + library.name;
 
             Library candidate = libraries.get(id);
@@ -157,40 +159,47 @@ public class Repository {
             if (candidate != null) {
                 // dupulication - compare version and use newly
                 if (candidate.version.compareTo(library.version) < 0) {
-                    add(id, library, scope);
+                    add(id, library);
                 }
             } else {
                 // new dependency
-                add(id, library, scope);
+                add(id, library);
             }
         }
 
-        private void add(String id, Library library, Scope scope) {
+        private void add(String id, Library library) {
             libraries.put(id, library);
 
             Path pom = library.getPOM();
 
             if (Files.exists(pom)) {
-                for (Element e : $(pom).find("dependency")) {
+                Element doc = $(pom);
+
+                for (Element e : doc.find("dependency")) {
                     String projectName = e.find("groupId").first().text();
                     String productName = e.find("artifactId").first().text();
                     String version = e.find("version").first().text();
                     String optional = e.find("optional").text();
+
+                    if (version.startsWith("$")) {
+                        version = searchProperty(doc, version.substring(2, version.length() - 1));
+                        System.out.println(version);
+                    }
                     System.out.println(e);
                     Library dependency = new Library(projectName, productName, version);
 
                     switch (Scope.by(e.find("scope").text())) {
-                    case TEST:
+                    case Test:
                         dependency.atTest();
                         break;
 
-                    case COMPILE:
+                    case Compile:
                         dependency.atCompile();
                         break;
                     }
 
-                    if (dependency.scope == scope && !optional.equals("true")) {
-                        add(dependency, scope);
+                    if (dependency.scope.contains(Scope.Runtime) && !optional.equals("true")) {
+                        add(dependency);
                     }
                 }
             } else {
@@ -202,30 +211,51 @@ public class Repository {
         }
     }
 
+    private String searchProperty(Element doc, String name) {
+        Element property = doc.find("properties > " + name);
+
+        if (property.size() == 0) {
+            // search parent pom
+            Element parent = doc.find("parent");
+            String projectName = parent.find("groupId").text();
+            String productName = parent.find("artifactId").text();
+            String version = parent.find("version").text();
+            String relative = parent.find("relativePath").text();
+            System.out.println(parent);
+            Path pom = downloadPOM(new Library(projectName, productName, version));
+            System.out.println(pom);
+            return searchProperty($(pom), name);
+        }
+        return property.text();
+    }
+
     private Path downloadPOM(Library library) {
         String path = library.localPath(".pom");
 
         // create destination
         Path dest = Local.resolve(path);
 
-        try {
-            Files.createDirectories(dest.getParent());
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-
-        for (URL uil : builtin) {
+        if (Files.notExists(dest)) {
             try {
-                // create source
-                URL source = new URL(uil, path);
+                Files.createDirectories(dest.getParent());
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
 
-                // download
-                I.copy(source.openStream(), Files.newOutputStream(dest), true);
-                break;
-            } catch (Exception e) {
-                e.printStackTrace(System.out);
+            for (URL uil : builtin) {
+                try {
+                    // create source
+                    URL source = new URL(uil, path);
+
+                    // download
+                    I.copy(source.openStream(), Files.newOutputStream(dest), true);
+                    break;
+                } catch (Exception e) {
+                    e.printStackTrace(System.out);
+                }
             }
         }
+
         return dest;
     }
 }

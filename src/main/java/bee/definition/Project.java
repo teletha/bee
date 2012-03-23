@@ -98,11 +98,11 @@ public class Project {
                     Library dependency = new Library(projectName, productName, version);
 
                     switch (Scope.by(e.find("scope").text())) {
-                    case TEST:
+                    case Test:
                         dependency.atTest();
                         break;
 
-                    case COMPILE:
+                    case Compile:
                         dependency.atCompile();
                         break;
                     }

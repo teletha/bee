@@ -31,8 +31,8 @@ public class RepositoryTest {
         dependencies.clear();
     }
 
-    private void resolve(String qualified, Scope scope) {
-        dependencies.addAll(repository.resolve(Collections.singleton(new Library(qualified)), scope));
+    private void resolve(String qualified) {
+        dependencies.addAll(repository.resolve(Collections.singleton(new Library(qualified)), Scope.Compile));
     }
 
     private void assertDependency(String qualified) {
@@ -40,9 +40,37 @@ public class RepositoryTest {
     }
 
     @Test
-    public void resolve() throws Exception {
-        resolve("commons-lang:commons-lang:1.0", Scope.COMPILE);
+    public void noDependencies() throws Exception {
+        resolve("commons-io:commons-io:0.1");
 
-        assertDependency("junit:junit:3.7");
+        assert dependencies.size() == 1;
+        assertDependency("commons-io:commons-io:0.1");
     }
+
+    @Test
+    public void dependencyTest() throws Exception {
+        resolve("commons-lang:commons-lang:1.0.1");
+
+        assert dependencies.size() == 1;
+        assertDependency("commons-lang:commons-lang:1.0.1");
+    }
+
+    @Test
+    public void dependencyCompile() throws Exception {
+        resolve("org.codehaus.woodstox:woodstox-core-asl:4.1.2");
+
+        assert dependencies.size() == 3;
+        assertDependency("javax.xml.stream:stax-api:1.0-2");
+        assertDependency("org.codehaus.woodstox:stax2-api:3.1.1");
+    }
+
+    @Test
+    public void dependencyNest() throws Exception {
+        resolve("org.apache.httpcomponents:httpclient:4.0");
+
+        assert dependencies.size() == 3;
+        assertDependency("javax.xml.stream:stax-api:1.0-2");
+        assertDependency("org.codehaus.woodstox:stax2-api:3.1.1");
+    }
+
 }
