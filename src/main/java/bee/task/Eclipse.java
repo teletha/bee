@@ -35,7 +35,7 @@ public class Eclipse extends Task {
     public void eclipse() {
         Path path = project.root.resolve("classpath.xml");
 
-        for (Library library : project.getDependency(Scope.Development)) {
+        for (Library library : project.getDependency(Scope.Compile)) {
             Path jar = library.getJar();
 
             if (Files.exists(jar)) {

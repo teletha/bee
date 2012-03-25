@@ -15,13 +15,19 @@ package bee.definition;
 public enum Scope {
 
     /** Depend at anytime. */
-    Compile(1 | 2 | 4),
+    Compile(1 | 2 | 4 | 8),
 
     /** Depend at test phase only. */
     Test(1 | 2),
 
     /** Depend at runtime phase only. */
-    Runtime(4);
+    Runtime(4),
+
+    /** Depend at runtime phase only. */
+    Provided(1 | 2),
+
+    /** Depend at runtime phase only. */
+    System(1 | 2);
 
     /** The internal flag. */
     private final int bit;
@@ -64,6 +70,14 @@ public enum Scope {
 
         if (keyword.equalsIgnoreCase("test")) {
             return Test;
+        }
+
+        if (keyword.equalsIgnoreCase("provided")) {
+            return Provided;
+        }
+
+        if (keyword.equalsIgnoreCase("system")) {
+            return System;
         }
         return Runtime;
     }

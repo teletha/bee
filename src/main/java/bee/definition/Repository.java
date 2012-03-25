@@ -178,12 +178,15 @@ public class Repository {
                 for (Element e : doc.find("dependency")) {
                     String projectName = e.find("groupId").first().text();
                     String productName = e.find("artifactId").first().text();
-                    String version = e.find("version").first().text();
+                    String version = e.find("version").text();
                     String optional = e.find("optional").text();
+
+                    if (projectName.startsWith("$")) {
+                        projectName = searchProperty(doc, projectName.substring(2, projectName.length() - 1));
+                    }
 
                     if (version.startsWith("$")) {
                         version = searchProperty(doc, version.substring(2, version.length() - 1));
-                        System.out.println(version);
                     }
                     System.out.println(e);
                     Library dependency = new Library(projectName, productName, version);
@@ -195,6 +198,14 @@ public class Repository {
 
                     case Compile:
                         dependency.atCompile();
+                        break;
+
+                    case Provided:
+                        dependency.atProvided();
+                        break;
+
+                    case System:
+                        dependency.atSystem();
                         break;
                     }
 
@@ -212,7 +223,7 @@ public class Repository {
     }
 
     private String searchProperty(Element doc, String name) {
-        Element property = doc.find("properties > " + name);
+        Element property = doc.find("properties " + name.replaceAll("(\\.|-)", "\\\\$1"));
 
         if (property.size() == 0) {
             // search parent pom
@@ -220,10 +231,17 @@ public class Repository {
             String projectName = parent.find("groupId").text();
             String productName = parent.find("artifactId").text();
             String version = parent.find("version").text();
-            String relative = parent.find("relativePath").text();
-            System.out.println(parent);
+
+            if (name.equals("project.parent.version")) {
+                return version;
+            }
+
+            if (name.equals("project.parent.groupId")) {
+                return projectName;
+            }
+
             Path pom = downloadPOM(new Library(projectName, productName, version));
-            System.out.println(pom);
+
             return searchProperty($(pom), name);
         }
         return property.text();
@@ -231,7 +249,7 @@ public class Repository {
 
     private Path downloadPOM(Library library) {
         String path = library.localPath(".pom");
-
+        System.out.println(path + "  @@@" + " " + library.group + "  " + library.name);
         // create destination
         Path dest = Local.resolve(path);
 

@@ -68,9 +68,30 @@ public class RepositoryTest {
     public void dependencyNest() throws Exception {
         resolve("org.apache.httpcomponents:httpclient:4.0");
 
-        assert dependencies.size() == 3;
-        assertDependency("javax.xml.stream:stax-api:1.0-2");
-        assertDependency("org.codehaus.woodstox:stax2-api:3.1.1");
+        assert dependencies.size() == 4;
+        assertDependency("commons-codec:commons-codec:1.3");
+        assertDependency("commons-logging:commons-logging:1.1.1");
+        assertDependency("org.apache.httpcomponents:httpcore:4.0.1");
     }
 
+    @Test
+    public void dependencySpring() throws Exception {
+        resolve("org.springframework:spring:2.5.6");
+
+        assert dependencies.size() == 2;
+    }
+
+    @Test
+    public void dependencyHibernate() throws Exception {
+        resolve("org.hibernate:hibernate-entitymanager:4.1.0.Final");
+
+        assert dependencies.size() == 13;
+    }
+
+    @Test
+    public void myfaces() throws Exception {
+        resolve("org.apache.myfaces.core:myfaces-api:2.1.6");
+
+        assert dependencies.size() == 13;
+    }
 }
