@@ -15,7 +15,7 @@
  */
 package bee.compiler;
 
-import static antibug.Ezunit.*;
+import static antibug.AntiBug.*;
 
 import java.io.IOException;
 import java.nio.file.Files;

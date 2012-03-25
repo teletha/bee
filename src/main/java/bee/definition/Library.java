@@ -84,6 +84,30 @@ public class Library implements Comparable<Library> {
     }
 
     /**
+     * <p>
+     * This library is needed at compile phase.
+     * </p>
+     * 
+     * @return
+     */
+    public Library atProvided() {
+        scope = Scope.Provided;
+        return this;
+    }
+
+    /**
+     * <p>
+     * This library is needed at compile phase.
+     * </p>
+     * 
+     * @return
+     */
+    public Library atSystem() {
+        scope = Scope.System;
+        return this;
+    }
+
+    /**
      * Load library from the specified repositories.
      * 
      * @param repositories
