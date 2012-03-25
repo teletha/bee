@@ -51,6 +51,8 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.file.FileRepositoryConnectorFactory;
 import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.graph.DependencyVisitor;
 import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
 import org.eclipse.aether.internal.impl.DefaultDependencyCollector;
 import org.eclipse.aether.internal.impl.DefaultFileProcessor;
@@ -88,8 +90,6 @@ import org.eclipse.aether.util.repository.DefaultProxySelector;
 
 import bee.repository.ConsoleRepositoryListener;
 import bee.repository.ConsoleTransferListener;
-import demo.manual.ManualWagonProvider;
-import demo.util.ConsoleDependencyGraphDumper;
 
 /**
  * @version 2012/03/25 14:55:21
@@ -196,8 +196,6 @@ public class Concierge {
     /** The repository connector factory for wagon. */
     private final WagonRepositoryConnectorFactory wagonRepositoryConnectorFactory = new WagonRepositoryConnectorFactory();
 
-    private final ManualWagonProvider wagonProvider = new ManualWagonProvider();
-
     /** The default dependency filter. */
     private final DependencySelector dependencyFilter = new AndDependencySelector(new DependencySelector[] {
             new OptionalDependencySelector(), // by option
@@ -294,7 +292,7 @@ public class Concierge {
         remoteRepositoryManager.addRepositoryConnectorFactory(wagonRepositoryConnectorFactory);
 
         // ============ WagonConnector ============ //
-        wagonRepositoryConnectorFactory.setWagonProvider(wagonProvider);
+        wagonRepositoryConnectorFactory.setWagonProvider(new MavenWagonProvider());
         wagonRepositoryConnectorFactory.setFileProcessor(fileProcessor);
 
         // ============ RepositorySystem ============ //
@@ -387,11 +385,10 @@ public class Concierge {
         try {
             CollectResult collectResult = system.collectDependencies(newSession(), collectRequest);
 
-            collectResult.getRoot().accept(new ConsoleDependencyGraphDumper());
+            collectResult.getRoot().accept(new Viewer());
         } catch (DependencyCollectionException e) {
             throw I.quiet(e);
         }
-
     }
 
     /**
@@ -468,4 +465,26 @@ public class Concierge {
         }
     }
 
+    /**
+     * @version 2012/03/25 20:50:27
+     */
+    private static final class Viewer implements DependencyVisitor {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean visitEnter(DependencyNode node) {
+            System.out.println(node);
+            return true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean visitLeave(DependencyNode node) {
+            return true;
+        }
+    }
 }
