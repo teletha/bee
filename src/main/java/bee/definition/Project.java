@@ -15,15 +15,11 @@
  */
 package bee.definition;
 
-import static kiss.Element.*;
-
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import kiss.Element;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
@@ -45,7 +41,7 @@ public class Project {
     public String name;
 
     /** The product version. */
-    public Version version;
+    public String version;
 
     /** The libraries. */
     private final SortedSet<Library> libraries = new TreeSet();
@@ -66,55 +62,7 @@ public class Project {
      * @return
      */
     public Set<Library> getDependency(Scope scope) {
-        // Set<Library> set = new TreeSet();
-        //
-        // for (Library library : libraries) {
-        // resolveDependency(library, scope, set);
-        // }
-        return I.make(Repository.class).resolve(libraries, scope);
-    }
-
-    /**
-     * <p>
-     * Resolve dependency.
-     * </p>
-     * 
-     * @param library
-     * @param scope
-     * @param set
-     */
-    private void resolveDependency(Library library, Scope scope, Set<Library> set) {
-        if (set.add(library)) {
-            // analyze pom
-            Path pom = library.getPOM();
-
-            if (Files.exists(pom)) {
-                for (Element e : $(pom).find("dependency")) {
-                    String projectName = e.find("groupId").first().text();
-                    String productName = e.find("artifactId").first().text();
-                    String version = e.find("version").first().text();
-                    String optional = e.find("optional").text();
-
-                    Library dependency = new Library(projectName, productName, version);
-
-                    switch (Scope.by(e.find("scope").text())) {
-                    case Test:
-                        dependency.atTest();
-                        break;
-
-                    case Compile:
-                        dependency.atCompile();
-                        break;
-                    }
-
-                    if (dependency.scope == scope && !optional.equals("true")) {
-                        resolveDependency(dependency, scope, set);
-                    }
-                }
-            } else {
-                System.out.println("no  " + pom);
-            }
-        }
+        return I.make(Repository.class).collectDependency(libraries, scope);
     }
 
     /**

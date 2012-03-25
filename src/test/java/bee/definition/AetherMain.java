@@ -9,6 +9,8 @@
  */
 package bee.definition;
 
+import java.util.Set;
+
 import kiss.I;
 
 /**
@@ -17,9 +19,11 @@ import kiss.I;
 public class AetherMain {
 
     public static void main(String[] args) {
-        Concierge concierge = I.make(Concierge.class);
+        Repository concierge = I.make(Repository.class);
         concierge.setLocalRepository(I.locate("target/local-repo"));
 
-        concierge.collectDependency(new Library("hibernate:hibernate-entitymanager:3.4.0.GA"));
+        Set<Library> libraries = concierge.collectDependency(new Library("hibernate:hibernate-entitymanager:3.4.0.GA"));
+
+        System.out.println(libraries);
     }
 }

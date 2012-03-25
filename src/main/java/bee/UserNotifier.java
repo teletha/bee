@@ -53,4 +53,13 @@ public interface UserNotifier {
      * @param params Message parameters.
      */
     void error(String message, Object... params);
+
+    /**
+     * <p>
+     * Declare a state of emergency.
+     * </p>
+     * 
+     * @param throwable Your emergency message.
+     */
+    void error(Throwable throwable);
 }
