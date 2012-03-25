@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package demo.manual;
+package bee.definition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +25,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Prerequisites;
 import org.apache.maven.model.Relocation;
 import org.apache.maven.model.Repository;
-import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.DefaultModelBuildingRequest;
 import org.apache.maven.model.building.FileModelSource;
 import org.apache.maven.model.building.ModelBuilder;
@@ -62,76 +61,27 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.VersionRequest;
 import org.eclipse.aether.resolution.VersionResolutionException;
 import org.eclipse.aether.resolution.VersionResult;
-import org.eclipse.aether.spi.locator.Service;
-import org.eclipse.aether.spi.locator.ServiceLocator;
 import org.eclipse.aether.transfer.ArtifactNotFoundException;
 
 /**
- * @version 2012/03/25 10:44:46
+ * @version 2012/03/25 20:25:11
  */
-public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader, Service {
+class MavenArtifactDescriptorReader implements ArtifactDescriptorReader {
 
-    private RemoteRepositoryManager remoteRepositoryManager;
+    ArtifactResolver artifactResolver;
 
-    private VersionResolver versionResolver;
+    ModelBuilder modelBuilder;
 
-    private ArtifactResolver artifactResolver;
+    RemoteRepositoryManager remoteRepositoryManager;
 
-    private RepositoryEventDispatcher repositoryEventDispatcher;
+    RepositoryEventDispatcher repositoryEventDispatcher;
 
-    private ModelBuilder modelBuilder;
+    VersionResolver versionResolver;
 
-    public void initService(ServiceLocator locator) {
-        setRemoteRepositoryManager(locator.getService(RemoteRepositoryManager.class));
-        setVersionResolver(locator.getService(VersionResolver.class));
-        setArtifactResolver(locator.getService(ArtifactResolver.class));
-        setRepositoryEventDispatcher(locator.getService(RepositoryEventDispatcher.class));
-        modelBuilder = locator.getService(ModelBuilder.class);
-        if (modelBuilder == null) {
-            setModelBuilder(new DefaultModelBuilderFactory().newInstance());
-        }
-    }
-
-    public DefaultArtifactDescriptorReader setRemoteRepositoryManager(RemoteRepositoryManager remoteRepositoryManager) {
-        if (remoteRepositoryManager == null) {
-            throw new IllegalArgumentException("remote repository manager has not been specified");
-        }
-        this.remoteRepositoryManager = remoteRepositoryManager;
-        return this;
-    }
-
-    public DefaultArtifactDescriptorReader setVersionResolver(VersionResolver versionResolver) {
-        if (versionResolver == null) {
-            throw new IllegalArgumentException("version resolver has not been specified");
-        }
-        this.versionResolver = versionResolver;
-        return this;
-    }
-
-    public DefaultArtifactDescriptorReader setArtifactResolver(ArtifactResolver artifactResolver) {
-        if (artifactResolver == null) {
-            throw new IllegalArgumentException("artifact resolver has not been specified");
-        }
-        this.artifactResolver = artifactResolver;
-        return this;
-    }
-
-    public DefaultArtifactDescriptorReader setRepositoryEventDispatcher(RepositoryEventDispatcher repositoryEventDispatcher) {
-        if (repositoryEventDispatcher == null) {
-            throw new IllegalArgumentException("repository event dispatcher has not been specified");
-        }
-        this.repositoryEventDispatcher = repositoryEventDispatcher;
-        return this;
-    }
-
-    public DefaultArtifactDescriptorReader setModelBuilder(ModelBuilder modelBuilder) {
-        if (modelBuilder == null) {
-            throw new IllegalArgumentException("model builder has not been specified");
-        }
-        this.modelBuilder = modelBuilder;
-        return this;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public ArtifactDescriptorResult readArtifactDescriptor(RepositorySystemSession session, ArtifactDescriptorRequest request)
             throws ArtifactDescriptorException {
         ArtifactDescriptorResult result = new ArtifactDescriptorResult(request);
@@ -142,7 +92,7 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
             ArtifactTypeRegistry stereotypes = session.getArtifactTypeRegistry();
 
             for (Repository r : model.getRepositories()) {
-                result.addRepository(ArtifactDescriptorUtils.toRemoteRepository(r));
+                result.addRepository(MavenUtils.convert(r));
             }
 
             for (org.apache.maven.model.Dependency dependency : model.getDependencies()) {
@@ -179,6 +129,13 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
         return result;
     }
 
+    /**
+     * @param session
+     * @param request
+     * @param result
+     * @return
+     * @throws ArtifactDescriptorException
+     */
     private Model loadPom(RepositorySystemSession session, ArtifactDescriptorRequest request, ArtifactDescriptorResult result)
             throws ArtifactDescriptorException {
         RequestTrace trace = RequestTrace.newChild(request.getTrace(), request);
@@ -204,7 +161,7 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
                 throw new ArtifactDescriptorException(result);
             }
 
-            Artifact pomArtifact = ArtifactDescriptorUtils.toPomArtifact(artifact);
+            Artifact pomArtifact = MavenUtils.convert(artifact);
 
             ArtifactResult resolveResult;
             try {
@@ -228,8 +185,8 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
                 modelRequest.setProcessPlugins(false);
                 modelRequest.setTwoPhaseBuilding(false);
                 modelRequest.setSystemProperties(toProperties(session.getUserProperties(), session.getSystemProperties()));
-                modelRequest.setModelCache(DefaultModelCache.newInstance(session));
-                modelRequest.setModelResolver(new DefaultModelResolver(session, trace.newChild(modelRequest), request.getRequestContext(), artifactResolver, remoteRepositoryManager, request.getRepositories()));
+                modelRequest.setModelCache(MavenModelCache.newInstance(session));
+                modelRequest.setModelResolver(new MavenModelResolver(session, trace.newChild(modelRequest), request.getRequestContext(), artifactResolver, remoteRepositoryManager, request.getRepositories()));
                 if (resolveResult.getRepository() instanceof WorkspaceRepository) {
                     modelRequest.setPomFile(pomArtifact.getFile());
                 } else {
@@ -254,7 +211,7 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
 
             if (relocation != null) {
                 result.addRelocation(artifact);
-                artifact = new RelocatedArtifact(artifact, relocation.getGroupId(), relocation.getArtifactId(), relocation.getVersion());
+                artifact = new MavenRelocatedArtifact(artifact, relocation.getGroupId(), relocation.getArtifactId(), relocation.getVersion());
                 result.setArtifact(artifact);
             } else {
                 return model;
@@ -262,6 +219,11 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
         }
     }
 
+    /**
+     * @param dominant
+     * @param recessive
+     * @return
+     */
     private Properties toProperties(Map<String, String> dominant, Map<String, String> recessive) {
         Properties props = new Properties();
         if (recessive != null) {
@@ -273,6 +235,10 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
         return props;
     }
 
+    /**
+     * @param model
+     * @return
+     */
     private Relocation getRelocation(Model model) {
         Relocation relocation = null;
         DistributionManagement distMngt = model.getDistributionManagement();
@@ -282,6 +248,11 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
         return relocation;
     }
 
+    /**
+     * @param dependency
+     * @param stereotypes
+     * @return
+     */
     private Dependency convert(org.apache.maven.model.Dependency dependency, ArtifactTypeRegistry stereotypes) {
         ArtifactType stereotype = stereotypes.get(dependency.getType());
         if (stereotype == null) {
@@ -307,10 +278,20 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
         return result;
     }
 
+    /**
+     * @param exclusion
+     * @return
+     */
     private Exclusion convert(org.apache.maven.model.Exclusion exclusion) {
         return new Exclusion(exclusion.getGroupId(), exclusion.getArtifactId(), "*", "*");
     }
 
+    /**
+     * @param session
+     * @param trace
+     * @param artifact
+     * @param exception
+     */
     private void missingDescriptor(RepositorySystemSession session, RequestTrace trace, Artifact artifact, Exception exception) {
         Builder builder = new RepositoryEvent.Builder(session, EventType.ARTIFACT_DESCRIPTOR_MISSING);
         builder.setArtifact(artifact).setException(exception).setTrace(trace);
@@ -318,11 +299,16 @@ public class DefaultArtifactDescriptorReader implements ArtifactDescriptorReader
         repositoryEventDispatcher.dispatch(builder.build());
     }
 
+    /**
+     * @param session
+     * @param trace
+     * @param artifact
+     * @param exception
+     */
     private void invalidDescriptor(RepositorySystemSession session, RequestTrace trace, Artifact artifact, Exception exception) {
         Builder builder = new RepositoryEvent.Builder(session, EventType.ARTIFACT_DESCRIPTOR_INVALID);
         builder.setArtifact(artifact).setException(exception).setTrace(trace);
 
         repositoryEventDispatcher.dispatch(builder.build());
     }
-
 }

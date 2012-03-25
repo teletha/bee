@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package demo.manual;
+package bee.definition;
 
 import java.io.File;
 import java.util.Map;
@@ -16,9 +16,9 @@ import org.eclipse.aether.artifact.AbstractArtifact;
 import org.eclipse.aether.artifact.Artifact;
 
 /**
- * @version 2012/03/25 10:54:59
+ * @version 2012/03/25 20:24:52
  */
-final class RelocatedArtifact extends AbstractArtifact {
+final class MavenRelocatedArtifact extends AbstractArtifact {
 
     private final Artifact artifact;
 
@@ -28,7 +28,13 @@ final class RelocatedArtifact extends AbstractArtifact {
 
     private final String version;
 
-    public RelocatedArtifact(Artifact artifact, String groupId, String artifactId, String version) {
+    /**
+     * @param artifact
+     * @param groupId
+     * @param artifactId
+     * @param version
+     */
+    public MavenRelocatedArtifact(Artifact artifact, String groupId, String artifactId, String version) {
         if (artifact == null) {
             throw new IllegalArgumentException("no artifact specified");
         }
@@ -38,6 +44,10 @@ final class RelocatedArtifact extends AbstractArtifact {
         this.version = (version != null && version.length() > 0) ? version : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getGroupId() {
         if (groupId != null) {
             return groupId;
@@ -46,6 +56,10 @@ final class RelocatedArtifact extends AbstractArtifact {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getArtifactId() {
         if (artifactId != null) {
             return artifactId;
@@ -54,6 +68,10 @@ final class RelocatedArtifact extends AbstractArtifact {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getVersion() {
         if (version != null) {
             return version;
@@ -62,24 +80,43 @@ final class RelocatedArtifact extends AbstractArtifact {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getClassifier() {
         return artifact.getClassifier();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getExtension() {
         return artifact.getExtension();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public File getFile() {
         return artifact.getFile();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getProperty(String key, String defaultValue) {
         return artifact.getProperty(key, defaultValue);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<String, String> getProperties() {
         return artifact.getProperties();
     }
-
 }

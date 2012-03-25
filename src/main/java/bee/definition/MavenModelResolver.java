@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package demo.manual;
+package bee.definition;
 
 import java.io.File;
 import java.util.Collections;
@@ -37,9 +37,9 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
  * are recessively merged into the search chain.
  * 
  * @author Benjamin Bentmann
- * @see DefaultArtifactDescriptorReader
+ * @see MavenArtifactDescriptorReader
  */
-class DefaultModelResolver implements ModelResolver {
+class MavenModelResolver implements ModelResolver {
 
     private final RepositorySystemSession session;
 
@@ -55,7 +55,15 @@ class DefaultModelResolver implements ModelResolver {
 
     private final Set<String> repositoryIds;
 
-    public DefaultModelResolver(RepositorySystemSession session, RequestTrace trace, String context, ArtifactResolver resolver, RemoteRepositoryManager remoteRepositoryManager, List<RemoteRepository> repositories) {
+    /**
+     * @param session
+     * @param trace
+     * @param context
+     * @param resolver
+     * @param remoteRepositoryManager
+     * @param repositories
+     */
+    MavenModelResolver(RepositorySystemSession session, RequestTrace trace, String context, ArtifactResolver resolver, RemoteRepositoryManager remoteRepositoryManager, List<RemoteRepository> repositories) {
         this.session = session;
         this.trace = trace;
         this.context = context;
@@ -65,7 +73,10 @@ class DefaultModelResolver implements ModelResolver {
         this.repositoryIds = new HashSet<String>();
     }
 
-    private DefaultModelResolver(DefaultModelResolver original) {
+    /**
+     * @param original
+     */
+    private MavenModelResolver(MavenModelResolver original) {
         this.session = original.session;
         this.trace = original.trace;
         this.context = original.context;
@@ -75,20 +86,29 @@ class DefaultModelResolver implements ModelResolver {
         this.repositoryIds = new HashSet<String>(original.repositoryIds);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void addRepository(Repository repository) throws InvalidRepositoryException {
         if (!repositoryIds.add(repository.getId())) {
             return;
         }
 
-        List<RemoteRepository> newRepositories = Collections.singletonList(ArtifactDescriptorUtils.toRemoteRepository(repository));
+        List<RemoteRepository> newRepositories = Collections.singletonList(MavenUtils.convert(repository));
 
         this.repositories = remoteRepositoryManager.aggregateRepositories(session, repositories, newRepositories, true);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ModelResolver newCopy() {
-        return new DefaultModelResolver(this);
+        return new MavenModelResolver(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public ModelSource resolveModel(String groupId, String artifactId, String version)
             throws UnresolvableModelException {
         Artifact pomArtifact = new DefaultArtifact(groupId, artifactId, "", "pom", version);
@@ -105,5 +125,4 @@ class DefaultModelResolver implements ModelResolver {
 
         return new FileModelSource(pomFile);
     }
-
 }

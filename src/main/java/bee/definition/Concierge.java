@@ -88,9 +88,6 @@ import org.eclipse.aether.util.repository.DefaultProxySelector;
 
 import bee.repository.ConsoleRepositoryListener;
 import bee.repository.ConsoleTransferListener;
-import demo.manual.DefaultArtifactDescriptorReader;
-import demo.manual.DefaultVersionRangeResolver;
-import demo.manual.DefaultVersionResolver;
 import demo.manual.ManualWagonProvider;
 import demo.util.ConsoleDependencyGraphDumper;
 
@@ -125,16 +122,16 @@ public class Concierge {
     private final DefaultArtifactResolver artifactResolver = new DefaultArtifactResolver();
 
     /** he artifact description reader . */
-    private final DefaultArtifactDescriptorReader artifactDescriptorReader = new DefaultArtifactDescriptorReader();
+    private final MavenArtifactDescriptorReader artifactDescriptorReader = new MavenArtifactDescriptorReader();
 
     /** The metadata resolver. */
     private final DefaultMetadataResolver metadataResolver = new DefaultMetadataResolver();
 
     /** The version resolver. */
-    private final DefaultVersionResolver versionResolver = new DefaultVersionResolver();
+    private final MavenVersionResolver versionResolver = new MavenVersionResolver();
 
     /** The version range resolver. */
-    private final DefaultVersionRangeResolver versionRangeResolver = new DefaultVersionRangeResolver();
+    private final MavenVersionRangeResolver versionRangeResolver = new MavenVersionRangeResolver();
 
     /** The profile selector. */
     private final DefaultProfileSelector profileSelector = new DefaultProfileSelector();
@@ -233,11 +230,11 @@ public class Concierge {
         artifactResolver.setUpdateCheckManager(updateCheckManager);
 
         // ============ ArtifactDescriptionReader ============ //
-        artifactDescriptorReader.setVersionResolver(versionResolver);
-        artifactDescriptorReader.setArtifactResolver(artifactResolver);
-        artifactDescriptorReader.setModelBuilder(modelBuilder);
-        artifactDescriptorReader.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        artifactDescriptorReader.setRemoteRepositoryManager(remoteRepositoryManager);
+        artifactDescriptorReader.artifactResolver = artifactResolver;
+        artifactDescriptorReader.modelBuilder = modelBuilder;
+        artifactDescriptorReader.remoteRepositoryManager = remoteRepositoryManager;
+        artifactDescriptorReader.repositoryEventDispatcher = repositoryEventDispatcher;
+        artifactDescriptorReader.versionResolver = versionResolver;
 
         // ============ Installer ============ //
         installer.setFileProcessor(fileProcessor);
@@ -250,9 +247,9 @@ public class Concierge {
         collector.setArtifactDescriptorReader(artifactDescriptorReader);
 
         // ============ VersionResolver ============ //
-        versionResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        versionResolver.setSyncContextFactory(syncContextFactory);
-        versionResolver.setMetadataResolver(metadataResolver);
+        versionResolver.metadataResolver = metadataResolver;
+        versionResolver.repositoryEventDispatcher = repositoryEventDispatcher;
+        versionResolver.syncContextFactory = syncContextFactory;
 
         // ============ MetadataResolver ============ //
         metadataResolver.setRemoteRepositoryManager(remoteRepositoryManager);
