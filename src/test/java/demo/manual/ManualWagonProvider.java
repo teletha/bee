@@ -11,7 +11,7 @@ package demo.manual;
 
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
-import org.sonatype.aether.connector.wagon.WagonProvider;
+import org.eclipse.aether.connector.wagon.WagonProvider;
 
 /**
  * @version 2012/03/25 1:00:39

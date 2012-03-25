@@ -7,12 +7,12 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package demo.util;
+package bee.repository;
 
 import java.io.PrintStream;
 
-import org.sonatype.aether.AbstractRepositoryListener;
-import org.sonatype.aether.RepositoryEvent;
+import org.eclipse.aether.AbstractRepositoryListener;
+import org.eclipse.aether.RepositoryEvent;
 
 /**
  * @version 2012/03/25 1:03:45
