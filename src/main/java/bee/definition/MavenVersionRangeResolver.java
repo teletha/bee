@@ -20,7 +20,7 @@ import org.eclipse.aether.version.VersionConstraint;
 import org.eclipse.aether.version.VersionScheme;
 
 /**
- * @version 2012/03/25 9:58:34
+ * @version 2012/03/25 20:40:54
  */
 class MavenVersionRangeResolver implements VersionRangeResolver {
 
@@ -30,20 +30,18 @@ class MavenVersionRangeResolver implements VersionRangeResolver {
     public VersionRangeResult resolveVersionRange(RepositorySystemSession session, VersionRangeRequest request)
             throws VersionRangeResolutionException {
         VersionRangeResult result = new VersionRangeResult(request);
+        VersionScheme scheme = new GenericVersionScheme();
 
-        VersionScheme versionScheme = new GenericVersionScheme();
-
-        VersionConstraint versionConstraint;
         try {
-            versionConstraint = versionScheme.parseVersionConstraint(request.getArtifact().getVersion());
+            VersionConstraint constraint = scheme.parseVersionConstraint(request.getArtifact().getVersion());
+            result.setVersionConstraint(constraint);
+            result.addVersion(constraint.getVersion());
+
+            // API definition
+            return result;
         } catch (InvalidVersionSpecificationException e) {
             result.addException(e);
             throw new VersionRangeResolutionException(result);
         }
-
-        result.setVersionConstraint(versionConstraint);
-        result.addVersion(versionConstraint.getVersion());
-
-        return result;
     }
 }
