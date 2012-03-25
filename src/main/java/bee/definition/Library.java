@@ -15,9 +15,10 @@
  */
 package bee.definition;
 
-import java.net.URL;
 import java.nio.file.Path;
-import java.util.List;
+
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 
 /**
  * @version 2010/09/09 20:10:56
@@ -31,10 +32,13 @@ public class Library implements Comparable<Library> {
     public final String name;
 
     /** The version identifier. */
-    public final Version version;
+    public final String version;
 
     /** The scope. */
     public Scope scope = Scope.Compile;
+
+    /** The actual artifact. */
+    final Artifact artifact;
 
     /**
      * @param name
@@ -42,10 +46,7 @@ public class Library implements Comparable<Library> {
      * @param version
      */
     Library(String qualified) {
-        String[] values = qualified.split(":");
-        this.group = values[0];
-        this.name = values[1];
-        this.version = new Version(values[2]);
+        this(new DefaultArtifact(qualified));
     }
 
     /**
@@ -54,9 +55,17 @@ public class Library implements Comparable<Library> {
      * @param version
      */
     Library(String group, String artifact, String version) {
-        this.group = group;
-        this.name = artifact;
-        this.version = new Version(version);
+        this(new DefaultArtifact(group, artifact, "", version));
+    }
+
+    /**
+     * 
+     */
+    Library(Artifact artifact) {
+        this.artifact = artifact;
+        this.group = artifact.getGroupId();
+        this.name = artifact.getArtifactId();
+        this.version = artifact.getVersion();
     }
 
     /**
@@ -105,57 +114,6 @@ public class Library implements Comparable<Library> {
     public Library atSystem() {
         scope = Scope.System;
         return this;
-    }
-
-    /**
-     * Load library from the specified repositories.
-     * 
-     * @param repositories
-     * @return
-     */
-    public Path load(List<Repository> repositories) {
-        return null;
-    }
-
-    /**
-     * <p>
-     * Locate jar file in your internal repository.
-     * </p>
-     * 
-     * @return A location.
-     */
-    Path toInternal(String extension) {
-        return null;
-    }
-
-    /**
-     * <p>
-     * Locate jar file in the central repository.
-     * </p>
-     * 
-     * @return A location.
-     */
-    URL toExternal(String extension) {
-        return null;
-    }
-
-    /**
-     * <p>
-     * Locate jar file in the specified external repository.
-     * </p>
-     * 
-     * @param repository A target repository.
-     * @return A location.
-     */
-    URL toExternal(String extension, Repository repository) {
-        // try {
-        // return new URL(repository.url, toPath(extension));
-        // } catch (MalformedURLException e) {
-        // // If this exception will be thrown, it is bug of this program. So we must rethrow the
-        // // wrapped error in here.
-        // throw new Error(e);
-        // }
-        return null;
     }
 
     /**
