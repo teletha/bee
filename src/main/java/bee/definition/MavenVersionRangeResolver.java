@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package demo.manual;
+package bee.definition;
 
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.impl.VersionRangeResolver;
@@ -22,8 +22,11 @@ import org.eclipse.aether.version.VersionScheme;
 /**
  * @version 2012/03/25 9:58:34
  */
-public class DefaultVersionRangeResolver implements VersionRangeResolver {
+class MavenVersionRangeResolver implements VersionRangeResolver {
 
+    /**
+     * {@inheritDoc}
+     */
     public VersionRangeResult resolveVersionRange(RepositorySystemSession session, VersionRangeRequest request)
             throws VersionRangeResolutionException {
         VersionRangeResult result = new VersionRangeResult(request);
@@ -39,28 +42,7 @@ public class DefaultVersionRangeResolver implements VersionRangeResolver {
         }
 
         result.setVersionConstraint(versionConstraint);
-
-        // if (versionConstraint.getRanges().isEmpty()) {
         result.addVersion(versionConstraint.getVersion());
-        // } else {
-        // Map<String, ArtifactRepository> versionIndex = getVersions(session, result, request);
-        //
-        // List<Version> versions = new ArrayList<Version>();
-        // for (Map.Entry<String, ArtifactRepository> v : versionIndex.entrySet()) {
-        // try {
-        // Version ver = versionScheme.parseVersion(v.getKey());
-        // if (versionConstraint.containsVersion(ver)) {
-        // versions.add(ver);
-        // result.setRepository(ver, v.getValue());
-        // }
-        // } catch (InvalidVersionSpecificationException e) {
-        // result.addException(e);
-        // }
-        // }
-        //
-        // Collections.sort(versions);
-        // result.setVersions(versions);
-        // }
 
         return result;
     }

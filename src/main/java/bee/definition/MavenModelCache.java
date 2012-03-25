@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package demo.manual;
+package bee.definition;
 
 import org.apache.maven.model.building.ModelCache;
 import org.eclipse.aether.RepositoryCache;
@@ -16,34 +16,50 @@ import org.eclipse.aether.RepositorySystemSession;
 /**
  * @version 2012/03/25 10:59:26
  */
-class DefaultModelCache implements ModelCache {
+class MavenModelCache implements ModelCache {
 
     private final RepositorySystemSession session;
 
     private final RepositoryCache cache;
 
-    public static ModelCache newInstance(RepositorySystemSession session) {
+    /**
+     * @param session
+     * @return
+     */
+    static ModelCache newInstance(RepositorySystemSession session) {
         if (session.getCache() == null) {
             return null;
         } else {
-            return new DefaultModelCache(session);
+            return new MavenModelCache(session);
         }
     }
 
-    private DefaultModelCache(RepositorySystemSession session) {
+    /**
+     * @param session
+     */
+    private MavenModelCache(RepositorySystemSession session) {
         this.session = session;
         this.cache = session.getCache();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Object get(String groupId, String artifactId, String version, String tag) {
         return cache.get(session, new Key(groupId, artifactId, version, tag));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void put(String groupId, String artifactId, String version, String tag, Object data) {
         cache.put(session, new Key(groupId, artifactId, version, tag), data);
     }
 
-    static class Key {
+    /**
+     * @version 2012/03/25 20:31:29
+     */
+    private static final class Key {
 
         private final String groupId;
 
@@ -55,6 +71,12 @@ class DefaultModelCache implements ModelCache {
 
         private final int hash;
 
+        /**
+         * @param groupId
+         * @param artifactId
+         * @param version
+         * @param tag
+         */
         public Key(String groupId, String artifactId, String version, String tag) {
             this.groupId = groupId;
             this.artifactId = artifactId;
@@ -69,6 +91,9 @@ class DefaultModelCache implements ModelCache {
             hash = h;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean equals(Object obj) {
             if (this == obj) {
@@ -82,10 +107,12 @@ class DefaultModelCache implements ModelCache {
             return artifactId.equals(that.artifactId) && groupId.equals(that.groupId) && version.equals(that.version) && tag.equals(that.tag);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int hashCode() {
             return hash;
         }
-
     }
 }

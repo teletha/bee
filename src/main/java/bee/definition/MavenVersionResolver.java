@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package demo.manual;
+package bee.definition;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,15 +47,11 @@ import org.eclipse.aether.resolution.MetadataResult;
 import org.eclipse.aether.resolution.VersionRequest;
 import org.eclipse.aether.resolution.VersionResolutionException;
 import org.eclipse.aether.resolution.VersionResult;
-import org.eclipse.aether.spi.locator.Service;
-import org.eclipse.aether.spi.locator.ServiceLocator;
-
-import sun.text.normalizer.VersionInfo;
 
 /**
- * @version 2012/03/25 11:30:24
+ * @version 2012/03/25 20:37:31
  */
-public class DefaultVersionResolver implements VersionResolver, Service {
+class MavenVersionResolver implements VersionResolver {
 
     private static final String MAVEN_METADATA_XML = "maven-metadata.xml";
 
@@ -65,42 +61,15 @@ public class DefaultVersionResolver implements VersionResolver, Service {
 
     private static final String SNAPSHOT = "SNAPSHOT";
 
-    private MetadataResolver metadataResolver;
+    MetadataResolver metadataResolver;
 
-    private SyncContextFactory syncContextFactory;
+    SyncContextFactory syncContextFactory;
 
-    private RepositoryEventDispatcher repositoryEventDispatcher;
+    RepositoryEventDispatcher repositoryEventDispatcher;
 
-    public void initService(ServiceLocator locator) {
-        setMetadataResolver(locator.getService(MetadataResolver.class));
-        setSyncContextFactory(locator.getService(SyncContextFactory.class));
-        setRepositoryEventDispatcher(locator.getService(RepositoryEventDispatcher.class));
-    }
-
-    public DefaultVersionResolver setMetadataResolver(MetadataResolver metadataResolver) {
-        if (metadataResolver == null) {
-            throw new IllegalArgumentException("metadata resolver has not been specified");
-        }
-        this.metadataResolver = metadataResolver;
-        return this;
-    }
-
-    public DefaultVersionResolver setSyncContextFactory(SyncContextFactory syncContextFactory) {
-        if (syncContextFactory == null) {
-            throw new IllegalArgumentException("sync context factory has not been specified");
-        }
-        this.syncContextFactory = syncContextFactory;
-        return this;
-    }
-
-    public DefaultVersionResolver setRepositoryEventDispatcher(RepositoryEventDispatcher repositoryEventDispatcher) {
-        if (repositoryEventDispatcher == null) {
-            throw new IllegalArgumentException("repository event dispatcher has not been specified");
-        }
-        this.repositoryEventDispatcher = repositoryEventDispatcher;
-        return this;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     public VersionResult resolveVersion(RepositorySystemSession session, VersionRequest request)
             throws VersionResolutionException {
         RequestTrace trace = RequestTrace.newChild(request.getTrace(), request);
@@ -216,6 +185,12 @@ public class DefaultVersionResolver implements VersionResolver, Service {
         return result;
     }
 
+    /**
+     * @param result
+     * @param infos
+     * @param key
+     * @return
+     */
     private boolean resolve(VersionResult result, Map<String, VersionInfo> infos, String key) {
         VersionInfo info = infos.get(key);
         if (info != null) {
@@ -225,6 +200,14 @@ public class DefaultVersionResolver implements VersionResolver, Service {
         return info != null;
     }
 
+    /**
+     * @param session
+     * @param trace
+     * @param metadata
+     * @param repository
+     * @param result
+     * @return
+     */
     private Versioning readVersions(RepositorySystemSession session, RequestTrace trace, Metadata metadata, ArtifactRepository repository, VersionResult result) {
         Versioning versioning = null;
 
@@ -282,6 +265,13 @@ public class DefaultVersionResolver implements VersionResolver, Service {
         return (versioning != null) ? versioning : new Versioning();
     }
 
+    /**
+     * @param session
+     * @param trace
+     * @param metadata
+     * @param repository
+     * @param exception
+     */
     private void invalidMetadata(RepositorySystemSession session, RequestTrace trace, Metadata metadata, ArtifactRepository repository, Exception exception) {
         Builder builder = new RepositoryEvent.Builder(session, EventType.METADATA_INVALID);
         builder.setMetadata(metadata).setException(exception).setRepository(repository);
@@ -289,6 +279,12 @@ public class DefaultVersionResolver implements VersionResolver, Service {
         repositoryEventDispatcher.dispatch(builder.build());
     }
 
+    /**
+     * @param artifact
+     * @param infos
+     * @param versioning
+     * @param repository
+     */
     private void merge(Artifact artifact, Map<String, VersionInfo> infos, Versioning versioning, ArtifactRepository repository) {
         if (!versioning.getRelease().isEmpty()) {
             merge(RELEASE, infos, versioning.getLastUpdated(), versioning.getRelease(), repository);
@@ -316,6 +312,13 @@ public class DefaultVersionResolver implements VersionResolver, Service {
         }
     }
 
+    /**
+     * @param key
+     * @param infos
+     * @param timestamp
+     * @param version
+     * @param repository
+     */
     private void merge(String key, Map<String, VersionInfo> infos, String timestamp, String version, ArtifactRepository repository) {
         VersionInfo info = infos.get(key);
         if (info == null) {
@@ -328,6 +331,11 @@ public class DefaultVersionResolver implements VersionResolver, Service {
         }
     }
 
+    /**
+     * @param infos
+     * @param srcKey
+     * @param dstKey
+     */
     private void merge(Map<String, VersionInfo> infos, String srcKey, String dstKey) {
         VersionInfo srcInfo = infos.get(srcKey);
         VersionInfo dstInfo = infos.get(dstKey);
@@ -337,14 +345,28 @@ public class DefaultVersionResolver implements VersionResolver, Service {
         }
     }
 
+    /**
+     * @param classifier
+     * @param extension
+     * @return
+     */
     private String getKey(String classifier, String extension) {
         return clean(classifier) + ':' + clean(extension);
     }
 
+    /**
+     * @param value
+     * @return
+     */
     private String clean(String value) {
         return value == null ? "" : value.trim();
     }
 
+    /**
+     * @param session
+     * @param artifact
+     * @return
+     */
     private boolean isSafelyCacheable(RepositorySystemSession session, Artifact artifact) {
         /*
          * The workspace/reactor is in flux so we better not assume definitive information for any
@@ -356,11 +378,14 @@ public class DefaultVersionResolver implements VersionResolver, Service {
             return true;
         }
 
-        Artifact pomArtifact = ArtifactDescriptorUtils.toPomArtifact(artifact);
+        Artifact pomArtifact = MavenUtils.convert(artifact);
 
         return workspace.findArtifact(pomArtifact) == null;
     }
 
+    /**
+     * @version 2012/03/25 20:33:44
+     */
     private static class VersionInfo {
 
         String timestamp;
@@ -369,18 +394,29 @@ public class DefaultVersionResolver implements VersionResolver, Service {
 
         ArtifactRepository repository;
 
+        /**
+         * @param timestamp
+         * @param version
+         * @param repository
+         */
         public VersionInfo(String timestamp, String version, ArtifactRepository repository) {
             this.timestamp = (timestamp != null) ? timestamp : "";
             this.version = version;
             this.repository = repository;
         }
 
+        /**
+         * @param timestamp
+         * @return
+         */
         public boolean isOutdated(String timestamp) {
             return timestamp != null && timestamp.compareTo(this.timestamp) > 0;
         }
-
     }
 
+    /**
+     * @version 2012/03/25 20:33:48
+     */
     private static class Key {
 
         private final String groupId;
@@ -403,6 +439,10 @@ public class DefaultVersionResolver implements VersionResolver, Service {
 
         private final int hashCode;
 
+        /**
+         * @param session
+         * @param request
+         */
         public Key(RepositorySystemSession session, VersionRequest request) {
             Artifact artifact = request.getArtifact();
             groupId = artifact.getGroupId();
@@ -435,6 +475,9 @@ public class DefaultVersionResolver implements VersionResolver, Service {
             hashCode = hash;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean equals(Object obj) {
             if (obj == this) {
@@ -447,13 +490,18 @@ public class DefaultVersionResolver implements VersionResolver, Service {
             return artifactId.equals(that.artifactId) && groupId.equals(that.groupId) && classifier.equals(that.classifier) && extension.equals(that.extension) && version.equals(that.version) && context.equals(that.context) && localRepo.equals(that.localRepo) && CacheUtils.eq(workspace, that.workspace) && CacheUtils.repositoriesEquals(repositories, that.repositories);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public int hashCode() {
             return hashCode;
         }
-
     }
 
+    /**
+     * @version 2012/03/25 20:34:13
+     */
     private static class Record {
 
         final String version;
@@ -462,6 +510,10 @@ public class DefaultVersionResolver implements VersionResolver, Service {
 
         final Class<?> repoClass;
 
+        /**
+         * @param version
+         * @param repository
+         */
         public Record(String version, ArtifactRepository repository) {
             this.version = version;
             if (repository != null) {
@@ -473,5 +525,4 @@ public class DefaultVersionResolver implements VersionResolver, Service {
             }
         }
     }
-
 }
