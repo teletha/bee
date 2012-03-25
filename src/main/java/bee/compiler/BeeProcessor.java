@@ -181,5 +181,13 @@ public class BeeProcessor implements Processor {
         public void error(String message, Object... params) {
             notifier.printMessage(ERROR, String.format(message, params), element);
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void error(Throwable throwable) {
+            notifier.printMessage(ERROR, throwable.getLocalizedMessage(), element);
+        }
     }
 }

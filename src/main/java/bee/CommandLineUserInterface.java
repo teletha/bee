@@ -242,15 +242,19 @@ class CommandLineUserInterface implements UserInterface {
     }
 
     /**
-     * @see bee.UserInterface#talk(String, Object...)
+     * {@inheritDoc}
      */
     @Override
     public void talk(String message, Object... params) {
-        System.out.format(message.concat("%n"), params);
+        if (message.charAt(message.length() - 1) == '\r') {
+            System.out.format(message, params);
+        } else {
+            System.out.format(message.concat("%n"), params);
+        }
     }
 
     /**
-     * @see bee.UserNotifier#warn(java.lang.String, java.lang.Object[])
+     * {@inheritDoc}
      */
     @Override
     public void warn(String message, Object... params) {
@@ -258,10 +262,18 @@ class CommandLineUserInterface implements UserInterface {
     }
 
     /**
-     * @see bee.UserNotifier#error(java.lang.String, java.lang.Object[])
+     * {@inheritDoc}
      */
     @Override
     public void error(String message, Object... params) {
         System.out.format(message.concat("%n"), params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void error(Throwable throwable) {
+        throwable.printStackTrace(System.out);
     }
 }

@@ -9,50 +9,61 @@
  */
 package bee.definition;
 
+import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.util.artifact.JavaScopes;
+import org.eclipse.aether.util.filter.DependencyFilterUtils;
+
 /**
  * @version 2012/03/21 20:20:37
  */
 public enum Scope {
 
     /** Depend at anytime. */
-    Compile(1 | 2 | 4 | 8),
+    Compile(JavaScopes.COMPILE),
 
     /** Depend at test phase only. */
-    Test(1 | 2),
+    Test(JavaScopes.TEST),
 
     /** Depend at runtime phase only. */
-    Runtime(4),
+    Runtime(JavaScopes.RUNTIME),
 
     /** Depend at runtime phase only. */
-    Provided(1 | 2),
+    Provided(JavaScopes.PROVIDED),
 
     /** Depend at runtime phase only. */
-    System(1 | 2);
+    System(JavaScopes.SYSTEM);
 
     /** The internal flag. */
-    private final int bit;
+    private final String type;
 
     /**
      * <p>
      * Scope definition.
      * </p>
      * 
-     * @param bit
+     * @param type
      */
-    private Scope(int bit) {
-        this.bit = bit;
+    private Scope(String type) {
+        this.type = type;
     }
 
     /**
      * <p>
-     * Check whether this scope overlaps the specified scope or not.
+     * Returns dependency filter.
      * </p>
      * 
-     * @param scope
      * @return
      */
-    public boolean contains(Scope scope) {
-        return (bit & scope.bit) == scope.bit;
+    public DependencyFilter getFilter() {
+        return DependencyFilterUtils.classpathFilter(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return type;
     }
 
     /**

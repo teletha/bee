@@ -17,6 +17,8 @@ package bee.definition;
 
 import java.nio.file.Path;
 
+import kiss.I;
+
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 
@@ -55,7 +57,7 @@ public class Library implements Comparable<Library> {
      * @param version
      */
     Library(String group, String artifact, String version) {
-        this(new DefaultArtifact(group, artifact, "", version));
+        this(new DefaultArtifact(group, artifact, "jar", version));
     }
 
     /**
@@ -124,7 +126,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Path getJar() {
-        return Repository.Local.resolve(localPath(".jar"));
+        return I.make(Repository.class).getLocalRepository().resolve(localPath(".jar"));
     }
 
     /**
@@ -135,7 +137,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Path getSourceJar() {
-        return Repository.Local.resolve(localPath("-sources.jar"));
+        return I.make(Repository.class).getLocalRepository().resolve(localPath("-sources.jar"));
     }
 
     /**
@@ -146,7 +148,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Path getPOM() {
-        return Repository.Local.resolve(localPath(".pom"));
+        return I.make(Repository.class).getLocalRepository().resolve(localPath(".pom"));
     }
 
     /**
