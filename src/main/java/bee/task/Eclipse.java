@@ -49,9 +49,23 @@ public class Eclipse extends Task {
     private void createClasspath(Path file) {
         Element doc = $("classpath");
 
+        // tests
+        for (Path path : project.getTestSources()) {
+            doc.append($("classpathentry").attr("kind", "src")
+                    .attr("path", path)
+                    .attr("output", project.getTestClasses()));
+        }
+
         // sources
-        for (Path path : project.getSources().getRoot()) {
-            System.out.println(path);
+        for (Path path : project.getSources()) {
+            doc.append($("classpathentry").attr("kind", "src").attr("path", path).attr("output", project.getClasses()));
+        }
+
+        // projects
+        for (Path path : project.getProjectSources()) {
+            doc.append($("classpathentry").attr("kind", "src")
+                    .attr("path", path)
+                    .attr("output", project.getProjectClasses()));
         }
 
         // library
@@ -60,17 +74,17 @@ public class Eclipse extends Task {
             Path source = library.getSourceJar();
 
             if (Files.exists(jar)) {
-                Element e = $("classpathentry").attr("kind", "var").attr("path", jar.toString());
+                Element e = $("classpathentry").attr("kind", "var").attr("path", jar);
 
                 if (Files.exists(source)) {
-                    e.attr("sourcepath", source.toString());
+                    e.attr("sourcepath", source);
                 }
                 doc.append(e);
             }
         }
         doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
-        doc.append($("classpathentry").attr("kind", "output").attr("path", project.getOutput().toString()));
 
         System.out.println(doc);
+
     }
 }

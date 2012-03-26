@@ -16,6 +16,7 @@
 package bee.definition;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -45,7 +46,10 @@ public class Project {
     public String version;
 
     /** The libraries. */
-    private final SortedSet<Library> libraries = new TreeSet();
+    final SortedSet<Library> libraries = new TreeSet();
+
+    /** The repositories. */
+    final ArrayList<String> repositories = new ArrayList();
 
     /** The input base directory. */
     private Path input;
@@ -71,7 +75,7 @@ public class Project {
      * @return
      */
     public final Set<Library> getDependency(Scope scope) {
-        return I.make(Repository.class).collectDependency(libraries, scope);
+        return I.make(Repository.class).collectDependency(this, scope);
     }
 
     /**
@@ -90,6 +94,19 @@ public class Project {
 
         // API definition
         return library;
+    }
+
+    /**
+     * <p>
+     * Add new repository by URI.
+     * </p>
+     * 
+     * @param uri
+     */
+    protected final void repository(String uri) {
+        if (uri != null && !uri.isEmpty()) {
+            repositories.add(uri);
+        }
     }
 
     /**
@@ -192,6 +209,71 @@ public class Project {
             set.add(path);
         }
         return set;
+    }
+
+    /**
+     * <p>
+     * Returns class directory.
+     * </p>
+     * 
+     * @return
+     */
+    public final Path getClasses() {
+        return output.resolve("classes");
+    }
+
+    /**
+     * <p>
+     * Returns test source directories.
+     * </p>
+     * 
+     * @return
+     */
+    public final PathSet getTestSources() {
+        PathSet set = new PathSet();
+
+        for (Path path : I.walkDirectory(input.resolve("test"), "*")) {
+            set.add(path);
+        }
+        return set;
+    }
+
+    /**
+     * <p>
+     * Returns test class directory.
+     * </p>
+     * 
+     * @return
+     */
+    public final Path getTestClasses() {
+        return output.resolve("test-classes");
+    }
+
+    /**
+     * <p>
+     * Returns project source directories.
+     * </p>
+     * 
+     * @return
+     */
+    public final PathSet getProjectSources() {
+        PathSet set = new PathSet();
+
+        for (Path path : I.walkDirectory(input.resolve("project"), "*")) {
+            set.add(path);
+        }
+        return set;
+    }
+
+    /**
+     * <p>
+     * Returns project class directory.
+     * </p>
+     * 
+     * @return
+     */
+    public final Path getProjectClasses() {
+        return output.resolve("project-classes");
     }
 
     /**

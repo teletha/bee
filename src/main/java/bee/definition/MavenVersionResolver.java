@@ -286,16 +286,16 @@ class MavenVersionResolver implements VersionResolver {
      * @param repository
      */
     private void merge(Artifact artifact, Map<String, VersionInfo> infos, Versioning versioning, ArtifactRepository repository) {
-        if (!versioning.getRelease().isEmpty()) {
+        if (!isEmpty(versioning.getRelease())) {
             merge(RELEASE, infos, versioning.getLastUpdated(), versioning.getRelease(), repository);
         }
 
-        if (!versioning.getLatest().isEmpty()) {
+        if (!isEmpty(versioning.getLatest())) {
             merge(LATEST, infos, versioning.getLastUpdated(), versioning.getLatest(), repository);
         }
 
         for (SnapshotVersion sv : versioning.getSnapshotVersions()) {
-            if (!sv.getVersion().isEmpty()) {
+            if (!isEmpty(sv.getVersion())) {
                 String key = getKey(sv.getClassifier(), sv.getExtension());
                 merge(SNAPSHOT + key, infos, sv.getUpdated(), sv.getVersion(), repository);
             }
@@ -310,6 +310,10 @@ class MavenVersionResolver implements VersionResolver {
             }
             merge(SNAPSHOT, infos, versioning.getLastUpdated(), version, repository);
         }
+    }
+
+    private static boolean isEmpty(String value) {
+        return value == null || value.isEmpty();
     }
 
     /**

@@ -84,7 +84,7 @@ public class PathSet implements Iterable<Path> {
         List<Path> paths = new ArrayList();
 
         for (Pattern pattern : set) {
-            paths.addAll(I.walk(pattern.base, pattern.patterns));
+            paths.add(pattern.base);
         }
         return paths.iterator();
     }
@@ -96,11 +96,11 @@ public class PathSet implements Iterable<Path> {
      * 
      * @return
      */
-    public List<Path> getRoot() {
+    public List<Path> getFiles() {
         List<Path> paths = new ArrayList();
 
         for (Pattern pattern : set) {
-            paths.add(pattern.base);
+            paths.addAll(I.walk(pattern.base, pattern.patterns));
         }
         return paths;
     }
