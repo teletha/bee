@@ -69,11 +69,10 @@ import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
 import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
 import org.eclipse.aether.internal.impl.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
-import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.resolution.ArtifactRequest;
-import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.repository.RepositoryPolicy;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
@@ -83,8 +82,6 @@ import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.util.artifact.DefaultArtifactTypeRegistry;
-import org.eclipse.aether.util.artifact.JavaScopes;
-import org.eclipse.aether.util.filter.DependencyFilterUtils;
 import org.eclipse.aether.util.graph.manager.ClassicDependencyManager;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
@@ -99,6 +96,7 @@ import org.eclipse.aether.util.graph.traverser.FatArtifactTraverser;
 import org.eclipse.aether.util.repository.DefaultAuthenticationSelector;
 import org.eclipse.aether.util.repository.DefaultMirrorSelector;
 import org.eclipse.aether.util.repository.DefaultProxySelector;
+import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 
 import bee.UserInterface;
 
@@ -202,7 +200,7 @@ public class Repository {
     private final DefaultLocalRepositoryProvider localRepositoryProvider = new DefaultLocalRepositoryProvider();
 
     /** The local repository manager factory. */
-    private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new EnhancedLocalRepositoryManagerFactory();
+    private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
 
     /** The repository connector factory for wagon. */
     private final WagonRepositoryConnectorFactory wagonRepositoryConnectorFactory = new WagonRepositoryConnectorFactory();
@@ -260,6 +258,11 @@ public class Repository {
         versionResolver.repositoryEventDispatcher = repositoryEventDispatcher;
         versionResolver.syncContextFactory = syncContextFactory;
 
+        // ============ VersionRangeResolver ============ //
+        versionRangeResolver.metadataResolver = metadataResolver;
+        versionRangeResolver.repositoryEventDispatcher = repositoryEventDispatcher;
+        versionRangeResolver.syncContextFactory = syncContextFactory;
+
         // ============ MetadataResolver ============ //
         metadataResolver.setRemoteRepositoryManager(remoteRepositoryManager);
         metadataResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
@@ -307,39 +310,21 @@ public class Repository {
         wagonRepositoryConnectorFactory.setFileProcessor(fileProcessor);
 
         // ============ RepositorySystem ============ //
-        system.setLocalRepositoryProvider(localRepositoryProvider);
-        system.setDependencyCollector(collector);
-        system.setArtifactResolver(artifactResolver);
         system.setArtifactDescriptorReader(artifactDescriptorReader);
-        system.setVersionRangeResolver(versionRangeResolver);
+        system.setArtifactResolver(artifactResolver);
         system.setDependencyCollector(collector);
+        system.setInstaller(installer);
+        system.setLocalRepositoryProvider(localRepositoryProvider);
+        system.setMetadataResolver(metadataResolver);
         system.setSyncContextFactory(syncContextFactory);
         system.setVersionResolver(versionResolver);
-        system.setMetadataResolver(metadataResolver);
-        system.setInstaller(installer);
+        system.setVersionRangeResolver(versionRangeResolver);
 
         // ==================================================
         // Initialize
         // ==================================================
         setLocalRepository(searchLocalRepository());
         addRemoteRepository("central", "http://repo1.maven.org/maven2/");
-    }
-
-    public void resolve(Library library) {
-        ArtifactRequest request = new ArtifactRequest();
-        request.setArtifact(library.artifact);
-
-        for (RemoteRepository remote : remoteRepositories) {
-            request.addRepository(remote);
-        }
-
-        try {
-            ArtifactResult result = system.resolveArtifact(newSession(), request);
-
-            System.out.println(result.getArtifact().getFile());
-        } catch (ArtifactResolutionException e) {
-            throw I.quiet(e);
-        }
     }
 
     /**
@@ -351,14 +336,17 @@ public class Repository {
      * @param scope
      * @return
      */
-    public Set<Library> collectDependency(Set<Library> libraries, Scope scope) {
+    public Set<Library> collectDependency(Project project, Scope scope) {
         Set<Library> set = new TreeSet();
 
         // dependency collector
         CollectRequest request = new CollectRequest();
-        request.setRepositories(remoteRepositories);
 
-        for (Library library : libraries) {
+        for (String repository : project.repositories) {
+            request.addRepository(new RemoteRepository("aa", "aa", repository).setPolicy(true, new RepositoryPolicy(true, "always", "fail")));
+        }
+
+        for (Library library : project.libraries) {
             request.addDependency(new Dependency(library.artifact, library.scope.toString()));
         }
 
@@ -368,30 +356,6 @@ public class Repository {
             for (ArtifactResult dependency : result.getArtifactResults()) {
                 set.add(new Library(dependency.getArtifact()));
             }
-
-            return set;
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
-    }
-
-    public Set<Library> collectDependency(Library library) {
-        Set<Library> set = new TreeSet();
-
-        CollectRequest request = new CollectRequest();
-        request.setRoot(new Dependency(library.artifact, ""));
-
-        for (RemoteRepository remote : remoteRepositories) {
-            request.addRepository(remote);
-        }
-
-        try {
-            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, DependencyFilterUtils.classpathFilter(JavaScopes.COMPILE)));
-
-            for (ArtifactResult dependency : result.getArtifactResults()) {
-                set.add(new Library(dependency.getArtifact()));
-            }
-            set.remove(library);
 
             return set;
         } catch (Exception e) {
@@ -448,6 +412,7 @@ public class Repository {
         session.setDependencyManager(new ClassicDependencyManager());
         session.setAuthenticationSelector(new DefaultAuthenticationSelector());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepository));
+        session.setArtifactDescriptorPolicy(new SimpleArtifactDescriptorPolicy(true, true));
 
         // event listener
         session.setTransferListener(I.make(TransferView.class));
