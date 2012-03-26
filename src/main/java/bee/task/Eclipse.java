@@ -15,9 +15,12 @@
  */
 package bee.task;
 
+import static kiss.Element.*;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import kiss.Element;
 import bee.definition.Library;
 import bee.definition.Scope;
 
@@ -33,14 +36,41 @@ public class Eclipse extends Task {
      */
     @Command(defaults = true)
     public void eclipse() {
-        Path path = project.root.resolve("classpath.xml");
+        createClasspath(project.root.resolve("classpath.xml"));
+    }
 
+    /**
+     * <p>
+     * Create classpath file.
+     * </p>
+     * 
+     * @param file
+     */
+    private void createClasspath(Path file) {
+        Element doc = $("classpath");
+
+        // sources
+        for (Path path : project.getSources().getRoot()) {
+            System.out.println(path);
+        }
+
+        // library
         for (Library library : project.getDependency(Scope.Test)) {
             Path jar = library.getJar();
+            Path source = library.getSourceJar();
 
             if (Files.exists(jar)) {
-                System.out.println("==== " + jar + " ====");
+                Element e = $("classpathentry").attr("kind", "var").attr("path", jar.toString());
+
+                if (Files.exists(source)) {
+                    e.attr("sourcepath", source.toString());
+                }
+                doc.append(e);
             }
         }
+        doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
+        doc.append($("classpathentry").attr("kind", "output").attr("path", project.getOutput().toString()));
+
+        System.out.println(doc);
     }
 }

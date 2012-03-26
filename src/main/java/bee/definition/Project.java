@@ -24,6 +24,7 @@ import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.model.ClassUtil;
+import bee.PathSet;
 
 /**
  * @version 2010/04/02 3:47:44
@@ -46,11 +47,19 @@ public class Project {
     /** The libraries. */
     private final SortedSet<Library> libraries = new TreeSet();
 
+    /** The input base directory. */
+    private Path input;
+
+    /** The output base directory. */
+    private Path output;
+
     /**
      * 
      */
     protected Project() {
         root = ClassUtil.getArchive(getClass()).getParent().getParent();
+        setInput((Path) null);
+        setOutput((Path) null);
     }
 
     /**
@@ -61,7 +70,7 @@ public class Project {
      * @param scope
      * @return
      */
-    public Set<Library> getDependency(Scope scope) {
+    public final Set<Library> getDependency(Scope scope) {
         return I.make(Repository.class).collectDependency(libraries, scope);
     }
 
@@ -81,6 +90,108 @@ public class Project {
 
         // API definition
         return library;
+    }
+
+    /**
+     * Get the bese directory of input.
+     * 
+     * @return The base input directory.
+     */
+    public final Path getInput() {
+        return input;
+    }
+
+    /**
+     * <p>
+     * Set base directory of input. <code>null</code> will set default directory. A relative path
+     * will be resolved from project root directory.
+     * </p>
+     * 
+     * @param input The base input directory to set.
+     */
+    protected final void setInput(Path input) {
+        if (input == null) {
+            input = root.resolve("src");
+        }
+
+        if (!input.isAbsolute()) {
+            input = root.resolve(input);
+        }
+        this.input = input;
+    }
+
+    /**
+     * <p>
+     * Set base directory of input. <code>null</code> will set default directory. A relative path
+     * will be resolved from project root directory.
+     * </p>
+     * 
+     * @param input The base input directory to set.
+     */
+    protected final void setInput(String input) {
+        if (input == null) {
+            input = "src";
+        }
+        setInput(root.resolve(input));
+    }
+
+    /**
+     * Get the bese directory of output.
+     * 
+     * @return The base output directory.
+     */
+    public final Path getOutput() {
+        return output;
+    }
+
+    /**
+     * <p>
+     * Set base directory of output. <code>null</code> will set default directory. A relative path
+     * will be resolved from project root directory.
+     * </p>
+     * 
+     * @param output The base output directory to set.
+     */
+    protected final void setOutput(Path output) {
+        if (output == null) {
+            output = root.resolve("target");
+        }
+
+        if (!output.isAbsolute()) {
+            output = root.resolve(output);
+        }
+        this.output = output;
+    }
+
+    /**
+     * <p>
+     * Set base directory of output. <code>null</code> will set default directory. A relative path
+     * will be resolved from project root directory.
+     * </p>
+     * 
+     * @param output The base output directory to set.
+     */
+    protected final void setOutput(String output) {
+        if (output == null) {
+            output = "target";
+        }
+        setOutput(root.resolve(output));
+    }
+
+    /**
+     * <p>
+     * Returns source directories.
+     * </p>
+     * 
+     * @return
+     */
+    public final PathSet getSources() {
+        PathSet set = new PathSet();
+
+        for (Path path : I.walkDirectory(input.resolve("main"), "*")) {
+            set.add(path);
+        }
+        return set;
     }
 
     /**
