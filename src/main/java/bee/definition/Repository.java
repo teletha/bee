@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -72,7 +73,8 @@ import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
@@ -82,6 +84,7 @@ import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.util.artifact.DefaultArtifactTypeRegistry;
+import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.manager.ClassicDependencyManager;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
@@ -104,7 +107,10 @@ import bee.UserInterface;
  * @version 2012/03/25 14:55:21
  */
 @Manageable(lifestyle = Singleton.class)
-public class Repository {
+class Repository {
+
+    /** The current processing project. */
+    private final Project project;
 
     /** The root repository system. */
     private final DefaultRepositorySystem system = new DefaultRepositorySystem();
@@ -206,10 +212,7 @@ public class Repository {
     private final WagonRepositoryConnectorFactory wagonRepositoryConnectorFactory = new WagonRepositoryConnectorFactory();
 
     /** The default dependency filter. */
-    private final DependencySelector dependencyFilter = new AndDependencySelector(new DependencySelector[] {
-            new OptionalDependencySelector(), // by option
-            new ExclusionDependencySelector(), // by exclusions
-            new ScopeDependencySelector(new String[] {"test", "provided"})}); // by scope
+    private final List<DependencySelector> dependencyFilters = new ArrayList();
 
     /** The default dependency builder. */
     private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(new DependencyGraphTransformer[] {
@@ -227,7 +230,13 @@ public class Repository {
     /**
      * Wiring components by hand.
      */
-    Repository() {
+    Repository(Project project) {
+        this.project = project;
+
+        // create filter
+        dependencyFilters.add(new OptionalDependencySelector());
+        dependencyFilters.add(new ScopeDependencySelector("test", "provided"));
+
         // ============ ArtifactResolver ============ //
         artifactResolver.setSyncContextFactory(syncContextFactory);
         artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
@@ -341,10 +350,7 @@ public class Repository {
 
         // dependency collector
         CollectRequest request = new CollectRequest();
-
-        for (String repository : project.repositories) {
-            request.addRepository(new RemoteRepository("aa", "aa", repository).setPolicy(true, new RepositoryPolicy(true, "always", "fail")));
-        }
+        request.setRepositories(project.repositories);
 
         for (Library library : project.libraries) {
             request.addDependency(new Dependency(library.artifact, library.scope.toString()));
@@ -354,13 +360,40 @@ public class Repository {
             DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
 
             for (ArtifactResult dependency : result.getArtifactResults()) {
-                set.add(new Library(dependency.getArtifact()));
+                set.add(new Library(dependency.getRequest().getArtifact()));
             }
 
             return set;
         } catch (Exception e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * <p>
+     * Resolve the source codes of the specified library.
+     * </p>
+     * 
+     * @param library
+     * @return
+     */
+    public Path resolveSource(Library library) {
+        ArtifactRequest request = new ArtifactRequest();
+        request.setArtifact(new SubArtifact(library.artifact, "*-sources", "jar"));
+        request.setRepositories(project.repositories);
+
+        try {
+            ArtifactResult result = system.resolveArtifact(newSession(), request);
+
+            if (result.isResolved()) {
+                return result.getArtifact().getFile().toPath();
+            }
+
+        } catch (ArtifactResolutionException e) {
+            return null;
+        }
+
+        return null;
     }
 
     /**
@@ -403,8 +436,11 @@ public class Repository {
      * @return
      */
     private RepositorySystemSession newSession() {
+        List<DependencySelector> filters = new ArrayList(dependencyFilters);
+        filters.add(new ExclusionDependencySelector(project.exclusions));
+
         DefaultRepositorySystemSession session = new DefaultRepositorySystemSession();
-        session.setDependencySelector(dependencyFilter);
+        session.setDependencySelector(new AndDependencySelector(filters));
         session.setDependencyGraphTransformer(dependencyBuilder);
         session.setProxySelector(new DefaultProxySelector());
         session.setMirrorSelector(new DefaultMirrorSelector());
@@ -559,7 +595,8 @@ public class Repository {
          */
         @Override
         public void artifactResolved(RepositoryEvent event) {
-            ui.talk("Resolved artifact " + event.getArtifact() + " from " + event.getRepository());
+            // ui.talk("Resolved artifact " + event.getArtifact() + " from " +
+            // event.getRepository());
         }
 
         /**
@@ -567,7 +604,8 @@ public class Repository {
          */
         @Override
         public void artifactDownloading(RepositoryEvent event) {
-            ui.talk("Downloading artifact " + event.getArtifact() + " from " + event.getRepository());
+            // ui.talk("Downloading artifact " + event.getArtifact() + " from " +
+            // event.getRepository());
         }
 
         /**
@@ -575,7 +613,11 @@ public class Repository {
          */
         @Override
         public void artifactDownloaded(RepositoryEvent event) {
-            ui.talk("Downloaded artifact " + event.getArtifact() + " from " + event.getRepository());
+            Exception e = event.getException();
+
+            if (e != null) {
+                ui.talk("Artifact is not found : " + event.getArtifact() + " from " + event.getRepository());
+            }
         }
 
         /**
@@ -583,7 +625,7 @@ public class Repository {
          */
         @Override
         public void artifactResolving(RepositoryEvent event) {
-            ui.talk("Resolving artifact " + event.getArtifact());
+            // ui.talk("Resolving artifact " + event.getArtifact());
         }
 
         /**
@@ -631,7 +673,8 @@ public class Repository {
          */
         @Override
         public void metadataResolved(RepositoryEvent event) {
-            ui.talk("Resolved metadata " + event.getMetadata() + " from " + event.getRepository());
+            // ui.talk("Resolved metadata " + event.getMetadata() + " from " +
+            // event.getRepository());
         }
 
         /**
@@ -639,7 +682,8 @@ public class Repository {
          */
         @Override
         public void metadataResolving(RepositoryEvent event) {
-            ui.talk("Resolving metadata " + event.getMetadata() + " from " + event.getRepository());
+            // ui.talk("Resolving metadata " + event.getMetadata() + " from " +
+            // event.getRepository());
         }
 
         /**
@@ -647,7 +691,8 @@ public class Repository {
          */
         @Override
         public void metadataDownloading(RepositoryEvent event) {
-            ui.talk("Downloading metadata " + event.getMetadata() + " from " + event.getRepository());
+            // ui.talk("Downloading metadata " + event.getMetadata() + " from " +
+            // event.getRepository());
         }
 
         /**
@@ -655,7 +700,8 @@ public class Repository {
          */
         @Override
         public void metadataDownloaded(RepositoryEvent event) {
-            ui.talk("Downloaded metadata " + event.getMetadata() + " from " + event.getRepository());
+            // ui.talk("Downloaded metadata " + event.getMetadata() + " from " +
+            // event.getRepository());
         }
     }
 
@@ -683,9 +729,11 @@ public class Repository {
          */
         @Override
         public void transferInitiated(TransferEvent event) {
-            String message = event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploading" : "Downloading";
+            // String message = event.getRequestType() == TransferEvent.RequestType.PUT ?
+            // "Uploading" : "Downloading";
 
-            ui.talk(message + ": " + event.getResource().getRepositoryUrl() + event.getResource().getResourceName());
+            // ui.talk(message + ": " + event.getResource().getRepositoryUrl() +
+            // event.getResource().getResourceName());
         }
 
         /**
@@ -777,8 +825,13 @@ public class Repository {
          */
         @Override
         public void transferFailed(TransferEvent event) {
-            transferCompleted(event);
-            transferCorrupted(event);
+            downloads.remove(event.getResource());
+
+            // String message = event.getRequestType() == TransferEvent.RequestType.PUT ?
+            // "Uploading" : "Not found";
+            //
+            // ui.talk(message + ": " + event.getResource().getRepositoryUrl() +
+            // event.getResource().getResourceName());
         }
 
         /**

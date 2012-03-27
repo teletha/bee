@@ -17,6 +17,7 @@ package bee.definition;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -25,6 +26,11 @@ import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.model.ClassUtil;
+
+import org.apache.maven.wagon.PathUtils;
+import org.eclipse.aether.graph.Exclusion;
+import org.eclipse.aether.repository.RemoteRepository;
+
 import bee.PathSet;
 
 /**
@@ -48,8 +54,11 @@ public class Project {
     /** The libraries. */
     final SortedSet<Library> libraries = new TreeSet();
 
+    /** The excluded libraries. */
+    final HashSet<Exclusion> exclusions = new HashSet();
+
     /** The repositories. */
-    final ArrayList<String> repositories = new ArrayList();
+    final ArrayList<RemoteRepository> repositories = new ArrayList();
 
     /** The input base directory. */
     private Path input;
@@ -98,6 +107,18 @@ public class Project {
 
     /**
      * <p>
+     * Exclude the specified library from transitive dependency resolution.
+     * </p>
+     * 
+     * @param projectName A project name.
+     * @param productName A product name.
+     */
+    protected final void unrequire(String projectName, String productName) {
+        exclusions.add(new Exclusion(projectName, productName, "", "jar"));
+    }
+
+    /**
+     * <p>
      * Add new repository by URI.
      * </p>
      * 
@@ -105,7 +126,7 @@ public class Project {
      */
     protected final void repository(String uri) {
         if (uri != null && !uri.isEmpty()) {
-            repositories.add(uri);
+            repositories.add(new RemoteRepository(PathUtils.host(uri), "default", uri));
         }
     }
 

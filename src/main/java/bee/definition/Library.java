@@ -137,7 +137,13 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Path getSourceJar() {
-        return I.make(Repository.class).getLocalRepository().resolve(localPath("-sources.jar"));
+        Path path = I.make(Repository.class).resolveSource(this);
+
+        if (path == null) {
+            return I.make(Repository.class).getLocalRepository().resolve(localPath("-sources.jar"));
+        } else {
+            return path;
+        }
     }
 
     /**
