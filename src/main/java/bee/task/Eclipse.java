@@ -17,10 +17,12 @@ package bee.task;
 
 import static kiss.Element.*;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import kiss.Element;
+import kiss.I;
 import bee.definition.Library;
 import bee.definition.Scope;
 
@@ -36,7 +38,7 @@ public class Eclipse extends Task {
      */
     @Command(defaults = true)
     public void eclipse() {
-        createClasspath(project.root.resolve("classpath.xml"));
+        createClasspath(project.root.resolve(".classpath"));
     }
 
     /**
@@ -52,20 +54,22 @@ public class Eclipse extends Task {
         // tests
         for (Path path : project.getTestSources()) {
             doc.append($("classpathentry").attr("kind", "src")
-                    .attr("path", path)
-                    .attr("output", project.getTestClasses()));
+                    .attr("path", project.root.relativize(path))
+                    .attr("output", project.root.relativize(project.getTestClasses())));
         }
 
         // sources
         for (Path path : project.getSources()) {
-            doc.append($("classpathentry").attr("kind", "src").attr("path", path).attr("output", project.getClasses()));
+            doc.append($("classpathentry").attr("kind", "src")
+                    .attr("path", project.root.relativize(path))
+                    .attr("output", project.root.relativize(project.getClasses())));
         }
 
         // projects
         for (Path path : project.getProjectSources()) {
             doc.append($("classpathentry").attr("kind", "src")
-                    .attr("path", path)
-                    .attr("output", project.getProjectClasses()));
+                    .attr("path", project.root.relativize(path))
+                    .attr("output", project.root.relativize(project.getProjectClasses())));
         }
 
         // library
@@ -74,7 +78,7 @@ public class Eclipse extends Task {
             Path source = library.getSourceJar();
 
             if (Files.exists(jar)) {
-                Element e = $("classpathentry").attr("kind", "var").attr("path", jar);
+                Element e = $("classpathentry").attr("kind", "lib").attr("path", jar);
 
                 if (Files.exists(source)) {
                     e.attr("sourcepath", source);
@@ -85,6 +89,12 @@ public class Eclipse extends Task {
         doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
 
         System.out.println(doc);
+        System.out.println(file);
 
+        try {
+            Files.write(file, doc.toString().getBytes());
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 }

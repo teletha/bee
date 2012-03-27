@@ -26,5 +26,10 @@ public class Project extends bee.definition.Project {
         require("org.apache.maven", "maven-aether-provider", "3.0.4");
         require("org.apache.maven.wagon", "wagon-http-lightweight", "1.0");
 
+        unrequire("org.sonatype.aether", "*");
+        unrequire("org.apache.maven.wagon", "wagon-http-shared");
+        unrequire("org.codehaus.plexus", "plexus-component-annotations");
+
+        repository("http://oss.sonatype.org/content/repositories/snapshots");
     }
 }

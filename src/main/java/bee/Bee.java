@@ -161,7 +161,10 @@ public class Bee {
         I.load(classes);
 
         try {
-            return (Project) I.make(Class.forName("Project"));
+            Project project = (Project) I.make(Class.forName("Project"));
+            ProjectLifestyle.project = project;
+
+            return project;
         } catch (Exception e) {
             throw I.quiet(e);
         }
