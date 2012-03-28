@@ -18,7 +18,7 @@ import bee.definition.Scope;
 public class Test extends Task {
 
     @Command(defaults = true)
-    public void execute() {
+    public void test() {
         // compile test codes
         JavaCompiler compiler = new JavaCompiler();
         compiler.addClassPath(project.getClasses());

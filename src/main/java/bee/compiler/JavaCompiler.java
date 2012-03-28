@@ -56,6 +56,7 @@ import kiss.model.ClassUtil;
 import bee.PathSet;
 import bee.UserInterface;
 import bee.definition.Library;
+import bee.util.Paths;
 
 /**
  * @version 2010/12/19 10:20:21
@@ -409,6 +410,12 @@ public class JavaCompiler {
             options.add(encoding.displayName());
 
             // =============================================
+            // Source and Target Version
+            // =============================================
+            writeVersionOption(options, "-source", sourceVersion);
+            writeVersionOption(options, "-target", targetVersion);
+
+            // =============================================
             // Java Class Paths
             // =============================================
             if (classpaths.size() != 0) {
@@ -422,8 +429,13 @@ public class JavaCompiler {
             List<File> sources = new ArrayList();
 
             for (Path directory : this.sources) {
-                for (Path file : I.walk(directory, "**.java")) {
-                    sources.add(file.toFile());
+                for (Path sourceFile : I.walk(directory, "**.java")) {
+                    Path classsFile = output.resolve(directory.relativize(sourceFile.getParent()))
+                            .resolve(Paths.getName(sourceFile) + ".class");
+
+                    if (Paths.getLastModified(classsFile) < Paths.getLastModified(sourceFile)) {
+                        sources.add(sourceFile.toFile());
+                    }
                 }
             }
             options.add("-sourcepath");
@@ -449,6 +461,44 @@ public class JavaCompiler {
             // If this exception will be thrown, it is bug of this program. So we must rethrow the
             // wrapped error in here.
             throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Helper method to write version option.
+     * </p>
+     * 
+     * @param options
+     * @param name
+     * @param version
+     */
+    private void writeVersionOption(List<String> options, String name, SourceVersion version) {
+        options.add(name);
+
+        switch (version) {
+        case RELEASE_0:
+        case RELEASE_1:
+        case RELEASE_2:
+        case RELEASE_3:
+            options.add("1.3");
+            break;
+
+        case RELEASE_4:
+            options.add("1.4");
+            break;
+
+        case RELEASE_5:
+            options.add("5");
+            break;
+
+        case RELEASE_6:
+            options.add("6");
+            break;
+
+        case RELEASE_7:
+            options.add("7");
+            break;
         }
     }
 
