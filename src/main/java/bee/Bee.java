@@ -195,7 +195,7 @@ public class Bee {
      * @param args
      */
     public static void main(String[] args) {
-        Tasks.execute(createProject("", null), "eclipse");
+        Tasks.execute(createProject("", null), "test", I.make(UserInterface.class));
     }
 
     /**
