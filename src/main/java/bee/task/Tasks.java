@@ -22,6 +22,7 @@ import kiss.Manageable;
 import kiss.Singleton;
 import kiss.Table;
 import kiss.model.ClassUtil;
+import bee.UserInterface;
 import bee.definition.Project;
 
 /**
@@ -57,7 +58,7 @@ public class Tasks implements ClassListener<Task> {
      * @param project
      * @param input
      */
-    public static final void execute(Project project, String input) {
+    public static final void execute(Project project, String input, UserInterface ui) {
         // parse command
         if (input == null) {
             return;
@@ -97,6 +98,7 @@ public class Tasks implements ClassListener<Task> {
         TaskInfo taskInfo = infos.get(taskGroupName.toLowerCase());
 
         if (taskInfo == null) {
+            ui.error("Task '" + taskName + "' is not found.");
             return;
         }
 

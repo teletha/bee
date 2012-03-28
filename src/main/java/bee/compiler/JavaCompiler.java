@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
@@ -52,6 +53,9 @@ import javax.tools.ToolProvider;
 
 import kiss.I;
 import kiss.model.ClassUtil;
+import bee.PathSet;
+import bee.UserInterface;
+import bee.definition.Library;
 
 /**
  * @version 2010/12/19 10:20:21
@@ -62,10 +66,10 @@ public class JavaCompiler {
     private final javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     /** The source directories. */
-    private final Set<Path> sources = new HashSet();
+    private final List<Path> sources = new ArrayList();
 
     /** The classpath list. */
-    private final Set<Path> classpaths = new HashSet();
+    private final List<Path> classpaths = new ArrayList();
 
     /** The annotation processors. */
     private final List<Processor> processors = new ArrayList();
@@ -88,8 +92,51 @@ public class JavaCompiler {
     /** The target version. */
     private SourceVersion targetVersion = SourceVersion.RELEASE_7;
 
-    public void addClassPath(Path file) {
+    /** The source encoding. */
+    private Charset encoding = StandardCharsets.UTF_8;
 
+    /**
+     * <p>
+     * Set the user class path, overriding the user class path in the CLASSPATH environment
+     * variable. If threr is no classpath, the user class path consists of the current directory.
+     * </p>
+     * 
+     * @param path A classpath to add.
+     */
+    public void addClassPath(Path path) {
+        if (path != null) {
+            classpaths.add(path);
+        }
+    }
+
+    /**
+     * <p>
+     * Set the user class path, overriding the user class path in the CLASSPATH environment
+     * variable. If threr is no classpath, the user class path consists of the current directory.
+     * </p>
+     * 
+     * @param path A classpath to add.
+     */
+    public void addClassPath(Library library) {
+        if (library != null) {
+            classpaths.add(library.getJar());
+        }
+    }
+
+    /**
+     * <p>
+     * Set the user class path, overriding the user class path in the CLASSPATH environment
+     * variable. If threr is no classpath, the user class path consists of the current directory.
+     * </p>
+     * 
+     * @param path A classpath to add.
+     */
+    public void addClassPath(Set<Library> libraries) {
+        if (libraries != null) {
+            for (Library library : libraries) {
+                addClassPath(library);
+            }
+        }
     }
 
     /**
@@ -118,6 +165,21 @@ public class JavaCompiler {
                 directory = directory.getParent();
             }
             sources.add(directory);
+        }
+    }
+
+    /**
+     * <p>
+     * Add the source code directory.
+     * </p>
+     * 
+     * @param directory Your source code directory.
+     */
+    public void addSourceDirectory(PathSet directories) {
+        if (directories != null) {
+            for (Path directory : directories) {
+                addSourceDirectory(directory);
+            }
         }
     }
 
@@ -214,7 +276,9 @@ public class JavaCompiler {
      * @param charset
      */
     public void setEncoding(Charset charset) {
-
+        if (charset != null) {
+            encoding = charset;
+        }
     }
 
     /**
@@ -339,6 +403,20 @@ public class JavaCompiler {
             }
 
             // =============================================
+            // Source encoding
+            // =============================================
+            options.add("-encoding");
+            options.add(encoding.displayName());
+
+            // =============================================
+            // Java Class Paths
+            // =============================================
+            if (classpaths.size() != 0) {
+                options.add("-cp");
+                options.add(I.join(classpaths, File.pathSeparator));
+            }
+
+            // =============================================
             // Java Source Files
             // =============================================
             List<File> sources = new ArrayList();
@@ -348,9 +426,11 @@ public class JavaCompiler {
                     sources.add(file.toFile());
                 }
             }
+            options.add("-sourcepath");
+            options.add(I.join(this.sources, File.pathSeparator));
 
             // Invocation
-            ErrorListener listener = new ErrorListener();
+            ErrorListener listener = I.make(ErrorListener.class);
             Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.$encoding));
 
             CompilationTask task = compiler.getTask(null, manager, listener, options, null, manager.getJavaFileObjectsFromFiles(sources));
@@ -377,12 +457,36 @@ public class JavaCompiler {
      */
     private static class ErrorListener implements DiagnosticListener<JavaFileObject> {
 
+        /** The actual ui. */
+        private final UserInterface ui;
+
+        /**
+         * @param ui
+         */
+        private ErrorListener(UserInterface ui) {
+            this.ui = ui;
+        }
+
         /**
          * @see javax.tools.DiagnosticListener#report(javax.tools.Diagnostic)
          */
         @Override
         public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-            System.out.println(diagnostic + " @");
+            switch (diagnostic.getKind()) {
+            case ERROR:
+                ui.error(diagnostic.toString());
+                break;
+
+            case MANDATORY_WARNING:
+            case WARNING:
+                ui.warn(diagnostic.toString());
+                break;
+
+            case NOTE:
+            case OTHER:
+                ui.talk(diagnostic.toString());
+                break;
+            }
         }
     }
 
