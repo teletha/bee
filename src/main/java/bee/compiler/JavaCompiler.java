@@ -24,7 +24,6 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
@@ -54,6 +53,7 @@ import javax.tools.ToolProvider;
 import kiss.I;
 import kiss.model.ClassUtil;
 import bee.PathSet;
+import bee.Platform;
 import bee.UserInterface;
 import bee.definition.Library;
 import bee.util.Paths;
@@ -94,7 +94,16 @@ public class JavaCompiler {
     private SourceVersion targetVersion = SourceVersion.RELEASE_7;
 
     /** The source encoding. */
-    private Charset encoding = StandardCharsets.UTF_8;
+    private Charset encoding = Platform.Encoding;
+
+    /** The deprication flag. */
+    private boolean deprication = false;
+
+    /** The verbose flag. */
+    private boolean verbose = false;
+
+    /** The nowarn flag. */
+    private boolean nowarn = false;
 
     /**
      * <p>
@@ -258,27 +267,29 @@ public class JavaCompiler {
     /**
      * <p>
      * Show a description of each use or override of a deprecated member or class. Without
-     * -deprecation, javac shows a summary of the source files that use or override deprecated
-     * members or classes. -deprecation is shorthand for -Xlint:deprecation.
+     * deprecation, java compiler shows a summary of the source files that use or override
+     * deprecated members or classes.
      * </p>
      * 
      * @param show
      */
     public void setDeprecation(boolean show) {
-
+        this.deprication = show;
     }
 
     /**
      * <p>
-     * Set the source file encoding name, such as EUC-JP and UTF-8. If -encoding is not specified,
-     * the platform default converter is used.
+     * Set the source file encoding name, such as EUC-JP and UTF-8. If encoding is not specified or
+     * <code>null</code> is specified, the platform default converter is used.
      * </p>
      * 
-     * @param charset
+     * @param encoding A charset to set.
      */
-    public void setEncoding(Charset charset) {
-        if (charset != null) {
-            encoding = charset;
+    public void setEncoding(Charset encoding) {
+        if (encoding == null) {
+            this.encoding = Platform.Encoding;
+        } else {
+            this.encoding = encoding;
         }
     }
 
@@ -303,7 +314,7 @@ public class JavaCompiler {
      * @param verbose
      */
     public void setVerbose(boolean verbose) {
-
+        this.verbose = verbose;
     }
 
     /**
@@ -313,7 +324,7 @@ public class JavaCompiler {
      * 
      * @param directory
      */
-    public void setExtensionDirectory(File directory) {
+    public void setExtensionDirectory(Path directory) {
 
     }
 
@@ -323,7 +334,7 @@ public class JavaCompiler {
      * </p>
      */
     public void setNoWarn() {
-
+        this.nowarn = true;
     }
 
     /**
@@ -369,6 +380,24 @@ public class JavaCompiler {
         ArrayList<String> options = new ArrayList();
 
         try {
+            // =============================================
+            // Option
+            // =============================================
+            if (verbose) {
+                options.add("-verbose");
+            }
+
+            // =============================================
+            // Lint
+            // =============================================
+            if (deprication) {
+                options.add("-Xlint:deprecation");
+            }
+
+            if (nowarn) {
+                options.add("-Xlint:none");
+            }
+
             // =============================================
             // Output Directory
             // =============================================
@@ -435,6 +464,7 @@ public class JavaCompiler {
 
                     if (Paths.getLastModified(classsFile) < Paths.getLastModified(sourceFile)) {
                         sources.add(sourceFile.toFile());
+                        System.out.println(sourceFile);
                     }
                 }
             }
