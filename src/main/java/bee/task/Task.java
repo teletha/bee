@@ -15,6 +15,8 @@
  */
 package bee.task;
 
+import kiss.I;
+import bee.UserInterface;
 import bee.definition.Project;
 
 /**
@@ -23,7 +25,20 @@ import bee.definition.Project;
 public abstract class Task {
 
     /** The current processing project. */
-    protected Project project;
+    protected final Project project;
+
+    /** The user interface. */
+    protected final UserInterface ui;
+
+    /**
+     * <p>
+     * Exposed constructor.
+     * <p>
+     */
+    protected Task() {
+        this.project = I.make(Project.class);
+        this.ui = I.make(UserInterface.class);
+    }
 
     @Command
     public void help() {
