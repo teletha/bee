@@ -63,6 +63,9 @@ import bee.util.Paths;
  */
 public class JavaCompiler {
 
+    /** The user interface. */
+    private final UserInterface ui;
+
     /** The actual java compiler. */
     private final javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
@@ -76,7 +79,7 @@ public class JavaCompiler {
     private final List<Processor> processors = new ArrayList();
 
     /** The annotation processor classes. */
-    private final List<Class> processorClasses = new ArrayList();
+    private final List<String> processorClasses = new ArrayList();
 
     /** The annotation processor's locations. */
     private final Set<Path> processorClassPaths = new HashSet();
@@ -104,6 +107,26 @@ public class JavaCompiler {
 
     /** The nowarn flag. */
     private boolean nowarn = false;
+
+    /**
+     * <p>
+     * Exposable constructor.
+     * </p>
+     */
+    public JavaCompiler() {
+        this(I.make(UserInterface.class));
+    }
+
+    /**
+     * <p>
+     * For test.
+     * </p>
+     * 
+     * @param ui
+     */
+    JavaCompiler(UserInterface ui) {
+        this.ui = ui;
+    }
 
     /**
      * <p>
@@ -206,7 +229,7 @@ public class JavaCompiler {
      */
     public void addProcessor(Class<? extends Processor> processor) {
         if (processor != null && !processorClasses.contains(processor)) {
-            processorClasses.add(processor);
+            processorClasses.add(processor.getName());
             processorClassPaths.add(ClassUtil.getArchive(processor).toAbsolutePath());
         }
     }
@@ -471,8 +494,15 @@ public class JavaCompiler {
             options.add("-sourcepath");
             options.add(I.join(this.sources, File.pathSeparator));
 
+            // check compiling source size
+            if (sources.isEmpty()) {
+                ui.talk("Nothing to compile - all classes are up to date");
+
+                return Thread.currentThread().getContextClassLoader();
+            }
+
             // Invocation
-            ErrorListener listener = I.make(ErrorListener.class);
+            ErrorListener listener = new ErrorListener();
             Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.$encoding));
 
             CompilationTask task = compiler.getTask(null, manager, listener, options, null, manager.getJavaFileObjectsFromFiles(sources));
@@ -485,6 +515,10 @@ public class JavaCompiler {
             }
 
             boolean result = task.call();
+
+            if (result) {
+                ui.talk("Compile " + sources.size() + " sources.");
+            }
 
             return manager;
         } catch (IOException e) {
@@ -535,17 +569,7 @@ public class JavaCompiler {
     /**
      * @version 2010/12/18 11:51:46
      */
-    private static class ErrorListener implements DiagnosticListener<JavaFileObject> {
-
-        /** The actual ui. */
-        private final UserInterface ui;
-
-        /**
-         * @param ui
-         */
-        private ErrorListener(UserInterface ui) {
-            this.ui = ui;
-        }
+    private class ErrorListener implements DiagnosticListener<JavaFileObject> {
 
         /**
          * @see javax.tools.DiagnosticListener#report(javax.tools.Diagnostic)
