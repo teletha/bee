@@ -159,7 +159,7 @@ public class BeeProcessor implements Processor {
         }
 
         /**
-         * @see bee.UserNotifier#talk(java.lang.String, java.lang.Object[])
+         * @see bee.UserNotifier#talk(java.lang.Object[])
          */
         @Override
         public void talk(String message, Object... params) {

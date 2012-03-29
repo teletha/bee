@@ -142,8 +142,8 @@ public class Bee {
         UserInterfaceLisfestyle.local.set(ui);
 
         // search Project from the specified file systems
-        Path sources = home.resolve("src/project");
-        Path classes = home.resolve("target/project");
+        Path sources = home.resolve("src/project/java");
+        Path classes = home.resolve("target/project-classes");
         Path projectDefinitionSource = sources.resolve("Project.java");
         Path projectDefinitionClass = classes.resolve("Project.class");
 

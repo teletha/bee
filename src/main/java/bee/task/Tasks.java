@@ -115,7 +115,6 @@ public class Tasks implements ClassListener<Task> {
 
         // create task and initialize
         Task task = I.make(taskInfo.task);
-        task.project = project;
 
         // execute task
         try {
