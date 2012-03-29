@@ -25,6 +25,7 @@ public class Test extends Task {
         compiler.addClassPath(project.getDependency(Scope.Test));
         compiler.addSourceDirectory(project.getTestSources());
         compiler.setOutput(project.getTestClasses().resolveSibling("aaa"));
+        compiler.setNoWarn();
         compiler.compile();
     }
 }

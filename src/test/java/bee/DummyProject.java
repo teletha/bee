@@ -62,7 +62,7 @@ public class DummyProject extends ReusableRule {
      */
     @Override
     protected void before(Method method) throws Exception {
-        project = I.make(moduleForProject.convert(projectClass));
+        project = (Project) I.make(moduleForProject.convert(projectClass));
     }
 
 }

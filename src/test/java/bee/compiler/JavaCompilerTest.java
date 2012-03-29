@@ -1,17 +1,11 @@
 /*
- * Copyright (C) 2010 Nameless Production Committee.
+ * Copyright (C) 2012 Nameless Production Committee
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *          http://opensource.org/licenses/mit-license.php
  */
 package bee.compiler;
 
@@ -23,6 +17,7 @@ import java.nio.file.Path;
 import org.junit.Rule;
 import org.junit.Test;
 
+import bee.Null;
 import bee.compiler.source01.MainClass;
 
 /**
@@ -43,7 +38,7 @@ public class JavaCompilerTest {
         Files.createDirectories(source01.output);
         assertTrue(Files.exists(source01.output));
 
-        JavaCompiler compiler = new JavaCompiler();
+        JavaCompiler compiler = new JavaCompiler(Null.UI);
         compiler.addSourceDirectory(source01.root);
         compiler.setOutput(source01.output);
         compiler.compile();
@@ -62,7 +57,7 @@ public class JavaCompilerTest {
         Files.deleteIfExists(source01.output);
         assertTrue(Files.notExists(source01.output));
 
-        JavaCompiler compiler = new JavaCompiler();
+        JavaCompiler compiler = new JavaCompiler(Null.UI);
         compiler.addSourceDirectory(source01.root);
         compiler.setOutput(source01.output);
         compiler.compile();
