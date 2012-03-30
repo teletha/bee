@@ -26,6 +26,24 @@ public interface UserNotifier {
 
     /**
      * <p>
+     * Talk to user with decoration like title.
+     * </p>
+     * 
+     * @param title
+     */
+    void title(CharSequence title, Object... params);
+
+    /**
+     * <p>
+     * Talk to user with decoration like sub title.
+     * </p>
+     * 
+     * @param title
+     */
+    void subtitle(CharSequence title, Object... params);
+
+    /**
+     * <p>
      * Talk to user.
      * </p>
      * 

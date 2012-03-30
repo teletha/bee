@@ -199,6 +199,13 @@ class CommandLineUserInterface implements UserInterface {
         }
     }
 
+    /**
+     * <p>
+     * Overwrite
+     * </p>
+     * 
+     * @param message
+     */
     private void overwrite(String message) {
         System.out.print("\r");
         System.out.println(message);
@@ -239,6 +246,10 @@ class CommandLineUserInterface implements UserInterface {
         }
 
         return instance;
+    }
+
+    public void title(CharSequence title) {
+
     }
 
     /**
