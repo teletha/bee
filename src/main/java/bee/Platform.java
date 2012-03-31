@@ -21,5 +21,5 @@ import java.nio.charset.Charset;
 public class Platform {
 
     /** The default encoding. */
-    public static final Charset Encoding = Charset.forName(System.getProperty("file.encoding"));
+    public static final Charset Encoding = Charset.forName(System.getProperty("sun.jnu.encoding"));
 }
