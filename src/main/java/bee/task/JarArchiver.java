@@ -20,10 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.jar.Manifest;
 
 import kiss.I;
 
@@ -36,14 +33,12 @@ import kiss.I;
  */
 public class JarArchiver extends ZipArchiver {
 
-    /** The manifest attributes. */
-    private final Map<String, String> attributes = new LinkedHashMap();
-
     /**
      * 
      */
     public JarArchiver() {
         encoding = StandardCharsets.UTF_8;
+        manifest = new Manifest();
     }
 
     /**
@@ -55,7 +50,7 @@ public class JarArchiver extends ZipArchiver {
      * @param value
      */
     public void set(String key, Object value) {
-        attributes.put(key, value.toString());
+        manifest.getMainAttributes().putValue(key, value.toString());
     }
 
     /**
@@ -72,36 +67,5 @@ public class JarArchiver extends ZipArchiver {
             }
         }
         super.add(base, patterns);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void pack(Path location) {
-        if (!attributes.isEmpty()) {
-            try {
-                // create manifest.mf
-                Path base = I.locateTemporary();
-                Path manifest = base.resolve("META-INF/MANIFEST.MF");
-                Files.createDirectories(manifest.getParent());
-
-                List<String> lines = new ArrayList();
-
-                for (java.util.Map.Entry<String, String> attribute : attributes.entrySet()) {
-                    lines.add(attribute.getKey() + ": " + attribute.getValue());
-                }
-                lines.add("");
-
-                // write manifest
-                Files.write(manifest, lines, encoding);
-
-                // archive it
-                add(base);
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-        super.pack(location);
     }
 }

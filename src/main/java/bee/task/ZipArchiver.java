@@ -17,6 +17,7 @@ package bee.task;
 
 import static java.nio.file.FileVisitResult.*;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -27,17 +28,26 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import kiss.Disposable;
 import kiss.I;
+import bee.Platform;
 
 /**
  * @version 2011/03/17 14:01:01
  */
 public abstract class ZipArchiver {
+
+    /** The default encoding. */
+    protected Charset encoding = Platform.Encoding;
+
+    /** The default manifest. */
+    protected Manifest manifest;
 
     /** The path entries. */
     private final List<Entry> entries = new ArrayList();
@@ -65,6 +75,8 @@ public abstract class ZipArchiver {
      */
     public void pack(Path location) {
         if (location != null) {
+            location = location.toAbsolutePath();
+
             try {
                 // Location must exist
                 if (Files.notExists(location)) {
@@ -77,7 +89,14 @@ public abstract class ZipArchiver {
                     throw new IllegalArgumentException("'" + location + "' must be regular file.");
                 }
 
-                Archiver archiver = new Archiver(location);
+                Archiver archiver = new Archiver(location, encoding);
+
+                if (manifest != null) {
+                    ZipEntry entry = new ZipEntry(JarFile.MANIFEST_NAME);
+                    archiver.putNextEntry(entry);
+                    manifest.write(new BufferedOutputStream(archiver));
+                    archiver.closeEntry();
+                }
 
                 try {
                     for (Entry entry : entries) {
@@ -106,8 +125,8 @@ public abstract class ZipArchiver {
         /**
          * @param output
          */
-        private Archiver(Path destination) throws IOException {
-            super(Files.newOutputStream(destination), Charset.defaultCharset());
+        private Archiver(Path destination, Charset encoding) throws IOException {
+            super(Files.newOutputStream(destination), encoding);
         }
 
         /**
