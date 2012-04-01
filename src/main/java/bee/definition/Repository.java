@@ -66,6 +66,7 @@ import org.eclipse.aether.internal.impl.DefaultInstaller;
 import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
 import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
 import org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager;
+import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
 import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
 import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
 import org.eclipse.aether.internal.impl.DefaultSyncContextFactory;
@@ -205,6 +206,9 @@ class Repository {
     /** The local repository provider. */
     private final DefaultLocalRepositoryProvider localRepositoryProvider = new DefaultLocalRepositoryProvider();
 
+    /** The remote repository provider. */
+    private final DefaultRepositoryConnectorProvider remoteRepositoryProvider = new DefaultRepositoryConnectorProvider();
+
     /** The local repository manager factory. */
     private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
 
@@ -242,6 +246,7 @@ class Repository {
         artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
         artifactResolver.setVersionResolver(versionResolver);
         artifactResolver.setRemoteRepositoryManager(remoteRepositoryManager);
+        artifactResolver.setRepositoryConnectorProvider(remoteRepositoryProvider);
         artifactResolver.setFileProcessor(fileProcessor);
         artifactResolver.setUpdateCheckManager(updateCheckManager);
 
@@ -273,6 +278,7 @@ class Repository {
         versionRangeResolver.syncContextFactory = syncContextFactory;
 
         // ============ MetadataResolver ============ //
+        metadataResolver.setRepositoryConnectorProvider(remoteRepositoryProvider);
         metadataResolver.setRemoteRepositoryManager(remoteRepositoryManager);
         metadataResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
         metadataResolver.setSyncContextFactory(syncContextFactory);
@@ -309,10 +315,12 @@ class Repository {
         // ============ LocalRepositoryProvider ============ //
         localRepositoryProvider.addLocalRepositoryManagerFactory(localRepositoryManagerFactory);
 
+        // ============ RemoteRepositoryProvider ============ //
+        remoteRepositoryProvider.addRepositoryConnectorFactory(new FileRepositoryConnectorFactory());
+        remoteRepositoryProvider.addRepositoryConnectorFactory(wagonRepositoryConnectorFactory);
+
         // ============ RemoteRepositoryManger ============ //
         remoteRepositoryManager.setUpdateCheckManager(updateCheckManager);
-        remoteRepositoryManager.addRepositoryConnectorFactory(new FileRepositoryConnectorFactory());
-        remoteRepositoryManager.addRepositoryConnectorFactory(wagonRepositoryConnectorFactory);
 
         // ============ WagonConnector ============ //
         wagonRepositoryConnectorFactory.setWagonProvider(new MavenWagonProvider());

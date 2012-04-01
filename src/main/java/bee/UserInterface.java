@@ -22,7 +22,7 @@ package bee;
  * 
  * @version 2011/03/23 16:30:28
  */
-public interface UserInterface extends UserNotifier {
+public abstract class UserInterface extends UserNotifier {
 
     /**
      * <p>
@@ -32,7 +32,7 @@ public interface UserInterface extends UserNotifier {
      * @param question Your question message.
      * @return An answer.
      */
-    String ask(String question);
+    public abstract String ask(String question);
 
     /**
      * <p>
@@ -49,7 +49,7 @@ public interface UserInterface extends UserNotifier {
      * @param defaultAnswer A default anwser.
      * @return An answer.
      */
-    <T> T ask(String question, T defaultAnswer);
+    public abstract <T> T ask(String question, T defaultAnswer);
 
     /**
      * <p>
@@ -59,5 +59,5 @@ public interface UserInterface extends UserNotifier {
      * @param question Your question class.
      * @return An answer.
      */
-    <T> T ask(Class<T> question);
+    public abstract <T> T ask(Class<T> question);
 }

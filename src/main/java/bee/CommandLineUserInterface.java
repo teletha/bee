@@ -30,7 +30,7 @@ import kiss.model.Property;
 /**
  * @version 2010/11/23 23:24:52
  */
-class CommandLineUserInterface implements UserInterface {
+class CommandLineUserInterface extends UserInterface {
 
     /**
      * @see bee.UserInterface#ask(java.lang.String)
@@ -248,43 +248,11 @@ class CommandLineUserInterface implements UserInterface {
         return instance;
     }
 
-    public void title(CharSequence title) {
-
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void talk(String message, Object... params) {
-        if (message.charAt(message.length() - 1) == '\r') {
-            System.out.format(message, params);
-        } else {
-            System.out.format(message.concat("%n"), params);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void warn(String message, Object... params) {
-        System.out.format(message.concat("%n"), params);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(String message, Object... params) {
-        System.out.format(message.concat("%n"), params);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void error(Throwable throwable) {
-        throwable.printStackTrace(System.out);
+    protected void write(String message) {
+        System.out.print(message);
     }
 }
