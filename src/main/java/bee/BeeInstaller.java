@@ -32,7 +32,7 @@ import javax.swing.UIManager;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.task.JarArchiver;
+import bee.util.JarArchiver;
 
 /**
  * @version 2011/03/23 18:55:51
