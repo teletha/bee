@@ -22,4 +22,12 @@ import bee.definition.Project;
  */
 public class NoConfigProject extends Project {
 
+    /**
+     * @param groupName
+     * @param projectName
+     * @param version
+     */
+    private NoConfigProject() {
+    }
+
 }
