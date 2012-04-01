@@ -63,13 +63,13 @@ public class Project {
     private String productName = "";
 
     /** The product version. */
-    private String version = "1.0";
+    private String productVersion = "1.0";
 
     /** The product description. */
     private String description = "";
 
     /** The requirement of Java version. */
-    private SourceVersion javaVersion;
+    private SourceVersion requirementJavaVersion;
 
     /** The input base directory. */
     private Path input;
@@ -91,7 +91,6 @@ public class Project {
             this.root = archive;
         }
 
-        require(null);
         setInput((Path) null);
         setOutput((Path) null);
     }
@@ -126,7 +125,7 @@ public class Project {
      * @return The product version.
      */
     public final String getVersion() {
-        return version;
+        return productVersion;
     }
 
     /**
@@ -141,7 +140,7 @@ public class Project {
     protected final void name(String projectName, String productName, String version) {
         this.projectName = normalize(projectName, "YourProject");
         this.productName = normalize(productName, "YourProduct");
-        this.version = normalize(version, "1.0");
+        this.productVersion = normalize(version, "1.0");
     }
 
     /**
@@ -206,8 +205,8 @@ public class Project {
      * 
      * @return A Java version requirement.
      */
-    public final SourceVersion getJavaVersion() {
-        return javaVersion;
+    public final String getJavaVersion() {
+        return normalize(requirementJavaVersion);
     }
 
     /**
@@ -218,10 +217,7 @@ public class Project {
      * @param version A Java version to require.
      */
     protected final void require(SourceVersion version) {
-        if (version == null) {
-            version = SourceVersion.latest();
-        }
-        this.javaVersion = version;
+        this.requirementJavaVersion = version;
     }
 
     /**

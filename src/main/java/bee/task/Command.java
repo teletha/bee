@@ -29,5 +29,21 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
 
+    /**
+     * <p>
+     * Check
+     * </p>
+     * 
+     * @return
+     */
     boolean defaults() default false;
+
+    /**
+     * <p>
+     * Describe this command.
+     * </p>
+     * 
+     * @return
+     */
+    String description() default "";
 }

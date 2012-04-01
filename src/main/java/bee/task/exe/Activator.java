@@ -14,7 +14,7 @@ import java.lang.reflect.Method;
 /**
  * @version 2012/03/31 22:59:29
  */
-public class Starter {
+public class Activator {
 
     /**
      * <p>
