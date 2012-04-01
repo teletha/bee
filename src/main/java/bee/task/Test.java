@@ -21,6 +21,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import bee.Platform;
 import bee.compiler.JavaCompiler;
 import bee.definition.Scope;
 
@@ -41,9 +42,7 @@ public class Test extends Task {
         compiler.compile();
 
         // execute test classes
-        ui.talk("-------------------------------------------------------");
-        ui.talk(" T E S T S");
-        ui.talk("-------------------------------------------------------");
+        ui.title(" T E S T S");
 
         int runs = 0;
         int skips = 0;
@@ -57,7 +56,7 @@ public class Test extends Task {
             fqcn = fqcn.substring(0, fqcn.length() - 6).replace(File.separatorChar, '.');
 
             try {
-                ui.talk("Running " + fqcn);
+                ui.talk("Running ", fqcn);
 
                 Result result = core.run(Class.forName(fqcn));
                 List<Failure> failures = result.getFailures();
@@ -96,12 +95,12 @@ public class Test extends Task {
             }
         }
 
-        ui.talk("\r\nResults :\r\n");
+        ui.talk(Platform.EOL, "Results :", Platform.EOL);
 
         showFailure("Tests in error", errors);
         showFailure("Tests in failure", fails);
 
-        ui.talk("Tests run: " + runs + ", Failures: " + fails.size() + ", Errors: " + errors.size() + ", Skipped: " + skips);
+        ui.talk("Tests run: ", runs, ", Failures: ", fails.size(), ", Errors: ", errors.size(), ", Skipped: ", skips);
     }
 
     /**
@@ -119,10 +118,8 @@ public class Test extends Task {
                 Description desc = failure.getDescription();
 
                 ui.talk(" ", desc.getMethodName(), "(", desc.getClassName(), ")");
-                ui.talk(" %1$s (%2$s)", failure.getDescription().getMethodName(), failure.getDescription()
-                        .getClassName());
             }
-            ui.talk(" ");
+            ui.talk("");
         }
     }
 }
