@@ -38,9 +38,9 @@ public abstract class UserNotifier {
      * @param title
      */
     public void title(CharSequence title) {
-        talk("----------------------------------------------------------------------");
+        talk("------------------------------------------------------------");
         talk(title);
-        talk("----------------------------------------------------------------------");
+        talk("------------------------------------------------------------");
     }
 
     /**
@@ -97,7 +97,9 @@ public abstract class UserNotifier {
         StringBuilder builder = new StringBuilder();
         build(builder, messages);
 
-        if (builder.charAt(builder.length() - 1) != '\r') {
+        int length = builder.length();
+
+        if (length != 0 && builder.charAt(length - 1) != '\r') {
             builder.append(Platform.EOL);
         }
 
