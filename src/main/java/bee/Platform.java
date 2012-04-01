@@ -22,4 +22,7 @@ public class Platform {
 
     /** The default encoding. */
     public static final Charset Encoding = Charset.forName(System.getProperty("sun.jnu.encoding"));
+
+    /** The default line separator. */
+    public static final String EOL = System.getProperty("line.separator");
 }

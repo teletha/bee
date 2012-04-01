@@ -16,6 +16,7 @@ import java.util.List;
 
 import kiss.I;
 
+import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
@@ -115,6 +116,9 @@ public class Test extends Task {
         if (!failures.isEmpty()) {
             ui.talk(message + ":");
             for (Failure failure : failures) {
+                Description desc = failure.getDescription();
+
+                ui.talk(" ", desc.getMethodName(), "(", desc.getClassName(), ")");
                 ui.talk(" %1$s (%2$s)", failure.getDescription().getMethodName(), failure.getDescription()
                         .getClassName());
             }

@@ -24,37 +24,14 @@ public class Null {
     /**
      * @version 2012/03/29 11:44:27
      */
-    private static class NullUserInterface implements UserInterface {
+    private static class NullUserInterface extends UserInterface {
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void talk(String message, Object... params) {
+        protected void write(String message) {
             System.out.println(message);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void warn(String message, Object... params) {
-            System.out.println(message);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void error(String message, Object... params) {
-            System.out.println(message);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void error(Throwable throwable) {
         }
 
         /**
@@ -81,5 +58,4 @@ public class Null {
             return null;
         }
     }
-
 }

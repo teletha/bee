@@ -137,7 +137,7 @@ public class BeeProcessor implements Processor {
     /**
      * @version 2011/03/23 17:02:50
      */
-    private static class Notifier implements UserNotifier {
+    private static class Notifier extends UserNotifier {
 
         /** The actual notifier. */
         private Messager notifier;
@@ -159,35 +159,35 @@ public class BeeProcessor implements Processor {
         }
 
         /**
-         * @see bee.UserNotifier#talk(java.lang.Object[])
+         * {@inheritDoc}
          */
         @Override
-        public void talk(String message, Object... params) {
-            notifier.printMessage(NOTE, String.format(message, params), element);
-        }
-
-        /**
-         * @see bee.UserNotifier#warn(java.lang.String, java.lang.Object[])
-         */
-        @Override
-        public void warn(String message, Object... params) {
-            notifier.printMessage(WARNING, String.format(message, params), element);
-        }
-
-        /**
-         * @see bee.UserNotifier#error(java.lang.String, java.lang.Object[])
-         */
-        @Override
-        public void error(String message, Object... params) {
-            notifier.printMessage(ERROR, String.format(message, params), element);
+        protected void write(String message) {
+            // do nothing
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void error(Throwable throwable) {
-            notifier.printMessage(ERROR, throwable.getLocalizedMessage(), element);
+        public void talk(Object... messages) {
+            notifier.printMessage(NOTE, build(messages), element);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void warn(Object... messages) {
+            notifier.printMessage(WARNING, build(messages), element);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void error(Object... messages) {
+            notifier.printMessage(ERROR, build(messages), element);
         }
     }
 }
