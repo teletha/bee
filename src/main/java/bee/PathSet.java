@@ -44,9 +44,9 @@ public class PathSet implements Iterable<Path> {
      * 
      * @param destination
      */
-    public void copyTo(Path destination) {
+    public void copyTo(Path destination, String... patterns) {
         for (Pattern pattern : set) {
-            I.copy(pattern.base, destination, pattern.patterns);
+            I.copy(pattern.base, destination, pattern.mix(patterns));
         }
     }
 
@@ -57,9 +57,22 @@ public class PathSet implements Iterable<Path> {
      * 
      * @param destination
      */
-    public void moveTo(Path destination) {
+    public void moveTo(Path destination, String... patterns) {
         for (Pattern pattern : set) {
-            I.move(pattern.base, destination, pattern.patterns);
+            I.move(pattern.base, destination, pattern.mix(patterns));
+        }
+    }
+
+    /**
+     * <p>
+     * Move all files to the specifed path.
+     * </p>
+     * 
+     * @param destination
+     */
+    public void delete(String... patterns) {
+        for (Pattern pattern : set) {
+            I.delete(pattern.base, pattern.mix(patterns));
         }
     }
 
@@ -72,7 +85,7 @@ public class PathSet implements Iterable<Path> {
      */
     public void each(FileVisitor<Path> visitor) {
         for (Pattern pattern : set) {
-            I.walk(pattern.base, visitor, pattern.patterns);
+            I.walk(pattern.base, visitor, pattern.mix());
         }
     }
 
@@ -100,7 +113,7 @@ public class PathSet implements Iterable<Path> {
         List<Path> paths = new ArrayList();
 
         for (Pattern pattern : set) {
-            paths.addAll(I.walk(pattern.base, pattern.patterns));
+            paths.addAll(I.walk(pattern.base, pattern.mix()));
         }
         return paths;
     }
@@ -114,7 +127,7 @@ public class PathSet implements Iterable<Path> {
         private final Path base;
 
         /** The include/exclude patterns. */
-        private final String[] patterns;
+        private final List<String> patterns = new ArrayList();
 
         /**
          * @param base
@@ -122,7 +135,27 @@ public class PathSet implements Iterable<Path> {
          */
         private Pattern(Path base, String[] patterns) {
             this.base = base;
-            this.patterns = patterns;
+
+            for (String pattern : patterns) {
+                this.patterns.add(pattern);
+            }
+        }
+
+        /**
+         * <p>
+         * Helper method to mix addtional patterns.
+         * </p>
+         * 
+         * @param additions
+         * @return
+         */
+        private String[] mix(String... additions) {
+            List<String> patterns = new ArrayList(this.patterns);
+
+            for (String addition : additions) {
+                patterns.add(addition);
+            }
+            return patterns.toArray(new String[patterns.size()]);
         }
     }
 }

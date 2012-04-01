@@ -22,15 +22,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map.Entry;
 
-import javax.lang.model.SourceVersion;
-
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.model.ClassUtil;
 import bee.compiler.JavaCompiler;
 import bee.definition.Project;
-import bee.license.License;
 import bee.task.Tasks;
 
 /**
@@ -195,113 +192,6 @@ public class Bee {
      * @param args
      */
     public static void main(String[] args) {
-        Tasks.execute(createProject("", null), "exe", I.make(UserInterface.class));
-    }
-
-    /**
-     * @version 2011/09/30 16:12:02
-     */
-    protected static class ProjectQuestion {
-
-        @Question(message = "Your project name")
-        private String project;
-
-        @Question(message = "Your product name")
-        private String product;
-
-        @Question(message = "Your product version")
-        private String version;
-
-        @Question(message = "What is your product's license?")
-        private License license;
-
-        /**
-         * Get the project property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @return The project property.
-         */
-        public String getProject() {
-            return project;
-        }
-
-        /**
-         * Set the project property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @param project The project value to set.
-         */
-        public void setProject(String project) {
-            for (String part : project.split("\\.")) {
-                if (SourceVersion.isKeyword(part)) {
-                    throw new IllegalArgumentException("Project Name contains Java keyword [ " + part + " ]");
-                }
-            }
-            this.project = project;
-
-            if (product == null) {
-                this.product = project;
-            }
-        }
-
-        /**
-         * Get the product property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @return The product property.
-         */
-        public String getProduct() {
-            return product;
-        }
-
-        /**
-         * Set the product property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @param product The product value to set.
-         */
-        public void setProduct(String product) {
-            this.product = product;
-        }
-
-        /**
-         * Get the version property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @return The version property.
-         */
-        public String getVersion() {
-            return version;
-        }
-
-        /**
-         * Set the version property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @param version The version value to set.
-         */
-        public void setVersion(String version) {
-            this.version = version;
-        }
-
-        /**
-         * Get the license property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @return The license property.
-         */
-        public License getLicense() {
-            return license;
-        }
-
-        /**
-         * Set the license property of this {@link Bee.ProjectQuestion}.
-         * 
-         * @param license The license value to set.
-         */
-        public void setLicense(License license) {
-            this.license = license;
-        }
-
-        /**
-         * @see java.lang.Object#toString()
-         */
-        @Override
-        public String toString() {
-            return "ProjectQuestion [project=" + project + ", artifact=" + product + ", version=" + version + "]";
-        }
+        Tasks.execute(createProject("", null), "jar", I.make(UserInterface.class));
     }
 }

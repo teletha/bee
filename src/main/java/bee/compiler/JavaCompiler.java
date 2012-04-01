@@ -15,6 +15,8 @@
  */
 package bee.compiler;
 
+import static bee.util.Inputs.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -91,10 +93,10 @@ public class JavaCompiler {
     private Path output;
 
     /** The source version. */
-    private SourceVersion sourceVersion = SourceVersion.RELEASE_7;
+    private SourceVersion sourceVersion = SourceVersion.latest();
 
     /** The target version. */
-    private SourceVersion targetVersion = SourceVersion.RELEASE_7;
+    private SourceVersion targetVersion = SourceVersion.latest();
 
     /** The source encoding. */
     private Charset encoding = Platform.Encoding;
@@ -464,8 +466,10 @@ public class JavaCompiler {
             // =============================================
             // Source and Target Version
             // =============================================
-            writeVersionOption(options, "-source", sourceVersion);
-            writeVersionOption(options, "-target", targetVersion);
+            options.add("-source");
+            options.add(normalize(sourceVersion));
+            options.add("-target");
+            options.add(normalize(targetVersion));
 
             // =============================================
             // Java Class Paths
@@ -525,44 +529,6 @@ public class JavaCompiler {
             // If this exception will be thrown, it is bug of this program. So we must rethrow the
             // wrapped error in here.
             throw I.quiet(e);
-        }
-    }
-
-    /**
-     * <p>
-     * Helper method to write version option.
-     * </p>
-     * 
-     * @param options
-     * @param name
-     * @param version
-     */
-    private void writeVersionOption(List<String> options, String name, SourceVersion version) {
-        options.add(name);
-
-        switch (version) {
-        case RELEASE_0:
-        case RELEASE_1:
-        case RELEASE_2:
-        case RELEASE_3:
-            options.add("1.3");
-            break;
-
-        case RELEASE_4:
-            options.add("1.4");
-            break;
-
-        case RELEASE_5:
-            options.add("5");
-            break;
-
-        case RELEASE_6:
-            options.add("6");
-            break;
-
-        case RELEASE_7:
-            options.add("7");
-            break;
         }
     }
 
