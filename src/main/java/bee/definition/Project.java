@@ -15,12 +15,17 @@
  */
 package bee.definition;
 
+import static bee.util.Inputs.*;
+
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.lang.model.SourceVersion;
 
 import kiss.I;
 import kiss.Manageable;
@@ -42,15 +47,6 @@ public class Project {
     /** The project root directory. */
     public final Path root;
 
-    /** The project name. */
-    public String group;
-
-    /** The product name. */
-    public String name;
-
-    /** The product version. */
-    public String version;
-
     /** The libraries. */
     final SortedSet<Library> libraries = new TreeSet();
 
@@ -59,6 +55,21 @@ public class Project {
 
     /** The repositories. */
     final ArrayList<RemoteRepository> repositories = new ArrayList();
+
+    /** The project name. */
+    private String projectName = "";
+
+    /** The product name. */
+    private String productName = "";
+
+    /** The product version. */
+    private String version = "1.0";
+
+    /** The product description. */
+    private String description = "";
+
+    /** The requirement of Java version. */
+    private SourceVersion javaVersion;
 
     /** The input base directory. */
     private Path input;
@@ -70,9 +81,92 @@ public class Project {
      * 
      */
     protected Project() {
-        root = ClassUtil.getArchive(getClass()).getParent().getParent();
+        Path archive = ClassUtil.getArchive(getClass());
+
+        if (Files.isDirectory(archive)) {
+            // directory
+            this.root = archive.getParent().getParent();
+        } else {
+            // some archive
+            this.root = archive;
+        }
+
+        require(null);
         setInput((Path) null);
         setOutput((Path) null);
+    }
+
+    /**
+     * <p>
+     * Return project name.
+     * </p>
+     * 
+     * @return The project name.
+     */
+    public final String getProject() {
+        return projectName;
+    }
+
+    /**
+     * <p>
+     * Return product name.
+     * </p>
+     * 
+     * @return The product name.
+     */
+    public final String getProduct() {
+        return productName;
+    }
+
+    /**
+     * <p>
+     * Return product version.
+     * </p>
+     * 
+     * @return The product version.
+     */
+    public final String getVersion() {
+        return version;
+    }
+
+    /**
+     * <p>
+     * Declare project name, product name and product version.
+     * </p>
+     * 
+     * @param projectName A project name.
+     * @param productName A product name.
+     * @param version A product version.
+     */
+    protected final void name(String projectName, String productName, String version) {
+        this.projectName = normalize(projectName, "YourProject");
+        this.productName = normalize(productName, "YourProduct");
+        this.version = normalize(version, "1.0");
+    }
+
+    /**
+     * <p>
+     * Return product description.
+     * </p>
+     * 
+     * @return The product description.
+     */
+    public final String getDescription() {
+        return description;
+    }
+
+    /**
+     * <p>
+     * Declare product description.
+     * </p>
+     * 
+     * @param description A product description.
+     */
+    protected final void describe(String description) {
+        if (description == null) {
+            description = "";
+        }
+        this.description = description.trim();
     }
 
     /**
@@ -103,6 +197,31 @@ public class Project {
 
         // API definition
         return library;
+    }
+
+    /**
+     * <p>
+     * Returns Java version requirement.
+     * </p>
+     * 
+     * @return A Java version requirement.
+     */
+    public final SourceVersion getJavaVersion() {
+        return javaVersion;
+    }
+
+    /**
+     * <p>
+     * Declare Java version requirement.
+     * </p>
+     * 
+     * @param version A Java version to require.
+     */
+    protected final void require(SourceVersion version) {
+        if (version == null) {
+            version = SourceVersion.latest();
+        }
+        this.javaVersion = version;
     }
 
     /**

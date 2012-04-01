@@ -16,6 +16,9 @@ public class Project extends bee.definition.Project {
     private String aetherVersion = "0.9.0-SNAPSHOT";
 
     {
+        name("npc", "bee", "0.1");
+        describe("Simple Build Tool for Java");
+
         require("npc", "sinobu", "0.9.1");
         require("npc", "antibug", "0.2").atTest();
         require("org.eclipse.aether", "aether-api", aetherVersion);

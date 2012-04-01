@@ -23,6 +23,8 @@ import java.nio.file.Path;
 import org.junit.Rule;
 import org.junit.Test;
 
+import bee.util.JarArchiver;
+
 import antibug.CleanRoom;
 
 /**
