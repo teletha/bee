@@ -23,14 +23,14 @@ import kiss.Lifestyle;
 class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
 
     /** The user interface class. */
-    static final ThreadLocal<UserInterface> local = new ThreadLocal();
+    static UserInterface ui;
 
     /**
      * @see ezbean.Lifestyle#resolve()
      */
     @Override
     public UserInterface resolve() {
-        return local.get();
+        return ui;
     }
 
 }

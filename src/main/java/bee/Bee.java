@@ -136,7 +136,7 @@ public class Bee {
         if (ui == null) {
             ui = new CommandLineUserInterface();
         }
-        UserInterfaceLisfestyle.local.set(ui);
+        UserInterfaceLisfestyle.ui = ui;
 
         // search Project from the specified file systems
         Path sources = home.resolve("src/project/java");

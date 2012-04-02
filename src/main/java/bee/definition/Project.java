@@ -44,9 +44,6 @@ import bee.util.PathSet;
 @Manageable(lifestyle = Singleton.class)
 public class Project {
 
-    /** The project root directory. */
-    public final Path root;
-
     /** The libraries. */
     final SortedSet<Library> libraries = new TreeSet();
 
@@ -55,6 +52,9 @@ public class Project {
 
     /** The repositories. */
     final ArrayList<RemoteRepository> repositories = new ArrayList();
+
+    /** The project root directory. */
+    private Path root;
 
     /** The project name. */
     private String projectName = "";
@@ -97,16 +97,13 @@ public class Project {
 
     /**
      * <p>
-     * For test.
+     * Return project root directory.
      * </p>
      * 
-     * @param root
+     * @return A root directory of this project.
      */
-    Project(Path root) {
-        this.root = root;
-
-        setInput((Path) null);
-        setOutput((Path) null);
+    public Path getRoot() {
+        return root;
     }
 
     /**
@@ -116,7 +113,7 @@ public class Project {
      * 
      * @return The project name.
      */
-    public final String getProject() {
+    public String getProject() {
         return projectName;
     }
 
@@ -127,7 +124,7 @@ public class Project {
      * 
      * @return The product name.
      */
-    public final String getProduct() {
+    public String getProduct() {
         return productName;
     }
 
@@ -138,7 +135,7 @@ public class Project {
      * 
      * @return The product version.
      */
-    public final String getVersion() {
+    public String getVersion() {
         return productVersion;
     }
 
@@ -164,7 +161,7 @@ public class Project {
      * 
      * @return The product description.
      */
-    public final String getDescription() {
+    public String getDescription() {
         return description;
     }
 
@@ -190,7 +187,7 @@ public class Project {
      * @param scope
      * @return
      */
-    public final Set<Library> getDependency(Scope scope) {
+    public Set<Library> getDependency(Scope scope) {
         return I.make(Repository.class).collectDependency(this, scope);
     }
 
@@ -219,7 +216,7 @@ public class Project {
      * 
      * @return A Java version requirement.
      */
-    public final String getJavaVersion() {
+    public String getJavaVersion() {
         return normalize(requirementJavaVersion);
     }
 
@@ -264,7 +261,7 @@ public class Project {
      * 
      * @return The base input directory.
      */
-    public final Path getInput() {
+    public Path getInput() {
         return input;
     }
 
@@ -278,11 +275,11 @@ public class Project {
      */
     protected final void setInput(Path input) {
         if (input == null) {
-            input = root.resolve("src");
+            input = getRoot().resolve("src");
         }
 
         if (!input.isAbsolute()) {
-            input = root.resolve(input);
+            input = getRoot().resolve(input);
         }
         this.input = input;
     }
@@ -299,7 +296,7 @@ public class Project {
         if (input == null) {
             input = "src";
         }
-        setInput(root.resolve(input));
+        setInput(getRoot().resolve(input));
     }
 
     /**
@@ -307,7 +304,7 @@ public class Project {
      * 
      * @return The base output directory.
      */
-    public final Path getOutput() {
+    public Path getOutput() {
         return output;
     }
 
@@ -321,11 +318,11 @@ public class Project {
      */
     protected final void setOutput(Path output) {
         if (output == null) {
-            output = root.resolve("target");
+            output = getRoot().resolve("target");
         }
 
         if (!output.isAbsolute()) {
-            output = root.resolve(output);
+            output = getRoot().resolve(output);
         }
         this.output = output;
     }
@@ -342,7 +339,7 @@ public class Project {
         if (output == null) {
             output = "target";
         }
-        setOutput(root.resolve(output));
+        setOutput(getRoot().resolve(output));
     }
 
     /**
@@ -352,7 +349,7 @@ public class Project {
      * 
      * @return
      */
-    public final PathSet getSources() {
+    public PathSet getSources() {
         PathSet set = new PathSet();
 
         for (Path path : I.walkDirectory(input.resolve("main"), "*")) {
@@ -368,7 +365,7 @@ public class Project {
      * 
      * @return
      */
-    public final Path getClasses() {
+    public Path getClasses() {
         return output.resolve("classes");
     }
 
@@ -379,7 +376,7 @@ public class Project {
      * 
      * @return
      */
-    public final PathSet getTestSources() {
+    public PathSet getTestSources() {
         PathSet set = new PathSet();
 
         for (Path path : I.walkDirectory(input.resolve("test"), "*")) {
@@ -395,7 +392,7 @@ public class Project {
      * 
      * @return
      */
-    public final Path getTestClasses() {
+    public Path getTestClasses() {
         return output.resolve("test-classes");
     }
 
@@ -406,7 +403,7 @@ public class Project {
      * 
      * @return
      */
-    public final PathSet getProjectSources() {
+    public PathSet getProjectSources() {
         PathSet set = new PathSet();
 
         for (Path path : I.walkDirectory(input.resolve("project"), "*")) {
@@ -422,7 +419,7 @@ public class Project {
      * 
      * @return
      */
-    public final Path getProjectClasses() {
+    public Path getProjectClasses() {
         return output.resolve("project-classes");
     }
 

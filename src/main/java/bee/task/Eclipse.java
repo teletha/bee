@@ -38,7 +38,7 @@ public class Eclipse extends Task {
      */
     @Command(defaults = true)
     public void eclipse() {
-        createClasspath(project.root.resolve(".classpath"));
+        createClasspath(project.getRoot().resolve(".classpath"));
     }
 
     /**
@@ -54,22 +54,22 @@ public class Eclipse extends Task {
         // tests
         for (Path path : project.getTestSources()) {
             doc.append($("classpathentry").attr("kind", "src")
-                    .attr("path", project.root.relativize(path))
-                    .attr("output", project.root.relativize(project.getTestClasses())));
+                    .attr("path", project.getRoot().relativize(path))
+                    .attr("output", project.getRoot().relativize(project.getTestClasses())));
         }
 
         // sources
         for (Path path : project.getSources()) {
             doc.append($("classpathentry").attr("kind", "src")
-                    .attr("path", project.root.relativize(path))
-                    .attr("output", project.root.relativize(project.getClasses())));
+                    .attr("path", project.getRoot().relativize(path))
+                    .attr("output", project.getRoot().relativize(project.getClasses())));
         }
 
         // projects
         for (Path path : project.getProjectSources()) {
             doc.append($("classpathentry").attr("kind", "src")
-                    .attr("path", project.root.relativize(path))
-                    .attr("output", project.root.relativize(project.getProjectClasses())));
+                    .attr("path", project.getRoot().relativize(path))
+                    .attr("output", project.getRoot().relativize(project.getProjectClasses())));
         }
 
         // library

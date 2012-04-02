@@ -9,14 +9,13 @@
  */
 package bee.task;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.Rule;
 import org.junit.Test;
 
-import bee.definition.PrivateProject;
-import bee.definition.TemporaryProjectBuilder;
-import bee.projects.noconfig.project.java.NoConfigProject;
+import bee.BlinkProject;
 
 /**
  * @version 2012/04/02 9:37:56
@@ -24,24 +23,30 @@ import bee.projects.noconfig.project.java.NoConfigProject;
 public class CompileTest {
 
     @Rule
-    public static final TemporaryProjectBuilder temporary = new TemporaryProjectBuilder(NoConfigProject.class);
+    public final BlinkProject project = new BlinkProject() {
+
+        {
+            source("A");
+            source("test.B");
+            resource("C");
+        }
+    };
 
     @Test
     public void compile() throws Exception {
+        Path A = project.locateClass("A.class");
+        Path B = project.locateClass("test/B.class");
+        Path C = project.locateClass("C");
+
+        assert Files.notExists(A);
+        assert Files.notExists(B);
+        assert Files.notExists(C);
+
         Compile compile = new Compile();
         compile.source();
-    }
 
-    /**
-     * @version 2012/04/02 11:59:54
-     */
-    private static class TestProject extends PrivateProject {
-
-        private Path path = null;
-
-        {
-
-        }
-
+        assert Files.exists(A);
+        assert Files.exists(B);
+        assert Files.exists(C);
     }
 }
