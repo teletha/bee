@@ -54,10 +54,10 @@ import javax.tools.ToolProvider;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.PathSet;
 import bee.Platform;
 import bee.UserInterface;
 import bee.definition.Library;
+import bee.util.PathSet;
 import bee.util.Paths;
 
 /**
