@@ -18,8 +18,9 @@ package bee.projects;
 import org.junit.Rule;
 import org.junit.Test;
 
-import bee.DummyProject;
-import bee.projects.noconfig.project.NoConfigProject;
+import bee.definition.Project;
+import bee.definition.TemporaryProjectBuilder;
+import bee.projects.noconfig.project.java.NoConfigProject;
 
 /**
  * @version 2010/10/06 7:42:12
@@ -27,10 +28,16 @@ import bee.projects.noconfig.project.NoConfigProject;
 public class NoConfigTest {
 
     @Rule
-    public static final DummyProject dummy = new DummyProject(NoConfigProject.class);
+    public static final TemporaryProjectBuilder dummy = new TemporaryProjectBuilder(NoConfigProject.class);
 
     @Test
     public void project() throws Exception {
+        Project project = dummy.project;
+
+        assert project != null;
+        assert project.getProject().equals("no");
+        assert project.getProduct().equals("config");
+        assert project.root.equals(dummy.moduleForProject.path);
 
     }
 }

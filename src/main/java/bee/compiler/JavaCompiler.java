@@ -491,7 +491,6 @@ public class JavaCompiler {
 
                     if (Paths.getLastModified(classsFile) < Paths.getLastModified(sourceFile)) {
                         sources.add(sourceFile.toFile());
-                        System.out.println(sourceFile);
                     }
                 }
             }
