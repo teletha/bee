@@ -31,7 +31,6 @@ public class Null {
          */
         @Override
         protected void write(String message) {
-            System.out.println(message);
         }
 
         /**

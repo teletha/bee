@@ -13,21 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.projects.noconfig.project;
-
-import bee.definition.Project;
+package bee.projects.noconfig.project.java;
 
 /**
  * @version 2010/10/06 7:40:09
  */
-public class NoConfigProject extends Project {
+public class NoConfigProject extends bee.definition.Project {
 
-    /**
-     * @param groupName
-     * @param projectName
-     * @param version
-     */
-    private NoConfigProject() {
+    {
+        name("no", "config", "1.0");
     }
-
 }

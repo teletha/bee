@@ -97,6 +97,20 @@ public class Project {
 
     /**
      * <p>
+     * For test.
+     * </p>
+     * 
+     * @param root
+     */
+    Project(Path root) {
+        this.root = root;
+
+        setInput((Path) null);
+        setOutput((Path) null);
+    }
+
+    /**
+     * <p>
      * Return project name.
      * </p>
      * 
