@@ -36,7 +36,7 @@ import org.apache.maven.wagon.PathUtils;
 import org.eclipse.aether.graph.Exclusion;
 import org.eclipse.aether.repository.RemoteRepository;
 
-import bee.PathSet;
+import bee.util.PathSet;
 
 /**
  * @version 2010/04/02 3:47:44

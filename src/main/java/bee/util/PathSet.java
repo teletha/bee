@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee;
+package bee.util;
 
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
