@@ -28,7 +28,7 @@ public class Jar extends Task {
 
         Path jar = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".jar");
 
-        ui.talk("Build source jar: ", jar);
+        ui.talk("Build main classes jar: ", jar);
         JarArchiver archiver = new JarArchiver();
         archiver.add(project.getClasses());
         archiver.pack(jar);
