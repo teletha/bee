@@ -186,8 +186,10 @@ public class BeeProcessor implements Processor {
          * {@inheritDoc}
          */
         @Override
-        public void error(Object... messages) {
+        public RuntimeException error(Object... messages) {
             notifier.printMessage(ERROR, build(messages), element);
+
+            return Suspend;
         }
     }
 }

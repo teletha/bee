@@ -17,24 +17,32 @@ package bee;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
+import kiss.ClassListener;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
+import kiss.Table;
 import kiss.model.ClassUtil;
 import bee.compiler.JavaCompiler;
 import bee.definition.Project;
-import bee.task.Tasks;
+import bee.task.Command;
+import bee.task.Task;
 
 /**
  * @version 2010/04/02 3:44:35
  */
 @Manageable(lifestyle = Singleton.class)
-public class Bee {
+public class Bee implements ClassListener<Task> {
 
     /** The executable file for Java. */
     public static final Path Java;
@@ -90,6 +98,121 @@ public class Bee {
         I.load(ClassUtil.getArchive(Bee.class));
     }
 
+    /** The task repository. */
+    private Map<String, TaskInfo> infos = new HashMap();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void load(Class<Task> clazz) {
+        infos.put(clazz.getSimpleName().toLowerCase(), new TaskInfo(clazz));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void unload(Class<Task> clazz) {
+        infos.remove(clazz.getSimpleName().toLowerCase());
+    }
+
+    /**
+     * <p>
+     * Create the specified task.
+     * </p>
+     * 
+     * @param taskClass
+     * @return
+     */
+    public <T extends Task> T createTask(Class<T> taskClass) {
+        UserInterface ui = UserInterfaceLisfestyle.ui;
+        String name = taskClass.getSimpleName().toLowerCase();
+        TaskInfo info = infos.get(name);
+
+        if (info == null) {
+            throw ui.error("Task [", name, "] is not found.");
+        }
+
+        // API definition
+        return (T) I.make(info.task);
+    }
+
+    /**
+     * <p>
+     * Execute task by user input.
+     * </p>
+     * 
+     * @param project
+     * @param input
+     * @param ui
+     */
+    private void executeTask(Project project, String input, UserInterface ui) {
+        // parse command
+        if (input == null) {
+            return;
+        }
+
+        // remove head and tail white space
+        input = input.trim();
+
+        if (input.length() == 0) {
+            return;
+        }
+
+        // search task name
+        String taskName;
+        int index = input.indexOf(' ');
+
+        if (index == -1) {
+            taskName = input;
+        } else {
+            taskName = input.substring(0, index);
+            input = input.substring(index + 1);
+        }
+
+        // analyze task name
+        String taskGroupName = "";
+        String commandName = "";
+        index = taskName.indexOf(':');
+
+        if (index == -1) {
+            taskGroupName = taskName;
+        } else {
+            taskGroupName = taskName.substring(0, index);
+            commandName = taskName.substring(index + 1);
+        }
+
+        // search task
+        TaskInfo taskInfo = infos.get(taskGroupName.toLowerCase());
+
+        if (taskInfo == null) {
+            ui.error("Task '" + taskName + "' is not found.");
+            return;
+        }
+
+        if (commandName.length() == 0) {
+            commandName = taskInfo.defaults;
+        }
+
+        // search command
+        Method command = taskInfo.infos.get(commandName.toLowerCase());
+
+        if (command == null) {
+            return;
+        }
+
+        // create task and initialize
+        Task task = I.make(taskInfo.task);
+
+        // execute task
+        try {
+            command.invoke(task);
+        } catch (Throwable e) {
+            ui.error(e);
+        }
+    }
+
     /**
      * <p>
      * Create project.
@@ -99,7 +222,7 @@ public class Bee {
      * @param ui
      * @return
      */
-    public static final Project createProject(String home, UserInterface ui) {
+    public final Project createProject(String home, UserInterface ui) {
         return createProject(home == null ? null : Paths.get(home), ui);
     }
 
@@ -112,7 +235,7 @@ public class Bee {
      * @param ui
      * @return
      */
-    public static final Project createProject(Path home, UserInterface ui) {
+    public final Project createProject(Path home, UserInterface ui) {
         // Use current directory if user doesn't specify.
         if (home == null) {
             home = I.locate("");
@@ -175,7 +298,7 @@ public class Bee {
      * @param input
      * @param output
      */
-    private static final void compileProject(Path input, Path output) {
+    private final void compileProject(Path input, Path output) {
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(input);
         compiler.addClassPath(ClassUtil.getArchive(Bee.class));
@@ -192,6 +315,51 @@ public class Bee {
      * @param args
      */
     public static void main(String[] args) {
-        Tasks.execute(createProject("", null), "jar", I.make(UserInterface.class));
+        Bee bee = I.make(Bee.class);
+        bee.executeTask(bee.createProject("", null), "jar", I.make(UserInterface.class));
+    }
+
+    /**
+     * @version 2012/03/20 16:29:25
+     */
+    private static class TaskInfo {
+
+        /** The task definition. */
+        private final Class<Task> task;
+
+        /** The default command name. */
+        private String defaults;
+
+        /** The command infos. */
+        private Map<String, Method> infos = new HashMap();
+
+        /**
+         * @param taskClass
+         */
+        private TaskInfo(Class<Task> taskClass) {
+            this.task = taskClass;
+
+            Table<Method, Annotation> methods = ClassUtil.getAnnotations(taskClass);
+
+            for (Entry<Method, List<Annotation>> info : methods.entrySet()) {
+                for (Annotation annotation : info.getValue()) {
+                    if (annotation.annotationType() == Command.class) {
+                        Command command = (Command) annotation;
+                        Method method = info.getKey();
+
+                        // compute command name
+                        String name = method.getName().toLowerCase();
+
+                        // register
+                        infos.put(name, method);
+
+                        // check default
+                        if (command.defaults()) {
+                            defaults = name;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

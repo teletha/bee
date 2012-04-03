@@ -12,6 +12,7 @@ package bee.util;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,6 +25,40 @@ public class PathSet implements Iterable<Path> {
 
     /** The path pattern set. */
     private final List<Pattern> set = new ArrayList();
+
+    /**
+     * <p>
+     * Empty path set.
+     * </p>
+     */
+    public PathSet() {
+    }
+
+    /**
+     * <p>
+     * Path set with the specified paths.
+     * </p>
+     * 
+     * @param paths
+     */
+    public PathSet(Path... paths) {
+        for (Path path : paths) {
+            add(path);
+        }
+    }
+
+    /**
+     * <p>
+     * Path set with the specified paths.
+     * </p>
+     * 
+     * @param paths
+     */
+    public PathSet(Collection<Path> paths) {
+        for (Path path : paths) {
+            add(path);
+        }
+    }
 
     /**
      * <p>

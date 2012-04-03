@@ -30,6 +30,13 @@ import kiss.I;
  */
 public abstract class UserNotifier {
 
+    /** The suspend state. */
+    protected static final RuntimeException Suspend = new RuntimeException();
+
+    static {
+        Suspend.setStackTrace(new StackTraceElement[0]);
+    }
+
     /**
      * <p>
      * Talk to user with decoration like title.
@@ -72,8 +79,10 @@ public abstract class UserNotifier {
      * 
      * @param message Your emergency message.
      */
-    public void error(Object... messages) {
+    public RuntimeException error(Object... messages) {
         talk("[ERROR]", messages);
+
+        return Suspend;
     }
 
     /**
