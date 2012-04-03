@@ -27,7 +27,7 @@ import bee.definition.Project;
 /**
  * @version 2012/04/02 22:16:55
  */
-public abstract class BlinkProject extends Project implements TestRule {
+public class BlinkProject extends Project implements TestRule {
 
     static {
         I.load(ClassUtil.getArchive(Bee.class));
@@ -42,7 +42,7 @@ public abstract class BlinkProject extends Project implements TestRule {
     /**
      * 
      */
-    protected BlinkProject() {
+    public BlinkProject() {
         ProjectLifestyle.project = this;
         UserInterfaceLisfestyle.ui = Null.UI;
     }
@@ -59,14 +59,47 @@ public abstract class BlinkProject extends Project implements TestRule {
 
     /**
      * <p>
+     * Show trace message.
+     * </p>
+     */
+    public final void showTrace() {
+        UserInterfaceLisfestyle.ui = new CommandLineUserInterface();
+    }
+
+    /**
+     * <p>
      * Locate file in main class directory.
      * </p>
      * 
      * @param path A relative path to file.
      * @return A located file path.
      */
-    public final Path locateClass(String path) {
+    public final Path locateMainOutput(String path) {
         return getClasses().resolve(path);
+    }
+
+    /**
+     * <p>
+     * Locate file in test class directory.
+     * </p>
+     * 
+     * @param path A relative path to file.
+     * @return A located file path.
+     */
+    public final Path locateTestOutput(String path) {
+        return getTestClasses().resolve(path);
+    }
+
+    /**
+     * <p>
+     * Locate file in project class directory.
+     * </p>
+     * 
+     * @param path A relative path to file.
+     * @return A located file path.
+     */
+    public final Path locateProjectOutput(String path) {
+        return getProjectClasses().resolve(path);
     }
 
     /**
@@ -76,8 +109,30 @@ public abstract class BlinkProject extends Project implements TestRule {
      * 
      * @param fqcn A fully qualified class name.
      */
-    protected final void source(String fqcn) {
-        createJavaSource(fqcn, getRoot().resolve("src/main/java/" + fqcn.replace('.', '/') + ".java"));
+    public final Path source(String fqcn, String... contents) {
+        return createJavaSource(fqcn, getRoot().resolve("src/main/java/" + fqcn.replace('.', '/') + ".java"), contents);
+    }
+
+    /**
+     * <p>
+     * Add test source file with the specified name.
+     * </p>
+     * 
+     * @param fqcn A fully qualified class name.
+     */
+    public final Path sourceTest(String fqcn) {
+        return createJavaSource(fqcn, getRoot().resolve("src/test/java/" + fqcn.replace('.', '/') + ".java"));
+    }
+
+    /**
+     * <p>
+     * Add project source file with the specified name.
+     * </p>
+     * 
+     * @param fqcn A fully qualified class name.
+     */
+    public final Path sourceProject(String fqcn) {
+        return createJavaSource(fqcn, getRoot().resolve("src/project/java/" + fqcn.replace('.', '/') + ".java"));
     }
 
     /**
@@ -88,7 +143,7 @@ public abstract class BlinkProject extends Project implements TestRule {
      * @param fqcn A fully qualified class name.
      * @param path A source location.
      */
-    private void createJavaSource(String fqcn, Path path) {
+    private Path createJavaSource(String fqcn, Path path, String... contents) {
         try {
             // create directory
             Files.createDirectories(path.getParent());
@@ -109,9 +164,15 @@ public abstract class BlinkProject extends Project implements TestRule {
             // write source file
             List<String> source = new ArrayList();
             if (packageName != null) source.add("package " + packageName + ";");
-            source.add("public class " + className + "{}");
+            source.add("public class " + className + "{");
+            for (String content : contents) {
+                source.add(content);
+            }
+            source.add("}");
 
             Files.write(path, source, StandardCharsets.UTF_8);
+
+            return path;
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -124,8 +185,30 @@ public abstract class BlinkProject extends Project implements TestRule {
      * 
      * @param fqcn A fully qualified file name.
      */
-    protected final void resource(String fqcn) {
-        createFile(fqcn, getRoot().resolve("src/main/resources/" + fqcn));
+    public final Path resource(String fqcn) {
+        return createFile(fqcn, getRoot().resolve("src/main/resources/" + fqcn));
+    }
+
+    /**
+     * <p>
+     * Add test resource file with the specified name.
+     * </p>
+     * 
+     * @param fqcn A fully qualified file name.
+     */
+    public final Path resourceTest(String fqcn) {
+        return createFile(fqcn, getRoot().resolve("src/test/resources/" + fqcn));
+    }
+
+    /**
+     * <p>
+     * Add project resource file with the specified name.
+     * </p>
+     * 
+     * @param fqcn A fully qualified file name.
+     */
+    public final Path resourceProject(String fqcn) {
+        return createFile(fqcn, getRoot().resolve("src/project/resources/" + fqcn));
     }
 
     /**
@@ -136,13 +219,16 @@ public abstract class BlinkProject extends Project implements TestRule {
      * @param fqcn A fully qualified file name.
      * @param path A file location.
      */
-    private void createFile(String fqcn, Path path) {
+    private Path createFile(String fqcn, Path path) {
         try {
             // create directory
             Files.createDirectories(path.getParent());
 
             // create file
             Files.createFile(path);
+
+            // API definition
+            return path;
         } catch (Exception e) {
             throw I.quiet(e);
         }

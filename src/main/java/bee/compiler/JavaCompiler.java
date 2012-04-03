@@ -521,6 +521,8 @@ public class JavaCompiler {
 
             if (result) {
                 ui.talk("Compile " + sources.size() + " sources.");
+            } else {
+                throw new Error("Compile is fail.");
             }
 
             return manager;
