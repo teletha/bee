@@ -58,7 +58,6 @@ public class Exe extends Task {
 
     @Command(defaults = true)
     public void build() {
-
         try {
             // create temporary executable jar
             Path jar = temporary.resolve("starter.jar");

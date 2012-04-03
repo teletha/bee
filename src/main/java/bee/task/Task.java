@@ -15,7 +15,14 @@
  */
 package bee.task;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map.Entry;
+
 import kiss.I;
+import kiss.model.ClassUtil;
+import bee.Bee;
 import bee.UserInterface;
 import bee.definition.Project;
 
@@ -40,8 +47,37 @@ public abstract class Task {
         this.ui = I.make(UserInterface.class);
     }
 
-    @Command
+    @Command(description = "Display help message for all commands of this task.")
     public void help() {
 
+        root: for (Entry<Method, List<Annotation>> entry : ClassUtil.getAnnotations(getClass()).entrySet()) {
+            String name = entry.getKey().getName();
+
+            if (!name.equals("help")) {
+                for (Annotation annotation : entry.getValue()) {
+                    if (annotation.annotationType() == Command.class) {
+                        Command command = (Command) annotation;
+
+                        // display usage description for this commnad
+                        ui.talk(name);
+                        ui.talk("    ");
+
+                        continue root;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Build other task.
+     * </p>
+     * 
+     * @param taskClass
+     * @return
+     */
+    protected <T extends Task> T task(Class<T> taskClass) {
+        return I.make(Bee.class).createTask(taskClass);
     }
 }
