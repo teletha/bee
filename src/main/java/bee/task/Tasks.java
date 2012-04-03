@@ -119,8 +119,8 @@ public class Tasks implements ClassListener<Task> {
         // execute task
         try {
             command.invoke(task);
-        } catch (Exception e) {
-            throw I.quiet(e);
+        } catch (Throwable e) {
+            ui.error(e);
         }
     }
 
