@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,9 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 import bee.Platform;
-import bee.compiler.JavaCompiler;
 import bee.definition.Scope;
+import bee.tool.Java;
+import bee.tool.Java.SubProcess;
 
 /**
  * @version 2012/03/28 9:58:39
@@ -32,94 +34,125 @@ public class Test extends Task {
 
     @Command(defaults = true)
     public void test() {
-        // compile test codes
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addClassPath(project.getClasses());
-        compiler.addClassPath(project.getDependency(Scope.Test));
-        compiler.addSourceDirectory(project.getTestSources());
-        compiler.setOutput(project.getTestClasses());
-        compiler.setNoWarn();
-        compiler.compile();
+        Compile compile = task(Compile.class);
+        compile.source();
+        compile.test();
 
         // execute test classes
         ui.title(" T E S T S");
 
-        int runs = 0;
-        int skips = 0;
-        List<Failure> fails = new ArrayList();
-        List<Failure> errors = new ArrayList();
+        try {
+            Path report = project.getOutput().resolve("test-reports");
+            Files.createDirectories(report);
 
-        JUnitCore core = new JUnitCore();
-
-        for (Path path : I.walk(project.getTestClasses(), "**Test.class")) {
-            String fqcn = project.getTestClasses().relativize(path).toString();
-            fqcn = fqcn.substring(0, fqcn.length() - 6).replace(File.separatorChar, '.');
-
-            try {
-                ui.talk("Running ", fqcn);
-
-                Result result = core.run(Class.forName(fqcn));
-                List<Failure> failures = result.getFailures();
-                List<Failure> fail = new ArrayList();
-                List<Failure> error = new ArrayList();
-
-                for (Failure failure : failures) {
-                    if (failure.getException() instanceof AssertionError) {
-                        fail.add(failure);
-                    } else {
-                        error.add(failure);
-                    }
-                }
-
-                StringBuilder builder = new StringBuilder();
-                builder.append("Tests run: ").append(result.getRunCount());
-                builder.append(", Failures: ").append(fail.size());
-                builder.append(", Errors: ").append(error.size());
-                builder.append(", Skipped: ").append(result.getIgnoreCount());
-                builder.append(", Time elapsed: ").append((float) result.getRunTime() / 1000).append("sec");
-
-                if (error.size() != 0) {
-                    builder.append(" <<< ERROR!");
-                } else if (fail.size() != 0) {
-                    builder.append(" <<< FAILURE!");
-                }
-
-                ui.talk(builder.toString());
-
-                runs += result.getRunCount();
-                skips += result.getIgnoreCount();
-                fails.addAll(fail);
-                errors.addAll(error);
-            } catch (ClassNotFoundException e) {
-                throw I.quiet(e);
-            }
+            Java java = new Java();
+            java.addClassPath(project.getClasses());
+            java.addClassPath(project.getTestClasses());
+            java.addClassPath(project.getDependency(Scope.Test));
+            java.enableAssertion();
+            java.setWorkingDirectory(project.getRoot());
+            java.run(Junit.class, project.getTestClasses(), report);
+        } catch (Exception e) {
+            throw I.quiet(e);
         }
-
-        ui.talk(Platform.EOL, "Results :", Platform.EOL);
-
-        showFailure("Tests in error", errors);
-        showFailure("Tests in failure", fails);
-
-        ui.talk("Tests run: ", runs, ", Failures: ", fails.size(), ", Errors: ", errors.size(), ", Skipped: ", skips);
     }
 
     /**
-     * <p>
-     * Show failures in detail.
-     * </p>
-     * 
-     * @param message
-     * @param failures
+     * @version 2012/04/04 17:51:29
      */
-    private void showFailure(String message, List<Failure> failures) {
-        if (!failures.isEmpty()) {
-            ui.talk(message + ":");
-            for (Failure failure : failures) {
-                Description desc = failure.getDescription();
+    private static final class Junit extends SubProcess {
 
-                ui.talk(" ", desc.getMethodName(), "(", desc.getClassName(), ")");
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void process() {
+            Path classes = I.locate(args[0]);
+
+            int runs = 0;
+            int skips = 0;
+            List<Failure> fails = new ArrayList();
+            List<Failure> errors = new ArrayList();
+
+            JUnitCore core = new JUnitCore();
+
+            for (Path path : I.walk(classes, "**Test.class")) {
+                String fqcn = classes.relativize(path).toString();
+                fqcn = fqcn.substring(0, fqcn.length() - 6).replace(File.separatorChar, '.');
+
+                try {
+                    ui.talk("Running ", fqcn);
+
+                    Result result = core.run(Class.forName(fqcn));
+                    List<Failure> failures = result.getFailures();
+                    List<Failure> fail = new ArrayList();
+                    List<Failure> error = new ArrayList();
+
+                    for (Failure failure : failures) {
+                        if (failure.getException() instanceof AssertionError) {
+                            fail.add(failure);
+                        } else {
+                            error.add(failure);
+                        }
+                    }
+
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("Tests run: ").append(result.getRunCount());
+                    builder.append(", Failures: ").append(fail.size());
+                    builder.append(", Errors: ").append(error.size());
+                    builder.append(", Skipped: ").append(result.getIgnoreCount());
+                    builder.append(", Time elapsed: ").append((float) result.getRunTime() / 1000).append("sec");
+
+                    if (error.size() != 0) {
+                        builder.append(" <<< ERROR!");
+                    } else if (fail.size() != 0) {
+                        builder.append(" <<< FAILURE!");
+                    }
+
+                    ui.talk(builder.toString());
+
+                    runs += result.getRunCount();
+                    skips += result.getIgnoreCount();
+                    fails.addAll(fail);
+                    errors.addAll(error);
+                } catch (ClassNotFoundException e) {
+                    throw I.quiet(e);
+                }
             }
-            ui.talk("");
+
+            ui.talk(Platform.EOL, "Results :", Platform.EOL);
+
+            showFailure("Tests in error", errors);
+            showFailure("Tests in failure", fails);
+
+            ui.talk("Tests run: ", runs, ", Failures: ", fails.size(), ", Errors: ", errors.size(), ", Skipped: ", skips);
+
+            if (fails.size() != 0 || errors.size() != 0) {
+                System.out.println("Test fails.");
+                // throw ui.error("Test fails.");
+            }
+        }
+
+        /**
+         * <p>
+         * Show failures in detail.
+         * </p>
+         * 
+         * @param message
+         * @param failures
+         */
+        private void showFailure(String message, List<Failure> failures) {
+            if (!failures.isEmpty()) {
+                ui.talk(message + ":");
+                for (Failure failure : failures) {
+                    Description desc = failure.getDescription();
+
+                    ui.talk(" ", desc.getMethodName(), "(", desc.getClassName(), ")");
+
+                    failure.getException().printStackTrace(System.out);
+                }
+                ui.talk("");
+            }
         }
     }
 }
