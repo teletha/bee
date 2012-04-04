@@ -26,7 +26,7 @@ public class Jar extends Task {
      */
     @Command(defaults = true, description = "Package main classes and other resources.")
     public void source() {
-        task(Compile.class).source();
+        // task(Compile.class).source();
 
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".jar");
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-sources.jar");
@@ -80,6 +80,7 @@ public class Jar extends Task {
      */
     private void pack(String type, PathSet input, Path output) {
         ui.talk("Build ", type, " jar: ", output);
+
         JarArchiver archiver = new JarArchiver();
         for (Path path : input) {
             archiver.add(path);

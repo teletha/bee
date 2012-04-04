@@ -18,6 +18,7 @@ package bee;
 import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +38,7 @@ import bee.compiler.JavaCompiler;
 import bee.definition.Project;
 import bee.task.Command;
 import bee.task.Task;
+import bee.util.Stopwatch;
 
 /**
  * @version 2010/04/02 3:44:35
@@ -206,10 +208,26 @@ public class Bee implements ClassListener<Task> {
         Task task = I.make(taskInfo.task);
 
         // execute task
+        ui.title("Building " + project.getProduct() + " " + project.getVersion());
+
+        Stopwatch stopwatch = new Stopwatch().start();
+        String result = "SUCCESS";
+
         try {
             command.invoke(task);
         } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                InvocationTargetException exception = (InvocationTargetException) e;
+
+                e = exception.getTargetException();
+            }
+
             ui.error(e);
+            result = "FAILURE";
+        } finally {
+            stopwatch.stop();
+
+            ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
         }
     }
 
@@ -316,7 +334,7 @@ public class Bee implements ClassListener<Task> {
      */
     public static void main(String[] args) {
         Bee bee = I.make(Bee.class);
-        bee.executeTask(bee.createProject("", null), "jar", I.make(UserInterface.class));
+        bee.executeTask(bee.createProject("", null), "install", I.make(UserInterface.class));
     }
 
     /**

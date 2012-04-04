@@ -1,0 +1,383 @@
+/*
+ * Copyright (C) 2012 Nameless Production Committee
+ *
+ * Licensed under the MIT License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *          http://opensource.org/licenses/mit-license.php
+ */
+package bee.tool;
+
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.rmi.registry.LocateRegistry;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.MXBean;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
+
+import kiss.I;
+import bee.UserInterface;
+import bee.definition.Library;
+import bee.util.NetworkAddressUtil;
+
+/**
+ * @version 2012/04/04 17:08:12
+ */
+public class Java {
+
+    /** The identifiable name. */
+    private static final ObjectName NAME;
+
+    static {
+        try {
+            NAME = new ObjectName(Transporter.class.getPackage().getName(), "type", Transporter.class.getSimpleName());
+        } catch (MalformedObjectNameException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /** The classpaths. */
+    private final List<Path> classpaths = new ArrayList();
+
+    /** The assertion usage state. */
+    private boolean enableAssertion = false;
+
+    /** The working directory. */
+    private Path directory;
+
+    /**
+     * <p>
+     * Add classpath.
+     * </p>
+     * 
+     * @param path
+     */
+    public void addClassPath(Collection<Library> paths) {
+        if (paths != null) {
+            for (Library library : paths) {
+                classpaths.add(library.getJar());
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Add classpath.
+     * </p>
+     * 
+     * @param path
+     */
+    public void addClassPath(Path path) {
+        if (path != null) {
+            classpaths.add(path.toAbsolutePath());
+        }
+    }
+
+    /**
+     * <p>
+     * Enable assertion functionality.
+     * </p>
+     */
+    public void enableAssertion() {
+        enableAssertion = true;
+    }
+
+    /**
+     * <p>
+     * Set working directory.
+     * </p>
+     * 
+     * @param directory A location of working directory.
+     */
+    public void setWorkingDirectory(Path directory) {
+        this.directory = directory;
+    }
+
+    /**
+     * <p>
+     * Execute this java command.
+     * </p>
+     */
+    public void run(Class<? extends SubProcess> mainClass, Object... arguments) {
+        // create address
+        int port = NetworkAddressUtil.getPort();
+        String address = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/hello";
+
+        List<String> command = new ArrayList();
+        command.add("java");
+
+        if (classpaths.size() != 0) {
+            command.add("-cp");
+            command.add(I.join(classpaths, File.pathSeparator));
+        }
+
+        if (enableAssertion) {
+            command.add("-ea");
+        }
+
+        command.add(SubProcessActivator.class.getName());
+        command.add(address);
+        command.add(mainClass.getName());
+
+        for (Object arg : arguments) {
+            command.add(arg.toString());
+        }
+
+        try {
+            // decide working directory
+            if (directory == null) {
+                directory = I.locateTemporary();
+            }
+
+            if (!Files.isDirectory(directory)) {
+                if (Files.notExists(directory)) {
+                    directory = Files.createDirectories(directory);
+                } else {
+                    directory = directory.getParent();
+                }
+            }
+
+            LocateRegistry.createRegistry(port);
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            server.registerMBean(I.make(Transporter.class), NAME);
+
+            JMXConnectorServer connector = JMXConnectorServerFactory.newJMXConnectorServer(new JMXServiceURL(address), null, server);
+            connector.start();
+
+            // build sub-process for java
+            ProcessBuilder builder = new ProcessBuilder();
+            builder.directory(directory.toFile());
+            builder.inheritIO();
+            builder.command(command);
+            builder.start().waitFor();
+
+            connector.stop();
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * @version 2012/04/05 1:50:00
+     */
+    public static abstract class SubProcess {
+
+        /** The user interface of the parent process. */
+        protected UserInterface ui;
+
+        /** The activation argument. */
+        protected String[] args;
+
+        /**
+         * <p>
+         * Write sub-process code.
+         * </p>
+         * 
+         * @param transporter
+         */
+        protected abstract void process();
+    }
+
+    /**
+     * @version 2012/04/04 23:03:00
+     */
+    @MXBean
+    protected static interface Transporter {
+
+        /**
+         * <p>
+         * Talk to user.
+         * </p>
+         * 
+         * @param message
+         */
+        void talk(String message);
+
+        /**
+         * <p>
+         * Talk to user.
+         * </p>
+         * 
+         * @param message
+         */
+        void title(String message);
+
+        /**
+         * <p>
+         * Talk to user.
+         * </p>
+         * 
+         * @param message
+         */
+        void warn(String message);
+    }
+
+    /**
+     * @version 2012/04/04 21:27:43
+     */
+    @SuppressWarnings("unused")
+    private static final class SubProcessActivator {
+
+        /**
+         * @param args
+         */
+        public static void main(String[] args) throws Exception {
+            // launch observer
+            JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(args[0]));
+            MBeanServerConnection connection = connector.getMBeanServerConnection();
+
+            SubProcess process = (SubProcess) I.make(Class.forName(args[1]));
+            process.ui = new SubProcessUserInterface(MBeanServerInvocationHandler.newProxyInstance(connection, NAME, Transporter.class, false));
+            process.args = Arrays.copyOfRange(args, 2, args.length);
+            process.process();
+
+            connector.close();
+        }
+    }
+
+    /**
+     * @version 2012/04/05 1:55:23
+     */
+    private static final class SubProcessUserInterface extends UserInterface {
+
+        private final Transporter transporter;
+
+        /**
+         * @param transporter
+         */
+        private SubProcessUserInterface(Transporter transporter) {
+            this.transporter = transporter;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String ask(String question) {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <T> T ask(String question, T defaultAnswer) {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public <T> T ask(Class<T> question) {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void title(CharSequence title) {
+            transporter.title(title.toString());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void talk(Object... messages) {
+            StringBuilder builder = new StringBuilder();
+
+            for (Object message : messages) {
+                builder.append(message.toString());
+            }
+            transporter.talk(builder.toString());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void warn(Object... messages) {
+            StringBuilder builder = new StringBuilder();
+
+            for (Object message : messages) {
+                builder.append(message.toString());
+            }
+            transporter.warn(builder.toString());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public RuntimeException error(Object... messages) {
+            throw new Error();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void write(String message) {
+            // do nothing
+        }
+    }
+
+    /**
+     * @version 2012/04/05 0:56:07
+     */
+    @SuppressWarnings("unused")
+    private static final class ParentProcessInterface implements Transporter {
+
+        /** The actual user interface. */
+        private final UserInterface ui;
+
+        /**
+         * @param ui
+         */
+        private ParentProcessInterface(UserInterface ui) {
+            this.ui = ui;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void talk(String message) {
+            ui.talk(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void title(String message) {
+            ui.title(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void warn(String message) {
+            ui.warn(message);
+        }
+    }
+}
