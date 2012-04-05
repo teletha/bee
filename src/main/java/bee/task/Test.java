@@ -149,7 +149,7 @@ public class Test extends Task {
 
                     ui.talk(" ", desc.getMethodName(), "(", desc.getClassName(), ")");
 
-                    failure.getException().printStackTrace(System.out);
+                    ui.error(failure.getException());
                 }
                 ui.talk("");
             }
