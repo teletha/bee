@@ -11,7 +11,6 @@ package bee.tool;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import kiss.I;
 import bee.UserInterface;
 import bee.definition.Library;
 import bee.util.NetworkAddressUtil;
+import bee.util.ProcessMaker;
 
 /**
  * @version 2012/04/04 17:08:12
@@ -140,19 +140,6 @@ public class Java {
         }
 
         try {
-            // decide working directory
-            if (directory == null) {
-                directory = I.locateTemporary();
-            }
-
-            if (!Files.isDirectory(directory)) {
-                if (Files.notExists(directory)) {
-                    directory = Files.createDirectories(directory);
-                } else {
-                    directory = directory.getParent();
-                }
-            }
-
             LocateRegistry.createRegistry(port);
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
             server.registerMBean(I.make(Transporter.class), NAME);
@@ -161,11 +148,9 @@ public class Java {
             connector.start();
 
             // build sub-process for java
-            ProcessBuilder builder = new ProcessBuilder();
-            builder.directory(directory.toFile());
-            builder.inheritIO();
-            builder.command(command);
-            builder.start().waitFor();
+            ProcessMaker maker = new ProcessMaker();
+            maker.setWorkingDirectory(directory);
+            maker.run(command);
 
             connector.stop();
         } catch (Exception e) {
@@ -226,6 +211,8 @@ public class Java {
          * @param message
          */
         void warn(String message);
+
+        void error(String className, String message);
     }
 
     /**
@@ -328,7 +315,14 @@ public class Java {
          */
         @Override
         public RuntimeException error(Object... messages) {
-            throw new Error();
+            for (Object message : messages) {
+                if (message instanceof Throwable) {
+                    Throwable error = (Throwable) message;
+
+                    transporter.error(error.getClass().getName(), error.getLocalizedMessage());
+                }
+            }
+            return null;
         }
 
         /**
@@ -378,6 +372,15 @@ public class Java {
         @Override
         public void warn(String message) {
             ui.warn(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void error(String className, String message) {
+            ui.talk(className);
+            ui.talk(message);
         }
     }
 }
