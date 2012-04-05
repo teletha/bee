@@ -31,6 +31,7 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import kiss.I;
+import kiss.model.Codec;
 import bee.UserInterface;
 import bee.definition.Library;
 import bee.util.NetworkAddressUtil;
@@ -180,42 +181,6 @@ public class Java {
     }
 
     /**
-     * @version 2012/04/04 23:03:00
-     */
-    @MXBean
-    protected static interface Transporter {
-
-        /**
-         * <p>
-         * Talk to user.
-         * </p>
-         * 
-         * @param message
-         */
-        void talk(String message);
-
-        /**
-         * <p>
-         * Talk to user.
-         * </p>
-         * 
-         * @param message
-         */
-        void title(String message);
-
-        /**
-         * <p>
-         * Talk to user.
-         * </p>
-         * 
-         * @param message
-         */
-        void warn(String message);
-
-        void error(String className, String message);
-    }
-
-    /**
      * @version 2012/04/04 21:27:43
      */
     @SuppressWarnings("unused")
@@ -243,10 +208,13 @@ public class Java {
      */
     private static final class SubProcessUserInterface extends UserInterface {
 
+        /** The event transporter. */
         private final Transporter transporter;
 
         /**
-         * @param transporter
+         * <p>
+         * Remote UserInterface.
+         * </p>
          */
         private SubProcessUserInterface(Transporter transporter) {
             this.transporter = transporter;
@@ -257,7 +225,9 @@ public class Java {
          */
         @Override
         public String ask(String question) {
-            return null;
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
         }
 
         /**
@@ -265,7 +235,9 @@ public class Java {
          */
         @Override
         public <T> T ask(String question, T defaultAnswer) {
-            return null;
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
         }
 
         /**
@@ -273,7 +245,9 @@ public class Java {
          */
         @Override
         public <T> T ask(Class<T> question) {
-            return null;
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
         }
 
         /**
@@ -317,9 +291,13 @@ public class Java {
         public RuntimeException error(Object... messages) {
             for (Object message : messages) {
                 if (message instanceof Throwable) {
-                    Throwable error = (Throwable) message;
+                    StringBuilder builder = new StringBuilder();
+                    Cause cause = make((Throwable) message);
+                    I.write(cause, builder, false);
 
-                    transporter.error(error.getClass().getName(), error.getLocalizedMessage());
+                    transporter.error(builder.toString());
+
+                    return I.quiet(message);
                 }
             }
             return null;
@@ -330,23 +308,93 @@ public class Java {
          */
         @Override
         protected void write(String message) {
-            // do nothing
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
         }
+
+        /**
+         * <p>
+         * Create cause.
+         * </p>
+         * 
+         * @param throwable
+         * @return
+         */
+        private static Cause make(Throwable throwable) {
+            Cause cause = new Cause();
+            cause.className = throwable.getClass().getName();
+            cause.message = throwable.getMessage();
+            if (throwable.getCause() != null) cause.cause = make(throwable.getCause());
+            for (StackTraceElement element : throwable.getStackTrace()) {
+                cause.traces.add(element);
+            }
+
+            // API definition
+            return cause;
+        }
+    }
+
+    /**
+     * <p>
+     * Transporter between parent process and sub process.
+     * </p>
+     * 
+     * @version 2012/04/04 23:03:00
+     */
+    @MXBean
+    protected static interface Transporter {
+
+        /**
+         * <p>
+         * Talk to user.
+         * </p>
+         * 
+         * @param message
+         */
+        void talk(String message);
+
+        /**
+         * <p>
+         * Talk to user.
+         * </p>
+         * 
+         * @param message
+         */
+        void title(String message);
+
+        /**
+         * <p>
+         * Talk to user.
+         * </p>
+         * 
+         * @param message
+         */
+        void warn(String message);
+
+        /**
+         * <p>
+         * Error message
+         * </p>
+         * 
+         * @param error
+         */
+        void error(String error);
     }
 
     /**
      * @version 2012/04/05 0:56:07
      */
     @SuppressWarnings("unused")
-    private static final class ParentProcessInterface implements Transporter {
+    private static final class Listener implements Transporter {
 
         /** The actual user interface. */
         private final UserInterface ui;
 
         /**
-         * @param ui
+         * Listen sub process event.
          */
-        private ParentProcessInterface(UserInterface ui) {
+        private Listener(UserInterface ui) {
             this.ui = ui;
         }
 
@@ -378,9 +426,57 @@ public class Java {
          * {@inheritDoc}
          */
         @Override
-        public void error(String className, String message) {
-            ui.talk(className);
-            ui.talk(message);
+        public void error(String error) {
+            try {
+                Cause cause = I.read(error, new Cause());
+                Error e = new Error(cause.message);
+                e.setStackTrace(cause.traces.toArray(new StackTraceElement[cause.traces.size()]));
+
+                ui.error(e);
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
+        }
+    }
+
+    /**
+     * @version 2012/04/06 0:30:59
+     */
+    public static final class Cause {
+
+        /** The error class name. */
+        public String className;
+
+        /** The error message. */
+        public String message;
+
+        /** The cause. */
+        public Cause cause;
+
+        /** The stack trace. */
+        public List<StackTraceElement> traces = new ArrayList();
+    }
+
+    /**
+     * @version 2012/04/06 0:33:18
+     */
+    private static final class StackTraceCodec extends Codec<StackTraceElement> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String encode(StackTraceElement value) {
+            return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value.getLineNumber();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public StackTraceElement decode(String value) {
+            String[] values = value.split(" ");
+            return new StackTraceElement(values[0], values[1], values[2], Integer.parseInt(values[3]));
         }
     }
 }
