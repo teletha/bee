@@ -442,7 +442,7 @@ public class Java {
     /**
      * @version 2012/04/06 0:30:59
      */
-    public static final class Cause {
+    private static final class Cause {
 
         /** The error class name. */
         public String className;
@@ -460,6 +460,7 @@ public class Java {
     /**
      * @version 2012/04/06 0:33:18
      */
+    @SuppressWarnings("unused")
     private static final class StackTraceCodec extends Codec<StackTraceElement> {
 
         /**

@@ -111,6 +111,9 @@ public class ProcessMaker {
                     input.ready();
 
                     i = input.read();
+                    if (i < 0) {
+                        System.out.println(i);
+                    }
                     output.append((char) i);
                 } while (i != -1);
             } catch (IOException e) {
