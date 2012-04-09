@@ -21,6 +21,10 @@ import kiss.I;
 import bee.Platform;
 
 /**
+ * <p>
+ * Utility for creating sub process.
+ * </p>
+ * 
  * @version 2012/04/05 11:50:55
  */
 public class ProcessMaker {
@@ -72,7 +76,12 @@ public class ProcessMaker {
             new ProcessReader(process.getInputStream(), System.out).start();
             new ProcessReader(process.getErrorStream(), System.err).start();
 
-            process.waitFor();
+            int result = process.waitFor();
+
+            if (result != 0) {
+                // error
+            }
+
             process.destroy();
         } catch (Exception e) {
             throw I.quiet(e);
@@ -108,12 +117,13 @@ public class ProcessMaker {
                 int i = -1;
 
                 do {
+                    // wait next input
                     input.ready();
 
+                    // read next character
                     i = input.read();
-                    if (i < 0) {
-                        System.out.println(i);
-                    }
+
+                    // outpu it
                     output.append((char) i);
                 } while (i != -1);
             } catch (IOException e) {

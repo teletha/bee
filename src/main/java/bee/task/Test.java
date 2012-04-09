@@ -25,7 +25,7 @@ import org.junit.runner.notification.Failure;
 import bee.Platform;
 import bee.definition.Scope;
 import bee.tool.Java;
-import bee.tool.Java.SubProcess;
+import bee.tool.Java.JVM;
 
 /**
  * @version 2012/03/28 9:58:39
@@ -60,13 +60,13 @@ public class Test extends Task {
     /**
      * @version 2012/04/04 17:51:29
      */
-    private static final class Junit extends SubProcess {
+    private static final class Junit extends JVM {
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void process() {
+        public boolean process() {
             Path classes = I.locate(args[0]);
 
             int runs = 0;
@@ -127,10 +127,7 @@ public class Test extends Task {
 
             ui.talk("Tests run: ", runs, ", Failures: ", fails.size(), ", Errors: ", errors.size(), ", Skipped: ", skips);
 
-            if (fails.size() != 0 || errors.size() != 0) {
-                System.out.println("Test fails.");
-                // throw ui.error("Test fails.");
-            }
+            return fails.size() == 0 && errors.size() == 0;
         }
 
         /**

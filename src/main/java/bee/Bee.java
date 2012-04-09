@@ -222,7 +222,7 @@ public class Bee implements ClassListener<Task> {
                 e = exception.getTargetException();
             }
 
-            ui.error(e);
+            // ui.error(e);
             result = "FAILURE";
         } finally {
             stopwatch.stop();

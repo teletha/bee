@@ -115,7 +115,7 @@ public class Java {
      * Execute this java command.
      * </p>
      */
-    public void run(Class<? extends SubProcess> mainClass, Object... arguments) {
+    public void run(Class<? extends JVM> mainClass, Object... arguments) {
         // create address
         int port = NetworkAddressUtil.getPort();
         String address = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/hello";
@@ -132,18 +132,20 @@ public class Java {
             command.add("-ea");
         }
 
-        command.add(SubProcessActivator.class.getName());
+        command.add(JVMUserInterface.class.getName());
         command.add(address);
         command.add(mainClass.getName());
 
-        for (Object arg : arguments) {
-            command.add(arg.toString());
+        for (Object argument : arguments) {
+            command.add(argument.toString());
         }
+
+        JVMTransporter listener = I.make(JVMTransporter.class);
 
         try {
             LocateRegistry.createRegistry(port);
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-            server.registerMBean(I.make(Transporter.class), NAME);
+            server.registerMBean(listener, NAME);
 
             JMXConnectorServer connector = JMXConnectorServerFactory.newJMXConnectorServer(new JMXServiceURL(address), null, server);
             connector.start();
@@ -156,13 +158,17 @@ public class Java {
             connector.stop();
         } catch (Exception e) {
             throw I.quiet(e);
+        } finally {
+            if (listener.error) {
+                throw new Error("Sub process ends with error.");
+            }
         }
     }
 
     /**
-     * @version 2012/04/05 1:50:00
+     * @version 2012/04/09 16:58:12
      */
-    public static abstract class SubProcess {
+    public static abstract class JVM {
 
         /** The user interface of the parent process. */
         protected UserInterface ui;
@@ -175,38 +181,21 @@ public class Java {
          * Write sub-process code.
          * </p>
          * 
-         * @param transporter
+         * @return A process result.
          */
-        protected abstract void process();
+        protected abstract boolean process();
     }
 
     /**
-     * @version 2012/04/04 21:27:43
+     * <p>
+     * This class is {@link UserInterface} wrapper of {@link Transporter} for interprocess
+     * communication.
+     * </p>
+     * 
+     * @version 2012/04/09 16:58:06
      */
     @SuppressWarnings("unused")
-    private static final class SubProcessActivator {
-
-        /**
-         * @param args
-         */
-        public static void main(String[] args) throws Exception {
-            // launch observer
-            JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(args[0]));
-            MBeanServerConnection connection = connector.getMBeanServerConnection();
-
-            SubProcess process = (SubProcess) I.make(Class.forName(args[1]));
-            process.ui = new SubProcessUserInterface(MBeanServerInvocationHandler.newProxyInstance(connection, NAME, Transporter.class, false));
-            process.args = Arrays.copyOfRange(args, 2, args.length);
-            process.process();
-
-            connector.close();
-        }
-    }
-
-    /**
-     * @version 2012/04/05 1:55:23
-     */
-    private static final class SubProcessUserInterface extends UserInterface {
+    private static final class JVMUserInterface extends UserInterface {
 
         /** The event transporter. */
         private final Transporter transporter;
@@ -216,7 +205,7 @@ public class Java {
          * Remote UserInterface.
          * </p>
          */
-        private SubProcessUserInterface(Transporter transporter) {
+        private JVMUserInterface(Transporter transporter) {
             this.transporter = transporter;
         }
 
@@ -296,8 +285,6 @@ public class Java {
                     I.write(cause, builder, false);
 
                     transporter.error(builder.toString());
-
-                    return I.quiet(message);
                 }
             }
             return null;
@@ -332,6 +319,30 @@ public class Java {
 
             // API definition
             return cause;
+        }
+
+        /**
+         * <p>
+         * Main method is activation point of sub process JVM.
+         * </p>
+         */
+        public static void main(String[] args) throws Exception {
+            // launch observer
+            JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(args[0]));
+            MBeanServerConnection connection = connector.getMBeanServerConnection();
+
+            // create transporter proxy
+            Transporter transporter = MBeanServerInvocationHandler.newProxyInstance(connection, NAME, Transporter.class, false);
+
+            // execute main process
+            JVM vm = (JVM) I.make(Class.forName(args[1]));
+            vm.ui = new JVMUserInterface(transporter);
+            vm.args = Arrays.copyOfRange(args, 2, args.length);
+
+            if (!vm.process()) {
+                transporter.terminateWithError();
+            }
+            connector.close();
         }
     }
 
@@ -380,21 +391,31 @@ public class Java {
          * @param error
          */
         void error(String error);
+
+        /**
+         * <p>
+         * Notify that sub process ends with some error.
+         * </p>
+         */
+        void terminateWithError();
     }
 
     /**
-     * @version 2012/04/05 0:56:07
+     * @version 2012/04/09 16:58:22
      */
     @SuppressWarnings("unused")
-    private static final class Listener implements Transporter {
+    private static final class JVMTransporter implements Transporter {
 
         /** The actual user interface. */
         private final UserInterface ui;
 
+        /** The sub process state. */
+        private boolean error = false;
+
         /**
          * Listen sub process event.
          */
-        private Listener(UserInterface ui) {
+        private JVMTransporter(UserInterface ui) {
             this.ui = ui;
         }
 
@@ -437,10 +458,18 @@ public class Java {
                 throw I.quiet(e);
             }
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void terminateWithError() {
+            this.error = true;
+        }
     }
 
     /**
-     * @version 2012/04/06 0:30:59
+     * @version 2012/04/09 16:58:27
      */
     private static final class Cause {
 
@@ -458,7 +487,7 @@ public class Java {
     }
 
     /**
-     * @version 2012/04/06 0:33:18
+     * @version 2012/04/09 16:58:31
      */
     @SuppressWarnings("unused")
     private static final class StackTraceCodec extends Codec<StackTraceElement> {
