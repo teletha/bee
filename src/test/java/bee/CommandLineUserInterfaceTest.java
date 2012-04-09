@@ -38,7 +38,7 @@ public class CommandLineUserInterfaceTest {
 
         String value = ui.ask("test");
 
-        assert !value.equals(expected);
+        assert value.equals(expected);
     }
 
     @Test
