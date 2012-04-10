@@ -11,6 +11,7 @@ package bee.task;
 
 import java.nio.file.Path;
 
+import bee.definition.ArtifactLocator;
 import bee.util.JarArchiver;
 import bee.util.PathSet;
 
@@ -28,10 +29,9 @@ public class Jar extends Task {
     public void source() {
         // task(Compile.class).source();
 
-        Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".jar");
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-sources.jar");
 
-        pack("main classes", new PathSet(project.getClasses()), classes);
+        pack("main classes", new PathSet(project.getClasses()), ArtifactLocator.Jar.in(project));
         pack("main sources", project.getSources(), sources);
     }
 
