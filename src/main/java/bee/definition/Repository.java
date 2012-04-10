@@ -52,6 +52,7 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryListener;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.artifact.DefaultArtifactType;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.DependencyGraphTransformer;
@@ -59,6 +60,10 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.file.FileRepositoryConnectorFactory;
 import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.impl.MetadataGeneratorFactory;
+import org.eclipse.aether.installation.InstallRequest;
+import org.eclipse.aether.installation.InstallResult;
+import org.eclipse.aether.installation.InstallationException;
 import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
 import org.eclipse.aether.internal.impl.DefaultDependencyCollector;
 import org.eclipse.aether.internal.impl.DefaultFileProcessor;
@@ -108,7 +113,7 @@ import bee.UserInterface;
  * @version 2012/03/25 14:55:21
  */
 @Manageable(lifestyle = Singleton.class)
-class Repository {
+public class Repository {
 
     /** The current processing project. */
     private final Project project;
@@ -194,6 +199,9 @@ class Repository {
     /** The url normalizer. */
     private final DefaultUrlNormalizer urlNormalizer = new DefaultUrlNormalizer();
 
+    /** The list of metadata generator factory. */
+    private final List<MetadataGeneratorFactory> metadataGeneratorFactories = new ArrayList();
+
     /** The dependency management importer. */
     private final DefaultDependencyManagementImporter dependencyManagementImporter = new DefaultDependencyManagementImporter();
 
@@ -241,6 +249,9 @@ class Repository {
         dependencyFilters.add(new OptionalDependencySelector());
         dependencyFilters.add(new ScopeDependencySelector("test", "provided"));
 
+        // create metadata factories
+        metadataGeneratorFactories.add(new MavenVersionsMetadataGeneratorFactory());
+
         // ============ ArtifactResolver ============ //
         artifactResolver.setSyncContextFactory(syncContextFactory);
         artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
@@ -259,6 +270,7 @@ class Repository {
 
         // ============ Installer ============ //
         installer.setFileProcessor(fileProcessor);
+        installer.setMetadataGeneratorFactories(metadataGeneratorFactories);
         installer.setRepositoryEventDispatcher(repositoryEventDispatcher);
         installer.setSyncContextFactory(syncContextFactory);
 
@@ -402,6 +414,30 @@ class Repository {
         }
 
         return null;
+    }
+
+    /**
+     * <p>
+     * Install project into the local repository.
+     * </p>
+     * 
+     * @param project A project to install.
+     * @return A installed location.
+     */
+    public Path install(Project project, Path file) {
+        DefaultArtifact jar = new DefaultArtifact(project.getProject(), project.getProduct(), "", "jar", project.getVersion(), null, file.toFile());
+
+        InstallRequest request = new InstallRequest();
+        request.addArtifact(jar);
+
+        try {
+            InstallResult result = system.install(newSession(), request);
+
+            return null;
+        } catch (InstallationException e) {
+            e.printStackTrace();
+            throw I.quiet(e);
+        }
     }
 
     /**
@@ -587,7 +623,7 @@ class Repository {
          */
         @Override
         public void artifactInstalled(RepositoryEvent event) {
-            ui.talk("Installed " + event.getArtifact() + " to " + event.getFile());
+            ui.talk("Install " + event.getArtifact() + " to " + event.getFile());
         }
 
         /**
@@ -595,7 +631,7 @@ class Repository {
          */
         @Override
         public void artifactInstalling(RepositoryEvent event) {
-            ui.talk("Installing " + event.getArtifact() + " to " + event.getFile());
+            // ui.talk("Installing " + event.getArtifact() + " to " + event.getFile());
         }
 
         /**
@@ -657,7 +693,7 @@ class Repository {
          */
         @Override
         public void metadataInstalled(RepositoryEvent event) {
-            ui.talk("Installed " + event.getMetadata() + " to " + event.getFile());
+            // ui.talk("Installed " + event.getMetadata() + " to " + event.getFile());
         }
 
         /**
@@ -665,7 +701,7 @@ class Repository {
          */
         @Override
         public void metadataInstalling(RepositoryEvent event) {
-            ui.talk("Installing " + event.getMetadata() + " to " + event.getFile());
+            // ui.talk("Installing " + event.getMetadata() + " to " + event.getFile());
         }
 
         /**
