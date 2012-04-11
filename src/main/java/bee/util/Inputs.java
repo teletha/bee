@@ -80,4 +80,26 @@ public class Inputs {
             return "1.7";
         }
     }
+
+    /**
+     * <p>
+     * Hyphenize user input.
+     * </p>
+     * 
+     * @param input A user input.
+     * @return A hyphenized input.
+     */
+    public static String hyphenize(String input) {
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+
+            if (i != 0 && Character.isUpperCase(c)) {
+                builder.append('-');
+            }
+            builder.append(Character.toLowerCase(c));
+        }
+        return builder.toString();
+    }
 }

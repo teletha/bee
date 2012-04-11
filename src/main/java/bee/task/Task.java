@@ -77,7 +77,7 @@ public abstract class Task {
      * @param taskClass
      * @return
      */
-    protected <T extends Task> T task(Class<T> taskClass) {
+    protected <T extends Task> T require(Class<T> taskClass) {
         return I.make(Bee.class).createTask(taskClass);
     }
 }

@@ -16,6 +16,7 @@ import kiss.Interceptor;
 import kiss.Manageable;
 import kiss.Singleton;
 import bee.UserInterface;
+import bee.util.Inputs;
 
 /**
  * @version 2012/04/10 16:18:04
@@ -41,22 +42,17 @@ class CommandInterceptor extends Interceptor<Command> {
      */
     @Override
     protected Object invoke(Object... params) {
-        String name = that.getClass().getSuperclass().getSimpleName().toLowerCase() + ":" + this.name;
+        String name = Inputs.hyphenize(that.getClass().getSuperclass().getSimpleName()) + ":" + this.name;
 
         Object result = commands.get(name);
 
-        if (result == null) {
+        if (!commands.containsKey(name)) {
             ui.startCommand(name, annotation);
             result = super.invoke(params);
             ui.endCommand(name, annotation);
 
-            if (result == null) {
-                result = Void.TYPE;
-            }
             commands.put(name, result);
         }
-
-        // return original result (null in almost every commands)
-        return result == Void.TYPE ? null : result;
+        return result;
     }
 }

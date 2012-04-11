@@ -15,6 +15,8 @@
  */
 package bee;
 
+import java.util.List;
+
 import bee.task.Command;
 
 /**
@@ -66,4 +68,15 @@ public abstract class UserInterface extends UserNotifier {
      * @return An answer.
      */
     public abstract <T> T ask(Class<T> question);
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her selected item.
+     * </p>
+     * 
+     * @param question
+     * @param items
+     * @return
+     */
+    public abstract <T> T ask(String question, List<T> items);
 }

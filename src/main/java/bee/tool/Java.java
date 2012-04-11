@@ -244,6 +244,16 @@ public class Java {
          * {@inheritDoc}
          */
         @Override
+        public <T> T ask(String question, List<T> items) {
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public void title(CharSequence title) {
             transporter.title(title.toString());
         }

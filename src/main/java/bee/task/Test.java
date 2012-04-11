@@ -34,7 +34,7 @@ public class Test extends Task {
 
     @Command(defaults = true, description = "Test product code.")
     public void test() {
-        Compile compile = task(Compile.class);
+        Compile compile = require(Compile.class);
         compile.source();
         compile.test();
 
