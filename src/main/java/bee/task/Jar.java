@@ -27,7 +27,7 @@ public class Jar extends Task {
      */
     @Command(defaults = true, description = "Package main classes and other resources.")
     public void source() {
-        // task(Compile.class).source();
+        task(Compile.class).source();
 
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-sources.jar");
 

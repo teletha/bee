@@ -15,6 +15,8 @@
  */
 package bee;
 
+import bee.task.Command;
+
 /**
  * <p>
  * Interactive user interface.
@@ -23,6 +25,10 @@ package bee;
  * @version 2011/03/23 16:30:28
  */
 public abstract class UserInterface extends UserNotifier {
+
+    public abstract void startCommand(String name, Command command);
+
+    public abstract void endCommand(String name, Command command);
 
     /**
      * <p>

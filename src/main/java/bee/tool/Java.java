@@ -34,6 +34,7 @@ import kiss.I;
 import kiss.model.Codec;
 import bee.UserInterface;
 import bee.definition.Library;
+import bee.task.Command;
 import bee.util.NetworkAddressUtil;
 import bee.util.ProcessMaker;
 
@@ -288,6 +289,26 @@ public class Java {
                 }
             }
             return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void startCommand(String name, Command command) {
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void endCommand(String name, Command command) {
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
         }
 
         /**
