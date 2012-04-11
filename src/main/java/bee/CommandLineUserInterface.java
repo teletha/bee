@@ -40,7 +40,7 @@ class CommandLineUserInterface extends UserInterface {
     private Deque<String> commands = new ArrayDeque();
 
     /**
-     * @see bee.UserInterface#ask(java.lang.String)
+     * {@inheritDoc}
      */
     @Override
     public String ask(String message) {
@@ -68,7 +68,7 @@ class CommandLineUserInterface extends UserInterface {
     }
 
     /**
-     * @see bee.UserInterface#ask(java.lang.String, java.lang.Object)
+     * {@inheritDoc}
      */
     @Override
     public <T> T ask(String message, T defaultAnswer) {
@@ -109,6 +109,52 @@ class CommandLineUserInterface extends UserInterface {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T ask(String question, List<T> items) {
+        talk(question.concat(":"));
+
+        for (int i = 0; i < items.size(); i++) {
+            talk("[", i + 1, "] ", items.get(i));
+        }
+        talk("");
+
+        return items.get(enterNumber(1, items.size()) - 1);
+    }
+
+    /**
+     * <p>
+     * Select number.
+     * </p>
+     * 
+     * @param max
+     * @return
+     */
+    private int enterNumber(int min, int max) {
+        try {
+            int index = Integer.parseInt(ask("Enter number"));
+
+            if (max < index) {
+                warn("Max number is " + max + ", please retry");
+
+                return enterNumber(min, max);
+            }
+
+            if (index < min) {
+                warn("Min number is " + min + ", please retry.");
+
+                return enterNumber(min, max);
+            }
+            return index;
+        } catch (NumberFormatException e) {
+            warn("Invalid number format, please retry.");
+
+            return enterNumber(min, max);
         }
     }
 

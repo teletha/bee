@@ -20,10 +20,8 @@ public class Install extends Task {
 
     @Command(defaults = true, description = "Install project into the local repository.")
     public void project() {
-        task(Test.class).test();
-
-        Jar taskJar = task(Jar.class);
-        taskJar.source();
+        require(Test.class).test();
+        require(Jar.class).source();
 
         Repository repository = I.make(Repository.class);
         repository.install(project, ArtifactLocator.Jar.in(project));

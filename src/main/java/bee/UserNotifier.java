@@ -69,7 +69,7 @@ public abstract class UserNotifier {
      * @param messages Your warning message.
      */
     public void warn(Object... messages) {
-        talk("[WARN]", messages);
+        talk("[WARN] ", messages);
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class UserNotifier {
      * @param message Your emergency message.
      */
     public RuntimeException error(Object... messages) {
-        talk("[ERROR]", messages);
+        talk("[ERROR] ", messages);
 
         return Suspend;
     }

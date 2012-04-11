@@ -136,8 +136,10 @@ public class Bee implements ClassListener<Task> {
             throw ui.error("Task [", name, "] is not found.");
         }
 
+        T task = (T) I.make(info.task);
+
         // API definition
-        return (T) I.make(info.task);
+        return task;
     }
 
     /**
@@ -205,7 +207,7 @@ public class Bee implements ClassListener<Task> {
         }
 
         // create task and initialize
-        Task task = I.make(taskInfo.task);
+        Task task = createTask(taskInfo.task);
 
         // execute task
         ui.title("Building " + project.getProduct() + " " + project.getVersion());
@@ -222,7 +224,7 @@ public class Bee implements ClassListener<Task> {
                 e = exception.getTargetException();
             }
 
-            // ui.error(e);
+            ui.error(e);
             result = "FAILURE";
         } finally {
             stopwatch.stop();
@@ -297,6 +299,7 @@ public class Bee implements ClassListener<Task> {
 
         // load Project definition class
         I.load(classes);
+        System.out.println(classes.toAbsolutePath());
 
         try {
             Project project = (Project) I.make(Class.forName("Project"));
@@ -334,7 +337,7 @@ public class Bee implements ClassListener<Task> {
      */
     public static void main(String[] args) {
         Bee bee = I.make(Bee.class);
-        bee.executeTask(bee.createProject("", null), "install", I.make(UserInterface.class));
+        bee.executeTask(bee.createProject("", null), "exe", I.make(UserInterface.class));
     }
 
     /**

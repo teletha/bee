@@ -27,7 +27,7 @@ public class Jar extends Task {
      */
     @Command(defaults = true, description = "Package main classes and other resources.")
     public void source() {
-        task(Compile.class).source();
+        require(Compile.class).source();
 
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-sources.jar");
 
@@ -42,7 +42,7 @@ public class Jar extends Task {
      */
     @Command(description = "Package test classes and other resources.")
     public void test() {
-        task(Compile.class).test();
+        require(Compile.class).test();
 
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         Path sources = project.getOutput()
@@ -59,7 +59,7 @@ public class Jar extends Task {
      */
     @Command(description = "Package project classes and other resources.")
     public void project() {
-        task(Compile.class).project();
+        require(Compile.class).project();
 
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         Path sources = project.getOutput()

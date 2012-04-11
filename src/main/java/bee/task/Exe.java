@@ -7,9 +7,10 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.task.exe;
+package bee.task;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.task.Command;
-import bee.task.Task;
+import bee.definition.ArtifactLocator;
+import bee.definition.Library;
+import bee.definition.Scope;
 import bee.util.JarArchiver;
 
 /**
@@ -58,14 +60,19 @@ public class Exe extends Task {
 
     @Command(defaults = true)
     public void build() {
+        require(Jar.class).source();
+
         try {
+            // search main classes
+            String main = require(FindMain.class).main();
+
             // create temporary executable jar
-            Path jar = temporary.resolve("starter.jar");
+            Path jar = temporary.resolve("exe.jar");
 
             JarArchiver archiver = new JarArchiver();
             archiver.set("Manifest-Version", "1.0");
             archiver.set("Main-Class", Activator.class.getName());
-            archiver.add(ClassUtil.getArchive(Activator.class), "**/" + Activator.class.getSimpleName() + ".class");
+            archiver.add(ClassUtil.getArchive(Activator.class), "**/" + Exe.class.getSimpleName() + "$" + Activator.class.getSimpleName() + ".class");
             archiver.pack(jar);
 
             // unzip exewrap.exe
@@ -83,6 +90,8 @@ public class Exe extends Task {
             command.add(project.getVersion().replace('-', '.'));
             command.add("-t");
             command.add(project.getJavaVersion());
+            command.add("-a");
+            command.add("-DMainClass=" + main);
 
             String description = project.getDescription();
 
@@ -101,8 +110,38 @@ public class Exe extends Task {
             builder.directory(exeBuilder.getParent().toFile());
             builder.command(command);
             builder.start().waitFor();
+
+            // deploy dependency libraries
+            Path lib = project.getOutput().resolve("lib");
+            Files.createDirectories(lib);
+
+            for (Library library : project.getDependency(Scope.Runtime)) {
+                I.copy(library.getJar(), lib);
+            }
+            I.copy(ArtifactLocator.Jar.in(project), lib);
         } catch (Exception e) {
             throw I.quiet(e);
+        }
+    }
+
+    /**
+     * @version 2012/04/11 13:54:42
+     */
+    private static final class Activator {
+
+        /**
+         * <p>
+         * Application Activation Acession.
+         * </p>
+         * 
+         * @param args
+         */
+        @SuppressWarnings("unused")
+        static final void main(String[] args) throws Exception {
+            Class clazz = Class.forName(System.getProperty("MainClass"));
+            Method main = clazz.getMethod("main", String[].class);
+
+            main.invoke(null, (Object) new String[] {});
         }
     }
 }
