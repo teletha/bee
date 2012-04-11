@@ -19,6 +19,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 
 import kiss.Extensible;
@@ -26,11 +28,16 @@ import kiss.I;
 import kiss.model.Codec;
 import kiss.model.Model;
 import kiss.model.Property;
+import bee.task.Command;
 
 /**
  * @version 2010/11/23 23:24:52
  */
 class CommandLineUserInterface extends UserInterface {
+
+    private boolean commandStarted = false;
+
+    private Deque<String> commands = new ArrayDeque();
 
     /**
      * @see bee.UserInterface#ask(java.lang.String)
@@ -252,7 +259,34 @@ class CommandLineUserInterface extends UserInterface {
      * {@inheritDoc}
      */
     @Override
+    public void startCommand(String name, Command command) {
+        commandStarted = true;
+        commands.add(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void endCommand(String name, Command command) {
+        commandStarted = true;
+        System.out.print(Platform.EOL);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     protected void write(String message) {
+        if (commandStarted) {
+            commandStarted = false;
+
+            String command = commands.pollLast();
+
+            if (command != null) {
+                System.out.println("◆ " + command + " ◆");
+            }
+        }
         System.out.print(message);
     }
 }

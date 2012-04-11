@@ -9,6 +9,8 @@
  */
 package bee;
 
+import bee.task.Command;
+
 /**
  * <p>
  * Null object pattern for tests.
@@ -55,6 +57,20 @@ public class Null {
         @Override
         public <T> T ask(Class<T> question) {
             return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void startCommand(String name, Command command) {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void endCommand(String name, Command command) {
         }
     }
 }
