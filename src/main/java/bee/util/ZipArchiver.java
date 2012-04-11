@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
@@ -86,7 +87,7 @@ public class ZipArchiver {
                 Archiver archiver = new Archiver(location, encoding);
 
                 if (manifest != null) {
-                    ZipEntry entry = new ZipEntry(JarFile.MANIFEST_NAME);
+                    ZipEntry entry = new JarEntry(JarFile.MANIFEST_NAME);
                     archiver.putNextEntry(entry);
                     manifest.write(new BufferedOutputStream(archiver));
                     archiver.closeEntry();

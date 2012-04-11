@@ -70,8 +70,7 @@ public class Exe extends Task {
             Path jar = temporary.resolve("exe.jar");
 
             JarArchiver archiver = new JarArchiver();
-            archiver.set("Manifest-Version", "1.0");
-            archiver.set("Main-Class", Activator.class.getName());
+            archiver.setMainClass(Activator.class);
             archiver.add(ClassUtil.getArchive(Activator.class), "**/" + Exe.class.getSimpleName() + "$" + Activator.class.getSimpleName() + ".class");
             archiver.pack(jar);
 

@@ -391,6 +391,36 @@ public class Repository {
 
     /**
      * <p>
+     * Collect all dependencies in the specified scope.
+     * </p>
+     * 
+     * @param libraries
+     * @param scope
+     * @return
+     */
+    public Set<Library> collectDependency(Library library, Scope scope) {
+        Set<Library> set = new TreeSet();
+
+        // dependency collector
+        CollectRequest request = new CollectRequest();
+        request.setRepositories(project.repositories);
+        request.addDependency(new Dependency(library.artifact, library.scope.toString()));
+
+        try {
+            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
+
+            for (ArtifactResult dependency : result.getArtifactResults()) {
+                set.add(new Library(dependency.getRequest().getArtifact()));
+            }
+
+            return set;
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
      * Resolve the source codes of the specified library.
      * </p>
      * 
