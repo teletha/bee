@@ -33,6 +33,8 @@ public class JarArchiver extends ZipArchiver {
     public JarArchiver() {
         encoding = StandardCharsets.UTF_8;
         manifest = new Manifest();
+
+        set("Manifest-Version", "1.0");
     }
 
     /**
@@ -61,5 +63,31 @@ public class JarArchiver extends ZipArchiver {
             }
         }
         super.add(base, patterns);
+    }
+
+    /**
+     * <p>
+     * Set main-class attribute.
+     * </p>
+     * 
+     * @param fqcn A fully qualified class name.
+     */
+    public void setMainClass(String fqcn) {
+        if (fqcn != null && fqcn.length() != 0) {
+            set("Main-Class", fqcn);
+        }
+    }
+
+    /**
+     * <p>
+     * Set main-class attribute.
+     * </p>
+     * 
+     * @param mainClass A main class to set.
+     */
+    public void setMainClass(Class mainClass) {
+        if (mainClass != null) {
+            set("Main-Class", mainClass.getName());
+        }
     }
 }

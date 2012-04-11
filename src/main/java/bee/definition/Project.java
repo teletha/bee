@@ -20,6 +20,7 @@ import static bee.util.Inputs.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -189,6 +190,24 @@ public class Project {
      */
     public Set<Library> getDependency(Scope scope) {
         return I.make(Repository.class).collectDependency(this, scope);
+    }
+
+    /**
+     * <p>
+     * Find {@link Library} by name.
+     * </p>
+     * 
+     * @param projectName
+     * @param productName
+     * @return
+     */
+    public Set<Library> getDependency(String projectName, String productName, Scope scope) {
+        for (Library library : libraries) {
+            if (library.group.equals(projectName) && library.name.equals(productName)) {
+                return I.make(Repository.class).collectDependency(library, scope);
+            }
+        }
+        return Collections.EMPTY_SET;
     }
 
     /**
