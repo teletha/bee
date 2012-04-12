@@ -73,7 +73,8 @@ public class BeeInstaller {
                     }
                 }
                 jar.pack(bee);
-            } else if (Files.getLastModifiedTime(bee).toMillis() != Files.getLastModifiedTime(current).toMillis()) {
+            } else if (Files.exists(bee) && Files.getLastModifiedTime(bee).toMillis() != Files.getLastModifiedTime(current)
+                    .toMillis()) {
                 // The current bee.jar is newer.
                 // We should copy it to JDK directory.
                 // This process is mainly used by Bee users while install phase.

@@ -1,11 +1,4 @@
-import java.nio.file.Path;
-
-import bee.BeeInstaller;
-import bee.definition.ArtifactLocator;
-import bee.definition.Library;
-import bee.definition.Scope;
-import bee.task.Compile;
-import bee.util.JarArchiver;
+import kiss.I;
 
 /*
  * Copyright (C) 2012 Nameless Production Committee
@@ -27,18 +20,16 @@ public class Jar extends bee.task.Jar {
      */
     @Override
     public void source() {
-        require(Compile.class).source();
+        for (int i = 0; i < 20; i++) {
+            System.out.println(i);
 
-        Path output = ArtifactLocator.Jar.in(project);
-        ui.talk("Build bee jar: ", output);
-
-        JarArchiver archiver = new JarArchiver();
-        archiver.setMainClass(BeeInstaller.class);
-        archiver.add(project.getClasses());
-        for (Library library : project.getDependency("npc", "sinobu", Scope.Runtime)) {
-            archiver.add(library.getJar());
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw I.quiet(e);
+            }
         }
 
-        archiver.pack(output);
+        System.out.println(ui.ask("test"));
     }
 }
