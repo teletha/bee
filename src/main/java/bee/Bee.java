@@ -97,7 +97,7 @@ public class Bee implements ClassListener<Task> {
         Java = java;
         JavaHome = java.getParent().getParent();
 
-        I.load(ClassUtil.getArchive(Bee.class));
+        I.load(Bee.class, true);
     }
 
     /** The task repository. */
@@ -298,11 +298,10 @@ public class Bee implements ClassListener<Task> {
         }
 
         // load Project definition class
-        I.load(classes);
-        System.out.println(classes.toAbsolutePath());
+        ClassLoader loader = I.load(classes);
 
         try {
-            Project project = (Project) I.make(Class.forName("Project"));
+            Project project = (Project) I.make(Class.forName("Project", true, loader));
             ProjectLifestyle.project = project;
 
             return project;
@@ -337,7 +336,7 @@ public class Bee implements ClassListener<Task> {
      */
     public static void main(String[] args) {
         Bee bee = I.make(Bee.class);
-        bee.executeTask(bee.createProject("", null), "jar", I.make(UserInterface.class));
+        bee.executeTask(bee.createProject("", null), "jar:merge", I.make(UserInterface.class));
     }
 
     /**
