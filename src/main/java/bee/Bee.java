@@ -336,7 +336,7 @@ public class Bee implements ClassListener<Task> {
      */
     public static void main(String[] args) {
         Bee bee = I.make(Bee.class);
-        bee.executeTask(bee.createProject("", null), "jar:merge", I.make(UserInterface.class));
+        bee.executeTask(bee.createProject("", null), "eclipse", I.make(UserInterface.class));
     }
 
     /**

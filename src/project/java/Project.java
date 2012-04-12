@@ -17,7 +17,7 @@ public class Project extends bee.definition.Project {
 
     {
         name("npc", "bee", "0.1");
-        describe("Yet Another Maven Interface");
+        describe("Simple Build Tool for Java");
 
         require("npc", "sinobu", "0.9.1");
         require("npc", "antibug", "0.2").atTest();
