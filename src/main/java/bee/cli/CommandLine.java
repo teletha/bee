@@ -21,7 +21,7 @@ import kiss.ClassListener;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
-import kiss.model.ClassUtil;
+import bee.Bee;
 
 /**
  * @version 2012/02/29 19:00:36
@@ -33,7 +33,7 @@ public final class CommandLine implements ClassListener<Command> {
     private static Map<String, Info> infos = new ConcurrentHashMap();
 
     static {
-        I.load(ClassUtil.getArchive(CommandLine.class));
+        I.load(Bee.class, true);
     }
 
     /**

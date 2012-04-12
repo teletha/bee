@@ -44,7 +44,7 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     public String ask(String message) {
-        System.out.print(message.concat(" : "));
+        talk(message.concat(" : "));
 
         try {
             String value = new BufferedReader(new InputStreamReader(System.in)).readLine();
@@ -72,15 +72,14 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     public <T> T ask(String message, T defaultAnswer) {
-        System.out.print(message);
+        talk(message);
 
         if (defaultAnswer != null) {
-            System.out.print(" [" + defaultAnswer + "]");
+            talk(" [" + defaultAnswer + "]");
         }
-        System.out.print(" : ");
+        talk(" : ");
 
         // selectable question
-
         try {
             String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
 

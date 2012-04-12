@@ -133,7 +133,7 @@ public class Java {
             command.add("-ea");
         }
 
-        command.add(JVMUserInterface.class.getName());
+        command.add(JVM.class.getName());
         command.add(address);
         command.add(mainClass.getName());
 
@@ -172,7 +172,7 @@ public class Java {
     public static abstract class JVM {
 
         /** The user interface of the parent process. */
-        protected UserInterface ui;
+        protected final UserInterface ui = new JVMUserInterface();
 
         /** The activation argument. */
         protected String[] args;
@@ -185,172 +185,6 @@ public class Java {
          * @return A process result.
          */
         protected abstract boolean process();
-    }
-
-    /**
-     * <p>
-     * This class is {@link UserInterface} wrapper of {@link Transporter} for interprocess
-     * communication.
-     * </p>
-     * 
-     * @version 2012/04/09 16:58:06
-     */
-    @SuppressWarnings("unused")
-    private static final class JVMUserInterface extends UserInterface {
-
-        /** The event transporter. */
-        private final Transporter transporter;
-
-        /**
-         * <p>
-         * Remote UserInterface.
-         * </p>
-         */
-        private JVMUserInterface(Transporter transporter) {
-            this.transporter = transporter;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String ask(String question) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public <T> T ask(String question, T defaultAnswer) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public <T> T ask(Class<T> question) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public <T> T ask(String question, List<T> items) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void title(CharSequence title) {
-            transporter.title(title.toString());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void talk(Object... messages) {
-            StringBuilder builder = new StringBuilder();
-
-            for (Object message : messages) {
-                builder.append(message.toString());
-            }
-            transporter.talk(builder.toString());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void warn(Object... messages) {
-            StringBuilder builder = new StringBuilder();
-
-            for (Object message : messages) {
-                builder.append(message.toString());
-            }
-            transporter.warn(builder.toString());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public RuntimeException error(Object... messages) {
-            for (Object message : messages) {
-                if (message instanceof Throwable) {
-                    StringBuilder builder = new StringBuilder();
-                    Cause cause = make((Throwable) message);
-                    I.write(cause, builder, false);
-
-                    transporter.error(builder.toString());
-                }
-            }
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void startCommand(String name, Command command) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void endCommand(String name, Command command) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected void write(String message) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw new Error();
-        }
-
-        /**
-         * <p>
-         * Create cause.
-         * </p>
-         * 
-         * @param throwable
-         * @return
-         */
-        private static Cause make(Throwable throwable) {
-            Cause cause = new Cause();
-            cause.className = throwable.getClass().getName();
-            cause.message = throwable.getMessage();
-            if (throwable.getCause() != null) cause.cause = make(throwable.getCause());
-            for (StackTraceElement element : throwable.getStackTrace()) {
-                cause.traces.add(element);
-            }
-
-            // API definition
-            return cause;
-        }
 
         /**
          * <p>
@@ -367,13 +201,173 @@ public class Java {
 
             // execute main process
             JVM vm = (JVM) I.make(Class.forName(args[1]));
-            vm.ui = new JVMUserInterface(transporter);
+            ((JVMUserInterface) vm.ui).transporter = transporter;
             vm.args = Arrays.copyOfRange(args, 2, args.length);
 
             if (!vm.process()) {
                 transporter.terminateWithError();
             }
             connector.close();
+        }
+
+        /**
+         * <p>
+         * This class is {@link UserInterface} wrapper of {@link Transporter} for interprocess
+         * communication.
+         * </p>
+         * <p>
+         * Must be non-static class to hide from class scanning.
+         * </p>
+         * 
+         * @version 2012/04/09 16:58:06
+         */
+        @SuppressWarnings("unused")
+        private final class JVMUserInterface extends UserInterface {
+
+            /** The event transporter. */
+            private Transporter transporter;
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public String ask(String question) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <T> T ask(String question, T defaultAnswer) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <T> T ask(Class<T> question) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public <T> T ask(String question, List<T> items) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void title(CharSequence title) {
+                transporter.title(title.toString());
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void talk(Object... messages) {
+                StringBuilder builder = new StringBuilder();
+
+                for (Object message : messages) {
+                    builder.append(message.toString());
+                }
+                transporter.talk(builder.toString());
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void warn(Object... messages) {
+                StringBuilder builder = new StringBuilder();
+
+                for (Object message : messages) {
+                    builder.append(message.toString());
+                }
+                transporter.warn(builder.toString());
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public RuntimeException error(Object... messages) {
+                for (Object message : messages) {
+                    if (message instanceof Throwable) {
+                        StringBuilder builder = new StringBuilder();
+                        Cause cause = make((Throwable) message);
+                        I.write(cause, builder, false);
+
+                        transporter.error(builder.toString());
+                    }
+                }
+                return null;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void startCommand(String name, Command command) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void endCommand(String name, Command command) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void write(String message) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * <p>
+             * Create cause.
+             * </p>
+             * 
+             * @param throwable
+             * @return
+             */
+            private Cause make(Throwable throwable) {
+                Cause cause = new Cause();
+                cause.className = throwable.getClass().getName();
+                cause.message = throwable.getMessage();
+                if (throwable.getCause() != null) cause.cause = make(throwable.getCause());
+                for (StackTraceElement element : throwable.getStackTrace()) {
+                    cause.traces.add(element);
+                }
+
+                // API definition
+                return cause;
+            }
         }
     }
 

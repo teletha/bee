@@ -26,11 +26,10 @@ class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
     static UserInterface ui;
 
     /**
-     * @see ezbean.Lifestyle#resolve()
+     * {@inheritDoc}
      */
     @Override
     public UserInterface resolve() {
         return ui;
     }
-
 }
