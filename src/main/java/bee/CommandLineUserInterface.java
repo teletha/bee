@@ -44,7 +44,7 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     public String ask(String message) {
-        talk(message.concat(" : "));
+        write(message.concat(" : "));
 
         try {
             String value = new BufferedReader(new InputStreamReader(System.in)).readLine();
@@ -121,7 +121,7 @@ class CommandLineUserInterface extends UserInterface {
         for (int i = 0; i < items.size(); i++) {
             talk("[", i + 1, "] ", items.get(i));
         }
-        talk("");
+        write(Platform.EOL);
 
         return items.get(enterNumber(1, items.size()) - 1);
     }

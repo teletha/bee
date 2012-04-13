@@ -1,4 +1,5 @@
-import kiss.I;
+import bee.definition.Library;
+import bee.definition.Scope;
 
 /*
  * Copyright (C) 2012 Nameless Production Committee
@@ -19,17 +20,9 @@ public class Jar extends bee.task.Jar {
      * {@inheritDoc}
      */
     @Override
-    public void source() {
-        for (int i = 0; i < 20; i++) {
-            System.out.println(i);
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw I.quiet(e);
-            }
+    public void merge() {
+        for (Library library : project.getDependency("xalan", "xalan", Scope.Runtime)) {
+            System.out.println(library);
         }
-
-        System.out.println(ui.ask("test"));
     }
 }
