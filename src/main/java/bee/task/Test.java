@@ -23,7 +23,7 @@ import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
 import bee.Platform;
-import bee.definition.Scope;
+import bee.api.Scope;
 import bee.tool.Java;
 import bee.tool.Java.JVM;
 

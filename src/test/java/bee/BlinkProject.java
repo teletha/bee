@@ -22,7 +22,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import bee.definition.Project;
+import bee.api.Project;
 
 /**
  * @version 2012/04/02 22:16:55

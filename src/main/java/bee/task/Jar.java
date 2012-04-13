@@ -11,9 +11,9 @@ package bee.task;
 
 import java.nio.file.Path;
 
-import bee.definition.ArtifactLocator;
-import bee.definition.Library;
-import bee.definition.Scope;
+import bee.api.ArtifactLocator;
+import bee.api.Library;
+import bee.api.Scope;
 import bee.util.JarArchiver;
 import bee.util.PathSet;
 

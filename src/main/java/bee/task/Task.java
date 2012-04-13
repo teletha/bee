@@ -24,7 +24,7 @@ import kiss.I;
 import kiss.model.ClassUtil;
 import bee.Bee;
 import bee.UserInterface;
-import bee.definition.Project;
+import bee.api.Project;
 
 /**
  * @version 2010/04/02 3:56:10

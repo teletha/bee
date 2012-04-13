@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.definition;
+package bee.api;
 
 import static bee.util.Inputs.*;
 

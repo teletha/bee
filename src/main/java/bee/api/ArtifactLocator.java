@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.definition;
+package bee.api;
 
 import java.nio.file.Path;
 
