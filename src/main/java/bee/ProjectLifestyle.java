@@ -12,7 +12,7 @@ package bee;
 import kiss.Lifestyle;
 import kiss.Manageable;
 import kiss.Singleton;
-import bee.definition.Project;
+import bee.api.Project;
 
 /**
  * @version 2012/03/27 16:16:00

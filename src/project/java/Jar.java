@@ -2,8 +2,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import kiss.I;
-import bee.definition.Library;
-import bee.definition.Scope;
+import bee.api.Library;
+import bee.api.Scope;
 
 /*
  * Copyright (C) 2012 Nameless Production Committee
@@ -24,7 +24,7 @@ public class Jar extends bee.task.Jar {
      * {@inheritDoc}
      */
     @Override
-    public void merge() {
+    public void source() {
         for (Library library : project.getDependency("xalan", "xalan", Scope.Runtime)) {
             ui.talk(library.getJar());
             try {

@@ -11,8 +11,8 @@ package bee.task;
 
 import java.nio.file.Path;
 
+import bee.api.Scope;
 import bee.compiler.JavaCompiler;
-import bee.definition.Scope;
 import bee.util.PathSet;
 
 /**

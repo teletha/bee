@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.definition;
+package bee.api;
 
 import static kiss.Element.*;
 
@@ -54,6 +54,10 @@ import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
+import org.apache.maven.wagon.ConnectionException;
+import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.sonatype.aether.RepositoryEvent;
 import org.sonatype.aether.RepositoryListener;
 import org.sonatype.aether.RepositorySystemSession;
@@ -61,6 +65,7 @@ import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.collection.DependencyGraphTransformer;
 import org.sonatype.aether.collection.DependencySelector;
 import org.sonatype.aether.connector.file.FileRepositoryConnectorFactory;
+import org.sonatype.aether.connector.wagon.WagonProvider;
 import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.sonatype.aether.graph.Dependency;
 import org.sonatype.aether.impl.MetadataGeneratorFactory;
@@ -342,7 +347,7 @@ public class Repository {
         remoteRepositoryManager.setRepositoryConnectorFactories(remoteRepositoryProvider);
 
         // ============ WagonConnector ============ //
-        wagonRepositoryConnectorFactory.setWagonProvider(new MavenWagonProvider());
+        wagonRepositoryConnectorFactory.setWagonProvider(new BeeWagonProvider());
         wagonRepositoryConnectorFactory.setFileProcessor(fileProcessor);
 
         // ============ RepositorySystem ============ //
@@ -944,6 +949,37 @@ public class Repository {
          */
         private static long toKB(long size) {
             return (size + 1023) / 1024;
+        }
+    }
+
+    /**
+     * @version 2012/04/13 20:34:51
+     */
+    private static class BeeWagonProvider implements WagonProvider {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Wagon lookup(String scheme) throws Exception {
+            if ("http".equals(scheme)) {
+                return new LightweightHttpWagon();
+            } else if ("https".equals(scheme)) {
+                return new LightweightHttpsWagon();
+            }
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void release(Wagon wagon) {
+            try {
+                wagon.disconnect();
+            } catch (ConnectionException e) {
+                throw I.quiet(e);
+            }
         }
     }
 }

@@ -23,7 +23,7 @@
   <description>Enhanced Build And Test System for Java.</description>
 
   <properties>
-    <aetherVersion>0.9.0-SNAPSHOT</aetherVersion>
+    <aetherVersion>1.13.1</aetherVersion>
     <mavenVersion>3.0.4</mavenVersion>
     <wagonVersion>1.0</wagonVersion>
   </properties>
@@ -40,32 +40,32 @@
       <version>0.2</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
+      <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-api</artifactId>
       <version>${aetherVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
+      <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-util</artifactId>
       <version>${aetherVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
+      <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-impl</artifactId>
       <version>${aetherVersion}</version>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
+      <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-file</artifactId>
       <version>${aetherVersion}</version>
     </dependency>
     <!--dependency>
-      <groupId>org.eclipse.aether</groupId>
+      <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-asynchttpclient</artifactId>
       <version>${aetherVersion}</version>
     </dependency-->
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
+      <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
       <version>${aetherVersion}</version>
     </dependency>

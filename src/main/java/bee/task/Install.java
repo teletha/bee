@@ -10,8 +10,8 @@
 package bee.task;
 
 import kiss.I;
-import bee.definition.ArtifactLocator;
-import bee.definition.Repository;
+import bee.api.ArtifactLocator;
+import bee.api.Repository;
 
 /**
  * @version 2012/04/04 2:43:44

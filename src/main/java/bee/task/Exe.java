@@ -18,9 +18,9 @@ import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.definition.ArtifactLocator;
-import bee.definition.Library;
-import bee.definition.Scope;
+import bee.api.ArtifactLocator;
+import bee.api.Library;
+import bee.api.Scope;
 import bee.util.JarArchiver;
 
 /**

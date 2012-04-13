@@ -23,8 +23,8 @@ import java.nio.file.Path;
 
 import kiss.Element;
 import kiss.I;
-import bee.definition.Library;
-import bee.definition.Scope;
+import bee.api.Library;
+import bee.api.Scope;
 
 /**
  * @version 2010/04/02 3:58:58

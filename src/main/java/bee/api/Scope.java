@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.definition;
+package bee.api;
 
 import org.sonatype.aether.graph.DependencyFilter;
 import org.sonatype.aether.util.artifact.JavaScopes;

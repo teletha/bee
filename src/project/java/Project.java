@@ -11,7 +11,7 @@
 /**
  * @version 2012/03/20 15:45:08
  */
-public class Project extends bee.definition.Project {
+public class Project extends bee.api.Project {
 
     private String aetherVersion = "1.13.1";
 
@@ -35,7 +35,5 @@ public class Project extends bee.definition.Project {
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
         unrequire("org.sonatype.sisu", "*");
-
-        repository("http://oss.sonatype.org/content/repositories/snapshots");
     }
 }

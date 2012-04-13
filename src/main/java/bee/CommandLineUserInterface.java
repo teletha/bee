@@ -116,10 +116,10 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     public <T> T ask(String question, List<T> items) {
-        talk(question.concat(":"));
+        talk(question.concat(Platform.EOL));
 
         for (int i = 0; i < items.size(); i++) {
-            talk("[", i + 1, "] ", items.get(i));
+            talk("    [", i + 1, "] ", items.get(i));
         }
         write(Platform.EOL);
 
