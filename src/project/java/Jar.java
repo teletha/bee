@@ -1,3 +1,7 @@
+import java.io.IOException;
+import java.nio.file.Files;
+
+import kiss.I;
 import bee.definition.Library;
 import bee.definition.Scope;
 
@@ -22,7 +26,12 @@ public class Jar extends bee.task.Jar {
     @Override
     public void merge() {
         for (Library library : project.getDependency("xalan", "xalan", Scope.Runtime)) {
-            System.out.println(library);
+            ui.talk(library.getJar());
+            try {
+                Files.delete(library.getJar());
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
         }
     }
 }
