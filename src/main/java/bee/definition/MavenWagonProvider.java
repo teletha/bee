@@ -15,7 +15,7 @@ import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
-import org.eclipse.aether.connector.wagon.WagonProvider;
+import org.sonatype.aether.connector.wagon.WagonProvider;
 
 /**
  * @version 2012/03/25 20:46:37

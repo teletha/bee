@@ -34,8 +34,8 @@ import kiss.Singleton;
 import kiss.model.ClassUtil;
 
 import org.apache.maven.wagon.PathUtils;
-import org.eclipse.aether.graph.Exclusion;
-import org.eclipse.aether.repository.RemoteRepository;
+import org.sonatype.aether.graph.Exclusion;
+import org.sonatype.aether.repository.RemoteRepository;
 
 import bee.util.PathSet;
 

@@ -21,8 +21,8 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.WriterFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.eclipse.aether.RepositoryException;
-import org.eclipse.aether.metadata.MergeableMetadata;
+import org.sonatype.aether.RepositoryException;
+import org.sonatype.aether.metadata.MergeableMetadata;
 
 /**
  * @version 2012/04/10 14:06:44

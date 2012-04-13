@@ -13,7 +13,7 @@
  */
 public class Project extends bee.definition.Project {
 
-    private String aetherVersion = "0.9.0-SNAPSHOT";
+    private String aetherVersion = "1.13.1";
 
     {
         name("npc", "bee", "0.1");
@@ -21,18 +21,20 @@ public class Project extends bee.definition.Project {
 
         require("npc", "sinobu", "0.9.1");
         require("npc", "antibug", "0.2").atTest();
-        require("org.eclipse.aether", "aether-api", aetherVersion);
-        require("org.eclipse.aether", "aether-util", aetherVersion);
-        require("org.eclipse.aether", "aether-impl", aetherVersion);
-        require("org.eclipse.aether", "aether-connector-file", aetherVersion);
-        require("org.eclipse.aether", "aether-connector-wagon", aetherVersion);
+        require("org.sonatype.aether", "aether-api", aetherVersion);
+        require("org.sonatype.aether", "aether-util", aetherVersion);
+        require("org.sonatype.aether", "aether-impl", aetherVersion);
+        require("org.sonatype.aether", "aether-connector-file", aetherVersion);
+        require("org.sonatype.aether", "aether-connector-wagon", aetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.0.4");
         require("org.apache.maven.wagon", "wagon-http-lightweight", "1.0");
         require("xalan", "xalan", "2.6.0");
 
-        unrequire("org.sonatype.aether", "*");
+        // unrequire("org.sonatype.aether", "*");
         unrequire("org.apache.maven.wagon", "wagon-http-shared");
+        unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
+        unrequire("org.sonatype.sisu", "*");
 
         repository("http://oss.sonatype.org/content/repositories/snapshots");
     }
