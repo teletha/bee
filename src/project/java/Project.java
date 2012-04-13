@@ -28,7 +28,7 @@ public class Project extends bee.definition.Project {
         require("org.sonatype.aether", "aether-connector-wagon", aetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.0.4");
         require("org.apache.maven.wagon", "wagon-http-lightweight", "1.0");
-        require("xalan", "xalan", "2.6.0");
+        require("xalan", "xalan", "2.7.1");
 
         // unrequire("org.sonatype.aether", "*");
         unrequire("org.apache.maven.wagon", "wagon-http-shared");

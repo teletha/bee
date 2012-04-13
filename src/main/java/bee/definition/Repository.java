@@ -52,6 +52,8 @@ import org.apache.maven.model.validation.DefaultModelValidator;
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
+import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
+import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.sonatype.aether.RepositoryEvent;
 import org.sonatype.aether.RepositoryListener;
 import org.sonatype.aether.RepositorySystemSession;
@@ -91,6 +93,7 @@ import org.sonatype.aether.transfer.TransferCancelledException;
 import org.sonatype.aether.transfer.TransferEvent;
 import org.sonatype.aether.transfer.TransferListener;
 import org.sonatype.aether.transfer.TransferResource;
+import org.sonatype.aether.util.DefaultRepositoryCache;
 import org.sonatype.aether.util.DefaultRepositorySystemSession;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 import org.sonatype.aether.util.artifact.DefaultArtifactType;
@@ -254,7 +257,8 @@ public class Repository {
         dependencyFilters.add(new ScopeDependencySelector("test", "provided"));
 
         // create metadata factories
-        metadataGeneratorFactories.add(new MavenVersionsMetadataGeneratorFactory());
+        metadataGeneratorFactories.add(new VersionsMetadataGeneratorFactory());
+        metadataGeneratorFactories.add(new SnapshotMetadataGeneratorFactory());
 
         // ============ ArtifactResolver ============ //
         artifactResolver.setSyncContextFactory(syncContextFactory);
@@ -371,9 +375,14 @@ public class Repository {
     public Set<Library> collectDependency(Project project, Scope scope) {
         Set<Library> set = new TreeSet();
 
+        // collect remote repository
+        List<RemoteRepository> repositories = new ArrayList();
+        repositories.addAll(remoteRepositories);
+        repositories.addAll(project.repositories);
+
         // dependency collector
         CollectRequest request = new CollectRequest();
-        request.setRepositories(project.repositories);
+        request.setRepositories(repositories);
 
         for (Library library : project.libraries) {
             request.addDependency(new Dependency(library.artifact, library.scope.toString()));
@@ -404,9 +413,14 @@ public class Repository {
     public Set<Library> collectDependency(Library library, Scope scope) {
         Set<Library> set = new TreeSet();
 
+        // collect remote repository
+        List<RemoteRepository> repositories = new ArrayList();
+        repositories.addAll(remoteRepositories);
+        repositories.addAll(project.repositories);
+
         // dependency collector
         CollectRequest request = new CollectRequest();
-        request.setRepositories(project.repositories);
+        request.setRepositories(repositories);
         request.addDependency(new Dependency(library.artifact, library.scope.toString()));
 
         try {
@@ -525,7 +539,10 @@ public class Repository {
         session.setDependencyManager(new ClassicDependencyManager());
         session.setAuthenticationSelector(new DefaultAuthenticationSelector());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepository));
-        session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
+        session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
+        session.setCache(new DefaultRepositoryCache());
+        session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
+        session.setIgnoreInvalidArtifactDescriptor(true);
 
         // event listener
         session.setTransferListener(I.make(TransferView.class));
@@ -783,19 +800,28 @@ public class Repository {
     }
 
     /**
-     * @version 2012/03/25 23:41:54
+     * @version 2012/04/13 15:51:37
      */
     private static final class TransferView implements TransferListener {
+
+        /** The progress event interval. (ns) */
+        private static final long interval = 200 * 1000 * 1000;
+
+        /** The last progress event time. */
+        private long last = 0;
 
         /** The actual console. */
         private UserInterface ui;
 
-        private Map<TransferResource, Long> downloads = new ConcurrentHashMap<TransferResource, Long>();
-
-        private int lastLength;
+        /** The downloading items. */
+        private Map<TransferResource, TransferEvent> downloading = new ConcurrentHashMap();
 
         /**
-         * @param ui
+         * <p>
+         * Injectable constructor.
+         * </p>
+         * 
+         * @param ui A user interface to notify.
          */
         private TransferView(UserInterface ui) {
             this.ui = ui;
@@ -806,11 +832,6 @@ public class Repository {
          */
         @Override
         public void transferInitiated(TransferEvent event) {
-            // String message = event.getRequestType() == TransferEvent.RequestType.PUT ?
-            // "Uploading" : "Downloading";
-
-            // ui.talk(message + ": " + event.getResource().getRepositoryUrl() +
-            // event.getResource().getResourceName());
         }
 
         /**
@@ -825,59 +846,37 @@ public class Repository {
          */
         @Override
         public void transferProgressed(TransferEvent event) {
-            TransferResource resource = event.getResource();
-            downloads.put(resource, Long.valueOf(event.getTransferredBytes()));
+            // register current downloading artifact
+            downloading.put(event.getResource(), event);
 
-            StringBuilder builder = new StringBuilder();
+            long now = System.nanoTime();
 
-            for (Map.Entry<TransferResource, Long> entry : downloads.entrySet()) {
-                long total = entry.getKey().getContentLength();
-                long complete = entry.getValue().longValue();
+            if (interval < now - last) {
+                last = now; // update last event time
 
-                builder.append(getStatus(complete, total)).append(" ");
-            }
+                // build message
+                StringBuilder message = new StringBuilder();
 
-            int pad = lastLength - builder.length();
-            lastLength = builder.length();
-            pad(builder, pad);
-            builder.append('\r');
+                for (Map.Entry<TransferResource, TransferEvent> entry : downloading.entrySet()) {
+                    TransferResource resource = entry.getKey();
+                    String name = resource.getResourceName();
 
-            ui.talk(builder.toString());
-        }
+                    message.append(name.substring(name.lastIndexOf('/') + 1));
+                    message.append(" (");
+                    message.append(format(entry.getValue().getTransferredBytes(), resource.getContentLength()));
+                    message.append(")   ");
+                }
+                message.append('\r');
 
-        /**
-         * @param complete
-         * @param total
-         * @return
-         */
-        private String getStatus(long complete, long total) {
-            if (total >= 1024) {
-                return toKB(complete) + "/" + toKB(total) + " KB ";
-            } else if (total >= 0) {
-                return complete + "/" + total + " B ";
-            } else if (complete >= 1024) {
-                return toKB(complete) + " KB ";
-            } else {
-                return complete + " B ";
-            }
-        }
-
-        /**
-         * @param buffer
-         * @param spaces
-         */
-        private void pad(StringBuilder buffer, int spaces) {
-            String block = " ";
-            while (spaces > 0) {
-                int n = Math.min(spaces, block.length());
-                buffer.append(block, 0, n);
-                spaces -= n;
+                // notify
+                ui.talk(message.toString());
             }
         }
 
         @Override
         public void transferSucceeded(TransferEvent event) {
-            transferCompleted(event);
+            // unregister item
+            downloading.remove(event.getResource());
 
             TransferResource resource = event.getResource();
             long contentLength = event.getTransferredBytes();
@@ -902,26 +901,8 @@ public class Repository {
          */
         @Override
         public void transferFailed(TransferEvent event) {
-            downloads.remove(event.getResource());
-
-            // String message = event.getRequestType() == TransferEvent.RequestType.PUT ?
-            // "Uploading" : "Not found";
-            //
-            // ui.talk(message + ": " + event.getResource().getRepositoryUrl() +
-            // event.getResource().getResourceName());
-        }
-
-        /**
-         * @param event
-         */
-        private void transferCompleted(TransferEvent event) {
-            downloads.remove(event.getResource());
-
-            StringBuilder builder = new StringBuilder(64);
-            pad(builder, lastLength);
-            builder.append('\r');
-
-            ui.talk(builder.toString());
+            // unregister item
+            downloading.remove(event.getResource());
         }
 
         /**
@@ -933,11 +914,36 @@ public class Repository {
         }
 
         /**
-         * @param bytes
+         * <p>
+         * Format size.
+         * </p>
+         * 
+         * @param current A current size.
+         * @param size A total size.
          * @return
          */
-        protected long toKB(long bytes) {
-            return (bytes + 1023) / 1024;
+        private static String format(long current, long size) {
+            if (size >= 1024) {
+                return toKB(current) + "/" + toKB(size) + " KB";
+            } else if (size >= 0) {
+                return current + "/" + size + " B";
+            } else if (current >= 1024) {
+                return toKB(current) + " KB";
+            } else {
+                return current + " B";
+            }
+        }
+
+        /**
+         * <p>
+         * Format.
+         * </p>
+         * 
+         * @param size
+         * @return
+         */
+        private static long toKB(long size) {
+            return (size + 1023) / 1024;
         }
     }
 }
