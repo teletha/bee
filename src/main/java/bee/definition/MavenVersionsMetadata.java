@@ -13,12 +13,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.artifact.repository.metadata.Versioning;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.ArtifactProperties;
+import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.util.artifact.ArtifactProperties;
 
 /**
  * @version 2012/04/10 14:05:53
@@ -136,29 +135,5 @@ class MavenVersionsMetadata extends MavenMetadata {
      */
     public Nature getNature() {
         return artifact.isSnapshot() ? Nature.RELEASE_OR_SNAPSHOT : Nature.RELEASE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getProperty(String key, String defaultValue) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Map<String, String> getProperties() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public org.eclipse.aether.metadata.Metadata setProperties(Map<String, String> properties) {
-        return null;
     }
 }

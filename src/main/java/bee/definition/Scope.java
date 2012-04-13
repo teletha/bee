@@ -9,9 +9,9 @@
  */
 package bee.definition;
 
-import org.eclipse.aether.graph.DependencyFilter;
-import org.eclipse.aether.util.artifact.JavaScopes;
-import org.eclipse.aether.util.filter.DependencyFilterUtils;
+import org.sonatype.aether.graph.DependencyFilter;
+import org.sonatype.aether.util.artifact.JavaScopes;
+import org.sonatype.aether.util.filter.DependencyFilterUtils;
 
 /**
  * @version 2012/03/21 20:20:37

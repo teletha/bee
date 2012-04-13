@@ -19,8 +19,8 @@ import java.nio.file.Path;
 
 import kiss.I;
 
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
+import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 /**
  * @version 2010/09/09 20:10:56

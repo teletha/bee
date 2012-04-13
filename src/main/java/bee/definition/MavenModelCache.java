@@ -10,8 +10,8 @@
 package bee.definition;
 
 import org.apache.maven.model.building.ModelCache;
-import org.eclipse.aether.RepositoryCache;
-import org.eclipse.aether.RepositorySystemSession;
+import org.sonatype.aether.RepositoryCache;
+import org.sonatype.aether.RepositorySystemSession;
 
 /**
  * @version 2012/03/25 10:59:26

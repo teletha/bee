@@ -10,10 +10,10 @@
 package bee.definition;
 
 import org.apache.maven.model.Repository;
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.repository.RemoteRepository;
-import org.eclipse.aether.repository.RepositoryPolicy;
+import org.sonatype.aether.artifact.Artifact;
+import org.sonatype.aether.repository.RemoteRepository;
+import org.sonatype.aether.repository.RepositoryPolicy;
+import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 /**
  * @version 2012/03/25 10:49:40
