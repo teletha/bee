@@ -57,14 +57,6 @@ public class Null {
          * {@inheritDoc}
          */
         @Override
-        public <T> T ask(Class<T> question) {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public <T> T ask(String question, List<T> items) {
             return null;
         }
