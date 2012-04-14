@@ -1,7 +1,3 @@
-import java.io.IOException;
-import java.nio.file.Files;
-
-import kiss.I;
 import bee.api.Library;
 import bee.api.Scope;
 
@@ -27,11 +23,7 @@ public class Jar extends bee.task.Jar {
     public void source() {
         for (Library library : project.getDependency("xalan", "xalan", Scope.Runtime)) {
             ui.talk(library.getJar());
-            try {
-                Files.delete(library.getJar());
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
+
         }
     }
 }
