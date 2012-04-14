@@ -15,6 +15,10 @@
  */
 package bee;
 
+import java.nio.file.Path;
+
+import kiss.I;
+
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -36,20 +40,72 @@ public class CommandLineUserInterfaceTest {
 
         user.willInput(expected);
 
-        String value = ui.ask("test");
+        String answer = ui.ask("question");
 
-        assert value.equals(expected);
+        assert answer.equals(expected);
+    }
+
+    @Test
+    public void inputEmpty() throws Exception {
+        String expected = "expected value";
+
+        user.willInput("");
+        user.willInput(expected);
+
+        String answer = ui.ask("question");
+
+        assert answer.equals(expected);
     }
 
     @Test
     public void inputWithDefault() throws Exception {
         String expected = "expected value";
 
+        user.willInput(expected);
+
+        String answer = ui.ask("question", "woo hoo");
+
+        assert answer.equals(expected);
+    }
+
+    @Test
+    public void inputEmptyWithDefault() throws Exception {
+        String expected = "expected value";
+
         user.willInput("");
 
-        String value = ui.ask("test", expected);
+        String answer = ui.ask("question", expected);
 
-        assert value.equals(expected);
+        assert answer.equals(expected);
+    }
+
+    @Test
+    public void inputInt() throws Exception {
+        user.willInput("1");
+        assert ui.ask("question", 10) == 1;
+
+        user.willInput("-1");
+        assert ui.ask("question", 10) == -1;
+
+        user.willInput(" +2 ");
+        assert ui.ask("question", 10) == 2;
+
+        user.willInput("");
+        assert ui.ask("question", 10) == 10;
+    }
+
+    @Test
+    public void inputPath() throws Exception {
+        Path def = I.locate("default");
+
+        user.willInput("path");
+        assert ui.ask("question", def).equals(I.locate("path"));
+
+        user.willInput("path/with/directory");
+        assert ui.ask("question", def).equals(I.locate("path/with/directory"));
+
+        user.willInput("   ");
+        assert ui.ask("question", def).equals(def);
     }
 
     @Test
