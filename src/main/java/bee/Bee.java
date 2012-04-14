@@ -9,7 +9,6 @@
  */
 package bee;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -40,57 +39,7 @@ import bee.util.Stopwatch;
 @Manageable(lifestyle = Singleton.class)
 public class Bee implements ClassListener<Task> {
 
-    /** The executable file for Java. */
-    public static final Path Java;
-
-    /** The executable file for Bee. */
-    public static final Path Bee;
-
-    /** The root directory for Java. */
-    public static final Path JavaHome;
-
-    // initialization
     static {
-        Path bin = null;
-        Path java = null;
-        Path bee = null;
-
-        // Search Java SDK from path. Don't use java.home system property to avoid JRE.
-        root: for (Entry<String, String> entry : System.getenv().entrySet()) {
-            // On UNIX systems the alphabetic case of name is typically significant, while on
-            // Microsoft Windows systems it is typically not.
-            if (entry.getKey().equalsIgnoreCase("path")) {
-                // Search classpath for Bee.
-                for (String value : entry.getValue().split(File.pathSeparator)) {
-                    Path directory = I.locate(value);
-                    Path linux = directory.resolve("javac");
-                    Path windows = directory.resolve("javac.exe");
-
-                    if (Files.exists(linux)) {
-                        bin = directory;
-                        java = linux;
-                        bee = directory.resolve("bee");
-
-                        break root;
-                    } else if (Files.exists(windows)) {
-                        bin = directory;
-                        java = windows;
-                        bee = directory.resolve("bee.bat");
-
-                        break root;
-                    }
-                }
-            }
-        }
-
-        if (bin == null) {
-            throw new Error("Java SDK is not found in your environment path.");
-        }
-
-        Bee = bee;
-        Java = java;
-        JavaHome = java.getParent().getParent();
-
         I.load(Bee.class, true);
     }
 
