@@ -15,8 +15,12 @@
  */
 package bee.compiler;
 
+import static bee.Platform.*;
 import static javax.tools.Diagnostic.Kind.*;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
 
@@ -36,7 +40,6 @@ import javax.lang.model.util.Elements;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.UserNotifier;
 
 /**
  * @version 2010/04/23 16:09:16
@@ -137,7 +140,7 @@ public class BeeProcessor implements Processor {
     /**
      * @version 2011/03/23 17:02:50
      */
-    private static class Notifier extends UserNotifier {
+    private static class Notifier implements AnnotationNotifier {
 
         /** The actual notifier. */
         private Messager notifier;
@@ -162,15 +165,7 @@ public class BeeProcessor implements Processor {
          * {@inheritDoc}
          */
         @Override
-        protected void write(String message) {
-            // do nothing
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void talk(Object... messages) {
+        public void notice(Object... messages) {
             notifier.printMessage(NOTE, build(messages), element);
         }
 
@@ -186,10 +181,103 @@ public class BeeProcessor implements Processor {
          * {@inheritDoc}
          */
         @Override
-        public RuntimeException error(Object... messages) {
+        public void error(Object... messages) {
             notifier.printMessage(ERROR, build(messages), element);
+        }
 
-            return Suspend;
+        /**
+         * <p>
+         * Helper method to build message.
+         * </p>
+         * 
+         * @param messages Your messages.
+         * @return A combined message.
+         */
+        protected String build(Object... messages) {
+            StringBuilder builder = new StringBuilder();
+            build(builder, messages);
+
+            int length = builder.length();
+
+            if (length != 0 && builder.charAt(length - 1) != '\r') {
+                builder.append(EOL);
+            }
+            return builder.toString();
+        }
+
+        /**
+         * <p>
+         * Helper method to build message.
+         * </p>
+         * 
+         * @param builder A message builder.
+         * @param messages Your messages.
+         */
+        private void build(StringBuilder builder, Object... messages) {
+            for (Object message : messages) {
+                if (message == null) {
+                    builder.append("null");
+                } else {
+                    Class type = message.getClass();
+
+                    if (type.isArray()) {
+                        buildArray(builder, type.getComponentType(), message);
+                    } else if (CharSequence.class.isAssignableFrom(type)) {
+                        builder.append((CharSequence) message);
+                    } else if (Throwable.class.isAssignableFrom(type)) {
+                        buildError(builder, (Throwable) message);
+                    } else {
+                        builder.append(I.transform(message, String.class));
+                    }
+                }
+            }
+        }
+
+        /**
+         * <p>
+         * Helper method to build message from various array type.
+         * </p>
+         * 
+         * @param builder A message builder.
+         * @param type A array type.
+         * @param array A message array.
+         */
+        private void buildArray(StringBuilder builder, Class type, Object array) {
+            if (type == int.class) {
+                builder.append(Arrays.toString((int[]) array));
+            } else if (type == long.class) {
+                builder.append(Arrays.toString((long[]) array));
+            } else if (type == float.class) {
+                builder.append(Arrays.toString((float[]) array));
+            } else if (type == double.class) {
+                builder.append(Arrays.toString((double[]) array));
+            } else if (type == boolean.class) {
+                builder.append(Arrays.toString((boolean[]) array));
+            } else if (type == char.class) {
+                builder.append(Arrays.toString((char[]) array));
+            } else if (type == byte.class) {
+                builder.append(Arrays.toString((byte[]) array));
+            } else if (type == short.class) {
+                builder.append(Arrays.toString((short[]) array));
+            } else {
+                build(builder, (Object[]) array);
+            }
+        }
+
+        /**
+         * <p>
+         * Build error message.
+         * </p>
+         * 
+         * @param builder A message builder.
+         * @param throwable An error message.
+         */
+        private void buildError(StringBuilder builder, Throwable throwable) {
+            StringWriter writer = new StringWriter();
+
+            throwable.printStackTrace(new PrintWriter(writer));
+
+            builder.append(writer.toString());
         }
     }
 }
