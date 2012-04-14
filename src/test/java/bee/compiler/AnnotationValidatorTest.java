@@ -13,7 +13,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import bee.Null;
-import bee.UserNotifier;
 
 /**
  * @version 2011/03/23 18:46:45
@@ -45,10 +44,10 @@ public class AnnotationValidatorTest {
 
         /**
          * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation, Source,
-         *      bee.UserNotifier)
+         *      bee.compiler.AnnotationNotifier)
          */
         @Override
-        public void validate(SourceAnnotation annotation, Source source, UserNotifier notifier) {
+        public void validate(SourceAnnotation annotation, Source source, AnnotationNotifier notifier) {
             assert annotation != null;
             assert notifier != null;
 

@@ -15,23 +15,39 @@
  */
 package bee.compiler;
 
-import java.lang.annotation.Annotation;
-
-import kiss.Extensible;
-
 /**
- * @version 2012/01/26 9:44:26
+ * <p>
+ * Notifiable user interface.
+ * </p>
+ * 
+ * @version 2011/03/23 16:46:09
  */
-public abstract class AnnotationValidator<A extends Annotation> implements Extensible {
+public interface AnnotationNotifier {
 
     /**
      * <p>
-     * Validate an annotation value.
+     * Talk to user.
      * </p>
      * 
-     * @param annotation An target annotation to validate.
-     * @param source An annotated source tree.
-     * @param notifier An error messenger.
+     * @param messages Your message.
      */
-    protected abstract void validate(A annotation, Source source, AnnotationNotifier notifier);
+    void notice(Object... messages);
+
+    /**
+     * <p>
+     * Warn to user.
+     * </p>
+     * 
+     * @param messages Your warning message.
+     */
+    void warn(Object... messages);
+
+    /**
+     * <p>
+     * Declare a state of emergency.
+     * </p>
+     * 
+     * @param message Your emergency message.
+     */
+    void error(Object... messages);
 }
