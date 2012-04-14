@@ -126,7 +126,7 @@ public abstract class UserInterface {
         builder.append(" : ");
 
         // Question
-        talk(builder);
+        write(builder.toString());
 
         try {
             // Answer
@@ -187,11 +187,11 @@ public abstract class UserInterface {
             talk(question, EOL);
 
             for (int i = 0; i < items.size(); i++) {
-                talk("    [", i + 1, "] ", items.get(i));
+                talk("  [", i + 1, "]  ", items.get(i));
             }
             write(EOL);
 
-            return items.get(enterNumber(1, items.size()) - 1);
+            return items.get(select(1, items.size()));
         }
     }
 
@@ -200,40 +200,32 @@ public abstract class UserInterface {
      * Select number.
      * </p>
      * 
-     * @param max
-     * @return
+     * @param min A minimum number.
+     * @param max A maximum number.
+     * @return A user input.
      */
-    private int enterNumber(int min, int max) {
+    private int select(int min, int max) {
         try {
-            int index = Integer.parseInt(ask("Enter number"));
+            int index = Integer.parseInt(ask("Input number to select one"));
 
             if (max < index) {
                 warn("Max number is " + max + ", please retry");
 
-                return enterNumber(min, max);
+                return select(min, max);
             }
 
             if (index < min) {
                 warn("Min number is " + min + ", please retry.");
 
-                return enterNumber(min, max);
+                return select(min, max);
             }
             return index;
         } catch (NumberFormatException e) {
             warn("Invalid number format, please retry.");
 
-            return enterNumber(min, max);
+            return select(min, max);
         }
     }
-
-    /**
-     * <p>
-     * Write message to user.
-     * </p>
-     * 
-     * @param message
-     */
-    protected abstract void write(String message);
 
     /**
      * <p>
@@ -330,17 +322,32 @@ public abstract class UserInterface {
         builder.append(writer.toString());
     }
 
-    public abstract void startCommand(String name, Command command);
-
-    public abstract void endCommand(String name, Command command);
+    /**
+     * <p>
+     * Write message to user.
+     * </p>
+     * 
+     * @param message
+     */
+    protected abstract void write(String message);
 
     /**
      * <p>
-     * Ask user about your question and return his/her answer.
+     * Display message about command starts.
      * </p>
      * 
-     * @param question Your question class.
-     * @return An answer.
+     * @param name A command name.
+     * @param command A coommand info.
      */
-    public abstract <T> T ask(Class<T> question);
+    public abstract void startCommand(String name, Command command);
+
+    /**
+     * <p>
+     * Display message about command ends.
+     * </p>
+     * 
+     * @param name A command name.
+     * @param command A coommand info.
+     */
+    public abstract void endCommand(String name, Command command);
 }

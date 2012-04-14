@@ -53,16 +53,7 @@ public class FindMain extends Task {
     public String main() {
         analyze();
 
-        switch (mains.size()) {
-        case 0:
-            return null;
-
-        case 1:
-            return mains.get(0);
-
-        default:
-            return ui.ask("Multiple main classes detected, select one as main class of your project", mains);
-        }
+        return ui.ask("Multiple main classes were detected. Which one do you use?", mains);
     }
 
     /**
@@ -76,16 +67,7 @@ public class FindMain extends Task {
     public String premain() {
         analyze();
 
-        switch (premains.size()) {
-        case 0:
-            return null;
-
-        case 1:
-            return premains.get(0);
-
-        default:
-            return ui.ask("Multiple premain classes detected, select one as premain class of your project", premains);
-        }
+        return ui.ask("Multiple premain classes were detected. Which one do you use?", premains);
     }
 
     /**
@@ -99,16 +81,7 @@ public class FindMain extends Task {
     public String agentmain() {
         analyze();
 
-        switch (premains.size()) {
-        case 0:
-            return null;
-
-        case 1:
-            return premains.get(0);
-
-        default:
-            return ui.ask("Multiple agentmain classes detected, select one as agentmain class of your project", agentmains);
-        }
+        return ui.ask("Multiple agentmain classes were detected. Which one do you use?", agentmains);
     }
 
     /**
