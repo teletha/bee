@@ -22,6 +22,11 @@ class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
     /** The actual store. */
     static final ThreadLocal<UserInterface> local = new InheritableThreadLocal();
 
+    // default setting
+    static {
+        local.set(new CommandLineUserInterface());
+    }
+
     /**
      * {@inheritDoc}
      */

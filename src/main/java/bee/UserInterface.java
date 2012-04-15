@@ -54,7 +54,7 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public void talk(Object... messages) {
-        write(build(messages));
+        write(build(messages, EOL));
     }
 
     /**
@@ -232,12 +232,6 @@ public abstract class UserInterface {
     protected String build(Object... messages) {
         StringBuilder builder = new StringBuilder();
         build(builder, messages);
-
-        int length = builder.length();
-
-        if (length != 0 && builder.charAt(length - 1) != '\r') {
-            builder.append(EOL);
-        }
         return builder.toString();
     }
 

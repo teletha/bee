@@ -10,8 +10,11 @@
 package bee;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import kiss.Disposable;
 import kiss.I;
@@ -20,7 +23,6 @@ import kiss.model.ClassUtil;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
 import bee.task.TaskManager;
-import bee.util.Inputs;
 import bee.util.Stopwatch;
 
 /**
@@ -32,6 +34,9 @@ import bee.util.Stopwatch;
  */
 public class Bee {
 
+    /** The project definition file name. */
+    private static final String ProjectFile = "Project";
+
     static {
         I.load(Bee.class, true);
     }
@@ -40,10 +45,10 @@ public class Bee {
     private final Path root;
 
     /** The user interface. */
-    private UserInterface ui;
+    private final UserInterface ui;
 
-    /** The state whether the current project is updated or not. */
-    private final ProjectUpdater updater;
+    /** The project builder. */
+    private final ProjectBuilder builder;
 
     /**
      * <p>
@@ -51,18 +56,18 @@ public class Bee {
      * </p>
      */
     public Bee() {
-        this((Path) null);
+        this((Path) null, null);
     }
 
     /**
      * <p>
-     * Create project builder in the specified location path.
+     * Create project builder with the specified {@link UserInterface}.
      * </p>
      * 
-     * @param directory A project root directory path.
+     * @param ui A user interface.
      */
-    public Bee(String directory) {
-        this(I.locate(Inputs.normalize(directory, "")));
+    public Bee(UserInterface ui) {
+        this(null, ui);
     }
 
     /**
@@ -71,8 +76,13 @@ public class Bee {
      * </p>
      * 
      * @param directory A project root directory.
+     * @param ui A user interface.
      */
-    public Bee(Path directory) {
+    public Bee(Path directory, UserInterface ui) {
+        if (ui == null) {
+            ui = new CommandLineUserInterface();
+        }
+
         if (directory == null) {
             directory = I.locate("");
         }
@@ -91,47 +101,10 @@ public class Bee {
 
         // configure project root directory and message notifier
         this.root = directory.toAbsolutePath();
-        this.ui = new CommandLineUserInterface();
-
-        // ================================================
-        // Create Project
-        // ================================================
-        // search Project from the specified file systems
-        Path sources = root.resolve("src/project/java");
-        Path classes = root.resolve("target/project-classes");
-        Path projectDefinitionSource = sources.resolve("Project.java");
-        Path projectDefinitionClass = classes.resolve("Project.class");
-
-        if (Files.notExists(projectDefinitionSource)) {
-            // create Project source
-
-            // compile Project source
-            compileProject(sources, classes);
-        } else if (Files.notExists(projectDefinitionClass)) {
-            // compile Project source
-            compileProject(sources, classes);
-        }
-
-        // load Project definition class
-        updater = new ProjectUpdater(sources, classes);
-    }
-
-    /**
-     * <p>
-     * Set {@link UserInterface} for project build.
-     * </p>
-     * 
-     * @param ui A {@link UserInterface} to use.
-     * @return Fluent API.
-     */
-    public Bee setUserInterface(UserInterface ui) {
-        if (ui == null) {
-            ui = new CommandLineUserInterface();
-        }
         this.ui = ui;
 
-        // Fluent API
-        return this;
+        // find project and build it
+        this.builder = new ProjectBuilder();
     }
 
     /**
@@ -142,7 +115,8 @@ public class Bee {
      * @param tasks A command literal.
      */
     public void execute(String... tasks) {
-        Project project = updater.createProject();
+        ui.title("Bee");
+        Project project = builder.build();
 
         ProjectLifestyle.local.set(project);
         UserInterfaceLisfestyle.local.set(ui);
@@ -170,25 +144,8 @@ public class Bee {
      */
     @Override
     protected void finalize() throws Throwable {
-        updater.observer.dispose();
+        builder.observer.dispose();
         super.finalize();
-    }
-
-    /**
-     * <p>
-     * Compile project definition.
-     * </p>
-     * 
-     * @param input
-     * @param output
-     */
-    private void compileProject(Path input, Path output) {
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(input);
-        compiler.addClassPath(ClassUtil.getArchive(Bee.class));
-        compiler.addClassPath(ClassUtil.getArchive(I.class));
-        compiler.setOutput(output);
-        compiler.compile();
     }
 
     /**
@@ -196,55 +153,63 @@ public class Bee {
      * Launch bee at the current location with commandline user interface.
      * </p>
      * 
-     * @param commands A list of task commands
+     * @param tasks A list of task commands
      */
-    public static void main(String[] commands) {
-        Bee bee = new Bee();
-        bee.execute("jar:merge");
+    public static void main(String[] tasks) {
+        if (tasks == null || tasks.length == 0) {
+            Bee bee = new Bee();
+            bee.execute("bee:install");
+        } else {
+            Bee bee = new Bee();
+            bee.execute(tasks);
+        }
     }
 
     /**
      * @version 2012/04/15 14:35:20
      */
-    private class ProjectUpdater implements PathListener {
+    private class ProjectBuilder implements PathListener {
 
         /** The state whether the current project is updated or not. */
         private boolean updated = true;
 
         /** The project directory observer. */
-        private final Disposable observer;
-
-        /** The project class directory. */
-        private final Path classes;
+        private Disposable observer;
 
         /** The current project. */
         private Project project;
 
         /**
-         * Create updater.
-         */
-        private ProjectUpdater(Path sources, Path classes) {
-            this.observer = I.observe(sources, this);
-            this.classes = classes;
-        }
-
-        /**
          * <p>
-         * Create project.
+         * Build the current project.
          * </p>
          * 
-         * @return
+         * @return A project.
          */
-        private Project createProject() {
+        private synchronized Project build() {
             if (updated) {
-                // unload old project
-                I.unload(classes);
-
-                // load new project
-                ClassLoader loader = I.load(classes);
-
                 try {
-                    project = (Project) I.make(Class.forName("Project", true, loader));
+                    // search Project from the specified file systems
+                    Path sources = root.resolve("src/project/java");
+                    Path classes = root.resolve("target/project-classes");
+                    Path projectSource = sources.resolve(ProjectFile + ".java");
+
+                    // unload old project
+                    I.unload(classes);
+
+                    // write project source if needed
+                    scaffold(projectSource);
+
+                    // compile project sources if needed
+                    compile(sources, classes);
+
+                    // load new project
+                    ClassLoader loader = I.load(classes);
+
+                    // create project
+                    project = (Project) I.make(Class.forName(ProjectFile, true, loader));
+
+                    if (observer == null) observer = I.observe(sources, this);
                 } catch (Exception e) {
                     throw I.quiet(e);
                 }
@@ -253,6 +218,51 @@ public class Bee {
 
             // API definition
             return project;
+        }
+
+        /**
+         * <p>
+         * Create project skeleton.
+         * </p>
+         */
+        private void scaffold(Path source) throws Exception {
+            if (Files.notExists(source)) {
+                ui.talk("Project file is not found. [", source, "]");
+                ui.title("Create New Project");
+
+                String project = ui.ask("Project name");
+                String product = ui.ask("Product name", project);
+                String version = ui.ask("Product version", "1.0");
+
+                List<String> code = new ArrayList();
+                code.add("public class " + ProjectFile + " extends " + Project.class.getName() + " {");
+                code.add("");
+                code.add("  {");
+                code.add("      name(\"" + project + "\", \"" + product + "\", \"" + version + "\");");
+                code.add("  }");
+                code.add("}");
+
+                Files.createDirectories(source.getParent());
+                Files.write(source, code, StandardCharsets.UTF_8);
+            }
+        }
+
+        /**
+         * <p>
+         * Compile project definition.
+         * </p>
+         * 
+         * @param input A project sources.
+         * @param output A project classes.
+         */
+        private void compile(Path input, Path output) {
+            ui.talk("Compile project sources.");
+
+            JavaCompiler compiler = new JavaCompiler();
+            compiler.addSourceDirectory(input);
+            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+            compiler.setOutput(output);
+            compiler.compile();
         }
 
         /**
