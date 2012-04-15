@@ -27,25 +27,15 @@ import bee.api.Project;
 import bee.util.Inputs;
 
 /**
- * @version 2012/04/15 0:18:30
+ * @version 2012/04/15 14:26:46
  */
 public abstract class Task {
 
     /** The current processing project. */
-    protected final Project project;
+    protected final Project project = I.make(Project.class);
 
     /** The user interface. */
-    protected final UserInterface ui;
-
-    /**
-     * <p>
-     * Exposed constructor.
-     * <p>
-     */
-    protected Task() {
-        this.project = I.make(Project.class);
-        this.ui = I.make(UserInterface.class);
-    }
+    protected final UserInterface ui = I.make(UserInterface.class);
 
     @Command(description = "Display help message for all commands of this task.")
     public void help() {
@@ -71,11 +61,11 @@ public abstract class Task {
 
     /**
      * <p>
-     * Build other task.
+     * Use other task from task specific API.
      * </p>
      * 
-     * @param taskClass
-     * @return
+     * @param taskClass A task class.
+     * @return A target task.
      */
     protected <T extends Task> T require(Class<T> taskClass) {
         return I.make(TaskManager.class).find(taskClass);

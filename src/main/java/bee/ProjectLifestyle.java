@@ -21,7 +21,7 @@ import bee.api.Project;
 class ProjectLifestyle implements Lifestyle<Project> {
 
     /** The actual store. */
-    static final ThreadLocal<Project> local = new ThreadLocal();
+    static final ThreadLocal<Project> local = new InheritableThreadLocal();
 
     /**
      * {@inheritDoc}
