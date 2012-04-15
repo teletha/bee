@@ -32,7 +32,7 @@ import bee.api.Project;
  * @version 2012/04/15 14:13:34
  */
 @Manageable(lifestyle = Singleton.class)
-public final class TaskManager implements ClassListener<Task> {
+public class TaskManager implements ClassListener<Task> {
 
     /** The common task repository. */
     private final Map<String, TaskInfo> commons = new HashMap();
@@ -52,45 +52,45 @@ public final class TaskManager implements ClassListener<Task> {
         if (input == null) {
             return;
         }
-    
+
         // remove head and tail white space
         input = input.trim();
-    
+
         if (input.length() == 0) {
             return;
         }
-    
+
         // analyze task name
         String taskName = "";
         String commandName = "";
         int index = input.indexOf(':');
-    
+
         if (index == -1) {
             taskName = input;
         } else {
             taskName = input.substring(0, index);
             commandName = input.substring(index + 1);
         }
-    
+
         // search task
         TaskInfo info = find(taskName);
-    
+
         if (commandName.isEmpty()) {
             commandName = info.defaults;
         }
-    
+
         // search command
         Method command = info.infos.get(commandName.toLowerCase());
-    
+
         if (command == null) {
             throw new Error("Task [" + taskName + "] doesn't has the coommand [" + commandName + "].");
         }
-    
+
         // create task and initialize
         Task task = I.make(info.task);
-    
+
         // execute task
-    
+
         try {
             command.invoke(task);
         } catch (Throwable e) {
@@ -127,32 +127,32 @@ public final class TaskManager implements ClassListener<Task> {
         if (name == null) {
             throw new Error("You must specify task name.");
         }
-    
+
         Project project = I.make(Project.class);
         TaskInfo info = null;
-    
+
         // search from project specified tasks
         for (Entry<Path, Map<String, TaskInfo>> entry : projects.entrySet()) {
             Path path = entry.getKey();
-    
+
             if (path.startsWith(project.getRoot())) {
                 info = entry.getValue().get(name);
-    
+
                 if (info != null) {
                     break;
                 }
             }
         }
-    
+
         if (info == null) {
             // search from common tasks
             info = commons.get(name);
-    
+
             if (info == null) {
                 throw new Error("Task [" + name + "] is not found.");
             }
         }
-    
+
         // API definition
         return info;
     }

@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import kiss.Disposable;
 import kiss.I;
+import kiss.PathListener;
 import kiss.model.ClassUtil;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
@@ -30,9 +32,6 @@ import bee.util.Stopwatch;
  */
 public class Bee {
 
-    /** The common task manager. */
-    static final TaskManager tasks = I.make(TaskManager.class);
-
     static {
         I.load(Bee.class, true);
     }
@@ -40,11 +39,11 @@ public class Bee {
     /** The project root directory. */
     public final Path root;
 
-    /** The actual project. */
-    public final Project project;
-
     /** The user interface. */
     private UserInterface ui;
+
+    /** The state whether the current project is updated or not. */
+    private final ProjectUpdater updater;
 
     /**
      * <p>
@@ -114,13 +113,7 @@ public class Bee {
         }
 
         // load Project definition class
-        ClassLoader loader = I.load(classes);
-
-        try {
-            this.project = (Project) I.make(Class.forName("Project", true, loader));
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
+        updater = new ProjectUpdater(sources, classes);
     }
 
     /**
@@ -163,9 +156,11 @@ public class Bee {
      * Execute tasks from the given command expression.
      * </p>
      * 
-     * @param commands A command literal.
+     * @param tasks A command literal.
      */
-    public void execute(String... commands) {
+    public void execute(String... tasks) {
+        Project project = updater.createProject();
+
         ProjectLifestyle.local.set(project);
         UserInterfaceLisfestyle.local.set(ui);
 
@@ -175,8 +170,8 @@ public class Bee {
         String result = "SUCCESS";
 
         try {
-            for (String command : commands) {
-                I.make(TaskManager.class).execute(command);
+            for (String task : tasks) {
+                I.make(TaskManager.class).execute(task);
             }
         } catch (Throwable e) {
             result = "FAILURE";
@@ -185,6 +180,15 @@ public class Bee {
 
             ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void finalize() throws Throwable {
+        updater.observer.dispose();
+        super.finalize();
     }
 
     /**
@@ -197,5 +201,82 @@ public class Bee {
     public static void main(String[] commands) {
         Bee bee = new Bee();
         bee.execute("test");
+    }
+
+    /**
+     * @version 2012/04/15 14:35:20
+     */
+    private class ProjectUpdater implements PathListener {
+
+        /** The state whether the current project is updated or not. */
+        private boolean updated = true;
+
+        /** The project directory observer. */
+        private final Disposable observer;
+
+        /** The project class directory. */
+        private final Path classes;
+
+        /** The current project. */
+        private Project project;
+
+        /**
+         * Create updater.
+         */
+        private ProjectUpdater(Path sources, Path classes) {
+            this.observer = I.observe(sources, this);
+            this.classes = classes;
+        }
+
+        /**
+         * <p>
+         * Create project.
+         * </p>
+         * 
+         * @return
+         */
+        private Project createProject() {
+            if (updated) {
+                // unload old project
+                I.unload(classes);
+
+                // load new project
+                ClassLoader loader = I.load(classes);
+
+                try {
+                    project = (Project) I.make(Class.forName("Project", true, loader));
+                } catch (Exception e) {
+                    throw I.quiet(e);
+                }
+                updated = false;
+            }
+
+            // API definition
+            return project;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void create(Path path) {
+            updated = true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void delete(Path path) {
+            updated = true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void modify(Path path) {
+            updated = true;
+        }
     }
 }

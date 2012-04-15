@@ -20,7 +20,7 @@ import kiss.Singleton;
 class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
 
     /** The actual store. */
-    static final ThreadLocal<UserInterface> local = new ThreadLocal();
+    static final ThreadLocal<UserInterface> local = new InheritableThreadLocal();
 
     /**
      * {@inheritDoc}
