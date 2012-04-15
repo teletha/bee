@@ -43,8 +43,8 @@ public class BlinkProject extends Project implements TestRule {
      * 
      */
     public BlinkProject() {
-        ProjectLifestyle.project = this;
-        UserInterfaceLisfestyle.ui = Null.UI;
+        ProjectLifestyle.local.set(this);
+        UserInterfaceLisfestyle.local.set(Null.UI);
     }
 
     /**
@@ -63,7 +63,7 @@ public class BlinkProject extends Project implements TestRule {
      * </p>
      */
     public final void showTrace() {
-        UserInterfaceLisfestyle.ui = new CommandLineUserInterface();
+        UserInterfaceLisfestyle.local.set(new CommandLineUserInterface());
     }
 
     /**

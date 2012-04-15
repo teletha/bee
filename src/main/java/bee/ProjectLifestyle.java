@@ -20,14 +20,14 @@ import bee.api.Project;
 @Manageable(lifestyle = Singleton.class)
 class ProjectLifestyle implements Lifestyle<Project> {
 
-    /** The current processing project. */
-    static Project project;
+    /** The actual store. */
+    static final ThreadLocal<Project> local = new ThreadLocal();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Project resolve() {
-        return project;
+        return local.get();
     }
 }

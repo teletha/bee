@@ -22,12 +22,12 @@ import java.util.Map.Entry;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.Bee;
 import bee.UserInterface;
 import bee.api.Project;
+import bee.util.Inputs;
 
 /**
- * @version 2010/04/02 3:56:10
+ * @version 2012/04/15 0:18:30
  */
 public abstract class Task {
 
@@ -78,6 +78,21 @@ public abstract class Task {
      * @return
      */
     protected <T extends Task> T require(Class<T> taskClass) {
-        return I.make(Bee.class).createTask(taskClass);
+        return I.make(TaskManager.class).find(taskClass);
+    }
+
+    /**
+     * <p>
+     * Compute human-readable task name.
+     * </p>
+     * 
+     * @param taskClass A target task.
+     * @return A task name.
+     */
+    public static final String computeTaskName(Class taskClass) {
+        if (taskClass.isSynthetic()) {
+            return computeTaskName(taskClass.getSuperclass());
+        }
+        return Inputs.hyphenize(taskClass.getSimpleName());
     }
 }
