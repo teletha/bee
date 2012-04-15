@@ -17,7 +17,7 @@ public class Project extends bee.api.Project {
 
     {
         name("npc", "bee", "0.1");
-        describe("Simple Build Tool for Java");
+        describe("Task based project builder for Java");
 
         require("npc", "sinobu", "0.9.1");
         require("npc", "antibug", "0.2").atTest();

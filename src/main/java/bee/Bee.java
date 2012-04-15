@@ -37,7 +37,7 @@ public class Bee {
     }
 
     /** The project root directory. */
-    public final Path root;
+    private final Path root;
 
     /** The user interface. */
     private UserInterface ui;
@@ -118,30 +118,13 @@ public class Bee {
 
     /**
      * <p>
-     * Compile project definition.
-     * </p>
-     * 
-     * @param input
-     * @param output
-     */
-    private final void compileProject(Path input, Path output) {
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(input);
-        compiler.addClassPath(ClassUtil.getArchive(Bee.class));
-        compiler.addClassPath(ClassUtil.getArchive(I.class));
-        compiler.setOutput(output);
-        compiler.compile();
-    }
-
-    /**
-     * <p>
      * Set {@link UserInterface} for project build.
      * </p>
      * 
      * @param ui A {@link UserInterface} to use.
      * @return Fluent API.
      */
-    public final Bee setUserInterface(UserInterface ui) {
+    public Bee setUserInterface(UserInterface ui) {
         if (ui == null) {
             ui = new CommandLineUserInterface();
         }
@@ -193,6 +176,23 @@ public class Bee {
 
     /**
      * <p>
+     * Compile project definition.
+     * </p>
+     * 
+     * @param input
+     * @param output
+     */
+    private void compileProject(Path input, Path output) {
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourceDirectory(input);
+        compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+        compiler.addClassPath(ClassUtil.getArchive(I.class));
+        compiler.setOutput(output);
+        compiler.compile();
+    }
+
+    /**
+     * <p>
      * Launch bee at the current location with commandline user interface.
      * </p>
      * 
@@ -200,7 +200,7 @@ public class Bee {
      */
     public static void main(String[] commands) {
         Bee bee = new Bee();
-        bee.execute("test");
+        bee.execute("jar:merge");
     }
 
     /**
