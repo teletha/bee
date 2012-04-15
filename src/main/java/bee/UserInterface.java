@@ -185,7 +185,7 @@ public abstract class UserInterface {
             }
             write(EOL);
 
-            return items.get(select(1, items.size()));
+            return items.get(select(1, items.size()) - 1);
         }
     }
 

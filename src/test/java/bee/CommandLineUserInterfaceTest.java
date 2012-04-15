@@ -1,21 +1,17 @@
 /*
- * Copyright (C) 2011 Nameless Production Committee.
+ * Copyright (C) 2012 Nameless Production Committee
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *          http://opensource.org/licenses/mit-license.php
  */
 package bee;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import kiss.I;
 
@@ -25,7 +21,7 @@ import org.junit.Test;
 import antibug.CommandLineUser;
 
 /**
- * @version 2011/09/22 15:10:39
+ * @version 2012/04/15 15:15:50
  */
 public class CommandLineUserInterfaceTest {
 
@@ -106,5 +102,22 @@ public class CommandLineUserInterfaceTest {
 
         user.willInput("   ");
         assert ui.ask("question", def).equals(def);
+    }
+
+    @Test
+    public void select() throws Exception {
+        List<String> items = new ArrayList();
+        items.add("one");
+        items.add("two");
+        items.add("three");
+
+        user.willInput("1");
+        assert ui.ask("question", items).equals("one");
+
+        user.willInput("2");
+        assert ui.ask("question", items).equals("two");
+
+        user.willInput("3");
+        assert ui.ask("question", items).equals("three");
     }
 }
