@@ -10,20 +10,23 @@
 package bee;
 
 import kiss.Lifestyle;
+import kiss.Manageable;
+import kiss.Singleton;
 
 /**
  * @version 2011/07/11 16:58:39
  */
+@Manageable(lifestyle = Singleton.class)
 class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
 
-    /** The user interface class. */
-    static UserInterface ui;
+    /** The actual store. */
+    static final ThreadLocal<UserInterface> local = new ThreadLocal();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public UserInterface resolve() {
-        return ui;
+        return local.get();
     }
 }

@@ -1,6 +1,3 @@
-import bee.api.Library;
-import bee.api.Scope;
-
 /*
  * Copyright (C) 2012 Nameless Production Committee
  *
@@ -21,9 +18,14 @@ public class Jar extends bee.task.Jar {
      */
     @Override
     public void source() {
-        for (Library library : project.getDependency("xalan", "xalan", Scope.Runtime)) {
-            ui.talk(library.getJar());
+        ui.talk("source");
+    }
 
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void test() {
+        ui.talk("test");
     }
 }

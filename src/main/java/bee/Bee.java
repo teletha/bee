@@ -10,223 +10,96 @@
 package bee;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import kiss.ClassListener;
 import kiss.I;
-import kiss.Manageable;
-import kiss.Singleton;
-import kiss.Table;
 import kiss.model.ClassUtil;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
-import bee.task.Command;
-import bee.task.Task;
+import bee.task.TaskManager;
+import bee.util.Inputs;
 import bee.util.Stopwatch;
 
 /**
- * @version 2012/04/13 20:38:08
+ * <p>
+ * Task based project builder for Java.
+ * </p>
+ * 
+ * @version 2012/04/15 0:28:54
  */
-@Manageable(lifestyle = Singleton.class)
-public class Bee implements ClassListener<Task> {
+public class Bee {
+
+    /** The common task manager. */
+    static final TaskManager tasks = I.make(TaskManager.class);
 
     static {
         I.load(Bee.class, true);
     }
 
-    /** The task repository. */
-    private Map<String, TaskInfo> infos = new HashMap();
+    /** The project root directory. */
+    public final Path root;
+
+    /** The actual project. */
+    public final Project project;
+
+    /** The user interface. */
+    private UserInterface ui;
 
     /**
-     * {@inheritDoc}
+     * <p>
+     * Create project builder in current location.
+     * </p>
      */
-    @Override
-    public void load(Class<Task> clazz) {
-        infos.put(clazz.getSimpleName().toLowerCase(), new TaskInfo(clazz));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void unload(Class<Task> clazz) {
-        infos.remove(clazz.getSimpleName().toLowerCase());
+    public Bee() {
+        this((Path) null);
     }
 
     /**
      * <p>
-     * Create the specified task.
+     * Create project builder in the specified location path.
      * </p>
      * 
-     * @param taskClass
-     * @return
+     * @param directory A project root directory path.
      */
-    public <T extends Task> T createTask(Class<T> taskClass) {
-        UserInterface ui = UserInterfaceLisfestyle.ui;
-        String name = taskClass.getSimpleName().toLowerCase();
-        TaskInfo info = infos.get(name);
-
-        if (info == null) {
-            throw ui.error("Task [", name, "] is not found.");
-        }
-
-        T task = (T) I.make(info.task);
-
-        // API definition
-        return task;
+    public Bee(String directory) {
+        this(I.locate(Inputs.normalize(directory, "")));
     }
 
     /**
      * <p>
-     * Execute task by user input.
+     * Create project builder in the specified location.
      * </p>
      * 
-     * @param project
-     * @param input
-     * @param ui
+     * @param directory A project root directory.
      */
-    private void executeTask(Project project, String input, UserInterface ui) {
-        // parse command
-        if (input == null) {
-            return;
+    public Bee(Path directory) {
+        if (directory == null) {
+            directory = I.locate("");
         }
 
-        // remove head and tail white space
-        input = input.trim();
-
-        if (input.length() == 0) {
-            return;
-        }
-
-        // search task name
-        String taskName;
-        int index = input.indexOf(' ');
-
-        if (index == -1) {
-            taskName = input;
-        } else {
-            taskName = input.substring(0, index);
-            input = input.substring(index + 1);
-        }
-
-        // analyze task name
-        String taskGroupName = "";
-        String commandName = "";
-        index = taskName.indexOf(':');
-
-        if (index == -1) {
-            taskGroupName = taskName;
-        } else {
-            taskGroupName = taskName.substring(0, index);
-            commandName = taskName.substring(index + 1);
-        }
-
-        // search task
-        TaskInfo taskInfo = infos.get(taskGroupName.toLowerCase());
-
-        if (taskInfo == null) {
-            ui.error("Task '" + taskName + "' is not found.");
-            return;
-        }
-
-        if (commandName.length() == 0) {
-            commandName = taskInfo.defaults;
-        }
-
-        // search command
-        Method command = taskInfo.infos.get(commandName.toLowerCase());
-
-        if (command == null) {
-            return;
-        }
-
-        // create task and initialize
-        Task task = createTask(taskInfo.task);
-
-        // execute task
-        ui.title("Building " + project.getProduct() + " " + project.getVersion());
-
-        Stopwatch stopwatch = new Stopwatch().start();
-        String result = "SUCCESS";
-
-        try {
-            command.invoke(task);
-        } catch (Throwable e) {
-            if (e instanceof InvocationTargetException) {
-                InvocationTargetException exception = (InvocationTargetException) e;
-
-                e = exception.getTargetException();
-            }
-
-            ui.error(e);
-            result = "FAILURE";
-        } finally {
-            stopwatch.stop();
-
-            ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
-        }
-    }
-
-    /**
-     * <p>
-     * Create project.
-     * </p>
-     * 
-     * @param home
-     * @param ui
-     * @return
-     */
-    public final Project createProject(String home, UserInterface ui) {
-        return createProject(home == null ? null : Paths.get(home), ui);
-    }
-
-    /**
-     * <p>
-     * Create project.
-     * </p>
-     * 
-     * @param home
-     * @param ui
-     * @return
-     */
-    public final Project createProject(Path home, UserInterface ui) {
-        // Use current directory if user doesn't specify.
-        if (home == null) {
-            home = I.locate("");
-        }
-
-        // We need absolute path.
-        home = home.toAbsolutePath();
-
-        // We need present directory path.
-        if (Files.notExists(home)) {
+        if (Files.notExists(directory)) {
             try {
-                Files.createDirectories(home);
+                directory = Files.createDirectories(directory);
             } catch (IOException e) {
                 throw I.quiet(e);
             }
-        } else if (!Files.isDirectory(home)) {
-            home = home.getParent();
         }
 
-        // validate user interface and register it
-        if (ui == null) {
-            ui = new CommandLineUserInterface();
+        if (!Files.isDirectory(directory)) {
+            directory = directory.getParent();
         }
-        UserInterfaceLisfestyle.ui = ui;
 
+        // configure project root directory and message notifier
+        this.root = directory.toAbsolutePath();
+        this.ui = new CommandLineUserInterface();
+
+        // ================================================
+        // Create Project
+        // ================================================
         // search Project from the specified file systems
-        Path sources = home.resolve("src/project/java");
-        Path classes = home.resolve("target/project-classes");
+        Path sources = root.resolve("src/project/java");
+        Path classes = root.resolve("target/project-classes");
         Path projectDefinitionSource = sources.resolve("Project.java");
         Path projectDefinitionClass = classes.resolve("Project.class");
 
@@ -244,10 +117,7 @@ public class Bee implements ClassListener<Task> {
         ClassLoader loader = I.load(classes);
 
         try {
-            Project project = (Project) I.make(Class.forName("Project", true, loader));
-            ProjectLifestyle.project = project;
-
-            return project;
+            this.project = (Project) I.make(Class.forName("Project", true, loader));
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -272,57 +142,60 @@ public class Bee implements ClassListener<Task> {
 
     /**
      * <p>
-     * Launch bee at the current location with commandline user interface.
+     * Set {@link UserInterface} for project build.
      * </p>
      * 
-     * @param args
+     * @param ui A {@link UserInterface} to use.
+     * @return Fluent API.
      */
-    public static void main(String[] args) {
-        Bee bee = I.make(Bee.class);
-        bee.executeTask(bee.createProject("", null), "jar:merge", I.make(UserInterface.class));
+    public final Bee setUserInterface(UserInterface ui) {
+        if (ui == null) {
+            ui = new CommandLineUserInterface();
+        }
+        this.ui = ui;
+
+        // Fluent API
+        return this;
     }
 
     /**
-     * @version 2012/03/20 16:29:25
+     * <p>
+     * Execute tasks from the given command expression.
+     * </p>
+     * 
+     * @param commands A command literal.
      */
-    private static class TaskInfo {
+    public void execute(String... commands) {
+        ProjectLifestyle.local.set(project);
+        UserInterfaceLisfestyle.local.set(ui);
 
-        /** The task definition. */
-        private final Class<Task> task;
+        ui.title("Building " + project.getProduct() + " " + project.getVersion());
 
-        /** The default command name. */
-        private String defaults;
+        Stopwatch stopwatch = new Stopwatch().start();
+        String result = "SUCCESS";
 
-        /** The command infos. */
-        private Map<String, Method> infos = new HashMap();
-
-        /**
-         * @param taskClass
-         */
-        private TaskInfo(Class<Task> taskClass) {
-            this.task = taskClass;
-
-            Table<Method, Annotation> methods = ClassUtil.getAnnotations(taskClass);
-
-            for (Entry<Method, List<Annotation>> info : methods.entrySet()) {
-                for (Annotation annotation : info.getValue()) {
-                    if (annotation.annotationType() == Command.class) {
-                        Command command = (Command) annotation;
-                        Method method = info.getKey();
-
-                        // compute command name
-                        String name = method.getName().toLowerCase();
-
-                        // register
-                        infos.put(name, method);
-
-                        // check default
-                        if (command.defaults()) {
-                            defaults = name;
-                        }
-                    }
-                }
+        try {
+            for (String command : commands) {
+                I.make(TaskManager.class).execute(command);
             }
+        } catch (Throwable e) {
+            result = "FAILURE";
+        } finally {
+            stopwatch.stop();
+
+            ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
         }
+    }
+
+    /**
+     * <p>
+     * Launch bee at the current location with commandline user interface.
+     * </p>
+     * 
+     * @param commands A list of task commands
+     */
+    public static void main(String[] commands) {
+        Bee bee = new Bee();
+        bee.execute("test");
     }
 }
