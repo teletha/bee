@@ -198,7 +198,14 @@ public class Bee {
                     I.unload(classes);
 
                     // write project source if needed
-                    scaffold(projectSource);
+                    if (Files.notExists(projectSource)) {
+                        ui.talk("Project definition is not found. [" + projectSource + "]");
+
+                        if (!ui.confirm("Create new project?")) {
+                            return null;
+                        }
+                        scaffold(projectSource);
+                    }
 
                     // compile project sources if needed
                     compile(sources, classes);
@@ -228,6 +235,7 @@ public class Bee {
         private void scaffold(Path source) throws Exception {
             if (Files.notExists(source)) {
                 ui.talk("Project file is not found. [", source, "]");
+
                 ui.title("Create New Project");
 
                 String project = ui.ask("Project name");
