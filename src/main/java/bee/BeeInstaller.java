@@ -53,8 +53,9 @@ class BeeInstaller {
 
             if (Bee.getFileName().toString().endsWith(".bat")) {
                 // windows
+                // use JDK full path to avoid using JRE
                 bat.add("@echo off");
-                bat.add("java -cp \"" + jar.toString() + "\" " + Bee.class.getName() + " %*");
+                bat.add(JavaHome.resolve("bin/java") + " -cp \"" + jar.toString() + "\" " + Bee.class.getName() + " %*");
             } else {
                 // linux
                 // TODO
