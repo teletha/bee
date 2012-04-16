@@ -23,6 +23,7 @@ import kiss.model.ClassUtil;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
 import bee.task.TaskManager;
+import bee.tool.IDE;
 import bee.util.Stopwatch;
 
 /**
@@ -115,7 +116,23 @@ public class Bee {
      * @param tasks A command literal.
      */
     public void execute(String... tasks) {
-        ui.title("Bee");
+        ui.talk("Finding your project...");
+
+        // Find project definition file
+        Path sources = root.resolve("src/project/java");
+        Path classes = root.resolve("target/project-classes");
+        Path projectSource = sources.resolve(ProjectFile + ".java");
+
+        if (Files.notExists(projectSource)) {
+            ui.talk("Project definition is not found. [", projectSource, "]");
+
+            if (!ui.confirm("Create new your project?")) {
+                return;
+            }
+            Project project = builder.build();
+
+        }
+
         Project project = builder.build();
 
         ProjectLifestyle.local.set(project);
@@ -137,6 +154,46 @@ public class Bee {
 
             ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
         }
+    }
+
+    /**
+     * <p>
+     * Create project skeleton.
+     * </p>
+     */
+    private void scaffold(Path source) {
+        ui.title("Create New Project");
+
+        String project = ui.ask("Project name");
+        String product = ui.ask("Product name", project);
+        String version = ui.ask("Product version", "1.0");
+
+        List<String> code = new ArrayList();
+        code.add("public class " + ProjectFile + " extends " + Project.class.getName() + " {");
+        code.add("");
+        code.add("  {");
+        code.add("      name(\"" + project + "\", \"" + product + "\", \"" + version + "\");");
+        code.add("  }");
+        code.add("}");
+
+        try {
+            Files.createDirectories(source.getParent());
+            Files.write(source, code, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+
+        ui.talk("Compile project sources.");
+
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourceDirectory(input);
+        compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+        compiler.setOutput(output);
+        compiler.compile();
+
+        IDE ide = ui.ask("Select your development emvironment.", I.find(IDE.class));
+        ide.addClassPath(ClassUtil.getArchive(Bee.class));
+        ide.build(root);
     }
 
     /**
