@@ -94,6 +94,28 @@ public abstract class UserInterface {
      * @param question Your question message.
      * @return An answer.
      */
+    public boolean confirm(String question) {
+        String answer = ask(question + " (y/n)").toLowerCase();
+
+        if (answer.equals("y") || answer.equals("ye") || answer.equals("yes")) {
+            return true;
+        } else if (answer.equals("n") || answer.equals("no")) {
+            return false;
+        } else {
+            talk("Type 'y' or 'n'.");
+
+            return confirm(question);
+        }
+    }
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her answer.
+     * </p>
+     * 
+     * @param question Your question message.
+     * @return An answer.
+     */
     public String ask(String question) {
         return ask(question, (String) null);
     }

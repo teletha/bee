@@ -17,7 +17,7 @@ public class Jar extends bee.task.Jar {
      * {@inheritDoc}
      */
     @Override
-    public void test() {
-        ui.talk("test");
+    public void source() {
+        System.out.println(ui.confirm("kuma?"));
     }
 }
