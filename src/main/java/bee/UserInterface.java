@@ -213,6 +213,25 @@ public abstract class UserInterface {
 
     /**
      * <p>
+     * Ask user about your question and return his/her selected item.
+     * </p>
+     * <p>
+     * UserInterface can display a list of items and user can select it with simple action.
+     * </p>
+     * 
+     * @param question Your question message.
+     * @param items A list of selectable items.
+     * @return A selected item.
+     */
+    public <E extends Enum> E ask(String question, Class<E> enumeration) {
+        if (enumeration == null) {
+            throw error("Question needs some items. [", question, "]");
+        }
+        return ask(question, Arrays.asList(enumeration.getEnumConstants()));
+    }
+
+    /**
+     * <p>
      * Select number.
      * </p>
      * 
