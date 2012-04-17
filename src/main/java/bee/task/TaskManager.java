@@ -83,7 +83,7 @@ public class TaskManager implements ClassListener<Task> {
         Method command = info.infos.get(commandName.toLowerCase());
 
         if (command == null) {
-            throw new Error("Task [" + taskName + "] doesn't has the coommand [" + commandName + "].");
+            throw new Error("Task [" + taskName + "] doesn't has the command [" + commandName + "].");
         }
 
         // create task and initialize
