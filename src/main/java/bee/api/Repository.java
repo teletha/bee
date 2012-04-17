@@ -30,7 +30,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import kiss.I;
 import kiss.Manageable;
-import kiss.Singleton;
 
 import org.apache.maven.model.building.DefaultModelBuilder;
 import org.apache.maven.model.building.DefaultModelProcessor;
@@ -124,7 +123,7 @@ import bee.UserInterface;
 /**
  * @version 2012/03/25 14:55:21
  */
-@Manageable(lifestyle = Singleton.class)
+@Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
 
     /** The current processing project. */

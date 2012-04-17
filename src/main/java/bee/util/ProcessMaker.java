@@ -114,18 +114,15 @@ public class ProcessMaker {
         @Override
         public synchronized void start() {
             try {
-                int i = -1;
+                int i = input.read();
 
-                do {
-                    // wait next input
-                    input.ready();
+                while (i != -1) {
+                    // outpu it
+                    output.append((char) i);
 
                     // read next character
                     i = input.read();
-
-                    // outpu it
-                    output.append((char) i);
-                } while (i != -1);
+                }
             } catch (IOException e) {
                 throw I.quiet(e);
             } finally {

@@ -14,14 +14,14 @@ import java.util.Map;
 
 import kiss.Interceptor;
 import kiss.Manageable;
-import kiss.Singleton;
 import bee.UserInterface;
+import bee.api.ProjectSpecific;
 import bee.util.Inputs;
 
 /**
  * @version 2012/04/10 16:18:04
  */
-@Manageable(lifestyle = Singleton.class)
+@Manageable(lifestyle = ProjectSpecific.class)
 class CommandInterceptor extends Interceptor<Command> {
 
     /** The executed commands pool. */

@@ -22,15 +22,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.lang.model.SourceVersion;
 
 import kiss.I;
-import kiss.Manageable;
-import kiss.Singleton;
 import kiss.model.ClassUtil;
 
 import org.apache.maven.wagon.PathUtils;
@@ -40,9 +40,8 @@ import org.sonatype.aether.repository.RemoteRepository;
 import bee.util.PathSet;
 
 /**
- * @version 2010/04/02 3:47:44
+ * @version 2012/04/17 23:50:41
  */
-@Manageable(lifestyle = Singleton.class)
 public class Project {
 
     /** The libraries. */
@@ -53,6 +52,9 @@ public class Project {
 
     /** The repositories. */
     final ArrayList<RemoteRepository> repositories = new ArrayList();
+
+    /** The project association. */
+    final Map<Class, Object> associates = new ConcurrentHashMap();
 
     /** The project root directory. */
     private Path root;
@@ -440,17 +442,5 @@ public class Project {
      */
     public Path getProjectClasses() {
         return output.resolve("project-classes");
-    }
-
-    /**
-     * <p>
-     * Launch project build process.
-     * </p>
-     * 
-     * @param definition
-     */
-    protected static final void launch(Class<? extends Project> definition) {
-        Project project = I.make(definition);
-
     }
 }
