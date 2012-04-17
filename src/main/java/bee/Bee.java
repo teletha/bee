@@ -23,17 +23,22 @@ import kiss.model.ClassUtil;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
 import bee.task.TaskManager;
-import bee.tool.IDE;
 import bee.util.Stopwatch;
 
 /**
  * <p>
  * Task based project builder for Java.
  * </p>
+ * <p>
+ * Bee represents a single project build process.
+ * </p>
  * 
  * @version 2012/04/15 0:28:54
  */
 public class Bee {
+
+    /** The project build process is aborted by user. */
+    public static final RuntimeException AbortedByUser = new RuntimeException();
 
     /** The project definition file name. */
     private static final String ProjectFile = "Project";
@@ -115,85 +120,49 @@ public class Bee {
      * 
      * @param tasks A command literal.
      */
-    public void execute(String... tasks) {
-        ui.talk("Finding your project...");
-
-        // Find project definition file
-        Path sources = root.resolve("src/project/java");
-        Path classes = root.resolve("target/project-classes");
-        Path projectSource = sources.resolve(ProjectFile + ".java");
-
-        if (Files.notExists(projectSource)) {
-            ui.talk("Project definition is not found. [", projectSource, "]");
-
-            if (!ui.confirm("Create new your project?")) {
-                return;
-            }
-            Project project = builder.build();
-
-        }
-
-        Project project = builder.build();
-
-        ProjectLifestyle.local.set(project);
-        UserInterfaceLisfestyle.local.set(ui);
-
-        ui.title("Building " + project.getProduct() + " " + project.getVersion());
-
-        Stopwatch stopwatch = new Stopwatch().start();
-        String result = "SUCCESS";
-
-        try {
-            for (String task : tasks) {
-                I.make(TaskManager.class).execute(task);
-            }
-        } catch (Throwable e) {
-            result = "FAILURE";
-        } finally {
-            stopwatch.stop();
-
-            ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
-        }
+    public void execute(final String... tasks) {
+        execute(new CommandBuild(tasks));
     }
 
     /**
      * <p>
-     * Create project skeleton.
+     * Build project.
      * </p>
+     * 
+     * @param build
      */
-    private void scaffold(Path source) {
-        ui.title("Create New Project");
-
-        String project = ui.ask("Project name");
-        String product = ui.ask("Product name", project);
-        String version = ui.ask("Product version", "1.0");
-
-        List<String> code = new ArrayList();
-        code.add("public class " + ProjectFile + " extends " + Project.class.getName() + " {");
-        code.add("");
-        code.add("  {");
-        code.add("      name(\"" + project + "\", \"" + product + "\", \"" + version + "\");");
-        code.add("  }");
-        code.add("}");
+    public void execute(Build build) {
+        ui.talk("Finding your project...");
 
         try {
-            Files.createDirectories(source.getParent());
-            Files.write(source, code, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw I.quiet(e);
+            // build project
+            Project project = builder.build();
+
+            BuildLifestyle.local.set(build);
+            ProjectLifestyle.local.set(project);
+            UserInterfaceLisfestyle.local.set(ui);
+
+            // start project build process
+            ui.title("Building " + project.getProduct() + " " + project.getVersion());
+
+            String result = "SUCCESS";
+            Stopwatch stopwatch = new Stopwatch().start();
+
+            try {
+                build.build(project);
+            } catch (Throwable e) {
+                result = "FAILURE";
+                throw e; // rethrow to show actual error
+            } finally {
+                stopwatch.stop();
+
+                ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
+            }
+        } catch (Throwable e) {
+            if (e != AbortedByUser) {
+                throw e;
+            }
         }
-
-        ui.talk("Compile project sources.");
-
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(input);
-        compiler.addClassPath(ClassUtil.getArchive(Bee.class));
-        compiler.setOutput(output);
-        compiler.compile();
-
-        IDE ide = ui.ask("Select your development emvironment.", I.find(IDE.class));
-        ide.addClassPath(ClassUtil.getArchive(Bee.class));
-        ide.build(root);
     }
 
     /**
@@ -255,14 +224,7 @@ public class Bee {
                     I.unload(classes);
 
                     // write project source if needed
-                    if (Files.notExists(projectSource)) {
-                        ui.talk("Project definition is not found. [" + projectSource + "]");
-
-                        if (!ui.confirm("Create new project?")) {
-                            return null;
-                        }
-                        scaffold(projectSource);
-                    }
+                    scaffold(projectSource);
 
                     // compile project sources if needed
                     compile(sources, classes);
@@ -291,7 +253,12 @@ public class Bee {
          */
         private void scaffold(Path source) throws Exception {
             if (Files.notExists(source)) {
-                ui.talk("Project file is not found. [", source, "]");
+                ui.talk("Project definition is not found. [" + source + "]");
+
+                if (!ui.confirm("Create new project?")) {
+                    ui.talk("See you later!");
+                    throw AbortedByUser;
+                }
 
                 ui.title("Create New Project");
 
@@ -309,6 +276,7 @@ public class Bee {
 
                 Files.createDirectories(source.getParent());
                 Files.write(source, code, StandardCharsets.UTF_8);
+                ui.talk("Generate project definition.");
             }
         }
 
@@ -352,6 +320,32 @@ public class Bee {
         @Override
         public void modify(Path path) {
             updated = true;
+        }
+    }
+
+    /**
+     * @version 2012/04/17 16:33:58
+     */
+    private static class CommandBuild extends Build {
+
+        /** The task list. */
+        private final String[] tasks;
+
+        /**
+         * @param tasks
+         */
+        private CommandBuild(String[] tasks) {
+            this.tasks = tasks;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void build(Project project) {
+            for (String task : tasks) {
+                I.make(TaskManager.class).execute(task);
+            }
         }
     }
 }

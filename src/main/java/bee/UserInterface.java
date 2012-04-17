@@ -95,7 +95,7 @@ public abstract class UserInterface {
      * @return An answer.
      */
     public boolean confirm(String question) {
-        String answer = ask(question + " (y/n)").toLowerCase();
+        String answer = ask(Platform.EOL + question + " (y/n)").toLowerCase();
 
         if (answer.equals("y") || answer.equals("ye") || answer.equals("yes")) {
             return true;
