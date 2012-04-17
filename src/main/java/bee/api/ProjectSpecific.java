@@ -7,20 +7,20 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee;
+package bee.api;
 
 import kiss.I;
 import kiss.Prototype;
 
 /**
- * @version 2012/04/17 17:00:43
+ * @version 2012/04/17 23:34:37
  */
-public class BuildProcessLifestyle<M> extends Prototype<M> {
+public class ProjectSpecific<M> extends Prototype<M> {
 
     /**
      * @param modelClass
      */
-    private BuildProcessLifestyle(Class<M> modelClass) {
+    private ProjectSpecific(Class<M> modelClass) {
         super(modelClass);
     }
 
@@ -29,8 +29,13 @@ public class BuildProcessLifestyle<M> extends Prototype<M> {
      */
     @Override
     public M resolve() {
-        Build build = I.make(Build.class);
+        Project project = I.make(Project.class);
+        M m = (M) project.associates.get(instantiator.getDeclaringClass());
 
-        return super.resolve();
+        if (m == null) {
+            m = super.resolve();
+            project.associates.put(instantiator.getDeclaringClass(), m);
+        }
+        return m;
     }
 }

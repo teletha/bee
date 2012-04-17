@@ -47,11 +47,11 @@ public class Bee {
         I.load(Bee.class, true);
     }
 
+    /** The user interface. */
+    protected final UserInterface ui;
+
     /** The project root directory. */
     private final Path root;
-
-    /** The user interface. */
-    private final UserInterface ui;
 
     /** The project builder. */
     private final ProjectBuilder builder;
@@ -121,7 +121,7 @@ public class Bee {
      * @param tasks A command literal.
      */
     public void execute(final String... tasks) {
-        execute(new CommandBuild(tasks));
+        execute(new CommandTasks(tasks));
     }
 
     /**
@@ -129,16 +129,15 @@ public class Bee {
      * Build project.
      * </p>
      * 
-     * @param build
+     * @param tasks
      */
-    public void execute(Build build) {
+    public void execute(Build tasks) {
         ui.talk("Finding your project...");
 
         try {
             // build project
             Project project = builder.build();
 
-            BuildLifestyle.local.set(build);
             ProjectLifestyle.local.set(project);
             UserInterfaceLisfestyle.local.set(ui);
 
@@ -149,7 +148,7 @@ public class Bee {
             Stopwatch stopwatch = new Stopwatch().start();
 
             try {
-                build.build(project);
+                tasks.build(project);
             } catch (Throwable e) {
                 result = "FAILURE";
                 throw e; // rethrow to show actual error
@@ -326,7 +325,7 @@ public class Bee {
     /**
      * @version 2012/04/17 16:33:58
      */
-    private static class CommandBuild extends Build {
+    private static class CommandTasks extends Build {
 
         /** The task list. */
         private final String[] tasks;
@@ -334,7 +333,7 @@ public class Bee {
         /**
          * @param tasks
          */
-        private CommandBuild(String[] tasks) {
+        private CommandTasks(String[] tasks) {
             this.tasks = tasks;
         }
 
