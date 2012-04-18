@@ -16,7 +16,7 @@ public class Project extends bee.api.Project {
     private String aetherVersion = "1.13.1";
 
     {
-        name("npc", "bee", "0.2");
+        name("npc", "bee", "0.1");
         describe("Task based project builder for Java");
 
         require("npc", "sinobu", "0.9.1");

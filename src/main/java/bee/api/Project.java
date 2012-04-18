@@ -16,6 +16,7 @@
 package bee.api;
 
 import static bee.util.Inputs.*;
+import static kiss.Element.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.lang.model.SourceVersion;
 
+import kiss.Element;
 import kiss.I;
 import kiss.model.ClassUtil;
 
@@ -438,5 +440,33 @@ public class Project {
      */
     public Path getProjectClasses() {
         return output.resolve("project-classes");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        Element pom = $("project");
+        pom.append($("modelVersion").text("4.0.0"));
+        pom.append($("groupId").text(getProject()));
+        pom.append($("artifactId").text(getProduct()));
+        pom.append($("version").text(getVersion()));
+
+        Element dependencies = $("dependencies");
+
+        for (Library library : libraries) {
+            Element dependency = $("dependency");
+            dependency.append($("groupId").text(library.group));
+            dependency.append($("artifactId").text(library.name));
+            dependency.append($("version").text(library.version));
+            dependency.append($("scope").text(library.scope.name()));
+
+            dependencies.append(dependency);
+        }
+        pom.append(dependencies);
+
+        // write as pom
+        return pom.toString();
     }
 }
