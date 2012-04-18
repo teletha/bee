@@ -20,7 +20,6 @@ import static bee.util.Inputs.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -201,15 +200,12 @@ public class Project {
      * 
      * @param projectName
      * @param productName
+     * @param version
      * @return
      */
-    public Set<Library> getDependency(String projectName, String productName, Scope scope) {
-        for (Library library : libraries) {
-            if (library.group.equals(projectName) && library.name.equals(productName)) {
-                return I.make(Repository.class).collectDependency(library, scope);
-            }
-        }
-        return Collections.EMPTY_SET;
+    public Set<Library> getLibrary(String projectName, String productName, String version) {
+        return I.make(Repository.class)
+                .collectDependency(new Library(projectName, productName, version), Scope.Runtime);
     }
 
     /**

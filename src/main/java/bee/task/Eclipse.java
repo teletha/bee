@@ -18,8 +18,12 @@ package bee.task;
 import static kiss.Element.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import kiss.Element;
 import kiss.I;
@@ -39,6 +43,16 @@ public class Eclipse extends Task {
     @Command(defaults = true)
     public void eclipse() {
         createClasspath(project.getRoot().resolve(".classpath"));
+        ui.talk("Generate classpath file.");
+
+        createFactorypath(project.getRoot().resolve(".factorypath"));
+        ui.talk("Generate factorypath file.");
+
+        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
+        ui.talk("Generate pref file.");
+
+        createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
+        ui.talk("Generate pref file.");
     }
 
     /**
@@ -88,11 +102,73 @@ public class Eclipse extends Task {
         }
         doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
 
-        System.out.println(doc);
-        System.out.println(file);
+        try {
+            Files.write(file, doc.toString().getBytes());
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Create factorypath file.
+     * </p>
+     * 
+     * @param file
+     */
+    private void createFactorypath(Path file) {
+        Element doc = $("factorypath");
+
+        for (Library library : project.getLibrary("npc", "bee", "0.1")) {
+            doc.append($("factorypathentry").attr("kind", "EXTJAR")
+                    .attr("id", library.getJar())
+                    .attr("enabled", true)
+                    .attr("runInBatchMode", false));
+        }
 
         try {
             Files.write(file, doc.toString().getBytes());
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Create factorypath file.
+     * </p>
+     * 
+     * @param file
+     */
+    private void createAPT(Path file) {
+        List<String> doc = new ArrayList();
+        doc.add("eclipse.preferences.version=1");
+        doc.add("org.eclipse.jdt.apt.aptEnabled=true");
+        doc.add("org.eclipse.jdt.apt.genSrcDir=.apt_generated");
+        doc.add("org.eclipse.jdt.apt.reconcileEnabled=true");
+
+        try {
+            Files.write(file, doc, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Create factorypath file.
+     * </p>
+     * 
+     * @param file
+     */
+    private void createJDT(Path file) {
+        try {
+            Properties doc = new Properties();
+            doc.load(Files.newInputStream(file));
+
+            doc.put("org.eclipse.jdt.core.compiler.processAnnotations", "enabled");
+
+            doc.store(Files.newOutputStream(file), "");
         } catch (IOException e) {
             throw I.quiet(e);
         }
