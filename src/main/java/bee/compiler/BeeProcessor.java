@@ -33,7 +33,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 
 import kiss.I;
-import kiss.model.ClassUtil;
 
 /**
  * @version 2010/04/23 16:09:16
@@ -86,7 +85,7 @@ public class BeeProcessor implements Processor {
         this.filer = environment.getFiler();
         this.util = environment.getElementUtils();
 
-        I.load(ClassUtil.getArchive(BeeProcessor.class));
+        I.load(BeeProcessor.class, true);
     }
 
     /**
