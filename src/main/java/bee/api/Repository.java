@@ -12,6 +12,7 @@ package bee.api;
 import static kiss.Element.*;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,6 +61,7 @@ import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.sonatype.aether.RepositoryEvent;
 import org.sonatype.aether.RepositoryListener;
 import org.sonatype.aether.RepositorySystemSession;
+import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.collection.CollectRequest;
 import org.sonatype.aether.collection.DependencyGraphTransformer;
 import org.sonatype.aether.collection.DependencySelector;
@@ -449,9 +451,14 @@ public class Repository {
      * @return
      */
     public Path resolveSource(Library library) {
+        // collect remote repository
+        List<RemoteRepository> repositories = new ArrayList();
+        repositories.addAll(remoteRepositories);
+        repositories.addAll(project.repositories);
+
         ArtifactRequest request = new ArtifactRequest();
         request.setArtifact(new SubArtifact(library.artifact, "*-sources", "jar"));
-        request.setRepositories(project.repositories);
+        request.setRepositories(repositories);
 
         try {
             ArtifactResult result = system.resolveArtifact(newSession(), request);
@@ -476,10 +483,22 @@ public class Repository {
      * @return A installed location.
      */
     public Path install(Project project, Path file) {
+        Path temp = I.locateTemporary();
+
+        try {
+
+            System.out.println(project.toString());
+            Files.write(temp, project.toString().getBytes());
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+
         DefaultArtifact jar = new DefaultArtifact(project.getProject(), project.getProduct(), "", "jar", project.getVersion(), null, file.toFile());
+        Artifact pom = new SubArtifact(jar, "", "pom", temp.toFile());
 
         InstallRequest request = new InstallRequest();
         request.addArtifact(jar);
+        request.addArtifact(pom);
 
         try {
             InstallResult result = system.install(newSession(), request);

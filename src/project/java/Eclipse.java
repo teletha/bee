@@ -1,3 +1,5 @@
+import bee.task.Install;
+
 /*
  * Copyright (C) 2012 Nameless Production Committee
  *
@@ -7,19 +9,18 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.compiler;
 
 /**
- * @version 2012/04/18 10:56:08
+ * @version 2012/04/19 0:48:05
  */
-@SuppressWarnings("くるっぽー")
-public class Suppresser extends AnnotationValidator<SuppressWarnings> {
+public class Eclipse extends bee.task.Eclipse {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void validate(SuppressWarnings annotation, Source source, AnnotationNotifier notifier) {
-        notifier.error("error ", annotation.value());
+    public void eclipse() {
+        require(Install.class).project();
+        super.eclipse();
     }
 }
