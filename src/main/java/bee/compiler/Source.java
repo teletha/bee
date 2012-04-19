@@ -1,17 +1,11 @@
 /*
- * Copyright (C) 2011 Nameless Production Committee.
+ * Copyright (C) 2012 Nameless Production Committee
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *          http://opensource.org/licenses/mit-license.php
  */
 package bee.compiler;
 
@@ -27,7 +21,7 @@ import javax.tools.StandardLocation;
 import kiss.I;
 
 /**
- * @version 2011/09/08 11:56:07
+ * @version 2012/04/19 12:16:18
  */
 public class Source {
 
@@ -54,6 +48,23 @@ public class Source {
         this.element = element;
         this.util = util;
         this.filer = filer;
+    }
+
+    /**
+     * <p>
+     * Compute source file path.
+     * </p>
+     * 
+     * @return A path to source file.
+     */
+    public Path getSourceFile() {
+        try {
+            String fqcn = root.toString().replace('.', '/').concat(".java");
+
+            return Paths.get(filer.getResource(StandardLocation.SOURCE_OUTPUT, "", fqcn).toUri());
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
