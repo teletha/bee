@@ -7,20 +7,19 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.compiler;
+
+package bee;
 
 /**
- * @version 2012/04/18 10:56:08
+ * @version 2012/04/18 10:46:11
  */
-@SuppressWarnings("くるぽsー")
-public class Suppresser extends AnnotationValidator<SuppressWarnings> {
+public class Jar extends bee.task.Jar {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void validate(SuppressWarnings annotation, Source source, AnnotationNotifier notifier) {
-        notifier.error("error ", source.getClassFile(), "  ", source.getSourceFile());
-
+    public void source() {
+        super.merge();
     }
 }

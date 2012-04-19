@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,11 +67,31 @@ import bee.util.Paths;
  */
 public class JavaCompiler {
 
+    /** The actual java compiler. */
+    private static javax.tools.JavaCompiler compiler;
+
+    static {
+        compiler = ToolProvider.getSystemJavaCompiler();
+
+        if (compiler == null) {
+            // search tools.jar
+            Path tools = Platform.JavaHome.resolve("lib/tools.jar");
+
+            if (Files.exists(tools)) {
+                try {
+                    URLClassLoader loader = new URLClassLoader(new URL[] {tools.toUri().toURL()});
+
+                    compiler = (javax.tools.JavaCompiler) Class.forName("com.sun.tools.javac.api.JavacTool", true, loader)
+                            .newInstance();
+                } catch (Exception e) {
+                    throw I.quiet(e);
+                }
+            }
+        }
+    }
+
     /** The user interface. */
     private final UserInterface ui;
-
-    /** The actual java compiler. */
-    private final javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     /** The source directories. */
     private final List<Path> sources = new ArrayList();
@@ -520,7 +542,7 @@ public class JavaCompiler {
             boolean result = task.call();
 
             if (result) {
-                ui.talk("Compile " + sources.size() + " sources.");
+                // ui.talk("Compile " + sources.size() + " sources.");
             } else {
                 throw new Error("Compile is fail.");
             }

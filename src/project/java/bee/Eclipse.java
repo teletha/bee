@@ -1,5 +1,3 @@
-import bee.task.Install;
-
 /*
  * Copyright (C) 2012 Nameless Production Committee
  *
@@ -9,6 +7,10 @@ import bee.task.Install;
  *
  *          http://opensource.org/licenses/mit-license.php
  */
+
+package bee;
+
+import bee.task.Install;
 
 /**
  * @version 2012/04/19 0:48:05
