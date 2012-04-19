@@ -486,8 +486,6 @@ public class Repository {
         Path temp = I.locateTemporary();
 
         try {
-
-            System.out.println(project.toString());
             Files.write(temp, project.toString().getBytes());
         } catch (IOException e) {
             throw I.quiet(e);

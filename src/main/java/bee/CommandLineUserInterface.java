@@ -44,6 +44,12 @@ class CommandLineUserInterface extends UserInterface {
     @Override
     public void endCommand(String name, Command command) {
         commandStarted = true;
+
+        if (name.equals(commands.peekLast())) {
+            commands.pollLast();
+
+            System.out.println("◆ " + name + " ◆");
+        }
         System.out.print(Platform.EOL);
     }
 
