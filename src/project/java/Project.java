@@ -7,10 +7,12 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
+import bee.api.ProjectDefinition;
 
 /**
  * @version 2012/03/20 15:45:08
  */
+@ProjectDefinition(group = "sass", name = "bee", version = "0.1")
 public class Project extends bee.api.Project {
 
     private String aetherVersion = "1.13.1";

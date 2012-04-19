@@ -7,17 +7,16 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
+package bee.api;
 
 /**
- * @version 2012/04/18 10:46:11
+ * @version 2012/04/19 13:47:31
  */
-public class Jar extends bee.task.Jar {
+public @interface ProjectDefinition {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void source() {
-        super.merge();
-    }
+    String group();
+
+    String name();
+
+    String version();
 }
