@@ -12,7 +12,7 @@ package bee.compiler;
 /**
  * @version 2012/04/18 10:56:08
  */
-@SuppressWarnings("くるっぽー")
+@SuppressWarnings("くるぽsー")
 public class Suppresser extends AnnotationValidator<SuppressWarnings> {
 
     /**
@@ -20,6 +20,7 @@ public class Suppresser extends AnnotationValidator<SuppressWarnings> {
      */
     @Override
     protected void validate(SuppressWarnings annotation, Source source, AnnotationNotifier notifier) {
-        notifier.error("error ", annotation.value());
+        notifier.error("error ", source.getClassFile(), "  ", source.getSourceFile());
+
     }
 }
