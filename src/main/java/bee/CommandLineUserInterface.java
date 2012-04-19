@@ -1,17 +1,11 @@
 /*
- * Copyright (C) 2010 Nameless Production Committee.
+ * Copyright (C) 2012 Nameless Production Committee
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *          http://opensource.org/licenses/mit-license.php
  */
 package bee;
 
@@ -21,12 +15,14 @@ import java.util.Deque;
 import bee.task.Command;
 
 /**
- * @version 2010/11/23 23:24:52
+ * @version 2012/04/19 12:52:27
  */
 class CommandLineUserInterface extends UserInterface {
 
-    private boolean commandStarted = false;
+    /** The task state. */
+    private boolean first = false;
 
+    /** The command queue. */
     private Deque<String> commands = new ArrayDeque();
 
     /**
@@ -34,7 +30,7 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     public void startCommand(String name, Command command) {
-        commandStarted = true;
+        first = true;
         commands.add(name);
     }
 
@@ -43,13 +39,10 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     public void endCommand(String name, Command command) {
-        commandStarted = true;
-
-        if (name.equals(commands.peekLast())) {
-            commands.pollLast();
-
-            System.out.println("◆ " + name + " ◆");
+        if (first) {
+            showCommandName();
         }
+        first = true;
         System.out.print(Platform.EOL);
     }
 
@@ -58,15 +51,23 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     protected void write(String message) {
-        if (commandStarted) {
-            commandStarted = false;
-
-            String command = commands.pollLast();
-
-            if (command != null) {
-                System.out.println("◆ " + command + " ◆");
-            }
+        if (first) {
+            showCommandName();
+            first = false;
         }
         System.out.print(message);
+    }
+
+    /**
+     * <p>
+     * Show command name.
+     * </p>
+     */
+    private void showCommandName() {
+        String command = commands.pollLast();
+
+        if (command != null) {
+            System.out.println("◆ " + command + " ◆");
+        }
     }
 }
