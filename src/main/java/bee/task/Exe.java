@@ -22,6 +22,7 @@ import bee.api.ArtifactLocator;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.util.JarArchiver;
+import bee.util.ZipArchiver;
 
 /**
  * @version 2012/04/01 9:34:01
@@ -40,6 +41,9 @@ public class Exe extends Task {
     /** The output for the generated exe file. */
     private final Path exeOutput;
 
+    /** The output for the generated zip file. */
+    private final Path zipOutput;
+
     /** The location for icon of exe file. */
     private Path icon;
 
@@ -51,6 +55,7 @@ public class Exe extends Task {
             temporary = I.locateTemporary();
             exeBuilder = temporary.resolve(exeBuilderName);
             exeOutput = project.getOutput().resolve(project.getProduct() + ".exe");
+            zipOutput = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".zip");
 
             Files.createDirectories(temporary);
         } catch (IOException e) {
@@ -118,6 +123,11 @@ public class Exe extends Task {
                 I.copy(library.getJar(), lib);
             }
             I.copy(ArtifactLocator.Jar.in(project), lib);
+
+            ZipArchiver zip = new ZipArchiver();
+            zip.add(project.getOutput(), "lib/**", "*.exe");
+            zip.pack(zipOutput);
+            System.out.println(zipOutput);
         } catch (Exception e) {
             throw I.quiet(e);
         }
