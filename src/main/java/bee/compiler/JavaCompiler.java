@@ -542,7 +542,7 @@ public class JavaCompiler {
             boolean result = task.call();
 
             if (result) {
-                // ui.talk("Compile " + sources.size() + " sources.");
+                ui.talk("Compile " + sources.size() + " sources.");
             } else {
                 throw new Error("Compile is fail.");
             }

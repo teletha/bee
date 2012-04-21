@@ -194,31 +194,6 @@ public class ZipArchiver {
                 throw I.quiet(e);
             }
         }
-
-        /**
-         * <p>
-         * Helper method to create a {@link ZipEntry} from {@link Path} information.
-         * </p>
-         * 
-         * @param path
-         * @param attr
-         * @return
-         */
-        private ZipEntry createEntry(Path path, BasicFileAttributes attr) {
-            boolean directory = attr.isDirectory();
-            String name = path.toString().replace(File.separatorChar, '/');
-
-            if (directory) {
-                name = name.concat("/");
-            }
-
-            ZipEntry entry = new ZipEntry(name);
-            entry.setSize(directory ? 0 : attr.size());
-            entry.setTime(attr.lastModifiedTime().toMillis());
-
-            // API definition
-            return entry;
-        }
     }
 
     /**
