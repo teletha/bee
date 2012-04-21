@@ -348,9 +348,8 @@ public class Java {
              */
             private Cause make(Throwable throwable) {
                 Cause cause = new Cause();
-                cause.className = throwable.getClass().getName();
                 cause.message = throwable.getMessage();
-                if (throwable.getCause() != null) cause.cause = make(throwable.getCause());
+
                 for (StackTraceElement element : throwable.getStackTrace()) {
                     cause.traces.add(element);
                 }
@@ -488,14 +487,8 @@ public class Java {
      */
     private static final class Cause {
 
-        /** The error class name. */
-        public String className;
-
         /** The error message. */
         public String message;
-
-        /** The cause. */
-        public Cause cause;
 
         /** The stack trace. */
         public List<StackTraceElement> traces = new ArrayList();

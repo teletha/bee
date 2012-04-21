@@ -19,6 +19,6 @@ public class FindMain extends bee.task.FindMain {
      */
     @Override
     public String main() {
-        return BeeInstaller.class.getName();
+        return "bee.BeeInstaller";
     }
 }

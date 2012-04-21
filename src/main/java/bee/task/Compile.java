@@ -9,8 +9,12 @@
  */
 package bee.task;
 
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Path;
 
+import kiss.I;
 import bee.api.Scope;
 import bee.compiler.JavaCompiler;
 import bee.util.PathSet;
@@ -71,5 +75,15 @@ public class Compile extends Task {
         compiler.setOutput(output);
         compiler.setNoWarn();
         compiler.compile();
+
+        // load project related classes
+        try {
+            Method add = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            add.setAccessible(true);
+
+            add.invoke(project.getClass().getClassLoader(), output.toUri().toURL());
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
     }
 }

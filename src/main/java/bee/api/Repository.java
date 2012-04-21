@@ -83,7 +83,6 @@ import org.sonatype.aether.impl.internal.DefaultSyncContextFactory;
 import org.sonatype.aether.impl.internal.DefaultUpdateCheckManager;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
 import org.sonatype.aether.installation.InstallRequest;
-import org.sonatype.aether.installation.InstallResult;
 import org.sonatype.aether.installation.InstallationException;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
@@ -499,7 +498,7 @@ public class Repository {
         request.addArtifact(pom);
 
         try {
-            InstallResult result = system.install(newSession(), request);
+            system.install(newSession(), request);
 
             return null;
         } catch (InstallationException e) {

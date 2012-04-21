@@ -26,7 +26,6 @@ import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -38,9 +37,6 @@ import kiss.I;
  * @version 2010/04/23 16:09:16
  */
 public class BeeProcessor implements Processor {
-
-    /** The processing environment. */
-    private ProcessingEnvironment environment;
 
     /** The message notifier. */
     private Notifier notifier;
@@ -80,7 +76,6 @@ public class BeeProcessor implements Processor {
      */
     @Override
     public void init(ProcessingEnvironment environment) {
-        this.environment = environment;
         this.notifier = new Notifier(environment.getMessager());
         this.filer = environment.getFiler();
         this.util = environment.getElementUtils();
@@ -140,12 +135,6 @@ public class BeeProcessor implements Processor {
 
         /** The current processing element. */
         private Element element;
-
-        /** The current processing annotation. */
-        private AnnotationMirror annotation;
-
-        /** The current processing annotation value. */
-        private AnnotationValue value;
 
         /**
          * Private constructor.
