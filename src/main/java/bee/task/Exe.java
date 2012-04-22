@@ -55,7 +55,7 @@ public class Exe extends Task {
         try {
             temporary = I.locateTemporary();
             exeBuilder = temporary.resolve(exeBuilderName);
-            exeOutput = project.getOutput().resolve(project.getProduct() + ".exe");
+            exeOutput = temporary.resolve(project.getProduct() + ".exe");
             zipOutput = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".zip");
 
             Files.createDirectories(temporary);
@@ -115,19 +115,14 @@ public class Exe extends Task {
             maker.setWorkingDirectory(exeBuilder.getParent());
             maker.run(command);
 
-            // deploy dependency libraries
-            Path lib = project.getOutput().resolve("lib");
-            Files.createDirectories(lib);
-
-            for (Library library : project.getDependency(Scope.Runtime)) {
-                I.copy(library.getJar(), lib);
-            }
-            I.copy(ArtifactLocator.Jar.in(project), lib);
-
+            // pack with dependency libraries
             ZipArchiver zip = new ZipArchiver();
-            zip.add(project.getOutput(), "lib/**", "*.exe");
+            zip.add(exeOutput);
+            zip.add("lib", ArtifactLocator.Jar.in(project));
+            for (Library library : project.getDependency(Scope.Runtime)) {
+                zip.add("lib", library.getJar());
+            }
             zip.pack(zipOutput);
-            System.out.println(zipOutput);
         } catch (Exception e) {
             throw I.quiet(e);
         }

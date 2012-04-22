@@ -362,12 +362,12 @@ public abstract class UserInterface {
 
     /**
      * <p>
-     * Write message to user.
+     * Get underlaying message listener.
      * </p>
      * 
-     * @param c A message
+     * @return
      */
-    public abstract void write(char c);
+    public abstract Appendable getInterface();
 
     /**
      * <p>

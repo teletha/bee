@@ -62,12 +62,12 @@ class CommandLineUserInterface extends UserInterface {
      * {@inheritDoc}
      */
     @Override
-    public void write(char c) {
+    public Appendable getInterface() {
         if (first) {
             showCommandName();
             first = false;
         }
-        System.out.print(c);
+        return System.out;
     }
 
     /**

@@ -26,7 +26,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import kiss.Disposable;
@@ -57,7 +56,21 @@ public class ZipArchiver {
      */
     public void add(Path base, String... patterns) {
         if (base != null) {
-            entries.add(new Entry(base, patterns));
+            entries.add(new Entry("", base, patterns));
+        }
+    }
+
+    /**
+     * <p>
+     * Add the target file.
+     * </p>
+     * 
+     * @param base A base directory path in this zip file.
+     * @param target A target file to archive.
+     */
+    public void add(String base, Path target) {
+        if (target != null) {
+            entries.add(new Entry(base, target));
         }
     }
 
@@ -95,10 +108,15 @@ public class ZipArchiver {
 
                 try {
                     for (Entry entry : entries) {
+                        archiver.directory = entry.directory;
                         archiver.base = entry.base;
 
                         // scan entry
-                        I.walk(entry.base, archiver, entry.patterns);
+                        if (Files.isDirectory(entry.base)) {
+                            I.walk(entry.base, archiver, entry.patterns);
+                        } else {
+                            archiver.add(entry.directory + entry.base.getFileName(), entry.base, Files.readAttributes(entry.base, BasicFileAttributes.class));
+                        }
                     }
                 } finally {
                     archiver.dispose();
@@ -110,9 +128,12 @@ public class ZipArchiver {
     }
 
     /**
-     * @version 2011/03/20 15:43:35
+     * @version 2012/04/22 11:04:40
      */
     private static class Archiver extends ZipOutputStream implements FileVisitor<Path>, Disposable {
+
+        /** The base directory path. */
+        private String directory;
 
         /** The base path. */
         private Path base;
@@ -122,6 +143,29 @@ public class ZipArchiver {
          */
         private Archiver(Path destination, Charset encoding) throws IOException {
             super(Files.newOutputStream(destination), encoding);
+        }
+
+        /**
+         * <p>
+         * Add archive entry.
+         * </p>
+         * 
+         * @param path
+         * @param attrs
+         */
+        private void add(String path, Path file, BasicFileAttributes attrs) {
+            try {
+                ZipEntry entry = new ZipEntry(path);
+                entry.setSize(attrs.size());
+                entry.setTime(attrs.lastModifiedTime().toMillis());
+                putNextEntry(entry);
+
+                // copy data
+                I.copy(Files.newInputStream(file), this, true);
+                closeEntry();
+            } catch (IOException e) {
+                // ignore
+            }
         }
 
         /**
@@ -139,22 +183,10 @@ public class ZipArchiver {
          */
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            try {
-                ZipEntry entry = new ZipEntry(base.relativize(file).toString().replace(File.separatorChar, '/'));
-                entry.setSize(attrs.size());
-                entry.setTime(attrs.lastModifiedTime().toMillis());
-                putNextEntry(entry);
+            add(directory + base.relativize(file).toString().replace(File.separatorChar, '/'), file, attrs);
 
-                // copy data
-                I.copy(Files.newInputStream(file), this, true);
-                closeEntry();
-
-                // API definition
-                return CONTINUE;
-            } catch (ZipException e) {
-                // ignore
-                return CONTINUE;
-            }
+            // API definition
+            return CONTINUE;
         }
 
         /**
@@ -201,6 +233,9 @@ public class ZipArchiver {
      */
     private static class Entry {
 
+        /** The directory path in archive. */
+        private final String directory;
+
         /** The base directory. */
         private final Path base;
 
@@ -210,7 +245,13 @@ public class ZipArchiver {
         /**
          * @param base
          */
-        public Entry(Path base, String... patterns) {
+        public Entry(String directory, Path base, String... patterns) {
+            if (directory == null) {
+                directory = "";
+            }
+            directory = directory.replace(File.separatorChar, '/');
+
+            this.directory = directory.length() == 0 || directory.endsWith("/") ? directory : directory.concat("/");
             this.base = base;
             this.patterns = patterns;
         }

@@ -97,14 +97,14 @@ public class ProcessMaker {
         private final InputStreamReader input;
 
         /** The output. */
-        private final UserInterface output;
+        private final Appendable output;
 
         /**
          * @param input
          */
         private ProcessReader(InputStream input) {
             this.input = new InputStreamReader(input, Platform.Encoding);
-            this.output = I.make(UserInterface.class);
+            this.output = I.make(UserInterface.class).getInterface();
         }
 
         /**
@@ -117,7 +117,7 @@ public class ProcessMaker {
 
                 while (i != -1) {
                     // output it
-                    output.write((char) i);
+                    output.append((char) i);
 
                     // read next character
                     i = input.read();

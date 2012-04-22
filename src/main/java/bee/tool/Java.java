@@ -312,6 +312,16 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
+            public Appendable getInterface() {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
             public void startCommand(String name, Command command) {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
@@ -333,16 +343,6 @@ public class Java {
              */
             @Override
             protected void write(String message) {
-                // If this exception will be thrown, it is bug of this program. So we must rethrow
-                // the wrapped error in here.
-                throw new Error();
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void write(char c) {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
                 throw new Error();
