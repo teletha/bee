@@ -22,6 +22,7 @@ import bee.api.ArtifactLocator;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.util.JarArchiver;
+import bee.util.ProcessMaker;
 import bee.util.ZipArchiver;
 
 /**
@@ -110,10 +111,9 @@ public class Exe extends Task {
             }
 
             // execute exewrap.exe
-            ProcessBuilder builder = new ProcessBuilder();
-            builder.directory(exeBuilder.getParent().toFile());
-            builder.command(command);
-            builder.start().waitFor();
+            ProcessMaker maker = new ProcessMaker();
+            maker.setWorkingDirectory(exeBuilder.getParent());
+            maker.run(command);
 
             // deploy dependency libraries
             Path lib = project.getOutput().resolve("lib");

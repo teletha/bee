@@ -59,6 +59,18 @@ class CommandLineUserInterface extends UserInterface {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void write(char c) {
+        if (first) {
+            showCommandName();
+            first = false;
+        }
+        System.out.print(c);
+    }
+
+    /**
      * <p>
      * Show command name.
      * </p>

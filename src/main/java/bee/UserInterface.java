@@ -362,6 +362,15 @@ public abstract class UserInterface {
 
     /**
      * <p>
+     * Write message to user.
+     * </p>
+     * 
+     * @param c A message
+     */
+    public abstract void write(char c);
+
+    /**
+     * <p>
      * Display message about command starts.
      * </p>
      * 
