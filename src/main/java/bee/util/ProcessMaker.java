@@ -12,7 +12,6 @@ package bee.util;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -74,9 +73,8 @@ public class ProcessMaker {
 
             Process process = builder.start();
 
-            UIOutputStream output = I.make(UIOutputStream.class);
-            new ProcessReader(process.getInputStream(), output).start();
-            new ProcessReader(process.getErrorStream(), output).start();
+            new ProcessReader(process.getInputStream()).start();
+            new ProcessReader(process.getErrorStream()).start();
 
             int result = process.waitFor();
 
@@ -91,7 +89,7 @@ public class ProcessMaker {
     }
 
     /**
-     * @version 2012/04/05 12:58:08
+     * @version 2012/04/22 10:06:43
      */
     private static class ProcessReader extends Thread {
 
@@ -99,15 +97,14 @@ public class ProcessMaker {
         private final InputStreamReader input;
 
         /** The output. */
-        private final OutputStream output;
+        private final UserInterface output;
 
         /**
          * @param input
-         * @param output
          */
-        private ProcessReader(InputStream input, OutputStream output) {
+        private ProcessReader(InputStream input) {
             this.input = new InputStreamReader(input, Platform.Encoding);
-            this.output = output;
+            this.output = I.make(UserInterface.class);
         }
 
         /**
@@ -119,7 +116,7 @@ public class ProcessMaker {
                 int i = input.read();
 
                 while (i != -1) {
-                    // outpu it
+                    // output it
                     output.write((char) i);
 
                     // read next character
@@ -131,30 +128,6 @@ public class ProcessMaker {
                 I.quiet(input);
                 // don't close output
             }
-        }
-    }
-
-    /**
-     * @version 2012/04/22 9:33:31
-     */
-    private static class UIOutputStream extends OutputStream {
-
-        /** The actual user interface. */
-        private final UserInterface ui;
-
-        /**
-         * @param ui
-         */
-        private UIOutputStream(UserInterface ui) {
-            this.ui = ui;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(int b) throws IOException {
-            ui.write((char) b);
         }
     }
 }
