@@ -339,6 +339,16 @@ public class Java {
             }
 
             /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void write(char c) {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
              * <p>
              * Create cause.
              * </p>

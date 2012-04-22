@@ -41,6 +41,13 @@ public class Null {
          * {@inheritDoc}
          */
         @Override
+        public void write(char c) {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public String ask(String question) {
             return null;
         }
