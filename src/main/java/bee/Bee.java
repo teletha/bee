@@ -132,10 +132,9 @@ public class Bee {
      * @param tasks
      */
     public void execute(Build tasks) {
-        ui.talk("Finding your project...");
-
         try {
             // build project
+            ui.talk("Finding your project...");
             Project project = builder.build();
 
             ProjectLifestyle.local.set(project);
@@ -183,7 +182,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("exe");
+            bee.execute("bee:install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
@@ -204,6 +203,9 @@ public class Bee {
         /** The current project. */
         private Project project;
 
+        /** The current develop environment. */
+        private IDE ide;
+
         /**
          * <p>
          * Build the current project.
@@ -218,6 +220,7 @@ public class Bee {
                     Path sources = root.resolve("src/project/java");
                     Path classes = root.resolve("target/project-classes");
                     Path projectSource = sources.resolve(ProjectFile + ".java");
+                    if (Files.notExists(classes.resolve(ProjectFile + ".class"))) find();
 
                     // unload old project
                     I.unload(classes);
@@ -295,6 +298,44 @@ public class Bee {
             compiler.addClassPath(ClassUtil.getArchive(Bee.class));
             compiler.setOutput(output);
             compiler.compile();
+        }
+
+        /**
+         * <p>
+         * Search develop environemnt.
+         * </p>
+         */
+        private void find() {
+            // search existing environment
+            for (IDE ide : IDE.values()) {
+                if (ide.exist(root)) {
+                    this.ide = ide;
+                }
+            }
+        }
+
+        /**
+         * <p>
+         * Build project develop environment.
+         * </p>
+         */
+        private void develop() {
+            if (ide == null) {
+                // build environemnt
+                ui.talk("Develop environemnt is not found.");
+        
+                if (!ui.confirm("Create new develop environemnt?")) {
+                    ui.talk("See you later!");
+                    throw Bee.AbortedByUser;
+                }
+        
+                ui.title("Create New Environment");
+        
+                IDE ide = ui.ask("Bee supports the following IDEs.", IDE.class);
+                ide.create(root);
+        
+                ui.talk("Create ", ide.name(), "'s configuration files.");
+            }
         }
 
         /**
