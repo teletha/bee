@@ -132,6 +132,9 @@ public class Bee {
      * @param tasks
      */
     public void execute(Build tasks) {
+        String result = "SUCCESS";
+        Stopwatch stopwatch = new Stopwatch().start();
+
         try {
             // build project
             ui.talk("Finding your project...");
@@ -143,23 +146,17 @@ public class Bee {
             // start project build process
             ui.title("Building " + project.getProduct() + " " + project.getVersion());
 
-            String result = "SUCCESS";
-            Stopwatch stopwatch = new Stopwatch().start();
-
-            try {
-                tasks.build(project);
-            } catch (Throwable e) {
-                result = "FAILURE";
-                throw e; // rethrow to show actual error
-            } finally {
-                stopwatch.stop();
-
-                ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
-            }
+            tasks.build(project);
         } catch (Throwable e) {
-            if (e != AbortedByUser) {
-                throw e;
+            if (e == AbortedByUser) {
+                result = "CANCEL";
+            } else {
+                result = "FAILURE";
             }
+        } finally {
+            stopwatch.stop();
+
+            ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
         }
     }
 
@@ -319,21 +316,21 @@ public class Bee {
          * Build project develop environment.
          * </p>
          */
-        private void develop() {
+        private void layout() {
             if (ide == null) {
                 // build environemnt
                 ui.talk("Develop environemnt is not found.");
-        
+
                 if (!ui.confirm("Create new develop environemnt?")) {
                     ui.talk("See you later!");
                     throw Bee.AbortedByUser;
                 }
-        
+
                 ui.title("Create New Environment");
-        
+
                 IDE ide = ui.ask("Bee supports the following IDEs.", IDE.class);
                 ide.create(root);
-        
+
                 ui.talk("Create ", ide.name(), "'s configuration files.");
             }
         }
