@@ -1,3 +1,4 @@
+package bee;
 
 /*
  * Copyright (C) 2012 Nameless Production Committee
@@ -8,12 +9,8 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-import static bee.Platform.*;
-
 import java.util.Locale;
 
-import kiss.I;
-import bee.Platform;
 import bee.api.ArtifactLocator;
 import bee.task.Command;
 import bee.task.Jar;
@@ -22,7 +19,7 @@ import bee.task.Task;
 /**
  * @version 2012/04/15 15:20:53
  */
-public class Bee extends Task {
+public class Host extends Task {
 
     /**
      * <p>
@@ -30,10 +27,10 @@ public class Bee extends Task {
      * </p>
      */
     @Command(description = "Install the current Bee into your environment.")
-    public void install() {
+    public void install() throws Exception {
         require(Jar.class).merge();
 
-        I.copy(ArtifactLocator.Jar.in(project), JavaHome.resolve("lib/bee.jar"));
+        BeeInstaller.install(ArtifactLocator.Jar.in(project));
     }
 
     /**

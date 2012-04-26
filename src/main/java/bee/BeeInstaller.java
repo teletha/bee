@@ -11,18 +11,21 @@ package bee;
 
 import static bee.Platform.*;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
+import bee.util.Paths;
 
 /**
  * @version 2011/03/23 18:55:51
  */
-class BeeInstaller {
+public class BeeInstaller {
 
     /**
      * <p>
@@ -30,22 +33,31 @@ class BeeInstaller {
      * </p>
      */
     public static final void main(String... args) {
-        try {
-            Path jar = JavaHome.resolve("lib/bee.jar");
-            Path current = ClassUtil.getArchive(BeeInstaller.class);
+        install(ClassUtil.getArchive(BeeInstaller.class));
+    }
 
-            if (Files.isDirectory(current)) {
-                // The current directory is class files store.
-                // We should pack them as jar file.
-                // This process is mainly used by Bee developers.
-                Bee bee = new Bee();
-                bee.execute("bee:install");
-            } else if (Files.exists(jar) && Files.getLastModifiedTime(jar).toMillis() != Files.getLastModifiedTime(current)
-                    .toMillis()) {
+    /**
+     * <p>
+     * Install Bee into your system.
+     * </p>
+     * 
+     * @param source
+     */
+    public static final void install(Path source) {
+        Path dest = JavaHome.resolve("lib/bee.jar");
+
+        try {
+            if (Files.exists(dest)) {
+
+                Path renamed = JavaHome.resolve("lib/bee2.jar");
+                Files.move(dest, renamed, StandardCopyOption.REPLACE_EXISTING);
+            }
+
+            if (Paths.getLastModified(source) != Paths.getLastModified(dest)) {
                 // The current bee.jar is newer.
                 // We should copy it to JDK directory.
                 // This process is mainly used by Bee users while install phase.
-                I.copy(current, jar);
+                I.copy(source, dest);
             }
 
             // create bat file
@@ -55,13 +67,13 @@ class BeeInstaller {
                 // windows
                 // use JDK full path to avoid using JRE
                 bat.add("@echo off");
-                bat.add(JavaHome.resolve("bin/java") + " -cp \"" + jar.toString() + "\" " + Bee.class.getName() + " %*");
+                bat.add(JavaHome.resolve("bin/java") + " -cp \"" + dest.toString() + "\" " + Bee.class.getName() + " %*");
             } else {
                 // linux
                 // TODO
             }
             Files.write(Bee, bat, I.$encoding);
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw I.quiet(e);
         }
     }

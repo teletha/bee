@@ -7,7 +7,6 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-
 package bee;
 
 import bee.task.Install;

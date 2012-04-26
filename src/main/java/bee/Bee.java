@@ -179,7 +179,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("bee:install");
+            bee.execute("host:install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

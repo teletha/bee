@@ -32,6 +32,9 @@ public class ProcessMaker {
     /** The working directory. */
     private Path directory;
 
+    /** The execution type. */
+    private boolean sync = true;
+
     /**
      * <p>
      * Set the working directory of the sub process.
@@ -42,6 +45,20 @@ public class ProcessMaker {
      */
     public ProcessMaker setWorkingDirectory(Path directory) {
         this.directory = directory;
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * <p>
+     * Make this process running asynchronously.
+     * </p>
+     * 
+     * @return Fluent API.
+     */
+    public ProcessMaker inParallel() {
+        this.sync = false;
 
         // API definition
         return this;
@@ -76,10 +93,8 @@ public class ProcessMaker {
             new ProcessReader(process.getInputStream()).start();
             new ProcessReader(process.getErrorStream()).start();
 
-            int result = process.waitFor();
-
-            if (result != 0) {
-                // error
+            if (sync) {
+                process.waitFor();
             }
 
             process.destroy();
