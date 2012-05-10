@@ -20,6 +20,8 @@ import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
+import bee.tool.Java;
+import bee.tool.Java.JVM;
 import bee.util.Paths;
 
 /**
@@ -75,6 +77,38 @@ public class BeeInstaller {
             Files.write(Bee, bat, I.$encoding);
         } catch (IOException e) {
             throw I.quiet(e);
+        }
+    }
+
+    private static void install() {
+        try {
+            Path temp = I.locateTemporary();
+            Files.createDirectories(temp);
+            Path bee = temp.resolve("bee.jar");
+
+            I.copy(ClassUtil.getArchive(BeeInstaller.class), bee);
+
+            Java sub = new Java();
+            sub.addClassPath(bee);
+            sub.run(Sub.class);
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * @version 2012/04/27 16:31:34
+     */
+    private static class Sub extends JVM {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected boolean process() {
+            ui.error(bee.Bee.AbortedByUser);
+            I.copy(ClassUtil.getArchive(BeeInstaller.class), Platform.Bee);
+            return false;
         }
     }
 }
