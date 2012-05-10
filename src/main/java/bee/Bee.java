@@ -152,6 +152,7 @@ public class Bee {
                 result = "CANCEL";
             } else {
                 result = "FAILURE";
+                ui.error(e);
             }
         } finally {
             stopwatch.stop();
@@ -179,7 +180,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("host:install");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
