@@ -24,7 +24,6 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
-
 /**
  * @version 2012/04/11 14:17:35
  */
@@ -50,7 +49,7 @@ public class FindMain extends Task {
      * 
      * @return A main class name.
      */
-    @Command(description = "Find main class.")
+    @Command("Find main class.")
     public String main() {
         analyze();
 
@@ -64,7 +63,7 @@ public class FindMain extends Task {
      * 
      * @return A premain class name.
      */
-    @Command(description = "Find premain class.")
+    @Command("Find premain class.")
     public String premain() {
         analyze();
 
@@ -78,7 +77,7 @@ public class FindMain extends Task {
      * 
      * @return A agentmain class name.
      */
-    @Command(description = "Find agentmain class.")
+    @Command("Find agentmain class.")
     public String agentmain() {
         analyze();
 

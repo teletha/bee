@@ -27,7 +27,7 @@ public class Jar extends Task {
      * Package main classes and other resources.
      * </p>
      */
-    @Command(defaults = true, description = "Package main classes and other resources.")
+    @Command("Package main classes and other resources.")
     public void source() {
         require(Compile.class).source();
 
@@ -42,7 +42,7 @@ public class Jar extends Task {
      * Package test classes and other resources.
      * </p>
      */
-    @Command(description = "Package test classes and other resources.")
+    @Command("Package test classes and other resources.")
     public void test() {
         require(Compile.class).test();
 
@@ -59,7 +59,7 @@ public class Jar extends Task {
      * Package project classes and other resources.
      * </p>
      */
-    @Command(description = "Package project classes and other resources.")
+    @Command("Package project classes and other resources.")
     public void project() {
         require(Compile.class).project();
 
@@ -95,7 +95,7 @@ public class Jar extends Task {
      * Package main classes and other resources.
      * </p>
      */
-    @Command(description = "Package all main classes and resources with dependencies.")
+    @Command("Package all main classes and resources with dependencies.")
     public void merge() {
         require(Compile.class).source();
         String main = require(FindMain.class).main();

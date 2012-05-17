@@ -23,10 +23,10 @@ import kiss.ClassListener;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
-import kiss.Table;
 import kiss.model.ClassUtil;
 import bee.UserInterface;
 import bee.api.Project;
+import bee.util.Inputs;
 
 /**
  * @version 2012/04/15 14:13:34
@@ -45,7 +45,7 @@ public class TaskManager implements ClassListener<Task> {
      * Execute task.
      * </p>
      * 
-     * @param input
+     * @param input User task input.
      */
     public void execute(String input) {
         // parse command
@@ -76,11 +76,11 @@ public class TaskManager implements ClassListener<Task> {
         TaskInfo info = find(taskName);
 
         if (commandName.isEmpty()) {
-            commandName = info.defaults;
+            commandName = info.defaultCommnad;
         }
 
         // search command
-        Method command = info.infos.get(commandName.toLowerCase());
+        Method command = info.commands.get(commandName.toLowerCase());
 
         if (command == null) {
             throw new Error("Task [" + taskName + "] doesn't has the command [" + commandName + "].");
@@ -112,7 +112,7 @@ public class TaskManager implements ClassListener<Task> {
         if (taskClass == null) {
             throw new Error("You must specify task class.");
         }
-        return (T) I.make(find(Task.computeTaskName(taskClass)).task);
+        return (T) I.make(find(computeTaskName(taskClass)).task);
     }
 
     /**
@@ -123,7 +123,7 @@ public class TaskManager implements ClassListener<Task> {
      * @param name A task name.
      * @return A specified task.
      */
-    private TaskInfo find(String name) {
+    TaskInfo find(String name) {
         if (name == null) {
             throw new Error("You must specify task name.");
         }
@@ -162,12 +162,12 @@ public class TaskManager implements ClassListener<Task> {
      */
     @Override
     public void load(Class<Task> clazz) {
-        String name = Task.computeTaskName(clazz);
+        String name = computeTaskName(clazz);
         Path archive = ClassUtil.getArchive(clazz);
 
         if (Files.isRegularFile(archive)) {
             // common task
-            commons.put(name, new TaskInfo(clazz));
+            commons.put(name, new TaskInfo(name, clazz));
         } else {
             // project specified task
             Map<String, TaskInfo> infos = projects.get(archive);
@@ -176,7 +176,7 @@ public class TaskManager implements ClassListener<Task> {
                 infos = new HashMap();
                 projects.put(archive, infos);
             }
-            infos.put(name, new TaskInfo(clazz));
+            infos.put(name, new TaskInfo(name, clazz));
         }
     }
 
@@ -185,7 +185,7 @@ public class TaskManager implements ClassListener<Task> {
      */
     @Override
     public void unload(Class<Task> clazz) {
-        String name = Task.computeTaskName(clazz);
+        String name = computeTaskName(clazz);
         Path archive = ClassUtil.getArchive(clazz);
 
         if (Files.isRegularFile(archive)) {
@@ -202,45 +202,67 @@ public class TaskManager implements ClassListener<Task> {
     }
 
     /**
-     * @version 2012/04/15 14:13:26
+     * <p>
+     * Compute human-readable task name.
+     * </p>
+     * 
+     * @param taskClass A target task.
+     * @return A task name.
      */
-    private static final class TaskInfo {
+    static final String computeTaskName(Class taskClass) {
+        if (taskClass.isSynthetic()) {
+            return computeTaskName(taskClass.getSuperclass());
+        }
+        return Inputs.hyphenize(taskClass.getSimpleName());
+    }
+
+    /**
+     * @version 2012/05/17 14:55:28
+     */
+    static final class TaskInfo {
 
         /** The task definition. */
         private final Class<Task> task;
 
         /** The default command name. */
-        private String defaults;
+        String defaultCommnad = "help";
 
-        /** The command infos. */
-        private Map<String, Method> infos = new HashMap();
+        /** The actual commands. */
+        final Map<String, Method> commands = new HashMap();
+
+        /** The command descriptions. */
+        final Map<String, String> descriptions = new HashMap();
 
         /**
-         * @param taskClass
+         * @param name
+         * @param task
          */
-        private TaskInfo(Class<Task> taskClass) {
-            this.task = taskClass;
+        private TaskInfo(String name, Class<Task> task) {
+            this.task = task;
 
-            Table<Method, Annotation> methods = ClassUtil.getAnnotations(taskClass);
-
-            for (Entry<Method, List<Annotation>> info : methods.entrySet()) {
+            for (Entry<Method, List<Annotation>> info : ClassUtil.getAnnotations(task).entrySet()) {
                 for (Annotation annotation : info.getValue()) {
                     if (annotation.annotationType() == Command.class) {
-                        Command command = (Command) annotation;
                         Method method = info.getKey();
 
                         // compute command name
-                        String name = method.getName().toLowerCase();
+                        String commnad = method.getName().toLowerCase();
 
                         // register
-                        infos.put(name, method);
+                        commands.put(commnad, method);
 
-                        // check default
-                        if (command.defaults()) {
-                            defaults = name;
+                        if (!commnad.equals("help")) {
+                            descriptions.put(commnad, ((Command) annotation).value());
                         }
                     }
                 }
+            }
+
+            // search default command
+            if (descriptions.size() == 1) {
+                defaultCommnad = descriptions.keySet().iterator().next();
+            } else if (descriptions.containsKey(name)) {
+                defaultCommnad = name;
             }
         }
     }
