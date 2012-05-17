@@ -22,7 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @version 2010/09/05 13:00:53
+ * @version 2012/05/17 15:30:06
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -36,5 +36,5 @@ public @interface Command {
      * 
      * @return
      */
-    String value() default "";
+    String value() default "No document.";
 }
