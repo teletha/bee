@@ -31,19 +31,10 @@ public @interface Command {
 
     /**
      * <p>
-     * Check
-     * </p>
-     * 
-     * @return
-     */
-    boolean defaults() default false;
-
-    /**
-     * <p>
      * Describe this command.
      * </p>
      * 
      * @return
      */
-    String description() default "";
+    String value() default "";
 }

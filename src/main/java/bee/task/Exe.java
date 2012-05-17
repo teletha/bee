@@ -64,7 +64,7 @@ public class Exe extends Task {
         }
     }
 
-    @Command(defaults = true)
+    @Command
     public void build() {
         require(Jar.class).source();
 

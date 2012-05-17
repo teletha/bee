@@ -32,7 +32,7 @@ import bee.tool.Java.JVM;
  */
 public class Test extends Task {
 
-    @Command(defaults = true, description = "Test product code.")
+    @Command("Test product code.")
     public void test() {
         Compile compile = require(Compile.class);
         compile.source();

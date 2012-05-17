@@ -40,7 +40,7 @@ public class Eclipse extends Task {
      * Create eclipse's project file.
      * </p>
      */
-    @Command(defaults = true)
+    @Command
     public void eclipse() {
         createClasspath(project.getRoot().resolve(".classpath"));
         ui.talk("Generate classpath file.");

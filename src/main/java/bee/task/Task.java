@@ -9,16 +9,12 @@
  */
 package bee.task;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map.Entry;
 
 import kiss.I;
-import kiss.model.ClassUtil;
 import bee.UserInterface;
 import bee.api.Project;
-import bee.util.Inputs;
+import bee.task.TaskManager.TaskInfo;
 
 /**
  * @version 2012/04/15 14:26:46
@@ -31,25 +27,13 @@ public abstract class Task {
     /** The user interface. */
     protected final UserInterface ui = I.make(UserInterface.class);
 
-    @Command(description = "Display help message for all commands of this task.")
+    @Command("Display help message for all commands of this task.")
     public void help() {
+        TaskInfo info = I.make(TaskManager.class).find(TaskManager.computeTaskName(getClass()));
 
-        root: for (Entry<Method, List<Annotation>> entry : ClassUtil.getAnnotations(getClass()).entrySet()) {
-            String name = entry.getKey().getName();
-
-            if (!name.equals("help")) {
-                for (Annotation annotation : entry.getValue()) {
-                    if (annotation.annotationType() == Command.class) {
-                        Command command = (Command) annotation;
-
-                        // display usage description for this commnad
-                        ui.talk(name);
-                        ui.talk("    ");
-
-                        continue root;
-                    }
-                }
-            }
+        for (Entry<String, String> entry : info.descriptions.entrySet()) {
+            // display usage description for this command
+            ui.talk(entry.getKey(), " - ", entry.getValue());
         }
     }
 
@@ -65,18 +49,4 @@ public abstract class Task {
         return I.make(TaskManager.class).find(taskClass);
     }
 
-    /**
-     * <p>
-     * Compute human-readable task name.
-     * </p>
-     * 
-     * @param taskClass A target task.
-     * @return A task name.
-     */
-    public static final String computeTaskName(Class taskClass) {
-        if (taskClass.isSynthetic()) {
-            return computeTaskName(taskClass.getSuperclass());
-        }
-        return Inputs.hyphenize(taskClass.getSimpleName());
-    }
 }

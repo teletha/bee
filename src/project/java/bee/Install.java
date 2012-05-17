@@ -23,11 +23,11 @@ public class Install extends bee.task.Install {
      * </p>
      */
     @Override
-    @Command(description = "Install the current Bee into your environment.")
+    @Command("Install the current Bee into your environment.")
     public void project() {
         System.out.println("test");
         require(Jar.class).merge();
-      
+
         BeeInstaller.install(ArtifactLocator.Jar.in(project));
     }
 }

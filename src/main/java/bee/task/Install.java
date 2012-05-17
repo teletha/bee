@@ -18,7 +18,7 @@ import bee.api.Repository;
  */
 public class Install extends Task {
 
-    @Command(defaults = true, description = "Install project into the local repository.")
+    @Command("Install project into the local repository.")
     public void project() {
         require(Test.class).test();
         require(Jar.class).source();
