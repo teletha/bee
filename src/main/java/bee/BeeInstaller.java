@@ -14,20 +14,22 @@ import static bee.Platform.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.tool.Java;
-import bee.tool.Java.JVM;
 import bee.util.Paths;
 
 /**
- * @version 2011/03/23 18:55:51
+ * @version 2012/05/17 16:45:46
  */
 public class BeeInstaller {
+
+    /** The date formatter. */
+    private static final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
 
     /**
      * <p>
@@ -46,13 +48,17 @@ public class BeeInstaller {
      * @param source
      */
     public static final void install(Path source) {
-        Path dest = JavaHome.resolve("lib/bee.jar");
-
         try {
-            if (Files.exists(dest)) {
+            String fileName = "bee-" + format.format(new Date(Files.getLastModifiedTime(source).toMillis())) + ".jar";
+            Path dest = JavaHome.resolve("lib/bee/" + fileName);
 
-                Path renamed = JavaHome.resolve("lib/bee2.jar");
-                Files.move(dest, renamed, StandardCopyOption.REPLACE_EXISTING);
+            // delete old files
+            for (Path jar : I.walk(dest.getParent())) {
+                try {
+                    Files.delete(jar);
+                } catch (Exception e) {
+                    // we can't delete current processing jar file.
+                }
             }
 
             if (Paths.getLastModified(source) != Paths.getLastModified(dest)) {
@@ -77,38 +83,6 @@ public class BeeInstaller {
             Files.write(Bee, bat, I.$encoding);
         } catch (IOException e) {
             throw I.quiet(e);
-        }
-    }
-
-    private static void install() {
-        try {
-            Path temp = I.locateTemporary();
-            Files.createDirectories(temp);
-            Path bee = temp.resolve("bee.jar");
-
-            I.copy(ClassUtil.getArchive(BeeInstaller.class), bee);
-
-            Java sub = new Java();
-            sub.addClassPath(bee);
-            sub.run(Sub.class);
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-    }
-
-    /**
-     * @version 2012/04/27 16:31:34
-     */
-    private static class Sub extends JVM {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected boolean process() {
-            ui.error(bee.Bee.AbortedByUser);
-            I.copy(ClassUtil.getArchive(BeeInstaller.class), Platform.Bee);
-            return false;
         }
     }
 }
