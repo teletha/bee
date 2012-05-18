@@ -295,7 +295,7 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            public RuntimeException error(Object... messages) {
+            public void error(Object... messages) {
                 for (Object message : messages) {
                     if (message instanceof Throwable) {
                         StringBuilder builder = new StringBuilder();
@@ -305,7 +305,6 @@ public class Java {
                         transporter.error(builder.toString());
                     }
                 }
-                return null;
             }
 
             /**

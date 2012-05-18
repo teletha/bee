@@ -29,7 +29,7 @@ import bee.task.Command;
  * Interactive user interface.
  * </p>
  * 
- * @version 2011/03/23 16:30:28
+ * @version 2012/05/18 11:58:07
  */
 public abstract class UserInterface {
 
@@ -75,15 +75,15 @@ public abstract class UserInterface {
      * 
      * @param message Your emergency message.
      */
-    public RuntimeException error(Object... messages) {
+    public void error(Object... messages) {
         talk("[ERROR] ", messages);
 
-        for (Object message : messages) {
-            if (message instanceof Throwable) {
-                return I.quiet(message);
-            }
-        }
-        return I.quiet(new Error(build(messages)));
+        // for (Object message : messages) {
+        // if (message instanceof Throwable) {
+        // return bee.Bee.AbortedByUser;
+        // }
+        // }
+        // return I.quiet(new Error(build(messages)));
     }
 
     /**
@@ -189,12 +189,12 @@ public abstract class UserInterface {
      */
     public <T> T ask(String question, List<T> items) {
         if (items == null) {
-            throw error("Question needs some items. [", question, "]");
+            throw new Error(build("Question needs some items. [" + question, "]"));
         }
 
         switch (items.size()) {
         case 0:
-            throw error("Question needs some items. [", question, "]");
+            throw new Error(build("Question needs some items. [", question, "]"));
 
         case 1:
             return items.get(0); // unconditionally
@@ -225,7 +225,7 @@ public abstract class UserInterface {
      */
     public <E extends Enum> E ask(String question, Class<E> enumeration) {
         if (enumeration == null) {
-            throw error("Question needs some items. [", question, "]");
+            throw new Error(build("Question needs some items. [", question, "]"));
         }
         return ask(question, Arrays.asList(enumeration.getEnumConstants()));
     }
