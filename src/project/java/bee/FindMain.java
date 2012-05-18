@@ -10,15 +10,11 @@
 package bee;
 
 /**
- * @version 2012/04/19 12:40:04
+ * @version 2012/05/18 10:56:43
  */
 public class FindMain extends bee.task.FindMain {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String main() {
-        return "bee.BeeInstaller";
+    {
+        main = "bee.BeeInstaller";
     }
 }

@@ -19,13 +19,13 @@ import bee.api.ProjectSpecific;
 import bee.util.Inputs;
 
 /**
- * @version 2012/04/10 16:18:04
+ * @version 2012/05/18 10:44:28
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 class CommandInterceptor extends Interceptor<Command> {
 
-    /** The executed commands pool. */
-    private final Map<String, Object> commands = new HashMap();
+    /** The executed commands results. */
+    private final Map<String, Object> results = new HashMap();
 
     /** The user interface. */
     private final UserInterface ui;
@@ -44,14 +44,14 @@ class CommandInterceptor extends Interceptor<Command> {
     protected Object invoke(Object... params) {
         String name = Inputs.hyphenize(that.getClass().getSuperclass().getSimpleName()) + ":" + this.name;
 
-        Object result = commands.get(name);
+        Object result = results.get(name);
 
-        if (!commands.containsKey(name)) {
+        if (!results.containsKey(name)) {
             ui.startCommand(name, annotation);
             result = super.invoke(params);
             ui.endCommand(name, annotation);
 
-            commands.put(name, result);
+            results.put(name, result);
         }
         return result;
     }

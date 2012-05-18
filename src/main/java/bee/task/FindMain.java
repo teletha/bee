@@ -16,8 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kiss.I;
-import kiss.Manageable;
-import kiss.Singleton;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -25,10 +23,18 @@ import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
 /**
- * @version 2012/04/11 14:17:35
+ * @version 2012/05/18 10:48:41
  */
-@Manageable(lifestyle = Singleton.class)
 public class FindMain extends Task {
+
+    /** In subclass, you can specify the fully qualified class name for project main class. */
+    protected String main;
+
+    /** In subclass, you can specify the fully qualified class name for project premain class. */
+    protected String premain;
+
+    /** In subclass, you can specify the fully qualified class name for project agentmain class. */
+    protected String agentmain;
 
     /** The main classes. */
     private List<String> mains = new ArrayList();
@@ -51,9 +57,15 @@ public class FindMain extends Task {
      */
     @Command("Find main class.")
     public String main() {
-        analyze();
+        if (main == null) {
+            analyze();
 
-        return ui.ask("Multiple main classes were detected. Which one do you use?", mains);
+            main = ui.ask("Multiple main classes were detected. Which one do you use?", mains);
+        }
+
+        ui.talk("Using ", main, " as main class.");
+
+        return main;
     }
 
     /**
@@ -65,9 +77,15 @@ public class FindMain extends Task {
      */
     @Command("Find premain class.")
     public String premain() {
-        analyze();
+        if (premain == null) {
+            analyze();
 
-        return ui.ask("Multiple premain classes were detected. Which one do you use?", premains);
+            premain = ui.ask("Multiple premain classes were detected. Which one do you use?", premains);
+        }
+
+        ui.talk("Using ", premain, " as premain class.");
+
+        return premain;
     }
 
     /**
@@ -79,9 +97,15 @@ public class FindMain extends Task {
      */
     @Command("Find agentmain class.")
     public String agentmain() {
-        analyze();
+        if (agentmain == null) {
+            analyze();
 
-        return ui.ask("Multiple agentmain classes were detected. Which one do you use?", agentmains);
+            agentmain = ui.ask("Multiple agentmain classes were detected. Which one do you use?", agentmains);
+        }
+
+        ui.talk("Using ", agentmain, " as agentmain class.");
+
+        return agentmain;
     }
 
     /**

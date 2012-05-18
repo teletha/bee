@@ -48,6 +48,8 @@ public class BeeInstaller {
      * @param source
      */
     public static final void install(Path source) {
+        UserInterface ui = I.make(UserInterface.class);
+
         try {
             String fileName = "bee-" + format.format(new Date(Files.getLastModifiedTime(source).toMillis())) + ".jar";
             Path dest = JavaHome.resolve("lib/bee/" + fileName);
@@ -66,6 +68,7 @@ public class BeeInstaller {
                 // We should copy it to JDK directory.
                 // This process is mainly used by Bee users while install phase.
                 I.copy(source, dest);
+                ui.talk("Install new bee library. [", dest, "]");
             }
 
             // create bat file
@@ -81,6 +84,8 @@ public class BeeInstaller {
                 // TODO
             }
             Files.write(Bee, bat, I.$encoding);
+
+            ui.talk("Write new bat file. [", Bee, "]");
         } catch (IOException e) {
             throw I.quiet(e);
         }
