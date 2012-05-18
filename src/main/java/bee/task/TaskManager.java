@@ -29,7 +29,7 @@ import bee.api.Project;
 import bee.util.Inputs;
 
 /**
- * @version 2012/04/15 14:13:34
+ * @version 2012/05/17 16:49:24
  */
 @Manageable(lifestyle = Singleton.class)
 public class TaskManager implements ClassListener<Task> {
