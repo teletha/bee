@@ -49,10 +49,10 @@ public class Eclipse extends Task {
         ui.talk("Generate factorypath file.");
 
         createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
-        ui.talk("Generate pref file.");
+        ui.talk("Generate APT preference file.");
 
         createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
-        ui.talk("Generate pref file.");
+        ui.talk("Generate JDT preference file.");
     }
 
     /**
