@@ -21,6 +21,9 @@ import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
+import bee.api.Project;
+import bee.api.Repository;
+import bee.util.JarArchiver;
 import bee.util.Paths;
 
 /**
@@ -86,8 +89,27 @@ public class BeeInstaller {
             Files.write(Bee, bat, I.$encoding);
 
             ui.talk("Write new bat file. [", Bee, "]");
+
+            // create bee-api library
+            Path library = I.locateTemporary();
+
+            JarArchiver archiver = new JarArchiver();
+            archiver.add(source, Project.class.getPackage().getName().replace('.', '/').concat("/**"));
+            archiver.pack(library);
+
+            I.make(Repository.class).install(new BeeApiProject(), library);
         } catch (IOException e) {
             throw I.quiet(e);
+        }
+    }
+
+    /**
+     * @version 2012/05/19 14:17:38
+     */
+    private static class BeeApiProject extends Project {
+
+        {
+            name("npc", "bee-api", bee.Bee.Version);
         }
     }
 }

@@ -27,6 +27,7 @@ import java.util.Properties;
 
 import kiss.Element;
 import kiss.I;
+import bee.Bee;
 import bee.api.Library;
 import bee.api.Scope;
 
@@ -48,11 +49,11 @@ public class Eclipse extends Task {
         createFactorypath(project.getRoot().resolve(".factorypath"));
         ui.talk("Generate factorypath file.");
 
-        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
-        ui.talk("Generate APT preference file.");
-
-        createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
-        ui.talk("Generate JDT preference file.");
+        // createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
+        // ui.talk("Generate APT preference file.");
+        //
+        // createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
+        // ui.talk("Generate JDT preference file.");
     }
 
     /**
@@ -99,6 +100,10 @@ public class Eclipse extends Task {
                 }
                 doc.append(e);
             }
+        }
+
+        for (Library lib : project.getLibrary("npc", "bee-api", Bee.Version)) {
+            doc.append($("classpathentry").attr("kind", "lib").attr("path", lib.getJar()));
         }
         doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
 

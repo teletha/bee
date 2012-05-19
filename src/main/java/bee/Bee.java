@@ -37,6 +37,9 @@ import bee.util.Stopwatch;
  */
 public class Bee {
 
+    /** Bee product version. */
+    public static final String Version = "0.1";
+
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 
@@ -308,8 +311,24 @@ public class Bee {
             for (IDE ide : IDE.values()) {
                 if (ide.exist(root)) {
                     this.ide = ide;
+                    return;
                 }
             }
+
+            // build environemnt
+            ui.talk("Develop environemnt is not found.");
+
+            if (!ui.confirm("Create new develop environemnt?")) {
+                ui.talk("See you later!");
+                throw Bee.AbortedByUser;
+            }
+
+            ui.title("Create New Environment");
+
+            IDE ide = ui.ask("Bee supports the following IDEs.", IDE.class);
+            ide.create(root);
+
+            ui.talk("Create ", ide.name(), "'s configuration files.");
         }
 
         /**

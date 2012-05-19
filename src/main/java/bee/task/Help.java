@@ -11,6 +11,7 @@ package bee.task;
 
 import java.util.Locale;
 
+import bee.Bee;
 import bee.Platform;
 
 /**
@@ -20,7 +21,7 @@ public class Help extends Task {
 
     @Command("Display environment.")
     public void version() {
-        ui.talk("Bee version: 0.1");
+        ui.talk("Bee version: ", Bee.Version);
         ui.talk("Java version: ", System.getProperty("java.version"), " by ", System.getProperty("java.vendor"));
         ui.talk("Java home: ", Platform.JavaHome);
         ui.talk("Locale: ", Locale.getDefault().getDisplayName());
