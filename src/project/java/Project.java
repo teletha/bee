@@ -7,6 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
+import bee.Bee;
 
 /**
  * @version 2012/03/20 15:45:08
@@ -16,7 +17,7 @@ public class Project extends bee.api.Project {
     private String aetherVersion = "1.13.1";
 
     {
-        name("npc", "bee", "0.1");
+        name("npc", "bee", Bee.Version);
         describe("Task based project builder for Java");
 
         require("npc", "sinobu", "0.9.1");
