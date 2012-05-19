@@ -97,19 +97,9 @@ public class BeeInstaller {
             archiver.add(source, Project.class.getPackage().getName().replace('.', '/').concat("/**"));
             archiver.pack(library);
 
-            I.make(Repository.class).install(new BeeApiProject(), library);
+            I.make(Repository.class).install(bee.Bee.API, library);
         } catch (IOException e) {
             throw I.quiet(e);
-        }
-    }
-
-    /**
-     * @version 2012/05/19 14:17:38
-     */
-    private static class BeeApiProject extends Project {
-
-        {
-            name("npc", "bee-api", bee.Bee.Version);
         }
     }
 }

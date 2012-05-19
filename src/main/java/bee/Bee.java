@@ -37,8 +37,13 @@ import bee.util.Stopwatch;
  */
 public class Bee {
 
-    /** Bee product version. */
-    public static final String Version = "0.1";
+    /** The api project. */
+    public static final Project API = new Project() {
+
+        {
+            name("npc", "bee-api", "0.1");
+        }
+    };
 
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();

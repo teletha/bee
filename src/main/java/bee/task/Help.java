@@ -21,7 +21,7 @@ public class Help extends Task {
 
     @Command("Display environment.")
     public void version() {
-        ui.talk("Bee version: ", Bee.Version);
+        ui.talk("Bee version: ", Bee.API.getVersion());
         ui.talk("Java version: ", System.getProperty("java.version"), " by ", System.getProperty("java.vendor"));
         ui.talk("Java home: ", Platform.JavaHome);
         ui.talk("Locale: ", Locale.getDefault().getDisplayName());
