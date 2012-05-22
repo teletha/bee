@@ -21,7 +21,6 @@ import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.api.Project;
 import bee.api.Repository;
 import bee.util.JarArchiver;
 import bee.util.Paths;
@@ -94,7 +93,7 @@ public class BeeInstaller {
             Path library = I.locateTemporary();
 
             JarArchiver archiver = new JarArchiver();
-            archiver.add(source, Project.class.getPackage().getName().replace('.', '/').concat("/**"));
+            archiver.add(source, "bee/**");
             archiver.pack(library);
 
             I.make(Repository.class).install(bee.Bee.API, library);

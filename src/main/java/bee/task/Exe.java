@@ -65,7 +65,7 @@ public class Exe extends Task {
     }
 
     @Command
-    public void build() {
+    public Path build() {
         require(Jar.class).source();
 
         try {
@@ -123,6 +123,8 @@ public class Exe extends Task {
                 zip.add("lib", library.getJar());
             }
             zip.pack(zipOutput);
+
+            return zipOutput;
         } catch (Exception e) {
             throw I.quiet(e);
         }
