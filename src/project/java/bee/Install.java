@@ -11,6 +11,7 @@ package bee;
 
 import bee.api.ArtifactLocator;
 import bee.task.Command;
+import bee.util.ZipArchiver;
 
 /**
  * @version 2012/05/10 10:29:33
@@ -28,5 +29,8 @@ public class Install extends bee.task.Install {
         require(Jar.class).merge();
 
         BeeInstaller.install(ArtifactLocator.Jar.in(project));
+        ZipArchiver archiver = new ZipArchiver();
+        archiver.add(ArtifactLocator.Jar.in(project));
+        archiver.unpack(project.getOutput().resolve("test"));
     }
 }
