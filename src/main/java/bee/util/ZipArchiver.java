@@ -15,6 +15,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
@@ -121,6 +122,29 @@ public class ZipArchiver {
                 } finally {
                     archiver.dispose();
                 }
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Pack all resources.
+     * </p>
+     * 
+     * @param location
+     */
+    public void unpack(Path location) {
+        try {
+            Files.createDirectories(location);
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+
+        for (Entry entry : entries) {
+            try {
+                I.copy(FileSystems.newFileSystem(entry.base, I.$loader).getPath("/"), location, entry.patterns);
             } catch (IOException e) {
                 throw I.quiet(e);
             }
