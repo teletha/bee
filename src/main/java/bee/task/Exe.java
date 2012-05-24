@@ -46,7 +46,7 @@ public class Exe extends Task {
     private final Path zipOutput;
 
     /** The location for icon of exe file. */
-    private Path icon;
+    protected Path icon;
 
     /**
      * 

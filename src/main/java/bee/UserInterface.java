@@ -54,7 +54,13 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public void talk(Object... messages) {
-        write(build(messages, EOL));
+        Object last = messages[messages.length - 1];
+
+        if (last instanceof String && ((String) last).endsWith("\r")) {
+            write(build(messages));
+        } else {
+            write(build(messages, EOL));
+        }
     }
 
     /**
