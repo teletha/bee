@@ -34,5 +34,7 @@ public class Project extends bee.api.Project {
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
         unrequire("org.sonatype.sisu", "*");
+
+        require("xerces", "xercesImpl", "2.9.1");
     }
 }

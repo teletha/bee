@@ -15,18 +15,19 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import kiss.Disposable;
@@ -135,19 +136,23 @@ public class ZipArchiver {
      * 
      * @param location
      */
-    public void unpack(Path location) {
-        try {
-            Files.createDirectories(location);
+    public static void unpack(Path input, Path output) {
+        try (ZipFile zip = new ZipFile(input.toFile(), Platform.Encoding)) {
+            Enumeration<? extends ZipEntry> items = zip.entries();
+
+            while (items.hasMoreElements()) {
+                ZipEntry entry = items.nextElement();
+                Path path = output.resolve(entry.getName());
+
+                if (entry.isDirectory()) {
+                    Files.createDirectories(path);
+                } else {
+                    Files.createDirectories(path.getParent());
+                    I.copy(zip.getInputStream(entry), Files.newOutputStream(path), false);
+                }
+            }
         } catch (IOException e) {
             throw I.quiet(e);
-        }
-
-        for (Entry entry : entries) {
-            try {
-                I.copy(FileSystems.newFileSystem(entry.base, I.$loader).getPath("/"), location, entry.patterns);
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
         }
     }
 
