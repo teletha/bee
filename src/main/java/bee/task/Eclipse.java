@@ -46,14 +46,39 @@ public class Eclipse extends Task {
         createClasspath(project.getRoot().resolve(".classpath"));
         ui.talk("Generate classpath file.");
 
-        createFactorypath(project.getRoot().resolve(".factorypath"));
-        ui.talk("Generate factorypath file.");
+        // createFactorypath(project.getRoot().resolve(".factorypath"));
+        // ui.talk("Generate factorypath file.");
+
+        createProject(project.getRoot().resolve(".project"));
+        ui.talk("Generate project file.");
 
         // createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
         // ui.talk("Generate APT preference file.");
         //
         // createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
         // ui.talk("Generate JDT preference file.");
+    }
+
+    /**
+     * <p>
+     * Create project file.
+     * </p>
+     * 
+     * @param file
+     */
+    private void createProject(Path file) {
+        Element doc = $("projectDescription");
+        doc.add("buildSpec").add("buildCommand").add("name").text("org.eclipse.jdt.core.javabuilder");
+        doc.append($("name").text(project.getProduct()));
+        doc.append($("comment").text(project.getDescription()));
+        doc.append($("buildSpec").append($("buildCommand").append($("name").text("org.eclipse.jdt.core.javabuilder"))));
+        doc.append($("natures").append($("nature").text("org.eclipse.jdt.core.javanature")));
+
+        try {
+            Files.write(file, doc.toString().getBytes());
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**

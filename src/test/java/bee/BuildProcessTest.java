@@ -7,23 +7,17 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.license;
+package bee;
 
-import java.util.List;
-
-import kiss.Extensible;
+import org.junit.Test;
 
 /**
- * @version 2012/01/27 0:37:30
+ * @version 2012/07/05 14:51:44
  */
-public interface License extends Extensible {
+public class BuildProcessTest {
 
-    /**
-     * <p>
-     * Write lisence text.
-     * </p>
-     * 
-     * @return
-     */
-    List<String> text();
+    @Test
+    public void build() throws Exception {
+        
+    }
 }
