@@ -68,7 +68,6 @@ public class Eclipse extends Task {
      */
     private void createProject(Path file) {
         Element doc = $("projectDescription");
-        doc.add("buildSpec").add("buildCommand").add("name").text("org.eclipse.jdt.core.javabuilder");
         doc.append($("name").text(project.getProduct()));
         doc.append($("comment").text(project.getDescription()));
         doc.append($("buildSpec").append($("buildCommand").append($("name").text("org.eclipse.jdt.core.javabuilder"))));
