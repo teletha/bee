@@ -10,18 +10,16 @@
 package bee.task;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import kiss.I;
-import kiss.model.ClassUtil;
+import bee.Platform;
 import bee.api.ArtifactLocator;
 import bee.api.Library;
 import bee.api.Scope;
-import bee.util.JarArchiver;
 import bee.util.ProcessMaker;
 import bee.util.ZipArchiver;
 
@@ -30,17 +28,14 @@ import bee.util.ZipArchiver;
  */
 public class Exe extends Task {
 
-    /** The builder file name. */
-    private static final String exeBuilderName = "exewrap.exe";
+    /** The icon exchanger file name. */
+    private static final String iconChangerName = "ResHacker.exe";
 
     /** The temporary directory. */
     private final Path temporary;
 
-    /** The location of exewrap.exe. */
-    private final Path exeBuilder;
-
-    /** The output for the generated exe file. */
-    private final Path exeOutput;
+    /** The location of icon changer. */
+    private final Path iconChanger;
 
     /** The output for the generated zip file. */
     private final Path zipOutput;
@@ -54,11 +49,11 @@ public class Exe extends Task {
     public Exe() {
         try {
             temporary = I.locateTemporary();
-            exeBuilder = temporary.resolve(exeBuilderName);
-            exeOutput = temporary.resolve(project.getProduct() + ".exe");
+            iconChanger = temporary.resolve(iconChangerName);
             zipOutput = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".zip");
 
             Files.createDirectories(temporary);
+            System.out.println(Files.isDirectory(temporary));
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -69,59 +64,21 @@ public class Exe extends Task {
         require(Jar.class).source();
 
         try {
-            // search main classes
-            String main = require(FindMain.class).main();
-
-            // create temporary executable jar
-            Path jar = temporary.resolve("exe.jar");
-
-            JarArchiver archiver = new JarArchiver();
-            archiver.setMainClass(Activator.class);
-            archiver.add(ClassUtil.getArchive(Activator.class), "**/" + Exe.class.getSimpleName() + "$" + Activator.class.getSimpleName() + ".class");
-            archiver.pack(jar);
-
-            // unzip exewrap.exe
-            I.copy(Exe.class.getResourceAsStream(exeBuilderName), Files.newOutputStream(exeBuilder), true);
-
-            // build command line
-            List<String> command = new ArrayList();
-            command.add(exeBuilder.toString());
-            command.add("-g");
-            command.add("-o");
-            command.add(exeOutput.toString());
-            command.add("-j");
-            command.add(jar.toString());
-            command.add("-v");
-            command.add(project.getVersion().replace('-', '.'));
-            command.add("-t");
-            command.add(project.getJavaVersion());
-            command.add("-a");
-            command.add("-DMainClass=" + main);
-
-            String description = project.getDescription();
-
-            if (description.length() != 0) {
-                command.add("-d");
-                command.add(description);
-            }
-
-            if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
-                command.add("-i");
-                command.add(icon.toAbsolutePath().toString());
-            }
-
-            // execute exewrap.exe
-            ProcessMaker maker = new ProcessMaker();
-            maker.setWorkingDirectory(exeBuilder.getParent());
-            maker.run(command);
-
             // pack with dependency libraries
             ZipArchiver zip = new ZipArchiver();
-            zip.add(exeOutput);
+
+            ui.talk("Building 32bit application.");
+            build(zip, "");
+
+            ui.talk("Building 64bit application.");
+            build(zip, "64");
+
             zip.add("lib", ArtifactLocator.Jar.in(project));
             for (Library library : project.getDependency(Scope.Runtime)) {
                 zip.add("lib", library.getJar());
             }
+
+            ui.talk("Packing application files.");
             zip.pack(zipOutput);
 
             return zipOutput;
@@ -131,23 +88,55 @@ public class Exe extends Task {
     }
 
     /**
-     * @version 2012/04/11 13:54:42
+     * <p>
+     * Helper method to build windows native application launcher.
+     * </p>
+     * 
+     * @param archiver
+     * @param suffix
      */
-    private static final class Activator {
+    private void build(ZipArchiver archiver, String suffix) {
+        Path settingFile = temporary.resolve(project.getProduct() + suffix + ".lap");
+        Path exeFile = temporary.resolve(project.getProduct() + suffix + ".exe");
 
-        /**
-         * <p>
-         * Application Activation Acession.
-         * </p>
-         * 
-         * @param args
-         */
-        @SuppressWarnings("unused")
-        static final void main(String[] args) throws Exception {
-            Class clazz = Class.forName(System.getProperty("MainClass"));
-            Method main = clazz.getMethod("main", String[].class);
+        try {
+            // search main classes
+            String main = require(FindMain.class).main();
 
-            main.invoke(null, (Object) new String[] {});
+            // write setting file
+            List<String> setting = new ArrayList();
+            setting.add("janel.main.class=" + main);
+            setting.add("janel.classpath.jars.dir=lib");
+            Files.write(settingFile, setting, Platform.Encoding);
+
+            // copy exe launcher
+            I.copy(Exe.class.getResourceAsStream("JanelWindows" + suffix + ".exe"), Files.newOutputStream(exeFile), true);
+
+            if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
+                // unzip icon changer
+                I.copy(Exe.class.getResourceAsStream(iconChangerName), Files.newOutputStream(iconChanger), true);
+
+                // build command line
+                List<String> command = new ArrayList();
+                command.add(iconChanger.toString());
+                command.add("-addoverwrite");
+                command.add(exeFile.toString() + ",");
+                command.add(exeFile.toString() + ",");
+                command.add(icon.toAbsolutePath() + ",");
+                command.add("ICONGROUP,");
+                command.add("101,");
+
+                // execute icon changer
+                ProcessMaker maker = new ProcessMaker();
+                maker.setWorkingDirectory(iconChanger.getParent());
+                maker.run(command);
+            }
+        } catch (Exception e) {
+            throw I.quiet(e);
         }
+
+        // pack
+        archiver.add(settingFile);
+        archiver.add(exeFile);
     }
 }

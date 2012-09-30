@@ -223,27 +223,28 @@ public class Bee {
             if (updated) {
                 try {
                     // search Project from the specified file systems
-                    Path sources = root.resolve("src/project/java");
-                    Path classes = root.resolve("target/project-classes");
-                    Path projectSource = sources.resolve(ProjectFile + ".java");
-                    if (Files.notExists(classes.resolve(ProjectFile + ".class"))) find();
+                    Path sources = root.resolve("src");
+                    Path projectSources = sources.resolve("project/java");
+                    Path projectClasses = root.resolve("target/project-classes");
+                    Path projectFileSource = projectSources.resolve(ProjectFile + ".java");
+                    if (Files.notExists(projectClasses.resolve(ProjectFile + ".class"))) searchDevelopEnvironment();
 
                     // unload old project
-                    I.unload(classes);
+                    I.unload(projectClasses);
 
                     // write project source if needed
-                    scaffold(projectSource);
+                    scaffold(projectSources, projectFileSource);
 
                     // compile project sources if needed
-                    compile(sources, classes);
+                    compile(projectSources, projectClasses);
 
                     // load new project
-                    ClassLoader loader = I.load(classes);
+                    ClassLoader loader = I.load(projectClasses);
 
                     // create project
                     project = (Project) I.make(Class.forName(ProjectFile, true, loader));
 
-                    if (observer == null) observer = I.observe(sources, this);
+                    if (observer == null) observer = I.observe(projectSources, this);
                 } catch (Exception e) {
                     throw I.quiet(e);
                 }
@@ -259,9 +260,9 @@ public class Bee {
          * Create project skeleton.
          * </p>
          */
-        private void scaffold(Path source) throws Exception {
-            if (Files.notExists(source)) {
-                ui.talk("Project definition is not found. [" + source + "]");
+        private void scaffold(Path sourceDirectory, Path projectFile) throws Exception {
+            if (Files.notExists(projectFile)) {
+                ui.talk("Project definition is not found. [" + projectFile + "]");
 
                 if (!ui.confirm("Create new project?")) {
                     ui.talk("See you later!");
@@ -282,9 +283,10 @@ public class Bee {
                 code.add("  }");
                 code.add("}");
 
-                Files.createDirectories(source.getParent());
-                Files.write(source, code, StandardCharsets.UTF_8);
+                Files.createDirectories(projectFile.getParent());
+                Files.write(projectFile, code, StandardCharsets.UTF_8);
                 ui.talk("Generate project definition.");
+
             }
         }
 
@@ -311,7 +313,7 @@ public class Bee {
          * Search develop environemnt.
          * </p>
          */
-        private void find() {
+        private void searchDevelopEnvironment() {
             // search existing environment
             for (IDE ide : IDE.values()) {
                 if (ide.exist(root)) {
