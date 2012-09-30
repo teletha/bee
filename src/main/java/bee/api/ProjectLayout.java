@@ -16,7 +16,7 @@ import kiss.I;
 /**
  * @version 2012/04/17 13:02:56
  */
-public enum Layout {
+public enum ProjectLayout {
 
     /** The source directory. */
     Source("src"),
@@ -43,7 +43,7 @@ public enum Layout {
      * 
      * @param path A relative path.
      */
-    private Layout(String path) {
+    private ProjectLayout(String path) {
         this.path = I.locate(path);
     }
 
@@ -55,7 +55,7 @@ public enum Layout {
      * @param base A base path.
      * @param path A relative path.
      */
-    private Layout(Layout base, String path) {
+    private ProjectLayout(ProjectLayout base, String path) {
         this.path = base.path.resolve(path);
     }
 
