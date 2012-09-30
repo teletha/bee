@@ -53,7 +53,6 @@ public class Exe extends Task {
             zipOutput = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".zip");
 
             Files.createDirectories(temporary);
-            System.out.println(Files.isDirectory(temporary));
         } catch (IOException e) {
             throw I.quiet(e);
         }
