@@ -66,10 +66,7 @@ public class Exe extends Task {
             // pack with dependency libraries
             ZipArchiver zip = new ZipArchiver();
 
-            ui.talk("Building 32bit application.");
             build(zip, "");
-
-            ui.talk("Building 64bit application.");
             build(zip, "64");
 
             zip.add("lib", ArtifactLocator.Jar.in(project));
@@ -77,7 +74,7 @@ public class Exe extends Task {
                 zip.add("lib", library.getJar());
             }
 
-            ui.talk("Packing application files.");
+            ui.talk("Packing application and libraries.");
             zip.pack(zipOutput);
 
             return zipOutput;
@@ -107,9 +104,11 @@ public class Exe extends Task {
             setting.add("janel.main.class=" + main);
             setting.add("janel.classpath.jars.dir=lib");
             Files.write(settingFile, setting, Platform.Encoding);
+            ui.talk("Write " + settingFile.getFileName() + ".");
 
             // copy exe launcher
             I.copy(Exe.class.getResourceAsStream("JanelWindows" + suffix + ".exe"), Files.newOutputStream(exeFile), true);
+            ui.talk("Write " + exeFile.getFileName() + ".");
 
             if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
                 // unzip icon changer
