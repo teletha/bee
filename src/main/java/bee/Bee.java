@@ -227,7 +227,6 @@ public class Bee {
                     Path projectSources = sources.resolve("project/java");
                     Path projectClasses = root.resolve("target/project-classes");
                     Path projectFileSource = projectSources.resolve(ProjectFile + ".java");
-                    if (Files.notExists(projectClasses.resolve(ProjectFile + ".class"))) searchDevelopEnvironment();
 
                     // unload old project
                     I.unload(projectClasses);
@@ -245,6 +244,8 @@ public class Bee {
                     project = (Project) I.make(Class.forName(ProjectFile, true, loader));
 
                     if (observer == null) observer = I.observe(projectSources, this);
+
+                    if (Files.notExists(projectClasses.resolve(ProjectFile + ".class"))) searchDevelopEnvironment();
                 } catch (Exception e) {
                     throw I.quiet(e);
                 }
@@ -286,7 +287,6 @@ public class Bee {
                 Files.createDirectories(projectFile.getParent());
                 Files.write(projectFile, code, StandardCharsets.UTF_8);
                 ui.talk("Generate project definition.");
-
             }
         }
 
