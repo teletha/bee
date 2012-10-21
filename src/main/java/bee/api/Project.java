@@ -38,7 +38,6 @@ import org.apache.maven.wagon.PathUtils;
 import org.sonatype.aether.graph.Exclusion;
 import org.sonatype.aether.repository.RemoteRepository;
 
-import bee.license.License;
 import bee.util.PathSet;
 
 /**
