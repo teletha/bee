@@ -38,6 +38,7 @@ import org.apache.maven.wagon.PathUtils;
 import org.sonatype.aether.graph.Exclusion;
 import org.sonatype.aether.repository.RemoteRepository;
 
+import bee.license.License;
 import bee.util.PathSet;
 
 /**
@@ -75,6 +76,9 @@ public class Project {
     /** The requirement of Java version. */
     private SourceVersion requirementJavaVersion;
 
+    /** The license. */
+    private License license = License.MIT;
+
     /** The input base directory. */
     private Path input;
 
@@ -85,14 +89,21 @@ public class Project {
      * 
      */
     protected Project() {
-        Path archive = ClassUtil.getArchive(getClass());
+        Class projectClass = getClass();
 
-        if (Files.isDirectory(archive)) {
-            // directory
-            this.root = archive.getParent().getParent();
+        if (projectClass.isMemberClass()) {
+            // fabric project
+            this.root = I.locate("").toAbsolutePath();
         } else {
-            // some archive
-            this.root = archive;
+            Path archive = ClassUtil.getArchive(projectClass);
+
+            if (Files.isDirectory(archive)) {
+                // directory
+                this.root = archive.getParent().getParent();
+            } else {
+                // some archive
+                this.root = archive;
+            }
         }
 
         setInput((Path) null);
@@ -440,6 +451,39 @@ public class Project {
      */
     public Path getProjectClasses() {
         return output.resolve("project-classes");
+    }
+
+    /**
+     * <p>
+     * Returns project source file.
+     * </p>
+     * 
+     * @return
+     */
+    public Path getProjectSourceFile() {
+        return input.resolve("project/java/Project.java");
+    }
+
+    /**
+     * <p>
+     * Returns project source file.
+     * </p>
+     * 
+     * @return
+     */
+    public Path getProjectClassFile() {
+        return getProjectClasses().resolve("Project.class");
+    }
+
+    /**
+     * <p>
+     * Returns project license.
+     * </p>
+     * 
+     * @return
+     */
+    public License getLicense() {
+        return license;
     }
 
     /**

@@ -32,6 +32,7 @@ enum IDE {
          */
         @Override
         void create(Path directory) {
+            new bee.task.Eclipse().eclipse();
         }
     },
 

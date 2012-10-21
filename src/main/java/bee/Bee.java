@@ -16,12 +16,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import kiss.Disposable;
 import kiss.I;
-import kiss.PathListener;
 import kiss.model.ClassUtil;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
+import bee.license.License;
 import bee.task.TaskManager;
 import bee.util.Stopwatch;
 
@@ -61,8 +60,11 @@ public class Bee {
     /** The project root directory. */
     private final Path root;
 
-    /** The project builder. */
-    private final ProjectBuilder builder;
+    /** The current project. */
+    private Project project;
+
+    /** The current develop environment. */
+    private IDE ide;
 
     /**
      * <p>
@@ -116,9 +118,19 @@ public class Bee {
         // configure project root directory and message notifier
         this.root = directory.toAbsolutePath();
         this.ui = ui;
+        this.project = new FavricProject();
 
-        // find project and build it
-        this.builder = new ProjectBuilder();
+        injectProject();
+    }
+
+    /**
+     * <p>
+     * Inject {@link Project} and {@link UserInterface}.
+     * </p>
+     */
+    private void injectProject() {
+        ProjectLifestyle.local.set(project);
+        UserInterfaceLisfestyle.local.set(ui);
     }
 
     /**
@@ -144,12 +156,37 @@ public class Bee {
         Stopwatch stopwatch = new Stopwatch().start();
 
         try {
-            // build project
+            // =====================================
+            // build my project
+            // =====================================
             ui.talk("Finding your project...");
-            Project project = builder.build();
 
-            ProjectLifestyle.local.set(project);
-            UserInterfaceLisfestyle.local.set(ui);
+            // unload old project
+            I.unload(project.getProjectClasses());
+
+            // write project source if needed
+            createProject(project.getProjectSourceFile());
+
+            // compile project sources if needed
+            ui.talk("Compile project sources.");
+
+            JavaCompiler compiler = new JavaCompiler();
+            compiler.addSourceDirectory(project.getProjectSources());
+            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+            compiler.setOutput(project.getProjectClasses());
+            compiler.compile();
+
+            // load new project
+            ClassLoader loader = I.load(project.getProjectClasses());
+
+            // create my project
+            project = (Project) I.make(Class.forName(ProjectFile, true, loader));
+            injectProject();
+
+            // =====================================
+            // build project develop environment
+            // =====================================
+            searchDevelopEnvironment();
 
             // start project build process
             ui.title("Building " + project.getProduct() + " " + project.getVersion());
@@ -170,12 +207,62 @@ public class Bee {
     }
 
     /**
-     * {@inheritDoc}
+     * <p>
+     * Create project skeleton.
+     * </p>
      */
-    @Override
-    protected void finalize() throws Throwable {
-        builder.observer.dispose();
-        super.finalize();
+    private void createProject(Path projectFile) throws Exception {
+        if (Files.notExists(projectFile)) {
+            ui.talk("Project definition is not found. [" + projectFile + "]");
+
+            if (!ui.confirm("Create new project?")) {
+                ui.talk("See you later!");
+                throw AbortedByUser;
+            }
+
+            ui.title("Create New Project");
+
+            String project = ui.ask("Project name");
+            String product = ui.ask("Product name", project);
+            String version = ui.ask("Product version", "1.0");
+            License license = ui.ask("Product license", License.class);
+
+            List<String> code = new ArrayList();
+            code.addAll(license.textJava());
+            code.add("public class " + ProjectFile + " extends " + Project.class.getName() + " {");
+            code.add("");
+            code.add("  {");
+            code.add("      name(\"" + project + "\", \"" + product + "\", \"" + version + "\");");
+            code.add("  }");
+            code.add("}");
+
+            Files.createDirectories(projectFile.getParent());
+            Files.write(projectFile, code, StandardCharsets.UTF_8);
+            ui.talk("Generate project definition.");
+        }
+    }
+
+    /**
+     * <p>
+     * Search develop environemnt.
+     * </p>
+     */
+    private void searchDevelopEnvironment() {
+        // search existing environment
+        for (IDE ide : IDE.values()) {
+            if (ide.exist(root)) {
+                this.ide = ide;
+                return;
+            }
+        }
+
+        // build environemnt
+        ui.title("Create New Environment");
+
+        IDE ide = ui.ask("Bee supports the following IDEs.", IDE.class);
+        ide.create(root);
+
+        ui.talk("Create ", ide.name(), "'s configuration files.");
     }
 
     /**
@@ -196,195 +283,9 @@ public class Bee {
     }
 
     /**
-     * @version 2012/04/15 14:35:20
+     * @version 2012/10/21 14:49:32
      */
-    private class ProjectBuilder implements PathListener {
-
-        /** The state whether the current project is updated or not. */
-        private boolean updated = true;
-
-        /** The project directory observer. */
-        private Disposable observer;
-
-        /** The current project. */
-        private Project project;
-
-        /** The current develop environment. */
-        private IDE ide;
-
-        /**
-         * <p>
-         * Build the current project.
-         * </p>
-         * 
-         * @return A project.
-         */
-        private synchronized Project build() {
-            if (updated) {
-                try {
-                    // search Project from the specified file systems
-                    Path sources = root.resolve("src");
-                    Path projectSources = sources.resolve("project/java");
-                    Path projectClasses = root.resolve("target/project-classes");
-                    Path projectFileSource = projectSources.resolve(ProjectFile + ".java");
-
-                    // unload old project
-                    I.unload(projectClasses);
-
-                    // write project source if needed
-                    scaffold(projectSources, projectFileSource);
-
-                    // compile project sources if needed
-                    compile(projectSources, projectClasses);
-
-                    // load new project
-                    ClassLoader loader = I.load(projectClasses);
-
-                    // create project
-                    project = (Project) I.make(Class.forName(ProjectFile, true, loader));
-
-                    if (observer == null) observer = I.observe(projectSources, this);
-
-                    if (Files.notExists(projectClasses.resolve(ProjectFile + ".class"))) searchDevelopEnvironment();
-                } catch (Exception e) {
-                    throw I.quiet(e);
-                }
-                updated = false;
-            }
-
-            // API definition
-            return project;
-        }
-
-        /**
-         * <p>
-         * Create project skeleton.
-         * </p>
-         */
-        private void scaffold(Path sourceDirectory, Path projectFile) throws Exception {
-            if (Files.notExists(projectFile)) {
-                ui.talk("Project definition is not found. [" + projectFile + "]");
-
-                if (!ui.confirm("Create new project?")) {
-                    ui.talk("See you later!");
-                    throw AbortedByUser;
-                }
-
-                ui.title("Create New Project");
-
-                String project = ui.ask("Project name");
-                String product = ui.ask("Product name", project);
-                String version = ui.ask("Product version", "1.0");
-
-                List<String> code = new ArrayList();
-                code.add("public class " + ProjectFile + " extends " + Project.class.getName() + " {");
-                code.add("");
-                code.add("  {");
-                code.add("      name(\"" + project + "\", \"" + product + "\", \"" + version + "\");");
-                code.add("  }");
-                code.add("}");
-
-                Files.createDirectories(projectFile.getParent());
-                Files.write(projectFile, code, StandardCharsets.UTF_8);
-                ui.talk("Generate project definition.");
-            }
-        }
-
-        /**
-         * <p>
-         * Compile project definition.
-         * </p>
-         * 
-         * @param input A project sources.
-         * @param output A project classes.
-         */
-        private void compile(Path input, Path output) {
-            ui.talk("Compile project sources.");
-
-            JavaCompiler compiler = new JavaCompiler();
-            compiler.addSourceDirectory(input);
-            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
-            compiler.setOutput(output);
-            compiler.compile();
-        }
-
-        /**
-         * <p>
-         * Search develop environemnt.
-         * </p>
-         */
-        private void searchDevelopEnvironment() {
-            // search existing environment
-            for (IDE ide : IDE.values()) {
-                if (ide.exist(root)) {
-                    this.ide = ide;
-                    return;
-                }
-            }
-
-            // build environemnt
-            ui.talk("Develop environemnt is not found.");
-
-            if (!ui.confirm("Create new develop environemnt?")) {
-                ui.talk("See you later!");
-                throw Bee.AbortedByUser;
-            }
-
-            ui.title("Create New Environment");
-
-            IDE ide = ui.ask("Bee supports the following IDEs.", IDE.class);
-            ide.create(root);
-
-            ui.talk("Create ", ide.name(), "'s configuration files.");
-        }
-
-        /**
-         * <p>
-         * Build project develop environment.
-         * </p>
-         */
-        private void layout() {
-            if (ide == null) {
-                // build environemnt
-                ui.talk("Develop environemnt is not found.");
-
-                if (!ui.confirm("Create new develop environemnt?")) {
-                    ui.talk("See you later!");
-                    throw Bee.AbortedByUser;
-                }
-
-                ui.title("Create New Environment");
-
-                IDE ide = ui.ask("Bee supports the following IDEs.", IDE.class);
-                ide.create(root);
-
-                ui.talk("Create ", ide.name(), "'s configuration files.");
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void create(Path path) {
-            updated = true;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void delete(Path path) {
-            updated = true;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void modify(Path path) {
-            updated = true;
-        }
+    private static class FavricProject extends Project {
     }
 
     /**
