@@ -18,9 +18,9 @@ import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
+import bee.api.License;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
-import bee.license.License;
 import bee.task.TaskManager;
 import bee.util.Stopwatch;
 
@@ -228,7 +228,7 @@ public class Bee {
             License license = ui.ask("Product license", License.class);
 
             List<String> code = new ArrayList();
-            code.addAll(license.textJava());
+            code.addAll(license.forJava());
             code.add("public class " + ProjectFile + " extends " + Project.class.getName() + " {");
             code.add("");
             code.add("  {");

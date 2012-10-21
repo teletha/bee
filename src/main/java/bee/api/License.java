@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.license;
+package bee.api;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 
 import kiss.I;
-import bee.api.Project;
 
 /**
  * @version 2012/10/21 15:16:38
@@ -44,17 +43,8 @@ public enum License {
      * 
      * @return
      */
-    private List<String> text() {
-        List<String> license = new ArrayList();
-        license.add("Copyright (C) " + YEAR.format(new Date()) + " " + I.make(Project.class).getProject());
-        license.add("");
-        license.add("Licensed under the " + name() + " License (the \"License\");");
-        license.add("you may not use this file except in compliance with the License.");
-        license.add("You may obtain a copy of the License at");
-        license.add("");
-        license.add("         " + uri());
-
-        return license;
+    public List<String> forXML() {
+        return text("<!--", " - ", "-->");
     }
 
     /**
@@ -64,24 +54,30 @@ public enum License {
      * 
      * @return
      */
-    public List<String> textJava() {
-        List<String> license = new ArrayList();
-        license.add("/**");
-
-        for (String line : text()) {
-            license.add(" * " + line);
-        }
-        license.add(" */");
-
-        return license;
+    public List<String> forJava() {
+        return text("/*", " * ", " */");
     }
 
     /**
-     * {@inheritDoc}
+     * <p>
+     * Write lisence text.
+     * </p>
+     * 
+     * @return
      */
-    @Override
-    public String toString() {
-        return I.join(text(), "\r\n");
+    private List<String> text(String start, String prefix, String end) {
+        List<String> license = new ArrayList();
+        license.add(start);
+        license.add(prefix + "Copyright (C) " + YEAR.format(new Date()) + " " + I.make(Project.class).getProject());
+        license.add(prefix);
+        license.add(prefix + "Licensed under the " + name() + " License (the \"License\");");
+        license.add(prefix + "you may not use this file except in compliance with the License.");
+        license.add(prefix + "You may obtain a copy of the License at");
+        license.add(prefix);
+        license.add(prefix + "         " + uri());
+        license.add(end);
+
+        return license;
     }
 
     /**
