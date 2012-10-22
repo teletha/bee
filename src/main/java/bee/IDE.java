@@ -10,7 +10,8 @@
 package bee;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
+
+import bee.api.Project;
 
 /**
  * @version 2012/04/16 22:42:37
@@ -23,15 +24,15 @@ enum IDE {
          * {@inheritDoc}
          */
         @Override
-        boolean exist(Path directory) {
-            return Files.isReadable(directory.resolve(".classpath"));
+        boolean exist(Project project) {
+            return Files.isReadable(project.getRoot().resolve(".classpath"));
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        void create(Path directory) {
+        void create(Project project) {
             new bee.task.Eclipse().eclipse();
         }
     },
@@ -42,7 +43,7 @@ enum IDE {
          * {@inheritDoc}
          */
         @Override
-        boolean exist(Path directory) {
+        boolean exist(Project project) {
             return false;
         }
 
@@ -50,8 +51,7 @@ enum IDE {
          * {@inheritDoc}
          */
         @Override
-        void create(Path directory) {
-            System.out.println(directory);
+        void create(Project project) {
         }
     },
 
@@ -61,7 +61,7 @@ enum IDE {
          * {@inheritDoc}
          */
         @Override
-        boolean exist(Path directory) {
+        boolean exist(Project project) {
             return false;
         }
 
@@ -69,7 +69,7 @@ enum IDE {
          * {@inheritDoc}
          */
         @Override
-        void create(Path directory) {
+        void create(Project project) {
         }
     };
 
@@ -78,18 +78,18 @@ enum IDE {
      * Analyze environment.
      * </p>
      * 
-     * @param directory
+     * @param project
      * @return
      */
-    abstract boolean exist(Path directory);
+    abstract boolean exist(Project project);
 
     /**
      * <p>
      * Create environment.
      * </p>
      * 
-     * @param directory
+     * @param project
      * @return
      */
-    abstract void create(Path directory);
+    abstract void create(Project project);
 }

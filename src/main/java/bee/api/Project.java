@@ -459,7 +459,7 @@ public class Project {
      * 
      * @return
      */
-    public Path getProjectSourceFile() {
+    public Path getProjectDefinition() {
         return input.resolve("project/java/Project.java");
     }
 
@@ -470,7 +470,7 @@ public class Project {
      * 
      * @return
      */
-    public Path getProjectClassFile() {
+    public Path getProjectDefintionClass() {
         return getProjectClasses().resolve("Project.class");
     }
 

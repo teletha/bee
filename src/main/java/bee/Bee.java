@@ -22,6 +22,7 @@ import bee.api.License;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
 import bee.task.TaskManager;
+import bee.util.Paths;
 import bee.util.Stopwatch;
 
 /**
@@ -56,9 +57,6 @@ public class Bee {
 
     /** The user interface. */
     protected final UserInterface ui;
-
-    /** The project root directory. */
-    private final Path root;
 
     /** The current project. */
     private Project project;
@@ -116,7 +114,6 @@ public class Bee {
         }
 
         // configure project root directory and message notifier
-        this.root = directory.toAbsolutePath();
         this.ui = ui;
         this.project = new FavricProject();
 
@@ -157,36 +154,27 @@ public class Bee {
 
         try {
             // =====================================
-            // build my project
+            // build your project
             // =====================================
             ui.talk("Finding your project...");
 
             // unload old project
             I.unload(project.getProjectClasses());
 
-            // write project source if needed
-            createProject(project.getProjectSourceFile());
-
-            // compile project sources if needed
-            ui.talk("Compile project sources.");
-
-            JavaCompiler compiler = new JavaCompiler();
-            compiler.addSourceDirectory(project.getProjectSources());
-            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
-            compiler.setOutput(project.getProjectClasses());
-            compiler.compile();
+            // build project definition
+            buildProjectDefinition(project.getProjectDefinition());
 
             // load new project
             ClassLoader loader = I.load(project.getProjectClasses());
 
-            // create my project
+            // create your project
             project = (Project) I.make(Class.forName(ProjectFile, true, loader));
             injectProject();
 
             // =====================================
             // build project develop environment
             // =====================================
-            searchDevelopEnvironment();
+            buildDevelopEnvironment();
 
             // start project build process
             ui.title("Building " + project.getProduct() + " " + project.getVersion());
@@ -211,9 +199,10 @@ public class Bee {
      * Create project skeleton.
      * </p>
      */
-    private void createProject(Path projectFile) throws Exception {
-        if (Files.notExists(projectFile)) {
-            ui.talk("Project definition is not found. [" + projectFile + "]");
+    private void buildProjectDefinition(Path definition) throws Exception {
+        // create project sources if needed
+        if (Files.notExists(definition)) {
+            ui.talk("Project definition is not found. [" + definition + "]");
 
             if (!ui.confirm("Create new project?")) {
                 ui.talk("See you later!");
@@ -236,31 +225,42 @@ public class Bee {
             code.add("  }");
             code.add("}");
 
-            Files.createDirectories(projectFile.getParent());
-            Files.write(projectFile, code, StandardCharsets.UTF_8);
+            Files.createDirectories(definition.getParent());
+            Files.write(definition, code, StandardCharsets.UTF_8);
             ui.talk("Generate project definition.");
+        }
+
+        // compile project sources if needed
+        if (Paths.getLastModified(definition) > Paths.getLastModified(project.getProjectDefintionClass())) {
+            ui.talk("Compile project sources.");
+
+            JavaCompiler compiler = new JavaCompiler();
+            compiler.addSourceDirectory(project.getProjectSources());
+            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+            compiler.setOutput(project.getProjectClasses());
+            compiler.compile();
         }
     }
 
     /**
      * <p>
-     * Search develop environemnt.
+     * Build develop environemnt.
      * </p>
      */
-    private void searchDevelopEnvironment() {
+    private void buildDevelopEnvironment() {
         // search existing environment
         for (IDE ide : IDE.values()) {
-            if (ide.exist(root)) {
+            if (ide.exist(project)) {
                 this.ide = ide;
                 return;
             }
         }
 
         // build environemnt
-        ui.title("Create New Environment");
+        ui.title("Create Your Develop Environment");
 
-        IDE ide = ui.ask("Bee supports the following IDEs.", IDE.class);
-        ide.create(root);
+        ide = ui.ask("Bee supports the following IDEs.", IDE.class);
+        ide.create(project);
 
         ui.talk("Create ", ide.name(), "'s configuration files.");
     }
