@@ -12,12 +12,18 @@ package bee;
 /**
  * @version 2012/10/11 10:05:35
  */
-public class ProjectTemplate {
+public class Project extends bee.api.Project {
 
-    /**
-     * 
-     */
-    public ProjectTemplate() {
-        
+    @Bind
+    public String projectName;
+
+    @Bind
+    public String productName;
+
+    @Bind
+    public String version;
+
+    {
+        name(projectName, productName, version);
     }
 }

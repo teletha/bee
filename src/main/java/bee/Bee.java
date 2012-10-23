@@ -64,6 +64,9 @@ public class Bee {
     /** The current develop environment. */
     private IDE ide;
 
+    /** The internal tasks. */
+    private final List<String> tasks = new ArrayList();
+
     /**
      * <p>
      * Create project builder in current location.
@@ -179,6 +182,12 @@ public class Bee {
             // start project build process
             ui.title("Building " + project.getProduct() + " " + project.getVersion());
 
+            // internal tasks
+            for (String task : this.tasks) {
+                I.make(TaskManager.class).execute(task);
+            }
+
+            // user tasks
             tasks.build(project);
         } catch (Throwable e) {
             if (e == AbortedByUser) {
@@ -228,6 +237,9 @@ public class Bee {
             Files.createDirectories(definition.getParent());
             Files.write(definition, code, StandardCharsets.UTF_8);
             ui.talk("Generate project definition.");
+
+            // build project architecture
+            tasks.add("prototype:java");
         }
 
         // compile project sources if needed
