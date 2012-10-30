@@ -10,17 +10,21 @@
 package bee;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import kiss.Extensible;
 import kiss.I;
 import kiss.model.ClassUtil;
 import bee.api.License;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
+import bee.task.Command;
+import bee.task.Prototype;
 import bee.task.TaskManager;
 import bee.util.Paths;
 import bee.util.Stopwatch;
@@ -61,11 +65,8 @@ public class Bee {
     /** The current project. */
     private Project project;
 
-    /** The current develop environment. */
-    private IDE ide;
-
     /** The internal tasks. */
-    private final List<String> tasks = new ArrayList();
+    private final List<Build> builds = new ArrayList();
 
     /**
      * <p>
@@ -149,9 +150,9 @@ public class Bee {
      * Build project.
      * </p>
      * 
-     * @param tasks
+     * @param build
      */
-    public void execute(Build tasks) {
+    public void execute(Build build) {
         String result = "SUCCESS";
         Stopwatch stopwatch = new Stopwatch().start();
 
@@ -182,13 +183,13 @@ public class Bee {
             // start project build process
             ui.title("Building " + project.getProduct() + " " + project.getVersion());
 
-            // internal tasks
-            for (String task : this.tasks) {
-                I.make(TaskManager.class).execute(task);
-            }
+            // compose build
+            builds.add(build);
 
-            // user tasks
-            tasks.build(project);
+            // execute build
+            for (Build current : builds) {
+                current.build(project);
+            }
         } catch (Throwable e) {
             if (e == AbortedByUser) {
                 result = "CANCEL";
@@ -239,7 +240,32 @@ public class Bee {
             ui.talk("Generate project definition.");
 
             // build project architecture
-            tasks.add("prototype:java");
+            List<String> methods = new ArrayList();
+
+            for (Method method : Prototype.class.getMethods()) {
+                if (method.isAnnotationPresent(Command.class)) {
+                    methods.add(method.getName());
+                }
+            }
+
+            // String select = ui.ask("Bee supports the following prototypes", methods);
+            //
+            // try {
+            // Prototype.class.getMethod(select).invoke();
+            // } catch (Exception e) {
+            // throw I.quiet(e);
+            // }
+
+            builds.add(new Build() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                protected void build(Project project) {
+                    task(Prototype.class).select();
+                }
+            });
         }
 
         // compile project sources if needed
@@ -260,21 +286,18 @@ public class Bee {
      * </p>
      */
     private void buildDevelopEnvironment() {
+        List<IDE> ides = I.find(IDE.class);
+
         // search existing environment
-        for (IDE ide : IDE.values()) {
+        for (IDE ide : ides) {
             if (ide.exist(project)) {
-                this.ide = ide;
                 return;
             }
         }
 
         // build environemnt
-        ui.title("Create Your Develop Environment");
-
-        ide = ui.ask("Bee supports the following IDEs.", IDE.class);
-        ide.create(project);
-
-        ui.talk("Create ", ide.name(), "'s configuration files.");
+        ui.talk("Project develop environment is not found.");
+        builds.add(ui.ask("Bee supports the following IDEs.", ides));
     }
 
     /**
@@ -323,6 +346,99 @@ public class Bee {
             for (String task : tasks) {
                 I.make(TaskManager.class).execute(task);
             }
+        }
+    }
+
+    /**
+     * @version 2012/10/25 21:33:00
+     */
+    private static abstract class IDE extends Build implements Extensible {
+
+        /**
+         * <p>
+         * Analyze environment.
+         * </p>
+         * 
+         * @param project
+         * @return
+         */
+        abstract boolean exist(Project project);
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return getClass().getSimpleName();
+        }
+    }
+
+    /**
+     * @version 2012/10/25 21:34:05
+     */
+    @SuppressWarnings("unused")
+    private static class Eclipse extends IDE {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        boolean exist(Project project) {
+            return Files.isReadable(project.getRoot().resolve(".classpath"));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void build(Project project) {
+            task(bee.task.Eclipse.class).eclipse();
+        }
+    }
+
+    /**
+     * @version 2012/10/25 21:34:05
+     */
+    @SuppressWarnings("unused")
+    private static class NetBeans extends IDE {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        boolean exist(Project project) {
+            return false;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void build(Project project) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * @version 2012/10/25 21:34:05
+     */
+    @SuppressWarnings("unused")
+    private static class IDEA extends IDE {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        boolean exist(Project project) {
+            return false;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void build(Project project) {
+            throw new UnsupportedOperationException();
         }
     }
 }
