@@ -57,6 +57,8 @@ public class Eclipse extends Task {
         //
         // createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
         // ui.talk("Generate JDT preference file.");
+
+        ui.talk("Create Eclipse configuration files.");
     }
 
     /**

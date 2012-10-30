@@ -10,8 +10,11 @@
 package bee.task;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 import kiss.I;
 
@@ -38,6 +41,20 @@ public class Prototype extends Task {
      * 
      */
     public void select() {
+        List<String> methods = new ArrayList();
 
+        for (Method method : getClass().getMethods()) {
+            if (method.isAnnotationPresent(Command.class)) {
+                methods.add(method.getName());
+            }
+        }
+
+        String select = ui.ask("Bee supports the following prototypes", methods);
+
+        try {
+            getClass().getMethod(select).invoke(this);
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
     }
 }
