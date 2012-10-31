@@ -68,7 +68,7 @@ public enum License {
     private List<String> text(String start, String prefix, String end) {
         List<String> license = new ArrayList();
         license.add(start);
-        license.add(prefix + "Copyright (C) " + YEAR.format(new Date()) + " " + I.make(Project.class).getProject());
+        license.add(prefix + "Copyright (C) " + YEAR.format(new Date()) + " " + I.make(Project.class).getProduct() + " Development Team");
         license.add(prefix);
         license.add(prefix + "Licensed under the " + name() + " License (the \"License\");");
         license.add(prefix + "you may not use this file except in compliance with the License.");
