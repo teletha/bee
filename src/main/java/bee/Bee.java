@@ -230,14 +230,13 @@ public class Bee {
 
             ui.title("Create New Project");
 
-            String productName = ui.ask("Product name");
-            String productPackage = ui.ask("Product package", productName.toLowerCase().replaceAll("\\s+", "."));
-            String productVersion = ui.ask("Product version", "1.0");
-            String projectName = ui.ask("Project name", productName);
+            String name = ui.ask("Product name");
+            String group = ui.ask("Product group", name.toLowerCase().replaceAll("\\s+", "."));
+            String version = ui.ask("Product version", "1.0");
             License license = ui.ask("Product license", License.class);
 
             // build temporary project
-            inject(new FavricProject(projectName, productPackage, productName, productVersion, license));
+            inject(new FavricProject(group, name, version, license));
 
             Files.createDirectories(definition.getParent());
             Files.write(definition, project.toDefinition(), StandardCharsets.UTF_8);
@@ -319,9 +318,8 @@ public class Bee {
         /**
          * @param projectName
          */
-        private FavricProject(String projectName, String productPackage, String productName, String productVersion, License license) {
-            project(projectName);
-            product(productPackage, productName, productVersion);
+        private FavricProject(String group, String name, String version, License license) {
+            product(group, name, version);
             set(license);
         }
     }

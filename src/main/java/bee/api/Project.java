@@ -61,11 +61,8 @@ public class Project {
     /** The project root directory. */
     private Path root;
 
-    /** The project name. */
-    private String projectName;
-
-    /** The product package. */
-    private String productPackage = "";
+    /** The product group. */
+    private String productGroup = "";
 
     /** The product name. */
     private String productName = "";
@@ -127,24 +124,13 @@ public class Project {
 
     /**
      * <p>
-     * Return project name.
+     * Return product group.
      * </p>
      * 
-     * @return The project name.
+     * @return The product group.
      */
-    public String getProject() {
-        return projectName;
-    }
-
-    /**
-     * <p>
-     * Return product package.
-     * </p>
-     * 
-     * @return The product package.
-     */
-    public String getPackage() {
-        return productPackage;
+    public String getGroup() {
+        return productGroup;
     }
 
     /**
@@ -171,17 +157,6 @@ public class Project {
 
     /**
      * <p>
-     * Declare project name.
-     * </p>
-     * 
-     * @param projectName
-     */
-    protected final void project(String projectName) {
-        this.projectName = normalize(projectName, "YourProject");
-    }
-
-    /**
-     * <p>
      * Declare product package, name and version.
      * </p>
      * 
@@ -190,7 +165,7 @@ public class Project {
      * @param productVersion A product version.
      */
     protected final void product(String productPackage, String productName, String productVersion) {
-        this.productPackage = normalize(productPackage, "YourPackage");
+        this.productGroup = normalize(productPackage, "YourPackage");
         this.productName = normalize(productName, "YourProduct");
         this.productVersion = normalize(productVersion, "1.0");
     }
@@ -533,7 +508,7 @@ public class Project {
     public String toString() {
         Element pom = $("project");
         pom.append($("modelVersion").text("4.0.0"));
-        pom.append($("groupId").text(getPackage()));
+        pom.append($("groupId").text(getGroup()));
         pom.append($("artifactId").text(getProduct()));
         pom.append($("version").text(getVersion()));
 
@@ -567,8 +542,7 @@ public class Project {
         code.add("public class Project extends " + Project.class.getName() + " {");
         code.add("");
         code.add("  {");
-        code.add("      project(\"" + projectName + "\");");
-        code.add("      product(\"" + productPackage + "\", \"" + productName + "\", \"" + productVersion + "\");");
+        code.add("      product(\"" + productGroup + "\", \"" + productName + "\", \"" + productVersion + "\");");
         code.add("  }");
         code.add("}");
 
