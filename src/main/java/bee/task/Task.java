@@ -9,6 +9,9 @@
  */
 package bee.task;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map.Entry;
 
 import kiss.I;
@@ -45,8 +48,37 @@ public abstract class Task {
      * @param taskClass A task class.
      * @return A target task.
      */
-    protected <T extends Task> T require(Class<T> taskClass) {
+    protected final <T extends Task> T require(Class<T> taskClass) {
         return I.make(TaskManager.class).find(taskClass);
     }
 
+    /**
+     * <p>
+     * Utility method for task.
+     * </p>
+     * 
+     * @param path
+     */
+    protected final void makeDirectory(Path path) {
+        if (path != null && Files.notExists(path)) {
+            try {
+                Files.createDirectories(path);
+
+                ui.talk("Make directory [" + path.toAbsolutePath() + "]");
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Utility method for task.
+     * </p>
+     * 
+     * @param path
+     */
+    protected final void makeDirectory(Path base, String path) {
+        makeDirectory(base.resolve(path));
+    }
 }

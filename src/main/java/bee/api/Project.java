@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -61,7 +62,10 @@ public class Project {
     private Path root;
 
     /** The project name. */
-    private String projectName = "";
+    private String projectName;
+
+    /** The product package. */
+    private String productPackage = "";
 
     /** The product name. */
     private String productName = "";
@@ -76,7 +80,7 @@ public class Project {
     private SourceVersion requirementJavaVersion;
 
     /** The license. */
-    private License license = License.MIT;
+    private License license;
 
     /** The input base directory. */
     private Path input;
@@ -107,6 +111,7 @@ public class Project {
 
         setInput((Path) null);
         setOutput((Path) null);
+        set((License) null);
     }
 
     /**
@@ -133,6 +138,17 @@ public class Project {
 
     /**
      * <p>
+     * Return product package.
+     * </p>
+     * 
+     * @return The product package.
+     */
+    public String getPackage() {
+        return productPackage;
+    }
+
+    /**
+     * <p>
      * Return product name.
      * </p>
      * 
@@ -155,17 +171,28 @@ public class Project {
 
     /**
      * <p>
-     * Declare project name, product name and product version.
+     * Declare project name.
      * </p>
      * 
-     * @param projectName A project name.
-     * @param productName A product name.
-     * @param version A product version.
+     * @param projectName
      */
-    protected final void name(String projectName, String productName, String version) {
+    protected final void project(String projectName) {
         this.projectName = normalize(projectName, "YourProject");
+    }
+
+    /**
+     * <p>
+     * Declare product package, name and version.
+     * </p>
+     * 
+     * @param productPackage A product package name.
+     * @param productName A product name.
+     * @param productVersion A product version.
+     */
+    protected final void product(String productPackage, String productName, String productVersion) {
+        this.productPackage = normalize(productPackage, "YourPackage");
         this.productName = normalize(productName, "YourProduct");
-        this.productVersion = normalize(version, "1.0");
+        this.productVersion = normalize(productVersion, "1.0");
     }
 
     /**
@@ -486,13 +513,27 @@ public class Project {
     }
 
     /**
+     * <p>
+     * Set product license.
+     * </p>
+     * 
+     * @param license
+     */
+    protected void set(License license) {
+        if (license == null) {
+            license = License.MIT;
+        }
+        this.license = license;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
         Element pom = $("project");
         pom.append($("modelVersion").text("4.0.0"));
-        pom.append($("groupId").text(getProject()));
+        pom.append($("groupId").text(getPackage()));
         pom.append($("artifactId").text(getProduct()));
         pom.append($("version").text(getVersion()));
 
@@ -511,5 +552,26 @@ public class Project {
 
         // write as pom
         return pom.toString();
+    }
+
+    /**
+     * <p>
+     * Returns literal project definition.
+     * </p>
+     * 
+     * @return
+     */
+    public List<String> toDefinition() {
+        List<String> code = new ArrayList();
+        code.addAll(license.forJava());
+        code.add("public class Project extends " + Project.class.getName() + " {");
+        code.add("");
+        code.add("  {");
+        code.add("      project(\"" + projectName + "\");");
+        code.add("      product(\"" + productPackage + "\", \"" + productName + "\", \"" + productVersion + "\");");
+        code.add("  }");
+        code.add("}");
+
+        return code;
     }
 }
