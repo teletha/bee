@@ -128,7 +128,7 @@ public class Eclipse extends Task {
             }
         }
 
-        for (Library lib : project.getLibrary(Bee.API.getProject(), Bee.API.getProduct(), Bee.API.getVersion())) {
+        for (Library lib : project.getLibrary(Bee.API.getPackage(), Bee.API.getProduct(), Bee.API.getVersion())) {
             doc.append($("classpathentry").attr("kind", "lib").attr("path", lib.getJar()));
         }
         doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));

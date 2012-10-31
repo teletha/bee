@@ -490,7 +490,7 @@ public class Repository {
             throw I.quiet(e);
         }
 
-        DefaultArtifact jar = new DefaultArtifact(project.getProject(), project.getProduct(), "", "jar", project.getVersion(), null, file.toFile());
+        DefaultArtifact jar = new DefaultArtifact(project.getPackage(), project.getProduct(), "", "jar", project.getVersion(), null, file.toFile());
         Artifact pom = new SubArtifact(jar, "", "pom", temp.toFile());
 
         InstallRequest request = new InstallRequest();

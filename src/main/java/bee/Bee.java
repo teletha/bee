@@ -10,7 +10,6 @@
 package bee;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,7 +22,6 @@ import kiss.model.ClassUtil;
 import bee.api.License;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
-import bee.task.Command;
 import bee.task.Prototype;
 import bee.task.TaskManager;
 import bee.util.Paths;
@@ -45,7 +43,7 @@ public class Bee {
     public static final Project API = new Project() {
 
         {
-            name("npc", "bee-api", "0.1");
+            product("npc", "bee-api", "0.1");
         }
     };
 
@@ -60,7 +58,7 @@ public class Bee {
     }
 
     /** The user interface. */
-    protected final UserInterface ui;
+    private UserInterface ui;
 
     /** The current project. */
     private Project project;
@@ -117,20 +115,32 @@ public class Bee {
             directory = directory.getParent();
         }
 
-        // configure project root directory and message notifier
-        this.ui = ui;
-        this.project = new FavricProject();
-
-        injectProject();
+        // set up
+        inject(ui);
+        inject(new FavricProject());
     }
 
     /**
      * <p>
-     * Inject {@link Project} and {@link UserInterface}.
+     * Inject {@link Project}.
      * </p>
      */
-    private void injectProject() {
+    private void inject(Project project) {
+        this.project = project;
+
+        // inject project
         ProjectLifestyle.local.set(project);
+    }
+
+    /**
+     * <p>
+     * Inject {@link UserInterface}.
+     * </p>
+     */
+    private void inject(UserInterface ui) {
+        this.ui = ui;
+
+        // inject user interface
         UserInterfaceLisfestyle.local.set(ui);
     }
 
@@ -172,8 +182,7 @@ public class Bee {
             ClassLoader loader = I.load(project.getProjectClasses());
 
             // create your project
-            project = (Project) I.make(Class.forName(ProjectFile, true, loader));
-            injectProject();
+            inject((Project) I.make(Class.forName(ProjectFile, true, loader)));
 
             // =====================================
             // build project develop environment
@@ -221,41 +230,20 @@ public class Bee {
 
             ui.title("Create New Project");
 
-            String project = ui.ask("Project name");
-            String product = ui.ask("Product name", project);
-            String version = ui.ask("Product version", "1.0");
+            String productName = ui.ask("Product name");
+            String productPackage = ui.ask("Product package", productName.toLowerCase().replaceAll("\\s+", "."));
+            String productVersion = ui.ask("Product version", "1.0");
+            String projectName = ui.ask("Project name", productName);
             License license = ui.ask("Product license", License.class);
 
-            List<String> code = new ArrayList();
-            code.addAll(license.forJava());
-            code.add("public class " + ProjectFile + " extends " + Project.class.getName() + " {");
-            code.add("");
-            code.add("  {");
-            code.add("      name(\"" + project + "\", \"" + product + "\", \"" + version + "\");");
-            code.add("  }");
-            code.add("}");
+            // build temporary project
+            inject(new FavricProject(projectName, productPackage, productName, productVersion, license));
 
             Files.createDirectories(definition.getParent());
-            Files.write(definition, code, StandardCharsets.UTF_8);
+            Files.write(definition, project.toDefinition(), StandardCharsets.UTF_8);
             ui.talk("Generate project definition.");
 
             // build project architecture
-            List<String> methods = new ArrayList();
-
-            for (Method method : Prototype.class.getMethods()) {
-                if (method.isAnnotationPresent(Command.class)) {
-                    methods.add(method.getName());
-                }
-            }
-
-            // String select = ui.ask("Bee supports the following prototypes", methods);
-            //
-            // try {
-            // Prototype.class.getMethod(select).invoke();
-            // } catch (Exception e) {
-            // throw I.quiet(e);
-            // }
-
             builds.add(new Build() {
 
                 /**
@@ -263,7 +251,7 @@ public class Bee {
                  */
                 @Override
                 protected void build(Project project) {
-                    task(Prototype.class).select();
+                    task(Prototype.class).java();
                 }
             });
         }
@@ -296,7 +284,7 @@ public class Bee {
         }
 
         // build environemnt
-        ui.talk("Project develop environment is not found.");
+        ui.talk("\r\nProject develop environment is not found.");
         builds.add(ui.ask("Bee supports the following IDEs.", ides));
     }
 
@@ -321,6 +309,21 @@ public class Bee {
      * @version 2012/10/21 14:49:32
      */
     private static class FavricProject extends Project {
+
+        /**
+         * 
+         */
+        private FavricProject() {
+        }
+
+        /**
+         * @param projectName
+         */
+        private FavricProject(String projectName, String productPackage, String productName, String productVersion, License license) {
+            project(projectName);
+            product(productPackage, productName, productVersion);
+            set(license);
+        }
     }
 
     /**
