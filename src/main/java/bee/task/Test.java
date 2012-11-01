@@ -49,6 +49,8 @@ public class Test extends Task {
             java.addClassPath(project.getClasses());
             java.addClassPath(project.getTestClasses());
             java.addClassPath(project.getDependency(Scope.Test));
+            java.addClassPath(loadBee());
+            java.addClassPath(load("junit", "junit", "4.10"));
             java.enableAssertion();
             java.setWorkingDirectory(project.getRoot());
             java.run(Junit.class, project.getTestClasses(), report);
