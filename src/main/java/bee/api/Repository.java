@@ -443,6 +443,19 @@ public class Repository {
 
     /**
      * <p>
+     * Collect all dependencies in the specified scope.
+     * </p>
+     * 
+     * @param libraries
+     * @param scope
+     * @return
+     */
+    public Set<Library> collectDependency(String group, String product, String version, Scope scope) {
+        return collectDependency(new Library(group, product, version), scope);
+    }
+
+    /**
+     * <p>
      * Resolve the source codes of the specified library.
      * </p>
      * 

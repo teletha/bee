@@ -13,10 +13,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import kiss.I;
+import kiss.model.ClassUtil;
+import bee.Bee;
 import bee.UserInterface;
+import bee.api.Library;
 import bee.api.Project;
+import bee.api.Repository;
+import bee.api.Scope;
 import bee.task.TaskManager.TaskInfo;
 
 /**
@@ -50,6 +56,31 @@ public abstract class Task {
      */
     protected final <T extends Task> T require(Class<T> taskClass) {
         return I.make(TaskManager.class).find(taskClass);
+    }
+
+    /**
+     * <p>
+     * Use other library from task specific API.
+     * </p>
+     * 
+     * @param group
+     * @param product
+     * @param version
+     * @return
+     */
+    protected final Set<Library> load(String group, String product, String version) {
+        return I.make(Repository.class).collectDependency(group, product, version, Scope.Runtime);
+    }
+
+    /**
+     * <p>
+     * Use Bee library.
+     * </p>
+     * 
+     * @return
+     */
+    protected final Path loadBee() {
+        return ClassUtil.getArchive(Bee.class);
     }
 
     /**
