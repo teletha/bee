@@ -22,19 +22,20 @@ import kiss.I;
  */
 public enum License {
 
-    MIT {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected String uri() {
-            return "http://opensource.org/licenses/mit-license.php";
-        }
-    };
+    MIT("http://opensource.org/licenses/mit-license.php");
 
     /** The year expression. */
     private static final DateFormat YEAR = new SimpleDateFormat("yyyy");
+
+    /** The license uri. */
+    private final String uii;
+
+    /**
+     * @param uii
+     */
+    private License(String uii) {
+        this.uii = uii;
+    }
 
     /**
      * <p>
@@ -87,5 +88,7 @@ public enum License {
      * 
      * @return A lisence URI.
      */
-    protected abstract String uri();
+    protected String uri() {
+        return uii;
+    }
 }
