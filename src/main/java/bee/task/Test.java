@@ -38,9 +38,6 @@ public class Test extends Task {
         compile.source();
         compile.test();
 
-        // execute test classes
-        ui.title(" T E S T S");
-
         try {
             Path report = project.getOutput().resolve("test-reports");
             Files.createDirectories(report);
@@ -70,6 +67,16 @@ public class Test extends Task {
         @Override
         public boolean process() {
             Path classes = I.locate(args[0]);
+            List<Path> tests = I.walk(classes, "**Test.class");
+
+            if (tests.isEmpty()) {
+                ui.talk("Nothing to test");
+
+                return true;
+            }
+
+            // execute test classes
+            ui.title(" T E S T S");
 
             int runs = 0;
             int skips = 0;
@@ -78,7 +85,7 @@ public class Test extends Task {
 
             JUnitCore core = new JUnitCore();
 
-            for (Path path : I.walk(classes, "**Test.class")) {
+            for (Path path : tests) {
                 String fqcn = classes.relativize(path).toString();
                 fqcn = fqcn.substring(0, fqcn.length() - 6).replace(File.separatorChar, '.');
 
