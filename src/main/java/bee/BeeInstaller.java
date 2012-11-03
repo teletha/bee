@@ -93,7 +93,7 @@ public class BeeInstaller {
             Path library = I.locateTemporary();
 
             JarArchiver archiver = new JarArchiver();
-            archiver.add(source, "bee/**");
+            archiver.add(source, "bee/api/**");
             archiver.pack(library);
 
             I.make(Repository.class).install(bee.Bee.API, library);

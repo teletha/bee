@@ -370,74 +370,74 @@ public class Bee {
         public String toString() {
             return getClass().getSimpleName();
         }
-    }
-
-    /**
-     * @version 2012/10/25 21:34:05
-     */
-    @SuppressWarnings("unused")
-    private static class Eclipse extends IDE {
 
         /**
-         * {@inheritDoc}
+         * @version 2012/10/25 21:34:05
          */
-        @Override
-        boolean exist(Project project) {
-            return Files.isReadable(project.getRoot().resolve(".classpath"));
+        @SuppressWarnings("unused")
+        private static final class Eclipse extends IDE {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            boolean exist(Project project) {
+                return Files.isReadable(project.getRoot().resolve(".classpath"));
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void execute() {
+                require(bee.task.Eclipse.class).eclipse();
+            }
         }
 
         /**
-         * {@inheritDoc}
+         * @version 2012/10/25 21:34:05
          */
-        @Override
-        public void execute() {
-            require(bee.task.Eclipse.class).eclipse();
-        }
-    }
+        @SuppressWarnings("unused")
+        private static final class NetBeans extends IDE {
 
-    /**
-     * @version 2012/10/25 21:34:05
-     */
-    @SuppressWarnings("unused")
-    private static class NetBeans extends IDE {
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            boolean exist(Project project) {
+                return false;
+            }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        boolean exist(Project project) {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void execute() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    /**
-     * @version 2012/10/25 21:34:05
-     */
-    @SuppressWarnings("unused")
-    private static class IDEA extends IDE {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        boolean exist(Project project) {
-            return false;
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void execute() {
+                throw new UnsupportedOperationException();
+            }
         }
 
         /**
-         * {@inheritDoc}
+         * @version 2012/10/25 21:34:05
          */
-        @Override
-        public void execute() {
-            throw new UnsupportedOperationException();
+        @SuppressWarnings("unused")
+        private static final class IDEA extends IDE {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            boolean exist(Project project) {
+                return false;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void execute() {
+                throw new UnsupportedOperationException();
+            }
         }
     }
 

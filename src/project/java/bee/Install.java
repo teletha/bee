@@ -9,7 +9,6 @@
  */
 package bee;
 
-import bee.api.ArtifactLocator;
 import bee.api.Command;
 
 /**
@@ -27,6 +26,6 @@ public class Install extends bee.task.Install {
     public void project() {
         require(Jar.class).merge();
 
-        BeeInstaller.install(ArtifactLocator.Jar.in(project));
+        BeeInstaller.install(project.locateJar());
     }
 }
