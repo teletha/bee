@@ -22,7 +22,19 @@ import kiss.I;
  */
 public enum License {
 
-    MIT("http://opensource.org/licenses/mit-license.php");
+    Apache("http://opensource.org/licenses/Apache-2.0"),
+
+    BSD("http://opensource.org/licenses/BSD-2-Clause"),
+
+    EPL("http://opensource.org/licenses/EPL-1.0"),
+
+    GPL("http://opensource.org/licenses/GPL-3.0"),
+
+    LGPL("http://opensource.org/licenses/LGPL-3.0"),
+
+    MIT("http://opensource.org/licenses/mit-license.php"),
+
+    MPL("http://opensource.org/licenses/MPL-2.0");
 
     /** The year expression. */
     private static final DateFormat YEAR = new SimpleDateFormat("yyyy");

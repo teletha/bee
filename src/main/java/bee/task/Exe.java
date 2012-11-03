@@ -17,7 +17,6 @@ import java.util.List;
 
 import kiss.I;
 import bee.Platform;
-import bee.api.ArtifactLocator;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
@@ -71,7 +70,7 @@ public class Exe extends Task {
             build(zip, "");
             build(zip, "64");
 
-            zip.add("lib", ArtifactLocator.Jar.in(project));
+            zip.add("lib", project.locateJar());
             for (Library library : project.getDependency(Scope.Runtime)) {
                 zip.add("lib", library.getJar());
             }

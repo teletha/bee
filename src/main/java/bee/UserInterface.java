@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import kiss.I;
@@ -207,6 +209,18 @@ public abstract class UserInterface {
 
         default:
             talk(question, EOL);
+
+            // sort by name
+            Collections.sort(items, new Comparator() {
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public int compare(Object one, Object other) {
+                    return one.toString().compareTo(other.toString());
+                }
+            });
 
             for (int i = 0; i < items.size(); i++) {
                 talk("  [", i + 1, "]  ", items.get(i));

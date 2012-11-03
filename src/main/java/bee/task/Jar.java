@@ -11,7 +11,6 @@ package bee.task;
 
 import java.nio.file.Path;
 
-import bee.api.ArtifactLocator;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
@@ -35,7 +34,7 @@ public class Jar extends Task {
 
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-sources.jar");
 
-        pack("main classes", new PathSet(project.getClasses()), ArtifactLocator.Jar.in(project));
+        pack("main classes", new PathSet(project.getClasses()), project.locateJar());
         pack("main sources", project.getSources(), sources);
     }
 
@@ -102,7 +101,7 @@ public class Jar extends Task {
         require(Compile.class).source();
         String main = require(FindMain.class).main();
 
-        Path output = ArtifactLocator.Jar.in(project);
+        Path output = project.locateJar();
         ui.talk("Build merged classes jar: ", output);
 
         JarArchiver archiver = new JarArchiver();

@@ -10,7 +10,6 @@
 package bee.task;
 
 import kiss.I;
-import bee.api.ArtifactLocator;
 import bee.api.Command;
 import bee.api.Repository;
 import bee.api.Task;
@@ -26,6 +25,6 @@ public class Install extends Task {
         require(Jar.class).source();
 
         Repository repository = I.make(Repository.class);
-        repository.install(project, ArtifactLocator.Jar.in(project));
+        repository.install(project, project.locateJar());
     }
 }

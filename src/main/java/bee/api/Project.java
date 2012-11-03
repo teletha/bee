@@ -502,6 +502,17 @@ public class Project {
     }
 
     /**
+     * <p>
+     * Locate product jar file.
+     * </p>
+     * 
+     * @return
+     */
+    public final Path locateJar() {
+        return getOutput().resolve(getProduct() + "-" + getVersion() + ".jar");
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
