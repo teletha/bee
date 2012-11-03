@@ -20,7 +20,7 @@ public class Project extends bee.api.Project {
         product(Bee.API.getProduct(), "Bee", Bee.API.getVersion());
         describe("Task based project builder for Java");
 
-        require("npc", "sinobu", "0.9.1");
+        require("npc", "sinobu", "0.9.2");
         require("npc", "antibug", "0.2").atTest();
         require("org.sonatype.aether", "aether-api", aetherVersion);
         require("org.sonatype.aether", "aether-util", aetherVersion);
@@ -34,7 +34,5 @@ public class Project extends bee.api.Project {
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
         unrequire("org.sonatype.sisu", "*");
-
-        require("xerces", "xercesImpl", "2.9.1");
     }
 }

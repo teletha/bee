@@ -15,6 +15,6 @@ package bee;
 public class FindMain extends bee.task.FindMain {
 
     {
-        main = "bee.BeeInstaller";
+        main = BeeInstaller.class.getName();
     }
 }
