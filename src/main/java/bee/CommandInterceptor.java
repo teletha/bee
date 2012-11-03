@@ -7,14 +7,13 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.task;
+package bee;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import kiss.Interceptor;
 import kiss.Manageable;
-import bee.UserInterface;
 import bee.api.Command;
 import bee.api.ProjectSpecific;
 import bee.util.Inputs;
