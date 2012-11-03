@@ -22,7 +22,7 @@ import java.util.List;
 import kiss.I;
 import kiss.model.Codec;
 import kiss.model.Model;
-import bee.task.Command;
+import bee.api.Command;
 
 /**
  * <p>

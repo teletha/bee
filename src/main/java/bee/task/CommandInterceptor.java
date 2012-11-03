@@ -15,6 +15,7 @@ import java.util.Map;
 import kiss.Interceptor;
 import kiss.Manageable;
 import bee.UserInterface;
+import bee.api.Command;
 import bee.api.ProjectSpecific;
 import bee.util.Inputs;
 

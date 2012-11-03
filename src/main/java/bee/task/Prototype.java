@@ -11,6 +11,7 @@ package bee.task;
 
 import java.nio.file.Path;
 
+import bee.api.Command;
 import bee.api.Task;
 
 /**

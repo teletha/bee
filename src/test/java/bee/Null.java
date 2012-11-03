@@ -11,7 +11,7 @@ package bee;
 
 import java.util.List;
 
-import bee.task.Command;
+import bee.api.Command;
 
 /**
  * <p>

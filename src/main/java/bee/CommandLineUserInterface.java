@@ -12,7 +12,7 @@ package bee;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import bee.task.Command;
+import bee.api.Command;
 
 /**
  * @version 2012/04/19 12:52:27

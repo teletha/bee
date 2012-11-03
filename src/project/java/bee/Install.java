@@ -10,7 +10,7 @@
 package bee;
 
 import bee.api.ArtifactLocator;
-import bee.task.Command;
+import bee.api.Command;
 
 /**
  * @version 2012/05/10 10:29:33
