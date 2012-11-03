@@ -22,6 +22,8 @@ import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
+import bee.api.Task;
+
 /**
  * @version 2012/05/18 10:48:41
  */
