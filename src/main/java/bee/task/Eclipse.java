@@ -28,6 +28,7 @@ import java.util.Properties;
 import kiss.Element;
 import kiss.I;
 import bee.Bee;
+import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;

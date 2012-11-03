@@ -12,6 +12,7 @@ package bee.task;
 import java.nio.file.Path;
 
 import bee.api.ArtifactLocator;
+import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;

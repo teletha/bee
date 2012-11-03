@@ -28,7 +28,6 @@ import kiss.Singleton;
 import kiss.model.ClassUtil;
 import bee.Bee;
 import bee.UserInterface;
-import bee.task.Command;
 import bee.util.Inputs;
 
 /**
@@ -42,9 +41,20 @@ public abstract class Task {
     /** The user interface. */
     protected final UserInterface ui = I.make(UserInterface.class);
 
+    /**
+     * <p>
+     * Execute manual tasks.
+     * </p>
+     * 
+     * @param tasks
+     */
+    public void execute() {
+        // do nothing
+    }
+
     @Command("Display help message for all commands of this task.")
     public void help() {
-        Info info = I.make(Manager.class).find(Manager.computeTaskName(getClass()));
+        Info info = I.make(Tasks.class).info(computeTaskName(getClass()));
 
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
             // display usage description for this command
@@ -61,7 +71,10 @@ public abstract class Task {
      * @return A target task.
      */
     protected final <T extends Task> T require(Class<T> taskClass) {
-        return I.make(Manager.class).find(taskClass);
+        if (taskClass == null) {
+            throw new Error("You must specify task class.");
+        }
+        return (T) I.make(I.make(Tasks.class).info(computeTaskName(taskClass)).task);
     }
 
     /**
@@ -74,19 +87,8 @@ public abstract class Task {
      */
     protected final void require(String... tasks) {
         for (String task : tasks) {
-            I.make(Manager.class).execute(task);
+            I.make(Tasks.class).execute(task);
         }
-    }
-
-    /**
-     * <p>
-     * Execute manual tasks.
-     * </p>
-     * 
-     * @param tasks
-     */
-    public void execute() {
-        // do nothing
     }
 
     /**
@@ -145,10 +147,25 @@ public abstract class Task {
     }
 
     /**
+     * <p>
+     * Compute human-readable task name.
+     * </p>
+     * 
+     * @param taskClass A target task.
+     * @return A task name.
+     */
+    private static final String computeTaskName(Class taskClass) {
+        if (taskClass.isSynthetic()) {
+            return computeTaskName(taskClass.getSuperclass());
+        }
+        return Inputs.hyphenize(taskClass.getSimpleName());
+    }
+
+    /**
      * @version 2012/05/17 16:49:24
      */
     @Manageable(lifestyle = Singleton.class)
-    private static final class Manager implements ClassListener<Task> {
+    private static final class Tasks implements ClassListener<Task> {
 
         /** The common task repository. */
         private final Map<String, Info> commons = new HashMap();
@@ -158,7 +175,7 @@ public abstract class Task {
 
         /**
          * <p>
-         * Execute task.
+         * Execute literal expression task.
          * </p>
          * 
          * @param input User task input.
@@ -189,7 +206,7 @@ public abstract class Task {
             }
 
             // search task
-            Info info = find(taskName);
+            Info info = info(taskName);
 
             if (commandName.isEmpty()) {
                 commandName = info.defaultCommnad;
@@ -219,27 +236,13 @@ public abstract class Task {
 
         /**
          * <p>
-         * Find task by class.
-         * </p>
-         * 
-         * @param taskClass
-         */
-        private <T extends Task> T find(Class<T> taskClass) {
-            if (taskClass == null) {
-                throw new Error("You must specify task class.");
-            }
-            return (T) I.make(find(computeTaskName(taskClass)).task);
-        }
-
-        /**
-         * <p>
-         * Find task by name.
+         * Find task information by name.
          * </p>
          * 
          * @param name A task name.
          * @return A specified task.
          */
-        private Info find(String name) {
+        private Info info(String name) {
             if (name == null) {
                 throw new Error("You must specify task name.");
             }
@@ -323,21 +326,6 @@ public abstract class Task {
                     infos.remove(name);
                 }
             }
-        }
-
-        /**
-         * <p>
-         * Compute human-readable task name.
-         * </p>
-         * 
-         * @param taskClass A target task.
-         * @return A task name.
-         */
-        private static final String computeTaskName(Class taskClass) {
-            if (taskClass.isSynthetic()) {
-                return computeTaskName(taskClass.getSuperclass());
-            }
-            return Inputs.hyphenize(taskClass.getSimpleName());
         }
     }
 

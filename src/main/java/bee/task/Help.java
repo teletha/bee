@@ -13,6 +13,7 @@ import java.util.Locale;
 
 import bee.Bee;
 import bee.Platform;
+import bee.api.Command;
 import bee.api.Task;
 
 /**

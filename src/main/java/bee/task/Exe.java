@@ -18,6 +18,7 @@ import java.util.List;
 import kiss.I;
 import bee.Platform;
 import bee.api.ArtifactLocator;
+import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;

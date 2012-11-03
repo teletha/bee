@@ -11,6 +11,7 @@ package bee.task;
 
 import kiss.I;
 import bee.api.ArtifactLocator;
+import bee.api.Command;
 import bee.api.Repository;
 import bee.api.Task;
 

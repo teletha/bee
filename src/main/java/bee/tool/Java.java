@@ -33,8 +33,8 @@ import javax.management.remote.JMXServiceURL;
 import kiss.I;
 import kiss.model.Codec;
 import bee.UserInterface;
+import bee.api.Command;
 import bee.api.Library;
-import bee.task.Command;
 import bee.util.NetworkAddressUtil;
 import bee.util.ProcessMaker;
 
