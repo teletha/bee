@@ -11,6 +11,8 @@ package bee.task;
 
 import java.nio.file.Path;
 
+import bee.api.Task;
+
 /**
  * @version 2012/10/23 13:31:46
  */

@@ -16,6 +16,7 @@ import java.nio.file.Path;
 
 import kiss.I;
 import bee.api.Scope;
+import bee.api.Task;
 import bee.compiler.JavaCompiler;
 import bee.util.PathSet;
 

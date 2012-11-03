@@ -21,9 +21,9 @@ import kiss.I;
 import kiss.model.ClassUtil;
 import bee.api.License;
 import bee.api.Project;
+import bee.api.Task;
 import bee.compiler.JavaCompiler;
 import bee.task.Prototype;
-import bee.task.TaskManager;
 import bee.util.Paths;
 import bee.util.Stopwatch;
 
@@ -64,7 +64,7 @@ public class Bee {
     private Project project;
 
     /** The internal tasks. */
-    private final List<Build> builds = new ArrayList();
+    private final List<Task> builds = new ArrayList();
 
     /**
      * <p>
@@ -152,7 +152,7 @@ public class Bee {
      * @param tasks A command literal.
      */
     public void execute(final String... tasks) {
-        execute(new CommandTasks(tasks));
+        execute(new CommandLineTask(tasks));
     }
 
     /**
@@ -162,7 +162,7 @@ public class Bee {
      * 
      * @param build
      */
-    public void execute(Build build) {
+    public void execute(Task build) {
         String result = "SUCCESS";
         Stopwatch stopwatch = new Stopwatch().start();
 
@@ -196,8 +196,8 @@ public class Bee {
             builds.add(build);
 
             // execute build
-            for (Build current : builds) {
-                current.build(project);
+            for (Task current : builds) {
+                current.execute();
             }
         } catch (Throwable e) {
             if (e == AbortedByUser) {
@@ -243,14 +243,14 @@ public class Bee {
             ui.talk("Generate project definition.");
 
             // build project architecture
-            builds.add(new Build() {
+            builds.add(new Task() {
 
                 /**
                  * {@inheritDoc}
                  */
                 @Override
-                protected void build(Project project) {
-                    task(Prototype.class).java();
+                public void execute() {
+                    require(Prototype.class).java();
                 }
             });
         }
@@ -305,6 +305,30 @@ public class Bee {
     }
 
     /**
+     * @version 2012/11/03 1:47:40
+     */
+    private static class CommandLineTask extends Task {
+
+        /** The task list. */
+        private final String[] tasks;
+
+        /**
+         * @param tasks
+         */
+        private CommandLineTask(String[] tasks) {
+            this.tasks = tasks;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void execute() {
+            require(tasks);
+        }
+    }
+
+    /**
      * @version 2012/10/21 14:49:32
      */
     private static class FavricProject extends Project {
@@ -325,35 +349,9 @@ public class Bee {
     }
 
     /**
-     * @version 2012/04/17 16:33:58
-     */
-    private static class CommandTasks extends Build {
-
-        /** The task list. */
-        private final String[] tasks;
-
-        /**
-         * @param tasks
-         */
-        private CommandTasks(String[] tasks) {
-            this.tasks = tasks;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected void build(Project project) {
-            for (String task : tasks) {
-                I.make(TaskManager.class).execute(task);
-            }
-        }
-    }
-
-    /**
      * @version 2012/10/25 21:33:00
      */
-    private static abstract class IDE extends Build implements Extensible {
+    private static abstract class IDE extends Task implements Extensible {
 
         /**
          * <p>
@@ -392,8 +390,8 @@ public class Bee {
          * {@inheritDoc}
          */
         @Override
-        protected void build(Project project) {
-            task(bee.task.Eclipse.class).eclipse();
+        public void execute() {
+            require(bee.task.Eclipse.class).eclipse();
         }
     }
 
@@ -415,7 +413,7 @@ public class Bee {
          * {@inheritDoc}
          */
         @Override
-        protected void build(Project project) {
+        public void execute() {
             throw new UnsupportedOperationException();
         }
     }
@@ -438,8 +436,9 @@ public class Bee {
          * {@inheritDoc}
          */
         @Override
-        protected void build(Project project) {
+        public void execute() {
             throw new UnsupportedOperationException();
         }
     }
+
 }

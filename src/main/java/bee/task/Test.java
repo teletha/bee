@@ -24,6 +24,7 @@ import org.junit.runner.notification.Failure;
 
 import bee.Platform;
 import bee.api.Scope;
+import bee.api.Task;
 import bee.tool.Java;
 import bee.tool.Java.JVM;
 

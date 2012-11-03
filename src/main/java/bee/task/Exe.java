@@ -20,6 +20,7 @@ import bee.Platform;
 import bee.api.ArtifactLocator;
 import bee.api.Library;
 import bee.api.Scope;
+import bee.api.Task;
 import bee.util.ProcessMaker;
 import bee.util.ZipArchiver;
 
