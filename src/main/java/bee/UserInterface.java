@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -210,8 +211,11 @@ public abstract class UserInterface {
         default:
             talk(question, EOL);
 
+            // copy items to prevent order destruction
+            List<T> copy = new ArrayList(items);
+
             // sort by name
-            Collections.sort(items, new Comparator() {
+            Collections.sort(copy, new Comparator() {
 
                 /**
                  * {@inheritDoc}
@@ -222,8 +226,8 @@ public abstract class UserInterface {
                 }
             });
 
-            for (int i = 0; i < items.size(); i++) {
-                talk("  [", i + 1, "]  ", items.get(i));
+            for (int i = 0; i < copy.size(); i++) {
+                talk("  [", i + 1, "]  ", copy.get(i));
             }
             write(EOL);
 
