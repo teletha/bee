@@ -231,7 +231,7 @@ public abstract class UserInterface {
             }
             write(EOL);
 
-            return items.get(select(1, items.size()) - 1);
+            return copy.get(select(1, copy.size()) - 1);
         }
     }
 
