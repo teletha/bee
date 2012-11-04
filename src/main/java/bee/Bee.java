@@ -206,6 +206,7 @@ public class Bee {
                 result = "FAILURE";
                 ui.error(e);
             }
+
         } finally {
             stopwatch.stop();
 
@@ -230,7 +231,7 @@ public class Bee {
 
             ui.title("Create New Project");
 
-            String name = ui.ask("Product name");
+            String name = ui.ask("Product name", project.getRoot().getFileName().toString());
             String group = ui.ask("Product group", name.toLowerCase().replaceAll("\\s+", "."));
             String version = ui.ask("Product version", "1.0");
             License license = ui.ask("Product license", License.class);
