@@ -523,18 +523,23 @@ public class Project {
         pom.append($("artifactId").text(getProduct()));
         pom.append($("version").text(getVersion()));
 
-        Element dependencies = $("dependencies");
+        Element dependencies = pom.child("dependencies");
 
         for (Library library : libraries) {
-            Element dependency = $("dependency");
+            Element dependency = dependencies.child("dependency");
             dependency.append($("groupId").text(library.group));
             dependency.append($("artifactId").text(library.name));
             dependency.append($("version").text(library.version));
             dependency.append($("scope").text(library.scope.name()));
 
-            dependencies.append(dependency);
+            Element exclusions = dependency.child("exclusions");
+
+            for (Exclusion e : this.exclusions) {
+                Element exclusion = exclusions.child("exclusion");
+                exclusion.append($("groupId").text(e.getGroupId()));
+                exclusion.append($("artifactId").text(e.getArtifactId()));
+            }
         }
-        pom.append(dependencies);
 
         // write as pom
         return pom.toString();

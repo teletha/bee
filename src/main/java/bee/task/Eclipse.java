@@ -18,7 +18,6 @@ package bee.task;
 import static kiss.Element.*;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -46,17 +45,10 @@ public class Eclipse extends Task {
     @Command
     public void eclipse() {
         createClasspath(project.getRoot().resolve(".classpath"));
-        ui.talk("Generate classpath file.");
-
-        // createFactorypath(project.getRoot().resolve(".factorypath"));
-        // ui.talk("Generate factorypath file.");
-
         createProject(project.getRoot().resolve(".project"));
-        ui.talk("Generate project file.");
+        createFactorypath(project.getRoot().resolve(".factorypath"));
+        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
 
-        // createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
-        // ui.talk("Generate APT preference file.");
-        //
         // createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
         // ui.talk("Generate JDT preference file.");
 
@@ -77,11 +69,7 @@ public class Eclipse extends Task {
         doc.append($("buildSpec").append($("buildCommand").append($("name").text("org.eclipse.jdt.core.javabuilder"))));
         doc.append($("natures").append($("nature").text("org.eclipse.jdt.core.javanature")));
 
-        try {
-            Files.write(file, doc.toString().getBytes());
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
+        makeFile(file, doc);
     }
 
     /**
@@ -135,11 +123,7 @@ public class Eclipse extends Task {
         }
         doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
 
-        try {
-            Files.write(file, doc.toString().getBytes());
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
+        makeFile(file, doc);
     }
 
     /**
@@ -152,18 +136,14 @@ public class Eclipse extends Task {
     private void createFactorypath(Path file) {
         Element doc = $("factorypath");
 
-        for (Library library : project.getLibrary("npc", "bee", "0.1")) {
+        for (Library library : project.getLibrary(Bee.API.getGroup(), "bee", Bee.API.getVersion())) {
             doc.append($("factorypathentry").attr("kind", "EXTJAR")
                     .attr("id", library.getJar())
                     .attr("enabled", true)
                     .attr("runInBatchMode", false));
         }
 
-        try {
-            Files.write(file, doc.toString().getBytes());
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
+        makeFile(file, doc);
     }
 
     /**
@@ -180,11 +160,7 @@ public class Eclipse extends Task {
         doc.add("org.eclipse.jdt.apt.genSrcDir=.apt_generated");
         doc.add("org.eclipse.jdt.apt.reconcileEnabled=true");
 
-        try {
-            Files.write(file, doc, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
+        makeFile(file, doc);
     }
 
     /**

@@ -16,10 +16,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import kiss.I;
@@ -210,24 +207,9 @@ public abstract class UserInterface {
 
         default:
             talk(question);
+            talk(items);
 
-            // copy items to prevent order destruction
-            List<T> copy = new ArrayList(items);
-
-            // sort by name
-            Collections.sort(copy, new Comparator() {
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public int compare(Object one, Object other) {
-                    return one.toString().compareTo(other.toString());
-                }
-            });
-            talk(copy);
-
-            return copy.get(select(1, copy.size()) - 1);
+            return items.get(select(1, items.size()) - 1);
         }
     }
 

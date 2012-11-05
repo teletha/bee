@@ -205,7 +205,7 @@ public class Bee {
             } else {
                 result = "FAILURE";
 
-                // ui.error(e);
+                ui.error(e);
             }
 
         } finally {
