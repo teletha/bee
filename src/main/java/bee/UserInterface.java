@@ -209,7 +209,7 @@ public abstract class UserInterface {
             return items.get(0); // unconditionally
 
         default:
-            talk(question, EOL);
+            talk(question);
 
             // copy items to prevent order destruction
             List<T> copy = new ArrayList(items);
@@ -225,11 +225,7 @@ public abstract class UserInterface {
                     return one.toString().compareTo(other.toString());
                 }
             });
-
-            for (int i = 0; i < copy.size(); i++) {
-                talk("  [", i + 1, "]  ", copy.get(i));
-            }
-            write(EOL);
+            talk(copy);
 
             return copy.get(select(1, copy.size()) - 1);
         }
@@ -321,6 +317,8 @@ public abstract class UserInterface {
                     builder.append((CharSequence) message);
                 } else if (Throwable.class.isAssignableFrom(type)) {
                     buildError(builder, (Throwable) message);
+                } else if (List.class.isAssignableFrom(type)) {
+                    buildList(builder, (List) message);
                 } else {
                     builder.append(I.transform(message, String.class));
                 }
@@ -373,6 +371,25 @@ public abstract class UserInterface {
         throwable.printStackTrace(new PrintWriter(writer));
 
         builder.append(writer.toString());
+    }
+
+    /**
+     * <p>
+     * Build listup message.
+     * </p>
+     * 
+     * @param builder A message builder.
+     * @param list Items.
+     */
+    private void buildList(StringBuilder builder, List list) {
+        if (builder.length() != 0) {
+            builder.append(EOL);
+        }
+        builder.append(EOL);
+
+        for (int i = 0; i < list.size(); i++) {
+            builder.append("  [").append(i + 1).append("] ").append(list.get(i)).append(EOL);
+        }
     }
 
     /**

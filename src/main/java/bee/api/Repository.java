@@ -16,13 +16,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -85,14 +82,15 @@ import org.sonatype.aether.impl.internal.DefaultUpdateCheckManager;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
 import org.sonatype.aether.installation.InstallRequest;
 import org.sonatype.aether.installation.InstallationException;
-import org.sonatype.aether.repository.ArtifactRepository;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.repository.RepositoryPolicy;
+import org.sonatype.aether.resolution.ArtifactDescriptorRequest;
 import org.sonatype.aether.resolution.ArtifactRequest;
 import org.sonatype.aether.resolution.ArtifactResolutionException;
 import org.sonatype.aether.resolution.ArtifactResult;
 import org.sonatype.aether.resolution.DependencyRequest;
+import org.sonatype.aether.resolution.DependencyResolutionException;
 import org.sonatype.aether.resolution.DependencyResult;
 import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
 import org.sonatype.aether.spi.localrepo.LocalRepositoryManagerFactory;
@@ -447,6 +445,8 @@ public class Repository {
             }
 
             return set;
+        } catch (DependencyResolutionException e) {
+            throw I.quiet(e);
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -696,7 +696,8 @@ public class Repository {
          */
         @Override
         public void artifactDescriptorMissing(RepositoryEvent event) {
-            // ui.talk("Missing artifact descriptor for " + event.getArtifact());
+            ArtifactDescriptorRequest request = (ArtifactDescriptorRequest) event.getTrace().getData();
+            ui.error(request.getArtifact(), " is not found at the following remote repositories.", request.getRepositories());
         }
 
         /**
@@ -738,19 +739,6 @@ public class Repository {
          */
         @Override
         public void artifactDownloaded(RepositoryEvent event) {
-            Exception e = event.getException();
-
-            if (e != null) {
-                ArtifactRepository repository = event.getRepository();
-
-                if (repository instanceof RemoteRepository) {
-                    RemoteRepository remote = (RemoteRepository) repository;
-
-                    ui.talk(event.getArtifact(), " is not found at ", remote.getUrl());
-                } else {
-                    ui.talk(event.getArtifact(), " is not found at ", event.getRepository());
-                }
-            }
         }
 
         /**
@@ -921,17 +909,10 @@ public class Repository {
             long contentLength = event.getTransferredBytes();
             if (contentLength >= 0) {
                 String type = (event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploaded" : "Downloaded");
+                String name = resource.getResourceName();
                 String len = contentLength >= 1024 ? toKB(contentLength) + " KB" : contentLength + " B";
 
-                String throughput = "";
-                long duration = System.currentTimeMillis() - resource.getTransferStartTime();
-                if (duration > 0) {
-                    DecimalFormat format = new DecimalFormat("0.0", new DecimalFormatSymbols(Locale.ENGLISH));
-                    double kbPerSec = (contentLength / 1024.0) / (duration / 1000.0);
-                    throughput = " at " + format.format(kbPerSec) + " KB/sec";
-                }
-
-                ui.talk(type + ": " + resource.getRepositoryUrl() + resource.getResourceName() + " (" + len + throughput + ")");
+                ui.talk(type, ": ", name.substring(name.lastIndexOf('/') + 1), " (", len, ")");
             }
         }
 
