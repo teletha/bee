@@ -13,8 +13,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,11 +24,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import kiss.ClassListener;
+import kiss.Element;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.model.ClassUtil;
 import bee.Bee;
+import bee.Platform;
 import bee.UserInterface;
 import bee.util.Inputs;
 
@@ -144,6 +148,50 @@ public abstract class Task {
      */
     protected final void makeDirectory(Path base, String path) {
         makeDirectory(base.resolve(path));
+    }
+
+    /**
+     * <p>
+     * Utilitu method to write xml file.
+     * </p>
+     * 
+     * @param path
+     * @param xml
+     */
+    protected final void makeFile(Path path, Element xml) {
+        makeFile(path, xml.toString());
+    }
+
+    /**
+     * <p>
+     * Utilitu method to write file.
+     * </p>
+     * 
+     * @param path A file path to write.
+     * @param content A file content.
+     */
+    protected final void makeFile(Path path, String content) {
+        makeFile(path, Arrays.asList(content.split(Platform.EOL)));
+    }
+
+    /**
+     * <p>
+     * Utilitu method to write file.
+     * </p>
+     * 
+     * @param path A file path to write.
+     * @param content A file content.
+     */
+    protected final void makeFile(Path path, Iterable<String> content) {
+        makeDirectory(path.getParent());
+
+        try {
+            Files.write(path, content, StandardCharsets.UTF_8);
+
+            ui.talk("Make file [" + path.toAbsolutePath() + "]");
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
