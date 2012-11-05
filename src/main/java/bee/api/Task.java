@@ -230,7 +230,7 @@ public abstract class Task {
                 if (e instanceof InvocationTargetException) {
                     e = ((InvocationTargetException) e).getTargetException();
                 }
-                I.make(UserInterface.class).error(e);
+                throw I.quiet(e);
             }
         }
 
