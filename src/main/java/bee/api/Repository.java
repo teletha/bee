@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -84,6 +85,7 @@ import org.sonatype.aether.impl.internal.DefaultUpdateCheckManager;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
 import org.sonatype.aether.installation.InstallRequest;
 import org.sonatype.aether.installation.InstallationException;
+import org.sonatype.aether.repository.ArtifactRepository;
 import org.sonatype.aether.repository.LocalRepository;
 import org.sonatype.aether.repository.RemoteRepository;
 import org.sonatype.aether.repository.RepositoryPolicy;
@@ -129,6 +131,9 @@ public class Repository {
 
     /** The current processing project. */
     private final Project project;
+
+    /** The current processing user interface. */
+    private final UserInterface ui;
 
     /** The root repository system. */
     private final DefaultRepositorySystem system = new DefaultRepositorySystem();
@@ -254,8 +259,9 @@ public class Repository {
     /**
      * Wiring components by hand.
      */
-    Repository(Project project) {
+    Repository(Project project, UserInterface ui) {
         this.project = project;
+        this.ui = ui;
 
         // create filter
         dependencyFilters.add(new OptionalDependencySelector());
@@ -366,6 +372,7 @@ public class Repository {
         // ==================================================
         setLocalRepository(searchLocalRepository());
         addRemoteRepository("central", "http://repo1.maven.org/maven2/");
+        addRemoteRepository("jboss", "http://repository.jboss.org/nexus/content/groups/public-jboss/");
     }
 
     /**
@@ -378,6 +385,45 @@ public class Repository {
      * @return
      */
     public Set<Library> collectDependency(Project project, Scope scope) {
+        return collectDependency(project, scope, project.libraries);
+    }
+
+    /**
+     * <p>
+     * Collect all dependencies in the specified scope.
+     * </p>
+     * 
+     * @param libraries
+     * @param scope
+     * @return
+     */
+    public Set<Library> collectDependency(String group, String product, String version, Scope scope) {
+        return collectDependency(new Library(group, product, version), scope);
+    }
+
+    /**
+     * <p>
+     * Collect all dependencies in the specified scope.
+     * </p>
+     * 
+     * @param libraries
+     * @param scope
+     * @return
+     */
+    public Set<Library> collectDependency(Library library, Scope scope) {
+        return collectDependency(project, scope, Collections.singleton(library));
+    }
+
+    /**
+     * <p>
+     * Collect all dependencies in the specified scope.
+     * </p>
+     * 
+     * @param libraries
+     * @param scope
+     * @return
+     */
+    private Set<Library> collectDependency(Project project, Scope scope, Set<Library> libraries) {
         Set<Library> set = new TreeSet();
 
         // collect remote repository
@@ -389,7 +435,7 @@ public class Repository {
         CollectRequest request = new CollectRequest();
         request.setRepositories(repositories);
 
-        for (Library library : project.libraries) {
+        for (Library library : libraries) {
             request.addDependency(new Dependency(library.artifact, library.scope.toString()));
         }
 
@@ -404,54 +450,6 @@ public class Repository {
         } catch (Exception e) {
             throw I.quiet(e);
         }
-    }
-
-    /**
-     * <p>
-     * Collect all dependencies in the specified scope.
-     * </p>
-     * 
-     * @param libraries
-     * @param scope
-     * @return
-     */
-    public Set<Library> collectDependency(Library library, Scope scope) {
-        Set<Library> set = new TreeSet();
-
-        // collect remote repository
-        List<RemoteRepository> repositories = new ArrayList();
-        repositories.addAll(remoteRepositories);
-        repositories.addAll(project.repositories);
-
-        // dependency collector
-        CollectRequest request = new CollectRequest();
-        request.setRepositories(repositories);
-        request.addDependency(new Dependency(library.artifact, library.scope.toString()));
-
-        try {
-            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
-
-            for (ArtifactResult dependency : result.getArtifactResults()) {
-                set.add(new Library(dependency.getRequest().getArtifact()));
-            }
-
-            return set;
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
-    }
-
-    /**
-     * <p>
-     * Collect all dependencies in the specified scope.
-     * </p>
-     * 
-     * @param libraries
-     * @param scope
-     * @return
-     */
-    public Set<Library> collectDependency(String group, String product, String version, Scope scope) {
-        return collectDependency(new Library(group, product, version), scope);
     }
 
     /**
@@ -698,7 +696,7 @@ public class Repository {
          */
         @Override
         public void artifactDescriptorMissing(RepositoryEvent event) {
-            ui.talk("Missing artifact descriptor for " + event.getArtifact());
+            // ui.talk("Missing artifact descriptor for " + event.getArtifact());
         }
 
         /**
@@ -743,7 +741,15 @@ public class Repository {
             Exception e = event.getException();
 
             if (e != null) {
-                ui.talk("Artifact is not found : " + event.getArtifact() + " from " + event.getRepository());
+                ArtifactRepository repository = event.getRepository();
+
+                if (repository instanceof RemoteRepository) {
+                    RemoteRepository remote = (RemoteRepository) repository;
+
+                    ui.talk(event.getArtifact(), " is not found at ", remote.getUrl());
+                } else {
+                    ui.talk(event.getArtifact(), " is not found at ", event.getRepository());
+                }
             }
         }
 
