@@ -518,26 +518,26 @@ public class Project {
     @Override
     public String toString() {
         Element pom = $("project");
-        pom.append($("modelVersion").text("4.0.0"));
-        pom.append($("groupId").text(getGroup()));
-        pom.append($("artifactId").text(getProduct()));
-        pom.append($("version").text(getVersion()));
+        pom.child("modelVersion").text("4.0.0");
+        pom.child("groupId").text(getGroup());
+        pom.child("artifactId").text(getProduct());
+        pom.child("version").text(getVersion());
 
         Element dependencies = pom.child("dependencies");
 
         for (Library library : libraries) {
             Element dependency = dependencies.child("dependency");
-            dependency.append($("groupId").text(library.group));
-            dependency.append($("artifactId").text(library.name));
-            dependency.append($("version").text(library.version));
-            dependency.append($("scope").text(library.scope.name()));
+            dependency.child("groupId").text(library.group);
+            dependency.child("artifactId").text(library.name);
+            dependency.child("version").text(library.version);
+            dependency.child("scope").text(library.scope.name());
 
             Element exclusions = dependency.child("exclusions");
 
             for (Exclusion e : this.exclusions) {
                 Element exclusion = exclusions.child("exclusion");
-                exclusion.append($("groupId").text(e.getGroupId()));
-                exclusion.append($("artifactId").text(e.getArtifactId()));
+                exclusion.child("groupId").text(e.getGroupId());
+                exclusion.child("artifactId").text(e.getArtifactId());
             }
         }
 
