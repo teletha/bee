@@ -26,8 +26,6 @@ public class Install extends bee.task.Install {
     public void project() {
         require(Jar.class).merge();
 
-        super.project();
-
         BeeInstaller.install(project.locateJar());
     }
 }
