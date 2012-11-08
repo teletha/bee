@@ -9,8 +9,6 @@
  */
 package bee.api;
 
-import static kiss.XML.*;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -640,7 +638,7 @@ public class Repository {
             Path conf = home.resolve("conf/settings.xml");
 
             if (Files.exists(conf)) {
-                String path = $(conf).find("localRepository").text();
+                String path = I.xml(conf).find("localRepository").text();
 
                 if (path.length() != 0) {
                     return I.locate(path);

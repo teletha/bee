@@ -16,7 +16,6 @@
 package bee.api;
 
 import static bee.util.Inputs.*;
-import static kiss.XML.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -517,7 +516,7 @@ public class Project {
      */
     @Override
     public String toString() {
-        XML pom = $("project");
+        XML pom = I.xml("project");
         pom.child("modelVersion").text("4.0.0");
         pom.child("groupId").text(getGroup());
         pom.child("artifactId").text(getProduct());
