@@ -15,8 +15,6 @@
  */
 package bee.task;
 
-import static kiss.XML.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -63,11 +61,12 @@ public class Eclipse extends Task {
      * @param file
      */
     private void createProject(Path file) {
-        XML doc = $("projectDescription");
-        doc.append($("name").text(project.getProduct()));
-        doc.append($("comment").text(project.getDescription()));
-        doc.append($("buildSpec").append($("buildCommand").append($("name").text("org.eclipse.jdt.core.javabuilder"))));
-        doc.append($("natures").append($("nature").text("org.eclipse.jdt.core.javanature")));
+        XML doc = I.xml("projectDescription");
+        doc.append(I.xml("name").text(project.getProduct()));
+        doc.append(I.xml("comment").text(project.getDescription()));
+        doc.append(I.xml("buildSpec").append(I.xml("buildCommand").append(I.xml("name")
+                .text("org.eclipse.jdt.core.javabuilder"))));
+        doc.append(I.xml("natures").append(I.xml("nature").text("org.eclipse.jdt.core.javanature")));
 
         makeFile(file, doc);
     }
@@ -80,25 +79,28 @@ public class Eclipse extends Task {
      * @param file
      */
     private void createClasspath(Path file) {
-        XML doc = $("classpath");
+        XML doc = I.xml("classpath");
 
         // tests
         for (Path path : project.getTestSources()) {
-            doc.append($("classpathentry").attr("kind", "src")
+            doc.append(I.xml("classpathentry")
+                    .attr("kind", "src")
                     .attr("path", project.getRoot().relativize(path))
                     .attr("output", project.getRoot().relativize(project.getTestClasses())));
         }
 
         // sources
         for (Path path : project.getSources()) {
-            doc.append($("classpathentry").attr("kind", "src")
+            doc.append(I.xml("classpathentry")
+                    .attr("kind", "src")
                     .attr("path", project.getRoot().relativize(path))
                     .attr("output", project.getRoot().relativize(project.getClasses())));
         }
 
         // projects
         for (Path path : project.getProjectSources()) {
-            doc.append($("classpathentry").attr("kind", "src")
+            doc.append(I.xml("classpathentry")
+                    .attr("kind", "src")
                     .attr("path", project.getRoot().relativize(path))
                     .attr("output", project.getRoot().relativize(project.getProjectClasses())));
         }
@@ -109,7 +111,7 @@ public class Eclipse extends Task {
             Path source = library.getSourceJar();
 
             if (Files.exists(jar)) {
-                XML e = $("classpathentry").attr("kind", "lib").attr("path", jar);
+                XML e = I.xml("classpathentry").attr("kind", "lib").attr("path", jar);
 
                 if (Files.exists(source)) {
                     e.attr("sourcepath", source);
@@ -119,9 +121,9 @@ public class Eclipse extends Task {
         }
 
         for (Library lib : project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion())) {
-            doc.append($("classpathentry").attr("kind", "lib").attr("path", lib.getJar()));
+            doc.append(I.xml("classpathentry").attr("kind", "lib").attr("path", lib.getJar()));
         }
-        doc.append($("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
+        doc.append(I.xml("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
 
         makeFile(file, doc);
     }
@@ -134,10 +136,11 @@ public class Eclipse extends Task {
      * @param file
      */
     private void createFactorypath(Path file) {
-        XML doc = $("factorypath");
+        XML doc = I.xml("factorypath");
 
         for (Library library : project.getLibrary(Bee.API.getGroup(), "bee", Bee.API.getVersion())) {
-            doc.append($("factorypathentry").attr("kind", "EXTJAR")
+            doc.append(I.xml("factorypathentry")
+                    .attr("kind", "EXTJAR")
                     .attr("id", library.getJar())
                     .attr("enabled", true)
                     .attr("runInBatchMode", false));
