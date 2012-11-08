@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static kiss.Element.*;
+import static kiss.XML.*;
 
 import java.io.File;
 import java.io.IOException;

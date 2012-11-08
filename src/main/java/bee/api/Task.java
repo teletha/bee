@@ -24,10 +24,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import kiss.ClassListener;
-import kiss.Element;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
+import kiss.XML;
 import kiss.model.ClassUtil;
 import bee.Bee;
 import bee.Platform;
@@ -158,7 +158,7 @@ public abstract class Task {
      * @param path
      * @param xml
      */
-    protected final void makeFile(Path path, Element xml) {
+    protected final void makeFile(Path path, XML xml) {
         makeFile(path, xml.toString());
     }
 

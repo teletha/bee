@@ -16,7 +16,7 @@
 package bee.api;
 
 import static bee.util.Inputs.*;
-import static kiss.Element.*;
+import static kiss.XML.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,8 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.lang.model.SourceVersion;
 
-import kiss.Element;
 import kiss.I;
+import kiss.XML;
 import kiss.model.ClassUtil;
 
 import org.apache.maven.wagon.PathUtils;
@@ -517,25 +517,25 @@ public class Project {
      */
     @Override
     public String toString() {
-        Element pom = $("project");
+        XML pom = $("project");
         pom.child("modelVersion").text("4.0.0");
         pom.child("groupId").text(getGroup());
         pom.child("artifactId").text(getProduct());
         pom.child("version").text(getVersion());
 
-        Element dependencies = pom.child("dependencies");
+        XML dependencies = pom.child("dependencies");
 
         for (Library library : libraries) {
-            Element dependency = dependencies.child("dependency");
+            XML dependency = dependencies.child("dependency");
             dependency.child("groupId").text(library.group);
             dependency.child("artifactId").text(library.name);
             dependency.child("version").text(library.version);
             dependency.child("scope").text(library.scope.name());
 
-            Element exclusions = dependency.child("exclusions");
+            XML exclusions = dependency.child("exclusions");
 
             for (Exclusion e : this.exclusions) {
-                Element exclusion = exclusions.child("exclusion");
+                XML exclusion = exclusions.child("exclusion");
                 exclusion.child("groupId").text(e.getGroupId());
                 exclusion.child("artifactId").text(e.getArtifactId());
             }
