@@ -15,7 +15,7 @@
  */
 package bee.task;
 
-import static kiss.Element.*;
+import static kiss.XML.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import kiss.Element;
 import kiss.I;
+import kiss.XML;
 import bee.Bee;
 import bee.api.Command;
 import bee.api.Library;
@@ -63,7 +63,7 @@ public class Eclipse extends Task {
      * @param file
      */
     private void createProject(Path file) {
-        Element doc = $("projectDescription");
+        XML doc = $("projectDescription");
         doc.append($("name").text(project.getProduct()));
         doc.append($("comment").text(project.getDescription()));
         doc.append($("buildSpec").append($("buildCommand").append($("name").text("org.eclipse.jdt.core.javabuilder"))));
@@ -80,7 +80,7 @@ public class Eclipse extends Task {
      * @param file
      */
     private void createClasspath(Path file) {
-        Element doc = $("classpath");
+        XML doc = $("classpath");
 
         // tests
         for (Path path : project.getTestSources()) {
@@ -109,7 +109,7 @@ public class Eclipse extends Task {
             Path source = library.getSourceJar();
 
             if (Files.exists(jar)) {
-                Element e = $("classpathentry").attr("kind", "lib").attr("path", jar);
+                XML e = $("classpathentry").attr("kind", "lib").attr("path", jar);
 
                 if (Files.exists(source)) {
                     e.attr("sourcepath", source);
@@ -134,7 +134,7 @@ public class Eclipse extends Task {
      * @param file
      */
     private void createFactorypath(Path file) {
-        Element doc = $("factorypath");
+        XML doc = $("factorypath");
 
         for (Library library : project.getLibrary(Bee.API.getGroup(), "bee", Bee.API.getVersion())) {
             doc.append($("factorypathentry").attr("kind", "EXTJAR")
