@@ -42,13 +42,12 @@ public class Eclipse extends Task {
      */
     @Command
     public void eclipse() {
+
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
-        createFactorypath(project.getRoot().resolve(".factorypath"));
-        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
-
+        // createFactorypath(project.getRoot().resolve(".factorypath"));
+        // createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
         // createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
-        // ui.talk("Generate JDT preference file.");
 
         ui.talk("Create Eclipse configuration files.");
     }
@@ -160,7 +159,7 @@ public class Eclipse extends Task {
         List<String> doc = new ArrayList();
         doc.add("eclipse.preferences.version=1");
         doc.add("org.eclipse.jdt.apt.aptEnabled=true");
-        doc.add("org.eclipse.jdt.apt.genSrcDir=.apt_generated");
+        doc.add("org.eclipse.jdt.apt.genSrcDir=src/main/auto");
         doc.add("org.eclipse.jdt.apt.reconcileEnabled=true");
 
         makeFile(file, doc);
@@ -175,6 +174,10 @@ public class Eclipse extends Task {
      */
     private void createJDT(Path file) {
         try {
+            if (Files.notExists(file)) {
+                makeFile(file, "");
+            }
+
             Properties doc = new Properties();
             doc.load(Files.newInputStream(file));
 
