@@ -15,32 +15,27 @@ import org.junit.Test;
 import bee.Null;
 
 /**
- * @version 2012/11/10 2:22:26
+ * @version 2012/11/10 2:22:15
  */
-public class AnnotationValidatorTest {
+public class SourceRootElementTest {
 
     @Rule
-    public static final PrivateSourceDirectory source01 = new PrivateSourceDirectory("source01");
+    public static final PrivateSourceDirectory source03 = new PrivateSourceDirectory("source03");
 
     @Test
-    public void byClass() throws Exception {
-        ByClass.invoked = false;
-
+    public void specialTypes() throws Exception {
         JavaCompiler compiler = new JavaCompiler(Null.UI);
-        compiler.addSourceDirectory(source01.root);
-        compiler.setOutput(source01.output);
+        compiler.addSourceDirectory(source03.root);
+        compiler.setOutput(source03.output);
         compiler.addProcessor(BeeProcessor.class);
         compiler.compile();
-
-        assert ByClass.invoked;
     }
 
     /**
-     * @version 2012/11/10 2:22:23
+     * @version 2012/11/10 2:22:11
      */
-    private static final class ByClass extends AnnotationValidator<SourceAnnotation> {
-
-        private static boolean invoked = false;
+    @SuppressWarnings("unused")
+    private static final class Validation extends AnnotationValidator<SourceAnnotation> {
 
         /**
          * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation, Source,
@@ -48,11 +43,7 @@ public class AnnotationValidatorTest {
          */
         @Override
         public void validate(SourceAnnotation annotation, Source source, AnnotationNotifier notifier) {
-            assert annotation != null;
-            assert notifier != null;
-            assert source != null;
-
-            invoked = true;
+            assert source.root != null;
         }
     }
 }

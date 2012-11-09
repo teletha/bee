@@ -26,10 +26,10 @@ import kiss.I;
 public class Source {
 
     /** The root tree. */
-    private final Element root;
+    public final Element root;
 
     /** The actual tree. */
-    private final Element element;
+    public final Element element;
 
     /** The element util. */
     private final Elements util;
@@ -38,16 +38,29 @@ public class Source {
     private final Filer filer;
 
     /**
-     * @param root
      * @param element
      * @param util
      * @param filer
      */
-    Source(Element root, Element element, Elements util, Filer filer) {
-        this.root = root;
+    Source(Element element, Elements util, Filer filer) {
         this.element = element;
         this.util = util;
         this.filer = filer;
+
+        root: while (true) {
+            switch (element.getKind()) {
+            case CLASS:
+            case ANNOTATION_TYPE:
+            case ENUM:
+            case INTERFACE:
+                break root;
+
+            default:
+                element = element.getEnclosingElement();
+                break;
+            }
+        }
+        this.root = element;
     }
 
     /**
