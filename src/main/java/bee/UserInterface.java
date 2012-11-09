@@ -200,7 +200,7 @@ public abstract class UserInterface {
 
         switch (items.size()) {
         case 0:
-            throw new Error(build("Question needs some items. [", question, "]"));
+            return null;
 
         case 1:
             return items.get(0); // unconditionally
