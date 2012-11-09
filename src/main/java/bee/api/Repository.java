@@ -117,6 +117,7 @@ import org.sonatype.aether.util.repository.DefaultAuthenticationSelector;
 import org.sonatype.aether.util.repository.DefaultMirrorSelector;
 import org.sonatype.aether.util.repository.DefaultProxySelector;
 
+import bee.Platform;
 import bee.UserInterface;
 
 /**
@@ -432,6 +433,13 @@ public class Repository {
         request.setRepositories(repositories);
 
         for (Library library : libraries) {
+            // install tools.jar if needed
+            if (library.group.equals("sun.jdk") && library.name.equals("tools") && Files.notExists(library.getJar())) {
+                Project dummy = new Project();
+                dummy.product(library.group, library.name, library.version);
+
+                install(dummy, Platform.JavaHome.resolve("lib/tools.jar"));
+            }
             request.addDependency(new Dependency(library.artifact, library.scope.toString()));
         }
 
