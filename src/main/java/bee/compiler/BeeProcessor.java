@@ -88,6 +88,8 @@ public class BeeProcessor implements Processor {
         this.filer = environment.getFiler();
         this.util = environment.getElementUtils();
         this.options = environment.getOptions();
+
+        I.load(I.locate(options.get("bee.project.class")));
     }
 
     /**

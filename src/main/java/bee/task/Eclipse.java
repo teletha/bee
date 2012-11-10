@@ -46,9 +46,11 @@ public class Eclipse extends Task {
      */
     @Command
     public void eclipse() {
-        Map<String, String> options = new HashMap();
-        options.put("test", "value");
-        options.put("aaaaa", "tadasd");
+        StringBuilder builder = new StringBuilder();
+        I.write(project, builder, true);
+
+        Map<String, Object> options = new HashMap();
+        options.put("bee.project.class", project.getProjectClasses());
 
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
@@ -159,7 +161,7 @@ public class Eclipse extends Task {
      * 
      * @param file
      */
-    private void createAPT(Path file, Map<String, String> options) {
+    private void createAPT(Path file, Map<String, Object> options) {
         List<String> doc = new ArrayList();
         doc.add("eclipse.preferences.version=1");
         doc.add("org.eclipse.jdt.apt.aptEnabled=true");
@@ -167,7 +169,7 @@ public class Eclipse extends Task {
         doc.add("org.eclipse.jdt.apt.reconcileEnabled=true");
 
         if (options != null) {
-            for (Entry<String, String> entry : options.entrySet()) {
+            for (Entry<String, Object> entry : options.entrySet()) {
                 doc.add("org.eclipse.jdt.apt.processorOptions/" + entry.getKey() + "=" + entry.getValue());
             }
         }
