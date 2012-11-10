@@ -19,11 +19,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import kiss.I;
 import kiss.XML;
+import kiss.model.ClassUtil;
 import bee.Bee;
 import bee.api.Command;
 import bee.api.Library;
@@ -42,12 +46,15 @@ public class Eclipse extends Task {
      */
     @Command
     public void eclipse() {
+        Map<String, String> options = new HashMap();
+        options.put("test", "value");
+        options.put("aaaaa", "tadasd");
 
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
-        // createFactorypath(project.getRoot().resolve(".factorypath"));
-        // createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"));
-        // createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
+        createFactorypath(project.getRoot().resolve(".factorypath"));
+        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), options);
+        createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
 
         ui.talk("Create Eclipse configuration files.");
     }
@@ -136,14 +143,11 @@ public class Eclipse extends Task {
      */
     private void createFactorypath(Path file) {
         XML doc = I.xml("factorypath");
-
-        for (Library library : project.getLibrary(Bee.API.getGroup(), "bee", Bee.API.getVersion())) {
-            doc.append(I.xml("factorypathentry")
-                    .attr("kind", "EXTJAR")
-                    .attr("id", library.getJar())
-                    .attr("enabled", true)
-                    .attr("runInBatchMode", false));
-        }
+        doc.child("factorypathentry")
+                .attr("kind", "EXTJAR")
+                .attr("id", ClassUtil.getArchive(Bee.class))
+                .attr("enabled", true)
+                .attr("runInBatchMode", false);
 
         makeFile(file, doc);
     }
@@ -155,13 +159,18 @@ public class Eclipse extends Task {
      * 
      * @param file
      */
-    private void createAPT(Path file) {
+    private void createAPT(Path file, Map<String, String> options) {
         List<String> doc = new ArrayList();
         doc.add("eclipse.preferences.version=1");
         doc.add("org.eclipse.jdt.apt.aptEnabled=true");
         doc.add("org.eclipse.jdt.apt.genSrcDir=src/main/auto");
         doc.add("org.eclipse.jdt.apt.reconcileEnabled=true");
 
+        if (options != null) {
+            for (Entry<String, String> entry : options.entrySet()) {
+                doc.add("org.eclipse.jdt.apt.processorOptions/" + entry.getKey() + "=" + entry.getValue());
+            }
+        }
         makeFile(file, doc);
     }
 
