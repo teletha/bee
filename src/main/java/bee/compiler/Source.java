@@ -12,6 +12,7 @@ package bee.compiler;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Element;
@@ -34,7 +35,15 @@ public class Source {
     /** The element util. */
     private final Elements util;
 
-    /** The file util. */
+    /**
+     * <p>
+     * The file util.
+     * </p>
+     * <p>
+     * Eclipse supports only {@value StandardLocation#CLASS_OUTPUT} and
+     * {@value StandardLocation#SOURCE_OUTPUT}.
+     * </p>
+     */
     private final Filer filer;
 
     /**
@@ -42,7 +51,7 @@ public class Source {
      * @param util
      * @param filer
      */
-    Source(Element element, Elements util, Filer filer) {
+    Source(Element element, Elements util, Filer filer, Map<String, String> options) {
         this.element = element;
         this.util = util;
         this.filer = filer;

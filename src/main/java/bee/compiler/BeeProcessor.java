@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.Completion;
@@ -38,6 +39,10 @@ import kiss.I;
  */
 public class BeeProcessor implements Processor {
 
+    static {
+        I.load(BeeProcessor.class, true);
+    }
+
     /** The message notifier. */
     private Notifier notifier;
 
@@ -46,6 +51,9 @@ public class BeeProcessor implements Processor {
 
     /** The utility. */
     private Elements util;
+
+    /** The options. */
+    private Map<String, String> options;
 
     /**
      * @see javax.annotation.processing.Processor#getSupportedOptions()
@@ -79,8 +87,7 @@ public class BeeProcessor implements Processor {
         this.notifier = new Notifier(environment.getMessager());
         this.filer = environment.getFiler();
         this.util = environment.getElementUtils();
-
-        I.load(BeeProcessor.class, true);
+        this.options = environment.getOptions();
     }
 
     /**
@@ -92,13 +99,13 @@ public class BeeProcessor implements Processor {
         try {
             for (TypeElement annotationType : annotations) {
                 for (Element element : round.getElementsAnnotatedWith(annotationType)) {
-                    Class annotationClass = Class.forName(annotationType.toString());
+                    Class annotationClass = Class.forName(annotationType.toString(), true, I.$loader);
                     AnnotationValidator validator = I.find(AnnotationValidator.class, annotationClass);
 
                     if (validator != null) {
                         notifier.element = element;
 
-                        validator.validate(element.getAnnotation(annotationClass), new Source(element, util, filer), notifier);
+                        validator.validate(element.getAnnotation(annotationClass), new Source(element, util, filer, options), notifier);
                     }
                 }
             }
