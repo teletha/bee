@@ -33,6 +33,7 @@ import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
+import bee.task.AnnotationProcessor.ProjectInfo;
 
 /**
  * @version 2010/04/02 3:58:58
@@ -46,11 +47,8 @@ public class Eclipse extends Task {
      */
     @Command
     public void eclipse() {
-        StringBuilder builder = new StringBuilder();
-        I.write(project, builder, true);
-
         Map<String, Object> options = new HashMap();
-        options.put("bee.project.class", project.getProjectClasses());
+        options.put(ProjectInfo.class.getName(), new ProjectInfo(project));
 
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));

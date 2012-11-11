@@ -13,6 +13,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import bee.Null;
+import bee.task.AnnotationProcessor;
+import bee.task.AnnotationValidator;
 
 /**
  * @version 2012/11/10 2:22:26
@@ -29,7 +31,7 @@ public class AnnotationValidatorTest {
         JavaCompiler compiler = new JavaCompiler(Null.UI);
         compiler.addSourceDirectory(source01.root);
         compiler.setOutput(source01.output);
-        compiler.addProcessor(BeeProcessor.class);
+        compiler.addProcessor(AnnotationProcessor.class);
         compiler.compile();
 
         assert ByClass.invoked;
@@ -43,14 +45,11 @@ public class AnnotationValidatorTest {
         private static boolean invoked = false;
 
         /**
-         * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation, Source,
-         *      bee.compiler.AnnotationNotifier)
+         * {@inheritDoc}
          */
         @Override
-        public void validate(SourceAnnotation annotation, Source source, AnnotationNotifier notifier) {
+        public void validate(SourceAnnotation annotation) {
             assert annotation != null;
-            assert notifier != null;
-            assert source != null;
 
             invoked = true;
         }

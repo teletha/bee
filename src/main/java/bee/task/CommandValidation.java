@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.compiler;
+package bee.task;
 
 import bee.api.Command;
 
@@ -20,7 +20,7 @@ public class CommandValidation extends AnnotationValidator<Command> {
      * {@inheritDoc}
      */
     @Override
-    protected void validate(Command annotation, Source source, AnnotationNotifier notifier) {
-        notifier.warn(annotation.value(), "   @@@", "   ", source.getClassFile(), "   ", source.getSourceFile());
+    public void validate(Command annotation) {
+        warn(annotation.value(), "   @@@", "   ", getSourceFile());
     }
 }
