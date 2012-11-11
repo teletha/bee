@@ -130,7 +130,7 @@ public class AnnotationProcessor implements Processor {
     static class ProjectInfo {
 
         /** The project root path. */
-        private Path projectRoot;
+        private Path root;
 
         /** The source directories. */
         private List<Path> sources;
@@ -139,7 +139,7 @@ public class AnnotationProcessor implements Processor {
          * @param project
          */
         ProjectInfo(Project project) {
-            setProjectRoot(project.getRoot());
+            setRoot(project.getRoot());
 
             this.sources = new ArrayList();
 
@@ -153,8 +153,8 @@ public class AnnotationProcessor implements Processor {
          * 
          * @return The projectRoot property.
          */
-        Path getProjectRoot() {
-            return projectRoot;
+        Path getRoot() {
+            return root;
         }
 
         /**
@@ -162,8 +162,8 @@ public class AnnotationProcessor implements Processor {
          * 
          * @param projectRoot The projectRoot value to set.
          */
-        void setProjectRoot(Path projectRoot) {
-            this.projectRoot = projectRoot;
+        void setRoot(Path projectRoot) {
+            this.root = projectRoot;
         }
 
         /**

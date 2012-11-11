@@ -109,6 +109,21 @@ public class BlinkProject extends Project implements TestRule {
      * 
      * @param fqcn A fully qualified class name.
      */
+    public final Path source(Class model) {
+        String fqcn = model.getName();
+        Path root = I.locate("").toAbsolutePath();
+        Path file = root.resolve("src/test/java/" + fqcn.replace('.', '/') + ".java");
+
+        return createJavaSource(fqcn, getRoot().resolve("src/main/java/" + fqcn.replace('.', '/') + ".java"), null);
+    }
+
+    /**
+     * <p>
+     * Add main source file with the specified name.
+     * </p>
+     * 
+     * @param fqcn A fully qualified class name.
+     */
     public final Path source(String fqcn, String... contents) {
         return createJavaSource(fqcn, getRoot().resolve("src/main/java/" + fqcn.replace('.', '/') + ".java"), contents);
     }
