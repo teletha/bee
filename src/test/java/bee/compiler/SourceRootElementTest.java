@@ -13,6 +13,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import bee.Null;
+import bee.task.AnnotationProcessor;
+import bee.task.AnnotationValidator;
 
 /**
  * @version 2012/11/10 2:22:15
@@ -27,7 +29,7 @@ public class SourceRootElementTest {
         JavaCompiler compiler = new JavaCompiler(Null.UI);
         compiler.addSourceDirectory(source03.root);
         compiler.setOutput(source03.output);
-        compiler.addProcessor(BeeProcessor.class);
+        compiler.addProcessor(AnnotationProcessor.class);
         compiler.compile();
     }
 
@@ -38,12 +40,11 @@ public class SourceRootElementTest {
     private static final class Validation extends AnnotationValidator<SourceAnnotation> {
 
         /**
-         * @see bee.compiler.AnnotationValidator#validate(java.lang.annotation.Annotation, Source,
-         *      bee.compiler.AnnotationNotifier)
+         * {@inheritDoc}
          */
         @Override
-        public void validate(SourceAnnotation annotation, Source source, AnnotationNotifier notifier) {
-            assert source.root != null;
+        public void validate(SourceAnnotation annotation) {
+
         }
     }
 }
