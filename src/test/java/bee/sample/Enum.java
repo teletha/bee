@@ -7,12 +7,18 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.compiler;
+package bee.sample;
+
+import bee.sample.annotation.SourceAnnotation;
 
 /**
- * @version 2011/03/23 18:40:24
+ * @version 2012/11/10 2:01:52
  */
-public @interface SourceAnnotation {
+public enum Enum {
 
-    String value() default "";
+    @SourceAnnotation
+    ONE,
+
+    @SourceAnnotation
+    TWO;
 }

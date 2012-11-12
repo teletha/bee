@@ -9,60 +9,58 @@
  */
 package bee.compiler;
 
-import static org.junit.Assert.*;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-import bee.Null;
-import bee.compiler.source01.MainClass;
+import bee.BlinkProject;
+import bee.sample.Interface;
 
 /**
- * @version 2010/12/19 10:21:32
+ * @version 2012/11/12 13:18:11
  */
 public class JavaCompilerTest {
 
-    @Rule
-    public static final PrivateSourceDirectory source01 = new PrivateSourceDirectory("source01");
-
     @Test
     public void outputPresent() throws Exception {
-        Path source = source01.locateSourceCode(MainClass.class);
-        Path bytecode = source01.locateByteCode(MainClass.class);
-        assertTrue(Files.exists(source));
-        assertTrue(Files.notExists(bytecode));
+        BlinkProject project = new BlinkProject();
+        Path source = project.importBy(Interface.class);
+        Path bytecode = project.locateByteCode(Interface.class);
 
-        Files.createDirectories(source01.output);
-        assertTrue(Files.exists(source01.output));
+        assert Files.exists(source);
+        assert Files.notExists(bytecode);
 
-        JavaCompiler compiler = new JavaCompiler(Null.UI);
-        compiler.addSourceDirectory(source01.root);
-        compiler.setOutput(source01.output);
+        Files.createDirectories(project.getClasses());
+        assert Files.exists(project.getClasses());
+
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourceDirectory(project.getSources());
+        compiler.setOutput(project.getClasses());
         compiler.compile();
 
-        assertTrue(Files.exists(source));
-        assertTrue(Files.exists(bytecode));
+        assert Files.exists(source);
+        assert Files.exists(bytecode);
     }
 
     @Test
     public void outputAbsent() throws Exception {
-        Path source = source01.locateSourceCode(MainClass.class);
-        Path bytecode = source01.locateByteCode(MainClass.class);
-        assertTrue(Files.exists(source));
-        assertTrue(Files.notExists(bytecode));
+        BlinkProject project = new BlinkProject();
+        Path source = project.importBy(Interface.class);
+        Path bytecode = project.locateByteCode(Interface.class);
 
-        Files.deleteIfExists(source01.output);
-        assertTrue(Files.notExists(source01.output));
+        assert Files.exists(source);
+        assert Files.notExists(bytecode);
 
-        JavaCompiler compiler = new JavaCompiler(Null.UI);
-        compiler.addSourceDirectory(source01.root);
-        compiler.setOutput(source01.output);
+        Files.deleteIfExists(project.getClasses());
+        assert Files.notExists(project.getClasses());
+
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourceDirectory(project.getSources());
+        compiler.setOutput(project.getClasses());
         compiler.compile();
 
-        assertTrue(Files.exists(source));
-        assertTrue(Files.exists(bytecode));
+        assert Files.exists(source);
+        assert Files.exists(bytecode);
     }
 }

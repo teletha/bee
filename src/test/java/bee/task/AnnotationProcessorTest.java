@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.compiler;
+package bee.task;
 
 import static org.junit.Assert.*;
 
@@ -21,26 +21,27 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 
-import org.junit.Rule;
 import org.junit.Test;
 
-import bee.Null;
+import bee.BlinkProject;
+import bee.compiler.JavaCompiler;
+import bee.sample.Interface;
 
 /**
- * @version 2011/03/22 10:03:04
+ * @version 2012/11/12 12:56:47
  */
-public class PluggableAnnotationProcessorTest {
-
-    @Rule
-    public static final PrivateSourceDirectory source01 = new PrivateSourceDirectory("source01");
+public class AnnotationProcessorTest {
 
     @Test
     public void byClass() throws Exception {
+        BlinkProject project = new BlinkProject();
+        project.importBy(Interface.class);
+
         ResourceAwareProcessor.initialized = false;
 
-        JavaCompiler compiler = new JavaCompiler(Null.UI);
-        compiler.addSourceDirectory(source01.root);
-        compiler.setOutput(source01.output);
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourceDirectory(project.getRoot());
+        compiler.setOutput(project.getOutput());
         compiler.addProcessor(ResourceAwareProcessor.class);
         compiler.compile();
 
@@ -49,14 +50,17 @@ public class PluggableAnnotationProcessorTest {
 
     @Test
     public void byInstance() throws Exception {
+        BlinkProject project = new BlinkProject();
+        project.importBy(Interface.class);
+
         ResourceAwareProcessor.initialized = false;
 
         ResourceAwareProcessor processor = new ResourceAwareProcessor();
         processor.instance = false;
 
-        JavaCompiler compiler = new JavaCompiler(Null.UI);
-        compiler.addSourceDirectory(source01.root);
-        compiler.setOutput(source01.output);
+        JavaCompiler compiler = new JavaCompiler();
+        compiler.addSourceDirectory(project.getRoot());
+        compiler.setOutput(project.getOutput());
         compiler.addProcessor(processor);
         compiler.compile();
 
