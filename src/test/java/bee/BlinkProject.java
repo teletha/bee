@@ -18,17 +18,12 @@ import java.util.List;
 
 import kiss.I;
 import kiss.model.ClassUtil;
-
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
-
 import bee.api.Project;
 
 /**
- * @version 2012/04/02 22:16:55
+ * @version 2012/11/12 13:20:32
  */
-public class BlinkProject extends Project implements TestRule {
+public class BlinkProject extends Project {
 
     static {
         I.load(ClassUtil.getArchive(Bee.class));
@@ -319,19 +314,5 @@ public class BlinkProject extends Project implements TestRule {
             // create root directory
             root = I.locateTemporary();
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public final Statement apply(final Statement base, final Description description) {
-        return new Statement() {
-
-            @Override
-            public void evaluate() throws Throwable {
-                base.evaluate();
-            }
-        };
     }
 }

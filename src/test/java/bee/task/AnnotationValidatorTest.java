@@ -9,7 +9,10 @@
  */
 package bee.task;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import kiss.I;
 import kiss.model.ClassUtil;
@@ -18,6 +21,7 @@ import org.junit.Test;
 
 import bee.BlinkProject;
 import bee.api.Project;
+import bee.sample.Bean;
 import bee.sample.Enum;
 import bee.sample.Interface;
 import bee.sample.annotation.SourceAnnotation;
@@ -32,7 +36,7 @@ public class AnnotationValidatorTest {
     @Test
     public void classNameForClass() throws Exception {
         BlinkProject project = new BlinkProject();
-        project.importBy(bee.sample.Class.class);
+        project.importBy(Bean.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
 
@@ -41,7 +45,7 @@ public class AnnotationValidatorTest {
              */
             @Override
             protected void validate(SourceAnnotation annotation) {
-                assert getClassName().equals(bee.sample.Class.class.getName());
+                assert getClassName().equals(Bean.class.getName());
             }
         });
     }
@@ -93,6 +97,27 @@ public class AnnotationValidatorTest {
             @Override
             protected void validate(SourceAnnotation annotation) {
                 assert getClassName().equals(bee.sample.Annotation.class.getName());
+            }
+        });
+    }
+
+    @Test
+    public void getSourceFile() throws Exception {
+        BlinkProject project = new BlinkProject();
+        final Path source = project.importBy(Bean.class);
+
+        compileWith(new AnnotationValidator<SourceAnnotation>() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void validate(SourceAnnotation annotation) {
+                try {
+                    assert Files.isSameFile(source, getSourceFile());
+                } catch (IOException e) {
+                    throw I.quiet(e);
+                }
             }
         });
     }
