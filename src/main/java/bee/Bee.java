@@ -22,8 +22,8 @@ import kiss.model.ClassUtil;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Task;
-import bee.compiler.JavaCompiler;
 import bee.task.Prototype;
+import bee.util.JavaCompiler;
 import bee.util.Paths;
 import bee.util.Stopwatch;
 

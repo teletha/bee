@@ -26,8 +26,8 @@ import bee.Platform;
 import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
-import bee.tool.Java;
-import bee.tool.Java.JVM;
+import bee.util.Java;
+import bee.util.Java.JVM;
 
 /**
  * @version 2012/03/28 9:58:39

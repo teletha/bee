@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.tool;
+package bee.util;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
@@ -35,8 +35,6 @@ import kiss.model.Codec;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
-import bee.util.NetworkAddressUtil;
-import bee.util.ProcessMaker;
 
 /**
  * @version 2012/04/04 17:08:12
