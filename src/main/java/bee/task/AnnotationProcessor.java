@@ -29,6 +29,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 
 import kiss.I;
 import bee.api.Project;
@@ -37,6 +38,9 @@ import bee.api.Project;
  * @version 2012/11/10 2:20:33
  */
 public class AnnotationProcessor implements Processor {
+
+    /** The flag for initialization. */
+    private static boolean initialized = false;
 
     static {
         I.load(AnnotationProcessor.class, true);
@@ -91,6 +95,12 @@ public class AnnotationProcessor implements Processor {
         this.util = environment.getElementUtils();
         this.options = environment.getOptions();
         this.info = I.read(options.get(ProjectInfo.class.getName()), I.make(ProjectInfo.class));
+
+        notifier.printMessage(Kind.WARNING, info.getSources().toString());
+        if (initialized) {
+            initialized = true;
+            notifier.printMessage(Kind.WARNING, toString());
+        }
     }
 
     /**

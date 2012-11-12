@@ -18,10 +18,6 @@ package bee.task;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -47,13 +43,10 @@ public class Eclipse extends Task {
      */
     @Command
     public void eclipse() {
-        Map<String, Object> options = new HashMap();
-        options.put(ProjectInfo.class.getName(), new ProjectInfo(project));
-
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
         createFactorypath(project.getRoot().resolve(".factorypath"));
-        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), options);
+        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), new ProjectInfo(project));
         createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
 
         ui.talk("Create Eclipse configuration files.");
@@ -68,12 +61,12 @@ public class Eclipse extends Task {
      */
     private void createProject(Path file) {
         XML doc = I.xml("projectDescription");
-        doc.append(I.xml("name").text(project.getProduct()));
-        doc.append(I.xml("comment").text(project.getDescription()));
-        doc.append(I.xml("buildSpec").append(I.xml("buildCommand").append(I.xml("name")
-                .text("org.eclipse.jdt.core.javabuilder"))));
-        doc.append(I.xml("natures").append(I.xml("nature").text("org.eclipse.jdt.core.javanature")));
+        doc.child("name").text(project.getProduct());
+        doc.child("comment").text(project.getDescription());
+        doc.child("buildSpec").child("buildCommand").child("name").text("org.eclipse.jdt.core.javabuilder");
+        doc.child("natures").child("nature").text("org.eclipse.jdt.core.javanature");
 
+        // write file
         makeFile(file, doc);
     }
 
@@ -89,26 +82,26 @@ public class Eclipse extends Task {
 
         // tests
         for (Path path : project.getTestSources()) {
-            doc.append(I.xml("classpathentry")
+            doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", project.getRoot().relativize(path))
-                    .attr("output", project.getRoot().relativize(project.getTestClasses())));
+                    .attr("path", relative(path))
+                    .attr("output", relative(project.getTestClasses()));
         }
 
         // sources
         for (Path path : project.getSources()) {
-            doc.append(I.xml("classpathentry")
+            doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", project.getRoot().relativize(path))
-                    .attr("output", project.getRoot().relativize(project.getClasses())));
+                    .attr("path", relative(path))
+                    .attr("output", relative(project.getClasses()));
         }
 
         // projects
         for (Path path : project.getProjectSources()) {
-            doc.append(I.xml("classpathentry")
+            doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", project.getRoot().relativize(path))
-                    .attr("output", project.getRoot().relativize(project.getProjectClasses())));
+                    .attr("path", relative(path))
+                    .attr("output", relative(project.getProjectClasses()));
         }
 
         // library
@@ -117,20 +110,24 @@ public class Eclipse extends Task {
             Path source = library.getSourceJar();
 
             if (Files.exists(jar)) {
-                XML e = I.xml("classpathentry").attr("kind", "lib").attr("path", jar);
+                XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
 
                 if (Files.exists(source)) {
-                    e.attr("sourcepath", source);
+                    child.attr("sourcepath", source);
                 }
-                doc.append(e);
             }
         }
 
+        // Bee API
         for (Library lib : project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion())) {
-            doc.append(I.xml("classpathentry").attr("kind", "lib").attr("path", lib.getJar()));
+            doc.child("classpathentry").attr("kind", "lib").attr("path", lib.getJar());
         }
-        doc.append(I.xml("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER"));
 
+        // Eclipse configurations
+        doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER");
+        doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
+
+        // write file
         makeFile(file, doc);
     }
 
@@ -149,6 +146,7 @@ public class Eclipse extends Task {
                 .attr("enabled", true)
                 .attr("runInBatchMode", false);
 
+        // write file
         makeFile(file, doc);
     }
 
@@ -159,19 +157,19 @@ public class Eclipse extends Task {
      * 
      * @param file
      */
-    private void createAPT(Path file, Map<String, Object> options) {
-        List<String> doc = new ArrayList();
-        doc.add("eclipse.preferences.version=1");
-        doc.add("org.eclipse.jdt.apt.aptEnabled=true");
-        doc.add("org.eclipse.jdt.apt.genSrcDir=src/main/auto");
-        doc.add("org.eclipse.jdt.apt.reconcileEnabled=true");
+    private void createAPT(Path file, Entry<String, String> option) {
+        Properties properties = new Properties();
+        properties.put("eclipse.preferences.version", "1");
+        properties.put("org.eclipse.jdt.apt.aptEnabled", "true");
+        properties.put("org.eclipse.jdt.apt.genSrcDir", "src/main/auto");
+        properties.put("org.eclipse.jdt.apt.reconcileEnabled", "true");
 
-        if (options != null) {
-            for (Entry<String, Object> entry : options.entrySet()) {
-                doc.add("org.eclipse.jdt.apt.processorOptions/" + entry.getKey() + "=" + entry.getValue());
-            }
+        if (option != null) {
+            properties.put("org.eclipse.jdt.apt.processorOptions/" + option.getKey(), option.getValue());
         }
-        makeFile(file, doc);
+
+        // write file
+        makeFile(file, properties);
     }
 
     /**
@@ -196,5 +194,17 @@ public class Eclipse extends Task {
         } catch (IOException e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * <p>
+     * Locate relative path.
+     * </p>
+     * 
+     * @param path
+     * @return
+     */
+    private Path relative(Path path) {
+        return project.getRoot().relativize(path);
     }
 }
