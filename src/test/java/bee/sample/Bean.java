@@ -19,9 +19,7 @@ public class Bean {
     private String name;
 
     /**
-     * Get the name property of this {@link Bean}.
-     * 
-     * @return The name property.
+     * Getter
      */
     @SourceAnnotation
     public String getName() {
@@ -29,9 +27,7 @@ public class Bean {
     }
 
     /**
-     * Set the name property of this {@link Bean}.
-     * 
-     * @param name The name value to set.
+     * Setter
      */
     public void setName(String name) {
         this.name = name;
