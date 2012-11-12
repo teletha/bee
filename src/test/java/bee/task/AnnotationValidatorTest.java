@@ -102,7 +102,7 @@ public class AnnotationValidatorTest {
     }
 
     @Test
-    public void getSourceFile() throws Exception {
+    public void sourceFile() throws Exception {
         BlinkProject project = new BlinkProject();
         final Path source = project.importBy(Bean.class);
 
@@ -118,6 +118,23 @@ public class AnnotationValidatorTest {
                 } catch (IOException e) {
                     throw I.quiet(e);
                 }
+            }
+        });
+    }
+
+    @Test
+    public void document() throws Exception {
+        BlinkProject project = new BlinkProject();
+        project.importBy(Bean.class);
+
+        compileWith(new AnnotationValidator<SourceAnnotation>() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void validate(SourceAnnotation annotation) {
+                assert getDocument().equals("Getter");
             }
         });
     }
