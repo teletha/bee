@@ -61,7 +61,7 @@ import bee.UserInterface;
 import bee.api.Library;
 
 /**
- * @version 2012/11/12 9:34:34
+ * @version 2012/11/12 13:22:59
  */
 public class JavaCompiler {
 
@@ -136,18 +136,7 @@ public class JavaCompiler {
      * </p>
      */
     public JavaCompiler() {
-        this(I.make(UserInterface.class));
-    }
-
-    /**
-     * <p>
-     * For test.
-     * </p>
-     * 
-     * @param ui
-     */
-    JavaCompiler(UserInterface ui) {
-        this.ui = ui;
+        this.ui = I.make(UserInterface.class);
     }
 
     /**
