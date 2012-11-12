@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import kiss.ClassListener;
@@ -35,7 +36,7 @@ import bee.UserInterface;
 import bee.util.Inputs;
 
 /**
- * @version 2012/04/15 14:26:46
+ * @version 2012/11/12 15:39:19
  */
 public abstract class Task {
 
@@ -152,19 +153,47 @@ public abstract class Task {
 
     /**
      * <p>
-     * Utilitu method to write xml file.
+     * Utility method to write xml file.
      * </p>
      * 
-     * @param path
-     * @param xml
+     * @param path A file path to write.
+     * @param xml A file contents.
      */
     protected final void makeFile(Path path, XML xml) {
-        makeFile(path, xml.toString());
+        makeDirectory(path.getParent());
+
+        try {
+            xml.writeTo(Files.newBufferedWriter(path, StandardCharsets.UTF_8));
+
+            ui.talk("Make file [" + path.toAbsolutePath() + "]");
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
      * <p>
-     * Utilitu method to write file.
+     * Utility method to write property file.
+     * </p>
+     * 
+     * @param path A file path to write.
+     * @param properties A file contents.
+     */
+    protected final void makeFile(Path path, Properties properties) {
+        makeDirectory(path.getParent());
+
+        try {
+            properties.store(Files.newOutputStream(path), "");
+
+            ui.talk("Make file [" + path.toAbsolutePath() + "]");
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Utility method to write file.
      * </p>
      * 
      * @param path A file path to write.
@@ -176,7 +205,7 @@ public abstract class Task {
 
     /**
      * <p>
-     * Utilitu method to write file.
+     * Utility method to write file.
      * </p>
      * 
      * @param path A file path to write.
