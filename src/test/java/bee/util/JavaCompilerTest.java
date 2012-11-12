@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.compiler;
+package bee.util;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import bee.BlinkProject;
 import bee.sample.Interface;
+import bee.util.JavaCompiler;
 
 /**
  * @version 2012/11/12 13:18:11

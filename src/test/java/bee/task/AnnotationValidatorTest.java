@@ -18,11 +18,11 @@ import org.junit.Test;
 
 import bee.BlinkProject;
 import bee.api.Project;
-import bee.compiler.JavaCompiler;
 import bee.sample.Enum;
 import bee.sample.Interface;
 import bee.sample.annotation.SourceAnnotation;
 import bee.task.AnnotationProcessor.ProjectInfo;
+import bee.util.JavaCompiler;
 
 /**
  * @version 2012/11/11 16:26:26

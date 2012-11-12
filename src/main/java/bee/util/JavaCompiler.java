@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package bee.compiler;
+package bee.util;
 
 import static bee.util.Inputs.*;
 
@@ -59,8 +59,6 @@ import kiss.model.ClassUtil;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Library;
-import bee.util.PathSet;
-import bee.util.Paths;
 
 /**
  * @version 2012/11/12 9:34:34

@@ -24,8 +24,8 @@ import javax.lang.model.element.TypeElement;
 import org.junit.Test;
 
 import bee.BlinkProject;
-import bee.compiler.JavaCompiler;
 import bee.sample.Interface;
+import bee.util.JavaCompiler;
 
 /**
  * @version 2012/11/12 12:56:47
