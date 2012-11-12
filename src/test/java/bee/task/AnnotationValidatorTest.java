@@ -19,9 +19,9 @@ import org.junit.Test;
 import bee.BlinkProject;
 import bee.api.Project;
 import bee.compiler.JavaCompiler;
-import bee.compiler.SourceAnnotation;
-import bee.compiler.source03.root.Enum;
-import bee.compiler.source03.root.Interface;
+import bee.sample.Enum;
+import bee.sample.Interface;
+import bee.sample.annotation.SourceAnnotation;
 import bee.task.AnnotationProcessor.ProjectInfo;
 
 /**
@@ -32,7 +32,7 @@ public class AnnotationValidatorTest {
     @Test
     public void classNameForClass() throws Exception {
         BlinkProject project = new BlinkProject();
-        project.importBy(bee.compiler.source03.root.Class.class);
+        project.importBy(bee.sample.Class.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
 
@@ -41,7 +41,7 @@ public class AnnotationValidatorTest {
              */
             @Override
             protected void validate(SourceAnnotation annotation) {
-                assert getClassName().equals(bee.compiler.source03.root.Class.class.getName());
+                assert getClassName().equals(bee.sample.Class.class.getName());
             }
         });
     }
@@ -80,6 +80,23 @@ public class AnnotationValidatorTest {
         });
     }
 
+    @Test
+    public void classNameForAnnotation() throws Exception {
+        BlinkProject project = new BlinkProject();
+        project.importBy(bee.sample.Annotation.class);
+
+        compileWith(new AnnotationValidator<SourceAnnotation>() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void validate(SourceAnnotation annotation) {
+                assert getClassName().equals(bee.sample.Annotation.class.getName());
+            }
+        });
+    }
+
     /**
      * <p>
      * Compile project sources.
@@ -93,7 +110,7 @@ public class AnnotationValidatorTest {
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(project.getSources());
-        compiler.setOutput(project.getOutput());
+        compiler.setOutput(project.getClasses());
         compiler.addProcessor(processor);
         compiler.addProcessorOption(new ProjectInfo(project));
         compiler.compile();

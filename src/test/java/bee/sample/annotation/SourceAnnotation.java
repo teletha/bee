@@ -7,11 +7,12 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.compiler.source02.root;
+package bee.sample.annotation;
 
 /**
- * @version 2011/03/13 15:52:18
+ * @version 2011/03/23 18:40:24
  */
-public class PackageClass {
+public @interface SourceAnnotation {
 
+    String value() default "";
 }

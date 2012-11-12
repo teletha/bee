@@ -69,6 +69,20 @@ public class BlinkProject extends Project implements TestRule {
 
     /**
      * <p>
+     * Locate a source file of the specified class.
+     * </p>
+     * 
+     * @param clazz A target class.
+     * @return A source code location.
+     */
+    public final Path locateByteCode(Class clazz) {
+        Path file = buildJavaBytecodeFilePath(clazz.getName());
+
+        return locateMainOutput(file.toString());
+    }
+
+    /**
+     * <p>
      * Locate file in main class directory.
      * </p>
      * 
@@ -111,7 +125,7 @@ public class BlinkProject extends Project implements TestRule {
      * @param model A class to import.
      */
     public final Path importBy(Class model) {
-        Path file = buildJavaFilePath(model.getName());
+        Path file = buildJavaSourceFilePath(model.getName());
         Path original = I.locate("src/test/java").resolve(file);
         Path copy = getRoot().resolve("src/main/java").resolve(file);
 
@@ -128,7 +142,7 @@ public class BlinkProject extends Project implements TestRule {
      * @param model A sample class to import.
      */
     public final Path importByPackageOf(Class model) {
-        Path directory = buildJavaFilePath(model.getName()).getParent();
+        Path directory = buildJavaSourceFilePath(model.getName()).getParent();
         Path original = I.locate("src/test/java").resolve(directory);
         Path copy = getRoot().resolve("src/main/java").resolve(directory);
 
@@ -221,8 +235,20 @@ public class BlinkProject extends Project implements TestRule {
      * @param fqcn
      * @return
      */
-    private Path buildJavaFilePath(String fqcn) {
+    private Path buildJavaSourceFilePath(String fqcn) {
         return Paths.get(fqcn.replace('.', '/').concat(".java"));
+    }
+
+    /**
+     * <p>
+     * Build bytecode file path from fully qualified class name.
+     * </p>
+     * 
+     * @param fqcn
+     * @return
+     */
+    private Path buildJavaBytecodeFilePath(String fqcn) {
+        return Paths.get(fqcn.replace('.', '/').concat(".class"));
     }
 
     /**
