@@ -63,7 +63,7 @@ import bee.util.PathSet;
 import bee.util.Paths;
 
 /**
- * @version 2010/12/19 10:20:21
+ * @version 2012/11/12 9:34:34
  */
 public class JavaCompiler {
 
@@ -287,6 +287,37 @@ public class JavaCompiler {
     public void addProcessorOption(String key, String value) {
         if (key != null && value != null && key.length() != 0 && value.length() != 0) {
             processorOptions.put(key, value);
+        }
+    }
+
+    /**
+     * <p>
+     * Options to pass to annotation processors. These are not interpreted by javac directly, but
+     * are made available for use by individual processors.
+     * </p>
+     * 
+     * @param key A key name.
+     * @param value A passing value.
+     */
+    public void addProcessorOption(Entry<String, String> option) {
+        if (option != null) {
+            addProcessorOption(option.getKey(), option.getValue());
+        }
+    }
+
+    /**
+     * <p>
+     * Options to pass to annotation processors. These are not interpreted by javac directly, but
+     * are made available for use by individual processors.
+     * </p>
+     * 
+     * @param options A key-value set.
+     */
+    public void addProcessorOption(Map<String, String> options) {
+        if (options != null) {
+            for (Entry<String, String> entry : options.entrySet()) {
+                addProcessorOption(entry.getKey(), entry.getValue());
+            }
         }
     }
 

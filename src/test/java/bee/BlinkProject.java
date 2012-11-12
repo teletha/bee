@@ -12,6 +12,7 @@ package bee;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,17 +105,36 @@ public class BlinkProject extends Project implements TestRule {
 
     /**
      * <p>
-     * Add main source file with the specified name.
+     * Import the specified main source file.
      * </p>
      * 
-     * @param fqcn A fully qualified class name.
+     * @param model A class to import.
      */
-    public final Path source(Class model) {
-        String fqcn = model.getName();
-        Path root = I.locate("").toAbsolutePath();
-        Path file = root.resolve("src/test/java/" + fqcn.replace('.', '/') + ".java");
+    public final Path importBy(Class model) {
+        Path file = buildJavaFilePath(model.getName());
+        Path original = I.locate("src/test/java").resolve(file);
+        Path copy = getRoot().resolve("src/main/java").resolve(file);
 
-        return createJavaSource(fqcn, getRoot().resolve("src/main/java/" + fqcn.replace('.', '/') + ".java"), null);
+        I.copy(original, copy);
+
+        return copy;
+    }
+
+    /**
+     * <p>
+     * Import all main source files in the specified class package.
+     * </p>
+     * 
+     * @param model A sample class to import.
+     */
+    public final Path importByPackageOf(Class model) {
+        Path directory = buildJavaFilePath(model.getName()).getParent();
+        Path original = I.locate("src/test/java").resolve(directory);
+        Path copy = getRoot().resolve("src/main/java").resolve(directory);
+
+        I.copy(original, copy);
+
+        return copy;
     }
 
     /**
@@ -191,6 +211,18 @@ public class BlinkProject extends Project implements TestRule {
         } catch (Exception e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * <p>
+     * Build source file path from fully qualified class name.
+     * </p>
+     * 
+     * @param fqcn
+     * @return
+     */
+    private Path buildJavaFilePath(String fqcn) {
+        return Paths.get(fqcn.replace('.', '/').concat(".java"));
     }
 
     /**
