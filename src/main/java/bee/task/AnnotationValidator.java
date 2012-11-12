@@ -110,6 +110,17 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
 
     /**
      * <p>
+     * Returns the fully qualified class name of the annotated element.
+     * </p>
+     * 
+     * @return
+     */
+    protected final String getClassName() {
+        return root.toString();
+    }
+
+    /**
+     * <p>
      * Compute source file path.
      * </p>
      * 
@@ -117,7 +128,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
      */
     protected final Path getSourceFile() {
         for (Path directory : info.getSources()) {
-            Path source = directory.resolve(root.toString().replace('.', '/').concat(".java"));
+            Path source = directory.resolve(getClassName().replace('.', '/').concat(".java"));
 
             if (Files.exists(source)) {
                 return source;

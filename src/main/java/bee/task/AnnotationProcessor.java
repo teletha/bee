@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.processing.Completion;
@@ -101,7 +102,7 @@ public class AnnotationProcessor implements Processor {
             for (TypeElement annotationType : annotations) {
                 for (Element element : round.getElementsAnnotatedWith(annotationType)) {
                     Class annotationClass = Class.forName(annotationType.toString(), true, I.$loader);
-                    AnnotationValidator validator = I.find(AnnotationValidator.class, annotationClass);
+                    AnnotationValidator validator = find(annotationClass);
 
                     if (validator != null) {
                         validator.initialize(element, notifier, filer, util, info);
@@ -125,9 +126,21 @@ public class AnnotationProcessor implements Processor {
     }
 
     /**
-     * @version 2012/11/11 13:02:21
+     * <p>
+     * Search {@link AnnotationValidator}.
+     * </p>
+     * 
+     * @param annotation
+     * @return
      */
-    static class ProjectInfo {
+    protected AnnotationValidator find(Class annotation) {
+        return I.find(AnnotationValidator.class, annotation);
+    }
+
+    /**
+     * @version 2012/11/12 9:32:10
+     */
+    static class ProjectInfo implements Entry<String, String> {
 
         /** The project root path. */
         private Path root;
@@ -194,6 +207,32 @@ public class AnnotationProcessor implements Processor {
             I.write(this, builder, true);
 
             return builder.toString();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String getKey() {
+            return ProjectInfo.class.getName();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String getValue() {
+            return toString();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String setValue(String value) {
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error();
         }
     }
 }
