@@ -18,6 +18,7 @@ package bee.task;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 
@@ -45,10 +46,14 @@ public class Eclipse extends Task {
     public void eclipse() {
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
-        createFactorypath(project.getRoot().resolve(".factorypath"));
-        createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), new ProjectInfo(project));
-        createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
 
+        List<AnnotationValidator> validators = I.find(AnnotationValidator.class);
+
+        if (validators.size() != 0) {
+            createFactorypath(project.getRoot().resolve(".factorypath"));
+            createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), new ProjectInfo(project));
+            createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
+        }
         ui.talk("Create Eclipse configuration files.");
     }
 
