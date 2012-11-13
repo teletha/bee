@@ -47,6 +47,14 @@ public class Bee {
         }
     };
 
+    /** The build tool project. */
+    public static final Project TOOL = new Project() {
+
+        {
+            product("npc", "Bee", "0.1");
+        }
+    };
+
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 

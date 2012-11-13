@@ -515,6 +515,32 @@ public class Project {
      * {@inheritDoc}
      */
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((productGroup == null) ? 0 : productGroup.toLowerCase().hashCode());
+        result = prime * result + ((productName == null) ? 0 : productName.toLowerCase().hashCode());
+        result = prime * result + ((productVersion == null) ? 0 : productVersion.toLowerCase().hashCode());
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Project) {
+            Project project = (Project) obj;
+
+            return productGroup.equalsIgnoreCase(project.productGroup) && productName.equalsIgnoreCase(project.productName) && productVersion.equalsIgnoreCase(project.productVersion);
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String toString() {
         XML pom = I.xml("project");
         pom.child("modelVersion").text("4.0.0");

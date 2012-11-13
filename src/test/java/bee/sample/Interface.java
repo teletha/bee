@@ -17,5 +17,5 @@ import bee.sample.annotation.SourceAnnotation;
 public interface Interface {
 
     @SourceAnnotation
-    int value();
+    int getType();
 }
