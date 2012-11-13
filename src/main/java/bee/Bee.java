@@ -10,6 +10,9 @@
 package bee;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -185,6 +188,11 @@ public class Bee {
 
             // build project definition
             buildProjectDefinition(project.getProjectDefinition());
+
+            // load project related classes in system class loader
+            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(ClassLoader.getSystemClassLoader(), project.getClasses().toUri().toURL());
 
             // load new project
             ClassLoader loader = I.load(project.getProjectClasses());
