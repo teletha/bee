@@ -29,7 +29,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic.Kind;
+import javax.lang.model.util.Types;
 
 import kiss.I;
 import bee.api.Project;
@@ -38,9 +38,6 @@ import bee.api.Project;
  * @version 2012/11/10 2:20:33
  */
 public class AnnotationProcessor implements Processor {
-
-    /** The flag for initialization. */
-    private static boolean initialized = false;
 
     static {
         I.load(AnnotationProcessor.class, true);
@@ -54,6 +51,9 @@ public class AnnotationProcessor implements Processor {
 
     /** The utility. */
     private Elements util;
+
+    /** The type utility. */
+    private Types types;
 
     /** The options. */
     private Map<String, String> options;
@@ -93,14 +93,9 @@ public class AnnotationProcessor implements Processor {
         this.notifier = environment.getMessager();
         this.filer = environment.getFiler();
         this.util = environment.getElementUtils();
+        this.types = environment.getTypeUtils();
         this.options = environment.getOptions();
         this.info = I.read(options.get(ProjectInfo.class.getName()), I.make(ProjectInfo.class));
-
-        notifier.printMessage(Kind.WARNING, info.getSources().toString());
-        if (initialized) {
-            initialized = true;
-            notifier.printMessage(Kind.WARNING, toString());
-        }
     }
 
     /**
@@ -115,7 +110,7 @@ public class AnnotationProcessor implements Processor {
                     AnnotationValidator validator = find(annotationClass);
 
                     if (validator != null) {
-                        validator.initialize(element, notifier, filer, util, info);
+                        validator.initialize(element, notifier, filer, util, types, info);
 
                         validator.validate(element.getAnnotation(annotationClass));
                     }

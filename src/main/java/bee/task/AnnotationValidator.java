@@ -28,7 +28,9 @@ import java.util.Arrays;
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.Messager;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
+import javax.lang.model.util.Types;
 import javax.tools.StandardLocation;
 
 import kiss.Extensible;
@@ -44,7 +46,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     private Element element;
 
     /** The root tree. */
-    private Element root;
+    private TypeElement root;
 
     /** The actual notifier. */
     private Messager messager;
@@ -63,6 +65,9 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     /** The element util. */
     private Elements util;
 
+    /** The type util. */
+    private Types types;
+
     /** The project related data. */
     private ProjectInfo info;
 
@@ -76,11 +81,12 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
      * @param util
      * @param info
      */
-    final void initialize(Element element, Messager messager, Filer filer, Elements util, ProjectInfo info) {
+    final void initialize(Element element, Messager messager, Filer filer, Elements util, Types types, ProjectInfo info) {
         this.element = element;
         this.messager = messager;
         this.filer = filer;
         this.util = util;
+        this.types = types;
         this.info = info;
 
         root: while (true) {
@@ -96,7 +102,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
                 break;
             }
         }
-        this.root = element;
+        this.root = (TypeElement) element;
     }
 
     /**
@@ -117,6 +123,18 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
      */
     protected final String getClassName() {
         return root.toString();
+    }
+
+    /**
+     * <p>
+     * Detecte the root element is sub class of the specified class or not.
+     * </p>
+     * 
+     * @param type
+     * @return
+     */
+    protected final boolean isSubClassOf(Class type) {
+        return types.isSubtype(root.asType(), util.getTypeElement(type.getName()).asType());
     }
 
     /**
