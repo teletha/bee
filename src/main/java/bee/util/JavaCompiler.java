@@ -217,7 +217,7 @@ public class JavaCompiler {
      * Add the source code directory.
      * </p>
      * 
-     * @param directory Your source code directory.
+     * @param outputDirectory Your source code directory.
      */
     public void addSourceDirectory(PathSet directories) {
         if (directories != null) {
