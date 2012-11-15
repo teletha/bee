@@ -19,6 +19,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import kiss.Extensible;
 import kiss.I;
+import kiss.model.ClassUtil;
+import bee.Bee;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Command;
@@ -91,8 +93,19 @@ public class Javadoc extends Task {
             }
         }
 
+        // setup
+        CustomJavadoc.outputDirectory = output;
+
         PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
-        Main.execute("", writer, writer, writer, docletClass.getName(), docletClass.getClassLoader(), options.toArray(new String[options.size()]));
+        int result = Main.execute("", writer, writer, writer, docletClass.getName(), docletClass.getClassLoader(), options.toArray(new String[options.size()]));
+
+        if (result == 1) {
+            // success
+
+        } else {
+            // fail
+            throw new Error("Javadoc command is failed.");
+        }
     }
 
     /**
@@ -152,6 +165,9 @@ public class Javadoc extends Task {
         /** The user interface to log. */
         protected static final UserInterface ui = I.make(UserInterface.class);
 
+        /** The root directory for Javadoc. */
+        protected static Path outputDirectory;
+
         /**
          * <p>
          * Start entry point.
@@ -162,6 +178,18 @@ public class Javadoc extends Task {
          */
         public static boolean start(RootDoc root) {
             ui.talk("@@@@@@@@@@@@@@@@@@");
+            ui.talk(outputDirectory);
+
+            // build index.html
+            Path path = ClassUtil.getArchive(Bee.class).resolve("bee/task/javadoc/in");
+            System.out.println(path);
+            System.out.println(Files.exists(path));
+
+            I.copy(ClassUtil.getArchive(Bee.class).resolve("bee/task/javadoc"), outputDirectory, "**");
+
+            for (ClassDoc classDoc : root.classes()) {
+                System.out.println(classDoc.qualifiedName());
+            }
             return false;
         }
     }
