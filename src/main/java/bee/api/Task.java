@@ -163,7 +163,7 @@ public abstract class Task {
         makeDirectory(path.getParent());
 
         try {
-            xml.writeTo(Files.newBufferedWriter(path, StandardCharsets.UTF_8));
+            xml.to(Files.newBufferedWriter(path, StandardCharsets.UTF_8));
 
             ui.talk("Make file [" + path.toAbsolutePath() + "]");
         } catch (IOException e) {
