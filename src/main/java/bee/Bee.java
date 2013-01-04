@@ -22,8 +22,10 @@ import java.util.List;
 import kiss.Extensible;
 import kiss.I;
 import kiss.model.ClassUtil;
+import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
+import bee.api.Scope;
 import bee.api.Task;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
@@ -193,12 +195,18 @@ public class Bee {
             Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);
             method.invoke(ClassLoader.getSystemClassLoader(), project.getClasses().toUri().toURL());
-
-            // load new project
-            ClassLoader loader = I.load(project.getProjectClasses());
+            method.invoke(ClassLoader.getSystemClassLoader(), project.getProjectClasses().toUri().toURL());
 
             // create your project
-            inject((Project) I.make(Class.forName(ProjectFile, true, loader)));
+            inject((Project) I.make(Class.forName(ProjectFile)));
+
+            // load project related classes in system class loader
+            for (Library library : project.getDependency(Scope.Compile)) {
+                method.invoke(ClassLoader.getSystemClassLoader(), library.getJar().toUri().toURL());
+            }
+
+            // load new project
+            I.load(project.getProjectClasses());
 
             // =====================================
             // build project develop environment
