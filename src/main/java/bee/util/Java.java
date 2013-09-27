@@ -124,7 +124,7 @@ public class Java {
 
         if (classpaths.size() != 0) {
             command.add("-cp");
-            command.add(I.join(classpaths, File.pathSeparator));
+            command.add(I.join(File.pathSeparator, classpaths));
         }
 
         if (enableAssertion) {
