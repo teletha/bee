@@ -488,9 +488,9 @@ public class JavaCompiler {
                 options.add("-proc:none");
             } else {
                 options.add("-processor");
-                options.add(I.join(processorClasses, ","));
+                options.add(I.join(",", processorClasses));
                 options.add("-processorpath");
-                options.add(I.join(processorClassPaths, ","));
+                options.add(I.join(",", processorClassPaths));
 
                 for (Entry<String, String> entry : processorOptions.entrySet()) {
                     options.add("-A" + entry.getKey() + '=' + entry.getValue());
@@ -516,7 +516,7 @@ public class JavaCompiler {
             // =============================================
             if (classpaths.size() != 0) {
                 options.add("-cp");
-                options.add(I.join(classpaths, File.pathSeparator));
+                options.add(I.join(File.pathSeparator, classpaths));
             }
 
             // =============================================
@@ -535,7 +535,7 @@ public class JavaCompiler {
                 }
             }
             options.add("-sourcepath");
-            options.add(I.join(this.sources, File.pathSeparator));
+            options.add(I.join(File.pathSeparator, this.sources));
 
             // check compiling source size
             if (sources.isEmpty()) {
