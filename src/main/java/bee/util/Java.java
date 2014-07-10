@@ -511,7 +511,7 @@ public class Java {
          * {@inheritDoc}
          */
         @Override
-        public String encode(StackTraceElement value) {
+        public String toString(StackTraceElement value) {
             return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value.getLineNumber();
         }
 
@@ -519,7 +519,7 @@ public class Java {
          * {@inheritDoc}
          */
         @Override
-        public StackTraceElement decode(String value) {
+        public StackTraceElement fromString(String value) {
             String[] values = value.split(" ");
             return new StackTraceElement(values[0], values[1], values[2], Integer.parseInt(values[3]));
         }

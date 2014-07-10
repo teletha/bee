@@ -31,7 +31,7 @@ class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
      * {@inheritDoc}
      */
     @Override
-    public UserInterface resolve() {
+    public UserInterface get() {
         return local.get();
     }
 }

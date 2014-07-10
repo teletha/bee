@@ -20,8 +20,8 @@ public class Project extends bee.api.Project {
         product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
         describe("Task based project builder for Java");
 
-        require("npc", "sinobu", "0.9.2");
-        require("npc", "antibug", "0.2").atTest();
+        require("npc", "sinobu", "0.9.4");
+        require("npc", "antibug", "0.3").atTest();
         require("org.sonatype.aether", "aether-api", aetherVersion);
         require("org.sonatype.aether", "aether-util", aetherVersion);
         require("org.sonatype.aether", "aether-impl", aetherVersion);

@@ -57,6 +57,7 @@ public class BeeInstaller {
             Path dest = JavaHome.resolve("lib/bee/" + fileName);
 
             // delete old files
+
             for (Path jar : I.walk(dest.getParent())) {
                 try {
                     Files.delete(jar);
