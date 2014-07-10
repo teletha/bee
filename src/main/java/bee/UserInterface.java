@@ -172,9 +172,9 @@ public abstract class UserInterface {
                 Codec<T> codec = I.find(Codec.class, defaultAnswer.getClass());
 
                 if (codec == null) {
-                    codec = (Codec<T>) Model.load(defaultAnswer.getClass()).getCodec();
+                    codec = Model.load(defaultAnswer.getClass()).getCodec();
                 }
-                return answer.length() == 0 ? defaultAnswer : codec.decode(answer);
+                return answer.length() == 0 ? defaultAnswer : codec.fromString(answer);
             }
         } catch (IOException e) {
             throw I.quiet(e);

@@ -28,12 +28,12 @@ public class ProjectSpecific<M> extends Prototype<M> {
      * {@inheritDoc}
      */
     @Override
-    public M resolve() {
+    public M get() {
         Project project = I.make(Project.class);
         M m = (M) project.associates.get(instantiator.getDeclaringClass());
 
         if (m == null) {
-            m = super.resolve();
+            m = super.get();
             project.associates.put(instantiator.getDeclaringClass(), m);
         }
         return m;

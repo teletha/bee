@@ -27,7 +27,7 @@ class ProjectLifestyle implements Lifestyle<Project> {
      * {@inheritDoc}
      */
     @Override
-    public Project resolve() {
+    public Project get() {
         return local.get();
     }
 }
