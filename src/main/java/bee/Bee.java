@@ -326,7 +326,6 @@ public class Bee {
             bee.execute("install");
         } else {
             Bee bee = new Bee();
-            I.walk(null);
             bee.execute(tasks);
         }
     }
