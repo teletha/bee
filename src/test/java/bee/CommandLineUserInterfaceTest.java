@@ -119,5 +119,6 @@ public class CommandLineUserInterfaceTest {
 
         user.willInput("3");
         assert ui.ask("question", items).equals("three");
+
     }
 }
