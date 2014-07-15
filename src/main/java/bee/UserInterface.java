@@ -19,8 +19,8 @@ import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
 
+import kiss.Codec;
 import kiss.I;
-import kiss.model.Codec;
 import kiss.model.Model;
 import bee.api.Command;
 
@@ -174,7 +174,7 @@ public abstract class UserInterface {
                 if (codec == null) {
                     codec = Model.load(defaultAnswer.getClass()).getCodec();
                 }
-                return answer.length() == 0 ? defaultAnswer : codec.fromString(answer);
+                return answer.length() == 0 ? defaultAnswer : codec.decode(answer);
             }
         } catch (IOException e) {
             throw I.quiet(e);
