@@ -30,8 +30,8 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import kiss.Codec;
 import kiss.I;
-import kiss.model.Codec;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
@@ -505,13 +505,13 @@ public class Java {
      * @version 2012/04/09 16:58:31
      */
     @SuppressWarnings("unused")
-    private static final class StackTraceCodec extends Codec<StackTraceElement> {
+    private static final class StackTraceCodec implements Codec<StackTraceElement> {
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public String toString(StackTraceElement value) {
+        public String encode(StackTraceElement value) {
             return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value.getLineNumber();
         }
 
@@ -519,7 +519,7 @@ public class Java {
          * {@inheritDoc}
          */
         @Override
-        public StackTraceElement fromString(String value) {
+        public StackTraceElement decode(String value) {
             String[] values = value.split(" ");
             return new StackTraceElement(values[0], values[1], values[2], Integer.parseInt(values[3]));
         }
