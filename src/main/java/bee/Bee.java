@@ -323,7 +323,8 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
+            // bee.execute("install");
+            bee.execute("javadoc");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

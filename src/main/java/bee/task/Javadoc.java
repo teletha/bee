@@ -44,7 +44,7 @@ public class Javadoc extends Task {
     /** The output root directory for javadoc. */
     protected Path output;
 
-    /** The output root directory for javadoc. */
+    /** The custom doclet class. */
     protected Class<? extends CustomJavadoc> doclet;
 
     /**
@@ -79,6 +79,7 @@ public class Javadoc extends Task {
         }
 
         List<String> options = new CopyOnWriteArrayList();
+        options.add("-XDignore.symbol.file");
 
         if (docletClass == Standard.class) {
             options.add("-d");
@@ -96,12 +97,13 @@ public class Javadoc extends Task {
         // setup
         CustomJavadoc.outputDirectory = output;
 
-        PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
-        int result = Main.execute("", writer, writer, writer, docletClass.getName(), docletClass.getClassLoader(), options.toArray(new String[options.size()]));
+        ui.talk("Use Doclet: " + docletClass.getName());
 
+        PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
+        int result = Main.execute("", writer, writer, writer, docletClass.getName(), I.$loader, options.toArray(new String[options.size()]));
+        System.out.println(result);
         if (result == 1) {
             // success
-
         } else {
             // fail
             throw new Error("Javadoc command is failed.");
@@ -177,18 +179,19 @@ public class Javadoc extends Task {
          * @return
          */
         public static boolean start(RootDoc root) {
+            try {
+                Files.createFile(I.locate("e:\\JJJ.txt"));
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
             ui.talk("@@@@@@@@@@@@@@@@@@");
             ui.talk(outputDirectory);
 
             // build index.html
-            Path path = ClassUtil.getArchive(Bee.class).resolve("bee/task/javadoc/in");
-            System.out.println(path);
-            System.out.println(Files.exists(path));
-
             I.copy(ClassUtil.getArchive(Bee.class).resolve("bee/task/javadoc"), outputDirectory, "**");
 
             for (ClassDoc classDoc : root.classes()) {
-                System.out.println(classDoc.qualifiedName());
+                ui.talk(classDoc.qualifiedName());
             }
             return false;
         }
