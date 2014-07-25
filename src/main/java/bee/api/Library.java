@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nameless Production Committee.
+ * Copyright (C) 2014 Nameless Production Committee.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.sonatype.aether.artifact.Artifact;
 import org.sonatype.aether.util.artifact.DefaultArtifact;
 
 /**
- * @version 2010/09/09 20:10:56
+ * @version 2014/07/25 16:57:34
  */
 public class Library implements Comparable<Library> {
 
@@ -176,7 +176,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * @see java.lang.Object#hashCode()
+     * {@inheritDoc}
      */
     @Override
     public int hashCode() {
@@ -189,7 +189,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
+     * {@inheritDoc}
      */
     @Override
     public boolean equals(Object obj) {
@@ -218,7 +218,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * @see java.lang.Object#toString()
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

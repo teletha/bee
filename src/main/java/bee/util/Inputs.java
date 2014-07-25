@@ -76,8 +76,14 @@ public class Inputs {
         case RELEASE_6:
             return "1.6";
 
-        default:
+        case RELEASE_7:
             return "1.7";
+
+        case RELEASE_8:
+            return "1.8";
+
+        default:
+            return "1.8";
         }
     }
 
