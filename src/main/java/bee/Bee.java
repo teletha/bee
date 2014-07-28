@@ -228,10 +228,9 @@ public class Bee {
                 result = "CANCEL";
             } else {
                 result = "FAILURE";
-
+                ui.talk("");
                 ui.error(e);
             }
-
         } finally {
             stopwatch.stop();
 
@@ -323,8 +322,8 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            // bee.execute("install");
-            bee.execute("javadoc");
+            bee.execute("test");
+            // bee.execute("javadoc");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

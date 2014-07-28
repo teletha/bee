@@ -22,7 +22,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
-import bee.Platform;
+import bee.TaskFailure;
 import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
@@ -49,7 +49,6 @@ public class Test extends Task {
             java.addClassPath(project.getTestClasses());
             java.addClassPath(project.getDependency(Scope.Test));
             java.addClassPath(loadBee());
-            java.addClassPath(load("junit", "junit", "4.10"));
             java.enableAssertion();
             java.setWorkingDirectory(project.getRoot());
             java.run(Junit.class, project.getTestClasses(), report);
@@ -82,6 +81,7 @@ public class Test extends Task {
 
             int runs = 0;
             int skips = 0;
+            long times = 0;
             List<Failure> fails = new ArrayList();
             List<Failure> errors = new ArrayList();
 
@@ -107,59 +107,74 @@ public class Test extends Task {
                         }
                     }
 
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("Tests run: ").append(result.getRunCount());
-                    builder.append(", Failures: ").append(fail.size());
-                    builder.append(", Errors: ").append(error.size());
-                    builder.append(", Skipped: ").append(result.getIgnoreCount());
-                    builder.append(", Time elapsed: ").append((float) result.getRunTime() / 1000).append("sec");
-
-                    if (error.size() != 0) {
-                        builder.append(" <<< ERROR!");
-                    } else if (fail.size() != 0) {
-                        builder.append(" <<< FAILURE!");
-                    }
-
-                    ui.talk(builder.toString());
+                    ui.talk(buildResult(result.getRunCount(), fail.size(), error.size(), result.getIgnoreCount(), result.getRunTime()));
 
                     runs += result.getRunCount();
                     skips += result.getIgnoreCount();
+                    times += result.getRunTime();
                     fails.addAll(fail);
                     errors.addAll(error);
+                } catch (Error e) {
+                    ui.talk(buildResult(0, 0, 0, 0, 0));
                 } catch (ClassNotFoundException e) {
                     throw I.quiet(e);
                 }
             }
 
-            ui.talk(Platform.EOL, "Results :", Platform.EOL);
+            ui.talk("TOTAL");
+            ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times));
 
-            showFailure("Tests in error", errors);
-            showFailure("Tests in failure", fails);
-
-            ui.talk("Tests run: ", runs, ", Failures: ", fails.size(), ", Errors: ", errors.size(), ", Skipped: ", skips);
-
-            return fails.size() == 0 && errors.size() == 0;
+            if (fails.size() != 0 || errors.size() != 0) {
+                TaskFailure failure = new TaskFailure("Test has failed.");
+                buildFailure(failure, errors);
+                buildFailure(failure, fails);
+                throw failure;
+            }
+            return true;
         }
 
         /**
          * <p>
-         * Show failures in detail.
+         * Build result message.
+         * </p>
+         */
+        private String buildResult(int tests, int fails, int errors, int ignores, long time) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Tests run: ").append(tests);
+            builder.append("  Failures: ").append(fails);
+            builder.append("  Errors: ").append(errors);
+            builder.append("  Skipped: ").append(ignores);
+            builder.append("  Time elapsed: ").append((float) time / 1000).append("sec");
+
+            if (errors != 0) {
+                builder.append(" <<< ERROR!");
+            } else if (fails != 0) {
+                builder.append(" <<< FAILURE!");
+            }
+            return builder.toString();
+        }
+
+        /**
+         * <p>
+         * Build {@link TaskFailure}.
          * </p>
          * 
-         * @param message
-         * @param failures
+         * @param failure A current resolver.
+         * @param list A list of test results.
          */
-        private void showFailure(String message, List<Failure> failures) {
-            if (!failures.isEmpty()) {
-                ui.talk(message + ":");
-                for (Failure failure : failures) {
-                    Description desc = failure.getDescription();
+        private void buildFailure(TaskFailure failure, List<Failure> list) {
+            for (Failure fail : list) {
+                Description desc = fail.getDescription();
+                Class test = desc.getTestClass();
+                StackTraceElement element = fail.getException().getStackTrace()[0];
+                int line = element.getClassName().equals(test.getName()) ? element.getLineNumber() : 0;
 
-                    ui.talk(" ", desc.getMethodName(), "(", desc.getClassName(), ")");
+                String target = desc.getClassName() + "." + desc.getMethodName();
 
-                    ui.error(failure.getException());
+                if (line != 0) {
+                    target = target + "(" + test.getSimpleName() + ".java:" + line + ")";
                 }
-                ui.talk("");
+                failure.solve("Fix " + target + "  >>>  " + fail.getMessage().trim().split("[\\r\\n]")[0]);
             }
         }
     }

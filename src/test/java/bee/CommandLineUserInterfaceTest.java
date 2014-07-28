@@ -15,6 +15,7 @@ import java.util.List;
 
 import kiss.I;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -91,6 +92,7 @@ public class CommandLineUserInterfaceTest {
     }
 
     @Test
+    @Ignore
     public void inputPath() throws Exception {
         Path def = I.locate("default");
 

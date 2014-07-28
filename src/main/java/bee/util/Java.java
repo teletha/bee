@@ -24,6 +24,7 @@ import javax.management.MBeanServerInvocationHandler;
 import javax.management.MXBean;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.StandardMBean;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXConnectorServer;
@@ -32,6 +33,7 @@ import javax.management.remote.JMXServiceURL;
 
 import kiss.Codec;
 import kiss.I;
+import bee.TaskFailure;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
@@ -153,13 +155,12 @@ public class Java {
             ProcessMaker maker = new ProcessMaker();
             maker.setWorkingDirectory(directory);
             maker.run(command);
-
             connector.stop();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw I.quiet(e);
         } finally {
-            if (listener.error) {
-                throw new Error("Sub process ends with error.");
+            if (listener.error != null) {
+                throw I.quiet(listener.error);
             }
         }
     }
@@ -202,10 +203,12 @@ public class Java {
             ((JVMUserInterface) vm.ui).transporter = transporter;
             vm.args = Arrays.copyOfRange(args, 2, args.length);
 
-            if (!vm.process()) {
-                transporter.terminateWithError();
+            try {
+                vm.process();
+                connector.close();
+            } catch (Throwable e) {
+                vm.ui.error(e);
             }
-            connector.close();
         }
 
         /**
@@ -219,7 +222,6 @@ public class Java {
          * 
          * @version 2012/04/09 16:58:06
          */
-        @SuppressWarnings("unused")
         private final class JVMUserInterface extends UserInterface {
 
             /** The event transporter. */
@@ -268,12 +270,7 @@ public class Java {
              */
             @Override
             public void talk(Object... messages) {
-                StringBuilder builder = new StringBuilder();
-
-                for (Object message : messages) {
-                    builder.append(message.toString());
-                }
-                transporter.talk(builder.toString());
+                transporter.talk(UserInterface.build(messages));
             }
 
             /**
@@ -281,12 +278,7 @@ public class Java {
              */
             @Override
             public void warn(Object... messages) {
-                StringBuilder builder = new StringBuilder();
-
-                for (Object message : messages) {
-                    builder.append(message.toString());
-                }
-                transporter.warn(builder.toString());
+                transporter.talk(UserInterface.build(messages));
             }
 
             /**
@@ -357,6 +349,12 @@ public class Java {
                 Cause cause = new Cause();
                 cause.message = throwable.getMessage();
 
+                if (throwable instanceof TaskFailure) {
+                    TaskFailure failure = (TaskFailure) throwable;
+                    cause.reason = failure.reason;
+                    cause.solution.addAll(failure.solution);
+                }
+
                 for (StackTraceElement element : throwable.getStackTrace()) {
                     cause.traces.add(element);
                 }
@@ -375,7 +373,7 @@ public class Java {
      * @version 2012/04/04 23:03:00
      */
     @MXBean
-    protected static interface Transporter {
+    public static interface Transporter {
 
         /**
          * <p>
@@ -412,31 +410,25 @@ public class Java {
          * @param error
          */
         void error(String error);
-
-        /**
-         * <p>
-         * Notify that sub process ends with some error.
-         * </p>
-         */
-        void terminateWithError();
     }
 
     /**
      * @version 2012/04/09 16:58:22
      */
-    @SuppressWarnings("unused")
-    private static final class JVMTransporter implements Transporter {
+    private static final class JVMTransporter extends StandardMBean implements Transporter {
 
         /** The actual user interface. */
         private final UserInterface ui;
 
         /** The sub process state. */
-        private boolean error = false;
+        private Throwable error;
 
         /**
          * Listen sub process event.
          */
-        private JVMTransporter(UserInterface ui) {
+        private JVMTransporter(UserInterface ui) throws Exception {
+            super(Transporter.class);
+
             this.ui = ui;
         }
 
@@ -469,32 +461,18 @@ public class Java {
          */
         @Override
         public void error(String error) {
-            try {
-                Cause cause = I.read(error, new Cause());
-                Error e = new Error(cause.message);
-                e.setStackTrace(cause.traces.toArray(new StackTraceElement[cause.traces.size()]));
-
-                ui.error(e);
-            } catch (Exception e) {
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void terminateWithError() {
-            this.error = true;
+            this.error = I.read(error, new Cause());
         }
     }
 
     /**
-     * @version 2012/04/09 16:58:27
+     * @version 2014/07/28 14:16:07
      */
-    private static final class Cause {
+    @SuppressWarnings("serial")
+    private static final class Cause extends TaskFailure {
 
         /** The error message. */
+        @SuppressWarnings("unused")
         public String message;
 
         /** The stack trace. */
