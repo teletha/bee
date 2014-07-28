@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Nameless Production Committee
+ * Copyright (C) 2014 Nameless Production Committee
  *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import bee.api.Command;
  * Interactive user interface.
  * </p>
  * 
- * @version 2012/05/18 11:58:07
+ * @version 2014/07/28 13:55:26
  */
 public abstract class UserInterface {
 
@@ -83,13 +83,6 @@ public abstract class UserInterface {
      */
     public void error(Object... messages) {
         talk("[ERROR] ", messages);
-
-        // for (Object message : messages) {
-        // if (message instanceof Throwable) {
-        // return bee.Bee.AbortedByUser;
-        // }
-        // }
-        // return I.quiet(new Error(build(messages)));
     }
 
     /**
@@ -272,7 +265,7 @@ public abstract class UserInterface {
      * @param messages Your messages.
      * @return A combined message.
      */
-    protected String build(Object... messages) {
+    protected static String build(Object... messages) {
         StringBuilder builder = new StringBuilder();
         build(builder, messages);
         return builder.toString();
@@ -286,7 +279,7 @@ public abstract class UserInterface {
      * @param builder A message builder.
      * @param messages Your messages.
      */
-    private void build(StringBuilder builder, Object... messages) {
+    private static void build(StringBuilder builder, Object... messages) {
         for (Object message : messages) {
             if (message == null) {
                 builder.append("null");
@@ -317,7 +310,7 @@ public abstract class UserInterface {
      * @param type A array type.
      * @param array A message array.
      */
-    private void buildArray(StringBuilder builder, Class type, Object array) {
+    private static void buildArray(StringBuilder builder, Class type, Object array) {
         if (type == int.class) {
             builder.append(Arrays.toString((int[]) array));
         } else if (type == long.class) {
@@ -347,7 +340,7 @@ public abstract class UserInterface {
      * @param builder A message builder.
      * @param throwable An error message.
      */
-    private void buildError(StringBuilder builder, Throwable throwable) {
+    private static void buildError(StringBuilder builder, Throwable throwable) {
         StringWriter writer = new StringWriter();
 
         throwable.printStackTrace(new PrintWriter(writer));
@@ -363,7 +356,7 @@ public abstract class UserInterface {
      * @param builder A message builder.
      * @param list Items.
      */
-    private void buildList(StringBuilder builder, List list) {
+    private static void buildList(StringBuilder builder, List list) {
         if (builder.length() != 0) {
             builder.append(EOL);
         }

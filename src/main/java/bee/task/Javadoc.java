@@ -9,13 +9,17 @@
  */
 package bee.task;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import kiss.Extensible;
 import kiss.I;
@@ -24,6 +28,7 @@ import bee.Bee;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Command;
+import bee.api.Scope;
 import bee.api.Task;
 
 import com.sun.javadoc.ClassDoc;
@@ -79,15 +84,31 @@ public class Javadoc extends Task {
         }
 
         List<String> options = new CopyOnWriteArrayList();
-        options.add("-XDignore.symbol.file");
 
+        // classpath
+        options.add("-classpath");
+        options.add(project.getDependency(Scope.Compile)
+                .stream()
+                .map(library -> "\"" + library.getJar().toString() + "\"")
+                .collect(Collectors.joining(File.pathSeparator)));
+
+        // sourcepath
+        options.add("-sourcepath");
+        options.add(StreamSupport.stream(project.getSources().spliterator(), false)
+                .map(path -> "\"" + path.toAbsolutePath().toString() + "\"")
+                .collect(Collectors.joining(File.pathSeparator)));
+
+        // output
         if (docletClass == Standard.class) {
             options.add("-d");
             options.add(output.toAbsolutePath().toString());
         }
+
+        // encoding
         options.add("-encoding");
         options.add("UTF-8");
 
+        // java sources
         for (Path sources : project.getSources()) {
             for (Path path : I.walk(sources, "**.java")) {
                 options.add(path.toString());
@@ -100,8 +121,8 @@ public class Javadoc extends Task {
         ui.talk("Use Doclet: " + docletClass.getName());
 
         PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
-        int result = Main.execute("", writer, writer, writer, docletClass.getName(), I.$loader, options.toArray(new String[options.size()]));
-        System.out.println(result);
+        int result = Main.execute("", new NoOperationWriter(), writer, writer, docletClass.getName(), docletClass.getClassLoader(), options.toArray(new String[options.size()]));
+
         if (result == 1) {
             // success
         } else {
@@ -156,6 +177,33 @@ public class Javadoc extends Task {
     }
 
     /**
+     * @version 2014/07/26 21:29:15
+     */
+    private static class NoOperationWriter extends PrintWriter {
+
+        /**
+         * @param out
+         */
+        public NoOperationWriter() {
+            super(new NoOperationOutputStream());
+        }
+    }
+
+    /**
+     * @version 2014/07/26 21:30:07
+     */
+    private static class NoOperationOutputStream extends OutputStream {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(int b) throws IOException {
+            // ignore
+        }
+    }
+
+    /**
      * <p>
      * Create your custom javadoc view.
      * </p>
@@ -179,73 +227,53 @@ public class Javadoc extends Task {
          * @return
          */
         public static boolean start(RootDoc root) {
-            try {
-                Files.createFile(I.locate("e:\\JJJ.txt"));
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-            ui.talk("@@@@@@@@@@@@@@@@@@");
             ui.talk(outputDirectory);
 
             // build index.html
             I.copy(ClassUtil.getArchive(Bee.class).resolve("bee/task/javadoc"), outputDirectory, "**");
 
             for (ClassDoc classDoc : root.classes()) {
-                ui.talk(classDoc.qualifiedName());
+                System.out.format("Class: %s\r\n", classDoc.name() + "  " + classDoc.qualifiedName());
+                for (MethodDoc methodDoc : classDoc.methods()) {
+                    write(methodDoc);
+                }
             }
             return false;
         }
-    }
 
-    /**
-     * @version 2012/11/09 14:14:03
-     */
-    public static class CustomDoc extends Doclet {
+        private static void write(MethodDoc methodDoc) {
+            // ソース位置
+            SourcePosition position = methodDoc.position();
+            int line = position.line();
+            String path;
 
-        /**
-         * @param root
-         * @return
-         */
-        public static boolean start(RootDoc root) {
-            for (ClassDoc classDoc : root.classes()) {
-                System.out.format("Class: %s\r\n", classDoc.name() + "  " + classDoc.qualifiedName());
-                for (MethodDoc methodDoc : classDoc.methods()) {
-
-                    // ソース位置
-                    SourcePosition position = methodDoc.position();
-                    int line = position.line();
-                    String path;
-
-                    try {
-                        path = position.file().getCanonicalPath();
-                    } catch (IOException e) {
-                        throw I.quiet(e);
-                    }
-
-                    // 修飾子
-                    String modifiersName = methodDoc.modifiers();
-
-                    // 戻り値
-                    Type returnType = methodDoc.returnType();
-                    String returnName = returnType.typeName();
-                    if (returnType.dimension() != null) {
-                        returnName += returnType.dimension();
-                    }
-
-                    // メソッド名
-                    String methodName = methodDoc.name();
-
-                    // パラメータ
-                    String paramName = "";
-                    for (Parameter parameter : methodDoc.parameters()) {
-                        paramName += "".equals(paramName) ? parameter.toString() : ", " + parameter.toString();
-                    }
-
-                    System.out.format("\t[%s:%03d]", path, line);
-                    System.out.format("%s %s %s(%s)\r\n", modifiersName, returnName, methodName, paramName);
-                }
+            try {
+                path = position.file().getCanonicalPath();
+            } catch (IOException e) {
+                throw I.quiet(e);
             }
-            return true;
+
+            // 修飾子
+            String modifiersName = methodDoc.modifiers();
+
+            // 戻り値
+            Type returnType = methodDoc.returnType();
+            String returnName = returnType.typeName();
+            if (returnType.dimension() != null) {
+                returnName += returnType.dimension();
+            }
+
+            // メソッド名
+            String methodName = methodDoc.name();
+
+            // パラメータ
+            String paramName = "";
+            for (Parameter parameter : methodDoc.parameters()) {
+                paramName += "".equals(paramName) ? parameter.toString() : ", " + parameter.toString();
+            }
+
+            System.out.format("\t[%s:%03d]", path, line);
+            System.out.format("%s %s %s(%s)\r\n", modifiersName, returnName, methodName, paramName);
         }
     }
 }
