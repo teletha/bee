@@ -208,7 +208,7 @@ public class Java {
             } catch (Throwable e) {
                 vm.ui.error(e);
             } finally {
-                System.exit(1);
+                System.exit(0);
             }
         }
 
