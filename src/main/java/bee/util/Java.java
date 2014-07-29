@@ -205,9 +205,10 @@ public class Java {
 
             try {
                 vm.process();
-                connector.close();
             } catch (Throwable e) {
                 vm.ui.error(e);
+            } finally {
+                System.exit(1);
             }
         }
 

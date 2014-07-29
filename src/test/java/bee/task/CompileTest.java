@@ -32,7 +32,7 @@ public class CompileTest {
         Path B = project.locateMainOutput("test/B.class");
         Path C = project.locateMainOutput("C");
 
-        assert Files.notExists(A) == false;
+        assert Files.notExists(A);
         assert Files.notExists(B);
         assert Files.notExists(C);
 

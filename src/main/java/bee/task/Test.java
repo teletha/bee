@@ -10,6 +10,8 @@
 package bee.task;
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -92,9 +94,15 @@ public class Test extends Task {
                 fqcn = fqcn.substring(0, fqcn.length() - 6).replace(File.separatorChar, '.');
 
                 try {
+                    Class clazz = Class.forName(fqcn);
+
+                    if (!validate(clazz)) {
+                        continue;
+                    }
+
                     ui.talk("Running ", fqcn);
 
-                    Result result = core.run(Class.forName(fqcn));
+                    Result result = core.run(clazz);
                     List<Failure> failures = result.getFailures();
                     List<Failure> fail = new ArrayList();
                     List<Failure> error = new ArrayList();
@@ -131,6 +139,23 @@ public class Test extends Task {
                 throw failure;
             }
             return true;
+        }
+
+        /**
+         * <p>
+         * Validate the target class which is test case or not.
+         * </p>
+         * 
+         * @param test A target class.
+         * @return A result.
+         */
+        private boolean validate(Class test) {
+            for (Method method : test.getDeclaredMethods()) {
+                if (Modifier.isPublic(method.getModifiers()) && method.isAnnotationPresent(org.junit.Test.class)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /**
