@@ -534,6 +534,7 @@ public class JavaCompiler {
                     }
                 }
             }
+
             options.add("-sourcepath");
             options.add(I.join(File.pathSeparator, this.sources));
 
