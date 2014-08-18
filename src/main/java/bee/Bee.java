@@ -194,7 +194,7 @@ public class Bee {
             // load project related classes in system class loader
             Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             method.setAccessible(true);
-            method.invoke(ClassLoader.getSystemClassLoader(), project.getClasses().toUri().toURL());
+            method.invoke(ClassLoader.getSystemClassLoader(), project.getClasses().base.toUri().toURL());
             method.invoke(ClassLoader.getSystemClassLoader(), project.getProjectClasses().toUri().toURL());
 
             // create your project

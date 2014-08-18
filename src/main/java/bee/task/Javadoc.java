@@ -30,6 +30,7 @@ import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
+import bee.util.PathPattern;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Doclet;
@@ -95,7 +96,7 @@ public class Javadoc extends Task {
         // sourcepath
         options.add("-sourcepath");
         options.add(StreamSupport.stream(project.getSources().spliterator(), false)
-                .map(path -> "\"" + path.toAbsolutePath().toString() + "\"")
+                .map(path -> "\"" + path.base.toAbsolutePath().toString() + "\"")
                 .collect(Collectors.joining(File.pathSeparator)));
 
         // output
@@ -109,8 +110,8 @@ public class Javadoc extends Task {
         options.add("UTF-8");
 
         // java sources
-        for (Path sources : project.getSources()) {
-            for (Path path : I.walk(sources, "**.java")) {
+        for (PathPattern sources : project.getSources()) {
+            for (Path path : sources.list("**.java")) {
                 options.add(path.toString());
             }
         }

@@ -16,6 +16,7 @@ import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.util.JarArchiver;
+import bee.util.PathPattern;
 import bee.util.PathSet;
 
 /**
@@ -32,10 +33,8 @@ public class Jar extends Task {
     public void source() {
         require(Compile.class).source();
 
-        Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-sources.jar");
-
         pack("main classes", new PathSet(project.getClasses()), project.locateJar());
-        pack("main sources", project.getSources(), sources);
+        pack("main sources", project.getSources(), project.locateSourceJar());
     }
 
     /**
@@ -85,7 +84,7 @@ public class Jar extends Task {
         ui.talk("Build ", type, " jar: ", output);
 
         JarArchiver archiver = new JarArchiver();
-        for (Path path : input) {
+        for (PathPattern path : input) {
             archiver.add(path);
         }
         archiver.pack(output);
@@ -106,7 +105,7 @@ public class Jar extends Task {
 
         JarArchiver archiver = new JarArchiver();
         archiver.setMainClass(main);
-        archiver.add(project.getClasses());
+        archiver.add(project.getClasses().base);
 
         for (Library library : project.getDependency(Scope.Runtime)) {
             archiver.add(library.getJar());

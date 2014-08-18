@@ -31,6 +31,7 @@ import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.task.AnnotationProcessor.ProjectInfo;
+import bee.util.PathPattern;
 
 /**
  * @version 2010/04/02 3:58:58
@@ -86,26 +87,26 @@ public class Eclipse extends Task {
         XML doc = I.xml("classpath");
 
         // tests
-        for (Path path : project.getTestSources()) {
+        for (PathPattern path : project.getTestSources()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(path))
+                    .attr("path", relative(path.base))
                     .attr("output", relative(project.getTestClasses()));
         }
 
         // sources
-        for (Path path : project.getSources()) {
+        for (PathPattern path : project.getSources()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(path))
-                    .attr("output", relative(project.getClasses()));
+                    .attr("path", relative(path.base))
+                    .attr("output", relative(project.getClasses().base));
         }
 
         // projects
-        for (Path path : project.getProjectSources()) {
+        for (PathPattern path : project.getProjectSources()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(path))
+                    .attr("path", relative(path.base))
                     .attr("output", relative(project.getProjectClasses()));
         }
 
@@ -132,7 +133,7 @@ public class Eclipse extends Task {
 
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER");
-        doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
+        doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses().base));
 
         // write file
         makeFile(file, doc);

@@ -221,8 +221,8 @@ public class JavaCompiler {
      */
     public void addSourceDirectory(PathSet directories) {
         if (directories != null) {
-            for (Path directory : directories) {
-                addSourceDirectory(directory);
+            for (PathPattern path : directories) {
+                addSourceDirectory(path.base);
             }
         }
     }
