@@ -119,7 +119,7 @@ public class FindMain extends Task {
             try {
                 require(Compile.class).source();
 
-                for (Path path : I.walk(project.getClasses(), "**.class")) {
+                for (Path path : project.getClasses().list("**.class")) {
                     ClassReader reader = new ClassReader(Files.newInputStream(path));
                     reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 }

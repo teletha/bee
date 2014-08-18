@@ -177,7 +177,7 @@ public class AnnotationValidatorTest {
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(project.getSources());
-        compiler.setOutput(project.getClasses());
+        compiler.setOutput(project.getClasses().base);
         compiler.addProcessor(processor);
         compiler.addProcessorOption(new ProjectInfo(project));
         compiler.compile();

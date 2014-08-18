@@ -38,6 +38,7 @@ import org.apache.maven.wagon.PathUtils;
 import org.sonatype.aether.graph.Exclusion;
 import org.sonatype.aether.repository.RemoteRepository;
 
+import bee.util.PathPattern;
 import bee.util.PathSet;
 
 /**
@@ -395,8 +396,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getClasses() {
-        return output.resolve("classes");
+    public PathPattern getClasses() {
+        return new PathPattern(output.resolve("classes"));
     }
 
     /**
@@ -509,6 +510,17 @@ public class Project {
      */
     public final Path locateJar() {
         return getOutput().resolve(getProduct() + "-" + getVersion() + ".jar");
+    }
+
+    /**
+     * <p>
+     * Locate product source jar file.
+     * </p>
+     * 
+     * @return
+     */
+    public final Path locateSourceJar() {
+        return getOutput().resolve(getProduct() + "-" + getVersion() + "-sources.jar");
     }
 
     /**

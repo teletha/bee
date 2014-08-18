@@ -21,10 +21,10 @@ import kiss.I;
 /**
  * @version 2012/03/26 15:44:18
  */
-public class PathSet implements Iterable<Path> {
+public class PathSet implements Iterable<PathPattern> {
 
     /** The path pattern set. */
-    private final List<Pattern> set = new ArrayList();
+    private final List<PathPattern> set = new ArrayList();
 
     /**
      * <p>
@@ -62,6 +62,17 @@ public class PathSet implements Iterable<Path> {
 
     /**
      * <p>
+     * Path set with the specified paths.
+     * </p>
+     * 
+     * @param paths
+     */
+    public PathSet(PathPattern path) {
+        set.add(path);
+    }
+
+    /**
+     * <p>
      * Add path patterns.
      * </p>
      * 
@@ -69,7 +80,7 @@ public class PathSet implements Iterable<Path> {
      * @param patterns
      */
     public void add(Path base, String... patterns) {
-        set.add(new Pattern(base, patterns));
+        set.add(new PathPattern(base, patterns));
     }
 
     /**
@@ -80,7 +91,7 @@ public class PathSet implements Iterable<Path> {
      * @param destination
      */
     public void copyTo(Path destination, String... patterns) {
-        for (Pattern pattern : set) {
+        for (PathPattern pattern : set) {
             I.copy(pattern.base, destination, pattern.mix(patterns));
         }
     }
@@ -93,7 +104,7 @@ public class PathSet implements Iterable<Path> {
      * @param destination
      */
     public void moveTo(Path destination, String... patterns) {
-        for (Pattern pattern : set) {
+        for (PathPattern pattern : set) {
             I.move(pattern.base, destination, pattern.mix(patterns));
         }
     }
@@ -106,7 +117,7 @@ public class PathSet implements Iterable<Path> {
      * @param destination
      */
     public void delete(String... patterns) {
-        for (Pattern pattern : set) {
+        for (PathPattern pattern : set) {
             I.delete(pattern.base, pattern.mix(patterns));
         }
     }
@@ -119,7 +130,7 @@ public class PathSet implements Iterable<Path> {
      * @param visitor
      */
     public void each(FileVisitor<Path> visitor) {
-        for (Pattern pattern : set) {
+        for (PathPattern pattern : set) {
             I.walk(pattern.base, visitor, pattern.mix());
         }
     }
@@ -128,13 +139,8 @@ public class PathSet implements Iterable<Path> {
      * {@inheritDoc}
      */
     @Override
-    public Iterator<Path> iterator() {
-        List<Path> paths = new ArrayList();
-
-        for (Pattern pattern : set) {
-            paths.add(pattern.base);
-        }
-        return paths.iterator();
+    public Iterator<PathPattern> iterator() {
+        return set.iterator();
     }
 
     /**
@@ -147,50 +153,9 @@ public class PathSet implements Iterable<Path> {
     public List<Path> getFiles() {
         List<Path> paths = new ArrayList();
 
-        for (Pattern pattern : set) {
+        for (PathPattern pattern : set) {
             paths.addAll(I.walk(pattern.base, pattern.mix()));
         }
         return paths;
-    }
-
-    /**
-     * @version 2012/03/26 15:45:26
-     */
-    private static final class Pattern {
-
-        /** The base path. */
-        private final Path base;
-
-        /** The include/exclude patterns. */
-        private final List<String> patterns = new ArrayList();
-
-        /**
-         * @param base
-         * @param patterns
-         */
-        private Pattern(Path base, String[] patterns) {
-            this.base = base;
-
-            for (String pattern : patterns) {
-                this.patterns.add(pattern);
-            }
-        }
-
-        /**
-         * <p>
-         * Helper method to mix addtional patterns.
-         * </p>
-         * 
-         * @param additions
-         * @return
-         */
-        private String[] mix(String... additions) {
-            List<String> patterns = new ArrayList(this.patterns);
-
-            for (String addition : additions) {
-                patterns.add(addition);
-            }
-            return patterns.toArray(new String[patterns.size()]);
-        }
     }
 }

@@ -47,7 +47,7 @@ public class Test extends Task {
             Files.createDirectories(report);
 
             Java java = new Java();
-            java.addClassPath(project.getClasses());
+            java.addClassPath(project.getClasses().base);
             java.addClassPath(project.getTestClasses());
             java.addClassPath(project.getDependency(Scope.Test));
             java.addClassPath(loadBee());
