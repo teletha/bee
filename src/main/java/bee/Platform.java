@@ -75,7 +75,7 @@ public final class Platform {
             }
         }
 
-        if (bin == null) {
+        if (bin == null || java == null) {
             throw new Error("Java SDK is not found in your environment path.");
         }
 
