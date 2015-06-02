@@ -25,9 +25,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import kiss.I;
-import kiss.Manageable;
-
 import org.apache.maven.model.building.DefaultModelBuilder;
 import org.apache.maven.model.building.DefaultModelProcessor;
 import org.apache.maven.model.composition.DefaultDependencyManagementImporter;
@@ -119,6 +116,8 @@ import org.sonatype.aether.util.repository.DefaultProxySelector;
 
 import bee.Platform;
 import bee.UserInterface;
+import kiss.I;
+import kiss.Manageable;
 
 /**
  * @version 2012/03/25 14:55:21
@@ -434,7 +433,8 @@ public class Repository {
 
         for (Library library : libraries) {
             // install tools.jar if needed
-            if (library.group.equals("sun.jdk") && library.name.equals("tools") && Files.notExists(library.getJar())) {
+            if ((library.group.equals("sun.jdk") || library.group.equals("com.sun")) && library.name
+                    .equals("tools") && Files.notExists(library.getJar())) {
                 Project dummy = new Project();
                 dummy.product(library.group, library.name, library.version);
 
@@ -444,7 +444,8 @@ public class Repository {
         }
 
         try {
-            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
+            DependencyResult result = system
+                    .resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
 
             for (ArtifactResult dependency : result.getArtifactResults()) {
                 set.add(new Library(dependency.getRequest().getArtifact()));
@@ -507,7 +508,8 @@ public class Repository {
             throw I.quiet(e);
         }
 
-        DefaultArtifact jar = new DefaultArtifact(project.getGroup(), project.getProduct(), "", "jar", project.getVersion(), null, file.toFile());
+        DefaultArtifact jar = new DefaultArtifact(project.getGroup(), project.getProduct(), "", "jar", project
+                .getVersion(), null, file.toFile());
         Artifact pom = new SubArtifact(jar, "", "pom", temp.toFile());
 
         InstallRequest request = new InstallRequest();
@@ -694,7 +696,8 @@ public class Repository {
          */
         @Override
         public void artifactDescriptorInvalid(RepositoryEvent event) {
-            ui.talk("Invalid artifact descriptor for " + event.getArtifact() + ": " + event.getException().getMessage());
+            ui.talk("Invalid artifact descriptor for " + event.getArtifact() + ": " + event.getException()
+                    .getMessage());
         }
 
         /**
@@ -703,7 +706,8 @@ public class Repository {
         @Override
         public void artifactDescriptorMissing(RepositoryEvent event) {
             ArtifactDescriptorRequest request = (ArtifactDescriptorRequest) event.getTrace().getData();
-            ui.error(request.getArtifact(), " is not found at the following remote repositories.", request.getRepositories());
+            ui.error(request.getArtifact(), " is not found at the following remote repositories.", request
+                    .getRepositories());
         }
 
         /**
