@@ -487,8 +487,6 @@ public class Project {
      * @return
      */
     public Set<Path> getAnnotationProcessors() {
-        Repository repository = I.make(Repository.class);
-
         // search javax.annotation.processing.Processor file in libraries
         Set<Path> libraries = new HashSet();
 
@@ -499,9 +497,7 @@ public class Project {
                         .resolve("META-INF/services/javax.annotation.processing.Processor");
 
                 if (Files.exists(file)) {
-                    for (Library dependency : repository.collectDependency(library, Scope.Runtime)) {
-                        libraries.add(dependency.getJar());
-                    }
+                    libraries.add(library.getJar());
                 }
             }
         } catch (IOException e) {

@@ -16,9 +16,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import bee.api.Project;
 import kiss.I;
 import kiss.model.ClassUtil;
-import bee.api.Project;
 
 /**
  * @version 2012/11/12 13:20:32
@@ -39,6 +39,7 @@ public class BlinkProject extends Project {
      * 
      */
     public BlinkProject() {
+        product("blink", "Blink", "1.0");
         ProjectLifestyle.local.set(this);
         UserInterfaceLisfestyle.local.set(Null.UI);
     }
