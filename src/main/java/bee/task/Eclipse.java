@@ -18,13 +18,10 @@ package bee.task;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
-import kiss.I;
-import kiss.XML;
-import kiss.model.ClassUtil;
 import bee.Bee;
 import bee.api.Command;
 import bee.api.Library;
@@ -32,6 +29,8 @@ import bee.api.Scope;
 import bee.api.Task;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.PathPattern;
+import kiss.I;
+import kiss.XML;
 
 /**
  * @version 2010/04/02 3:58:58
@@ -48,10 +47,10 @@ public class Eclipse extends Task {
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
 
-        List<AnnotationValidator> validators = I.find(AnnotationValidator.class);
+        Set<Path> processors = project.getAnnotationProcessors();
 
-        if (validators.size() != 0) {
-            createFactorypath(project.getRoot().resolve(".factorypath"));
+        if (!processors.isEmpty()) {
+            createFactorypath(project.getRoot().resolve(".factorypath"), processors);
             createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), new ProjectInfo(project));
             createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
         }
@@ -146,13 +145,16 @@ public class Eclipse extends Task {
      * 
      * @param file
      */
-    private void createFactorypath(Path file) {
+    private void createFactorypath(Path file, Set<Path> processors) {
         XML doc = I.xml("factorypath");
-        doc.child("factorypathentry")
-                .attr("kind", "EXTJAR")
-                .attr("id", ClassUtil.getArchive(Bee.class))
-                .attr("enabled", true)
-                .attr("runInBatchMode", false);
+
+        for (Path processor : processors) {
+            doc.child("factorypathentry")
+                    .attr("kind", "EXTJAR")
+                    .attr("id", processor)
+                    .attr("enabled", true)
+                    .attr("runInBatchMode", false);
+        }
 
         // write file
         makeFile(file, doc);

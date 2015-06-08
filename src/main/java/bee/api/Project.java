@@ -17,6 +17,8 @@ package bee.api;
 
 import static bee.util.Inputs.*;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -30,16 +32,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.lang.model.SourceVersion;
 
-import kiss.I;
-import kiss.XML;
-import kiss.model.ClassUtil;
-
 import org.apache.maven.wagon.PathUtils;
 import org.sonatype.aether.graph.Exclusion;
 import org.sonatype.aether.repository.RemoteRepository;
 
+import bee.Bee;
+import bee.task.AnnotationValidator;
 import bee.util.PathPattern;
 import bee.util.PathSet;
+import kiss.I;
+import kiss.XML;
+import kiss.model.ClassUtil;
 
 /**
  * @version 2012/04/17 23:50:41
@@ -478,6 +481,45 @@ public class Project {
 
     /**
      * <p>
+     * Resolve all annotation processor for this project.
+     * </p>
+     * 
+     * @return
+     */
+    public Set<Path> getAnnotationProcessors() {
+        Repository repository = I.make(Repository.class);
+
+        // search javax.annotation.processing.Processor file in libraries
+        Set<Path> libraries = new HashSet();
+
+        try {
+            for (Library library : getDependency(Scope.Runtime)) {
+                Path file = FileSystems.newFileSystem(library.getJar(), ClassLoader.getSystemClassLoader())
+                        .getPath("/")
+                        .resolve("META-INF/services/javax.annotation.processing.Processor");
+
+                if (Files.exists(file)) {
+                    for (Library dependency : repository.collectDependency(library, Scope.Runtime)) {
+                        libraries.add(dependency.getJar());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+
+        // search AnnotationValidator in classpath
+        List<AnnotationValidator> validators = I.find(AnnotationValidator.class);
+
+        if (!validators.isEmpty()) {
+            libraries.add(ClassUtil.getArchive(Bee.class));
+        }
+
+        return libraries;
+    }
+
+    /**
+     * <p>
      * Returns project license.
      * </p>
      * 
@@ -544,7 +586,8 @@ public class Project {
         if (obj instanceof Project) {
             Project project = (Project) obj;
 
-            return productGroup.equalsIgnoreCase(project.productGroup) && productName.equalsIgnoreCase(project.productName) && productVersion.equalsIgnoreCase(project.productVersion);
+            return productGroup.equalsIgnoreCase(project.productGroup) && productName
+                    .equalsIgnoreCase(project.productName) && productVersion.equalsIgnoreCase(project.productVersion);
         }
         return false;
     }
