@@ -384,9 +384,20 @@ public class Project {
      * @return
      */
     public PathSet getSources() {
+        return getSources("*");
+    }
+
+    /**
+     * <p>
+     * Returns source directories.
+     * </p>
+     * 
+     * @return
+     */
+    public PathSet getSources(String... patterns) {
         PathSet set = new PathSet();
 
-        for (Path path : I.walkDirectory(input.resolve("main"), "*")) {
+        for (Path path : I.walkDirectory(input.resolve("main"), patterns)) {
             set.add(path);
         }
         return set;

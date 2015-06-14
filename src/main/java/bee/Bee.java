@@ -19,9 +19,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import kiss.Extensible;
-import kiss.I;
-import kiss.model.ClassUtil;
 import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
@@ -31,6 +28,9 @@ import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import bee.util.Paths;
 import bee.util.Stopwatch;
+import kiss.Extensible;
+import kiss.I;
+import kiss.model.ClassUtil;
 
 /**
  * <p>
@@ -322,8 +322,8 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
-            // bee.execute("javadoc");
+            // bee.execute("install");
+            bee.execute("license");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
