@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import bee.Platform;
 import bee.api.Command;
@@ -36,94 +38,233 @@ public class License extends Task {
      */
     @Command
     public void update() throws IOException {
-        Path license = project.getRoot().resolve("license.txt");
+        Path licenseFile = project.getRoot().resolve("license.txt");
+        List<String> licenseLines = Files.readAllLines(licenseFile);
+
         Path path = project.getSources("java").getFiles().get(0);
 
-        Java java = new Java();
-        java.analyze(path);
+        Header header = Header.JAVADOC_STYLE;
 
-        List<String> readAllLines = Files.readAllLines(path, encoding);
+        int first = -1;
+        int end = -1;
+        List<String> lines = Files.readAllLines(path, encoding);
 
-        for (String string : readAllLines) {
-            ui.talk(string);
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            if (header.isFirstHeaderLine(line)) {
+                first = i;
+            } else if (first != -1 && header.isEndHeaderLine(line)) {
+                end = i;
+                break;
+            }
+        }
+
+        // remove existing header
+        if (first != -1 && end != -1) {
+            for (int i = end; first <= i; i--) {
+                lines.remove(i);
+            }
+        }
+
+        // add specified header
+        List<String> update = new ArrayList();
+        update.add(header.firstLine);
+        for (String licenseLine : licenseLines) {
+            update.add(header.beforeEachLine.concat(licenseLine).concat(header.afterEachLine));
+        }
+        update.add(header.endLine);
+
+        lines.addAll(first, update);
+
+        for (String line : lines) {
+            ui.talk(line);
         }
     }
 
     /**
-     * @version 2015/06/14 18:05:40
+     * @version 2015/06/15 15:32:32
      */
-    public static abstract class Analyzer {
+    private enum Header {
 
-        public abstract boolean isStart(String line);
+        /** Header Definition. */
+        JAVADOC_STYLE("/**", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
 
-        public abstract String prefix();
+        /** Header Definition. */
+        SCRIPT_STYLE("#", "# ", "#EOL", "", "^#!.*$", "#.*$", "#.*$", false, false, false),
 
-        public abstract boolean isEnd(String line);
+        /** Header Definition. */
+        HAML_STYLE("-#", "-# ", "-#EOL", "", "^-#!.*$", "-#.*$", "-#.*$", false, false, false),
 
-        public abstract String[] extension();
+        /** Header Definition. */
+        XML_STYLE("<!--EOL", "    ", "EOL-->", "", "^<\\?xml.*>$", "(\\s|\\t)*<!--.*$", ".*-->(\\s|\\t)*$", true, true,
+                false),
 
-        void analyze(Path file) throws IOException {
-            int lisencePosition = -1;
-            List<String> lines = Files.readAllLines(file, encoding);
+        /** Header Definition. */
+        XML_PER_LINE("EOL", "<!-- ", "EOL", " -->", "^<\\?xml.*>$", "(\\s|\\t)*<!--.*$", ".*-->(\\s|\\t)*$", true,
+                false, true),
 
-            for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
+        /** Header Definition. */
+        SEMICOLON_STYLE(";", "; ", ";EOL", "", null, ";.*$", ";.*$", false, false, false),
 
-                if (isStart(line)) {
-                    lisencePosition = i;
-                } else if (isEnd(line)) {
-                    lisencePosition = -1;
-                } else if (lisencePosition != -1) {
-                    // skip
-                } else {
+        /** Header Definition. */
+        APOSTROPHE_STYLE("'", "' ", "'EOL", "", null, "'.*$", "'.*$", false, false, false),
 
-                }
-            }
-            for (String line : lines) {
-                line = line.trim();
+        /** Header Definition. */
+        EXCLAMATION_STYLE("!", "! ", "!EOL", "", null, "!.*$", "!.*$", false, false, false),
 
-                if (isStart(line)) {
+        /** Header Definition. */
+        DOUBLEDASHES_STYLE("--", "-- ", "--EOL", "", null, "--.*$", "--.*$", false, false, false),
 
-                }
-            }
-        }
-    }
+        /** Header Definition. */
+        SLASHSTAR_STYLE("/*", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
 
-    /**
-     * @version 2015/06/14 18:06:21
-     */
-    private static class Java extends Analyzer {
+        /** Header Definition. */
+        BRACESSTAR_STYLE("\\{*", " * ", " *\\}", "", null, "(\\s|\\t)*\\{\\*.*$", ".*\\*\\}(\\s|\\t)*$", false, true,
+                false),
+
+        /** Header Definition. */
+        SHARPSTAR_STYLE("#*", " * ", " *#", "", null, "(\\s|\\t)*#\\*.*$", ".*\\*#(\\s|\\t)*$", false, true, false),
+
+        /** Header Definition. */
+        DOUBLETILDE_STYLE("~~", "~~ ", "~~EOL", "", null, "~~.*$", "~~.*$", false, false, false),
+
+        /** Header Definition. */
+        DYNASCRIPT_STYLE("<%--EOL", "    ", "EOL--%>", "", null, "(\\s|\\t)*<%--.*$", ".*--%>(\\s|\\t)*$", true, true,
+                false),
+
+        /** Header Definition. */
+        DYNASCRIPT3_STYLE("<!---EOL", "    ", "EOL--->", "", null, "(\\s|\\t)*<!---.*$", ".*--->(\\s|\\t)*$", true,
+                true, false),
+
+        /** Header Definition. */
+        PERCENT3_STYLE("%%%", "%%% ", "%%%EOL", "", null, "%%%.*$", "%%%.*$", false, false, false),
+
+        /** Header Definition. */
+        EXCLAMATION3_STYLE("!!!", "!!! ", "!!!EOL", "", null, "!!!.*$", "!!!.*$", false, false, false),
+
+        /** Header Definition. */
+        DOUBLESLASH_STYLE("//", "// ", "//EOL", "", null, "//.*$", "//.*$", false, false, false),
+
+        /** Header Definition. */
+        TRIPLESLASH_STYLE("///", "/// ", "///EOL", "", null, "///.*$", "///.*$", false, false, false),
+
+        /** Header Definition. */
+        PHP("/*", " * ", " */", "", "^<\\?php.*$", "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
+
+        /** Header Definition. */
+        ASP("<%", "    ", "%>", "", null, "(\\s|\\t)*<%[^@].*$", ".*%>(\\s|\\t)*$", true, true, false),
+
+        /** Header Definition. */
+        LUA("--[[EOL", "    ", "EOL]]", "", null, "--\\[\\[$", "\\]\\]$", true, true, false),
+
+        /** Header Definition. */
+        FTL("<#--EOL", "    ", "EOL-->", "", null, "(\\s|\\t)*<#--.*$", ".*-->(\\s|\\t)*$", true, true, false),
+
+        /** Header Definition. */
+        FTL_ALT("[#--EOL", "    ", "EOL--]", "", "\\[#ftl(\\s.*)?\\]", "(\\s|\\t)*\\[#--.*$", ".*--\\](\\s|\\t)*$",
+                true, true, false), /** Header Definition. */
+        TEXT("====", "    ", "====EOL", "", null, "====.*$", "====.*$", true, true, false),
+
+        /** Header Definition. */
+        BATCH("@REM", "@REM ", "@REMEOL", "", null, "@REM.*$", "@REM.*$", false, false, false),
+
+        /** Header Definition. */
+        MUSTACHE_STYLE("{{!", "    ", "}}", "", null, "\\{\\{\\!.*$", "\\}\\}.*$", false, true, false),
+
+        /** Header Definition. */
+        UNKNOWN("", "", "", "", null, null, null, false, false, false);
+
+        private final String firstLine;
+
+        private final String beforeEachLine;
+
+        private final String endLine;
+
+        private final String afterEachLine;
+
+        private final Pattern skipLinePattern;
+
+        private final Pattern firstLineDetectionPattern;
+
+        private final Pattern endLineDetectionPattern;
+
+        private final boolean allowBlankLines;
+
+        private final boolean isMultiline;
+
+        private final boolean padLines;
 
         /**
-         * {@inheritDoc}
+         * @param firstLine
+         * @param beforeEachLine
+         * @param endLine
+         * @param afterEachLine
+         * @param skipLinePattern
+         * @param firstLineDetectionPattern
+         * @param endLineDetectionPattern
+         * @param allowBlankLines
+         * @param isMultiline
+         * @param padLines
          */
-        @Override
-        public boolean isStart(String line) {
-            return line.startsWith("/*");
+        private Header(String firstLine, String beforeEachLine, String endLine, String afterEachLine, String skipLinePattern, String firstLineDetectionPattern, String endLineDetectionPattern, boolean allowBlankLines, boolean isMultiline, boolean padLines) {
+            this.firstLine = firstLine;
+            this.beforeEachLine = beforeEachLine;
+            this.endLine = endLine;
+            this.afterEachLine = afterEachLine;
+            this.skipLinePattern = compile(skipLinePattern);
+            this.firstLineDetectionPattern = compile(firstLineDetectionPattern);
+            this.endLineDetectionPattern = compile(endLineDetectionPattern);
+            this.allowBlankLines = allowBlankLines;
+            this.isMultiline = isMultiline;
+            this.padLines = padLines;
         }
 
         /**
-         * {@inheritDoc}
+         * <p>
+         * Helper method to compile to {@link Pattern}.
+         * </p>
+         * 
+         * @param regexp
+         * @return
          */
-        @Override
-        public String prefix() {
-            return " * ";
+        private Pattern compile(String regexp) {
+            return regexp == null ? null : Pattern.compile(regexp);
         }
 
         /**
-         * {@inheritDoc}
+         * Tells if the given content line must be skipped according to this header definition. The
+         * header is outputted after any skipped line if any pattern defined on this point or on the
+         * first line if not pattern defined.
+         *
+         * @param line The line to test.
+         * @return true if this line must be skipped or false.
          */
-        @Override
-        public boolean isEnd(String line) {
-            return line.endsWith(" */");
+        private boolean isSkipLine(String line) {
+            return skipLinePattern != null && line != null && skipLinePattern.matcher(line).matches();
         }
 
         /**
-         * {@inheritDoc}
+         * Tells if the given content line is the first line of a possible header of this definition
+         * kind.
+         *
+         * @param line The line to test.
+         * @return true if the first line of a header have been recognized or false.
          */
-        @Override
-        public String[] extension() {
-            return new String[] {"java"};
+        private boolean isFirstHeaderLine(String line) {
+            return firstLineDetectionPattern != null && line != null && firstLineDetectionPattern.matcher(line)
+                    .matches();
+        }
+
+        /**
+         * Tells if the given content line is the end line of a possible header of this definition
+         * kind.
+         *
+         * @param line The end to test.
+         * @return true if the end line of a header have been recognized or false.
+         */
+        private boolean isEndHeaderLine(String line) {
+            return endLineDetectionPattern != null && line != null && endLineDetectionPattern.matcher(line).matches();
         }
     }
 }
