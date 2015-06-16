@@ -38,6 +38,7 @@ import org.sonatype.aether.repository.RemoteRepository;
 
 import bee.Bee;
 import bee.task.AnnotationValidator;
+import bee.task.License.Header;
 import bee.util.PathPattern;
 import bee.util.PathSet;
 import kiss.I;
@@ -80,7 +81,7 @@ public class Project {
     private SourceVersion requirementJavaVersion;
 
     /** The license. */
-    private License license;
+    private StandardLicense license;
 
     /** The input base directory. */
     private Path input;
@@ -111,7 +112,7 @@ public class Project {
 
         setInput((Path) null);
         setOutput((Path) null);
-        set((License) null);
+        set((StandardLicense) null);
     }
 
     /**
@@ -532,7 +533,7 @@ public class Project {
      * 
      * @return
      */
-    public License getLicense() {
+    public StandardLicense getLicense() {
         return license;
     }
 
@@ -543,9 +544,9 @@ public class Project {
      * 
      * @param license
      */
-    protected void set(License license) {
+    protected void set(StandardLicense license) {
         if (license == null) {
-            license = License.MIT;
+            license = StandardLicense.MIT;
         }
         this.license = license;
     }
@@ -641,7 +642,6 @@ public class Project {
      */
     public List<String> toDefinition() {
         List<String> code = new ArrayList();
-        code.addAll(license.forJava());
         code.add("public class Project extends " + Project.class.getName() + " {");
         code.add("");
         code.add("  {");
@@ -649,6 +649,6 @@ public class Project {
         code.add("  }");
         code.add("}");
 
-        return code;
+        return I.make(bee.task.License.class).convert(code, Header.SLASHSTAR_STYLE);
     }
 }

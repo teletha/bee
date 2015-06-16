@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import bee.Platform;
 import bee.api.Command;
 import bee.api.Task;
+import kiss.I;
 
 /**
  * @version 2015/06/14 17:50:58
@@ -27,7 +28,10 @@ import bee.api.Task;
 public class License extends Task {
 
     /** The file encoding. */
-    protected static Charset encoding = Platform.Encoding;
+    protected Charset encoding = Platform.Encoding;
+
+    /** The license text. */
+    protected final List<String> license = new ArrayList();
 
     /**
      * <p>
@@ -83,9 +87,81 @@ public class License extends Task {
     }
 
     /**
+     * <p>
+     * Read license file.
+     * </p>
+     * 
+     * @param path A path to license file.
+     */
+    protected void license(String path) {
+        license(I.locate(path));
+    }
+
+    /**
+     * <p>
+     * Read license file.
+     * </p>
+     * 
+     * @param path A path to license file.
+     */
+    protected void license(Path path) {
+        if (path != null && Files.exists(path)) {
+            try {
+                license.clear();
+                license.addAll(Files.readAllLines(path, encoding));
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+    }
+
+    /**
+     * @param sources
+     * @param header
+     */
+    public List<String> convert(List<String> sources, Header header) {
+        int first = -1;
+        int end = -1;
+
+        for (int i = 0; i < sources.size(); i++) {
+            String line = sources.get(i);
+
+            if (header.isFirstHeaderLine(line)) {
+                first = i;
+            } else if (first != -1 && header.isEndHeaderLine(line)) {
+                end = i;
+                break;
+            }
+        }
+
+        // remove existing header
+        if (first != -1 && end != -1) {
+            for (int i = end; first <= i; i--) {
+                sources.remove(i);
+            }
+        }
+
+        if (first == -1) {
+            first = 0;
+        }
+
+        // add specified header
+        List<String> update = new ArrayList();
+        update.add(header.firstLine);
+        for (String line : license) {
+            update.add(header.beforeEachLine.concat(line).concat(header.afterEachLine));
+        }
+        update.add(header.endLine);
+
+        sources.addAll(first, update);
+
+        return sources;
+    }
+
+    /**
      * @version 2015/06/15 15:32:32
      */
-    private enum Header {
+    public enum Header {
 
         /** Header Definition. */
         JAVADOC_STYLE("/**", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bee.api.Library;
-import bee.api.License;
+import bee.api.StandardLicense;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.api.Task;
@@ -258,7 +258,7 @@ public class Bee {
             String name = ui.ask("Product name", project.getRoot().getFileName().toString());
             String group = ui.ask("Product group", name.toLowerCase().replaceAll("\\s+", "."));
             String version = ui.ask("Product version", "1.0");
-            License license = ui.ask("Product license", License.class);
+            StandardLicense license = ui.ask("Product license", StandardLicense.class);
 
             // build temporary project
             inject(new FavricProject(group, name, version, license));
@@ -368,7 +368,7 @@ public class Bee {
         /**
          * @param projectName
          */
-        private FavricProject(String group, String name, String version, License license) {
+        private FavricProject(String group, String name, String version, StandardLicense license) {
             product(group, name, version);
             set(license);
         }

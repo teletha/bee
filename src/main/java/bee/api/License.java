@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Nameless Production Committee
+ * Copyright (C) 2015 Nameless Production Committee
  *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
@@ -9,7 +9,6 @@
  */
 package bee.api;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,36 +17,27 @@ import java.util.List;
 import kiss.I;
 
 /**
- * @version 2012/10/21 15:16:38
+ * @version 2015/06/16 12:11:16
  */
-public enum License {
-
-    Apache("http://opensource.org/licenses/Apache-2.0"),
-
-    BSD("http://opensource.org/licenses/BSD-2-Clause"),
-
-    EPL("http://opensource.org/licenses/EPL-1.0"),
-
-    GPL("http://opensource.org/licenses/GPL-3.0"),
-
-    LGPL("http://opensource.org/licenses/LGPL-3.0"),
-
-    MIT("http://opensource.org/licenses/mit-license.php"),
-
-    MPL("http://opensource.org/licenses/MPL-2.0");
-
-    /** The year expression. */
-    private static final DateFormat YEAR = new SimpleDateFormat("yyyy");
-
-    /** The license uri. */
-    private final String uii;
+public interface License {
 
     /**
-     * @param uii
+     * <p>
+     * Retrieve the license name.
+     * </p>
+     * 
+     * @return
      */
-    private License(String uii) {
-        this.uii = uii;
-    }
+    String name();
+
+    /**
+     * <p>
+     * Retrieve the license uri.
+     * </p>
+     * 
+     * @return
+     */
+    String uri();
 
     /**
      * <p>
@@ -56,51 +46,19 @@ public enum License {
      * 
      * @return
      */
-    public List<String> forXML() {
-        return text("<!--", " - ", "-->");
-    }
+    default List<String> text() {
+        String year = new SimpleDateFormat("yyyy").format(new Date());
+        String product = I.make(Project.class).getProduct();
 
-    /**
-     * <p>
-     * Write lisence text.
-     * </p>
-     * 
-     * @return
-     */
-    public List<String> forJava() {
-        return text("/*", " * ", " */");
-    }
-
-    /**
-     * <p>
-     * Write lisence text.
-     * </p>
-     * 
-     * @return
-     */
-    private List<String> text(String start, String prefix, String end) {
         List<String> license = new ArrayList();
-        license.add(start);
-        license.add(prefix + "Copyright (C) " + YEAR.format(new Date()) + " " + I.make(Project.class).getProduct() + " Development Team");
-        license.add(prefix);
-        license.add(prefix + "Licensed under the " + name() + " License (the \"License\");");
-        license.add(prefix + "you may not use this file except in compliance with the License.");
-        license.add(prefix + "You may obtain a copy of the License at");
-        license.add(prefix);
-        license.add(prefix + "         " + uri());
-        license.add(end);
+        license.add("Copyright (C) " + year + " " + product + " Development Team");
+        license.add("");
+        license.add("Licensed under the " + name() + " License (the \"License\");");
+        license.add("you may not use this file except in compliance with the License.");
+        license.add("You may obtain a copy of the License at");
+        license.add("");
+        license.add("         " + uri());
 
         return license;
-    }
-
-    /**
-     * <p>
-     * Retrieve lisence URI.
-     * </p>
-     * 
-     * @return A lisence URI.
-     */
-    protected String uri() {
-        return uii;
     }
 }
