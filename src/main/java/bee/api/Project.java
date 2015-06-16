@@ -81,7 +81,7 @@ public class Project {
     private SourceVersion requirementJavaVersion;
 
     /** The license. */
-    private StandardLicense license;
+    private License license;
 
     /** The input base directory. */
     private Path input;
@@ -533,7 +533,7 @@ public class Project {
      * 
      * @return
      */
-    public StandardLicense getLicense() {
+    public License getLicense() {
         return license;
     }
 
@@ -544,7 +544,7 @@ public class Project {
      * 
      * @param license
      */
-    protected void set(StandardLicense license) {
+    protected void set(License license) {
         if (license == null) {
             license = StandardLicense.MIT;
         }

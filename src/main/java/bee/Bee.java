@@ -20,10 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bee.api.Library;
-import bee.api.StandardLicense;
 import bee.api.Project;
 import bee.api.Scope;
+import bee.api.StandardLicense;
 import bee.api.Task;
+import bee.task.License;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import bee.util.Paths;
@@ -368,7 +369,7 @@ public class Bee {
         /**
          * @param projectName
          */
-        private FavricProject(String group, String name, String version, StandardLicense license) {
+        private FavricProject(String group, String name, String version, License license) {
             product(group, name, version);
             set(license);
         }
