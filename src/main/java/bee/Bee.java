@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bee.api.Library;
+import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.api.StandardLicense;
 import bee.api.Task;
-import bee.task.License;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import bee.util.Paths;
