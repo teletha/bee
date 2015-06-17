@@ -20,6 +20,7 @@ import bee.api.Task;
 import bee.util.FileType;
 import bee.util.HeaderType;
 import bee.util.PathSet;
+import bee.util.StandardHeaderType;
 import kiss.I;
 
 /**
@@ -59,7 +60,7 @@ public class License extends Task {
         for (Path path : set.getFiles()) {
             FileType type = FileType.of(path);
 
-            if (type.header().getClass() == HeaderType.Unknown.class) {
+            if (type.header() == StandardHeaderType.Unknown) {
                 ui.talk("Unknown Format ", project.getRoot().relativize(path));
             } else {
                 ui.talk("Update ", project.getRoot().relativize(path));
