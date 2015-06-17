@@ -41,7 +41,7 @@ import kiss.model.ClassUtil;
  * Bee represents a single project build process.
  * </p>
  * 
- * @version 2012/04/15 0:28:54
+ * @version 2015/06/17 16:35:22
  */
 public class Bee {
 
@@ -467,5 +467,4 @@ public class Bee {
             }
         }
     }
-
 }
