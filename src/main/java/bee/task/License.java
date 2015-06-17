@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2015 Nameless Production Committee
- *
+ * 
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *          http://opensource.org/licenses/mit-license.php
  */
 package bee.task;
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import bee.Platform;
 import bee.api.Command;
 import bee.api.Task;
 import kiss.I;
@@ -28,7 +27,7 @@ import kiss.I;
 public class License extends Task {
 
     /** The file encoding. */
-    protected Charset encoding = Platform.Encoding;
+    protected Charset encoding = project.getEncoding();
 
     /** The license text. */
     protected final List<String> license = project.getLicense().text();
@@ -42,16 +41,13 @@ public class License extends Task {
      */
     @Command
     public void update() throws IOException {
-        Path path = project.getSources("java").getFiles().get(0);
-        List<String> lines = Files.readAllLines(path, encoding);
+        for (Path path : project.getSources("java").getFiles()) {
+            System.out.println(path);
+            List<String> lines = Files.readAllLines(path, encoding);
+            List<String> convert = convert(lines, Header.SLASHSTAR_STYLE);
 
-        List<String> convert = convert(lines, Header.SLASHSTAR_STYLE);
-
-        for (String line : convert) {
-            ui.talk(line);
+            Files.write(path, convert, encoding);
         }
-
-        Files.write(path, convert, encoding);
     }
 
     /**
