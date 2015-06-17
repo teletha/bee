@@ -54,9 +54,13 @@ public class License extends Task {
             if (type.header() == StandardHeaderStyle.Unknown) {
                 ui.talk("Unknown Format ", project.getRoot().relativize(path));
             } else {
-                ui.talk("Update ", project.getRoot().relativize(path));
-                List<String> lines = Files.readAllLines(path, project.getEncoding());
-                Files.write(path, type.header().convert(lines, project.getLicense()), project.getEncoding());
+                List<String> source = Files.readAllLines(path, project.getEncoding());
+                List<String> converted = type.header().convert(source, project.getLicense());
+
+                if (converted != null) {
+                    Files.write(path, converted, project.getEncoding());
+                    ui.talk("Update ", project.getRoot().relativize(path));
+                }
             }
         }
     }

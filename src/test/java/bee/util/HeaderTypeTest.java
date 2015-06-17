@@ -77,6 +77,23 @@ public class HeaderTypeTest {
     }
 
     @Test
+    public void same() {
+        source("/*");
+        source(" * License");
+        source(" */");
+        source("public class A {");
+        source("}");
+
+        expect("/*");
+        expect(" * License");
+        expect(" */");
+        expect("public class A {");
+        expect("}");
+
+        validateBy(StandardHeaderStyle.SlashStar);
+    }
+
+    @Test
     public void noHeader() {
         source("public class A {");
         source("}");
@@ -250,10 +267,12 @@ public class HeaderTypeTest {
     private void validateBy(HeaderStyle header, Class<? extends bee.api.License> licenseClass) {
         List<String> convert = header.convert(codeSource, I.make(licenseClass));
 
-        assert convert.size() == codeExpect.size();
+        if (convert != null) {
+            assert convert.size() == codeExpect.size();
 
-        for (int i = 0; i < convert.size(); i++) {
-            assert convert.get(i).equals(codeExpect.get(i));
+            for (int i = 0; i < convert.size(); i++) {
+                assert convert.get(i).equals(codeExpect.get(i));
+            }
         }
     }
 

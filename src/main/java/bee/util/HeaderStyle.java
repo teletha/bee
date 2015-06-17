@@ -9,7 +9,6 @@
  */
 package bee.util;
 
-import java.util.Collections;
 import java.util.List;
 
 import bee.api.License;
@@ -64,7 +63,7 @@ public interface HeaderStyle extends Extensible {
     default List<String> convert(List<String> source, License license) {
         // ignore empty source
         if (source == null || source.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return null;
         }
 
         int first = -1;
@@ -78,7 +77,7 @@ public interface HeaderStyle extends Extensible {
                 // skip blank line
                 if (i == size) {
                     // if it is last line, this souce is blank. so we must ignore it.
-                    return source;
+                    return null;
                 }
             } else if (isFirstHeaderLine(line)) {
                 first = i;
@@ -104,8 +103,15 @@ public interface HeaderStyle extends Extensible {
             }
         }
 
+        List<String> decorated = decorate(license.text());
+
         // remove existing header
         if (end != -1) {
+            // check header equality
+            if (decorated.equals(source.subList(first, end + 1))) {
+                // if this souce has no modification, we must ignore it.
+                return null;
+            }
             for (int i = end; first <= i; i--) {
                 source.remove(i);
             }
