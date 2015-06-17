@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import bee.api.License;
 import bee.api.Project;
 import kiss.I;
 import kiss.model.ClassUtil;
@@ -315,5 +316,13 @@ public class BlinkProject extends Project {
             // create root directory
             root = I.locateTemporary();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void set(License license) {
+        super.set(license);
     }
 }

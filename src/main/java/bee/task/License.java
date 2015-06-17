@@ -31,7 +31,7 @@ public class License extends Task {
     protected Charset encoding = Platform.Encoding;
 
     /** The license text. */
-    protected final List<String> license = new ArrayList();
+    protected final List<String> license = project.getLicense().text();
 
     /**
      * <p>
@@ -47,7 +47,7 @@ public class License extends Task {
 
         Path path = project.getSources("java").getFiles().get(0);
 
-        Header header = Header.JAVADOC_STYLE;
+        Header header = Header.SLASHSTAR_STYLE;
 
         int first = -1;
         int end = -1;
@@ -146,14 +146,7 @@ public class License extends Task {
         }
 
         // add specified header
-        List<String> update = new ArrayList();
-        update.add(header.firstLine);
-        for (String line : license) {
-            update.add(header.beforeEachLine.concat(line).concat(header.afterEachLine));
-        }
-        update.add(header.endLine);
-
-        sources.addAll(first, update);
+        sources.addAll(first, header.text(license));
 
         return sources;
     }
@@ -341,6 +334,21 @@ public class License extends Task {
          */
         private boolean isEndHeaderLine(String line) {
             return endLineDetectionPattern != null && line != null && endLineDetectionPattern.matcher(line).matches();
+        }
+
+        /**
+         * Build header text by using the specified text.
+         */
+        private List<String> text(List<String> text) {
+            List<String> header = new ArrayList();
+
+            header.add(firstLine);
+            for (String line : text) {
+                header.add(beforeEachLine.concat(line).concat(afterEachLine));
+            }
+            header.add(endLine);
+
+            return header;
         }
     }
 }

@@ -83,8 +83,9 @@ public class LicenseTest {
      */
     private void validateBy(Header definition) {
         BlinkProject project = new BlinkProject();
+        project.set(new ModifiedLicense());
+
         License task = new License();
-        task.license.add("Modified");
         task.convert(sources, definition);
 
         assert sources.size() == expect.size();
@@ -101,5 +102,38 @@ public class LicenseTest {
     public void clean() {
         sources.clear();
         expect.clear();
+    }
+
+    /**
+     * @version 2015/06/17 9:22:58
+     */
+    private static class ModifiedLicense implements bee.api.License {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String name() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String uri() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public List<String> text() {
+            List<String> text = new ArrayList();
+            text.add("Modified");
+
+            return text;
+        }
     }
 }
