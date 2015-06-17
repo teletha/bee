@@ -21,17 +21,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import kiss.Extensible;
-import kiss.I;
-import kiss.model.ClassUtil;
-import bee.Bee;
-import bee.Platform;
-import bee.UserInterface;
-import bee.api.Command;
-import bee.api.Scope;
-import bee.api.Task;
-import bee.util.PathPattern;
-
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Doclet;
 import com.sun.javadoc.MethodDoc;
@@ -41,6 +30,17 @@ import com.sun.javadoc.SourcePosition;
 import com.sun.javadoc.Type;
 import com.sun.tools.doclets.standard.Standard;
 import com.sun.tools.javadoc.Main;
+
+import bee.Bee;
+import bee.Platform;
+import bee.UserInterface;
+import bee.api.Command;
+import bee.api.Scope;
+import bee.api.Task;
+import bee.util.PathPattern;
+import kiss.Extensible;
+import kiss.I;
+import kiss.model.ClassUtil;
 
 /**
  * @version 2012/11/09 13:17:38
@@ -75,7 +75,7 @@ public class Javadoc extends Task {
         if (doclet == null) {
             CustomJavadoc custom = ui.ask("Multiple doclets are found.", I.find(CustomJavadoc.class));
 
-            if (custom == null) {
+            if (custom == null || custom.getClass() == CustomJavadoc.class) {
                 docletClass = Standard.class;
             } else {
                 docletClass = custom.getClass();
@@ -122,7 +122,8 @@ public class Javadoc extends Task {
         ui.talk("Use Doclet: " + docletClass.getName());
 
         PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
-        int result = Main.execute("", new NoOperationWriter(), writer, writer, docletClass.getName(), docletClass.getClassLoader(), options.toArray(new String[options.size()]));
+        int result = Main.execute("", new NoOperationWriter(), writer, writer, docletClass.getName(), docletClass
+                .getClassLoader(), options.toArray(new String[options.size()]));
 
         if (result == 1) {
             // success
