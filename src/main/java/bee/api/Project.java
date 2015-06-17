@@ -34,7 +34,7 @@ import org.sonatype.aether.repository.RemoteRepository;
 
 import bee.Bee;
 import bee.task.AnnotationValidator;
-import bee.task.License.Header;
+import bee.util.HeaderType;
 import bee.util.PathPattern;
 import bee.util.PathSet;
 import kiss.I;
@@ -690,6 +690,6 @@ public class Project {
         code.add("  }");
         code.add("}");
 
-        return I.make(bee.task.License.class).convert(code, Header.SLASHSTAR_STYLE);
+        return I.make(bee.task.License.class).convert(code, I.make(HeaderType.SlashStar.class));
     }
 }

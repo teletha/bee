@@ -16,7 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import bee.BlinkProject;
-import bee.task.License.Header;
+import bee.util.HeaderType;
+import kiss.I;
 
 /**
  * @version 2015/06/15 16:55:54
@@ -35,7 +36,7 @@ public class LicenseTest {
         expect(" * With Space Line");
         expect(" */");
 
-        validateBy(Header.SLASHSTAR_STYLE);
+        validateBy(HeaderType.SlashStar.class);
     }
 
     /** The source contents. */
@@ -83,12 +84,12 @@ public class LicenseTest {
     /**
      * 
      */
-    private void validateBy(Header definition) {
+    private void validateBy(Class<? extends HeaderType> definition) {
         BlinkProject project = new BlinkProject();
         project.set(new ModifiedLicense());
 
         License task = new License();
-        task.convert(sources, definition);
+        task.convert(sources, I.make(definition));
 
         assert sources.size() == expect.size();
 

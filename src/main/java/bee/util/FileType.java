@@ -9,12 +9,15 @@
  */
 package bee.util;
 
-import static bee.task.License.Header.*;
-
 import java.nio.file.Path;
 import java.util.List;
 
-import bee.task.License.Header;
+import bee.util.HeaderType.Batch;
+import bee.util.HeaderType.Script;
+import bee.util.HeaderType.Semicolon;
+import bee.util.HeaderType.SlashStar;
+import bee.util.HeaderType.TripleSlash;
+import bee.util.HeaderType.Unknown;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
@@ -37,7 +40,7 @@ public interface FileType extends Extensible {
      * 
      * @return
      */
-    Header header();
+    HeaderType header();
 
     /**
      * Search {@link FileType} by extension.
@@ -53,7 +56,7 @@ public interface FileType extends Extensible {
                 return type;
             }
         }
-        return new File(extension, Header.UNKNOWN);
+        return new File(extension, Unknown.class);
     }
 
     /**
@@ -76,22 +79,22 @@ public interface FileType extends Extensible {
         private final String extension;
 
         /** The header type. */
-        private final Header header;
+        private final HeaderType header;
 
         /**
          * 
          */
         private File() {
-            this("", Header.UNKNOWN);
+            this("", Unknown.class);
         }
 
         /**
          * @param extension
          * @param header
          */
-        private File(String extension, Header header) {
+        private File(String extension, Class<? extends HeaderType> header) {
             this.extension = extension;
-            this.header = header;
+            this.header = I.make(header);
         }
 
         /**
@@ -106,7 +109,7 @@ public interface FileType extends Extensible {
          * {@inheritDoc}
          */
         @Override
-        public Header header() {
+        public HeaderType header() {
             return header;
         }
 
@@ -128,7 +131,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Java() {
-            super("java", SLASHSTAR_STYLE);
+            super("java", SlashStar.class);
         }
     }
 
@@ -141,7 +144,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Groovy() {
-            super("groovy", SLASHSTAR_STYLE);
+            super("groovy", SlashStar.class);
         }
     }
 
@@ -154,7 +157,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Scala() {
-            super("scala", SLASHSTAR_STYLE);
+            super("scala", SlashStar.class);
         }
     }
 
@@ -167,7 +170,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Clojure() {
-            super("clj", SEMICOLON_STYLE);
+            super("clj", Semicolon.class);
         }
     }
 
@@ -180,7 +183,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private HTML() {
-            super("html", XML_STYLE);
+            super("html", HeaderType.XML.class);
         }
     }
 
@@ -193,7 +196,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private XHTML() {
-            super("xhtml", XML_STYLE);
+            super("xhtml", HeaderType.XML.class);
         }
     }
 
@@ -206,7 +209,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private CSS() {
-            super("css", SLASHSTAR_STYLE);
+            super("css", SlashStar.class);
         }
     }
 
@@ -219,7 +222,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private JavaScript() {
-            super("js", SLASHSTAR_STYLE);
+            super("js", SlashStar.class);
         }
     }
 
@@ -232,7 +235,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private TypeScript() {
-            super("ts", TRIPLESLASH_STYLE);
+            super("ts", TripleSlash.class);
         }
     }
 
@@ -245,7 +248,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private C() {
-            super("c", SLASHSTAR_STYLE);
+            super("c", SlashStar.class);
         }
     }
 
@@ -258,7 +261,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Cpp() {
-            super("cpp", SLASHSTAR_STYLE);
+            super("cpp", SlashStar.class);
         }
     }
 
@@ -271,7 +274,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private CSharp() {
-            super("cs", SLASHSTAR_STYLE);
+            super("cs", SlashStar.class);
         }
     }
 
@@ -284,7 +287,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private XML() {
-            super("xml", XML_STYLE);
+            super("xml", HeaderType.XML.class);
         }
     }
 
@@ -297,7 +300,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private XMLSchema() {
-            super("xsd", XML_STYLE);
+            super("xsd", HeaderType.XML.class);
         }
     }
 
@@ -310,7 +313,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private DocumentTypeDefinition() {
-            super("dtd", XML_STYLE);
+            super("dtd", HeaderType.XML.class);
         }
     }
 
@@ -323,7 +326,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private POM() {
-            super("pom", XML_STYLE);
+            super("pom", HeaderType.XML.class);
         }
     }
 
@@ -336,7 +339,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Perl() {
-            super("pl", SCRIPT_STYLE);
+            super("pl", Script.class);
         }
     }
 
@@ -349,7 +352,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private PHP() {
-            super("php", PHP);
+            super("php", HeaderType.PHP.class);
         }
     }
 
@@ -362,7 +365,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Python() {
-            super("py", SCRIPT_STYLE);
+            super("py", Script.class);
         }
     }
 
@@ -375,7 +378,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Ruby() {
-            super("rb", SCRIPT_STYLE);
+            super("rb", Script.class);
         }
     }
 
@@ -388,7 +391,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Shell() {
-            super("sh", SCRIPT_STYLE);
+            super("sh", Script.class);
         }
     }
 
@@ -401,7 +404,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private WindowsBatch() {
-            super("bat", BATCH);
+            super("bat", Batch.class);
         }
     }
 
@@ -414,7 +417,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private WindowsShell() {
-            super("cmd", BATCH);
+            super("cmd", Batch.class);
         }
     }
 }
