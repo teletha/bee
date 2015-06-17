@@ -17,8 +17,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import kiss.I;
-
 import org.junit.runner.Description;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -30,6 +28,7 @@ import bee.api.Scope;
 import bee.api.Task;
 import bee.util.Java;
 import bee.util.Java.JVM;
+import kiss.I;
 
 /**
  * @version 2012/03/28 9:58:39
@@ -46,14 +45,15 @@ public class Test extends Task {
             Path report = project.getOutput().resolve("test-reports");
             Files.createDirectories(report);
 
-            Java java = new Java();
-            java.addClassPath(project.getClasses().base);
-            java.addClassPath(project.getTestClasses());
-            java.addClassPath(project.getDependency(Scope.Test));
-            java.addClassPath(loadBee());
-            java.enableAssertion();
-            java.setWorkingDirectory(project.getRoot());
-            java.run(Junit.class, project.getTestClasses(), report);
+            Java.with()
+                    .classPath(project.getClasses().base)
+                    .classPath(project.getTestClasses())
+                    .classPath(project.getDependency(Scope.Test))
+                    .classPath(loadBee())
+                    .enableAssertion()
+                    .encoding(project.getEncoding())
+                    .workingDirectory(project.getRoot())
+                    .run(Junit.class, project.getTestClasses(), report);
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -115,7 +115,8 @@ public class Test extends Task {
                         }
                     }
 
-                    ui.talk(buildResult(result.getRunCount(), fail.size(), error.size(), result.getIgnoreCount(), result.getRunTime()));
+                    ui.talk(buildResult(result.getRunCount(), fail.size(), error.size(), result.getIgnoreCount(), result
+                            .getRunTime()));
 
                     runs += result.getRunCount();
                     skips += result.getIgnoreCount();

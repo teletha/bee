@@ -15,14 +15,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import kiss.I;
 import bee.Platform;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
-import bee.util.ProcessMaker;
+import bee.util.Process;
 import bee.util.ZipArchiver;
+import kiss.I;
 
 /**
  * @version 2012/04/01 9:34:01
@@ -108,7 +108,8 @@ public class Exe extends Task {
             ui.talk("Write " + settingFile.getFileName() + ".");
 
             // copy exe launcher
-            I.copy(Exe.class.getResourceAsStream("JanelWindows" + suffix + ".exe"), Files.newOutputStream(exeFile), true);
+            I.copy(Exe.class.getResourceAsStream("JanelWindows" + suffix + ".exe"), Files
+                    .newOutputStream(exeFile), true);
             ui.talk("Write " + exeFile.getFileName() + ".");
 
             if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
@@ -126,9 +127,7 @@ public class Exe extends Task {
                 command.add("101,");
 
                 // execute icon changer
-                ProcessMaker maker = new ProcessMaker();
-                maker.setWorkingDirectory(iconChanger.getParent());
-                maker.run(command);
+                Process.with().workingDirectory(iconChanger.getParent()).run(command);
             }
         } catch (Exception e) {
             throw I.quiet(e);

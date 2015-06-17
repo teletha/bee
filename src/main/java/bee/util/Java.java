@@ -11,6 +11,7 @@ package bee.util;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
@@ -31,15 +32,15 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import kiss.Codec;
-import kiss.I;
 import bee.TaskFailure;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
+import kiss.Codec;
+import kiss.I;
 
 /**
- * @version 2012/04/04 17:08:12
+ * @version 2015/06/18 2:05:48
  */
 public class Java {
 
@@ -63,19 +64,22 @@ public class Java {
     /** The working directory. */
     private Path directory;
 
+    /** {@link System#out} and {@link System#in} encoding. */
+    private Charset encoding;
+
+    /**
+     * Hide Constructor.
+     */
+    private Java() {
+    }
+
     /**
      * <p>
-     * Add classpath.
+     * Create JVM instance.
      * </p>
-     * 
-     * @param path
      */
-    public void addClassPath(Collection<Library> paths) {
-        if (paths != null) {
-            for (Library library : paths) {
-                classpaths.add(library.getJar());
-            }
-        }
+    public static Java with() {
+        return new Java();
     }
 
     /**
@@ -85,10 +89,31 @@ public class Java {
      * 
      * @param path
      */
-    public void addClassPath(Path path) {
+    public Java classPath(Collection<Library> paths) {
+        if (paths != null) {
+            for (Library library : paths) {
+                classpaths.add(library.getJar());
+            }
+        }
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * <p>
+     * Add classpath.
+     * </p>
+     * 
+     * @param path
+     */
+    public Java classPath(Path path) {
         if (path != null) {
             classpaths.add(path.toAbsolutePath());
         }
+
+        // API definition
+        return this;
     }
 
     /**
@@ -96,8 +121,11 @@ public class Java {
      * Enable assertion functionality.
      * </p>
      */
-    public void enableAssertion() {
+    public Java enableAssertion() {
         enableAssertion = true;
+
+        // API definition
+        return this;
     }
 
     /**
@@ -107,8 +135,26 @@ public class Java {
      * 
      * @param directory A location of working directory.
      */
-    public void setWorkingDirectory(Path directory) {
+    public Java workingDirectory(Path directory) {
         this.directory = directory;
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * <p>
+     * Set {@link System#out} and {@link System#in} encoding.
+     * </p>
+     * 
+     * @param encoding A {@link Charset} to set.
+     * @return
+     */
+    public Java encoding(Charset encoding) {
+        this.encoding = encoding;
+
+        // API definition
+        return this;
     }
 
     /**
@@ -133,6 +179,7 @@ public class Java {
             command.add("-ea");
         }
 
+        command.add("-Dfile.encoding=UTF-8");
         command.add(JVM.class.getName());
         command.add(address);
         command.add(mainClass.getName());
@@ -148,13 +195,13 @@ public class Java {
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
             server.registerMBean(listener, NAME);
 
-            JMXConnectorServer connector = JMXConnectorServerFactory.newJMXConnectorServer(new JMXServiceURL(address), null, server);
+            JMXConnectorServer connector = JMXConnectorServerFactory
+                    .newJMXConnectorServer(new JMXServiceURL(address), null, server);
             connector.start();
 
             // build sub-process for java
-            ProcessMaker maker = new ProcessMaker();
-            maker.setWorkingDirectory(directory);
-            maker.run(command);
+            Process.with().workingDirectory(directory).encoding(encoding).run(command);
+
             connector.stop();
         } catch (Throwable e) {
             throw I.quiet(e);
@@ -196,7 +243,8 @@ public class Java {
             MBeanServerConnection connection = connector.getMBeanServerConnection();
 
             // create transporter proxy
-            Transporter transporter = MBeanServerInvocationHandler.newProxyInstance(connection, NAME, Transporter.class, false);
+            Transporter transporter = MBeanServerInvocationHandler
+                    .newProxyInstance(connection, NAME, Transporter.class, false);
 
             // execute main process
             JVM vm = (JVM) I.make(Class.forName(args[1]));
@@ -491,7 +539,8 @@ public class Java {
          */
         @Override
         public String encode(StackTraceElement value) {
-            return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value.getLineNumber();
+            return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value
+                    .getLineNumber();
         }
 
         /**

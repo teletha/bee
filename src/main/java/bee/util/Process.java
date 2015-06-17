@@ -10,30 +10,50 @@
 package bee.util;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import kiss.I;
 import bee.Platform;
 import bee.UserInterface;
+import kiss.I;
 
 /**
  * <p>
  * Utility for creating sub process.
  * </p>
  * 
- * @version 2012/04/05 11:50:55
+ * @version 2015/06/18 1:57:14
  */
-public class ProcessMaker {
+public class Process {
 
     /** The working directory. */
     private Path directory;
 
+    /** {@link System#out} and {@link System#in} encoding. */
+    private Charset encoding;
+
     /** The execution type. */
     private boolean sync = true;
+
+    /**
+     * Hide Constructor.
+     */
+    private Process() {
+    }
+
+    /**
+     * <p>
+     * Create new {@link Process} builder.
+     * </p>
+     * 
+     * @return
+     */
+    public static Process with() {
+        return new Process();
+    }
 
     /**
      * <p>
@@ -43,8 +63,23 @@ public class ProcessMaker {
      * @param directory A working directory.
      * @return Fluent API.
      */
-    public ProcessMaker setWorkingDirectory(Path directory) {
+    public Process workingDirectory(Path directory) {
         this.directory = directory;
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * <p>
+     * Set {@link System#out} and {@link System#in} encoding. .
+     * </p>
+     * 
+     * @param encoding
+     * @return
+     */
+    public Process encoding(Charset encoding) {
+        this.encoding = encoding;
 
         // API definition
         return this;
@@ -57,7 +92,7 @@ public class ProcessMaker {
      * 
      * @return Fluent API.
      */
-    public ProcessMaker inParallel() {
+    public Process inParallel() {
         this.sync = false;
 
         // API definition
@@ -75,6 +110,10 @@ public class ProcessMaker {
         try {
             ProcessBuilder builder = new ProcessBuilder();
 
+            if (encoding == null) {
+                encoding = Platform.Encoding;
+            }
+
             if (directory == null) {
                 directory = I.locateTemporary();
             }
@@ -88,10 +127,10 @@ public class ProcessMaker {
             }
             builder.command(command);
 
-            Process process = builder.start();
+            java.lang.Process process = builder.start();
 
-            new ProcessReader(process.getInputStream()).start();
-            new ProcessReader(process.getErrorStream()).start();
+            new ProcessReader(new InputStreamReader(process.getInputStream(), encoding)).start();
+            new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding)).start();
 
             if (sync) {
                 process.waitFor();
@@ -104,7 +143,7 @@ public class ProcessMaker {
     }
 
     /**
-     * @version 2012/04/22 10:06:43
+     * @version 2015/06/18 1:55:33
      */
     private static class ProcessReader extends Thread {
 
@@ -117,8 +156,8 @@ public class ProcessMaker {
         /**
          * @param input
          */
-        private ProcessReader(InputStream input) {
-            this.input = new InputStreamReader(input, Platform.Encoding);
+        private ProcessReader(InputStreamReader input) {
+            this.input = input;
             this.output = I.make(UserInterface.class).getInterface();
         }
 
@@ -142,6 +181,7 @@ public class ProcessMaker {
             } finally {
                 I.quiet(input);
                 // don't close output
+                // I.quiet(output);
             }
         }
     }
