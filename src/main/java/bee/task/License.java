@@ -1,10 +1,10 @@
 /*
  * Copyright (C) 2015 Nameless Production Committee
- * 
+ *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *          http://opensource.org/licenses/mit-license.php
  */
 package bee.task;
@@ -63,12 +63,11 @@ public class License extends Task {
         for (Path path : set.getFiles()) {
             FileType type = FileType.of(path);
 
-            List<String> lines = Files.readAllLines(path, encoding);
-
             if (type.header() == Header.UNKNOWN) {
                 ui.talk("Unknown Format ", project.getRoot().relativize(path));
             } else {
                 ui.talk("Update ", project.getRoot().relativize(path));
+                List<String> lines = Files.readAllLines(path, encoding);
                 Files.write(path, convert(lines, type.header()), encoding);
             }
         }
@@ -332,7 +331,11 @@ public class License extends Task {
 
             header.add(firstLine);
             for (String line : text) {
-                header.add(beforeEachLine.concat(line).concat(afterEachLine));
+                String concat = beforeEachLine.concat(line).concat(afterEachLine);
+                while (Character.isWhitespace(concat.charAt(concat.length() - 1))) {
+                    concat = concat.substring(0, concat.length() - 1);
+                }
+                header.add(concat);
             }
             header.add(endLine);
 

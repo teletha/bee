@@ -31,6 +31,8 @@ public class LicenseTest {
 
         expect("/*");
         expect(" * Modified");
+        expect(" *");
+        expect(" * With Space Line");
         expect(" */");
 
         validateBy(Header.SLASHSTAR_STYLE);
@@ -132,6 +134,8 @@ public class LicenseTest {
         public List<String> text() {
             List<String> text = new ArrayList();
             text.add("Modified");
+            text.add("");
+            text.add("With Space Line");
 
             return text;
         }
