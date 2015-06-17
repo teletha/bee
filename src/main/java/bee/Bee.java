@@ -371,7 +371,7 @@ public class Bee {
          */
         private FavricProject(String group, String name, String version, License license) {
             product(group, name, version);
-            set(license);
+            license(license);
         }
     }
 

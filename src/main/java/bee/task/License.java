@@ -42,48 +42,16 @@ public class License extends Task {
      */
     @Command
     public void update() throws IOException {
-        Path licenseFile = project.getRoot().resolve("license.txt");
-        List<String> licenseLines = Files.readAllLines(licenseFile);
-
         Path path = project.getSources("java").getFiles().get(0);
-
-        Header header = Header.SLASHSTAR_STYLE;
-
-        int first = -1;
-        int end = -1;
         List<String> lines = Files.readAllLines(path, encoding);
 
-        for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i);
+        List<String> convert = convert(lines, Header.SLASHSTAR_STYLE);
 
-            if (header.isFirstHeaderLine(line)) {
-                first = i;
-            } else if (first != -1 && header.isEndHeaderLine(line)) {
-                end = i;
-                break;
-            }
-        }
-
-        // remove existing header
-        if (first != -1 && end != -1) {
-            for (int i = end; first <= i; i--) {
-                lines.remove(i);
-            }
-        }
-
-        // add specified header
-        List<String> update = new ArrayList();
-        update.add(header.firstLine);
-        for (String licenseLine : licenseLines) {
-            update.add(header.beforeEachLine.concat(licenseLine).concat(header.afterEachLine));
-        }
-        update.add(header.endLine);
-
-        lines.addAll(first, update);
-
-        for (String line : lines) {
+        for (String line : convert) {
             ui.talk(line);
         }
+
+        Files.write(path, convert, encoding);
     }
 
     /**

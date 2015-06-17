@@ -319,10 +319,13 @@ public class BlinkProject extends Project {
     }
 
     /**
-     * {@inheritDoc}
+     * <p>
+     * Assign {@link License}.
+     * </p>
+     * 
+     * @param license
      */
-    @Override
     public void set(License license) {
-        super.set(license);
+        super.license(license);
     }
 }

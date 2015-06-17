@@ -48,10 +48,10 @@ public interface License {
      */
     default List<String> text() {
         String year = new SimpleDateFormat("yyyy").format(new Date());
-        String product = I.make(Project.class).getProduct();
+        String producer = I.make(Project.class).getProducer();
 
         List<String> license = new ArrayList();
-        license.add("Copyright (C) " + year + " " + product + " Development Team");
+        license.add("Copyright (C) " + year + " " + producer);
         license.add("");
         license.add("Licensed under the " + name() + " License (the \"License\");");
         license.add("you may not use this file except in compliance with the License.");

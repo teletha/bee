@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2012 Nameless Production Committee
  *
@@ -18,6 +19,7 @@ public class Project extends bee.api.Project {
 
     {
         product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
+        producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
         require("npc", "sinobu", "0.9.4");

@@ -77,6 +77,9 @@ public class Project {
     /** The product description. */
     private String description = "";
 
+    /** The producer. */
+    private String producer = "";
+
     /** The requirement of Java version. */
     private SourceVersion requirementJavaVersion;
 
@@ -112,7 +115,7 @@ public class Project {
 
         setInput((Path) null);
         setOutput((Path) null);
-        set((StandardLicense) null);
+        license((StandardLicense) null);
     }
 
     /**
@@ -197,6 +200,56 @@ public class Project {
             description = "";
         }
         this.description = description.trim();
+    }
+
+    /**
+     * <p>
+     * Return product producer.
+     * </p>
+     * 
+     * @return The product producer.
+     */
+    public String getProducer() {
+        return producer.isEmpty() ? getProduct() + " Development Team" : producer;
+    }
+
+    /**
+     * <p>
+     * Declare product producer.
+     * </p>
+     * 
+     * @param producer A product producer.
+     */
+    protected final void producer(String producer) {
+        if (producer == null) {
+            producer = "";
+        }
+        this.producer = producer.trim();
+    }
+
+    /**
+     * <p>
+     * Returns project license.
+     * </p>
+     * 
+     * @return
+     */
+    public License getLicense() {
+        return license;
+    }
+
+    /**
+     * <p>
+     * Set product license.
+     * </p>
+     * 
+     * @param license
+     */
+    protected final void license(License license) {
+        if (license == null) {
+            license = StandardLicense.MIT;
+        }
+        this.license = license;
     }
 
     /**
@@ -524,31 +577,6 @@ public class Project {
         }
 
         return libraries;
-    }
-
-    /**
-     * <p>
-     * Returns project license.
-     * </p>
-     * 
-     * @return
-     */
-    public License getLicense() {
-        return license;
-    }
-
-    /**
-     * <p>
-     * Set product license.
-     * </p>
-     * 
-     * @param license
-     */
-    protected void set(License license) {
-        if (license == null) {
-            license = StandardLicense.MIT;
-        }
-        this.license = license;
     }
 
     /**
