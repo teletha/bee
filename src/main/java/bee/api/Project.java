@@ -690,6 +690,6 @@ public class Project {
         code.add("  }");
         code.add("}");
 
-        return I.make(bee.task.License.class).convert(code, StandardHeaderType.SlashStar);
+        return StandardHeaderType.SlashStar.convert(code, license);
     }
 }

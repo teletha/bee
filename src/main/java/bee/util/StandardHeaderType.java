@@ -130,7 +130,7 @@ public enum StandardHeaderType implements HeaderType {
      * {@inheritDoc}
      */
     @Override
-    public List<String> text(List<String> text) {
+    public List<String> decorate(List<String> text) {
         List<String> header = new ArrayList();
 
         header.add(firstLine);

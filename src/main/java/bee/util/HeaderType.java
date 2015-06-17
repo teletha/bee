@@ -9,8 +9,10 @@
  */
 package bee.util;
 
+import java.util.Collections;
 import java.util.List;
 
+import bee.api.License;
 import kiss.Extensible;
 
 /**
@@ -46,7 +48,71 @@ public interface HeaderType extends Extensible {
     boolean isEndHeaderLine(String line);
 
     /**
-     * Build header text by using the specified text.
+     * Build decorated header text by using the specified law header text.
      */
-    List<String> text(List<String> text);
+    List<String> decorate(List<String> header);
+
+    /**
+     * <p>
+     * Apply the specified license header to the specified source.
+     * </p>
+     * 
+     * @param source A source to update.
+     * @param license A license definition.
+     * @return An updated source.
+     */
+    default List<String> convert(List<String> source, License license) {
+        // ignore empty source
+        if (source == null || source.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+
+        int first = -1;
+        int end = -1;
+
+        // find first header line
+        for (int i = 0, size = source.size() - 1; i <= size; i++) {
+            String line = source.get(i);
+
+            if (line.trim().isEmpty()) {
+                // skip blank line
+                if (i == size) {
+                    // if it is last line, this souce is blank. so we must ignore it.
+                    return source;
+                }
+            } else if (isFirstHeaderLine(line)) {
+                first = i;
+                break;
+            } else {
+                break;
+            }
+        }
+
+        if (first == -1) {
+            first = 0;
+        } else {
+            // find end header line
+            for (int i = first + 1; i < source.size(); i++) {
+                String line = source.get(i);
+
+                if (isEndHeaderLine(line)) {
+                    end = i;
+                    break;
+                }
+            }
+        }
+
+        // remove existing header
+        if (end != -1) {
+            for (int i = end; first <= i; i--) {
+                source.remove(i);
+            }
+        }
+
+        // add specified header
+        source.addAll(first, decorate(license.text()));
+
+        // API definition
+        return source;
+    }
 }
