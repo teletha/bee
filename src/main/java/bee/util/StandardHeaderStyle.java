@@ -143,7 +143,7 @@ public enum StandardHeaderStyle implements HeaderStyle {
         header.add(firstLine);
         for (String line : text) {
             String concat = beforeEachLine.concat(line).concat(afterEachLine);
-            while (Character.isWhitespace(concat.charAt(concat.length() - 1))) {
+            while (!concat.isEmpty() && Character.isWhitespace(concat.charAt(concat.length() - 1))) {
                 concat = concat.substring(0, concat.length() - 1);
             }
             header.add(concat);

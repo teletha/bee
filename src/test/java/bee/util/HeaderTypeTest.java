@@ -163,6 +163,20 @@ public class HeaderTypeTest {
     }
 
     @Test
+    public void htmlWithoutHeader() {
+        source("<!DOCTYPE html>");
+        source("<html/>");
+
+        expect("<!--");
+        expect("  License");
+        expect("-->");
+        expect("<!DOCTYPE html>");
+        expect("<html/>");
+
+        validateBy(StandardHeaderStyle.XML);
+    }
+
+    @Test
     public void xml() {
         source("<?xml version='1.0' encoding='UTF-8'>");
         source("<!--");
@@ -172,11 +186,13 @@ public class HeaderTypeTest {
 
         expect("<?xml version='1.0' encoding='UTF-8'>");
         expect("<!--");
-        expect("  License");
+        expect("  Blank");
+        expect();
+        expect("  Line");
         expect("-->");
         expect("<html/>");
 
-        validateBy(StandardHeaderStyle.XML);
+        validateBy(StandardHeaderStyle.XML, Blank.class);
     }
 
     /** The source contents. */
