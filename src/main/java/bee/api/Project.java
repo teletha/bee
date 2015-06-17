@@ -36,7 +36,7 @@ import bee.Bee;
 import bee.task.AnnotationValidator;
 import bee.util.PathPattern;
 import bee.util.PathSet;
-import bee.util.StandardHeaderType;
+import bee.util.StandardHeaderStyle;
 import kiss.I;
 import kiss.XML;
 import kiss.model.ClassUtil;
@@ -690,6 +690,6 @@ public class Project {
         code.add("  }");
         code.add("}");
 
-        return StandardHeaderType.SlashStar.convert(code, license);
+        return StandardHeaderStyle.SlashStar.convert(code, license);
     }
 }

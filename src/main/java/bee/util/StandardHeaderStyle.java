@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * @version 2015/06/17 14:40:29
  */
-public enum StandardHeaderType implements HeaderType {
+public enum StandardHeaderStyle implements HeaderStyle {
 
     /** The header style. */
     JavaDoc("/**", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
@@ -77,7 +77,7 @@ public enum StandardHeaderType implements HeaderType {
      * @param isMultiline
      * @param padLines
      */
-    private StandardHeaderType(String firstLine, String beforeEachLine, String endLine, String afterEachLine, String skipLinePattern, String firstLineDetectionPattern, String endLineDetectionPattern, boolean allowBlankLines, boolean isMultiline, boolean padLines) {
+    private StandardHeaderStyle(String firstLine, String beforeEachLine, String endLine, String afterEachLine, String skipLinePattern, String firstLineDetectionPattern, String endLineDetectionPattern, boolean allowBlankLines, boolean isMultiline, boolean padLines) {
         this.firstLine = firstLine;
         this.beforeEachLine = beforeEachLine;
         this.endLine = endLine;

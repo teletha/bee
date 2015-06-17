@@ -18,7 +18,7 @@ import kiss.Extensible;
 /**
  * @version 2015/06/17 13:33:00
  */
-public interface HeaderType extends Extensible {
+public interface HeaderStyle extends Extensible {
 
     /**
      * Tells if the given content line must be skipped according to this header definition. The

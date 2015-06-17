@@ -36,7 +36,7 @@ public class HeaderTypeTest {
         expect("public class A {");
         expect("}");
 
-        validateBy(StandardHeaderType.SlashStar);
+        validateBy(StandardHeaderStyle.SlashStar);
     }
 
     @Test
@@ -57,12 +57,12 @@ public class HeaderTypeTest {
         expect("public class A {");
         expect("}");
 
-        validateBy(StandardHeaderType.SlashStar);
+        validateBy(StandardHeaderStyle.SlashStar);
     }
 
     @Test
     public void emply() {
-        validateBy(StandardHeaderType.SlashStar);
+        validateBy(StandardHeaderStyle.SlashStar);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class HeaderTypeTest {
         expect();
         expect();
 
-        validateBy(StandardHeaderType.SlashStar);
+        validateBy(StandardHeaderStyle.SlashStar);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class HeaderTypeTest {
         expect("public class A {");
         expect("}");
 
-        validateBy(StandardHeaderType.SlashStar);
+        validateBy(StandardHeaderStyle.SlashStar);
     }
 
     @Test
@@ -107,7 +107,7 @@ public class HeaderTypeTest {
         expect("   */");
         expect("}");
 
-        validateBy(StandardHeaderType.SlashStar);
+        validateBy(StandardHeaderStyle.SlashStar);
     }
 
     @Test
@@ -125,7 +125,7 @@ public class HeaderTypeTest {
         expect("public class A {");
         expect("}");
 
-        validateBy(StandardHeaderType.SlashStar, Multi.class);
+        validateBy(StandardHeaderStyle.SlashStar, Multi.class);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class HeaderTypeTest {
         expect("public class A {");
         expect("}");
 
-        validateBy(StandardHeaderType.SlashStar, Blank.class);
+        validateBy(StandardHeaderStyle.SlashStar, Blank.class);
     }
 
     /** The source contents. */
@@ -192,14 +192,14 @@ public class HeaderTypeTest {
     /**
      * 
      */
-    private void validateBy(HeaderType header) {
+    private void validateBy(HeaderStyle header) {
         validateBy(header, Single.class);
     }
 
     /**
      * 
      */
-    private void validateBy(HeaderType header, Class<? extends bee.api.License> licenseClass) {
+    private void validateBy(HeaderStyle header, Class<? extends bee.api.License> licenseClass) {
         List<String> convert = header.convert(codeSource, I.make(licenseClass));
 
         assert convert.size() == codeExpect.size();

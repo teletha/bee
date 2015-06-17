@@ -18,7 +18,7 @@ import bee.api.Command;
 import bee.api.Task;
 import bee.util.FileType;
 import bee.util.PathSet;
-import bee.util.StandardHeaderType;
+import bee.util.StandardHeaderStyle;
 
 /**
  * @version 2015/06/14 17:50:58
@@ -51,7 +51,7 @@ public class License extends Task {
         for (Path path : set.getFiles()) {
             FileType type = FileType.of(path);
 
-            if (type.header() == StandardHeaderType.Unknown) {
+            if (type.header() == StandardHeaderStyle.Unknown) {
                 ui.talk("Unknown Format ", project.getRoot().relativize(path));
             } else {
                 ui.talk("Update ", project.getRoot().relativize(path));
