@@ -14,9 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import bee.api.Command;
@@ -36,9 +34,6 @@ public class License extends Task {
     /** The license text. */
     protected List<String> license = project.getLicense().text();
 
-    /** The header style mapping. */
-    protected Map<String, Header> headers = new HashMap();
-
     /**
      * <p>
      * Update license text.
@@ -49,6 +44,8 @@ public class License extends Task {
     @Command
     public void update() throws IOException {
         update(project.getSources());
+        update(project.getTestSources());
+        update(project.getProjectSources());
     }
 
     /**
