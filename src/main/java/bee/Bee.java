@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -264,8 +263,7 @@ public class Bee {
             // build temporary project
             inject(new FavricProject(group, name, version, license));
 
-            Files.createDirectories(definition.getParent());
-            Files.write(definition, project.toDefinition(), StandardCharsets.UTF_8);
+            Paths.write(definition, project.toDefinition());
             ui.talk("Generate project definition.");
 
             // build project architecture

@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.util;
+package bee.file;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +15,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import bee.file.HeaderStyle;
+import bee.file.StandardHeaderStyle;
 import kiss.I;
 
 /**

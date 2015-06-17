@@ -33,10 +33,10 @@ import org.sonatype.aether.graph.Exclusion;
 import org.sonatype.aether.repository.RemoteRepository;
 
 import bee.Bee;
+import bee.file.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import bee.util.PathPattern;
 import bee.util.PathSet;
-import bee.util.StandardHeaderStyle;
 import kiss.I;
 import kiss.XML;
 import kiss.model.ClassUtil;

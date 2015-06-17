@@ -7,11 +7,12 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.util;
+package bee.file;
 
 import java.nio.file.Path;
 import java.util.List;
 
+import bee.util.Paths;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
