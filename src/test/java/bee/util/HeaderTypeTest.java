@@ -147,6 +147,38 @@ public class HeaderTypeTest {
         validateBy(StandardHeaderStyle.SlashStar, Blank.class);
     }
 
+    @Test
+    public void html() {
+        source("<!--");
+        source("  Some");
+        source("-->");
+        source("<html/>");
+
+        expect("<!--");
+        expect("  License");
+        expect("-->");
+        expect("<html/>");
+
+        validateBy(StandardHeaderStyle.XML);
+    }
+
+    @Test
+    public void xml() {
+        source("<?xml version='1.0' encoding='UTF-8'>");
+        source("<!--");
+        source("  Some");
+        source("-->");
+        source("<html/>");
+
+        expect("<?xml version='1.0' encoding='UTF-8'>");
+        expect("<!--");
+        expect("  License");
+        expect("-->");
+        expect("<html/>");
+
+        validateBy(StandardHeaderStyle.XML);
+    }
+
     /** The source contents. */
     private final List<String> codeSource = new ArrayList();
 

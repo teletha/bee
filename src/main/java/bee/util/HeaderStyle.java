@@ -83,6 +83,8 @@ public interface HeaderStyle extends Extensible {
             } else if (isFirstHeaderLine(line)) {
                 first = i;
                 break;
+            } else if (isSkipLine(line)) {
+                // skip line
             } else {
                 break;
             }

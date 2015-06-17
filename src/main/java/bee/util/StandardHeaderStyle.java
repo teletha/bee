@@ -19,44 +19,51 @@ import java.util.regex.Pattern;
 public enum StandardHeaderStyle implements HeaderStyle {
 
     /** The header style. */
-    JavaDoc("/**", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
+    JavaDoc("/**", " * ", "", " */", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
 
     /** The header style. */
-    SlashStar("/*", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
+    SlashStar("/*", " * ", "", " */", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
 
     /** The header style. */
-    Sharp("###", "# ", "###", "", "^#!.*$", "#.*$", "#.*$", false, false, false),
+    Sharp("###", "# ", "", "###", "^#!.*$", "#.*$", "#.*$", false, false, false),
 
     /** The header style. */
-    XML("<!--", "    ", "-->", "", "^<\\?xml.*>$", "(\\s|\\t)*<!--.*$", ".*-->(\\s|\\t)*$", true, true, false),
+    XML("<!--", "  ", "", "-->", "^<\\?xml.*>$", "(\\s|\\t)*<!--.*$", ".*-->(\\s|\\t)*$", true, true, false),
 
     /** The header style. */
-    Semicolon(";", "; ", ";", "", null, ";.*$", ";.*$", false, false, false),
+    Semicolon(";", "; ", "", ";", null, ";.*$", ";.*$", false, false, false),
 
     /** The header style. */
-    SlashDouble("//", "// ", "//", "", null, "//.*$", "//.*$", false, false, false),
+    SlashDouble("//", "// ", "", "//", null, "//.*$", "//.*$", false, false, false),
 
     /** The header style. */
-    SlashTriple("///", "/// ", "///", "", null, "///.*$", "///.*$", false, false, false),
+    SlashTriple("///", "/// ", "", "///", null, "///.*$", "///.*$", false, false, false),
 
     /** The header style. */
-    Batch("@REM", "@REM ", "@REM", "", null, "@REM.*$", "@REM.*$", false, false, false),
+    Batch("@REM", "@REM ", "", "@REM", null, "@REM.*$", "@REM.*$", false, false, false),
 
     /** The header style. */
     Unknown("", "", "", "", null, null, null, false, false, false);
 
+    /** The first line. */
     private final String firstLine;
 
+    /** The line prefix. */
     private final String beforeEachLine;
 
-    private final String endLine;
-
+    /** The line suffix. */
     private final String afterEachLine;
 
+    /** The end line. */
+    private final String endLine;
+
+    /** The pattern of skip line. */
     private final Pattern skipLinePattern;
 
+    /** The pattern of first line. */
     private final Pattern firstLineDetectionPattern;
 
+    /** The pattern of end line. */
     private final Pattern endLineDetectionPattern;
 
     private final boolean allowBlankLines;
@@ -68,8 +75,8 @@ public enum StandardHeaderStyle implements HeaderStyle {
     /**
      * @param firstLine
      * @param beforeEachLine
-     * @param endLine
      * @param afterEachLine
+     * @param endLine
      * @param skipLinePattern
      * @param firstLineDetectionPattern
      * @param endLineDetectionPattern
@@ -77,7 +84,7 @@ public enum StandardHeaderStyle implements HeaderStyle {
      * @param isMultiline
      * @param padLines
      */
-    private StandardHeaderStyle(String firstLine, String beforeEachLine, String endLine, String afterEachLine, String skipLinePattern, String firstLineDetectionPattern, String endLineDetectionPattern, boolean allowBlankLines, boolean isMultiline, boolean padLines) {
+    private StandardHeaderStyle(String firstLine, String beforeEachLine, String afterEachLine, String endLine, String skipLinePattern, String firstLineDetectionPattern, String endLineDetectionPattern, boolean allowBlankLines, boolean isMultiline, boolean padLines) {
         this.firstLine = firstLine;
         this.beforeEachLine = beforeEachLine;
         this.endLine = endLine;
