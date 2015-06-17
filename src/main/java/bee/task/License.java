@@ -14,11 +14,15 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import bee.api.Command;
 import bee.api.Task;
+import bee.util.FileType;
+import bee.util.PathSet;
 import kiss.I;
 
 /**
@@ -30,7 +34,10 @@ public class License extends Task {
     protected Charset encoding = project.getEncoding();
 
     /** The license text. */
-    protected final List<String> license = project.getLicense().text();
+    protected List<String> license = project.getLicense().text();
+
+    /** The header style mapping. */
+    protected Map<String, Header> headers = new HashMap();
 
     /**
      * <p>
@@ -41,12 +48,29 @@ public class License extends Task {
      */
     @Command
     public void update() throws IOException {
-        for (Path path : project.getSources("java").getFiles()) {
-            System.out.println(path);
-            List<String> lines = Files.readAllLines(path, encoding);
-            List<String> convert = convert(lines, Header.SLASHSTAR_STYLE);
+        update(project.getSources());
+    }
 
-            Files.write(path, convert, encoding);
+    /**
+     * <p>
+     * Update license text.
+     * </p>
+     * 
+     * @param set
+     * @throws IOException
+     */
+    private void update(PathSet set) throws IOException {
+        for (Path path : set.getFiles()) {
+            FileType type = FileType.of(path);
+
+            List<String> lines = Files.readAllLines(path, encoding);
+
+            if (type.header() == Header.UNKNOWN) {
+                ui.talk("Unknown Format ", project.getRoot().relativize(path));
+            } else {
+                ui.talk("Update ", project.getRoot().relativize(path));
+                Files.write(path, convert(lines, type.header()), encoding);
+            }
         }
     }
 
