@@ -229,7 +229,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private TypeScript() {
-            super("ts", StandardHeaderType.TripleSlash);
+            super("ts", StandardHeaderType.SlashTriple);
         }
     }
 
@@ -333,20 +333,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Perl() {
-            super("pl", StandardHeaderType.Script);
-        }
-    }
-
-    /**
-     * @version 2015/06/17 10:49:10
-     */
-    class PHP extends File {
-
-        /**
-         * Hide constructor.
-         */
-        private PHP() {
-            super("php", StandardHeaderType.PHP);
+            super("pl", StandardHeaderType.Sharp);
         }
     }
 
@@ -359,7 +346,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Python() {
-            super("py", StandardHeaderType.Script);
+            super("py", StandardHeaderType.Sharp);
         }
     }
 
@@ -372,7 +359,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Ruby() {
-            super("rb", StandardHeaderType.Script);
+            super("rb", StandardHeaderType.Sharp);
         }
     }
 
@@ -385,7 +372,7 @@ public interface FileType extends Extensible {
          * Hide constructor.
          */
         private Shell() {
-            super("sh", StandardHeaderType.Script);
+            super("sh", StandardHeaderType.Sharp);
         }
     }
 

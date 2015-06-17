@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * @version 2015/06/17 14:21:23
+ * @version 2015/06/17 14:40:29
  */
 public enum StandardHeaderType implements HeaderType {
 
@@ -22,25 +22,25 @@ public enum StandardHeaderType implements HeaderType {
     JavaDoc("/**", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
 
     /** The header style. */
-    Script("#", "# ", "#EOL", "", "^#!.*$", "#.*$", "#.*$", false, false, false),
-
-    /** The header style. */
-    XML("<!--EOL", "    ", "EOL-->", "", "^<\\?xml.*>$", "(\\s|\\t)*<!--.*$", ".*-->(\\s|\\t)*$", true, true, false),
-
-    /** The header style. */
-    Semicolon(";", "; ", ";EOL", "", null, ";.*$", ";.*$", false, false, false),
-
-    /** The header style. */
-    TripleSlash("///", "/// ", "///EOL", "", null, "///.*$", "///.*$", false, false, false),
-
-    /** The header style. */
     SlashStar("/*", " * ", " */", "", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
 
     /** The header style. */
-    PHP("/*", " * ", " */", "", "^<\\?php.*$", "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
+    Sharp("###", "# ", "###", "", "^#!.*$", "#.*$", "#.*$", false, false, false),
 
     /** The header style. */
-    Batch("@REM", "@REM ", "@REMEOL", "", null, "@REM.*$", "@REM.*$", false, false, false),
+    XML("<!--", "    ", "-->", "", "^<\\?xml.*>$", "(\\s|\\t)*<!--.*$", ".*-->(\\s|\\t)*$", true, true, false),
+
+    /** The header style. */
+    Semicolon(";", "; ", ";", "", null, ";.*$", ";.*$", false, false, false),
+
+    /** The header style. */
+    SlashDouble("//", "// ", "//", "", null, "//.*$", "//.*$", false, false, false),
+
+    /** The header style. */
+    SlashTriple("///", "/// ", "///", "", null, "///.*$", "///.*$", false, false, false),
+
+    /** The header style. */
+    Batch("@REM", "@REM ", "@REM", "", null, "@REM.*$", "@REM.*$", false, false, false),
 
     /** The header style. */
     Unknown("", "", "", "", null, null, null, false, false, false);
