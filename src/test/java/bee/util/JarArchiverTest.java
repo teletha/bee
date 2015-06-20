@@ -14,10 +14,9 @@ import static org.junit.Assert.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-
-import bee.util.JarArchiver;
 
 import antibug.CleanRoom;
 
@@ -27,6 +26,7 @@ import antibug.CleanRoom;
 public class JarArchiverTest {
 
     @Rule
+    @ClassRule
     public static final CleanRoom room = new CleanRoom();
 
     @Test

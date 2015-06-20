@@ -13,13 +13,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import kiss.I;
-
+import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 import antibug.CommandLineUser;
+import kiss.I;
 
 /**
  * @version 2012/04/15 15:15:50
@@ -27,6 +27,7 @@ import antibug.CommandLineUser;
 public class CommandLineUserInterfaceTest {
 
     @Rule
+    @ClassRule
     public static final CommandLineUser user = new CommandLineUser();
 
     private CommandLineUserInterface ui = new CommandLineUserInterface();
