@@ -571,6 +571,12 @@ public class Repository {
         request.addArtifact(jar);
         request.addArtifact(pom);
 
+        Path sources = project.locateSourceJar();
+        System.out.println(sources);
+        if (Files.exists(sources)) {
+            request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.toFile()));
+        }
+
         try {
             system.install(newSession(), request);
 

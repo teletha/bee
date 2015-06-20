@@ -98,7 +98,7 @@ public class Project {
     protected Project() {
         Class projectClass = getClass();
 
-        if (projectClass.isMemberClass()) {
+        if (projectClass.isMemberClass() || projectClass.isAnonymousClass()) {
             // fabric project
             this.root = I.locate("").toAbsolutePath();
         } else {

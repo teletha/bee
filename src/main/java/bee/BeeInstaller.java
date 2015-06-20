@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import kiss.I;
-import kiss.model.ClassUtil;
 import bee.api.Repository;
 import bee.util.JarArchiver;
 import bee.util.Paths;
+import kiss.I;
+import kiss.model.ClassUtil;
 
 /**
  * @version 2012/05/17 16:45:46
@@ -57,7 +57,6 @@ public class BeeInstaller {
             Path dest = JavaHome.resolve("lib/bee/" + fileName);
 
             // delete old files
-
             for (Path jar : I.walk(dest.getParent())) {
                 try {
                     Files.delete(jar);
@@ -81,7 +80,8 @@ public class BeeInstaller {
                 // windows
                 // use JDK full path to avoid using JRE
                 bat.add("@echo off");
-                bat.add(JavaHome.resolve("bin/java") + " -cp \"" + dest.toString() + "\" " + Bee.class.getName() + " %*");
+                bat.add(JavaHome.resolve("bin/java") + " -cp \"" + dest.toString() + "\" " + Bee.class
+                        .getName() + " %*");
             } else {
                 // linux
                 // TODO
