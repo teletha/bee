@@ -104,7 +104,6 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
-import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
@@ -473,7 +472,7 @@ public class Repository {
                 Project dummy = new Project();
                 dummy.product(library.group, library.name, library.version);
 
-                install(dummy, Platform.JavaHome.resolve("lib/tools.jar"));
+                install(dummy, Platform.JavaTool);
             }
             request.addDependency(new Dependency(library.artifact, library.scope.toString()));
         }
@@ -483,15 +482,36 @@ public class Repository {
                     .resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
 
             for (ArtifactResult dependency : result.getArtifactResults()) {
-                set.add(new Library(dependency.getRequest().getArtifact()));
-            }
+                Artifact artifact = dependency.getArtifact();
 
+                if (validateDependency(artifact)) {
+                    set.add(new Library(artifact));
+                }
+            }
             return set;
-        } catch (DependencyResolutionException e) {
-            throw I.quiet(e);
         } catch (Exception e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * <p>
+     * Validate artifact.
+     * </p>
+     * 
+     * @param artifact
+     * @return
+     */
+    private boolean validateDependency(Artifact artifact) {
+        String group = artifact.getGroupId();
+        String product = artifact.getArtifactId();
+
+        // remove project itself
+        if (group.equalsIgnoreCase(project.getGroup()) && product.equalsIgnoreCase(project.getProduct())) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
