@@ -67,15 +67,6 @@ public class Bee {
     private static final String ProjectFile = "Project";
 
     static {
-        // Bee requires JDK(tools.jar) surely.
-        try {
-            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            method.invoke(ClassLoader.getSystemClassLoader(), Platform.JavaTool.toUri().toURL());
-        } catch (Exception e) {
-            throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
-        }
-
         I.load(Bee.class, true);
     }
 

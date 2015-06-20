@@ -35,9 +35,6 @@ public final class Platform {
     /** The executable file for Java. */
     public static final Path Java;
 
-    /** The tool.jar file for Java. */
-    public static final Path JavaTool;
-
     /** The executable file for Bee. */
     public static final Path Bee;
 
@@ -85,6 +82,5 @@ public final class Platform {
         Bee = bee;
         Java = java;
         JavaHome = java.getParent().getParent();
-        JavaTool = JavaHome.resolve("lib/tools.jar");
     }
 }
