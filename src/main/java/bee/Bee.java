@@ -11,6 +11,7 @@ package bee;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -67,6 +68,15 @@ public class Bee {
     private static final String ProjectFile = "Project";
 
     static {
+        // Bee requires JDK(tools.jar) surely.
+        try {
+            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            method.setAccessible(true);
+            method.invoke(ClassLoader.getSystemClassLoader(), Platform.JavaTool.toUri().toURL());
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+
         I.load(Bee.class, true);
     }
 
