@@ -11,10 +11,10 @@ package bee.api;
 
 import java.nio.file.Path;
 
-import kiss.I;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
 
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
+import kiss.I;
 
 /**
  * @version 2014/07/25 16:57:34

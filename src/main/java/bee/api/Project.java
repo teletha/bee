@@ -29,8 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.lang.model.SourceVersion;
 
 import org.apache.maven.wagon.PathUtils;
-import org.sonatype.aether.graph.Exclusion;
-import org.sonatype.aether.repository.RemoteRepository;
+import org.eclipse.aether.graph.Exclusion;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RemoteRepository.Builder;
 
 import bee.Bee;
 import bee.file.StandardHeaderStyle;
@@ -364,7 +365,8 @@ public class Project {
      */
     protected final void repository(String uri) {
         if (uri != null && !uri.isEmpty()) {
-            repositories.add(new RemoteRepository(PathUtils.host(uri), "default", uri));
+            Builder builder = new Builder(PathUtils.host(uri), "default", uri);
+            repositories.add(builder.build());
         }
     }
 

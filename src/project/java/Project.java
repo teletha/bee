@@ -15,7 +15,9 @@ import bee.Bee;
  */
 public class Project extends bee.api.Project {
 
-    private String aetherVersion = "1.13.1";
+    private String aetherGroup = "org.eclipse.aether";
+
+    private String aetherVersion = "1.0.2.v20150114";
 
     {
         product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
@@ -24,13 +26,13 @@ public class Project extends bee.api.Project {
 
         require("npc", "sinobu", "0.9.4");
         require("npc", "antibug", "0.3").atTest();
-        require("org.sonatype.aether", "aether-api", aetherVersion);
-        require("org.sonatype.aether", "aether-util", aetherVersion);
-        require("org.sonatype.aether", "aether-impl", aetherVersion);
-        require("org.sonatype.aether", "aether-connector-file", aetherVersion);
-        require("org.sonatype.aether", "aether-connector-wagon", aetherVersion);
-        require("org.apache.maven", "maven-aether-provider", "3.0.4");
-        require("org.apache.maven.wagon", "wagon-http-lightweight", "1.0");
+        require(aetherGroup, "aether-api", aetherVersion);
+        require(aetherGroup, "aether-util", aetherVersion);
+        require(aetherGroup, "aether-impl", aetherVersion);
+        require(aetherGroup, "aether-transport-file", aetherVersion);
+        require(aetherGroup, "aether-transport-wagon", aetherVersion);
+        require("org.apache.maven", "maven-aether-provider", "3.3.3");
+        require("org.apache.maven.wagon", "wagon-http-lightweight", "2.9");
         require("sun.jdk", "tools", "8.0").atSystem();
 
         unrequire("org.apache.maven.wagon", "wagon-http-shared");

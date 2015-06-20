@@ -51,68 +51,95 @@ import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
-import org.sonatype.aether.RepositoryEvent;
-import org.sonatype.aether.RepositoryListener;
-import org.sonatype.aether.RepositorySystemSession;
-import org.sonatype.aether.artifact.Artifact;
-import org.sonatype.aether.collection.CollectRequest;
-import org.sonatype.aether.collection.DependencyGraphTransformer;
-import org.sonatype.aether.collection.DependencySelector;
-import org.sonatype.aether.connector.file.FileRepositoryConnectorFactory;
-import org.sonatype.aether.connector.wagon.WagonProvider;
-import org.sonatype.aether.connector.wagon.WagonRepositoryConnectorFactory;
-import org.sonatype.aether.graph.Dependency;
-import org.sonatype.aether.impl.MetadataGeneratorFactory;
-import org.sonatype.aether.impl.internal.DefaultArtifactResolver;
-import org.sonatype.aether.impl.internal.DefaultDependencyCollector;
-import org.sonatype.aether.impl.internal.DefaultFileProcessor;
-import org.sonatype.aether.impl.internal.DefaultInstaller;
-import org.sonatype.aether.impl.internal.DefaultLocalRepositoryProvider;
-import org.sonatype.aether.impl.internal.DefaultMetadataResolver;
-import org.sonatype.aether.impl.internal.DefaultRemoteRepositoryManager;
-import org.sonatype.aether.impl.internal.DefaultRepositoryEventDispatcher;
-import org.sonatype.aether.impl.internal.DefaultRepositorySystem;
-import org.sonatype.aether.impl.internal.DefaultSyncContextFactory;
-import org.sonatype.aether.impl.internal.DefaultUpdateCheckManager;
-import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
-import org.sonatype.aether.installation.InstallRequest;
-import org.sonatype.aether.installation.InstallationException;
-import org.sonatype.aether.repository.LocalRepository;
-import org.sonatype.aether.repository.RemoteRepository;
-import org.sonatype.aether.repository.RepositoryPolicy;
-import org.sonatype.aether.resolution.ArtifactDescriptorRequest;
-import org.sonatype.aether.resolution.ArtifactRequest;
-import org.sonatype.aether.resolution.ArtifactResolutionException;
-import org.sonatype.aether.resolution.ArtifactResult;
-import org.sonatype.aether.resolution.DependencyRequest;
-import org.sonatype.aether.resolution.DependencyResolutionException;
-import org.sonatype.aether.resolution.DependencyResult;
-import org.sonatype.aether.spi.connector.RepositoryConnectorFactory;
-import org.sonatype.aether.spi.localrepo.LocalRepositoryManagerFactory;
-import org.sonatype.aether.transfer.TransferCancelledException;
-import org.sonatype.aether.transfer.TransferEvent;
-import org.sonatype.aether.transfer.TransferListener;
-import org.sonatype.aether.transfer.TransferResource;
-import org.sonatype.aether.util.DefaultRepositoryCache;
-import org.sonatype.aether.util.DefaultRepositorySystemSession;
-import org.sonatype.aether.util.artifact.DefaultArtifact;
-import org.sonatype.aether.util.artifact.DefaultArtifactType;
-import org.sonatype.aether.util.artifact.DefaultArtifactTypeRegistry;
-import org.sonatype.aether.util.artifact.SubArtifact;
-import org.sonatype.aether.util.graph.manager.ClassicDependencyManager;
-import org.sonatype.aether.util.graph.selector.AndDependencySelector;
-import org.sonatype.aether.util.graph.selector.ExclusionDependencySelector;
-import org.sonatype.aether.util.graph.selector.OptionalDependencySelector;
-import org.sonatype.aether.util.graph.selector.ScopeDependencySelector;
-import org.sonatype.aether.util.graph.transformer.ChainedDependencyGraphTransformer;
-import org.sonatype.aether.util.graph.transformer.ConflictMarker;
-import org.sonatype.aether.util.graph.transformer.JavaDependencyContextRefiner;
-import org.sonatype.aether.util.graph.transformer.JavaEffectiveScopeCalculator;
-import org.sonatype.aether.util.graph.transformer.NearestVersionConflictResolver;
-import org.sonatype.aether.util.graph.traverser.FatArtifactTraverser;
-import org.sonatype.aether.util.repository.DefaultAuthenticationSelector;
-import org.sonatype.aether.util.repository.DefaultMirrorSelector;
-import org.sonatype.aether.util.repository.DefaultProxySelector;
+import org.eclipse.aether.DefaultRepositoryCache;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.RepositoryEvent;
+import org.eclipse.aether.RepositoryListener;
+import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.artifact.DefaultArtifactType;
+import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.DependencyGraphTransformer;
+import org.eclipse.aether.collection.DependencySelector;
+//import org.eclipse.aether.connector.file.FileRepositoryConnectorFactory;
+//import org.eclipse.aether.connector.wagon.WagonProvider;
+//import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.impl.MetadataGeneratorFactory;
+//import org.eclipse.aether.impl.internal.DefaultArtifactResolver;
+//import org.eclipse.aether.impl.internal.DefaultDependencyCollector;
+//import org.eclipse.aether.impl.internal.DefaultFileProcessor;
+//import org.eclipse.aether.impl.internal.DefaultInstaller;
+//import org.eclipse.aether.impl.internal.DefaultLocalRepositoryProvider;
+//import org.eclipse.aether.impl.internal.DefaultMetadataResolver;
+//import org.eclipse.aether.impl.internal.DefaultRemoteRepositoryManager;
+//import org.eclipse.aether.impl.internal.DefaultRepositoryEventDispatcher;
+//import org.eclipse.aether.impl.internal.DefaultRepositorySystem;
+//import org.eclipse.aether.impl.internal.DefaultSyncContextFactory;
+//import org.eclipse.aether.impl.internal.DefaultUpdateCheckManager;
+//import org.eclipse.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.installation.InstallRequest;
+import org.eclipse.aether.installation.InstallationException;
+import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
+import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
+import org.eclipse.aether.internal.impl.DefaultDependencyCollector;
+import org.eclipse.aether.internal.impl.DefaultFileProcessor;
+import org.eclipse.aether.internal.impl.DefaultInstaller;
+import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
+import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
+import org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager;
+import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
+import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
+import org.eclipse.aether.internal.impl.DefaultSyncContextFactory;
+import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
+import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
+import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.repository.RepositoryPolicy;
+import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
+import org.eclipse.aether.resolution.DependencyResult;
+import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
+import org.eclipse.aether.transfer.TransferCancelledException;
+import org.eclipse.aether.transfer.TransferEvent;
+import org.eclipse.aether.transfer.TransferListener;
+import org.eclipse.aether.transfer.TransferResource;
+import org.eclipse.aether.transport.file.FileTransporterFactory;
+import org.eclipse.aether.transport.wagon.WagonProvider;
+import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
+//import org.eclipse.aether.util.DefaultRepositoryCache;
+//import org.eclipse.aether.util.DefaultRepositorySystemSession;
+//import org.eclipse.aether.util.artifact.DefaultArtifact;
+//import org.eclipse.aether.util.artifact.DefaultArtifactType;
+import org.eclipse.aether.util.artifact.DefaultArtifactTypeRegistry;
+import org.eclipse.aether.util.artifact.SubArtifact;
+import org.eclipse.aether.util.graph.manager.ClassicDependencyManager;
+import org.eclipse.aether.util.graph.selector.AndDependencySelector;
+import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
+import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
+import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
+import org.eclipse.aether.util.graph.transformer.ChainedDependencyGraphTransformer;
+import org.eclipse.aether.util.graph.transformer.ConflictResolver;
+import org.eclipse.aether.util.graph.transformer.JavaDependencyContextRefiner;
+import org.eclipse.aether.util.graph.transformer.JavaScopeDeriver;
+import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
+import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
+import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
+//import org.eclipse.aether.util.graph.transformer.JavaEffectiveScopeCalculator;
+//import org.eclipse.aether.util.graph.transformer.NearestVersionConflictResolver;
+import org.eclipse.aether.util.graph.traverser.FatArtifactTraverser;
+import org.eclipse.aether.util.repository.DefaultAuthenticationSelector;
+import org.eclipse.aether.util.repository.DefaultMirrorSelector;
+import org.eclipse.aether.util.repository.DefaultProxySelector;
+import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 
 import bee.Platform;
 import bee.UserInterface;
@@ -212,6 +239,12 @@ public class Repository {
     /** The url normalizer. */
     private final DefaultUrlNormalizer urlNormalizer = new DefaultUrlNormalizer();
 
+    /** The checksum policy provider. */
+    private final DefaultChecksumPolicyProvider checksumPolicyProvider = new DefaultChecksumPolicyProvider();
+
+    /** The update policy analyzer. */
+    private final DefaultUpdatePolicyAnalyzer updatePolicyAnalyzer = new DefaultUpdatePolicyAnalyzer();
+
     /** The list of metadata generator factory. */
     private final List<MetadataGeneratorFactory> metadataGeneratorFactories = new ArrayList();
 
@@ -227,24 +260,23 @@ public class Repository {
     /** The local repository provider. */
     private final DefaultLocalRepositoryProvider localRepositoryProvider = new DefaultLocalRepositoryProvider();
 
+    /** The repository connector provider. */
+    private final DefaultRepositoryConnectorProvider repositoryConnectorProvider = new DefaultRepositoryConnectorProvider();
+
     /** The remote repository provider. */
-    private final List<RepositoryConnectorFactory> remoteRepositoryProvider = new ArrayList();
+    private final List<TransporterFactory> remoteRepositoryProvider = new ArrayList();
 
     /** The local repository manager factory. */
     private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
 
-    /** The repository connector factory for wagon. */
-    private final WagonRepositoryConnectorFactory wagonRepositoryConnectorFactory = new WagonRepositoryConnectorFactory();
+    /** The transporter factory for wagon. */
+    private final WagonTransporterFactory wagonTransporterFactory = new WagonTransporterFactory();
 
     /** The default dependency filter. */
     private final List<DependencySelector> dependencyFilters = new ArrayList();
 
     /** The default dependency builder. */
-    private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(new DependencyGraphTransformer[] {
-            new ConflictMarker(), // resolve conflict
-            new JavaEffectiveScopeCalculator(), // resolve scope
-            new NearestVersionConflictResolver(), // resolve version conflict
-            new JavaDependencyContextRefiner()}); // resolve duplication
+    private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new JavaScopeDeriver()), new JavaDependencyContextRefiner());
 
     /** The path to local repository. */
     private LocalRepository localRepository;
@@ -269,6 +301,7 @@ public class Repository {
 
         // ============ ArtifactResolver ============ //
         artifactResolver.setSyncContextFactory(syncContextFactory);
+        artifactResolver.setRepositoryConnectorProvider(repositoryConnectorProvider);
         artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
         artifactResolver.setVersionResolver(versionResolver);
         artifactResolver.setRemoteRepositoryManager(remoteRepositoryManager);
@@ -281,10 +314,11 @@ public class Repository {
         artifactDescriptorReader.setRemoteRepositoryManager(remoteRepositoryManager);
         artifactDescriptorReader.setRepositoryEventDispatcher(repositoryEventDispatcher);
         artifactDescriptorReader.setVersionResolver(versionResolver);
+        artifactDescriptorReader.setVersionRangeResolver(versionRangeResolver);
 
         // ============ Installer ============ //
         installer.setFileProcessor(fileProcessor);
-        installer.setMetadataFactories(metadataGeneratorFactories);
+        installer.setMetadataGeneratorFactories(metadataGeneratorFactories);
         installer.setRepositoryEventDispatcher(repositoryEventDispatcher);
         installer.setSyncContextFactory(syncContextFactory);
 
@@ -340,17 +374,18 @@ public class Repository {
         // ============ LocalRepositoryProvider ============ //
         localRepositoryProvider.addLocalRepositoryManagerFactory(localRepositoryManagerFactory);
 
+        // ============ RepositoryConnectorProvider ============ //
+
         // ============ RemoteRepositoryProvider ============ //
-        remoteRepositoryProvider.add(new FileRepositoryConnectorFactory());
-        remoteRepositoryProvider.add(wagonRepositoryConnectorFactory);
+        remoteRepositoryProvider.add(new FileTransporterFactory());
+        remoteRepositoryProvider.add(wagonTransporterFactory);
 
         // ============ RemoteRepositoryManger ============ //
-        remoteRepositoryManager.setUpdateCheckManager(updateCheckManager);
-        remoteRepositoryManager.setRepositoryConnectorFactories(remoteRepositoryProvider);
+        remoteRepositoryManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
+        remoteRepositoryManager.setChecksumPolicyProvider(checksumPolicyProvider);
 
-        // ============ WagonConnector ============ //
-        wagonRepositoryConnectorFactory.setWagonProvider(new BeeWagonProvider());
-        wagonRepositoryConnectorFactory.setFileProcessor(fileProcessor);
+        // ============ WagonTransporter ============ //
+        wagonTransporterFactory.setWagonProvider(new BeeWagonProvider());
 
         // ============ RepositorySystem ============ //
         system.setArtifactDescriptorReader(artifactDescriptorReader);
@@ -555,7 +590,7 @@ public class Repository {
      * @param url
      */
     public final void addRemoteRepository(String name, String url) {
-        remoteRepositories.add(new RemoteRepository(name, "default", url));
+        remoteRepositories.add(new RemoteRepository.Builder(name, "default", url).build());
     }
 
     /**
@@ -570,6 +605,7 @@ public class Repository {
         filters.add(new ExclusionDependencySelector(project.exclusions));
 
         DefaultRepositorySystemSession session = new DefaultRepositorySystemSession();
+        session.setArtifactDescriptorPolicy(new SimpleArtifactDescriptorPolicy(true, true));
         session.setDependencySelector(new AndDependencySelector(filters));
         session.setDependencyGraphTransformer(dependencyBuilder);
         session.setProxySelector(new DefaultProxySelector());
@@ -577,11 +613,11 @@ public class Repository {
         session.setDependencyTraverser(new FatArtifactTraverser());
         session.setDependencyManager(new ClassicDependencyManager());
         session.setAuthenticationSelector(new DefaultAuthenticationSelector());
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(localRepository));
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
         session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
         session.setCache(new DefaultRepositoryCache());
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
-        session.setIgnoreInvalidArtifactDescriptor(true);
+        session.setIgnoreArtifactDescriptorRepositories(true);
 
         // event listener
         session.setTransferListener(I.make(TransferView.class));
