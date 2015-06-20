@@ -31,7 +31,7 @@ public class Project extends bee.api.Project {
         require("org.sonatype.aether", "aether-connector-wagon", aetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.0.4");
         require("org.apache.maven.wagon", "wagon-http-lightweight", "1.0");
-        require("sun.jdk", "tools", "8.0");
+        require("sun.jdk", "tools", "8.0").atSystem();
 
         unrequire("org.apache.maven.wagon", "wagon-http-shared");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
