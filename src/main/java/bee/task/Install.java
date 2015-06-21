@@ -25,6 +25,6 @@ public class Install extends Task {
         require(Jar.class).source();
 
         Repository repository = I.make(Repository.class);
-        repository.install(project, project.locateJar());
+        repository.install(project);
     }
 }

@@ -10,10 +10,8 @@
 package bee.api;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -142,6 +140,7 @@ import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 
 import bee.Platform;
 import bee.UserInterface;
+import bee.util.Paths;
 import kiss.I;
 import kiss.Manageable;
 
@@ -472,7 +471,7 @@ public class Repository {
                 Project dummy = new Project();
                 dummy.product(library.group, library.name, library.version);
 
-                install(dummy, Platform.JavaTool);
+                install(dummy, Platform.JavaTool, Platform.JavaHome.resolve("src.zip"));
             }
             request.addDependency(new Dependency(library.artifact, library.scope.toString()));
         }
@@ -552,35 +551,45 @@ public class Repository {
      * </p>
      * 
      * @param project A project to install.
-     * @return A installed location.
      */
-    public Path install(Project project, Path file) {
-        Path temp = I.locateTemporary();
+    public void install(Project project) {
+        install(project, project.locateJar());
+    }
+
+    /**
+     * <p>
+     * Install project into the local repository.
+     * </p>
+     * 
+     * @param project A project to install.
+     */
+    public void install(Project project, Path classes) {
+        install(project, classes, project.locateSourceJar());
+    }
+
+    /**
+     * <p>
+     * Install project into the local repository.
+     * </p>
+     * 
+     * @param project A project to install.
+     */
+    public void install(Project project, Path classes, Path sources) {
+        String group = project.getGroup();
+        String product = project.getProduct();
+        String version = project.getVersion();
+
+        // create artifact for project
+        Artifact jar = new DefaultArtifact(group, product, "", "jar", version, null, classes.toFile());
 
         try {
-            Files.write(temp, project.toString().getBytes());
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-
-        DefaultArtifact jar = new DefaultArtifact(project.getGroup(), project.getProduct(), "", "jar", project
-                .getVersion(), null, file.toFile());
-        Artifact pom = new SubArtifact(jar, "", "pom", temp.toFile());
-
-        InstallRequest request = new InstallRequest();
-        request.addArtifact(jar);
-        request.addArtifact(pom);
-
-        Path sources = project.locateSourceJar();
-        System.out.println(sources);
-        if (Files.exists(sources)) {
-            request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.toFile()));
-        }
-
-        try {
+            InstallRequest request = new InstallRequest();
+            request.addArtifact(jar);
+            request.addArtifact(new SubArtifact(jar, "", "pom", Paths.write(project.toString()).toFile()));
+            if (Paths.exist(sources)) {
+                request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.toFile()));
+            }
             system.install(newSession(), request);
-
-            return null;
         } catch (InstallationException e) {
             e.printStackTrace();
             throw I.quiet(e);
@@ -699,7 +708,7 @@ public class Repository {
      * @return
      */
     private static Path searchLocalRepository() {
-        Path local = Paths.get(System.getProperty("user.home"), ".m2");
+        Path local = I.locate(System.getProperty("user.home")).resolve(".m2");
         Path home = searchMavenHome();
 
         if (home == null) {
