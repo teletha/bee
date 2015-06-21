@@ -31,9 +31,9 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
-import kiss.I;
 import bee.api.Project;
 import bee.util.PathPattern;
+import kiss.I;
 
 /**
  * @version 2012/11/10 2:20:33
@@ -83,7 +83,7 @@ public class AnnotationProcessor implements Processor {
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_7;
+        return SourceVersion.RELEASE_8;
     }
 
     /**

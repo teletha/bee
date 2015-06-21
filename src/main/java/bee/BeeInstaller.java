@@ -95,6 +95,7 @@ public class BeeInstaller {
 
             JarArchiver archiver = new JarArchiver();
             archiver.add(source, "bee/**");
+            archiver.add(source, "META-INF/services/**");
             archiver.pack(library);
 
             I.make(Repository.class).install(bee.Bee.API, library);

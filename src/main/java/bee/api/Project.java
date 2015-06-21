@@ -575,7 +575,6 @@ public class Project {
                 Path file = FileSystems.newFileSystem(library.getJar(), ClassLoader.getSystemClassLoader())
                         .getPath("/")
                         .resolve("META-INF/services/javax.annotation.processing.Processor");
-
                 if (Files.exists(file)) {
                     libraries.add(library.getJar());
                 }
