@@ -66,10 +66,8 @@ public class TaskFailure extends Error {
         if (size == 0) {
             builder.append("No solution.");
         } else {
-            List<String> solutions = size <= 5 ? this.solution : this.solution.subList(0, 5);
-
-            for (int i = 0; i < solutions.size(); i++) {
-                builder.append("・").append(solutions.get(i)).append(EOL);
+            for (String solution : this.solution) {
+                builder.append("・").append(solution).append(EOL);
             }
         }
         return builder.toString().trim();

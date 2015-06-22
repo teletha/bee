@@ -23,22 +23,25 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
 
+import bee.Bee;
+import bee.Platform;
+import bee.TaskFailure;
+import bee.UserInterface;
+import bee.util.Inputs;
 import kiss.ClassListener;
+import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.XML;
 import kiss.model.ClassUtil;
-import bee.Bee;
-import bee.Platform;
-import bee.UserInterface;
-import bee.util.Inputs;
 
 /**
- * @version 2012/11/12 15:39:19
+ * @version 2015/06/22 13:17:10
  */
-public abstract class Task {
+public abstract class Task implements Extensible {
 
     /** The current processing project. */
     protected final Project project = I.make(Project.class);
@@ -245,7 +248,7 @@ public abstract class Task {
     private static final class Tasks implements ClassListener<Task> {
 
         /** The common task repository. */
-        private final Map<String, Info> commons = new HashMap();
+        private final Map<String, Info> commons = new TreeMap();
 
         /** The project specific task repository. */
         private final Map<Path, Map<String, Info>> projects = new HashMap();
@@ -293,14 +296,17 @@ public abstract class Task {
             Method command = info.commands.get(commandName.toLowerCase());
 
             if (command == null) {
-                throw new Error("Task [" + taskName + "] doesn't has the command [" + commandName + "].");
+                TaskFailure failure = new TaskFailure("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
+                for (Entry<String, String> entry : info.descriptions.entrySet()) {
+                    failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
+                }
+                throw failure;
             }
 
             // create task and initialize
             Task task = I.make(info.task);
 
             // execute task
-
             try {
                 command.invoke(task);
             } catch (Throwable e) {
@@ -345,7 +351,11 @@ public abstract class Task {
                 info = commons.get(name);
 
                 if (info == null) {
-                    throw new Error("Task [" + name + "] is not found.");
+                    TaskFailure failure = new TaskFailure("Task [" + name + "] is not found. You can use the following tasks.");
+                    for (Entry<String, Info> entry : commons.entrySet()) {
+                        failure.solve(entry.getKey());
+                    }
+                    throw failure;
                 }
             }
 
@@ -418,10 +428,10 @@ public abstract class Task {
         private String defaultCommnad = "help";
 
         /** The actual commands. */
-        private final Map<String, Method> commands = new HashMap();
+        private final Map<String, Method> commands = new TreeMap();
 
         /** The command descriptions. */
-        private final Map<String, String> descriptions = new HashMap();
+        private final Map<String, String> descriptions = new TreeMap();
 
         /**
          * @param name
