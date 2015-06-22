@@ -261,8 +261,8 @@ public class Repository {
     /** The repository connector provider. */
     private final DefaultRepositoryConnectorProvider repositoryConnectorProvider = new DefaultRepositoryConnectorProvider();
 
-    /** The remote repository provider. */
-    private final List<TransporterFactory> remoteRepositoryProvider = new ArrayList();
+    /** The list of transporter factory. */
+    private final List<TransporterFactory> transporterFactories = new ArrayList();
 
     /** The local repository manager factory. */
     private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
@@ -299,12 +299,12 @@ public class Repository {
 
         // ============ ArtifactResolver ============ //
         artifactResolver.setSyncContextFactory(syncContextFactory);
-        artifactResolver.setRepositoryConnectorProvider(repositoryConnectorProvider);
         artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
         artifactResolver.setVersionResolver(versionResolver);
         artifactResolver.setRemoteRepositoryManager(remoteRepositoryManager);
         artifactResolver.setFileProcessor(fileProcessor);
         artifactResolver.setUpdateCheckManager(updateCheckManager);
+        artifactResolver.setRepositoryConnectorProvider(repositoryConnectorProvider);
 
         // ============ ArtifactDescriptionReader ============ //
         artifactDescriptorReader.setArtifactResolver(artifactResolver);
@@ -340,6 +340,7 @@ public class Repository {
         metadataResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
         metadataResolver.setSyncContextFactory(syncContextFactory);
         metadataResolver.setUpdateCheckManager(updateCheckManager);
+        metadataResolver.setRepositoryConnectorProvider(repositoryConnectorProvider);
 
         // ============ ModelURLNormalizer ============ //
         modelUrlNormalizer.setUrlNormalizer(urlNormalizer);
@@ -372,15 +373,16 @@ public class Repository {
         // ============ LocalRepositoryProvider ============ //
         localRepositoryProvider.addLocalRepositoryManagerFactory(localRepositoryManagerFactory);
 
-        // ============ RepositoryConnectorProvider ============ //
-
         // ============ RemoteRepositoryProvider ============ //
-        remoteRepositoryProvider.add(new FileTransporterFactory());
-        remoteRepositoryProvider.add(wagonTransporterFactory);
+        transporterFactories.add(new FileTransporterFactory());
+        transporterFactories.add(wagonTransporterFactory);
 
         // ============ RemoteRepositoryManger ============ //
         remoteRepositoryManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
         remoteRepositoryManager.setChecksumPolicyProvider(checksumPolicyProvider);
+
+        // ============ UpdateCheckManager ============ //
+        updateCheckManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
 
         // ============ WagonTransporter ============ //
         wagonTransporterFactory.setWagonProvider(new BeeWagonProvider());
