@@ -30,14 +30,15 @@ public class Project extends bee.api.Project {
         require(aetherGroup, "aether-util", aetherVersion);
         require(aetherGroup, "aether-impl", aetherVersion);
         require(aetherGroup, "aether-transport-file", aetherVersion);
+        // require(aetherGroup, "aether-transport-http", aetherVersion);
         require(aetherGroup, "aether-transport-wagon", aetherVersion);
+        // require("commons-lang", "commons-lang", "2.6");
         // require(aetherGroup, "aether-connector-wagon", "0.9.0-SNAPSHOT");
         require("org.apache.maven", "maven-aether-provider", "3.3.3");
         require("org.apache.maven.wagon", "wagon-http-lightweight", "2.9");
-        // require("com.google.code.gson", "gson", "2.3");
+        require("com.google.code.gson", "gson", "1.4");
         require("sun.jdk", "tools", "8.0").atSystem();
 
-        unrequire("org.apache.maven.wagon", "wagon-http-shared");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
         unrequire("org.sonatype.sisu", "*");

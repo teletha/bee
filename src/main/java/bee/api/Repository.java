@@ -10,9 +10,11 @@
 package bee.api;
 
 import java.io.File;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -48,6 +50,7 @@ import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -91,6 +94,7 @@ import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
 import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
 import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
 import org.eclipse.aether.internal.impl.DefaultSyncContextFactory;
+import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
 import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
 import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
@@ -103,8 +107,17 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.spi.connector.ArtifactDownload;
+import org.eclipse.aether.spi.connector.ArtifactUpload;
+import org.eclipse.aether.spi.connector.MetadataDownload;
+import org.eclipse.aether.spi.connector.MetadataUpload;
+import org.eclipse.aether.spi.connector.RepositoryConnector;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
+import org.eclipse.aether.spi.connector.transport.GetTask;
+import org.eclipse.aether.spi.connector.transport.Transporter;
 import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
+import org.eclipse.aether.transfer.NoRepositoryConnectorException;
+import org.eclipse.aether.transfer.NoTransporterException;
 import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
@@ -261,8 +274,8 @@ public class Repository {
     /** The repository connector provider. */
     private final DefaultRepositoryConnectorProvider repositoryConnectorProvider = new DefaultRepositoryConnectorProvider();
 
-    /** The list of transporter factory. */
-    private final List<TransporterFactory> transporterFactories = new ArrayList();
+    /** The transporter provider. */
+    private final DefaultTransporterProvider transporterProvider = new DefaultTransporterProvider();
 
     /** The local repository manager factory. */
     private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
@@ -373,9 +386,70 @@ public class Repository {
         // ============ LocalRepositoryProvider ============ //
         localRepositoryProvider.addLocalRepositoryManagerFactory(localRepositoryManagerFactory);
 
-        // ============ RemoteRepositoryProvider ============ //
-        transporterFactories.add(new FileTransporterFactory());
-        transporterFactories.add(wagonTransporterFactory);
+        // ============ TransporterProvider ============ //
+        transporterProvider.addTransporterFactory(new FileTransporterFactory());
+        transporterProvider.addTransporterFactory(wagonTransporterFactory);
+
+        // ============ RepositoryConnectorProvider ============ //
+        repositoryConnectorProvider.addRepositoryConnectorFactory(new RepositoryConnectorFactory() {
+
+            @Override
+            public RepositoryConnector newInstance(RepositorySystemSession session, RemoteRepository repository)
+                    throws NoRepositoryConnectorException {
+                try {
+                    Transporter transporter = transporterProvider.newTransporter(session, repository);
+
+                    return new RepositoryConnector() {
+
+                        @Override
+                        public void put(Collection<? extends ArtifactUpload> artifactUploads, Collection<? extends MetadataUpload> metadataUploads) {
+                        }
+
+                        @Override
+                        public void get(Collection<? extends ArtifactDownload> artifactDownloads, Collection<? extends MetadataDownload> metadataDownloads) {
+                            System.out.println(metadataDownloads + "   @@@");
+                            if (artifactDownloads != null) {
+                                for (ArtifactDownload download : artifactDownloads) {
+                                    try {
+                                        Artifact artifact = download.getArtifact();
+                                        String uri = artifact.getGroupId().replaceAll("\\.", "/") + "/" + artifact
+                                                .getArtifactId() + "/" + artifact.getVersion() + "/" + artifact
+                                                        .getArtifactId() + "-" + artifact.getVersion() + "." + artifact
+                                                                .getExtension();
+                                        System.out.println(uri + " @@");
+                                        GetTask task = new GetTask(new URI(uri));
+                                        Files.createDirectories(download.getFile().toPath().getParent());
+                                        task.setDataFile(download.getFile());
+
+                                        transporter.get(task);
+                                    } catch (Exception e) {
+                                        throw I.quiet(e);
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void close() {
+                            transporter.close();
+                        }
+                    };
+                } catch (
+
+                NoTransporterException e)
+
+                {
+                    throw I.quiet(e);
+                }
+
+            }
+
+            @Override
+            public float getPriority() {
+                return 0;
+            }
+
+        });
 
         // ============ RemoteRepositoryManger ============ //
         remoteRepositoryManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
@@ -956,6 +1030,7 @@ public class Repository {
          */
         @Override
         public void transferProgressed(TransferEvent event) {
+            System.out.println(event);
             // register current downloading artifact
             downloading.put(event.getResource(), event);
 
@@ -1061,7 +1136,9 @@ public class Repository {
         @Override
         public Wagon lookup(String scheme) throws Exception {
             if ("http".equals(scheme)) {
-                return new LightweightHttpWagon();
+                LightweightHttpWagon wagon = new LightweightHttpWagon();
+                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+                return wagon;
             } else if ("https".equals(scheme)) {
                 return new LightweightHttpsWagon();
             }

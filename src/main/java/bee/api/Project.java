@@ -12,6 +12,8 @@ package bee.api;
 import static bee.util.Inputs.*;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
@@ -28,7 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.lang.model.SourceVersion;
 
-import org.apache.maven.wagon.PathUtils;
 import org.eclipse.aether.graph.Exclusion;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
@@ -365,8 +366,12 @@ public class Project {
      */
     protected final void repository(String uri) {
         if (uri != null && !uri.isEmpty()) {
-            Builder builder = new Builder(PathUtils.host(uri), "default", uri);
-            repositories.add(builder.build());
+            try {
+                Builder builder = new Builder(new URI(uri).getHost(), "default", uri);
+                repositories.add(builder.build());
+            } catch (URISyntaxException e) {
+                throw I.quiet(e);
+            }
         }
     }
 
