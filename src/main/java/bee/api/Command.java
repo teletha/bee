@@ -16,7 +16,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * @version 2012/05/17 15:30:06
+ * @version 2015/06/22 16:23:08
  */
 @Documented
 @Target(ElementType.METHOD)
@@ -30,5 +30,14 @@ public @interface Command {
      * 
      * @return
      */
-    String value() default "No document.";
+    String value();
+
+    /**
+     * <p>
+     * Determine whether this command is default or not.
+     * </p>
+     * 
+     * @return
+     */
+    boolean defaults() default false;
 }

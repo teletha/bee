@@ -20,7 +20,7 @@ import bee.util.PathPattern;
 import bee.util.PathSet;
 
 /**
- * @version 2012/04/03 16:43:40
+ * @version 2015/06/22 16:47:36
  */
 public class Jar extends Task {
 
@@ -29,7 +29,7 @@ public class Jar extends Task {
      * Package main classes and other resources.
      * </p>
      */
-    @Command("Package main classes and other resources.")
+    @Command(value = "Package main classes and other resources.", defaults = true)
     public void source() {
         require(Compile.class).source();
 

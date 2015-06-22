@@ -15,7 +15,7 @@ import bee.api.Task;
 import kiss.I;
 
 /**
- * @version 2012/04/04 2:43:44
+ * @version 2015/06/22 16:36:56
  */
 public class Install extends Task {
 

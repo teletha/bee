@@ -25,7 +25,7 @@ import bee.util.ZipArchiver;
 import kiss.I;
 
 /**
- * @version 2012/04/01 9:34:01
+ * @version 2015/06/22 16:36:41
  */
 public class Exe extends Task {
 
@@ -59,7 +59,7 @@ public class Exe extends Task {
         }
     }
 
-    @Command
+    @Command("Generate windows exe file which executes the main class.")
     public Path build() {
         require(Jar.class).source();
 

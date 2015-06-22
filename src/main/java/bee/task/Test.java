@@ -31,11 +31,11 @@ import bee.util.Java.JVM;
 import kiss.I;
 
 /**
- * @version 2012/03/28 9:58:39
+ * @version 2015/06/22 16:38:06
  */
 public class Test extends Task {
 
-    @Command("Test product code.")
+    @Command("Test product codes.")
     public void test() {
         Compile compile = require(Compile.class);
         compile.source();

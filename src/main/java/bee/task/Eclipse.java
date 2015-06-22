@@ -27,7 +27,7 @@ import kiss.I;
 import kiss.XML;
 
 /**
- * @version 2010/04/02 3:58:58
+ * @version 2015/06/22 16:28:38
  */
 public class Eclipse extends Task {
 
@@ -36,7 +36,7 @@ public class Eclipse extends Task {
      * Create eclipse's project file.
      * </p>
      */
-    @Command
+    @Command("Generate configuration files for Eclipse.")
     public void eclipse() {
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));

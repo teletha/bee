@@ -43,7 +43,7 @@ import kiss.I;
 import kiss.model.ClassUtil;
 
 /**
- * @version 2012/11/09 13:17:38
+ * @version 2015/06/22 16:36:47
  */
 public class Javadoc extends Task {
 
@@ -58,7 +58,7 @@ public class Javadoc extends Task {
      * Generate javadoc with the specified doclet.
      * </p>
      */
-    @Command("Generate javadoc.")
+    @Command("Generate product javadoc.")
     public void javadoc() {
         // specify output directory
         if (output == null) {

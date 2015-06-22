@@ -15,16 +15,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import bee.api.Command;
+import bee.api.Task;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
 import jdk.internal.org.objectweb.asm.MethodVisitor;
 import jdk.internal.org.objectweb.asm.Opcodes;
 import kiss.I;
-import bee.api.Command;
-import bee.api.Task;
 
 /**
- * @version 2012/05/18 10:48:41
+ * @version 2015/06/22 16:48:28
  */
 public class FindMain extends Task {
 
@@ -56,7 +56,7 @@ public class FindMain extends Task {
      * 
      * @return A main class name.
      */
-    @Command("Find main class.")
+    @Command(value = "Find main class.", defaults = true)
     public String main() {
         if (main == null) {
             analyze();
@@ -141,7 +141,7 @@ public class FindMain extends Task {
         private String internalClassName;
 
         /**
-
+        
          */
         private Search() {
             super(Opcodes.ASM4);
@@ -174,7 +174,8 @@ public class FindMain extends Task {
             // method name is "premain"
             if (name.equals("premain")) {
                 // method has String[] parameter and returns void
-                if (desc.equals("(Ljava/lang/String;)V") || desc.equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
+                if (desc.equals("(Ljava/lang/String;)V") || desc
+                        .equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
                     // method is public and static
                     if ((Opcodes.ACC_STATIC & access) != 0 && (Opcodes.ACC_PUBLIC & access) != 0) {
                         premains.add(internalClassName.replace('/', '.'));
@@ -185,7 +186,8 @@ public class FindMain extends Task {
             // method name is "agentmain"
             if (name.equals("agentmain")) {
                 // method has String[] parameter and returns void
-                if (desc.equals("(Ljava/lang/String;)V") || desc.equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
+                if (desc.equals("(Ljava/lang/String;)V") || desc
+                        .equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
                     // method is public and static
                     if ((Opcodes.ACC_STATIC & access) != 0 && (Opcodes.ACC_PUBLIC & access) != 0) {
                         agentmains.add(internalClassName.replace('/', '.'));

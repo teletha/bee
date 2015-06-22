@@ -29,18 +29,27 @@ public class TaskFailure extends Error {
     public List<String> solution = new ArrayList<String>();
 
     /**
-     */
-    public TaskFailure() {
-        this("");
-    }
-
-    /**
-     * @param message
+     * <p>
+     * Create failure with reason message.
+     * </p>
+     * 
+     * @param reason
      */
     public TaskFailure(String reason) {
         super(reason);
 
         this.reason = reason;
+    }
+
+    /**
+     * <p>
+     * Create failure with reason message.
+     * </p>
+     * 
+     * @param reason
+     */
+    public TaskFailure(Object... reason) {
+        this(UserInterface.build(reason));
     }
 
     /**

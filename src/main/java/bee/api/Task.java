@@ -17,7 +17,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -250,9 +249,6 @@ public abstract class Task implements Extensible {
         /** The common task repository. */
         private final Map<String, Info> commons = new TreeMap();
 
-        /** The project specific task repository. */
-        private final Map<Path, Map<String, Info>> projects = new HashMap();
-
         /**
          * <p>
          * Execute literal expression task.
@@ -296,7 +292,7 @@ public abstract class Task implements Extensible {
             Method command = info.commands.get(commandName.toLowerCase());
 
             if (command == null) {
-                TaskFailure failure = new TaskFailure("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
+                TaskFailure failure = new TaskFailure("Task [", taskName, "] doesn't have the command [", commandName, "]. Task [", taskName, "] can use the following commands.");
                 for (Entry<String, String> entry : info.descriptions.entrySet()) {
                     failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
                 }
@@ -330,33 +326,16 @@ public abstract class Task implements Extensible {
                 throw new Error("You must specify task name.");
             }
 
-            Project project = I.make(Project.class);
-            Info info = null;
-
-            // search from project specified tasks
-            for (Entry<Path, Map<String, Info>> entry : projects.entrySet()) {
-                Path path = entry.getKey();
-
-                if (path.startsWith(project.getRoot())) {
-                    info = entry.getValue().get(name);
-
-                    if (info != null) {
-                        break;
-                    }
-                }
-            }
+            // search from common tasks
+            Info info = commons.get(name);
 
             if (info == null) {
-                // search from common tasks
-                info = commons.get(name);
-
-                if (info == null) {
-                    TaskFailure failure = new TaskFailure("Task [" + name + "] is not found. You can use the following tasks.");
-                    for (Entry<String, Info> entry : commons.entrySet()) {
-                        failure.solve(entry.getKey());
-                    }
-                    throw failure;
+                TaskFailure failure = new TaskFailure("Task [", name, "] is not found. You can use the following tasks.");
+                for (Entry<String, Info> entry : commons.entrySet()) {
+                    info = entry.getValue();
+                    failure.solve(entry.getKey(), " - ", info.descriptions.get(info.defaultCommnad));
                 }
+                throw failure;
             }
 
             // API definition
@@ -373,21 +352,7 @@ public abstract class Task implements Extensible {
             }
 
             String name = computeTaskName(clazz);
-            Path archive = ClassUtil.getArchive(clazz);
-
-            if (Files.isRegularFile(archive)) {
-                // common task
-                commons.put(name, new Info(name, clazz));
-            } else {
-                // project specified task
-                Map<String, Info> infos = projects.get(archive);
-
-                if (infos == null) {
-                    infos = new HashMap();
-                    projects.put(archive, infos);
-                }
-                infos.put(name, new Info(name, clazz));
-            }
+            commons.put(name, new Info(name, clazz));
         }
 
         /**
@@ -400,19 +365,7 @@ public abstract class Task implements Extensible {
             }
 
             String name = computeTaskName(clazz);
-            Path archive = ClassUtil.getArchive(clazz);
-
-            if (Files.isRegularFile(archive)) {
-                // common task
-                commons.remove(name);
-            } else {
-                // project specified task
-                Map<String, Info> infos = projects.get(archive);
-
-                if (infos != null) {
-                    infos.remove(name);
-                }
-            }
+            commons.remove(name);
         }
     }
 
@@ -446,13 +399,18 @@ public abstract class Task implements Extensible {
                         Method method = info.getKey();
 
                         // compute command name
-                        String commnad = method.getName().toLowerCase();
+                        Command command = (Command) annotation;
+                        String commnadName = method.getName().toLowerCase();
 
                         // register
-                        commands.put(commnad, method);
+                        commands.put(commnadName, method);
 
-                        if (!commnad.equals("help")) {
-                            descriptions.put(commnad, ((Command) annotation).value());
+                        if (!commnadName.equals("help")) {
+                            descriptions.put(commnadName, command.value());
+                        }
+
+                        if (command.defaults()) {
+                            defaultCommnad = commnadName;
                         }
                     }
                 }

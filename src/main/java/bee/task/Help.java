@@ -17,11 +17,11 @@ import bee.api.Command;
 import bee.api.Task;
 
 /**
- * @version 2012/05/18 11:11:39
+ * @version 2015/06/22 16:48:35
  */
 public class Help extends Task {
 
-    @Command("Display environment.")
+    @Command("Display Bee runtime environment.")
     public void version() {
         ui.talk("Bee version: ", Bee.API.getVersion());
         ui.talk("Java version: ", System.getProperty("java.version"), " by ", System.getProperty("java.vendor"));

@@ -15,11 +15,11 @@ import bee.api.Command;
 import bee.api.Task;
 
 /**
- * @version 2012/10/23 13:31:46
+ * @version 2015/06/22 16:47:25
  */
 public class Prototype extends Task {
 
-    @Command("Build standard Java project skelton.")
+    @Command("Generate standard Java project skelton.")
     public void java() {
         String packageName = project.getGroup().replaceAll("\\.", "/");
         Path sources = project.getInput();

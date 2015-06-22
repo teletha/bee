@@ -14,15 +14,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 
-import kiss.I;
 import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.util.JavaCompiler;
 import bee.util.PathSet;
+import kiss.I;
 
 /**
- * @version 2012/04/02 1:09:24
+ * @version 2015/06/22 16:47:46
  */
 public class Compile extends Task {
 
@@ -31,7 +31,7 @@ public class Compile extends Task {
      * Compile main sources and copy other resources.
      * </p>
      */
-    @Command("Compile main sources and copy other resources.")
+    @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
         compile("main", project.getSources(), project.getClasses().base);
     }
