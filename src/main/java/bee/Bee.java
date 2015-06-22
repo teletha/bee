@@ -66,17 +66,24 @@ public class Bee {
     /** The project definition file name. */
     private static final String ProjectFile = "Project";
 
+    private static final Method addURL;
+
     static {
         // Bee requires JDK(tools.jar) surely.
         try {
-            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            method.invoke(ClassLoader.getSystemClassLoader(), Platform.JavaTool.toUri().toURL());
+            addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            addURL.setAccessible(true);
+
+            load(Platform.JavaTool);
         } catch (Exception e) {
             throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
         }
 
         I.load(Bee.class, true);
+    }
+
+    private static void load(Path path) throws Exception {
+        addURL.invoke(ClassLoader.getSystemClassLoader(), path.toUri().toURL());
     }
 
     /** The user interface. */
@@ -201,17 +208,15 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            method.setAccessible(true);
-            method.invoke(ClassLoader.getSystemClassLoader(), project.getClasses().base.toUri().toURL());
-            method.invoke(ClassLoader.getSystemClassLoader(), project.getProjectClasses().toUri().toURL());
+            load(project.getClasses().base);
+            load(project.getProjectClasses());
 
             // create your project
             inject((Project) I.make(Class.forName(ProjectFile)));
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                method.invoke(ClassLoader.getSystemClassLoader(), library.getJar().toUri().toURL());
+                load(library.getJar());
             }
 
             // load new project
