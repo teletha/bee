@@ -26,7 +26,7 @@ import kiss.I;
 import kiss.model.ClassUtil;
 
 /**
- * @version 2012/05/17 16:45:46
+ * @version 2015/06/22 11:53:31
  */
 public class BeeInstaller {
 
@@ -90,15 +90,20 @@ public class BeeInstaller {
 
             ui.talk("Write new bat file. [", Bee, "]");
 
-            // create bee-api library
-            Path library = I.locateTemporary();
-
+            // create bee-api library and sources
+            Path classes = I.locateTemporary();
             JarArchiver archiver = new JarArchiver();
-            archiver.add(source, "bee/**");
+            archiver.add(source, "bee/**", "!**.java");
             archiver.add(source, "META-INF/services/**");
-            archiver.pack(library);
+            archiver.pack(classes);
 
-            I.make(Repository.class).install(bee.Bee.API, library);
+            Path sources = I.locateTemporary();
+            archiver = new JarArchiver();
+            archiver.add(source, "bee/**.java");
+            archiver.add(source, "META-INF/services/**");
+            archiver.pack(sources);
+
+            I.make(Repository.class).install(bee.Bee.API, classes, sources);
         } catch (IOException e) {
             throw I.quiet(e);
         }

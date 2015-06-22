@@ -120,7 +120,10 @@ public class Eclipse extends Task {
         // Bee API
         if (!project.equals(Bee.TOOL)) {
             for (Library lib : project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion())) {
-                doc.child("classpathentry").attr("kind", "lib").attr("path", lib.getJar());
+                doc.child("classpathentry")
+                        .attr("kind", "lib")
+                        .attr("path", lib.getJar())
+                        .attr("sourcepath", lib.getSourceJar());
             }
         }
 

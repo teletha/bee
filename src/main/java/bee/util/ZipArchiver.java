@@ -30,9 +30,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import bee.Platform;
 import kiss.Disposable;
 import kiss.I;
-import bee.Platform;
 
 /**
  * @version 2011/03/17 14:01:01
@@ -47,6 +47,22 @@ public class ZipArchiver {
 
     /** The path entries. */
     private final List<Entry> entries = new ArrayList();
+
+    /**
+     * <p>
+     * Add pattern matching path.
+     * </p>
+     * 
+     * @param base A base path.
+     * @param patterns "glob" include/exclude patterns.
+     */
+    public void add(PathSet set) {
+        if (set != null) {
+            for (PathPattern pattern : set) {
+                add(pattern);
+            }
+        }
+    }
 
     /**
      * <p>
@@ -131,7 +147,8 @@ public class ZipArchiver {
                         if (Files.isDirectory(entry.base)) {
                             I.walk(entry.base, archiver, entry.patterns);
                         } else {
-                            archiver.add(entry.directory + entry.base.getFileName(), entry.base, Files.readAttributes(entry.base, BasicFileAttributes.class));
+                            archiver.add(entry.directory + entry.base.getFileName(), entry.base, Files
+                                    .readAttributes(entry.base, BasicFileAttributes.class));
                         }
                     }
                 } finally {
