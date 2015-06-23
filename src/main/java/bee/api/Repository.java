@@ -47,10 +47,8 @@ import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
-import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
-import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -63,6 +61,7 @@ import org.eclipse.aether.artifact.DefaultArtifactType;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.DependencyGraphTransformer;
 import org.eclipse.aether.collection.DependencySelector;
+import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 //import org.eclipse.aether.connector.file.FileRepositoryConnectorFactory;
 //import org.eclipse.aether.connector.wagon.WagonProvider;
 //import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
@@ -113,11 +112,8 @@ import org.eclipse.aether.spi.connector.MetadataDownload;
 import org.eclipse.aether.spi.connector.MetadataUpload;
 import org.eclipse.aether.spi.connector.RepositoryConnector;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.GetTask;
-import org.eclipse.aether.spi.connector.transport.Transporter;
 import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
 import org.eclipse.aether.transfer.NoRepositoryConnectorException;
-import org.eclipse.aether.transfer.NoTransporterException;
 import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
@@ -178,8 +174,8 @@ public class Repository {
     /** The synchronous context. */
     private final DefaultSyncContextFactory syncContextFactory = new DefaultSyncContextFactory();
 
-    /** The dependency collector. */
-    private final DefaultDependencyCollector collector = new DefaultDependencyCollector();
+    /** The dependency dependencyCollector. */
+    private final DefaultDependencyCollector dependencyCollector = new DefaultDependencyCollector();
 
     /** The file processor. */
     private final DefaultFileProcessor fileProcessor = new DefaultFileProcessor();
@@ -274,14 +270,17 @@ public class Repository {
     /** The repository connector provider. */
     private final DefaultRepositoryConnectorProvider repositoryConnectorProvider = new DefaultRepositoryConnectorProvider();
 
+    /** The repository connector factory. */
+    private final BasicRepositoryConnectorFactory repositoryConnectorFactory = new BasicRepositoryConnectorFactory();
+
     /** The transporter provider. */
     private final DefaultTransporterProvider transporterProvider = new DefaultTransporterProvider();
 
+    /** The wafon tranporter. */
+    private final WagonTransporterFactory wagonTransporterFactory = new WagonTransporterFactory();
+
     /** The local repository manager factory. */
     private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
-
-    /** The transporter factory for wagon. */
-    private final WagonTransporterFactory wagonTransporterFactory = new WagonTransporterFactory();
 
     /** The default dependency filter. */
     private final List<DependencySelector> dependencyFilters = new ArrayList();
@@ -311,13 +310,13 @@ public class Repository {
         metadataGeneratorFactories.add(new SnapshotMetadataGeneratorFactory());
 
         // ============ ArtifactResolver ============ //
-        artifactResolver.setSyncContextFactory(syncContextFactory);
-        artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        artifactResolver.setVersionResolver(versionResolver);
-        artifactResolver.setRemoteRepositoryManager(remoteRepositoryManager);
         artifactResolver.setFileProcessor(fileProcessor);
-        artifactResolver.setUpdateCheckManager(updateCheckManager);
+        artifactResolver.setRemoteRepositoryManager(remoteRepositoryManager);
+        artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
         artifactResolver.setRepositoryConnectorProvider(repositoryConnectorProvider);
+        artifactResolver.setSyncContextFactory(syncContextFactory);
+        artifactResolver.setUpdateCheckManager(updateCheckManager);
+        artifactResolver.setVersionResolver(versionResolver);
 
         // ============ ArtifactDescriptionReader ============ //
         artifactDescriptorReader.setArtifactResolver(artifactResolver);
@@ -334,9 +333,9 @@ public class Repository {
         installer.setSyncContextFactory(syncContextFactory);
 
         // ============ DependencyCollector ============ //
-        collector.setRemoteRepositoryManager(remoteRepositoryManager);
-        collector.setVersionRangeResolver(versionRangeResolver);
-        collector.setArtifactDescriptorReader(artifactDescriptorReader);
+        dependencyCollector.setRemoteRepositoryManager(remoteRepositoryManager);
+        dependencyCollector.setVersionRangeResolver(versionRangeResolver);
+        dependencyCollector.setArtifactDescriptorReader(artifactDescriptorReader);
 
         // ============ VersionResolver ============ //
         versionResolver.setMetadataResolver(metadataResolver);
@@ -386,70 +385,20 @@ public class Repository {
         // ============ LocalRepositoryProvider ============ //
         localRepositoryProvider.addLocalRepositoryManagerFactory(localRepositoryManagerFactory);
 
+        // ============ RepositoryConnectorProvider ============ //
+        repositoryConnectorProvider.addRepositoryConnectorFactory(new BeeRepositoryConnectorFactory());
+
+        // ============ RepositoryConnectorFactory ============ //
+        repositoryConnectorFactory.setChecksumPolicyProvider(checksumPolicyProvider);
+        repositoryConnectorFactory.setFileProcessor(fileProcessor);
+        repositoryConnectorFactory.setTransporterProvider(transporterProvider);
+
         // ============ TransporterProvider ============ //
         transporterProvider.addTransporterFactory(new FileTransporterFactory());
         transporterProvider.addTransporterFactory(wagonTransporterFactory);
 
-        // ============ RepositoryConnectorProvider ============ //
-        repositoryConnectorProvider.addRepositoryConnectorFactory(new RepositoryConnectorFactory() {
-
-            @Override
-            public RepositoryConnector newInstance(RepositorySystemSession session, RemoteRepository repository)
-                    throws NoRepositoryConnectorException {
-                try {
-                    Transporter transporter = transporterProvider.newTransporter(session, repository);
-
-                    return new RepositoryConnector() {
-
-                        @Override
-                        public void put(Collection<? extends ArtifactUpload> artifactUploads, Collection<? extends MetadataUpload> metadataUploads) {
-                        }
-
-                        @Override
-                        public void get(Collection<? extends ArtifactDownload> artifactDownloads, Collection<? extends MetadataDownload> metadataDownloads) {
-                            System.out.println(metadataDownloads + "   @@@");
-                            if (artifactDownloads != null) {
-                                for (ArtifactDownload download : artifactDownloads) {
-                                    try {
-                                        Artifact artifact = download.getArtifact();
-                                        String uri = artifact.getGroupId().replaceAll("\\.", "/") + "/" + artifact
-                                                .getArtifactId() + "/" + artifact.getVersion() + "/" + artifact
-                                                        .getArtifactId() + "-" + artifact.getVersion() + "." + artifact
-                                                                .getExtension();
-                                        System.out.println(uri + " @@");
-                                        GetTask task = new GetTask(new URI(uri));
-                                        Files.createDirectories(download.getFile().toPath().getParent());
-                                        task.setDataFile(download.getFile());
-
-                                        transporter.get(task);
-                                    } catch (Exception e) {
-                                        throw I.quiet(e);
-                                    }
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void close() {
-                            transporter.close();
-                        }
-                    };
-                } catch (
-
-                NoTransporterException e)
-
-                {
-                    throw I.quiet(e);
-                }
-
-            }
-
-            @Override
-            public float getPriority() {
-                return 0;
-            }
-
-        });
+        // ============ TransporterProvider ============ //
+        wagonTransporterFactory.setWagonProvider(new BeeWagonProvider());
 
         // ============ RemoteRepositoryManger ============ //
         remoteRepositoryManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
@@ -458,19 +407,53 @@ public class Repository {
         // ============ UpdateCheckManager ============ //
         updateCheckManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
 
-        // ============ WagonTransporter ============ //
-        wagonTransporterFactory.setWagonProvider(new BeeWagonProvider());
-
         // ============ RepositorySystem ============ //
         system.setArtifactDescriptorReader(artifactDescriptorReader);
         system.setArtifactResolver(artifactResolver);
-        system.setDependencyCollector(collector);
+        system.setDependencyCollector(dependencyCollector);
         system.setInstaller(installer);
         system.setLocalRepositoryProvider(localRepositoryProvider);
         system.setMetadataResolver(metadataResolver);
+        system.setRemoteRepositoryManager(remoteRepositoryManager);
         system.setSyncContextFactory(syncContextFactory);
         system.setVersionResolver(versionResolver);
         system.setVersionRangeResolver(versionRangeResolver);
+
+        // DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+        // locator.addService(ArtifactResolver.class, DefaultArtifactResolver.class);
+        // locator.addService(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
+        // locator.addService(DependencyCollector.class, DefaultDependencyCollector.class);
+        // locator.addService(DependencyManagementInjector.class,
+        // DefaultDependencyManagementInjector.class);
+        // locator.addService(DependencyManagementImporter.class,
+        // DefaultDependencyManagementImporter.class);
+        // locator.addService(FileProcessor.class, DefaultFileProcessor.class);
+        // locator.addService(InheritanceAssembler.class, DefaultInheritanceAssembler.class);
+        // locator.addService(Installer.class, DefaultInstaller.class);
+        // locator.addService(LocalRepositoryProvider.class, DefaultLocalRepositoryProvider.class);
+        // locator.addService(MetadataResolver.class, DefaultMetadataResolver.class);
+        // locator.addService(ModelUrlNormalizer.class, DefaultModelUrlNormalizer.class);
+        // locator.addService(ModelBuilder.class, DefaultModelBuilder.class);
+        // locator.addService(ModelInterpolator.class, StringSearchModelInterpolator.class);
+        // locator.addService(ModelProcessor.class, DefaultModelProcessor.class);
+        // locator.addService(ModelPathTranslator.class, DefaultModelPathTranslator.class);
+        // locator.addService(ModelNormalizer.class, DefaultModelNormalizer.class);
+        // locator.addService(ModelReader.class, DefaultModelReader.class);
+        // locator.addService(ModelValidator.class, DefaultModelValidator.class);
+        // locator.addService(PluginManagementInjector.class,
+        // DefaultPluginManagementInjector.class);
+        // locator.addService(ProfileSelector.class, DefaultProfileSelector.class);
+        // locator.addService(ProfileInjector.class, DefaultProfileInjector.class);
+        // locator.addService(RepositoryConnectorFactory.class,
+        // BasicRepositoryConnectorFactory.class);
+        // locator.addService(RepositoryEventDispatcher.class,
+        // DefaultRepositoryEventDispatcher.class);
+        // locator.addService(RepositorySystem.class, DefaultRepositorySystem.class);
+        // locator.addService(SuperPomProvider.class, DefaultSuperPomProvider.class);
+        // locator.addService(SyncContextFactory.class, DefaultSyncContextFactory.class);
+        // locator.addService(TransporterProvider.class, DefaultTransporterProvider.class);
+        // locator.addService(UpdateCheckManager.class, DefaultUpdateCheckManager.class);
+        // locator.addService(UrlNormalizer.class, DefaultUrlNormalizer.class);
 
         // ==================================================
         // Initialize
@@ -478,6 +461,8 @@ public class Repository {
         setLocalRepository(searchLocalRepository());
         addRemoteRepository("central", "http://repo1.maven.org/maven2/");
         addRemoteRepository("jboss", "http://repository.jboss.org/nexus/content/groups/public-jboss/");
+        
+        repositoryConnectorProvider.new
     }
 
     /**
@@ -536,7 +521,7 @@ public class Repository {
         repositories.addAll(remoteRepositories);
         repositories.addAll(project.repositories);
 
-        // dependency collector
+        // dependency dependencyCollector
         CollectRequest request = new CollectRequest();
         request.setRepositories(repositories);
 
@@ -1126,7 +1111,107 @@ public class Repository {
     }
 
     /**
-     * @version 2012/04/13 20:34:51
+     * @version 2015/06/23 4:00:24
+     */
+    private class BeeRepositoryConnectorFactory implements RepositoryConnectorFactory {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public RepositoryConnector newInstance(RepositorySystemSession session, RemoteRepository repository)
+                throws NoRepositoryConnectorException {
+            return new BeeRepositoryConnector(session, repository);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public float getPriority() {
+            return 0;
+        }
+    }
+
+    /**
+     * @version 2015/06/23 4:01:30
+     */
+    private class BeeRepositoryConnector implements RepositoryConnector {
+
+        /** The current session. */
+        private final RepositorySystemSession session;
+
+        /** The target remote repository. */
+        private final RemoteRepository repository;
+
+        /**
+         * @param session
+         * @param repository
+         */
+        private BeeRepositoryConnector(RepositorySystemSession session, RemoteRepository repository) {
+            this.session = session;
+            this.repository = repository;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void get(Collection<? extends ArtifactDownload> artifactDownloads, Collection<? extends MetadataDownload> metadataDownloads) {
+            if (artifactDownloads != null) {
+                for (ArtifactDownload download : artifactDownloads) {
+                    get(download);
+                }
+            }
+        }
+
+        /**
+         * <p>
+         * Download.
+         * </p>
+         * 
+         * @param download
+         */
+        private void get(ArtifactDownload download) {
+            Path file = download.getFile().toPath();
+
+            try {
+                // create output directory
+                Files.createDirectories(file.getParent());
+
+                // create input url
+
+                Artifact artifact = download.getArtifact();
+                System.out.println(download.getListener());
+
+                String uri = repository.getUrl() + artifact.getGroupId().replaceAll("\\.", "/") + "/" + artifact
+                        .getArtifactId() + "/" + artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact
+                                .getVersion() + "." + artifact.getExtension();
+
+                I.copy(new URI(uri).toURL().openStream(), Files.newOutputStream(download.getFile().toPath()), true);
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
+
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void put(Collection<? extends ArtifactUpload> artifactUploads, Collection<? extends MetadataUpload> metadataUploads) {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() {
+        }
+    }
+
+    /**
+     * @version 2015/06/23 10:45:33
      */
     private static class BeeWagonProvider implements WagonProvider {
 
@@ -1135,11 +1220,9 @@ public class Repository {
          */
         @Override
         public Wagon lookup(String scheme) throws Exception {
-            if ("http".equals(scheme)) {
-                LightweightHttpWagon wagon = new LightweightHttpWagon();
-                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
-                return wagon;
-            } else if ("https".equals(scheme)) {
+            if (scheme.equals("http")) {
+                return new LightweightHttpWagon();
+            } else if (scheme.equals("https")) {
                 return new LightweightHttpsWagon();
             }
             return null;
@@ -1150,11 +1233,6 @@ public class Repository {
          */
         @Override
         public void release(Wagon wagon) {
-            try {
-                wagon.disconnect();
-            } catch (ConnectionException e) {
-                throw I.quiet(e);
-            }
         }
     }
 }
