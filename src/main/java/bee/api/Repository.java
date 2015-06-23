@@ -10,11 +10,9 @@
 package bee.api;
 
 import java.io.File;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -25,78 +23,26 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.maven.model.building.DefaultModelBuilder;
-import org.apache.maven.model.building.DefaultModelProcessor;
-import org.apache.maven.model.composition.DefaultDependencyManagementImporter;
-import org.apache.maven.model.inheritance.DefaultInheritanceAssembler;
-import org.apache.maven.model.interpolation.StringSearchModelInterpolator;
-import org.apache.maven.model.io.DefaultModelReader;
-import org.apache.maven.model.management.DefaultDependencyManagementInjector;
-import org.apache.maven.model.management.DefaultPluginManagementInjector;
-import org.apache.maven.model.normalization.DefaultModelNormalizer;
-import org.apache.maven.model.path.DefaultModelPathTranslator;
-import org.apache.maven.model.path.DefaultModelUrlNormalizer;
-import org.apache.maven.model.path.DefaultPathTranslator;
-import org.apache.maven.model.path.DefaultUrlNormalizer;
-import org.apache.maven.model.profile.DefaultProfileInjector;
-import org.apache.maven.model.profile.DefaultProfileSelector;
-import org.apache.maven.model.superpom.DefaultSuperPomProvider;
-import org.apache.maven.model.validation.DefaultModelValidator;
-import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
-import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
-import org.apache.maven.repository.internal.DefaultVersionResolver;
-import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
-import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.wagon.Wagon;
 import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
 import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
-import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryListener;
+import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.artifact.DefaultArtifactType;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.DependencyGraphTransformer;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
-//import org.eclipse.aether.connector.file.FileRepositoryConnectorFactory;
-//import org.eclipse.aether.connector.wagon.WagonProvider;
-//import org.eclipse.aether.connector.wagon.WagonRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.impl.MetadataGeneratorFactory;
-//import org.eclipse.aether.impl.internal.DefaultArtifactResolver;
-//import org.eclipse.aether.impl.internal.DefaultDependencyCollector;
-//import org.eclipse.aether.impl.internal.DefaultFileProcessor;
-//import org.eclipse.aether.impl.internal.DefaultInstaller;
-//import org.eclipse.aether.impl.internal.DefaultLocalRepositoryProvider;
-//import org.eclipse.aether.impl.internal.DefaultMetadataResolver;
-//import org.eclipse.aether.impl.internal.DefaultRemoteRepositoryManager;
-//import org.eclipse.aether.impl.internal.DefaultRepositoryEventDispatcher;
-//import org.eclipse.aether.impl.internal.DefaultRepositorySystem;
-//import org.eclipse.aether.impl.internal.DefaultSyncContextFactory;
-//import org.eclipse.aether.impl.internal.DefaultUpdateCheckManager;
-//import org.eclipse.aether.impl.internal.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
-import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
-import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
-import org.eclipse.aether.internal.impl.DefaultDependencyCollector;
-import org.eclipse.aether.internal.impl.DefaultFileProcessor;
-import org.eclipse.aether.internal.impl.DefaultInstaller;
-import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
-import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
-import org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager;
-import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
-import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
-import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
-import org.eclipse.aether.internal.impl.DefaultSyncContextFactory;
-import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
-import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
-import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
-import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -106,28 +52,15 @@ import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
-import org.eclipse.aether.spi.connector.ArtifactDownload;
-import org.eclipse.aether.spi.connector.ArtifactUpload;
-import org.eclipse.aether.spi.connector.MetadataDownload;
-import org.eclipse.aether.spi.connector.MetadataUpload;
-import org.eclipse.aether.spi.connector.RepositoryConnector;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
-import org.eclipse.aether.transfer.NoRepositoryConnectorException;
+import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
-import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.wagon.WagonProvider;
 import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
-//import org.eclipse.aether.util.DefaultRepositoryCache;
-//import org.eclipse.aether.util.DefaultRepositorySystemSession;
-//import org.eclipse.aether.util.artifact.DefaultArtifact;
-//import org.eclipse.aether.util.artifact.DefaultArtifactType;
-import org.eclipse.aether.util.artifact.DefaultArtifactTypeRegistry;
 import org.eclipse.aether.util.artifact.SubArtifact;
-import org.eclipse.aether.util.graph.manager.ClassicDependencyManager;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
 import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
@@ -139,13 +72,6 @@ import org.eclipse.aether.util.graph.transformer.JavaScopeDeriver;
 import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
 import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
-//import org.eclipse.aether.util.graph.transformer.JavaEffectiveScopeCalculator;
-//import org.eclipse.aether.util.graph.transformer.NearestVersionConflictResolver;
-import org.eclipse.aether.util.graph.traverser.FatArtifactTraverser;
-import org.eclipse.aether.util.repository.DefaultAuthenticationSelector;
-import org.eclipse.aether.util.repository.DefaultMirrorSelector;
-import org.eclipse.aether.util.repository.DefaultProxySelector;
-import org.eclipse.aether.util.repository.SimpleArtifactDescriptorPolicy;
 
 import bee.Platform;
 import bee.UserInterface;
@@ -154,7 +80,7 @@ import kiss.I;
 import kiss.Manageable;
 
 /**
- * @version 2012/03/25 14:55:21
+ * @version 2015/06/23 12:27:20
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
@@ -166,121 +92,7 @@ public class Repository {
     private final UserInterface ui;
 
     /** The root repository system. */
-    private final DefaultRepositorySystem system = new DefaultRepositorySystem();
-
-    /** The repository event dispatcher. */
-    private final DefaultRepositoryEventDispatcher repositoryEventDispatcher = new DefaultRepositoryEventDispatcher();
-
-    /** The synchronous context. */
-    private final DefaultSyncContextFactory syncContextFactory = new DefaultSyncContextFactory();
-
-    /** The dependency dependencyCollector. */
-    private final DefaultDependencyCollector dependencyCollector = new DefaultDependencyCollector();
-
-    /** The file processor. */
-    private final DefaultFileProcessor fileProcessor = new DefaultFileProcessor();
-
-    /** The artifact installer. */
-    private final DefaultInstaller installer = new DefaultInstaller();
-
-    /** The update checker. */
-    private final DefaultUpdateCheckManager updateCheckManager = new DefaultUpdateCheckManager();
-
-    /** The artifact reader. */
-    private final DefaultArtifactResolver artifactResolver = new DefaultArtifactResolver();
-
-    /** he artifact description reader . */
-    private final DefaultArtifactDescriptorReader artifactDescriptorReader = new DefaultArtifactDescriptorReader();
-
-    /** The metadata resolver. */
-    private final DefaultMetadataResolver metadataResolver = new DefaultMetadataResolver();
-
-    /** The version resolver. */
-    private final DefaultVersionResolver versionResolver = new DefaultVersionResolver();
-
-    /** The version range resolver. */
-    private final DefaultVersionRangeResolver versionRangeResolver = new DefaultVersionRangeResolver();
-
-    /** The profile selector. */
-    private final DefaultProfileSelector profileSelector = new DefaultProfileSelector();
-
-    /** The profile injector. */
-    private final DefaultProfileInjector profileInjector = new DefaultProfileInjector();
-
-    /** The path translator. */
-    private final DefaultPathTranslator pathTranslator = new DefaultPathTranslator();
-
-    /** The plugin management injector. */
-    private final DefaultPluginManagementInjector pluginManagementInjector = new DefaultPluginManagementInjector();
-
-    /** The model builder. */
-    private final DefaultModelBuilder modelBuilder = new DefaultModelBuilder();
-
-    /** The model interpolator. */
-    private final StringSearchModelInterpolator modelInterpolator = new StringSearchModelInterpolator();
-
-    /** The model processor. */
-    private final DefaultModelProcessor modelProcessor = new DefaultModelProcessor();
-
-    /** The model reader. */
-    private final DefaultModelReader modelReader = new DefaultModelReader();
-
-    /** The model validator. */
-    private final DefaultModelValidator modelValidator = new DefaultModelValidator();
-
-    /** The super pom provider. */
-    private final DefaultSuperPomProvider modelParentPomProvider = new DefaultSuperPomProvider();
-
-    /** The inheritance model assembler. */
-    private final DefaultInheritanceAssembler modelInheritanceAssembler = new DefaultInheritanceAssembler();
-
-    /** The model path translator. */
-    private final DefaultModelPathTranslator modelPathTranslator = new DefaultModelPathTranslator();
-
-    /** The model normalizer. */
-    private final DefaultModelNormalizer modelNormalizer = new DefaultModelNormalizer();
-
-    /** The model url normalizer. */
-    private final DefaultModelUrlNormalizer modelUrlNormalizer = new DefaultModelUrlNormalizer();
-
-    /** The url normalizer. */
-    private final DefaultUrlNormalizer urlNormalizer = new DefaultUrlNormalizer();
-
-    /** The checksum policy provider. */
-    private final DefaultChecksumPolicyProvider checksumPolicyProvider = new DefaultChecksumPolicyProvider();
-
-    /** The update policy analyzer. */
-    private final DefaultUpdatePolicyAnalyzer updatePolicyAnalyzer = new DefaultUpdatePolicyAnalyzer();
-
-    /** The list of metadata generator factory. */
-    private final List<MetadataGeneratorFactory> metadataGeneratorFactories = new ArrayList();
-
-    /** The dependency management importer. */
-    private final DefaultDependencyManagementImporter dependencyManagementImporter = new DefaultDependencyManagementImporter();
-
-    /** The dependency management injector. */
-    private final DefaultDependencyManagementInjector dependencyManagementInjector = new DefaultDependencyManagementInjector();
-
-    /** The remote repository manager. */
-    private final DefaultRemoteRepositoryManager remoteRepositoryManager = new DefaultRemoteRepositoryManager();
-
-    /** The local repository provider. */
-    private final DefaultLocalRepositoryProvider localRepositoryProvider = new DefaultLocalRepositoryProvider();
-
-    /** The repository connector provider. */
-    private final DefaultRepositoryConnectorProvider repositoryConnectorProvider = new DefaultRepositoryConnectorProvider();
-
-    /** The repository connector factory. */
-    private final BasicRepositoryConnectorFactory repositoryConnectorFactory = new BasicRepositoryConnectorFactory();
-
-    /** The transporter provider. */
-    private final DefaultTransporterProvider transporterProvider = new DefaultTransporterProvider();
-
-    /** The wafon tranporter. */
-    private final WagonTransporterFactory wagonTransporterFactory = new WagonTransporterFactory();
-
-    /** The local repository manager factory. */
-    private final LocalRepositoryManagerFactory localRepositoryManagerFactory = new SimpleLocalRepositoryManagerFactory();
+    private final RepositorySystem system;
 
     /** The default dependency filter. */
     private final List<DependencySelector> dependencyFilters = new ArrayList();
@@ -305,155 +117,12 @@ public class Repository {
         dependencyFilters.add(new OptionalDependencySelector());
         dependencyFilters.add(new ScopeDependencySelector("test", "provided"));
 
-        // create metadata factories
-        metadataGeneratorFactories.add(new VersionsMetadataGeneratorFactory());
-        metadataGeneratorFactories.add(new SnapshotMetadataGeneratorFactory());
-
-        // ============ ArtifactResolver ============ //
-        artifactResolver.setFileProcessor(fileProcessor);
-        artifactResolver.setRemoteRepositoryManager(remoteRepositoryManager);
-        artifactResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        artifactResolver.setRepositoryConnectorProvider(repositoryConnectorProvider);
-        artifactResolver.setSyncContextFactory(syncContextFactory);
-        artifactResolver.setUpdateCheckManager(updateCheckManager);
-        artifactResolver.setVersionResolver(versionResolver);
-
-        // ============ ArtifactDescriptionReader ============ //
-        artifactDescriptorReader.setArtifactResolver(artifactResolver);
-        artifactDescriptorReader.setModelBuilder(modelBuilder);
-        artifactDescriptorReader.setRemoteRepositoryManager(remoteRepositoryManager);
-        artifactDescriptorReader.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        artifactDescriptorReader.setVersionResolver(versionResolver);
-        artifactDescriptorReader.setVersionRangeResolver(versionRangeResolver);
-
-        // ============ Installer ============ //
-        installer.setFileProcessor(fileProcessor);
-        installer.setMetadataGeneratorFactories(metadataGeneratorFactories);
-        installer.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        installer.setSyncContextFactory(syncContextFactory);
-
-        // ============ DependencyCollector ============ //
-        dependencyCollector.setRemoteRepositoryManager(remoteRepositoryManager);
-        dependencyCollector.setVersionRangeResolver(versionRangeResolver);
-        dependencyCollector.setArtifactDescriptorReader(artifactDescriptorReader);
-
-        // ============ VersionResolver ============ //
-        versionResolver.setMetadataResolver(metadataResolver);
-        versionResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        versionResolver.setSyncContextFactory(syncContextFactory);
-
-        // ============ VersionRangeResolver ============ //
-        versionRangeResolver.setMetadataResolver(metadataResolver);
-        versionRangeResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        versionRangeResolver.setSyncContextFactory(syncContextFactory);
-
-        // ============ MetadataResolver ============ //
-        metadataResolver.setRemoteRepositoryManager(remoteRepositoryManager);
-        metadataResolver.setRepositoryEventDispatcher(repositoryEventDispatcher);
-        metadataResolver.setSyncContextFactory(syncContextFactory);
-        metadataResolver.setUpdateCheckManager(updateCheckManager);
-        metadataResolver.setRepositoryConnectorProvider(repositoryConnectorProvider);
-
-        // ============ ModelURLNormalizer ============ //
-        modelUrlNormalizer.setUrlNormalizer(urlNormalizer);
-
-        // ============ ModelBuilder ============ //
-        modelBuilder.setProfileSelector(profileSelector);
-        modelBuilder.setProfileInjector(profileInjector);
-        modelBuilder.setModelProcessor(modelProcessor);
-        modelBuilder.setModelValidator(modelValidator);
-        modelBuilder.setSuperPomProvider(modelParentPomProvider);
-        modelBuilder.setModelNormalizer(modelNormalizer);
-        modelBuilder.setInheritanceAssembler(modelInheritanceAssembler);
-        modelBuilder.setModelUrlNormalizer(modelUrlNormalizer);
-        modelBuilder.setDependencyManagementImporter(dependencyManagementImporter);
-        modelBuilder.setDependencyManagementInjector(dependencyManagementInjector);
-        modelBuilder.setModelPathTranslator(modelPathTranslator);
-        modelBuilder.setPluginManagementInjector(pluginManagementInjector);
-        modelBuilder.setModelInterpolator(modelInterpolator);
-
-        // ============ ModelInterpolator ============ //
-        modelInterpolator.setPathTranslator(pathTranslator);
-        modelInterpolator.setUrlNormalizer(urlNormalizer);
-
-        // ============ ModelProcessor ============ //
-        modelProcessor.setModelReader(modelReader);
-
-        // ============ SuperPOMProvider ============ //
-        modelParentPomProvider.setModelProcessor(modelProcessor);
-
-        // ============ LocalRepositoryProvider ============ //
-        localRepositoryProvider.addLocalRepositoryManagerFactory(localRepositoryManagerFactory);
-
-        // ============ RepositoryConnectorProvider ============ //
-        repositoryConnectorProvider.addRepositoryConnectorFactory(new BeeRepositoryConnectorFactory());
-
-        // ============ RepositoryConnectorFactory ============ //
-        repositoryConnectorFactory.setChecksumPolicyProvider(checksumPolicyProvider);
-        repositoryConnectorFactory.setFileProcessor(fileProcessor);
-        repositoryConnectorFactory.setTransporterProvider(transporterProvider);
-
-        // ============ TransporterProvider ============ //
-        transporterProvider.addTransporterFactory(new FileTransporterFactory());
-        transporterProvider.addTransporterFactory(wagonTransporterFactory);
-
-        // ============ TransporterProvider ============ //
-        wagonTransporterFactory.setWagonProvider(new BeeWagonProvider());
-
-        // ============ RemoteRepositoryManger ============ //
-        remoteRepositoryManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
-        remoteRepositoryManager.setChecksumPolicyProvider(checksumPolicyProvider);
-
-        // ============ UpdateCheckManager ============ //
-        updateCheckManager.setUpdatePolicyAnalyzer(updatePolicyAnalyzer);
-
         // ============ RepositorySystem ============ //
-        system.setArtifactDescriptorReader(artifactDescriptorReader);
-        system.setArtifactResolver(artifactResolver);
-        system.setDependencyCollector(dependencyCollector);
-        system.setInstaller(installer);
-        system.setLocalRepositoryProvider(localRepositoryProvider);
-        system.setMetadataResolver(metadataResolver);
-        system.setRemoteRepositoryManager(remoteRepositoryManager);
-        system.setSyncContextFactory(syncContextFactory);
-        system.setVersionResolver(versionResolver);
-        system.setVersionRangeResolver(versionRangeResolver);
-
-        // DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        // locator.addService(ArtifactResolver.class, DefaultArtifactResolver.class);
-        // locator.addService(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
-        // locator.addService(DependencyCollector.class, DefaultDependencyCollector.class);
-        // locator.addService(DependencyManagementInjector.class,
-        // DefaultDependencyManagementInjector.class);
-        // locator.addService(DependencyManagementImporter.class,
-        // DefaultDependencyManagementImporter.class);
-        // locator.addService(FileProcessor.class, DefaultFileProcessor.class);
-        // locator.addService(InheritanceAssembler.class, DefaultInheritanceAssembler.class);
-        // locator.addService(Installer.class, DefaultInstaller.class);
-        // locator.addService(LocalRepositoryProvider.class, DefaultLocalRepositoryProvider.class);
-        // locator.addService(MetadataResolver.class, DefaultMetadataResolver.class);
-        // locator.addService(ModelUrlNormalizer.class, DefaultModelUrlNormalizer.class);
-        // locator.addService(ModelBuilder.class, DefaultModelBuilder.class);
-        // locator.addService(ModelInterpolator.class, StringSearchModelInterpolator.class);
-        // locator.addService(ModelProcessor.class, DefaultModelProcessor.class);
-        // locator.addService(ModelPathTranslator.class, DefaultModelPathTranslator.class);
-        // locator.addService(ModelNormalizer.class, DefaultModelNormalizer.class);
-        // locator.addService(ModelReader.class, DefaultModelReader.class);
-        // locator.addService(ModelValidator.class, DefaultModelValidator.class);
-        // locator.addService(PluginManagementInjector.class,
-        // DefaultPluginManagementInjector.class);
-        // locator.addService(ProfileSelector.class, DefaultProfileSelector.class);
-        // locator.addService(ProfileInjector.class, DefaultProfileInjector.class);
-        // locator.addService(RepositoryConnectorFactory.class,
-        // BasicRepositoryConnectorFactory.class);
-        // locator.addService(RepositoryEventDispatcher.class,
-        // DefaultRepositoryEventDispatcher.class);
-        // locator.addService(RepositorySystem.class, DefaultRepositorySystem.class);
-        // locator.addService(SuperPomProvider.class, DefaultSuperPomProvider.class);
-        // locator.addService(SyncContextFactory.class, DefaultSyncContextFactory.class);
-        // locator.addService(TransporterProvider.class, DefaultTransporterProvider.class);
-        // locator.addService(UpdateCheckManager.class, DefaultUpdateCheckManager.class);
-        // locator.addService(UrlNormalizer.class, DefaultUrlNormalizer.class);
+        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+        locator.addService(TransporterFactory.class, WagonTransporterFactory.class);
+        locator.addService(WagonProvider.class, BeeWagonProvider.class);
+        system = locator.getService(RepositorySystem.class);
 
         // ==================================================
         // Initialize
@@ -461,8 +130,6 @@ public class Repository {
         setLocalRepository(searchLocalRepository());
         addRemoteRepository("central", "http://repo1.maven.org/maven2/");
         addRemoteRepository("jboss", "http://repository.jboss.org/nexus/content/groups/public-jboss/");
-        
-        repositoryConnectorProvider.new
     }
 
     /**
@@ -700,40 +367,17 @@ public class Repository {
         Set<DependencySelector> filters = new HashSet(dependencyFilters);
         filters.add(new ExclusionDependencySelector(project.exclusions));
 
-        DefaultRepositorySystemSession session = new DefaultRepositorySystemSession();
-        session.setArtifactDescriptorPolicy(new SimpleArtifactDescriptorPolicy(true, true));
+        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         session.setDependencySelector(new AndDependencySelector(filters));
         session.setDependencyGraphTransformer(dependencyBuilder);
-        session.setProxySelector(new DefaultProxySelector());
-        session.setMirrorSelector(new DefaultMirrorSelector());
-        session.setDependencyTraverser(new FatArtifactTraverser());
-        session.setDependencyManager(new ClassicDependencyManager());
-        session.setAuthenticationSelector(new DefaultAuthenticationSelector());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
         session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
-        session.setCache(new DefaultRepositoryCache());
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
         session.setIgnoreArtifactDescriptorRepositories(true);
 
         // event listener
         session.setTransferListener(I.make(TransferView.class));
         session.setRepositoryListener(I.make(RepositoryView.class));
-
-        // file types registry
-        DefaultArtifactTypeRegistry stereotypes = new DefaultArtifactTypeRegistry();
-        stereotypes.add(new DefaultArtifactType("pom"));
-        stereotypes.add(new DefaultArtifactType("maven-plugin", "jar", "", "java"));
-        stereotypes.add(new DefaultArtifactType("jar", "jar", "", "java"));
-        stereotypes.add(new DefaultArtifactType("ejb", "jar", "", "java"));
-        stereotypes.add(new DefaultArtifactType("ejb-client", "jar", "client", "java"));
-        stereotypes.add(new DefaultArtifactType("test-jar", "jar", "tests", "java"));
-        stereotypes.add(new DefaultArtifactType("javadoc", "jar", "javadoc", "java"));
-        stereotypes.add(new DefaultArtifactType("java-source", "jar", "sources", "java", false, false));
-        stereotypes.add(new DefaultArtifactType("war", "war", "", "java", false, true));
-        stereotypes.add(new DefaultArtifactType("ear", "ear", "", "java", false, true));
-        stereotypes.add(new DefaultArtifactType("rar", "rar", "", "java", false, true));
-        stereotypes.add(new DefaultArtifactType("par", "par", "", "java", false, true));
-        session.setArtifactTypeRegistry(stereotypes);
 
         // API definition
         return session;
@@ -793,7 +437,7 @@ public class Repository {
     }
 
     /**
-     * @version 2012/03/25 23:08:57
+     * @version 2015/06/23 12:26:57
      */
     private static final class RepositoryView implements RepositoryListener {
 
@@ -969,7 +613,7 @@ public class Repository {
     }
 
     /**
-     * @version 2012/04/13 15:51:37
+     * @version 2015/06/23 12:26:51
      */
     private static final class TransferView implements TransferListener {
 
@@ -1015,7 +659,6 @@ public class Repository {
          */
         @Override
         public void transferProgressed(TransferEvent event) {
-            System.out.println(event);
             // register current downloading artifact
             downloading.put(event.getResource(), event);
 
@@ -1111,106 +754,6 @@ public class Repository {
     }
 
     /**
-     * @version 2015/06/23 4:00:24
-     */
-    private class BeeRepositoryConnectorFactory implements RepositoryConnectorFactory {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public RepositoryConnector newInstance(RepositorySystemSession session, RemoteRepository repository)
-                throws NoRepositoryConnectorException {
-            return new BeeRepositoryConnector(session, repository);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public float getPriority() {
-            return 0;
-        }
-    }
-
-    /**
-     * @version 2015/06/23 4:01:30
-     */
-    private class BeeRepositoryConnector implements RepositoryConnector {
-
-        /** The current session. */
-        private final RepositorySystemSession session;
-
-        /** The target remote repository. */
-        private final RemoteRepository repository;
-
-        /**
-         * @param session
-         * @param repository
-         */
-        private BeeRepositoryConnector(RepositorySystemSession session, RemoteRepository repository) {
-            this.session = session;
-            this.repository = repository;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void get(Collection<? extends ArtifactDownload> artifactDownloads, Collection<? extends MetadataDownload> metadataDownloads) {
-            if (artifactDownloads != null) {
-                for (ArtifactDownload download : artifactDownloads) {
-                    get(download);
-                }
-            }
-        }
-
-        /**
-         * <p>
-         * Download.
-         * </p>
-         * 
-         * @param download
-         */
-        private void get(ArtifactDownload download) {
-            Path file = download.getFile().toPath();
-
-            try {
-                // create output directory
-                Files.createDirectories(file.getParent());
-
-                // create input url
-
-                Artifact artifact = download.getArtifact();
-                System.out.println(download.getListener());
-
-                String uri = repository.getUrl() + artifact.getGroupId().replaceAll("\\.", "/") + "/" + artifact
-                        .getArtifactId() + "/" + artifact.getVersion() + "/" + artifact.getArtifactId() + "-" + artifact
-                                .getVersion() + "." + artifact.getExtension();
-
-                I.copy(new URI(uri).toURL().openStream(), Files.newOutputStream(download.getFile().toPath()), true);
-            } catch (Exception e) {
-                throw I.quiet(e);
-            }
-
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void put(Collection<? extends ArtifactUpload> artifactUploads, Collection<? extends MetadataUpload> metadataUploads) {
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void close() {
-        }
-    }
-
-    /**
      * @version 2015/06/23 10:45:33
      */
     private static class BeeWagonProvider implements WagonProvider {
@@ -1221,9 +764,15 @@ public class Repository {
         @Override
         public Wagon lookup(String scheme) throws Exception {
             if (scheme.equals("http")) {
-                return new LightweightHttpWagon();
+                LightweightHttpWagon wagon = new LightweightHttpWagon();
+                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+
+                return wagon;
             } else if (scheme.equals("https")) {
-                return new LightweightHttpsWagon();
+                LightweightHttpsWagon wagon = new LightweightHttpsWagon();
+                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+
+                return wagon;
             }
             return null;
         }
