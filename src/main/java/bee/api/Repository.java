@@ -130,6 +130,7 @@ public class Repository {
         setLocalRepository(searchLocalRepository());
         addRemoteRepository("central", "http://repo1.maven.org/maven2/");
         addRemoteRepository("jboss", "http://repository.jboss.org/nexus/content/groups/public-jboss/");
+        addRemoteRepository("jitpack", "https://jitpack.io/");
     }
 
     /**

@@ -35,7 +35,7 @@ import kiss.Disposable;
 import kiss.I;
 
 /**
- * @version 2011/03/17 14:01:01
+ * @version 2015/06/23 21:55:34
  */
 public class ZipArchiver {
 
@@ -144,12 +144,7 @@ public class ZipArchiver {
                         archiver.base = entry.base;
 
                         // scan entry
-                        if (Files.isDirectory(entry.base)) {
-                            I.walk(entry.base, archiver, entry.patterns);
-                        } else {
-                            archiver.add(entry.directory + entry.base.getFileName(), entry.base, Files
-                                    .readAttributes(entry.base, BasicFileAttributes.class));
-                        }
+                        I.walk(entry.base, archiver, entry.patterns);
                     }
                 } finally {
                     archiver.dispose();
@@ -158,6 +153,7 @@ public class ZipArchiver {
                 throw I.quiet(e);
             }
         }
+
     }
 
     /**
@@ -188,7 +184,7 @@ public class ZipArchiver {
     }
 
     /**
-     * @version 2012/04/22 11:04:40
+     * @version 2015/06/23 21:21:57
      */
     private static class Archiver extends ZipOutputStream implements FileVisitor<Path>, Disposable {
 
@@ -229,8 +225,7 @@ public class ZipArchiver {
         }
 
         /**
-         * @see java.nio.file.FileVisitor#preVisitDirectory(java.lang.Object,
-         *      java.nio.file.attribute.BasicFileAttributes)
+         * {@inheritDoc}
          */
         @Override
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -238,8 +233,7 @@ public class ZipArchiver {
         }
 
         /**
-         * @see java.nio.file.FileVisitor#visitFile(java.lang.Object,
-         *      java.nio.file.attribute.BasicFileAttributes)
+         * {@inheritDoc}
          */
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -250,7 +244,7 @@ public class ZipArchiver {
         }
 
         /**
-         * @see java.nio.file.FileVisitor#visitFileFailed(java.lang.Object, java.io.IOException)
+         * {@inheritDoc}
          */
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
@@ -259,7 +253,7 @@ public class ZipArchiver {
         }
 
         /**
-         * @see java.nio.file.FileVisitor#postVisitDirectory(java.lang.Object, java.io.IOException)
+         * {@inheritDoc}
          */
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
@@ -268,7 +262,7 @@ public class ZipArchiver {
         }
 
         /**
-         * @see java.util.zip.ZipOutputStream#close()
+         * {@inheritDoc}
          */
         @Override
         public void close() throws IOException {
@@ -276,7 +270,7 @@ public class ZipArchiver {
         }
 
         /**
-         * @see ezbean.Disposable#dispose()
+         * {@inheritDoc}
          */
         @Override
         public void dispose() {
@@ -289,7 +283,7 @@ public class ZipArchiver {
     }
 
     /**
-     * @version 2011/03/15 18:07:46
+     * @version 2015/06/23 21:21:53
      */
     private static class Entry {
 
