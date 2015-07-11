@@ -9,7 +9,6 @@
  */
 package bee.util;
 
-import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,19 +118,6 @@ public class PathSet implements Iterable<PathPattern> {
     public void delete(String... patterns) {
         for (PathPattern pattern : set) {
             I.delete(pattern.base, pattern.mix(patterns));
-        }
-    }
-
-    /**
-     * <p>
-     * Walk all files and directories.
-     * </p>
-     * 
-     * @param visitor
-     */
-    public void each(FileVisitor<Path> visitor) {
-        for (PathPattern pattern : set) {
-            I.walk(pattern.base, visitor, pattern.mix());
         }
     }
 

@@ -9,14 +9,10 @@
  */
 package bee.util;
 
-import static java.nio.file.FileVisitResult.*;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -35,7 +31,7 @@ import kiss.Disposable;
 import kiss.I;
 
 /**
- * @version 2015/06/23 21:55:34
+ * @version 2015/07/11 22:02:59
  */
 public class ZipArchiver {
 
@@ -144,7 +140,24 @@ public class ZipArchiver {
                         archiver.base = entry.base;
 
                         // scan entry
-                        I.walk(entry.base, archiver, entry.patterns);
+                        I.walk(entry.base, entry.patterns).forEach(file -> {
+                            try {
+                                String path = archiver.directory + archiver.base.relativize(file)
+                                        .toString()
+                                        .replace(File.separatorChar, '/');
+                                BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+                                ZipEntry zip = new ZipEntry(path);
+                                zip.setSize(attrs.size());
+                                zip.setTime(attrs.lastModifiedTime().toMillis());
+                                archiver.putNextEntry(zip);
+
+                                // copy data
+                                I.copy(Files.newInputStream(file), archiver, true);
+                                archiver.closeEntry();
+                            } catch (IOException e) {
+                                // ignore
+                            }
+                        });
                     }
                 } finally {
                     archiver.dispose();
@@ -153,7 +166,6 @@ public class ZipArchiver {
                 throw I.quiet(e);
             }
         }
-
     }
 
     /**
@@ -186,7 +198,7 @@ public class ZipArchiver {
     /**
      * @version 2015/06/23 21:21:57
      */
-    private static class Archiver extends ZipOutputStream implements FileVisitor<Path>, Disposable {
+    private static class Archiver extends ZipOutputStream implements Disposable {
 
         /** The base directory path. */
         private String directory;
@@ -199,66 +211,6 @@ public class ZipArchiver {
          */
         private Archiver(Path destination, Charset encoding) throws IOException {
             super(Files.newOutputStream(destination), encoding);
-        }
-
-        /**
-         * <p>
-         * Add archive entry.
-         * </p>
-         * 
-         * @param path
-         * @param attrs
-         */
-        private void add(String path, Path file, BasicFileAttributes attrs) {
-            try {
-                ZipEntry entry = new ZipEntry(path);
-                entry.setSize(attrs.size());
-                entry.setTime(attrs.lastModifiedTime().toMillis());
-                putNextEntry(entry);
-
-                // copy data
-                I.copy(Files.newInputStream(file), this, true);
-                closeEntry();
-            } catch (IOException e) {
-                // ignore
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-            return CONTINUE;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            add(directory + base.relativize(file).toString().replace(File.separatorChar, '/'), file, attrs);
-
-            // API definition
-            return CONTINUE;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-            // API definition
-            return CONTINUE;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            // API definition
-            return CONTINUE;
         }
 
         /**
