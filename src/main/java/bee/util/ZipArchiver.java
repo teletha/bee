@@ -31,7 +31,7 @@ import kiss.Disposable;
 import kiss.I;
 
 /**
- * @version 2015/07/11 22:02:59
+ * @version 2015/07/14 2:48:03
  */
 public class ZipArchiver {
 
@@ -146,12 +146,14 @@ public class ZipArchiver {
                                         .toString()
                                         .replace(File.separatorChar, '/');
                                 BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+
                                 ZipEntry zip = new ZipEntry(path);
                                 zip.setSize(attrs.size());
-                                zip.setTime(attrs.lastModifiedTime().toMillis());
-                                archiver.putNextEntry(zip);
+                                zip.setCreationTime(attrs.creationTime());
+                                zip.setLastAccessTime(attrs.lastAccessTime());
+                                zip.setLastModifiedTime(attrs.lastModifiedTime());
 
-                                // copy data
+                                archiver.putNextEntry(zip);
                                 I.copy(Files.newInputStream(file), archiver, true);
                                 archiver.closeEntry();
                             } catch (IOException e) {
