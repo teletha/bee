@@ -35,7 +35,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
 
 import bee.Bee;
-import bee.file.StandardHeaderStyle;
+import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import bee.util.PathPattern;
 import bee.util.PathSet;

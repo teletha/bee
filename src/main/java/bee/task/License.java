@@ -16,8 +16,8 @@ import java.util.List;
 
 import bee.api.Command;
 import bee.api.Task;
-import bee.file.FileType;
-import bee.file.StandardHeaderStyle;
+import bee.coder.FileType;
+import bee.coder.StandardHeaderStyle;
 import bee.util.PathSet;
 
 /**

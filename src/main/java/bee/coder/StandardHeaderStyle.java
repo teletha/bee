@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.file;
+package bee.coder;
 
 import java.util.ArrayList;
 import java.util.List;
