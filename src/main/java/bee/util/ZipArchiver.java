@@ -149,8 +149,6 @@ public class ZipArchiver {
 
                                 ZipEntry zip = new ZipEntry(path);
                                 zip.setSize(attrs.size());
-                                zip.setCreationTime(attrs.creationTime());
-                                zip.setLastAccessTime(attrs.lastAccessTime());
                                 zip.setLastModifiedTime(attrs.lastModifiedTime());
 
                                 archiver.putNextEntry(zip);
