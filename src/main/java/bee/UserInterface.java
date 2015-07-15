@@ -232,6 +232,43 @@ public abstract class UserInterface {
      * Ask user about your question and return his/her specified location.
      * </p>
      * <p>
+     * UserInterface can display the file chooser and user can select it with simple action.
+     * </p>
+     * 
+     * @param question Your question message.
+     * @return A specified location.
+     */
+    public Path file(String question) {
+        try {
+            Path answer = I.locate(ask(question));
+
+            if (!answer.isAbsolute()) {
+                answer = answer.toAbsolutePath();
+            }
+
+            if (Files.notExists(answer)) {
+                if (confirm("File [" + answer + "] doesn't exist. Create it?")) {
+                    Files.createDirectories(answer.getParent());
+                    Files.createFile(answer);
+                } else {
+                    throw bee.Bee.AbortedByUser;
+                }
+            } else if (!Files.isRegularFile(answer)) {
+                error("Path [", answer, "] is not file.");
+
+                return directory(question);
+            }
+            return answer;
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her specified location.
+     * </p>
+     * <p>
      * UserInterface can display the directory chooser and user can select it with simple action.
      * </p>
      * 
