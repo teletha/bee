@@ -391,7 +391,7 @@ public class Repository {
      * 
      * @return
      */
-    private static Path searchMavenHome() {
+    private Path searchMavenHome() {
         for (Entry<String, String> entry : System.getenv().entrySet()) {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 for (String path : entry.getValue().split(File.pathSeparator)) {
@@ -413,13 +413,14 @@ public class Repository {
      * 
      * @return
      */
-    private static Path searchLocalRepository() {
+    private Path searchLocalRepository() {
         Path local = I.locate(System.getProperty("user.home")).resolve(".m2");
         Path home = searchMavenHome();
 
         if (home == null) {
             // maven is not found
-            return local;
+            ui.talk("Local repository is not found.");
+            return ui.directory("Specify the local repository location");
         } else {
             // maven is here
             Path conf = home.resolve("conf/settings.xml");

@@ -16,13 +16,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 
+import bee.api.Command;
 import kiss.Codec;
 import kiss.I;
 import kiss.model.Model;
-import bee.api.Command;
 
 /**
  * <p>
@@ -223,6 +225,42 @@ public abstract class UserInterface {
             throw new Error(build("Question needs some items. [", question, "]"));
         }
         return ask(question, Arrays.asList(enumeration.getEnumConstants()));
+    }
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her specified location.
+     * </p>
+     * <p>
+     * UserInterface can display the directory chooser and user can select it with simple action.
+     * </p>
+     * 
+     * @param question Your question message.
+     * @return A specified location.
+     */
+    public Path directory(String question) {
+        try {
+            Path answer = I.locate(ask(question));
+
+            if (!answer.isAbsolute()) {
+                answer = answer.toAbsolutePath();
+            }
+
+            if (Files.notExists(answer)) {
+                if (confirm("Directory [" + answer + "] doesn't exist. Create it?")) {
+                    Files.createDirectories(answer);
+                } else {
+                    throw bee.Bee.AbortedByUser;
+                }
+            } else if (!Files.isDirectory(answer)) {
+                error("Path [", answer, "] is not directory.");
+
+                return directory(question);
+            }
+            return answer;
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
