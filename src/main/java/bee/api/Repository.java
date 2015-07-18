@@ -9,7 +9,6 @@
  */
 package bee.api;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -80,16 +78,13 @@ import kiss.I;
 import kiss.Manageable;
 
 /**
- * @version 2015/06/23 12:27:20
+ * @version 2015/07/18 11:23:59
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
 
     /** The current processing project. */
     private final Project project;
-
-    /** The current processing user interface. */
-    private final UserInterface ui;
 
     /** The root repository system. */
     private final RepositorySystem system;
@@ -109,9 +104,8 @@ public class Repository {
     /**
      * Wiring components by hand.
      */
-    Repository(Project project, UserInterface ui) {
+    Repository(Project project) {
         this.project = project;
-        this.ui = ui;
 
         // create filter
         dependencyFilters.add(new OptionalDependencySelector());
@@ -127,7 +121,7 @@ public class Repository {
         // ==================================================
         // Initialize
         // ==================================================
-        setLocalRepository(searchLocalRepository());
+        setLocalRepository(Platform.BeeLocalRepository);
         addRemoteRepository("central", "http://repo1.maven.org/maven2/");
         addRemoteRepository("jboss", "http://repository.jboss.org/nexus/content/groups/public-jboss/");
         addRemoteRepository("jitpack", "https://jitpack.io/");
@@ -382,60 +376,6 @@ public class Repository {
 
         // API definition
         return session;
-    }
-
-    /**
-     * <p>
-     * Search maven home directory.
-     * </p>
-     * 
-     * @return
-     */
-    private Path searchMavenHome() {
-        for (Entry<String, String> entry : System.getenv().entrySet()) {
-            if (entry.getKey().equalsIgnoreCase("path")) {
-                for (String path : entry.getValue().split(File.pathSeparator)) {
-                    Path mvn = I.locate(path).resolve("mvn");
-
-                    if (Files.exists(mvn)) {
-                        return mvn.getParent().getParent();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * <p>
-     * Search maven local respository.
-     * </p>
-     * 
-     * @return
-     */
-    private Path searchLocalRepository() {
-        Path local = I.locate(System.getProperty("user.home")).resolve(".m2");
-        Path home = searchMavenHome();
-
-        if (home == null) {
-            // maven is not found
-            ui.talk("Local repository is not found.");
-            return ui.directory("Specify the local repository location");
-        } else {
-            // maven is here
-            Path conf = home.resolve("conf/settings.xml");
-
-            if (Files.exists(conf)) {
-                String path = I.xml(conf).find("localRepository").text();
-
-                if (path.length() != 0) {
-                    return I.locate(path);
-                }
-            }
-
-            // user custom local repository is not found
-            return local;
-        }
     }
 
     /**

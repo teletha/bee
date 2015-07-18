@@ -54,10 +54,10 @@ public class BeeInstaller {
 
         try {
             String fileName = "bee-" + format.format(new Date(Files.getLastModifiedTime(source).toMillis())) + ".jar";
-            Path dest = JavaHome.resolve("lib/bee/" + fileName);
+            Path dest = BeeHome.resolve(fileName);
 
             // delete old files
-            for (Path jar : I.walk(dest.getParent())) {
+            for (Path jar : I.walk(BeeHome, "bee-*.jar")) {
                 try {
                     Files.delete(jar);
                 } catch (Exception e) {

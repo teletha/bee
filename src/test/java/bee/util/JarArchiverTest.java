@@ -9,8 +9,8 @@
  */
 package bee.util;
 
-import static org.junit.Assert.*;
-
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -38,26 +38,36 @@ public class JarArchiverTest {
         jar.add(file.getParent());
         jar.pack(output);
 
-        Path archive = room.locateArchive(output);
-        assertTrue(Files.exists(archive.resolve("file")));
-        assertTrue(Files.isRegularFile(archive.resolve("file")));
+        try (FileSystem system = FileSystems.newFileSystem(output, null)) {
+            Path archive = system.getPath("/");
+
+            assert Files.exists(archive.resolve("file"));
+            assert Files.isRegularFile(archive.resolve("file"));
+        }
     }
 
     @Test
     public void directory() throws Exception {
-        Path file1 = room.locateFile("root/file");
-        room.locateFile("root/directory/file");
+        Path root = room.locateDirectory("root", $ -> {
+            $.file("file");
+            $.dir("directory", () -> {
+                $.file("file");
+            });
+        });
         Path output = room.locateAbsent("out");
 
         JarArchiver jar = new JarArchiver();
-        jar.add(file1.getParent());
+        jar.add(root);
         jar.pack(output);
 
-        Path archive = room.locateArchive(output);
-        assertTrue(Files.exists(archive.resolve("file")));
-        assertTrue(Files.exists(archive.resolve("directory")));
-        assertTrue(Files.isDirectory(archive.resolve("directory")));
-        assertTrue(Files.exists(archive.resolve("directory/file")));
-        assertTrue(Files.isRegularFile(archive.resolve("directory/file")));
+        try (FileSystem system = FileSystems.newFileSystem(output, null)) {
+            Path archive = system.getPath("/");
+
+            assert Files.exists(archive.resolve("file"));
+            assert Files.exists(archive.resolve("directory"));
+            assert Files.isDirectory(archive.resolve("directory"));
+            assert Files.exists(archive.resolve("directory/file"));
+            assert Files.isRegularFile(archive.resolve("directory/file"));
+        }
     }
 }

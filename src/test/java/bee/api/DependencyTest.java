@@ -14,7 +14,6 @@ import java.util.Set;
 import org.junit.Test;
 
 import bee.BlinkProject;
-import bee.Null;
 
 /**
  * @version 2015/06/08 16:05:49
@@ -24,7 +23,7 @@ public class DependencyTest {
     @Test
     public void empty() {
         BlinkProject project = new BlinkProject();
-        Repository repository = new Repository(project, Null.UI);
+        Repository repository = new Repository(project);
         Set<Library> dependencies = repository.collectDependency(project, Scope.Compile);
         assert dependencies.size() == 0;
     }
@@ -34,7 +33,7 @@ public class DependencyTest {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm", "5.0");
 
-        Repository repository = new Repository(project, Null.UI);
+        Repository repository = new Repository(project);
         Set<Library> dependencies = repository.collectDependency(project, Scope.Compile);
         assert dependencies.size() == 1;
     }
@@ -44,7 +43,7 @@ public class DependencyTest {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm", "5.0.4").atTest();
 
-        Repository repository = new Repository(project, Null.UI);
+        Repository repository = new Repository(project);
         Set<Library> dependencies = repository.collectDependency(project, Scope.Test);
         assert dependencies.size() == 1;
         dependencies = repository.collectDependency(project, Scope.Runtime);
@@ -56,7 +55,7 @@ public class DependencyTest {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm-tree", "5.0.4").atTest();
 
-        Repository repository = new Repository(project, Null.UI);
+        Repository repository = new Repository(project);
         Set<Library> dependencies = repository.collectDependency(project, Scope.Test);
         assert dependencies.size() == 2;
         dependencies = repository.collectDependency(project, Scope.Runtime);
@@ -68,7 +67,7 @@ public class DependencyTest {
         BlinkProject project = new BlinkProject();
         project.require("org.skyscreamer", "jsonassert", "1.2.3");
 
-        Repository repository = new Repository(project, Null.UI);
+        Repository repository = new Repository(project);
         Set<Library> dependencies = repository.collectDependency(project, Scope.Runtime);
         assert dependencies.size() == 2;
         dependencies = repository.collectDependency(project, Scope.Test);
@@ -77,7 +76,7 @@ public class DependencyTest {
 
     @Test
     public void byLibrary() {
-        Repository repo = new Repository(new BlinkProject(), Null.UI);
+        Repository repo = new Repository(new BlinkProject());
         Set<Library> dep = repo.collectDependency("org.skyscreamer", "jsonassert", "1.2.3", Scope.Runtime);
         assert dep.size() == 2;
 

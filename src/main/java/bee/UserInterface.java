@@ -239,8 +239,23 @@ public abstract class UserInterface {
      * @return A specified location.
      */
     public Path file(String question) {
+        return file(question, null);
+    }
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her specified location.
+     * </p>
+     * <p>
+     * UserInterface can display the file chooser and user can select it with simple action.
+     * </p>
+     * 
+     * @param question Your question message.
+     * @return A specified location.
+     */
+    public Path file(String question, Path defaultFile) {
         try {
-            Path answer = I.locate(ask(question));
+            Path answer = ask(question, defaultFile);
 
             if (!answer.isAbsolute()) {
                 answer = answer.toAbsolutePath();
@@ -276,8 +291,23 @@ public abstract class UserInterface {
      * @return A specified location.
      */
     public Path directory(String question) {
+        return directory(question, null);
+    }
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her specified location.
+     * </p>
+     * <p>
+     * UserInterface can display the directory chooser and user can select it with simple action.
+     * </p>
+     * 
+     * @param question Your question message.
+     * @return A specified location.
+     */
+    public Path directory(String question, Path defaultDirectory) {
         try {
-            Path answer = I.locate(ask(question));
+            Path answer = ask(question, defaultDirectory);
 
             if (!answer.isAbsolute()) {
                 answer = answer.toAbsolutePath();

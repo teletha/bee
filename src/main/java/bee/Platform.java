@@ -22,7 +22,7 @@ import kiss.I;
  * Define platform specific default configurations.
  * </p>
  * 
- * @version 2012/03/29 0:57:53
+ * @version 2015/07/18 10:01:58
  */
 public final class Platform {
 
@@ -35,14 +35,20 @@ public final class Platform {
     /** The executable file for Java. */
     public static final Path Java;
 
+    /** The root directory for Java. */
+    public static final Path JavaHome;
+
     /** The tool.jar file for Java. */
     public static final Path JavaTool;
 
     /** The executable file for Bee. */
     public static final Path Bee;
 
-    /** The root directory for Java. */
-    public static final Path JavaHome;
+    /** The root directory for Bee. */
+    public static final Path BeeHome;
+
+    /** The local repository. */
+    public static final Path BeeLocalRepository;
 
     // initialization
     static {
@@ -82,9 +88,49 @@ public final class Platform {
             throw new Error("Java SDK is not found in your environment path.");
         }
 
-        Bee = bee;
         Java = java;
         JavaHome = java.getParent().getParent();
         JavaTool = JavaHome.resolve("lib/tools.jar");
+        Bee = bee;
+        BeeHome = JavaHome.resolve("lib/bee");
+        BeeLocalRepository = searchLocalRepository();
+    }
+
+    /**
+     * <p>
+     * Search maven home directory.
+     * </p>
+     * 
+     * @return
+     */
+    private static Path searchLocalRepository() {
+        for (Entry<String, String> entry : System.getenv().entrySet()) {
+            if (entry.getKey().equalsIgnoreCase("path")) {
+                for (String path : entry.getValue().split(File.pathSeparator)) {
+                    Path mvn = I.locate(path).resolve("mvn");
+
+                    if (Files.exists(mvn)) {
+                        // maven is here
+                        Path home = mvn.getParent().getParent();
+                        Path conf = home.resolve("conf/settings.xml");
+
+                        if (Files.exists(conf)) {
+                            String location = I.xml(conf).find("localRepository").text();
+
+                            if (location.length() != 0) {
+                                return I.locate(location);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return BeeHome.resolve("repository");
+    }
+
+    /**
+     * Hide constructor.
+     */
+    private Platform() {
     }
 }
