@@ -36,7 +36,8 @@ import bee.TaskFailure;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
-import kiss.Codec;
+import kiss.Decoder;
+import kiss.Encoder;
 import kiss.I;
 
 /**
@@ -195,8 +196,7 @@ public class Java {
             MBeanServer server = ManagementFactory.getPlatformMBeanServer();
             server.registerMBean(listener, NAME);
 
-            JMXConnectorServer connector = JMXConnectorServerFactory
-                    .newJMXConnectorServer(new JMXServiceURL(address), null, server);
+            JMXConnectorServer connector = JMXConnectorServerFactory.newJMXConnectorServer(new JMXServiceURL(address), null, server);
             connector.start();
 
             // build sub-process for java
@@ -243,8 +243,7 @@ public class Java {
             MBeanServerConnection connection = connector.getMBeanServerConnection();
 
             // create transporter proxy
-            Transporter transporter = MBeanServerInvocationHandler
-                    .newProxyInstance(connection, NAME, Transporter.class, false);
+            Transporter transporter = MBeanServerInvocationHandler.newProxyInstance(connection, NAME, Transporter.class, false);
 
             // execute main process
             JVM vm = (JVM) I.make(Class.forName(args[1]));
@@ -532,15 +531,14 @@ public class Java {
      * @version 2012/04/09 16:58:31
      */
     @SuppressWarnings("unused")
-    private static final class StackTraceCodec implements Codec<StackTraceElement> {
+    private static final class StackTraceCodec implements Decoder<StackTraceElement>, Encoder<StackTraceElement> {
 
         /**
          * {@inheritDoc}
          */
         @Override
         public String encode(StackTraceElement value) {
-            return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value
-                    .getLineNumber();
+            return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value.getLineNumber();
         }
 
         /**

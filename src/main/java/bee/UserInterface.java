@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import bee.api.Command;
-import kiss.Codec;
+import kiss.Decoder;
 import kiss.I;
 import kiss.model.Model;
 
@@ -164,12 +164,12 @@ public abstract class UserInterface {
                 // API definition
                 return (T) answer;
             } else {
-                Codec<T> codec = I.find(Codec.class, defaultAnswer.getClass());
+                Decoder<T> decoder = I.find(Decoder.class, defaultAnswer.getClass());
 
-                if (codec == null) {
-                    codec = Model.load(defaultAnswer.getClass()).getCodec();
+                if (decoder == null) {
+                    decoder = Model.load(defaultAnswer.getClass()).getDecoder();
                 }
-                return answer.length() == 0 ? defaultAnswer : codec.decode(answer);
+                return answer.length() == 0 ? defaultAnswer : decoder.decode(answer);
             }
         } catch (IOException e) {
             throw I.quiet(e);
