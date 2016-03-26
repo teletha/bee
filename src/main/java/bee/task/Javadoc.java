@@ -116,14 +116,18 @@ public class Javadoc extends Task {
             }
         }
 
+        // external links
+        options.add("-link");
+        options.add("http://docs.oracle.com/javase/8/docs/api");
+
         // setup
         CustomJavadoc.outputDirectory = output;
 
         ui.talk("Use Doclet: " + docletClass.getName());
 
         PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
-        int result = Main.execute("", new NoOperationWriter(), writer, writer, docletClass.getName(), docletClass
-                .getClassLoader(), options.toArray(new String[options.size()]));
+        int result = Main.execute("", new NoOperationWriter(), writer, writer, docletClass.getName(), docletClass.getClassLoader(), options
+                .toArray(new String[options.size()]));
 
         if (result == 1) {
             // success
