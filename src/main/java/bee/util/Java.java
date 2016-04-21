@@ -338,7 +338,7 @@ public class Java {
                     if (message instanceof Throwable) {
                         StringBuilder builder = new StringBuilder();
                         Cause cause = make((Throwable) message);
-                        I.write(cause, builder, false);
+                        I.write(cause, builder);
 
                         transporter.error(builder.toString());
                     }

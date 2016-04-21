@@ -167,7 +167,7 @@ public abstract class UserInterface {
                 Decoder<T> decoder = I.find(Decoder.class, defaultAnswer.getClass());
 
                 if (decoder == null) {
-                    decoder = Model.load(defaultAnswer.getClass()).getDecoder();
+                    decoder = Model.of(defaultAnswer.getClass()).decoder();
                 }
                 return answer.length() == 0 ? defaultAnswer : decoder.decode(answer);
             }

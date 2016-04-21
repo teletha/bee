@@ -212,7 +212,7 @@ public class Bee {
             load(project.getProjectClasses());
 
             // create your project
-            inject((Project) I.make(Class.forName(ProjectFile)));
+            inject((Project) Class.forName(ProjectFile).newInstance());
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {

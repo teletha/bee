@@ -210,7 +210,7 @@ public class AnnotationProcessor implements Processor {
         public String toString() {
             StringBuilder builder = new StringBuilder();
 
-            I.write(this, builder, true);
+            I.write(this, builder);
 
             return builder.toString();
         }

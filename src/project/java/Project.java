@@ -11,7 +11,7 @@
 import bee.Bee;
 
 /**
- * @version 2012/03/20 15:45:08
+ * @version 2016/04/21 14:11:15
  */
 public class Project extends bee.api.Project {
 
@@ -24,7 +24,7 @@ public class Project extends bee.api.Project {
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
-        require("npc", "sinobu", "0.9.4");
+        require("npc", "sinobu", "1.0");
         require("npc", "antibug", "0.3").atTest();
         require(aetherGroup, "aether-api", aetherVersion);
         require(aetherGroup, "aether-util", aetherVersion);
