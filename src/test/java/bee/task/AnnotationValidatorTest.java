@@ -12,12 +12,10 @@ package bee.task;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-
-import kiss.I;
-import kiss.model.ClassUtil;
 
 import org.junit.Test;
 
@@ -30,6 +28,8 @@ import bee.sample.Interface;
 import bee.sample.annotation.SourceAnnotation;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.JavaCompiler;
+import kiss.I;
+import kiss.model.ClassUtil;
 
 /**
  * @version 2012/11/11 16:26:26
@@ -194,7 +194,7 @@ public class AnnotationValidatorTest {
         private final AnnotationValidator<T> validator;
 
         /** The validation target annotation. */
-        private final Class annotation;
+        private final Type annotation;
 
         /** The flag for confirmation. */
         private boolean isCalled = false;
