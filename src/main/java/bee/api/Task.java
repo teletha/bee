@@ -35,7 +35,6 @@ import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.XML;
-import kiss.model.ClassUtil;
 
 /**
  * @version 2015/06/22 13:17:10
@@ -393,7 +392,7 @@ public abstract class Task implements Extensible {
         private Info(String name, Class<Task> task) {
             this.task = task;
 
-            for (Entry<Method, List<Annotation>> info : ClassUtil.getAnnotations(task).entrySet()) {
+            for (Entry<Method, List<Annotation>> info : I.collectAnnotationsOf(task).entrySet()) {
                 for (Annotation annotation : info.getValue()) {
                     if (annotation.annotationType() == Command.class) {
                         Method method = info.getKey();
