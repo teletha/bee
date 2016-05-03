@@ -120,7 +120,7 @@ public abstract class Task implements Extensible {
      * @return
      */
     protected final Path loadBee() {
-        return ClassUtil.getArchive(Bee.class);
+        return I.locate(Bee.class);
     }
 
     /**

@@ -41,7 +41,6 @@ import bee.util.PathPattern;
 import bee.util.PathSet;
 import kiss.I;
 import kiss.XML;
-import kiss.model.ClassUtil;
 
 /**
  * @version 2012/04/17 23:50:41
@@ -103,7 +102,7 @@ public class Project {
             // fabric project
             this.root = I.locate("").toAbsolutePath();
         } else {
-            Path archive = ClassUtil.getArchive(projectClass);
+            Path archive = I.locate(projectClass);
 
             if (Files.isDirectory(archive)) {
                 // directory
@@ -301,8 +300,7 @@ public class Project {
      * @return
      */
     public Set<Library> getLibrary(String projectName, String productName, String version) {
-        return I.make(Repository.class)
-                .collectDependency(new Library(projectName, productName, version), Scope.Runtime);
+        return I.make(Repository.class).collectDependency(new Library(projectName, productName, version), Scope.Runtime);
     }
 
     /**
@@ -592,7 +590,7 @@ public class Project {
         List<AnnotationValidator> validators = I.find(AnnotationValidator.class);
 
         if (!validators.isEmpty()) {
-            libraries.add(ClassUtil.getArchive(Bee.class));
+            libraries.add(I.locate(Bee.class));
         }
 
         return libraries;

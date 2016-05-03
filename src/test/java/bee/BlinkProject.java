@@ -19,7 +19,6 @@ import java.util.List;
 import bee.api.License;
 import bee.api.Project;
 import kiss.I;
-import kiss.model.ClassUtil;
 
 /**
  * @version 2012/11/12 13:20:32
@@ -27,7 +26,7 @@ import kiss.model.ClassUtil;
 public class BlinkProject extends Project {
 
     static {
-        I.load(ClassUtil.getArchive(Bee.class));
+        I.load(I.locate(Bee.class));
     }
 
     /** The root. */

@@ -40,7 +40,6 @@ import bee.api.Task;
 import bee.util.PathPattern;
 import kiss.Extensible;
 import kiss.I;
-import kiss.model.ClassUtil;
 
 /**
  * @version 2015/06/22 16:36:47
@@ -236,7 +235,7 @@ public class Javadoc extends Task {
             ui.talk(outputDirectory);
 
             // build index.html
-            I.copy(ClassUtil.getArchive(Bee.class).resolve("bee/task/javadoc"), outputDirectory, "**");
+            I.copy(I.locate(Bee.class).resolve("bee/task/javadoc"), outputDirectory, "**");
 
             for (ClassDoc classDoc : root.classes()) {
                 System.out.format("Class: %s\r\n", classDoc.name() + "  " + classDoc.qualifiedName());

@@ -48,11 +48,10 @@ import javax.tools.JavaFileObject.Kind;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
-import kiss.I;
-import kiss.model.ClassUtil;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Library;
+import kiss.I;
 
 /**
  * @version 2012/11/12 13:22:59
@@ -73,8 +72,7 @@ public class JavaCompiler {
                 try {
                     URLClassLoader loader = new URLClassLoader(new URL[] {tools.toUri().toURL()});
 
-                    compiler = (javax.tools.JavaCompiler) Class.forName("com.sun.tools.javac.api.JavacTool", true, loader)
-                            .newInstance();
+                    compiler = (javax.tools.JavaCompiler) Class.forName("com.sun.tools.javac.api.JavacTool", true, loader).newInstance();
                 } catch (Exception e) {
                     throw I.quiet(e);
                 }
@@ -235,7 +233,7 @@ public class JavaCompiler {
     public void addProcessor(Class<? extends Processor> processor) {
         if (processor != null && !processorClasses.contains(processor)) {
             processorClasses.add(processor.getName());
-            processorClassPaths.add(ClassUtil.getArchive(processor).toAbsolutePath());
+            processorClassPaths.add(I.locate(processor).toAbsolutePath());
         }
     }
 
@@ -676,8 +674,7 @@ public class JavaCompiler {
          *      java.lang.String, java.util.Set, boolean)
          */
         @Override
-        public Iterable<JavaFileObject> list(Location location, String packageName, Set<Kind> kinds, boolean recurse)
-                throws IOException {
+        public Iterable<JavaFileObject> list(Location location, String packageName, Set<Kind> kinds, boolean recurse) throws IOException {
             return manager.list(location, packageName, kinds, recurse);
         }
 
@@ -737,8 +734,7 @@ public class JavaCompiler {
          *      java.lang.String, javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
          */
         @Override
-        public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling)
-                throws IOException {
+        public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
             if (output == null) {
                 return new Bytecode(className);
             } else {
@@ -751,8 +747,7 @@ public class JavaCompiler {
          *      java.lang.String, java.lang.String)
          */
         @Override
-        public FileObject getFileForInput(Location location, String packageName, String relativeName)
-                throws IOException {
+        public FileObject getFileForInput(Location location, String packageName, String relativeName) throws IOException {
             return manager.getFileForInput(location, packageName, relativeName);
         }
 

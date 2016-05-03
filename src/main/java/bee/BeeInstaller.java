@@ -23,7 +23,6 @@ import bee.api.Repository;
 import bee.util.JarArchiver;
 import bee.util.Paths;
 import kiss.I;
-import kiss.model.ClassUtil;
 
 /**
  * @version 2015/06/22 11:53:31
@@ -39,7 +38,7 @@ public class BeeInstaller {
      * </p>
      */
     public static final void main(String... args) {
-        install(ClassUtil.getArchive(BeeInstaller.class));
+        install(I.locate(BeeInstaller.class));
     }
 
     /**
@@ -80,8 +79,7 @@ public class BeeInstaller {
                 // windows
                 // use JDK full path to avoid using JRE
                 bat.add("@echo off");
-                bat.add(JavaHome.resolve("bin/java") + " -cp \"" + dest.toString() + "\" " + Bee.class
-                        .getName() + " %*");
+                bat.add(JavaHome.resolve("bin/java") + " -cp \"" + dest.toString() + "\" " + Bee.class.getName() + " %*");
             } else {
                 // linux
                 // TODO

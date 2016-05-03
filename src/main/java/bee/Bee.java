@@ -30,7 +30,6 @@ import bee.util.Paths;
 import bee.util.Stopwatch;
 import kiss.Extensible;
 import kiss.I;
-import kiss.model.ClassUtil;
 
 /**
  * <p>
@@ -299,7 +298,7 @@ public class Bee {
 
             JavaCompiler compiler = new JavaCompiler();
             compiler.addSourceDirectory(project.getProjectSources());
-            compiler.addClassPath(ClassUtil.getArchive(Bee.class));
+            compiler.addClassPath(I.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();
         }
