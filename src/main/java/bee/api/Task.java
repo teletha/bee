@@ -392,7 +392,7 @@ public abstract class Task implements Extensible {
         private Info(String name, Class<Task> task) {
             this.task = task;
 
-            for (Entry<Method, List<Annotation>> info : I.collectAnnotationsOf(task).entrySet()) {
+            for (Entry<Method, List<Annotation>> info : I.collectAnnotatedMethods(task).entrySet()) {
                 for (Annotation annotation : info.getValue()) {
                     if (annotation.annotationType() == Command.class) {
                         Method method = info.getKey();

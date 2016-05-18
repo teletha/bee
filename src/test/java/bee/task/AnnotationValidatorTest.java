@@ -29,7 +29,6 @@ import bee.sample.annotation.SourceAnnotation;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.JavaCompiler;
 import kiss.I;
-import kiss.model.ClassUtil;
 
 /**
  * @version 2012/11/11 16:26:26
@@ -204,7 +203,7 @@ public class AnnotationValidatorTest {
          */
         private TestableProcessor(AnnotationValidator<T> validator) {
             this.validator = validator;
-            this.annotation = ClassUtil.getParameter(validator.getClass(), AnnotationValidator.class)[0];
+            this.annotation = I.collectParameters(validator.getClass(), AnnotationValidator.class)[0];
         }
 
         /**
