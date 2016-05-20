@@ -35,6 +35,7 @@ import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.XML;
+import kiss.model.Model;
 
 /**
  * @version 2015/06/22 13:17:10
@@ -291,7 +292,13 @@ public abstract class Task implements Extensible {
             Method command = info.commands.get(commandName.toLowerCase());
 
             if (command == null) {
-                TaskFailure failure = new TaskFailure("Task [", taskName, "] doesn't have the command [", commandName, "]. Task [", taskName, "] can use the following commands.");
+                TaskFailure failure = new TaskFailure("Task [",
+                        taskName,
+                        "] doesn't have the command [",
+                        commandName,
+                        "]. Task [",
+                        taskName,
+                        "] can use the following commands.");
                 for (Entry<String, String> entry : info.descriptions.entrySet()) {
                     failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
                 }
@@ -392,7 +399,7 @@ public abstract class Task implements Extensible {
         private Info(String name, Class<Task> task) {
             this.task = task;
 
-            for (Entry<Method, List<Annotation>> info : I.collectAnnotatedMethods(task).entrySet()) {
+            for (Entry<Method, List<Annotation>> info : Model.collectAnnotatedMethods(task).entrySet()) {
                 for (Annotation annotation : info.getValue()) {
                     if (annotation.annotationType() == Command.class) {
                         Method method = info.getKey();
