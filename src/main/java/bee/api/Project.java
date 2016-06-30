@@ -663,7 +663,7 @@ public class Project {
             dependency.child("groupId").text(library.group);
             dependency.child("artifactId").text(library.name);
             dependency.child("version").text(library.version);
-            dependency.child("scope").text(library.scope.name());
+            dependency.child("scope").text(library.scope.toString());
 
             XML exclusions = dependency.child("exclusions");
 

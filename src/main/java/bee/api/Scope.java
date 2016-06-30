@@ -65,7 +65,7 @@ public enum Scope {
      */
     public DependencyFilter getFilter() {
         return (node, parents) -> {
-            return accept(node) && parents.stream().allMatch(this::accept);
+            return accept(node.getDependency()) && parents.stream().map(DependencyNode::getDependency).allMatch(this::accept);
         };
     }
 
@@ -77,9 +77,7 @@ public enum Scope {
      * @param dependency
      * @return
      */
-    private boolean accept(DependencyNode node) {
-        Dependency dependency = node.getDependency();
-
+    public boolean accept(Dependency dependency) {
         if (dependency == null) {
             return true;
         }

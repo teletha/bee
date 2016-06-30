@@ -38,6 +38,7 @@ import org.eclipse.aether.collection.DependencyGraphTransformer;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
@@ -201,11 +202,34 @@ public class Repository {
 
                 install(dummy, Platform.JavaTool, Platform.JavaHome.resolve("src.zip"));
             }
-            request.addDependency(new Dependency(library.artifact, library.scope.toString()));
+
+            Dependency dependency = new Dependency(library.artifact, library.scope.toString());
+
+            if (scope.accept(dependency)) {
+                request.addDependency(dependency);
+            }
         }
 
         try {
-            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
+            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, (node, parents) -> {
+                if (node == null || node.getArtifact() == null) {
+                    return true;
+                }
+
+                List<DependencyNode> list = new ArrayList();
+
+                for (int i = parents.size() - 1; 0 <= i; i--) {
+                    DependencyNode parent = parents.get(i);
+
+                    if (parent != null && parent.getArtifact() != null) {
+                        list.add(parent);
+                    }
+                }
+                list.add(node);
+
+                Scope root = Scope.by(list.get(0).getDependency().getScope());
+                return list.stream().allMatch(n -> root.accept(n.getDependency()));
+            }));
 
             for (ArtifactResult dependency : result.getArtifactResults()) {
                 Artifact artifact = dependency.getArtifact();
