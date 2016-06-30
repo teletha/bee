@@ -9,23 +9,27 @@
  */
 package bee.api;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyFilter;
+import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.artifact.JavaScopes;
-import org.eclipse.aether.util.filter.DependencyFilterUtils;
 
 /**
- * @version 2012/03/21 20:20:37
+ * @version 2016/06/30 11:14:45
  */
 public enum Scope {
 
     /** Depend at anytime. */
-    Compile(JavaScopes.COMPILE),
+    Compile(JavaScopes.COMPILE, JavaScopes.PROVIDED, JavaScopes.SYSTEM),
 
     /** Depend at test phase only. */
-    Test(JavaScopes.TEST),
+    Test(JavaScopes.TEST, JavaScopes.COMPILE, JavaScopes.PROVIDED, JavaScopes.RUNTIME, JavaScopes.SYSTEM),
 
     /** Depend at runtime phase only. */
-    Runtime(JavaScopes.RUNTIME),
+    Runtime(JavaScopes.RUNTIME, JavaScopes.COMPILE),
 
     /** Depend at runtime phase only. */
     Provided(JavaScopes.PROVIDED),
@@ -36,15 +40,20 @@ public enum Scope {
     /** The internal flag. */
     private final String type;
 
+    /** The acceptable scope. */
+    private List<String> acceptable;
+
     /**
      * <p>
      * Scope definition.
      * </p>
      * 
-     * @param type
+     * @param type A scope type.
+     * @param acceptables A list of acceptable scope types.
      */
-    private Scope(String type) {
+    private Scope(String type, String... acceptables) {
         this.type = type;
+        this.acceptable = Arrays.asList(acceptables);
     }
 
     /**
@@ -55,7 +64,29 @@ public enum Scope {
      * @return
      */
     public DependencyFilter getFilter() {
-        return DependencyFilterUtils.classpathFilter(type);
+        return (node, parents) -> {
+            return accept(node) && parents.stream().allMatch(this::accept);
+        };
+    }
+
+    /**
+     * <p>
+     * Test scope.
+     * </p>
+     * 
+     * @param dependency
+     * @return
+     */
+    private boolean accept(DependencyNode node) {
+        Dependency dependency = node.getDependency();
+
+        if (dependency == null) {
+            return true;
+        }
+
+        String scope = dependency.getScope();
+
+        return type.equals(scope) || acceptable.contains(scope);
     }
 
     /**

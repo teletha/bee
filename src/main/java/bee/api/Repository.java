@@ -93,7 +93,12 @@ public class Repository {
     private final List<DependencySelector> dependencyFilters = new ArrayList();
 
     /** The default dependency builder. */
-    private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new JavaScopeDeriver()), new JavaDependencyContextRefiner());
+    private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(
+            new ConflictResolver(new NearestVersionSelector(),
+                    new JavaScopeSelector(),
+                    new SimpleOptionalitySelector(),
+                    new JavaScopeDeriver()),
+            new JavaDependencyContextRefiner());
 
     /** The path to local repository. */
     private LocalRepository localRepository;
@@ -189,8 +194,8 @@ public class Repository {
 
         for (Library library : libraries) {
             // install tools.jar if needed
-            if ((library.group.equals("sun.jdk") || library.group.equals("com.sun")) && library.name
-                    .equals("tools") && Files.notExists(library.getJar())) {
+            if ((library.group.equals("sun.jdk") || library.group.equals("com.sun")) && library.name.equals("tools") && Files
+                    .notExists(library.getJar())) {
                 Project dummy = new Project();
                 dummy.product(library.group, library.name, library.version);
 
@@ -200,8 +205,7 @@ public class Repository {
         }
 
         try {
-            DependencyResult result = system
-                    .resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
+            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, scope.getFilter()));
 
             for (ArtifactResult dependency : result.getArtifactResults()) {
                 Artifact artifact = dependency.getArtifact();
@@ -414,8 +418,7 @@ public class Repository {
          */
         @Override
         public void artifactDescriptorInvalid(RepositoryEvent event) {
-            ui.talk("Invalid artifact descriptor for " + event.getArtifact() + ": " + event.getException()
-                    .getMessage());
+            ui.talk("Invalid artifact descriptor for " + event.getArtifact() + ": " + event.getException().getMessage());
         }
 
         /**
@@ -424,8 +427,7 @@ public class Repository {
         @Override
         public void artifactDescriptorMissing(RepositoryEvent event) {
             ArtifactDescriptorRequest request = (ArtifactDescriptorRequest) event.getTrace().getData();
-            ui.error(request.getArtifact(), " is not found at the following remote repositories.", request
-                    .getRepositories());
+            ui.error(request.getArtifact(), " is not found at the following remote repositories.", request.getRepositories());
         }
 
         /**

@@ -17,7 +17,7 @@ public class Project extends bee.api.Project {
 
     private String aetherGroup = "org.eclipse.aether";
 
-    private String aetherVersion = "1.0.2.v20150114";
+    private String aetherVersion = "1.1.0";
 
     {
         product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
