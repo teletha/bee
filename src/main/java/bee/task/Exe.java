@@ -108,8 +108,7 @@ public class Exe extends Task {
             ui.talk("Write " + settingFile.getFileName() + ".");
 
             // copy exe launcher
-            I.copy(Exe.class.getResourceAsStream("JanelWindows" + suffix + ".exe"), Files
-                    .newOutputStream(exeFile), true);
+            I.copy(Exe.class.getResourceAsStream("JanelWindows" + suffix + ".exe"), Files.newOutputStream(exeFile), true);
             ui.talk("Write " + exeFile.getFileName() + ".");
 
             if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {

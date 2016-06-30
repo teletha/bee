@@ -136,15 +136,13 @@ public class ZipArchiver {
 
                 try {
                     for (Entry entry : entries) {
-                        archiver.directory = entry.directory;
-                        archiver.base = entry.base;
+                        // compute base directory
+                        Path base = Files.isDirectory(entry.base) ? entry.base : entry.base.getParent();
 
                         // scan entry
                         I.walk(entry.base, entry.patterns).forEach(file -> {
                             try {
-                                String path = archiver.directory + archiver.base.relativize(file)
-                                        .toString()
-                                        .replace(File.separatorChar, '/');
+                                String path = entry.directory + base.relativize(file).toString().replace(File.separatorChar, '/');
                                 BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
 
                                 ZipEntry zip = new ZipEntry(path);
@@ -199,12 +197,6 @@ public class ZipArchiver {
      * @version 2015/06/23 21:21:57
      */
     private static class Archiver extends ZipOutputStream implements Disposable {
-
-        /** The base directory path. */
-        private String directory;
-
-        /** The base path. */
-        private Path base;
 
         /**
          * @param output
