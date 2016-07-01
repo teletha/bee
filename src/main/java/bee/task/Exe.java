@@ -15,7 +15,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import bee.Platform;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
@@ -25,18 +24,12 @@ import bee.util.ZipArchiver;
 import kiss.I;
 
 /**
- * @version 2015/06/22 16:36:41
+ * @version 2016/07/01 15:10:46
  */
 public class Exe extends Task {
 
-    /** The icon exchanger file name. */
-    private static final String iconChangerName = "ResHacker.exe";
-
     /** The temporary directory. */
     private final Path temporary;
-
-    /** The location of icon changer. */
-    private final Path iconChanger;
 
     /** The output for the generated zip file. */
     private final Path zipOutput;
@@ -50,7 +43,6 @@ public class Exe extends Task {
     public Exe() {
         try {
             temporary = I.locateTemporary();
-            iconChanger = temporary.resolve(iconChangerName);
             zipOutput = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".zip");
 
             Files.createDirectories(temporary);
@@ -93,47 +85,41 @@ public class Exe extends Task {
      * @param suffix
      */
     private void build(ZipArchiver archiver, String suffix) {
-        Path settingFile = temporary.resolve(project.getProduct() + suffix + ".lap");
-        Path exeFile = temporary.resolve(project.getProduct() + suffix + ".exe");
+        Path builder = temporary.resolve("exewrap" + suffix + ".exe");
+        Path exe = temporary.resolve(project.getProduct() + suffix + ".exe");
 
         try {
             // search main classes
             String main = require(FindMain.class).main();
 
-            // write setting file
-            List<String> setting = new ArrayList();
-            setting.add("janel.main.class=" + main);
-            setting.add("janel.classpath.jars.dir=lib");
-            Files.write(settingFile, setting, Platform.Encoding);
-            ui.talk("Write " + settingFile.getFileName() + ".");
+            // unzip exe builder
+            I.copy(Exe.class.getResourceAsStream("exewrap" + suffix + ".exe"), Files.newOutputStream(builder), true);
 
-            // copy exe launcher
-            I.copy(Exe.class.getResourceAsStream("JanelWindows" + suffix + ".exe"), Files.newOutputStream(exeFile), true);
-            ui.talk("Write " + exeFile.getFileName() + ".");
-
+            // build command line
+            List<String> command = new ArrayList();
+            command.add(builder.toString());
+            command.add("-e");
+            command.add("SINGLE");
+            command.add("-M");
+            command.add(main);
+            command.add("-g");
+            command.add("-j");
+            command.add(project.locateJar().toString());
+            command.add("-o");
+            command.add(exe.toAbsolutePath().toString());
             if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
-                // unzip icon changer
-                I.copy(Exe.class.getResourceAsStream(iconChangerName), Files.newOutputStream(iconChanger), true);
-
-                // build command line
-                List<String> command = new ArrayList();
-                command.add(iconChanger.toString());
-                command.add("-addoverwrite");
-                command.add(exeFile.toString() + ",");
-                command.add(exeFile.toString() + ",");
-                command.add(icon.toAbsolutePath() + ",");
-                command.add("ICONGROUP,");
-                command.add("101,");
-
-                // execute icon changer
-                Process.with().workingDirectory(iconChanger.getParent()).run(command);
+                command.add("-i");
+                command.add(icon.toString());
             }
+
+            // execute exe builder
+            Process.with().workingDirectory(builder.getParent()).ignoreOutput().run(command);
+            ui.talk("Write " + exe.getFileName() + ".");
         } catch (Exception e) {
             throw I.quiet(e);
         }
 
         // pack
-        archiver.add(settingFile);
-        archiver.add(exeFile);
+        archiver.add(exe);
     }
 }

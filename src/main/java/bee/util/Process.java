@@ -25,7 +25,7 @@ import kiss.I;
  * Utility for creating sub process.
  * </p>
  * 
- * @version 2015/06/18 1:57:14
+ * @version 2016/07/01 15:10:31
  */
 public class Process {
 
@@ -37,6 +37,9 @@ public class Process {
 
     /** The execution type. */
     private boolean sync = true;
+
+    /** The flag. */
+    private boolean showOutput = true;
 
     /**
      * Hide Constructor.
@@ -101,6 +104,20 @@ public class Process {
 
     /**
      * <p>
+     * Make this process ignore system output.
+     * </p>
+     * 
+     * @return Fluent API.
+     */
+    public Process ignoreOutput() {
+        this.showOutput = false;
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * <p>
      * Execute sub process.
      * </p>
      * 
@@ -129,8 +146,10 @@ public class Process {
 
             java.lang.Process process = builder.start();
 
-            new ProcessReader(new InputStreamReader(process.getInputStream(), encoding)).start();
-            new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding)).start();
+            if (showOutput) {
+                new ProcessReader(new InputStreamReader(process.getInputStream(), encoding)).start();
+                new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding)).start();
+            }
 
             if (sync) {
                 process.waitFor();
