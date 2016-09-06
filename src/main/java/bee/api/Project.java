@@ -304,6 +304,13 @@ public class Project {
     }
 
     /**
+     * Declare dependency against to Lombok library.
+     */
+    protected final void requireLombok() {
+        require("org.projectlombok", "lombok", "1.16.10").atProvided();
+    }
+
+    /**
      * <p>
      * Declare dependency.
      * </p>
