@@ -10,24 +10,30 @@
 package bee.task;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
 import bee.Bee;
+import bee.Platform;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.task.AnnotationProcessor.ProjectInfo;
+import bee.util.Java;
+import bee.util.Java.JVM;
 import bee.util.PathPattern;
+import bee.util.Process;
 import kiss.I;
 import kiss.XML;
 
 /**
- * @version 2015/06/22 16:28:38
+ * @version 2016/09/08 12:04:28
  */
 public class Eclipse extends Task {
 
@@ -49,6 +55,21 @@ public class Eclipse extends Task {
             createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
         }
         ui.talk("Create Eclipse configuration files.");
+
+        // check lombok
+        if (project.hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
+            Path eclipse = locateActiveEclipse();
+            Library lombok = project.getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion()).iterator().next();
+
+            // install lombok
+            Java.with()
+                    .classPath(loadBee())
+                    .classPath(I.locate(I.class))
+                    .classPath(lombok.getJar())
+                    .enableAssertion()
+                    .encoding(project.getEncoding())
+                    .run(LombokInstaller.class, "install", eclipse.toAbsolutePath().toString());
+        }
     }
 
     /**
@@ -120,10 +141,7 @@ public class Eclipse extends Task {
         // Bee API
         if (!project.equals(Bee.TOOL)) {
             for (Library lib : project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion())) {
-                doc.child("classpathentry")
-                        .attr("kind", "lib")
-                        .attr("path", lib.getJar())
-                        .attr("sourcepath", lib.getSourceJar());
+                doc.child("classpathentry").attr("kind", "lib").attr("path", lib.getJar()).attr("sourcepath", lib.getSourceJar());
             }
         }
 
@@ -146,11 +164,7 @@ public class Eclipse extends Task {
         XML doc = I.xml("factorypath");
 
         for (Path processor : processors) {
-            doc.child("factorypathentry")
-                    .attr("kind", "EXTJAR")
-                    .attr("id", processor)
-                    .attr("enabled", true)
-                    .attr("runInBatchMode", false);
+            doc.child("factorypathentry").attr("kind", "EXTJAR").attr("id", processor).attr("enabled", true).attr("runInBatchMode", false);
         }
 
         // write file
@@ -213,5 +227,58 @@ public class Eclipse extends Task {
      */
     private Path relative(Path path) {
         return project.getRoot().relativize(path);
+    }
+
+    /**
+     * <p>
+     * Locate eclipse execution file which is activating now.
+     * </p>
+     * 
+     * @return
+     */
+    private Path locateActiveEclipse() {
+        Path eclipse = null;
+
+        if (Platform.isWindows()) {
+            String result = Process.with().read(Arrays.asList("PowerShell", "Get-Process Eclipse | Format-List Path"));
+
+            if (result.startsWith("Path :")) {
+                result = result.substring(6).trim();
+            }
+            eclipse = I.locate(result);
+        } else {
+            // If this exception will be thrown, it is bug of this program. So we must rethrow the
+            // wrapped error in here.
+            throw new Error("Not Implement for this platform.");
+        }
+
+        if (Files.exists(eclipse)) {
+            return eclipse;
+        } else {
+            throw new Error("Please activate eclipse application.");
+        }
+    }
+
+    /**
+     * @version 2016/09/08 12:03:54
+     */
+    private static class LombokInstaller extends JVM {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected boolean process() {
+            try {
+                Class main = I.type("lombok.launch.Main");
+                Method method = main.getMethod("main", String[].class);
+                method.setAccessible(true);
+                method.invoke(null, new Object[] {args});
+
+                return true;
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
+        }
     }
 }

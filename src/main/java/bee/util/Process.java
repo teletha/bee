@@ -25,7 +25,7 @@ import kiss.I;
  * Utility for creating sub process.
  * </p>
  * 
- * @version 2016/07/01 15:10:31
+ * @version 2016/09/08 10:46:51
  */
 public class Process {
 
@@ -124,6 +124,30 @@ public class Process {
      * @param command
      */
     public void run(List<String> command) {
+        run(command, true);
+    }
+
+    /**
+     * <p>
+     * Execute sub process and accept its result.
+     * </p>
+     * 
+     * @param command
+     */
+    public String read(List<String> command) {
+        return run(command, false);
+    }
+
+    /**
+     * <p>
+     * Execute sub process.
+     * </p>
+     * 
+     * @param command
+     * @param userOutput
+     * @return
+     */
+    private String run(List<String> command, boolean userOutput) {
         try {
             ProcessBuilder builder = new ProcessBuilder();
 
@@ -145,17 +169,22 @@ public class Process {
             builder.command(command);
 
             java.lang.Process process = builder.start();
+            ProcessReader output = null;
+            ProcessReader error = null;
 
             if (showOutput) {
-                new ProcessReader(new InputStreamReader(process.getInputStream(), encoding)).start();
-                new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding)).start();
+                output = new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), userOutput);
+                output.start();
+                error = new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding), true);
+                error.start();
             }
 
-            if (sync) {
+            if (sync || !userOutput) {
                 process.waitFor();
             }
-
             process.destroy();
+
+            return userOutput ? null : output.output.toString().trim();
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -170,14 +199,15 @@ public class Process {
         private final InputStreamReader input;
 
         /** The output. */
-        private final Appendable output;
+        private Appendable output;
 
         /**
          * @param input
+         * @param systemOutput
          */
-        private ProcessReader(InputStreamReader input) {
+        private ProcessReader(InputStreamReader input, boolean userOutput) {
             this.input = input;
-            this.output = I.make(UserInterface.class).getInterface();
+            this.output = userOutput ? I.make(UserInterface.class).getInterface() : new StringBuilder();
         }
 
         /**
@@ -189,7 +219,6 @@ public class Process {
                 int i = input.read();
 
                 while (i != -1) {
-                    // output it
                     output.append((char) i);
 
                     // read next character

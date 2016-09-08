@@ -50,6 +50,9 @@ public final class Platform {
     /** The local repository. */
     public static final Path BeeLocalRepository;
 
+    /** The platform type. */
+    private static boolean isWindows;
+
     // initialization
     static {
         Path bin = null;
@@ -77,6 +80,7 @@ public final class Platform {
                         bin = directory;
                         java = windows;
                         bee = directory.resolve("bee.bat");
+                        isWindows = true;
 
                         break root;
                     }
@@ -132,5 +136,16 @@ public final class Platform {
      * Hide constructor.
      */
     private Platform() {
+    }
+
+    /**
+     * <p>
+     * Check platform.
+     * </p>
+     * 
+     * @return
+     */
+    public static boolean isWindows() {
+        return isWindows;
     }
 }

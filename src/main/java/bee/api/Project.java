@@ -279,6 +279,22 @@ public class Project {
 
     /**
      * <p>
+     * Check whether this project depends on the specified product or not.
+     * </p>
+     * 
+     * @param projectName A project name to search.
+     * @param productName A product name to search.
+     * @return A search result.
+     */
+    public boolean hasDependency(String projectName, String productName) {
+        return getDependency(Scope.Compile).stream()
+                .filter(p -> p.group.equals(projectName) && p.name.equals(productName))
+                .findFirst()
+                .isPresent();
+    }
+
+    /**
+     * <p>
      * Resolve all dependencies for the specified scope.
      * </p>
      * 
@@ -306,8 +322,8 @@ public class Project {
     /**
      * Declare dependency against to Lombok library.
      */
-    protected final void requireLombok() {
-        require("org.projectlombok", "lombok", "1.16.10").atProvided();
+    protected final Library requireLombok() {
+        return require(Bee.Lombok.productGroup, Bee.Lombok.productName, Bee.Lombok.productVersion).atProvided();
     }
 
     /**

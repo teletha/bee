@@ -59,6 +59,13 @@ public class Bee {
         }
     };
 
+    public static final Project Lombok = new Project() {
+
+        {
+            product("org.projectlombok", "lombok", "1.16.10");
+        }
+    };
+
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 

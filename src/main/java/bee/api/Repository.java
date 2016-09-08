@@ -94,12 +94,7 @@ public class Repository {
     private final List<DependencySelector> dependencyFilters = new ArrayList();
 
     /** The default dependency builder. */
-    private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(
-            new ConflictResolver(new NearestVersionSelector(),
-                    new JavaScopeSelector(),
-                    new SimpleOptionalitySelector(),
-                    new JavaScopeDeriver()),
-            new JavaDependencyContextRefiner());
+    private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new JavaScopeDeriver()), new JavaDependencyContextRefiner());
 
     /** The path to local repository. */
     private LocalRepository localRepository;
