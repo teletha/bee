@@ -22,6 +22,7 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+import bee.Bee;
 import bee.TaskFailure;
 import bee.api.Command;
 import bee.api.Scope;
@@ -49,7 +50,7 @@ public class Test extends Task {
                     .classPath(project.getClasses().base)
                     .classPath(project.getTestClasses())
                     .classPath(project.getDependency(Scope.Test))
-                    .classPath(loadBee())
+                    .classPath(Bee.class)
                     .enableAssertion()
                     .encoding(project.getEncoding())
                     .workingDirectory(project.getRoot())
@@ -115,8 +116,7 @@ public class Test extends Task {
                         }
                     }
 
-                    ui.talk(buildResult(result.getRunCount(), fail.size(), error.size(), result.getIgnoreCount(), result
-                            .getRunTime()));
+                    ui.talk(buildResult(result.getRunCount(), fail.size(), error.size(), result.getIgnoreCount(), result.getRunTime()));
 
                     runs += result.getRunCount();
                     skips += result.getIgnoreCount();

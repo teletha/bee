@@ -63,10 +63,8 @@ public class Eclipse extends Task {
 
             // install lombok
             Java.with()
-                    .classPath(loadBee())
-                    .classPath(I.locate(I.class))
+                    .classPath(I.class, Bee.class)
                     .classPath(lombok.getJar())
-                    .enableAssertion()
                     .encoding(project.getEncoding())
                     .run(LombokInstaller.class, "install", eclipse.toAbsolutePath().toString());
         }

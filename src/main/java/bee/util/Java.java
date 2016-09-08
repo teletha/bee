@@ -119,6 +119,24 @@ public class Java {
 
     /**
      * <p>
+     * Add classpath.
+     * </p>
+     * 
+     * @param path
+     */
+    public Java classPath(Class... classes) {
+        if (classes != null) {
+            for (Class clazz : classes) {
+                classPath(I.locate(clazz));
+            }
+        }
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * <p>
      * Enable assertion functionality.
      * </p>
      */

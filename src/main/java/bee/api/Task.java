@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeMap;
 
-import bee.Bee;
 import bee.Platform;
 import bee.TaskFailure;
 import bee.UserInterface;
@@ -96,31 +94,6 @@ public abstract class Task implements Extensible {
         for (String task : tasks) {
             I.make(Tasks.class).execute(task);
         }
-    }
-
-    /**
-     * <p>
-     * Use other library from task specific API.
-     * </p>
-     * 
-     * @param group
-     * @param product
-     * @param version
-     * @return
-     */
-    protected final Set<Library> load(String group, String product, String version) {
-        return I.make(Repository.class).collectDependency(group, product, version, Scope.Runtime);
-    }
-
-    /**
-     * <p>
-     * Use Bee library.
-     * </p>
-     * 
-     * @return
-     */
-    protected final Path loadBee() {
-        return I.locate(Bee.class);
     }
 
     /**
@@ -292,13 +265,7 @@ public abstract class Task implements Extensible {
             Method command = info.commands.get(commandName.toLowerCase());
 
             if (command == null) {
-                TaskFailure failure = new TaskFailure("Task [",
-                        taskName,
-                        "] doesn't have the command [",
-                        commandName,
-                        "]. Task [",
-                        taskName,
-                        "] can use the following commands.");
+                TaskFailure failure = new TaskFailure("Task [", taskName, "] doesn't have the command [", commandName, "]. Task [", taskName, "] can use the following commands.");
                 for (Entry<String, String> entry : info.descriptions.entrySet()) {
                     failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
                 }
