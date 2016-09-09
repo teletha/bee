@@ -24,7 +24,6 @@ import java.util.List;
 import bee.api.Command;
 import kiss.Decoder;
 import kiss.I;
-import kiss.model.Model;
 
 /**
  * <p>
@@ -166,9 +165,6 @@ public abstract class UserInterface {
             } else {
                 Decoder<T> decoder = I.find(Decoder.class, defaultAnswer.getClass());
 
-                if (decoder == null) {
-                    decoder = Model.of(defaultAnswer).decoder();
-                }
                 return answer.length() == 0 ? defaultAnswer : decoder.decode(answer);
             }
         } catch (IOException e) {

@@ -61,12 +61,24 @@ public class Eclipse extends Task {
             Path eclipse = locateActiveEclipse();
             Library lombok = project.getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion()).iterator().next();
 
-            // install lombok
-            Java.with()
-                    .classPath(I.class, Bee.class)
-                    .classPath(lombok.getJar())
-                    .encoding(project.getEncoding())
-                    .run(LombokInstaller.class, "install", eclipse.toAbsolutePath().toString());
+            if (!isLomboked(eclipse)) {
+                // install lombok
+                Java.with()
+                        .classPath(I.class, Bee.class)
+                        .classPath(lombok.getJar())
+                        .encoding(project.getEncoding())
+                        .run(LombokInstaller.class, "install", eclipse.toAbsolutePath().toString());
+
+                // restart eclipse
+                boolean result = ui.confirm("To enable Lombok, May I restart your Eclipse?");
+
+                if (result) {
+                    // restart eclipse
+
+                } else {
+                    ui.warn("Restart your Eclipse to enable Lombok.");
+                }
+            }
         }
     }
 
@@ -255,6 +267,27 @@ public class Eclipse extends Task {
         } else {
             throw new Error("Please activate eclipse application.");
         }
+    }
+
+    /**
+     * <p>
+     * Check whether the specified eclipse application is customized or not.
+     * </p>
+     * 
+     * @return A result.
+     */
+    private boolean isLomboked(Path eclipse) {
+        try {
+            for (String line : Files.readAllLines(eclipse.resolveSibling("eclipse.ini"))) {
+                if (line.contains("lombok.jar")) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+
     }
 
     /**
