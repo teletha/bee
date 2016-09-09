@@ -169,14 +169,11 @@ public class Process {
             builder.command(command);
 
             java.lang.Process process = builder.start();
-            ProcessReader output = null;
-            ProcessReader error = null;
+            Appendable output = userOutput ? I.make(UserInterface.class).getInterface() : new StringBuilder();
 
             if (showOutput) {
-                output = new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), userOutput);
-                output.start();
-                error = new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding), true);
-                error.start();
+                new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), output);
+                new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding), output);
             }
 
             if (sync || !userOutput) {
@@ -184,7 +181,7 @@ public class Process {
             }
             process.destroy();
 
-            return userOutput ? null : output.output.toString().trim();
+            return userOutput ? null : output.toString().trim();
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -205,9 +202,12 @@ public class Process {
          * @param input
          * @param systemOutput
          */
-        private ProcessReader(InputStreamReader input, boolean userOutput) {
+        private ProcessReader(InputStreamReader input, Appendable output) {
             this.input = input;
-            this.output = userOutput ? I.make(UserInterface.class).getInterface() : new StringBuilder();
+            this.output = output;
+
+            // start thread immediately
+            start();
         }
 
         /**
