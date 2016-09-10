@@ -70,14 +70,7 @@ public class Eclipse extends Task {
                         .run(LombokInstaller.class, "install", eclipse.toAbsolutePath().toString());
 
                 // restart eclipse
-                boolean result = ui.confirm("To enable Lombok, May I restart your Eclipse?");
-
-                if (result) {
-                    // restart eclipse
-
-                } else {
-                    ui.warn("Restart your Eclipse to enable Lombok.");
-                }
+                ui.warn("Restart your Eclipse to enable Lombok.");
             }
         }
     }
