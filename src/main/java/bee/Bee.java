@@ -26,6 +26,7 @@ import bee.api.StandardLicense;
 import bee.api.Task;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
+import bee.util.PathPattern;
 import bee.util.Paths;
 import bee.util.Stopwatch;
 import kiss.Extensible;
@@ -304,7 +305,8 @@ public class Bee {
             ui.talk("Compile project sources.");
 
             JavaCompiler compiler = new JavaCompiler();
-            compiler.addSourceDirectory(project.getProjectSources());
+            Path projectFile = project.getProjectDefinition();
+            compiler.addSourceDirectory(new PathPattern(projectFile.getParent(), projectFile.getFileName().toString()));
             compiler.addClassPath(I.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();

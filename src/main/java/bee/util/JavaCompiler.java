@@ -84,7 +84,7 @@ public class JavaCompiler {
     private final UserInterface ui;
 
     /** The source directories. */
-    private final List<Path> sources = new ArrayList();
+    private final List<PathPattern> sources = new ArrayList();
 
     /** The classpath list. */
     private final List<Path> classpaths = new ArrayList();
@@ -200,7 +200,7 @@ public class JavaCompiler {
             if (!Files.isDirectory(directory)) {
                 directory = directory.getParent();
             }
-            sources.add(directory);
+            addSourceDirectory(new PathPattern(directory, "**.java"));
         }
     }
 
@@ -213,9 +213,22 @@ public class JavaCompiler {
      */
     public void addSourceDirectory(PathSet directories) {
         if (directories != null) {
-            for (PathPattern path : directories) {
-                addSourceDirectory(path.base);
+            for (PathPattern pattern : directories) {
+                addSourceDirectory(new PathPattern(pattern.base, pattern.mix("**.java")));
             }
+        }
+    }
+
+    /**
+     * <p>
+     * Add the source code directory.
+     * </p>
+     * 
+     * @param outputDirectory Your source code directory.
+     */
+    public void addSourceDirectory(PathPattern directories) {
+        if (directories != null) {
+            sources.add(directories);
         }
     }
 
@@ -516,9 +529,9 @@ public class JavaCompiler {
             // =============================================
             List<File> sources = new ArrayList();
 
-            for (Path directory : this.sources) {
-                for (Path sourceFile : I.walk(directory, "**.java")) {
-                    Path classsFile = output.resolve(directory.relativize(sourceFile.getParent()))
+            for (PathPattern directory : this.sources) {
+                for (Path sourceFile : directory.list()) {
+                    Path classsFile = output.resolve(directory.base.relativize(sourceFile.getParent()))
                             .resolve(Paths.getName(sourceFile) + ".class");
 
                     if (Paths.getLastModified(classsFile) < Paths.getLastModified(sourceFile)) {
