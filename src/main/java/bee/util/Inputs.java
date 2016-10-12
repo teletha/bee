@@ -12,7 +12,7 @@ package bee.util;
 import javax.lang.model.SourceVersion;
 
 /**
- * @version 2012/04/01 15:57:20
+ * @version 2016/10/12 14:32:06
  */
 public class Inputs {
 
@@ -105,6 +105,30 @@ public class Inputs {
                 builder.append('-');
             }
             builder.append(Character.toLowerCase(c));
+        }
+        return builder.toString();
+    }
+
+    /**
+     * <p>
+     * Justify user input.
+     * </p>
+     * 
+     * @param input
+     * @param size
+     * @return
+     */
+    public static String justify(String input, int size) {
+        int length = input.length();
+
+        if (size <= length) {
+            return input;
+        }
+
+        StringBuilder builder = new StringBuilder(input);
+
+        for (int i = size - length; 0 < i; i--) {
+            builder.append(" ");
         }
         return builder.toString();
     }
