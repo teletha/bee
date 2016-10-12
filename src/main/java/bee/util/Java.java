@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
@@ -256,6 +257,9 @@ public class Java {
          * </p>
          */
         public static void main(String[] args) throws Exception {
+            // load stacktrace codec
+            I.load(Java.class, true);
+
             // launch observer
             JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(args[0]));
             MBeanServerConnection connection = connector.getMBeanServerConnection();
@@ -566,6 +570,42 @@ public class Java {
         public StackTraceElement decode(String value) {
             String[] values = value.split(" ");
             return new StackTraceElement(values[0], values[1], values[2], Integer.parseInt(values[3]));
+        }
+    }
+
+    /**
+     * @version 2016/10/12 10:53:26
+     */
+    @SuppressWarnings("unused")
+    private static final class StackTracesCodec implements Decoder<StackTraceElement[]>, Encoder<StackTraceElement[]> {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String encode(StackTraceElement[] values) {
+            Encoder<StackTraceElement> encoder = I.find(Encoder.class, StackTraceElement.class);
+
+            StringJoiner joiner = new StringJoiner(",");
+            for (StackTraceElement value : values) {
+                joiner.add(encoder.encode(value));
+            }
+            return joiner.toString();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public StackTraceElement[] decode(String value) {
+            Decoder<StackTraceElement> decoder = I.find(Decoder.class, StackTraceElement.class);
+            String[] values = value.split(",");
+            StackTraceElement[] elements = new StackTraceElement[values.length];
+
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = decoder.decode(values[i]);
+            }
+            return elements;
         }
     }
 }
