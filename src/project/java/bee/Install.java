@@ -9,8 +9,6 @@
  */
 package bee;
 
-import bee.api.Command;
-
 /**
  * @version 2012/05/10 10:29:33
  */
@@ -22,7 +20,6 @@ public class Install extends bee.task.Install {
      * </p>
      */
     @Override
-    @Command("Install the current Bee into your environment.")
     public void project() {
         require(Jar.class).merge();
 
