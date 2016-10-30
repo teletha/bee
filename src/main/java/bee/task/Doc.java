@@ -44,7 +44,7 @@ import kiss.I;
 /**
  * @version 2015/06/22 16:36:47
  */
-public class Javadoc extends Task {
+public class Doc extends Task {
 
     /** The output root directory for javadoc. */
     protected Path output;
