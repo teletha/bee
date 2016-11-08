@@ -17,7 +17,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import kiss.I;
 
 /**
- * @version 2014/07/25 16:57:34
+ * @version 2016/11/08 17:38:00
  */
 public class Library implements Comparable<Library> {
 
@@ -61,7 +61,7 @@ public class Library implements Comparable<Library> {
         this.artifact = artifact;
         this.group = artifact.getGroupId();
         this.name = artifact.getArtifactId();
-        this.version = artifact.getVersion();
+        this.version = artifact.isSnapshot() ? artifact.getBaseVersion() : artifact.getVersion();
     }
 
     /**
