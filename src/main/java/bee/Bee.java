@@ -24,12 +24,12 @@ import bee.api.Project;
 import bee.api.Scope;
 import bee.api.StandardLicense;
 import bee.api.Task;
+import bee.task.IDESupport;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import bee.util.PathPattern;
 import bee.util.Paths;
 import bee.util.Stopwatch;
-import kiss.Extensible;
 import kiss.I;
 
 /**
@@ -40,7 +40,7 @@ import kiss.I;
  * Bee represents a single project build process.
  * </p>
  * 
- * @version 2015/06/17 16:35:22
+ * @version 2016/11/30 12:18:20
  */
 public class Bee {
 
@@ -319,18 +319,18 @@ public class Bee {
      * </p>
      */
     private void buildDevelopEnvironment() {
-        List<IDE> ides = I.find(IDE.class);
+        List<IDESupport> supports = I.find(IDESupport.class);
 
         // search existing environment
-        for (IDE ide : ides) {
-            if (ide.exist(project)) {
+        for (IDESupport support : supports) {
+            if (support.exist(project)) {
                 return;
             }
         }
 
         // build environemnt
         ui.talk("\r\nProject develop environment is not found.");
-        builds.add(ui.ask("Bee supports the following IDEs.", ides));
+        builds.add((Task) ui.ask("Bee supports the following IDEs.", supports));
     }
 
     /**
@@ -392,99 +392,6 @@ public class Bee {
         private FavricProject(String group, String name, String version, License license) {
             product(group, name, version);
             license(license);
-        }
-    }
-
-    /**
-     * @version 2012/10/25 21:33:00
-     */
-    private static abstract class IDE extends Task implements Extensible {
-
-        /**
-         * <p>
-         * Analyze environment.
-         * </p>
-         * 
-         * @param project
-         * @return
-         */
-        abstract boolean exist(Project project);
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return getClass().getSimpleName();
-        }
-
-        /**
-         * @version 2012/10/25 21:34:05
-         */
-        @SuppressWarnings("unused")
-        private static final class Eclipse extends IDE {
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            boolean exist(Project project) {
-                return Files.isReadable(project.getRoot().resolve(".classpath"));
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void execute() {
-                require(bee.task.Eclipse.class).eclipse();
-            }
-        }
-
-        /**
-         * @version 2012/10/25 21:34:05
-         */
-        @SuppressWarnings("unused")
-        private static final class NetBeans extends IDE {
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            boolean exist(Project project) {
-                return false;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void execute() {
-                throw new UnsupportedOperationException();
-            }
-        }
-
-        /**
-         * @version 2012/10/25 21:34:05
-         */
-        @SuppressWarnings("unused")
-        private static final class IDEA extends IDE {
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            boolean exist(Project project) {
-                return false;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void execute() {
-                throw new UnsupportedOperationException();
-            }
         }
     }
 }

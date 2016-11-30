@@ -22,6 +22,7 @@ import bee.Bee;
 import bee.Platform;
 import bee.api.Command;
 import bee.api.Library;
+import bee.api.Project;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.task.AnnotationProcessor.ProjectInfo;
@@ -33,17 +34,18 @@ import kiss.I;
 import kiss.XML;
 
 /**
- * @version 2016/09/08 12:04:28
+ * @version 2016/11/30 12:05:38
  */
-public class Eclipse extends Task {
+public class Eclipse extends Task implements IDESupport {
 
     /**
      * <p>
      * Create eclipse's project file.
      * </p>
      */
+    @Override
     @Command("Generate configuration files for Eclipse.")
-    public void eclipse() {
+    public void execute() {
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
 
@@ -73,6 +75,14 @@ public class Eclipse extends Task {
                 ui.warn("Restart your Eclipse to enable Lombok.");
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean exist(Project project) {
+        return Files.isReadable(project.getRoot().resolve(".classpath"));
     }
 
     /**

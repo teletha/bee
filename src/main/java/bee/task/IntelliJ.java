@@ -16,6 +16,7 @@ import java.util.Set;
 import bee.Bee;
 import bee.api.Command;
 import bee.api.Library;
+import bee.api.Project;
 import bee.api.Scope;
 import bee.api.Task;
 import kiss.I;
@@ -24,20 +25,29 @@ import kiss.XML;
 /**
  * @version 2016/11/30 11:50:50
  */
-public class Idea extends Task {
+public class IntelliJ extends Task implements IDESupport {
 
     /**
      * <p>
      * Create idea's project file.
      * </p>
      */
+    @Override
     @Command("Generate configuration files for IntelliJ IDEA.")
-    public void idea() {
+    public void execute() {
         createModule(project.getSources(), Scope.Compile);
         createModule(project.getTestSources(), Scope.Test);
         createModule(project.getProjectSources(), Scope.System);
 
         ui.talk("Create IDEA configuration files.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean exist(Project project) {
+        return Files.isReadable(project.getRoot().resolve(".idea/modules.xml"));
     }
 
     /**

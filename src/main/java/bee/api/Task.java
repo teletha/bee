@@ -36,7 +36,7 @@ import kiss.XML;
 import kiss.model.Model;
 
 /**
- * @version 2015/06/22 13:17:10
+ * @version 2016/11/30 12:30:02
  */
 public abstract class Task implements Extensible {
 
@@ -65,6 +65,14 @@ public abstract class Task implements Extensible {
             // display usage description for this command
             ui.talk(entry.getKey(), " - ", entry.getValue());
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return Model.of(this).name;
     }
 
     /**
