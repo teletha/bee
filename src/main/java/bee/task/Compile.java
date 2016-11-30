@@ -33,7 +33,7 @@ public class Compile extends Task {
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
-        compile("main", project.getSources(), project.getClasses().base);
+        compile("main", project.getSourceSet(), project.getClasses().base);
     }
 
     /**
@@ -43,7 +43,7 @@ public class Compile extends Task {
      */
     @Command("Compile test sources and copy other resources.")
     public void test() {
-        compile("test", project.getTestSources(), project.getTestClasses());
+        compile("test", project.getTestSourceSet(), project.getTestClasses());
     }
 
     /**
@@ -53,7 +53,7 @@ public class Compile extends Task {
      */
     @Command("Compile project sources and copy other resources.")
     public void project() {
-        compile("project", project.getProjectSources(), project.getProjectClasses());
+        compile("project", project.getProjectSourceSet(), project.getProjectClasses());
     }
 
     /**

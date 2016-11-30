@@ -20,6 +20,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -302,6 +303,9 @@ public class Project {
      * @return
      */
     public Set<Library> getDependency(Scope scope) {
+        if (scope == null) {
+            return Collections.emptySet();
+        }
         return I.make(Repository.class).collectDependency(this, scope);
     }
 
@@ -489,10 +493,21 @@ public class Project {
      * 
      * @return
      */
-    public PathSet getSources() {
+    public Path getSources() {
+        return input.resolve("main");
+    }
+
+    /**
+     * <p>
+     * Returns source directories.
+     * </p>
+     * 
+     * @return
+     */
+    public PathSet getSourceSet() {
         PathSet set = new PathSet();
 
-        for (Path path : I.walkDirectory(input.resolve("main"), "*")) {
+        for (Path path : I.walkDirectory(getSources(), "*")) {
             set.add(path);
         }
         return set;
@@ -516,10 +531,21 @@ public class Project {
      * 
      * @return
      */
-    public PathSet getTestSources() {
+    public Path getTestSources() {
+        return input.resolve("test");
+    }
+
+    /**
+     * <p>
+     * Returns test source directories.
+     * </p>
+     * 
+     * @return
+     */
+    public PathSet getTestSourceSet() {
         PathSet set = new PathSet();
 
-        for (Path path : I.walkDirectory(input.resolve("test"), "*")) {
+        for (Path path : I.walkDirectory(getTestSources(), "*")) {
             set.add(path);
         }
         return set;
@@ -543,10 +569,21 @@ public class Project {
      * 
      * @return
      */
-    public PathSet getProjectSources() {
+    public Path getProjectSources() {
+        return input.resolve("project");
+    }
+
+    /**
+     * <p>
+     * Returns project source directories.
+     * </p>
+     * 
+     * @return
+     */
+    public PathSet getProjectSourceSet() {
         PathSet set = new PathSet();
 
-        for (Path path : I.walkDirectory(input.resolve("project"), "*")) {
+        for (Path path : I.walkDirectory(getProjectSources(), "*")) {
             set.add(path);
         }
         return set;

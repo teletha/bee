@@ -104,7 +104,7 @@ public class Eclipse extends Task {
         XML doc = I.xml("classpath");
 
         // tests
-        for (PathPattern path : project.getTestSources()) {
+        for (PathPattern path : project.getTestSourceSet()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(path.base))
@@ -112,7 +112,7 @@ public class Eclipse extends Task {
         }
 
         // sources
-        for (PathPattern path : project.getSources()) {
+        for (PathPattern path : project.getSourceSet()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(path.base))
@@ -120,7 +120,7 @@ public class Eclipse extends Task {
         }
 
         // projects
-        for (PathPattern path : project.getProjectSources()) {
+        for (PathPattern path : project.getProjectSourceSet()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(path.base))

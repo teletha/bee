@@ -94,7 +94,7 @@ public class Doc extends Task {
 
         // sourcepath
         options.add("-sourcepath");
-        options.add(StreamSupport.stream(project.getSources().spliterator(), false)
+        options.add(StreamSupport.stream(project.getSourceSet().spliterator(), false)
                 .map(path -> "\"" + path.base.toAbsolutePath().toString() + "\"")
                 .collect(Collectors.joining(File.pathSeparator)));
 
@@ -109,7 +109,7 @@ public class Doc extends Task {
         options.add("UTF-8");
 
         // java sources
-        for (PathPattern sources : project.getSources()) {
+        for (PathPattern sources : project.getSourceSet()) {
             for (Path path : sources.list("**.java")) {
                 options.add(path.toString());
             }

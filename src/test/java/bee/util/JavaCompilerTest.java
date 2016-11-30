@@ -35,7 +35,7 @@ public class JavaCompilerTest {
         assert Files.exists(project.getClasses().base);
 
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getSources());
+        compiler.addSourceDirectory(project.getSourceSet());
         compiler.setOutput(project.getClasses().base);
         compiler.compile();
 
@@ -56,7 +56,7 @@ public class JavaCompilerTest {
         assert Files.notExists(project.getClasses().base);
 
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getSources());
+        compiler.addSourceDirectory(project.getSourceSet());
         compiler.setOutput(project.getClasses().base);
         compiler.compile();
 

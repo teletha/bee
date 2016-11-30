@@ -34,7 +34,7 @@ public class Jar extends Task {
         require(Compile.class).source();
 
         pack("main classes", new PathSet(project.getClasses()), project.locateJar());
-        pack("main sources", project.getSources(), project.locateSourceJar());
+        pack("main sources", project.getSourceSet(), project.locateSourceJar());
     }
 
     /**
@@ -51,7 +51,7 @@ public class Jar extends Task {
                 .resolve(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
         pack("test classes", new PathSet(project.getTestClasses()), classes);
-        pack("test sources", project.getTestSources(), sources);
+        pack("test sources", project.getTestSourceSet(), sources);
     }
 
     /**
@@ -68,7 +68,7 @@ public class Jar extends Task {
                 .resolve(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
         pack("project classes", new PathSet(project.getProjectClasses()), classes);
-        pack("project sources", project.getProjectSources(), sources);
+        pack("project sources", project.getProjectSourceSet(), sources);
     }
 
     /**

@@ -34,9 +34,9 @@ public class License extends Task {
      */
     @Command("Write license header comment.")
     public void update() throws IOException {
-        update(project.getSources());
-        update(project.getTestSources());
-        update(project.getProjectSources());
+        update(project.getSourceSet());
+        update(project.getTestSourceSet());
+        update(project.getProjectSourceSet());
     }
 
     /**
