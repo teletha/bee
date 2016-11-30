@@ -47,8 +47,7 @@ public class Jar extends Task {
         require(Compile.class).test();
 
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
-        Path sources = project.getOutput()
-                .resolve(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
+        Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
         pack("test classes", new PathSet(project.getTestClasses()), classes);
         pack("test sources", project.getTestSourceSet(), sources);
@@ -64,8 +63,7 @@ public class Jar extends Task {
         require(Compile.class).project();
 
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
-        Path sources = project.getOutput()
-                .resolve(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
+        Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
         pack("project classes", new PathSet(project.getProjectClasses()), classes);
         pack("project sources", project.getProjectSourceSet(), sources);
@@ -105,7 +103,7 @@ public class Jar extends Task {
 
         JarArchiver archiver = new JarArchiver();
         archiver.setMainClass(main);
-        archiver.add(project.getClasses().base);
+        archiver.add(project.getClasses());
 
         for (Library library : project.getDependency(Scope.Runtime)) {
             archiver.add(library.getJar());

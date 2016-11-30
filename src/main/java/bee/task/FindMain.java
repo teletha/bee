@@ -119,7 +119,7 @@ public class FindMain extends Task {
             try {
                 require(Compile.class).source();
 
-                for (Path path : project.getClasses().list("**.class")) {
+                for (Path path : I.walk(project.getClasses(), "**.class")) {
                     ClassReader reader = new ClassReader(Files.newInputStream(path));
                     reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 }
@@ -174,8 +174,7 @@ public class FindMain extends Task {
             // method name is "premain"
             if (name.equals("premain")) {
                 // method has String[] parameter and returns void
-                if (desc.equals("(Ljava/lang/String;)V") || desc
-                        .equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
+                if (desc.equals("(Ljava/lang/String;)V") || desc.equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
                     // method is public and static
                     if ((Opcodes.ACC_STATIC & access) != 0 && (Opcodes.ACC_PUBLIC & access) != 0) {
                         premains.add(internalClassName.replace('/', '.'));
@@ -186,8 +185,7 @@ public class FindMain extends Task {
             // method name is "agentmain"
             if (name.equals("agentmain")) {
                 // method has String[] parameter and returns void
-                if (desc.equals("(Ljava/lang/String;)V") || desc
-                        .equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
+                if (desc.equals("(Ljava/lang/String;)V") || desc.equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
                     // method is public and static
                     if ((Opcodes.ACC_STATIC & access) != 0 && (Opcodes.ACC_PUBLIC & access) != 0) {
                         agentmains.add(internalClassName.replace('/', '.'));

@@ -158,8 +158,8 @@ public class AnnotationValidatorTest {
                 assert isSubClassOf(Bean.class);
                 assert isSubClassOf(Interface.class);
                 assert isSubClassOf(Object.class);
-                assert !isSubClassOf(HashMap.class);
-                assert !isSubClassOf(Serializable.class);
+                assert!isSubClassOf(HashMap.class);
+                assert!isSubClassOf(Serializable.class);
             }
         });
     }
@@ -177,7 +177,7 @@ public class AnnotationValidatorTest {
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(project.getSourceSet());
-        compiler.setOutput(project.getClasses().base);
+        compiler.setOutput(project.getClasses());
         compiler.addProcessor(processor);
         compiler.addProcessorOption(new ProjectInfo(project));
         compiler.compile();

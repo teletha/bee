@@ -35,7 +35,7 @@ public class Jar extends bee.task.Jar {
 
         JarArchiver archiver = new JarArchiver();
         archiver.setMainClass(main);
-        archiver.add(project.getClasses().base);
+        archiver.add(project.getClasses());
         archiver.add(project.getSourceSet());
 
         for (Library library : project.getDependency(Scope.Runtime)) {

@@ -35,7 +35,7 @@ public class IntelliJ extends Task implements IDESupport {
     @Override
     @Command("Generate configuration files for IntelliJ IDEA.")
     public void execute() {
-        createModule(project.getSources(), project.getClasses().base, Scope.Compile);
+        createModule(project.getSources(), project.getClasses(), Scope.Compile);
         createModule(project.getTestSources(), project.getTestClasses(), Scope.Test);
         createModule(project.getProjectSources(), project.getProjectClasses(), Scope.System);
 

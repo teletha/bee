@@ -86,7 +86,7 @@ public class BlinkProject extends Project {
      * @return A located file path.
      */
     public final Path locateMainOutput(String path) {
-        return getClasses().base.resolve(path);
+        return getClasses().resolve(path);
     }
 
     /**

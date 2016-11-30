@@ -31,12 +31,12 @@ public class JavaCompilerTest {
         assert Files.exists(source);
         assert Files.notExists(bytecode);
 
-        Files.createDirectories(project.getClasses().base);
-        assert Files.exists(project.getClasses().base);
+        Files.createDirectories(project.getClasses());
+        assert Files.exists(project.getClasses());
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(project.getSourceSet());
-        compiler.setOutput(project.getClasses().base);
+        compiler.setOutput(project.getClasses());
         compiler.compile();
 
         assert Files.exists(source);
@@ -52,12 +52,12 @@ public class JavaCompilerTest {
         assert Files.exists(source);
         assert Files.notExists(bytecode);
 
-        Files.deleteIfExists(project.getClasses().base);
-        assert Files.notExists(project.getClasses().base);
+        Files.deleteIfExists(project.getClasses());
+        assert Files.notExists(project.getClasses());
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(project.getSourceSet());
-        compiler.setOutput(project.getClasses().base);
+        compiler.setOutput(project.getClasses());
         compiler.compile();
 
         assert Files.exists(source);

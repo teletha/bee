@@ -38,7 +38,6 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
-import bee.util.PathPattern;
 import bee.util.PathSet;
 import kiss.I;
 import kiss.XML;
@@ -520,8 +519,8 @@ public class Project {
      * 
      * @return
      */
-    public PathPattern getClasses() {
-        return new PathPattern(output.resolve("classes"));
+    public Path getClasses() {
+        return output.resolve("classes");
     }
 
     /**

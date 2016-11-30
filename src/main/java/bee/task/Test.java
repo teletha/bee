@@ -49,7 +49,7 @@ public class Test extends Task {
             Files.createDirectories(report);
 
             Java.with()
-                    .classPath(project.getClasses().base)
+                    .classPath(project.getClasses())
                     .classPath(project.getTestClasses())
                     .classPath(project.getDependency(Scope.Test))
                     .classPath(Bee.class)

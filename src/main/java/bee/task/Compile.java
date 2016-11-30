@@ -33,7 +33,7 @@ public class Compile extends Task {
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
-        compile("main", project.getSourceSet(), project.getClasses().base);
+        compile("main", project.getSourceSet(), project.getClasses());
     }
 
     /**
@@ -71,7 +71,7 @@ public class Compile extends Task {
 
         ui.talk("Compiling ", type, " sources to ", output);
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addClassPath(project.getClasses().base);
+        compiler.addClassPath(project.getClasses());
         compiler.addClassPath(project.getDependency(Scope.Test));
         compiler.addSourceDirectory(input);
         compiler.setOutput(output);
