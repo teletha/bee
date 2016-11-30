@@ -35,9 +35,9 @@ public class IntelliJ extends Task implements IDESupport {
     @Override
     @Command("Generate configuration files for IntelliJ IDEA.")
     public void execute() {
-        createModule(project.getSources(), Scope.Compile);
-        createModule(project.getTestSources(), Scope.Test);
-        createModule(project.getProjectSources(), Scope.System);
+        createModule(project.getSources(), project.getClasses().base, Scope.Compile);
+        createModule(project.getTestSources(), project.getTestClasses(), Scope.Test);
+        createModule(project.getProjectSources(), project.getProjectClasses(), Scope.System);
 
         ui.talk("Create IDEA configuration files.");
     }
@@ -56,11 +56,15 @@ public class IntelliJ extends Task implements IDESupport {
      * </p>
      * 
      * @param file A configuration file.
+     * @param output A class output directory.
      * @param scope A curretn scope.
      */
-    private void createModule(Path file, Scope scope) {
+    private void createModule(Path file, Path output, Scope scope) {
         XML doc = I.xml("module").attr("type", "JAVA_MODULE").attr("version", 4);
-        XML component = doc.child("component").attr("name", "NewModuleRootManager").attr("inherit-compiler-output", true);
+        XML component = doc.child("component").attr("name", "NewModuleRootManager").attr("inherit-compiler-output", false);
+        component.child("output").attr("url", output);
+        component.child("output-test").attr("url", project.getTestClasses());
+
         XML content = component.child("content").attr("url", "file://$MODULE_DIR$");
         content.child("sourceFolder").attr("url", "file://$MODULE_DIR$/java").attr("isTestSource", scope == Scope.Test);
         component.child("orderEntry").attr("type", "inheritedJdk");
