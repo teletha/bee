@@ -90,6 +90,8 @@ public class PathSet implements Iterable<PathPattern> {
      * @param destination
      */
     public void copyTo(Path destination, String... patterns) {
+        Paths.createDirectory(destination);
+
         for (PathPattern pattern : set) {
             I.copy(pattern.base, destination, pattern.mix(patterns));
         }

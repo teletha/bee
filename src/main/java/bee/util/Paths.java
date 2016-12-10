@@ -210,4 +210,23 @@ public class Paths {
     public static boolean exist(Path path) {
         return path != null && Files.exists(path);
     }
+
+    /**
+     * <p>
+     * Helper method to create directory.
+     * </p>
+     * 
+     * @param path A directory.
+     * @return A created directory.
+     */
+    public static Path createDirectory(Path path) {
+        if (Files.isDirectory(path) == false) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+        return path;
+    }
 }

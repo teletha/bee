@@ -159,8 +159,15 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // Eclipse configurations
-        doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER");
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
+        // doc.child("classpathentry").attr("kind", "con").attr("path",
+        // "org.eclipse.jdt.launching.JRE_CONTAINER");
+        for (Path path : I.walk(Platform.JavaRuntime
+                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!javaws.jar", "!security/*", "!deploy.jar")) {
+            doc.child("classpathentry").attr("kind", "lib").attr("path", path);
+        }
+
+        require(EnhanceLibrary.class).enhance();
 
         // write file
         makeFile(file, doc);

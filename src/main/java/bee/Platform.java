@@ -97,7 +97,7 @@ public final class Platform {
 
         Java = java;
         JavaHome = java.getParent().getParent();
-        JavaRuntime = JavaHome.resolve("jre/rt.jar");
+        JavaRuntime = JavaHome.resolve("jre/lib/rt.jar");
         JavaTool = JavaHome.resolve("lib/tools.jar");
         Bee = bee;
         BeeHome = JavaHome.resolve("lib/bee");

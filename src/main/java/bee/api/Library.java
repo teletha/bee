@@ -114,6 +114,17 @@ public class Library implements Comparable<Library> {
 
     /**
      * <p>
+     * This library is needed at compile phase.
+     * </p>
+     * 
+     * @return
+     */
+    public Library atExtension() {
+        return this;
+    }
+
+    /**
+     * <p>
      * Get jar file.
      * </p>
      * 
