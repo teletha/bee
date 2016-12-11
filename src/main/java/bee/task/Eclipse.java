@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,9 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+
+import com.sun.org.apache.xml.internal.serialize.OutputFormat;
+import com.sun.org.apache.xml.internal.serialize.XML11Serializer;
 
 import bee.Bee;
 import bee.Platform;
@@ -31,8 +35,10 @@ import bee.util.Java;
 import bee.util.Java.JVM;
 import bee.util.PathPattern;
 import bee.util.Process;
+import kiss.Events;
 import kiss.I;
 import kiss.XML;
+import lombok.SneakyThrows;
 
 /**
  * @version 2016/11/30 12:05:38
@@ -165,11 +171,15 @@ public class Eclipse extends Task implements IDESupport {
 
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
-        // doc.child("classpathentry").attr("kind", "con").attr("path",
-        // "org.eclipse.jdt.launching.JRE_CONTAINER");
-        for (Path path : jars) {
-            doc.child("classpathentry").attr("kind", "lib").attr("path", path).attr("sourcepath", Platform.JavaHome.resolve("src.zip"));
-        }
+        doc.child("classpathentry")
+                .attr("kind", "con")
+                .attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project
+                        .getProduct());
+        // for (Path path : jars) {
+        // doc.child("classpathentry").attr("kind", "lib").attr("path", path).attr("sourcepath",
+        // Platform.JavaHome.resolve("src.zip"));
+        // }
+        addJRE(project.getProduct(), jars);
 
         // write file
         makeFile(file, doc);
@@ -279,6 +289,66 @@ public class Eclipse extends Task implements IDESupport {
         } else {
             throw new Error("Please activate eclipse application.");
         }
+    }
+
+    /**
+     * <p>
+     * Locate eclipse workspace directory which is activating now.
+     * </p>
+     * 
+     * @return
+     */
+    @SneakyThrows
+    private Path locateWorkspace() {
+        Properties properties = new Properties();
+        properties.load(Files.newInputStream(locateActiveEclipse().resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
+        return I.locate(properties.getProperty("RECENT_WORKSPACES"));
+    }
+
+    /**
+     * <p>
+     * Locate eclipse installed JRE preference.
+     * </p>
+     * 
+     * @return
+     */
+    @SneakyThrows
+    private void addJRE(String name, List<Path> jars) {
+        Path prefs = locateWorkspace().resolve(".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs");
+
+        Properties properties = new Properties();
+        properties.load(Files.newInputStream(prefs));
+
+        XML root = I.xml(properties.getProperty("org.eclipse.jdt.launching.PREF_VM_XML"));
+        XML vm = root.find("vm[name=\"" + name + "\"]");
+
+        if (vm.size() == 0) {
+            ui.error("Eclipse needs installed JRE[" + name + "], but it doesn't exist. Please duplicate the default JRE and name it '" + name + "'.");
+        } else {
+            Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
+            vm.find("libraryLocation[jreJar*=\"/rt\"]").attr("jreJar", jar);
+
+            StringWriter writer = new StringWriter();
+            OutputFormat format = new OutputFormat();
+            format.setIndent(0);
+            format.setLineWidth(0);
+            format.setOmitXMLDeclaration(false);
+            root.to(new XML11Serializer(writer, format));
+
+            properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", writer.toString());
+            properties.store(Files.newOutputStream(prefs), "");
+
+            ui.talk("Write Eclipse JRE configuration file.");
+            System.out.println(writer.toString());
+        }
+    }
+
+    /**
+     * @version 2016/12/11 21:10:40
+     */
+    private static class Setting {
+
+        public String vmSettings;
     }
 
     /**

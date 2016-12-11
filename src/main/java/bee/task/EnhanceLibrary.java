@@ -37,6 +37,7 @@ import bee.util.Paths;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
 import jdk.internal.org.objectweb.asm.ClassWriter;
+import jdk.internal.org.objectweb.asm.Label;
 import jdk.internal.org.objectweb.asm.MethodVisitor;
 import jdk.internal.org.objectweb.asm.Opcodes;
 import jdk.internal.org.objectweb.asm.Type;
@@ -111,7 +112,7 @@ public class EnhanceLibrary extends Task {
             this.definitions = definitions;
 
             String v = "";
-            System.out.println(v.isNotEmpty());
+            // System.out.println(v.isNotEmpty());
         }
 
         /**
@@ -123,22 +124,186 @@ public class EnhanceLibrary extends Task {
             for (ExtensionDefinition def : definitions) {
                 String className = Type.getInternalName(def.extensionClass);
                 Type callee = Type.getMethodType(Type.getMethodDescriptor(def.method));
+                Class[] params = def.method.getParameterTypes();
                 Type[] param = Type.getArgumentTypes(def.method);
                 Type caller = Type.getMethodType(callee.getReturnType(), Arrays.asList(param)
                         .subList(1, param.length)
                         .toArray(new Type[param.length - 1]));
-                System.out.println(callee.getDescriptor() + "  " + className + "  " + def.method.getName());
-                System.out.println(caller.getDescriptor() + "  " + def.method.getName());
+
+                int localIndex = params.length;
+
                 MethodVisitor mv = visitMethod(ACC_PUBLIC, def.method.getName(), caller.getDescriptor(), null, null);
                 mv.visitCode();
-                mv.visitVarInsn(ALOAD, 0); // load 'this'
-                mv.visitMethodInsn(INVOKESTATIC, className, def.method.getName(), callee.getDescriptor(), false);
-                mv.visitInsn(caller.getOpcode(IRETURN));
+                Label l0 = new Label();
+                Label l1 = new Label();
+                Label l2 = new Label();
+                mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Exception");
+                mv.visitLabel(l0);
+                mv.visitIntInsn(BIPUSH, params.length);
+                mv.visitTypeInsn(ANEWARRAY, "java/lang/Object"); // new Object[params.length]
+                mv.visitInsn(DUP);
+                mv.visitInsn(ICONST_0);
+                mv.visitVarInsn(ALOAD, 0);
+                mv.visitInsn(AASTORE); // first parameter must be 'this'
+                for (int i = 1; i < params.length; i++) {
+                    mv.visitInsn(DUP); // copy array
+                    mv.visitIntInsn(BIPUSH, i); // array index
+                    mv.visitVarInsn(param[i].getOpcode(ILOAD), i); // load param
+                    wrap(params[i], mv);
+                    mv.visitInsn(AASTORE); // store param into array
+                }
+                mv.visitVarInsn(ASTORE, localIndex); // store params into local variable
+
+                Label l3 = new Label();
+                mv.visitLabel(l3);
+                mv.visitIntInsn(BIPUSH, params.length);
+                mv.visitTypeInsn(ANEWARRAY, "java/lang/String"); // new String[params.length]
+                for (int i = 0; i < params.length; i++) {
+                    mv.visitInsn(DUP); // copy array
+                    mv.visitIntInsn(BIPUSH, i); // array index
+                    mv.visitLdcInsn(params[i].getName()); // load param type
+                    mv.visitInsn(AASTORE); // store param into array
+                }
+                mv.visitVarInsn(ASTORE, localIndex + 1); // store paramTypes into local variable
+
+                Label l4 = new Label();
+                mv.visitLabel(l4);
+                mv.visitVarInsn(ALOAD, localIndex);
+                mv.visitInsn(ARRAYLENGTH); // calculate param length
+                mv.visitTypeInsn(ANEWARRAY, "java/lang/Class"); // new Class[params.length]
+                mv.visitVarInsn(ASTORE, localIndex + 2); // store types into local variable
+
+                // for loop to load parameter classes
+                Label l5 = new Label();
+                mv.visitLabel(l5);
+                mv.visitInsn(ICONST_0);
+                mv.visitVarInsn(ISTORE, localIndex + 3); // int i = 0;
+                Label l6 = new Label();
+                mv.visitLabel(l6);
+                Label l7 = new Label();
+                mv.visitJumpInsn(GOTO, l7);
+                Label l8 = new Label();
+                mv.visitLabel(l8);
+                mv.visitVarInsn(ALOAD, localIndex + 2); // paramTypes
+                mv.visitVarInsn(ILOAD, localIndex + 3); // i
+                mv.visitVarInsn(ALOAD, localIndex + 1); // paramNames
+                mv.visitVarInsn(ILOAD, localIndex + 3); // i
+                mv.visitInsn(AALOAD); // paramNames[i]
+                mv.visitInsn(ICONST_1); // true
+                mv.visitMethodInsn(INVOKESTATIC, "java/lang/ClassLoader", "getSystemClassLoader", "()Ljava/lang/ClassLoader;", false);
+                mv.visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;", false);
+                mv.visitInsn(AASTORE);
+                Label l9 = new Label();
+                mv.visitLabel(l9);
+                mv.visitIincInsn(localIndex + 3, 1); // increment i
+                mv.visitLabel(l7);
+                mv.visitVarInsn(ILOAD, localIndex + 3);
+                mv.visitVarInsn(ALOAD, localIndex + 2);
+                mv.visitInsn(ARRAYLENGTH);
+                mv.visitJumpInsn(IF_ICMPLT, l8);
+
+                // load extension class
+                Label l10 = new Label();
+                mv.visitLabel(l10);
+                mv.visitLdcInsn(def.extensionClass.getName()); // class name
+                mv.visitInsn(ICONST_1); // true
+                mv.visitMethodInsn(INVOKESTATIC, "java/lang/ClassLoader", "getSystemClassLoader", "()Ljava/lang/ClassLoader;", false);
+                mv.visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;", false);
+                mv.visitVarInsn(ASTORE, localIndex + 3); // store extensionClass into local variable
+
+                // load extension method
+                Label l11 = new Label();
+                mv.visitLabel(l11);
+                mv.visitVarInsn(ALOAD, localIndex + 3); // load extension class
+                mv.visitLdcInsn(def.method.getName()); // load method name
+                mv.visitVarInsn(ALOAD, localIndex + 2); // load parameter types
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;", false);
+
+                // invoke extension method
+                mv.visitInsn(ACONST_NULL);
+                mv.visitVarInsn(ALOAD, 1); // load actual parameters
+                mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;", false);
+
+                // check return type
+                cast(def.method.getReturnType(), mv);
+
+                // return
+                mv.visitLabel(l1);
+                mv.visitInsn(Type.getReturnType(def.method).getOpcode(IRETURN));
+
+                // catch exception
+                mv.visitLabel(l2);
+                mv.visitFrame(Opcodes.F_FULL, 1, new Object[] {className}, 1, new Object[] {"java/lang/Exception"});
+                mv.visitVarInsn(ASTORE, 1);
+                Label l12 = new Label();
+                mv.visitLabel(l12);
+                mv.visitTypeInsn(NEW, "java/lang/RuntimeException");
+                mv.visitInsn(DUP);
+                mv.visitVarInsn(ALOAD, 1);
+                mv.visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/Throwable;)V", false);
+                mv.visitInsn(ATHROW);
                 mv.visitMaxs(0, 0);
                 mv.visitEnd();
             }
             super.visitEnd();
         }
+    }
+
+    /**
+     * Helper method to write cast code. This cast mostly means down cast. (e.g. Object -> String,
+     * Object -> int)
+     *
+     * @param clazz A class to cast.
+     * @return A class type to be casted.
+     */
+    private static Type cast(Class clazz, MethodVisitor mv) {
+        Type type = Type.getType(clazz);
+
+        if (clazz.isPrimitive()) {
+            if (clazz != Void.TYPE) {
+                Type wrapper = Type.getType(I.wrap(clazz));
+                mv.visitTypeInsn(CHECKCAST, wrapper.getInternalName());
+                mv.visitMethodInsn(INVOKEVIRTUAL, wrapper.getInternalName(), clazz.getName() + "Value", "()" + type.getDescriptor(), false);
+            }
+        } else {
+            mv.visitTypeInsn(CHECKCAST, type.getInternalName());
+        }
+
+        // API definition
+        return type;
+    }
+
+    /**
+     * Helper method to write cast code. This cast mostly means up cast. (e.g. String -> Object, int
+     * -> Integer)
+     *
+     * @param clazz A primitive class type to wrap.
+     */
+    private static void wrap(Class clazz, MethodVisitor mv) {
+        if (clazz.isPrimitive() && clazz != Void.TYPE) {
+            Type wrapper = Type.getType(I.wrap(clazz));
+            mv.visitMethodInsn(INVOKESTATIC, wrapper
+                    .getInternalName(), "valueOf", "(" + Type.getType(clazz).getDescriptor() + ")" + wrapper.getDescriptor(), false);
+        }
+    }
+
+    public boolean isNotEmpty(int value, String name) {
+        try {
+            Object[] params = {this, value, name};
+            String[] paramNames = {"java.lang.String", "int", "java.lang.String"};
+            Class[] paramTypes = new Class[paramNames.length];
+
+            for (int i = 0; i < paramTypes.length; i++) {
+                paramTypes[i] = Class.forName(paramNames[i], true, ClassLoader.getSystemClassLoader());
+            }
+            System.out.println(Arrays.toString(paramTypes));
+
+            Class clazz = Class.forName("bee.task.EnhanceLibrary", true, ClassLoader.getSystemClassLoader());
+            return ((Boolean) clazz.getMethod("isNotEmpty", paramTypes).invoke(null, params)).booleanValue();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        // return EnhanceLibrary.isNotEmpty((String) (Object) this);
     }
 
     /**
@@ -150,8 +315,13 @@ public class EnhanceLibrary extends Task {
         return !value.isEmpty();
     }
 
-    public boolean isNotEmpty() {
-        return EnhanceLibrary.isNotEmpty((String) (Object) this);
+    /**
+     * @param value
+     * @return
+     */
+    @ExtensionMethod
+    public static boolean isBlank(String value) {
+        return value.length() == 0;
     }
 
     /**
@@ -159,7 +329,7 @@ public class EnhanceLibrary extends Task {
      * @return
      */
     @ExtensionMethod
-    public static boolean isBlank(String value) {
+    public static boolean isColorName(String value) {
         return value.length() == 0;
     }
 
