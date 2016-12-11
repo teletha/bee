@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -158,16 +159,17 @@ public class Eclipse extends Task implements IDESupport {
             }
         }
 
+        EnhanceLibrary enhancer = require(EnhanceLibrary.class);
+        List<Path> jars = enhancer.enhance(I.walk(Platform.JavaRuntime
+                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!javaws.jar", "!security/*", "!deploy.jar"));
+
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
         // doc.child("classpathentry").attr("kind", "con").attr("path",
         // "org.eclipse.jdt.launching.JRE_CONTAINER");
-        for (Path path : I.walk(Platform.JavaRuntime
-                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!javaws.jar", "!security/*", "!deploy.jar")) {
-            doc.child("classpathentry").attr("kind", "lib").attr("path", path);
+        for (Path path : jars) {
+            doc.child("classpathentry").attr("kind", "lib").attr("path", path).attr("sourcepath", Platform.JavaHome.resolve("src.zip"));
         }
-
-        require(EnhanceLibrary.class).enhance();
 
         // write file
         makeFile(file, doc);
