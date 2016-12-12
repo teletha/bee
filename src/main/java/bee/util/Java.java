@@ -272,8 +272,9 @@ public class Java {
          * </p>
          * 
          * @return A process result.
+         * @throws Exception Execution error.
          */
-        protected abstract boolean process();
+        protected abstract boolean process() throws Exception;
 
         /**
          * <p>

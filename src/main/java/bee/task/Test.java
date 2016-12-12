@@ -63,7 +63,7 @@ public class Test extends Task {
     }
 
     /**
-     * @version 2012/04/04 17:51:29
+     * @version 2016/12/12 14:42:20
      */
     private static final class Junit extends JVM {
 
@@ -71,7 +71,7 @@ public class Test extends Task {
          * {@inheritDoc}
          */
         @Override
-        public boolean process() {
+        public boolean process() throws Exception {
             Path classes = I.locate(args[0]);
             List<Path> tests = I.walk(classes, "**Test.class");
 

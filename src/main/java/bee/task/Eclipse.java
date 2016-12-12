@@ -408,7 +408,7 @@ public class Eclipse extends Task implements IDESupport {
          * {@inheritDoc}
          */
         @Override
-        protected boolean process() {
+        protected boolean process() throws Exception {
             try {
                 Class main = I.type("lombok.launch.Main");
                 Method method = main.getMethod("main", String[].class);
