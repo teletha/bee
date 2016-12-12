@@ -13,15 +13,15 @@ import static java.util.concurrent.TimeUnit.*;
 
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Ticker;
+
 /**
  * An object that measures elapsed time in nanoseconds. Note that measurement overhead is typically
  * on the order of a microsecond (1000 ns) or more.
  * <p>
  * This class is not thread-safe.
  * <p>
- * Basic usage:
- * 
- * <pre>
+ * Basic usage: <pre>
  *   Stopwatch stopwatch = new Stopwatch().{@link #start()};
  *
  *   long millis = stopwatch.{@link #elapsedMillis()};

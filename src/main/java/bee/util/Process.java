@@ -170,7 +170,15 @@ public class Process {
             builder.command(command);
 
             java.lang.Process process = builder.start();
-            Appendable output = userOutput ? I.make(UserInterface.class).getInterface() : new StringBuilder();
+            Appendable output = new StringBuilder();
+
+            if (userOutput) {
+                try {
+                    output = I.make(UserInterface.class).getInterface();
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
 
             if (showOutput) {
                 new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), output);

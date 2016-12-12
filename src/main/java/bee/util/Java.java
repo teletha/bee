@@ -281,15 +281,15 @@ public class Java {
          * </p>
          */
         public static void main(String[] args) throws Exception {
+            // load stacktrace codec
+            I.load(Java.class, true);
+
             // execute main process
             JVM vm = (JVM) I.make(Class.forName(args[2]));
 
             try {
                 // check sync mode
                 if (args[1].equals("true")) {
-                    // load stacktrace codec
-                    I.load(Java.class, true);
-
                     // launch observer
                     JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(args[0]));
                     MBeanServerConnection connection = connector.getMBeanServerConnection();

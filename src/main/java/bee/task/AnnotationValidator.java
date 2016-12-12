@@ -27,9 +27,9 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.StandardLocation;
 
+import bee.task.AnnotationProcessor.ProjectInfo;
 import kiss.Extensible;
 import kiss.I;
-import bee.task.AnnotationProcessor.ProjectInfo;
 
 /**
  * @version 2012/11/11 15:36:14

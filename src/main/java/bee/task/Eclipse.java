@@ -293,18 +293,15 @@ public class Eclipse extends Task implements IDESupport {
         format.setOmitXMLDeclaration(false);
         root.to(new XML11Serializer(writer, format));
 
+        Path temp = I.locateTemporary();
         properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", writer.toString());
-
-        StringBuilder builder = new StringBuilder();
-        for (Entry entry : properties.entrySet()) {
-            builder.append(entry.getKey()).append("=").append(entry.getValue()).append(Platform.EOL);
-        }
+        properties.store(Files.newBufferedWriter(temp), "");
 
         Java.with()
                 .classPath(project.getClasses())
                 .classPath(project.getTestClasses())
                 .classPath(project.getDependency(Scope.Test))
-                .run(UpdateEclipseConfiguration.class, eclipse.locateExe(), builder);
+                .run(UpdateEclipseConfiguration.class, eclipse.locateExe(), temp);
     }
 
     /**
@@ -413,6 +410,41 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         /**
+         * Open eclipse application.
+         */
+        private void open() {
+            try {
+                System.out.println(eclipse.getParent() + "   " + eclipse.getFileName());
+                // Process.with().workingDirectory(eclipse.getParent()).inParallel().run(Arrays.asList("\""
+                // + eclipse + "\""));
+                ps("Start-Process -FilePath \"" + eclipse + "\"");
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw I.quiet(e);
+            }
+        }
+
+        /**
+         * <p>
+         * Close eclipse application.
+         * </p>
+         */
+        private void close() {
+            ps("Get-Process Eclipse | %{ $_.CloseMainWindow() }");
+        }
+
+        /**
+         * <p>
+         * Helper method to execute power shell.
+         * </p>
+         * 
+         * @param command
+         */
+        private void ps(String command) {
+            Process.with().inParallel().run(Arrays.asList("PowerShell", command));
+        }
+
+        /**
          * <p>
          * Locate eclipse execution file which is activating now.
          * </p>
@@ -460,10 +492,13 @@ public class Eclipse extends Task implements IDESupport {
             // close eclipse
 
             // locate configuration
+            Path updater = I.locate(args[1]);
 
             // update configuration
+            I.copy(Files.newInputStream(updater), Files.newOutputStream(eclipse.locateJREPreference()), true);
 
             // open eclipse
+            eclipse.open();
         }
     }
 }
