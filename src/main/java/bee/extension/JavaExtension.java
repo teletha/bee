@@ -7,7 +7,7 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
-package bee.task;
+package bee.extension;
 
 import static jdk.internal.org.objectweb.asm.Opcodes.*;
 
@@ -18,7 +18,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Method;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,9 +29,9 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import bee.Platform;
+import bee.UserInterface;
+import bee.api.Project;
 import bee.api.Scope;
-import bee.api.Task;
-import bee.util.PathSet;
 import bee.util.Paths;
 import jdk.internal.org.objectweb.asm.ClassReader;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
@@ -49,12 +48,73 @@ import lombok.Value;
 import lombok.experimental.Accessors;
 
 /**
- * @version 20 import kiss.Table;16/12/10 13:15:20
+ * @version 2016/12/12 21:24:29
  */
-public class EnhanceLibrary extends Task {
+public class JavaExtension {
 
     /** The timestamp format. */
     private static final DateTimeFormatter timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
+    /** The user interface. */
+    private final UserInterface ui;
+
+    /** The current project. */
+    private final Project project;
+
+    /** The extension definition repository. */
+    private Table<Path, Definition> extensions;
+
+    /**
+     * @param ui
+     * @param project
+     */
+    JavaExtension(UserInterface ui, Project project) {
+        this.ui = ui;
+        this.project = project;
+        this.extensions = Events.from(project.getDependency(Scope.Compile))
+                .map(lib -> lib.getJar())
+                .map(this::jar)
+                .startWith(project.getSources().resolve("resources"))
+                .map(path -> path.resolve("META-INF/services/" + JavaExtension.class.getName()))
+                .take(Files::exists)
+                .flatIterable(I.quiet(Files::readAllLines))
+                .map(Definition::of)
+                .skipNull()
+                .toTable(Definition::archive);
+    }
+
+    /**
+     * <p>
+     * Check whether some extension exist or not.
+     * </p>
+     * 
+     * @return A result.
+     */
+    public boolean hasExtension() {
+        return extensions.isEmpty() == false;
+    }
+
+    /**
+     * <p>
+     * Check whether JRE extension exist or not.
+     * </p>
+     * 
+     * @return A result.
+     */
+    public boolean hasJREExtension() {
+        return extensions.containsKey(Platform.JavaRuntime);
+    }
+
+    /**
+     * <p>
+     * List up all enhanced JRE jars.
+     * </p>
+     * 
+     * @return A list of jars.
+     */
+    public List<Path> enhancedJRE() {
+        return enhance(collectJRE());
+    }
 
     /**
      * <p>
@@ -65,7 +125,7 @@ public class EnhanceLibrary extends Task {
      */
     @SneakyThrows
     public List<Path> enhance(List<Path> jars) {
-        for (Entry<Path, List<Definition>> archives : collectDefinition().entrySet()) {
+        for (Entry<Path, List<Definition>> archives : extensions.entrySet()) {
             // copy original archive
             Path archive = archives.getKey();
 
@@ -98,19 +158,14 @@ public class EnhanceLibrary extends Task {
 
     /**
      * <p>
-     * Search all extension libraries.
+     * Collect JRE related jars.
      * </p>
+     * 
+     * @return
      */
-    private Table<Path, Definition> collectDefinition() {
-        return Events.from(project.getDependency(Scope.Compile))
-                .map(lib -> lib.getJar())
-                .map(this::jar)
-                .startWith(project.getSources().resolve("resources"))
-                .map(path -> path.resolve("META-INF/services/" + EnhanceLibrary.class.getName()))
-                .take(Files::exists)
-                .flatIterable(I.quiet(Files::readAllLines))
-                .map(Definition::of)
-                .toTable(Definition::archive);
+    private List<Path> collectJRE() {
+        return I.walk(Platform.JavaRuntime
+                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!java*", "!security/*", "!deploy.jar");
     }
 
     /**
@@ -369,7 +424,7 @@ public class EnhanceLibrary extends Task {
         Class extensionClass;
 
         /** The extension method. */
-        Method method;
+        java.lang.reflect.Method method;
 
         /**
          * <p>
@@ -379,58 +434,33 @@ public class EnhanceLibrary extends Task {
          * @param line A definition.
          * @return A parsed definition.
          */
-        @SneakyThrows
         static Definition of(String line) {
-            String[] values = line.split(" ");
-            Class extensionClass = Class.forName(values[0]);
-            String[] params = values[2].split(",");
-            Class[] paramTypes = new Class[params.length];
+            try {
+                String[] values = line.split(" ");
+                Class extensionClass = Class.forName(values[0]);
+                String[] params = values[2].split(",");
+                Class[] paramTypes = new Class[params.length];
 
-            for (int i = 0; i < paramTypes.length; i++) {
-                paramTypes[i] = Class.forName(params[i]);
+                for (int i = 0; i < paramTypes.length; i++) {
+                    paramTypes[i] = Class.forName(params[i]);
+                }
+                java.lang.reflect.Method method = extensionClass.getMethod(values[1], paramTypes);
+                Path archive = I.locate(paramTypes[0]);
+
+                return new Definition(paramTypes[0], archive == null ? Platform.JavaRuntime : archive, extensionClass, method);
+            } catch (Exception e) {
+                return null;
             }
-            Method method = extensionClass.getMethod(values[1], paramTypes);
-            Path archive = I.locate(paramTypes[0]);
-
-            return new Definition(paramTypes[0], archive == null ? Platform.JavaRuntime : archive, extensionClass, method);
         }
     }
 
     /**
-     * <p>
-     * Collect JRE related jars.
-     * </p>
-     * 
-     * @return
-     */
-    private PathSet collectJRE() {
-        return new PathSet(I.walk(Platform.JavaRuntime
-                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!java*", "!security/*", "!deploy.jar"));
-    }
-
-    private void collectEnhancers() {
-        // try {
-        // for (Library library : project.getDependency(Scope.Runtime)) {
-        // Path file = FileSystems.newFileSystem(library.getJar(),
-        // ClassLoader.getSystemClassLoader())
-        // .getPath("/")
-        // .resolve("META-INF/services/bee.enhancer.ExtensionMethod");
-        // if (Files.exists(file)) {
-        // libraries.add(library.getJar());
-        // }
-        // }
-        // } catch (IOException e) {
-        // throw I.quiet(e);
-        // }
-    }
-
-    /**
-     * @version 2016/12/10 13:20:14
+     * @version 2016/12/12 21:07:08
      */
     @Documented
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface ExtensionMethod {
+    public @interface Method {
     }
 
     public boolean isNotEmpty(int value, String name) {
@@ -456,7 +486,7 @@ public class EnhanceLibrary extends Task {
      * @param value
      * @return
      */
-    @ExtensionMethod
+    @Method
     public static boolean isNotEmpty(String value) {
         return !value.isEmpty();
     }
@@ -465,7 +495,7 @@ public class EnhanceLibrary extends Task {
      * @param value
      * @return
      */
-    @ExtensionMethod
+    @Method
     public static boolean isBlank(String value) {
         return value.length() == 0;
     }
@@ -474,7 +504,7 @@ public class EnhanceLibrary extends Task {
      * @param value
      * @return
      */
-    @ExtensionMethod
+    @Method
     public static boolean isColorName(String value) {
         return value.length() == 0;
     }

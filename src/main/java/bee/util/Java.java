@@ -282,7 +282,7 @@ public class Java {
          */
         public static void main(String[] args) throws Exception {
             // load stacktrace codec
-            I.load(Java.class, true);
+            I.load(Java.class, false);
 
             // execute main process
             JVM vm = (JVM) I.make(Class.forName(args[2]));

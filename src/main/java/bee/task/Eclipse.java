@@ -26,6 +26,7 @@ import bee.api.Library;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.api.Task;
+import bee.extension.JavaExtension;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.Java;
 import bee.util.Java.JVM;
@@ -159,23 +160,24 @@ public class Eclipse extends Task implements IDESupport {
             }
         }
 
-        EnhanceLibrary enhancer = require(EnhanceLibrary.class);
-        List<Path> jars = enhancer.enhance(I.walk(Platform.JavaRuntime
-                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!javaws.jar", "!security/*", "!deploy.jar"));
-
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
-        doc.child("classpathentry")
-                .attr("kind", "con")
-                .attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Bee");
-        // for (Path path : jars) {
-        // doc.child("classpathentry").attr("kind", "lib").attr("path", path).attr("sourcepath",
-        // Platform.JavaHome.resolve("src.zip"));
-        // }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            addJRE(project.getProduct(), jars);
-        }));
+        // Java extensions
+        JavaExtension extension = I.make(JavaExtension.class);
+
+        if (extension.hasExtension()) {
+            boolean needEnhanceJRE = extension.hasJREExtension();
+            String JREName = needEnhanceJRE ? "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project.getProduct() : "";
+            doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
+
+            if (needEnhanceJRE) {
+                // don't call in lambda because enhance process will be failed, why?
+                List<Path> JRE = extension.enhancedJRE();
+
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> addJRE(project.getProduct(), JRE)));
+            }
+        }
 
         // write file
         makeFile(file, doc);
@@ -213,9 +215,9 @@ public class Eclipse extends Task implements IDESupport {
     private void createAPT(boolean enable, Entry<String, String> option) {
         Properties properties = new Properties();
         properties.put("eclipse.preferences.version", "1");
-        properties.put("org.eclipse.jdt.apt.aptEnabled", enable);
+        properties.put("org.eclipse.jdt.apt.aptEnabled", String.valueOf(enable));
         properties.put("org.eclipse.jdt.apt.genSrcDir", "src/main/auto");
-        properties.put("org.eclipse.jdt.apt.reconcileEnabled", enable);
+        properties.put("org.eclipse.jdt.apt.reconcileEnabled", String.valueOf(enable));
 
         if (option != null) {
             properties.put("org.eclipse.jdt.apt.processorOptions/" + option.getKey(), option.getValue());

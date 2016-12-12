@@ -1,3 +1,0 @@
-bee.task.EnhanceLibrary isNotEmpty java.lang.String
-bee.task.EnhanceLibrary isBlank java.lang.String
-bee.task.EnhanceLibrary isColorName java.lang.String
