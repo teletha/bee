@@ -53,6 +53,9 @@ import lombok.experimental.Accessors;
  */
 public class EnhanceLibrary extends Task {
 
+    /** The timestamp format. */
+    private static final DateTimeFormatter timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
     /**
      * <p>
      * Enhance external class.
@@ -62,20 +65,18 @@ public class EnhanceLibrary extends Task {
      */
     @SneakyThrows
     public List<Path> enhance(List<Path> jars) {
-        for (Entry<Path, List<ExtensionDefinition>> entry : searchExtensionLibrary().entrySet()) {
+        for (Entry<Path, List<Definition>> archives : collectDefinition().entrySet()) {
             // copy original archive
-            Path original = entry.getKey();
+            Path archive = archives.getKey();
 
-            if (jars.remove(original)) {
-                Path enhanced = manageLocalLibrary(original);
+            if (jars.remove(archive)) {
+                Path enhanced = manageLocalLibrary(archive);
                 jars.add(enhanced);
 
                 Path jar = jar(enhanced);
-                Table<Class, ExtensionDefinition> table = Events.from(entry.getValue()).toTable(ExtensionDefinition::target);
 
-                for (Entry<Class, List<ExtensionDefinition>> definitions : table.entrySet()) {
-                    Class clazz = definitions.getKey();
-                    Path classFile = jar.resolve(clazz.getName().replace('.', '/') + ".class");
+                for (Entry<Class, List<Definition>> definitions : Events.from(archives.getValue()).toTable(Definition::target).entrySet()) {
+                    Path classFile = jar.resolve(definitions.getKey().getName().replace('.', '/') + ".class");
 
                     // start writing byte code
                     ClassReader reader = new ClassReader(Files.newInputStream(classFile));
@@ -84,12 +85,78 @@ public class EnhanceLibrary extends Task {
 
                     // write new byte code
                     Files.copy(new ByteArrayInputStream(writer.toByteArray()), classFile, StandardCopyOption.REPLACE_EXISTING);
-
-                    ui.talk("Enhance " + clazz.getName() + ".");
                 }
+
+                // cleanup temporary files
+                I.delete(enhanced.getParent(), "zipfstmp*");
+
+                ui.talk("Enhance " + archive.getFileName() + ".");
             }
         }
         return jars;
+    }
+
+    /**
+     * <p>
+     * Search all extension libraries.
+     * </p>
+     */
+    private Table<Path, Definition> collectDefinition() {
+        return Events.from(project.getDependency(Scope.Compile))
+                .map(lib -> lib.getJar())
+                .map(this::jar)
+                .startWith(project.getSources().resolve("resources"))
+                .map(path -> path.resolve("META-INF/services/" + EnhanceLibrary.class.getName()))
+                .take(Files::exists)
+                .flatIterable(I.quiet(Files::readAllLines))
+                .map(Definition::of)
+                .toTable(Definition::archive);
+    }
+
+    /**
+     * <p>
+     * Create the new local library path and delete all old local libraries.
+     * </p>
+     * 
+     * @param original
+     * @return
+     */
+    @SneakyThrows
+    private Path manageLocalLibrary(Path original) {
+        String name = Paths.getName(original);
+        Path root = Paths.createDirectory(project.getOutput().resolve("local-library"));
+
+        // delete old libraries at later
+        for (Path path : I.walk(root, name + "-*.jar")) {
+            try {
+                I.delete(path);
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+
+        // create new library with time stamp
+        Path created = root.resolve(name + "-" + LocalDateTime.now().format(timestamp) + ".jar");
+
+        // copy actual jar file
+        I.copy(original, created);
+
+        // API definition
+        return created;
+    }
+
+    /**
+     * <p>
+     * Resolve jar file.
+     * </p>
+     * 
+     * @param path
+     * @return
+     * @throws IOException
+     */
+    @SneakyThrows
+    private Path jar(Path path) {
+        return FileSystems.newFileSystem(path, ClassLoader.getSystemClassLoader()).getPath("/");
     }
 
     /**
@@ -98,7 +165,7 @@ public class EnhanceLibrary extends Task {
     private static class Enhancer extends ClassVisitor {
 
         /** The definitions. */
-        private final List<ExtensionDefinition> definitions;
+        private final List<Definition> definitions;
 
         /**
          * Class file enhancer.
@@ -106,13 +173,10 @@ public class EnhanceLibrary extends Task {
          * @param writer An actual writer.
          * @param definitions A list of extension definitions.
          */
-        private Enhancer(ClassWriter writer, List<ExtensionDefinition> definitions) {
+        private Enhancer(ClassWriter writer, List<Definition> definitions) {
             super(Opcodes.ASM5, writer);
 
             this.definitions = definitions;
-
-            String v = "";
-            // System.out.println(v.isNotEmpty());
         }
 
         /**
@@ -121,7 +185,7 @@ public class EnhanceLibrary extends Task {
         @Override
         public void visitEnd() {
             // add extension methods
-            for (ExtensionDefinition def : definitions) {
+            for (Definition def : definitions) {
                 String className = Type.getInternalName(def.extensionClass);
                 Type callee = Type.getMethodType(Type.getMethodDescriptor(def.method));
                 Class[] params = def.method.getParameterTypes();
@@ -247,44 +311,126 @@ public class EnhanceLibrary extends Task {
             }
             super.visitEnd();
         }
-    }
 
-    /**
-     * Helper method to write cast code. This cast mostly means down cast. (e.g. Object -> String,
-     * Object -> int)
-     *
-     * @param clazz A class to cast.
-     * @return A class type to be casted.
-     */
-    private static Type cast(Class clazz, MethodVisitor mv) {
-        Type type = Type.getType(clazz);
+        /**
+         * Helper method to write cast code. This cast mostly means down cast. (e.g. Object ->
+         * String, Object -> int)
+         *
+         * @param clazz A class to cast.
+         * @return A class type to be casted.
+         */
+        private Type cast(Class clazz, MethodVisitor mv) {
+            Type type = Type.getType(clazz);
 
-        if (clazz.isPrimitive()) {
-            if (clazz != Void.TYPE) {
-                Type wrapper = Type.getType(I.wrap(clazz));
-                mv.visitTypeInsn(CHECKCAST, wrapper.getInternalName());
-                mv.visitMethodInsn(INVOKEVIRTUAL, wrapper.getInternalName(), clazz.getName() + "Value", "()" + type.getDescriptor(), false);
+            if (clazz.isPrimitive()) {
+                if (clazz != Void.TYPE) {
+                    Type wrapper = Type.getType(I.wrap(clazz));
+                    mv.visitTypeInsn(CHECKCAST, wrapper.getInternalName());
+                    mv.visitMethodInsn(INVOKEVIRTUAL, wrapper
+                            .getInternalName(), clazz.getName() + "Value", "()" + type.getDescriptor(), false);
+                }
+            } else {
+                mv.visitTypeInsn(CHECKCAST, type.getInternalName());
             }
-        } else {
-            mv.visitTypeInsn(CHECKCAST, type.getInternalName());
+
+            // API definition
+            return type;
         }
 
-        // API definition
-        return type;
+        /**
+         * Helper method to write cast code. This cast mostly means up cast. (e.g. String -> Object,
+         * int -> Integer)
+         *
+         * @param clazz A primitive class type to wrap.
+         */
+        private void wrap(Class clazz, MethodVisitor mv) {
+            if (clazz.isPrimitive() && clazz != Void.TYPE) {
+                Type wrapper = Type.getType(I.wrap(clazz));
+                mv.visitMethodInsn(INVOKESTATIC, wrapper
+                        .getInternalName(), "valueOf", "(" + Type.getType(clazz).getDescriptor() + ")" + wrapper.getDescriptor(), false);
+            }
+        }
     }
 
     /**
-     * Helper method to write cast code. This cast mostly means up cast. (e.g. String -> Object, int
-     * -> Integer)
-     *
-     * @param clazz A primitive class type to wrap.
+     * @version 2016/12/11 1:30:03
      */
-    private static void wrap(Class clazz, MethodVisitor mv) {
-        if (clazz.isPrimitive() && clazz != Void.TYPE) {
-            Type wrapper = Type.getType(I.wrap(clazz));
-            mv.visitMethodInsn(INVOKESTATIC, wrapper
-                    .getInternalName(), "valueOf", "(" + Type.getType(clazz).getDescriptor() + ")" + wrapper.getDescriptor(), false);
+    @Value
+    @Accessors(fluent = true)
+    private static class Definition {
+
+        /** The target class to extend. */
+        Class target;
+
+        /** The archive of the target class. */
+        Path archive;
+
+        /** The extension class. */
+        Class extensionClass;
+
+        /** The extension method. */
+        Method method;
+
+        /**
+         * <p>
+         * Parse definition.
+         * </p>
+         * 
+         * @param line A definition.
+         * @return A parsed definition.
+         */
+        @SneakyThrows
+        static Definition of(String line) {
+            String[] values = line.split(" ");
+            Class extensionClass = Class.forName(values[0]);
+            String[] params = values[2].split(",");
+            Class[] paramTypes = new Class[params.length];
+
+            for (int i = 0; i < paramTypes.length; i++) {
+                paramTypes[i] = Class.forName(params[i]);
+            }
+            Method method = extensionClass.getMethod(values[1], paramTypes);
+            Path archive = I.locate(paramTypes[0]);
+
+            return new Definition(paramTypes[0], archive == null ? Platform.JavaRuntime : archive, extensionClass, method);
         }
+    }
+
+    /**
+     * <p>
+     * Collect JRE related jars.
+     * </p>
+     * 
+     * @return
+     */
+    private PathSet collectJRE() {
+        return new PathSet(I.walk(Platform.JavaRuntime
+                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!java*", "!security/*", "!deploy.jar"));
+    }
+
+    private void collectEnhancers() {
+        // try {
+        // for (Library library : project.getDependency(Scope.Runtime)) {
+        // Path file = FileSystems.newFileSystem(library.getJar(),
+        // ClassLoader.getSystemClassLoader())
+        // .getPath("/")
+        // .resolve("META-INF/services/bee.enhancer.ExtensionMethod");
+        // if (Files.exists(file)) {
+        // libraries.add(library.getJar());
+        // }
+        // }
+        // } catch (IOException e) {
+        // throw I.quiet(e);
+        // }
+    }
+
+    /**
+     * @version 2016/12/10 13:20:14
+     */
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface ExtensionMethod {
     }
 
     public boolean isNotEmpty(int value, String name) {
@@ -331,151 +477,5 @@ public class EnhanceLibrary extends Task {
     @ExtensionMethod
     public static boolean isColorName(String value) {
         return value.length() == 0;
-    }
-
-    /** The timestamp format. */
-    private static final DateTimeFormatter timestamp = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-
-    /**
-     * <p>
-     * Create the new local library path and delete all old local libraries.
-     * </p>
-     * 
-     * @param original
-     * @return
-     */
-    @SneakyThrows
-    private Path manageLocalLibrary(Path original) {
-        String name = Paths.getName(original);
-        Path root = Paths.createDirectory(project.getOutput().resolve("local-library"));
-
-        // delete old libraries at later
-        for (Path path : I.walk(root, name + "-*.jar")) {
-            path.toFile().deleteOnExit();
-        }
-
-        // create new library with time stamp
-        Path created = root.resolve(name + "-" + LocalDateTime.now().format(timestamp) + ".jar");
-
-        // copy actual jar file
-        I.copy(original, created);
-
-        // API definition
-        return created;
-    }
-
-    /**
-     * <p>
-     * Search all extension libraries.
-     * </p>
-     */
-    private Table<Path, ExtensionDefinition> searchExtensionLibrary() {
-        return Events.from(project.getDependency(Scope.Compile))
-                .map(lib -> lib.getJar())
-                .map(this::jar)
-                .startWith(project.getSources().resolve("resources"))
-                .map(path -> path.resolve("META-INF/services/" + EnhanceLibrary.class.getName()))
-                .take(Files::exists)
-                .flatIterable(I.quiet(Files::readAllLines))
-                .map(ExtensionDefinition::of)
-                .toTable(ExtensionDefinition::archive);
-    }
-
-    /**
-     * <p>
-     * Resolve jar file.
-     * </p>
-     * 
-     * @param path
-     * @return
-     * @throws IOException
-     */
-    @SneakyThrows
-    private Path jar(Path path) {
-        return FileSystems.newFileSystem(path, ClassLoader.getSystemClassLoader()).getPath("/");
-    }
-
-    /**
-     * @version 2016/12/11 1:30:03
-     */
-    @Value
-    @Accessors(fluent = true)
-    private static class ExtensionDefinition {
-
-        Class target;
-
-        Path archive;
-
-        Class extensionClass;
-
-        Method method;
-
-        /**
-         * @param line
-         * @return
-         * @throws ClassNotFoundException
-         */
-        @SneakyThrows
-        static ExtensionDefinition of(String line) {
-            String[] values = line.split(" ");
-            Class extensionClass = Class.forName(values[0]);
-            String[] params = values[2].split(",");
-            Class[] paramTypes = new Class[params.length];
-
-            for (int i = 0; i < paramTypes.length; i++) {
-                paramTypes[i] = Class.forName(params[i]);
-            }
-            Method method = extensionClass.getMethod(values[1], paramTypes);
-            Path archive = I.locate(paramTypes[0]);
-
-            return new ExtensionDefinition(paramTypes[0], archive == null ? Platform.JavaRuntime : archive, extensionClass, method);
-        }
-    }
-
-    /**
-     * <p>
-     * Copy JRE related jars to project local directory.
-     * </p>
-     */
-    void copyJRE() {
-        Path local = project.getOutput().resolve("jre");
-        collectJRE().copyTo(local);
-    }
-
-    /**
-     * <p>
-     * Collect JRE related jars.
-     * </p>
-     * 
-     * @return
-     */
-    private PathSet collectJRE() {
-        return new PathSet(I.walk(Platform.JavaRuntime
-                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!java*", "!security/*", "!deploy.jar"));
-    }
-
-    private void collectEnhancers() {
-        // try {
-        // for (Library library : project.getDependency(Scope.Runtime)) {
-        // Path file = FileSystems.newFileSystem(library.getJar(),
-        // ClassLoader.getSystemClassLoader())
-        // .getPath("/")
-        // .resolve("META-INF/services/bee.enhancer.ExtensionMethod");
-        // if (Files.exists(file)) {
-        // libraries.add(library.getJar());
-        // }
-        // }
-        // } catch (IOException e) {
-        // throw I.quiet(e);
-        // }
-    }
-
-    /**
-     * @version 2016/12/10 13:20:14
-     */
-    @Documented
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
-    public @interface ExtensionMethod {
     }
 }

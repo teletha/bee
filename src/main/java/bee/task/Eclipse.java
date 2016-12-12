@@ -10,7 +10,6 @@
 package bee.task;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,9 +18,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XML11Serializer;
 
 import bee.Bee;
 import bee.Platform;
@@ -67,7 +63,7 @@ public class Eclipse extends Task implements IDESupport {
 
         // check lombok
         if (project.hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
-            EclipseLocator eclipse = new EclipseLocator();
+            EclipseManipulator eclipse = new EclipseManipulator();
             Library lombok = project.getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion()).iterator().next();
 
             if (!eclipse.isLomboked()) {
@@ -178,7 +174,10 @@ public class Eclipse extends Task implements IDESupport {
         // doc.child("classpathentry").attr("kind", "lib").attr("path", path).attr("sourcepath",
         // Platform.JavaHome.resolve("src.zip"));
         // }
-        addJRE(project.getProduct(), jars);
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            addJRE(project.getProduct(), jars);
+        }));
 
         // write file
         makeFile(file, doc);
@@ -260,12 +259,6 @@ public class Eclipse extends Task implements IDESupport {
         return project.getRoot().relativize(path);
     }
 
-    private void add() {
-        EclipseLocator eclipse = new EclipseLocator();
-
-        ui.talk("Write Eclipse JRE configuration file.");
-    }
-
     /**
      * <p>
      * Locate eclipse installed JRE preference.
@@ -275,7 +268,7 @@ public class Eclipse extends Task implements IDESupport {
      */
     @SneakyThrows
     private void addJRE(String name, List<Path> jars) {
-        EclipseLocator eclipse = new EclipseLocator();
+        EclipseManipulator eclipse = new EclipseManipulator();
 
         Properties properties = new Properties();
         properties.load(Files.newInputStream(eclipse.locateJREPreference()));
@@ -284,17 +277,15 @@ public class Eclipse extends Task implements IDESupport {
         XML vm = root.find("vm[name=\"" + name + "\"]");
 
         Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
-        vm.find("libraryLocation[jreJar*=\"/rt\"]").attr("jreJar", jar);
 
-        StringWriter writer = new StringWriter();
-        OutputFormat format = new OutputFormat();
-        format.setIndent(0);
-        format.setLineWidth(0);
-        format.setOmitXMLDeclaration(false);
-        root.to(new XML11Serializer(writer, format));
+        for (XML location : vm.find("libraryLocation")) {
+            if (location.attr("jreJar").matches(".+rt-.+\\.jar")) {
+                location.attr("jreJar", jar);
+            }
+        }
 
         Path temp = I.locateTemporary();
-        properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", writer.toString());
+        properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", root.toString());
         properties.store(Files.newBufferedWriter(temp), "");
 
         Java.with()
@@ -324,7 +315,7 @@ public class Eclipse extends Task implements IDESupport {
     /**
      * @version 2016/12/12 15:05:05
      */
-    private static class EclipseLocator {
+    private static class EclipseManipulator {
 
         /** The base eclipse.exe. */
         private Path eclipse;
@@ -337,7 +328,7 @@ public class Eclipse extends Task implements IDESupport {
          * @param eclipse
          * @return
          */
-        private EclipseLocator() {
+        private EclipseManipulator() {
             this(null);
         }
 
@@ -349,7 +340,7 @@ public class Eclipse extends Task implements IDESupport {
          * @param eclipse
          * @return
          */
-        private EclipseLocator(Path eclipse) {
+        private EclipseManipulator(Path eclipse) {
             this.eclipse = eclipse == null ? locateActiveEclipse() : eclipse;
         }
 
@@ -414,10 +405,9 @@ public class Eclipse extends Task implements IDESupport {
          */
         private void open() {
             try {
-                System.out.println(eclipse.getParent() + "   " + eclipse.getFileName());
-                // Process.with().workingDirectory(eclipse.getParent()).inParallel().run(Arrays.asList("\""
-                // + eclipse + "\""));
-                ps("Start-Process -FilePath \"" + eclipse + "\"");
+                Process.with()
+                        .workingDirectory(eclipse.getParent())
+                        .run(Arrays.asList("cmd", "/c", "cd", "/d", eclipse.getParent().toString(), "&", eclipse.getFileName().toString()));
             } catch (Throwable e) {
                 e.printStackTrace();
                 throw I.quiet(e);
@@ -430,18 +420,7 @@ public class Eclipse extends Task implements IDESupport {
          * </p>
          */
         private void close() {
-            ps("Get-Process Eclipse | %{ $_.CloseMainWindow() }");
-        }
-
-        /**
-         * <p>
-         * Helper method to execute power shell.
-         * </p>
-         * 
-         * @param command
-         */
-        private void ps(String command) {
-            Process.with().inParallel().run(Arrays.asList("PowerShell", command));
+            Process.with().run(Arrays.asList("PowerShell", "Get-Process Eclipse | %{ $_.CloseMainWindow(); $_.WaitForExit() }"));
         }
 
         /**
@@ -463,8 +442,7 @@ public class Eclipse extends Task implements IDESupport {
                 eclipse = I.locate(result);
             } else {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
-                // the
-                // wrapped error in here.
+                // the wrapped error in here.
                 throw new Error("Not Implement for this platform.");
             }
 
@@ -486,10 +464,10 @@ public class Eclipse extends Task implements IDESupport {
          */
         @Override
         protected void process() throws Exception {
-            EclipseLocator eclipse = new EclipseLocator(I.locate(args[0]));
-            System.out.println(eclipse.locateExe());
+            EclipseManipulator eclipse = new EclipseManipulator(I.locate(args[0]));
 
             // close eclipse
+            eclipse.close();
 
             // locate configuration
             Path updater = I.locate(args[1]);
