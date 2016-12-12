@@ -37,7 +37,7 @@ import kiss.XML;
 import lombok.SneakyThrows;
 
 /**
- * @version 2016/11/30 12:05:38
+ * @version 2016/12/12 20:45:06
  */
 public class Eclipse extends Task implements IDESupport {
 
@@ -53,12 +53,10 @@ public class Eclipse extends Task implements IDESupport {
         createProject(project.getRoot().resolve(".project"));
 
         Set<Path> processors = project.getAnnotationProcessors();
-
-        if (!processors.isEmpty()) {
-            createFactorypath(project.getRoot().resolve(".factorypath"), processors);
-            createAPT(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), new ProjectInfo(project));
-            createJDT(project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs"));
-        }
+        boolean enableAnnotationProcessor = !processors.isEmpty();
+        createFactorypath(enableAnnotationProcessor, processors);
+        createAPT(enableAnnotationProcessor, new ProjectInfo(project));
+        createJDT(enableAnnotationProcessor);
         ui.talk("Create Eclipse configuration files.");
 
         // check lombok
@@ -190,15 +188,19 @@ public class Eclipse extends Task implements IDESupport {
      * 
      * @param file
      */
-    private void createFactorypath(Path file, Set<Path> processors) {
+    private void createFactorypath(boolean enable, Set<Path> processors) {
         XML doc = I.xml("factorypath");
 
         for (Path processor : processors) {
-            doc.child("factorypathentry").attr("kind", "EXTJAR").attr("id", processor).attr("enabled", true).attr("runInBatchMode", false);
+            doc.child("factorypathentry")
+                    .attr("kind", "EXTJAR")
+                    .attr("id", processor)
+                    .attr("enabled", enable)
+                    .attr("runInBatchMode", false);
         }
 
         // write file
-        makeFile(file, doc);
+        makeFile(project.getRoot().resolve(".factorypath"), doc);
     }
 
     /**
@@ -208,19 +210,19 @@ public class Eclipse extends Task implements IDESupport {
      * 
      * @param file
      */
-    private void createAPT(Path file, Entry<String, String> option) {
+    private void createAPT(boolean enable, Entry<String, String> option) {
         Properties properties = new Properties();
         properties.put("eclipse.preferences.version", "1");
-        properties.put("org.eclipse.jdt.apt.aptEnabled", "true");
+        properties.put("org.eclipse.jdt.apt.aptEnabled", enable);
         properties.put("org.eclipse.jdt.apt.genSrcDir", "src/main/auto");
-        properties.put("org.eclipse.jdt.apt.reconcileEnabled", "true");
+        properties.put("org.eclipse.jdt.apt.reconcileEnabled", enable);
 
         if (option != null) {
             properties.put("org.eclipse.jdt.apt.processorOptions/" + option.getKey(), option.getValue());
         }
 
         // write file
-        makeFile(file, properties);
+        makeFile(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), properties);
     }
 
     /**
@@ -230,7 +232,9 @@ public class Eclipse extends Task implements IDESupport {
      * 
      * @param file
      */
-    private void createJDT(Path file) {
+    private void createJDT(boolean enabled) {
+        Path file = project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs");
+
         try {
             if (Files.notExists(file)) {
                 makeFile(file, "");
@@ -238,9 +242,7 @@ public class Eclipse extends Task implements IDESupport {
 
             Properties doc = new Properties();
             doc.load(Files.newInputStream(file));
-
-            doc.put("org.eclipse.jdt.core.compiler.processAnnotations", "enabled");
-
+            doc.put("org.eclipse.jdt.core.compiler.processAnnotations", enabled ? "enabled" : "disabled");
             doc.store(Files.newOutputStream(file), "");
         } catch (IOException e) {
             throw I.quiet(e);
