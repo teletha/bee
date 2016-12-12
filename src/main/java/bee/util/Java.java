@@ -271,10 +271,9 @@ public class Java {
          * Write sub-process code.
          * </p>
          * 
-         * @return A process result.
          * @throws Exception Execution error.
          */
-        protected abstract boolean process() throws Exception;
+        protected abstract void process() throws Exception;
 
         /**
          * <p>

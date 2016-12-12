@@ -400,7 +400,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * @version 2016/09/08 12:03:54
+     * @version 2016/12/12 14:44:57
      */
     private static class LombokInstaller extends JVM {
 
@@ -408,17 +408,11 @@ public class Eclipse extends Task implements IDESupport {
          * {@inheritDoc}
          */
         @Override
-        protected boolean process() throws Exception {
-            try {
-                Class main = I.type("lombok.launch.Main");
-                Method method = main.getMethod("main", String[].class);
-                method.setAccessible(true);
-                method.invoke(null, new Object[] {args});
-
-                return true;
-            } catch (Exception e) {
-                throw I.quiet(e);
-            }
+        protected void process() throws Exception {
+            Class main = I.type("lombok.launch.Main");
+            Method method = main.getMethod("main", String[].class);
+            method.setAccessible(true);
+            method.invoke(null, new Object[] {args});
         }
     }
 }

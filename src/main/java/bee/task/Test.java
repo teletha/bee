@@ -71,14 +71,13 @@ public class Test extends Task {
          * {@inheritDoc}
          */
         @Override
-        public boolean process() throws Exception {
+        public void process() throws Exception {
             Path classes = I.locate(args[0]);
             List<Path> tests = I.walk(classes, "**Test.class");
 
             if (tests.isEmpty()) {
                 ui.talk("Nothing to test");
-
-                return true;
+                return;
             }
 
             // execute test classes
@@ -139,7 +138,6 @@ public class Test extends Task {
                 buildFailure(failure, fails);
                 throw failure;
             }
-            return true;
         }
 
         /**
