@@ -42,7 +42,7 @@ import kiss.Encoder;
 import kiss.I;
 
 /**
- * @version 2015/06/18 2:05:48
+ * @version 2016/12/12 14:40:20
  */
 public class Java {
 
@@ -68,6 +68,9 @@ public class Java {
 
     /** {@link System#out} and {@link System#in} encoding. */
     private Charset encoding;
+
+    /** The execution type. */
+    private boolean sync = true;
 
     /**
      * Hide Constructor.
@@ -150,6 +153,20 @@ public class Java {
 
     /**
      * <p>
+     * Make this process running asynchronously.
+     * </p>
+     * 
+     * @return Fluent API.
+     */
+    public Java inParallel() {
+        this.sync = false;
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * <p>
      * Set working directory.
      * </p>
      * 
@@ -200,39 +217,46 @@ public class Java {
         }
 
         command.add("-Dfile.encoding=UTF-8");
+
         command.add(JVM.class.getName());
         command.add(address);
+        command.add(String.valueOf(sync));
         command.add(mainClass.getName());
 
         for (Object argument : arguments) {
             command.add(argument.toString());
         }
 
-        JVMTransporter listener = I.make(JVMTransporter.class);
-
-        try {
-            LocateRegistry.createRegistry(port);
-            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-            server.registerMBean(listener, NAME);
-
-            JMXConnectorServer connector = JMXConnectorServerFactory.newJMXConnectorServer(new JMXServiceURL(address), null, server);
-            connector.start();
-
+        if (!sync) {
             // build sub-process for java
-            Process.with().workingDirectory(directory).encoding(encoding).run(command);
+            Process.with().workingDirectory(directory).encoding(encoding).inParallel().run(command);
+        } else {
+            JVMTransporter listener = I.make(JVMTransporter.class);
 
-            connector.stop();
-        } catch (Throwable e) {
-            throw I.quiet(e);
-        } finally {
-            if (listener.error != null) {
-                throw I.quiet(listener.error);
+            try {
+                LocateRegistry.createRegistry(port);
+                MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+                server.registerMBean(listener, NAME);
+
+                JMXConnectorServer connector = JMXConnectorServerFactory.newJMXConnectorServer(new JMXServiceURL(address), null, server);
+                connector.start();
+
+                // build sub-process for java
+                Process.with().workingDirectory(directory).encoding(encoding).run(command);
+
+                connector.stop();
+            } catch (Throwable e) {
+                throw I.quiet(e);
+            } finally {
+                if (listener.error != null) {
+                    throw I.quiet(listener.error);
+                }
             }
         }
     }
 
     /**
-     * @version 2012/04/09 16:58:12
+     * @version 2016/12/12 14:40:14
      */
     public static abstract class JVM {
 
@@ -257,22 +281,26 @@ public class Java {
          * </p>
          */
         public static void main(String[] args) throws Exception {
-            // load stacktrace codec
-            I.load(Java.class, true);
-
-            // launch observer
-            JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(args[0]));
-            MBeanServerConnection connection = connector.getMBeanServerConnection();
-
-            // create transporter proxy
-            Transporter transporter = MBeanServerInvocationHandler.newProxyInstance(connection, NAME, Transporter.class, false);
-
             // execute main process
-            JVM vm = (JVM) I.make(Class.forName(args[1]));
-            ((JVMUserInterface) vm.ui).transporter = transporter;
-            vm.args = Arrays.copyOfRange(args, 2, args.length);
+            JVM vm = (JVM) I.make(Class.forName(args[2]));
 
             try {
+                // check sync mode
+                if (args[1].equals("true")) {
+                    // load stacktrace codec
+                    I.load(Java.class, true);
+
+                    // launch observer
+                    JMXConnector connector = JMXConnectorFactory.connect(new JMXServiceURL(args[0]));
+                    MBeanServerConnection connection = connector.getMBeanServerConnection();
+
+                    // create transporter proxy
+                    Transporter transporter = MBeanServerInvocationHandler.newProxyInstance(connection, NAME, Transporter.class, false);
+
+                    ((JVMUserInterface) vm.ui).transporter = transporter;
+                }
+
+                vm.args = Arrays.copyOfRange(args, 3, args.length);
                 vm.process();
             } catch (Throwable e) {
                 vm.ui.error(e);

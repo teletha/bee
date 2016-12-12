@@ -173,8 +173,7 @@ public class Eclipse extends Task implements IDESupport {
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
         doc.child("classpathentry")
                 .attr("kind", "con")
-                .attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project
-                        .getProduct());
+                .attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Bee");
         // for (Path path : jars) {
         // doc.child("classpathentry").attr("kind", "lib").attr("path", path).attr("sourcepath",
         // Platform.JavaHome.resolve("src.zip"));
@@ -322,25 +321,53 @@ public class Eclipse extends Task implements IDESupport {
         XML root = I.xml(properties.getProperty("org.eclipse.jdt.launching.PREF_VM_XML"));
         XML vm = root.find("vm[name=\"" + name + "\"]");
 
-        if (vm.size() == 0) {
-            ui.error("Eclipse needs installed JRE[" + name + "], but it doesn't exist. Please duplicate the default JRE and name it '" + name + "'.");
-        } else {
-            Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
-            vm.find("libraryLocation[jreJar*=\"/rt\"]").attr("jreJar", jar);
+        // if (vm.size() == 0) {
+        // ui.error("Eclipse needs installed JRE[" + name + "], but it doesn't exist. Please
+        // duplicate the default JRE and name it '" + name + "'.");
+        // } else {
+        // String result = Process.with().read(Arrays.asList("PowerShell", "Get-Process Eclipse
+        // | %{ $_.closemainwindow() }"));
+        Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
+        vm.find("libraryLocation[jreJar*=\"/rt\"]").attr("jreJar", jar);
 
-            StringWriter writer = new StringWriter();
-            OutputFormat format = new OutputFormat();
-            format.setIndent(0);
-            format.setLineWidth(0);
-            format.setOmitXMLDeclaration(false);
-            root.to(new XML11Serializer(writer, format));
+        StringWriter writer = new StringWriter();
+        OutputFormat format = new OutputFormat();
+        format.setIndent(0);
+        format.setLineWidth(0);
+        format.setOmitXMLDeclaration(false);
+        root.to(new XML11Serializer(writer, format));
 
-            properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", writer.toString());
-            properties.store(Files.newOutputStream(prefs), "");
+        properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", writer.toString());
+        properties.store(Files.newOutputStream(prefs), "");
 
-            ui.talk("Write Eclipse JRE configuration file.");
-            System.out.println(writer.toString());
+        Java.with()
+                .classPath(project.getClasses())
+                .classPath(project.getTestClasses())
+                .classPath(project.getDependency(Scope.Test))
+                .inParallel()
+                .run(TestAfter.class);
+
+        // StringBuilder builder = new StringBuilder();
+        // for (Entry entry : properties.entrySet()) {
+        // builder.append(entry.getKey()).append("=").append(entry.getValue()).append(Platform.EOL);
+        // }
+
+        // String result = ps("Get-Process Eclipse | %{ $_.CloseMainWindow(); $_.WaitForExit() } |
+        // Get-Content '", temp, "' | Out-File '", prefs, "' -Encoding DEFAULT");
+        // String result = ps("Get-Content '", temp, "' | Set-Content '", prefs, "' -Encoding
+        // DEFAULT -Force");
+        // System.out.println(result);
+        ui.talk("Write Eclipse JRE configuration file.");
+    }
+
+    private String ps(Object... commands) {
+        StringBuilder builder = new StringBuilder();
+
+        for (Object command : commands) {
+            builder.append(command);
         }
+        System.out.println(builder);
+        return Process.with().read(Arrays.asList("PowerShell", builder.toString()));
     }
 
     /**

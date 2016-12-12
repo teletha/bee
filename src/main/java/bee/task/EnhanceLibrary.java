@@ -376,7 +376,7 @@ public class EnhanceLibrary extends Task {
                 .startWith(project.getSources().resolve("resources"))
                 .map(path -> path.resolve("META-INF/services/" + EnhanceLibrary.class.getName()))
                 .take(Files::exists)
-                .flatIterable(Files::readAllLines)
+                .flatIterable(I.quiet(Files::readAllLines))
                 .map(ExtensionDefinition::of)
                 .toTable(ExtensionDefinition::archive);
     }
@@ -390,7 +390,8 @@ public class EnhanceLibrary extends Task {
      * @return
      * @throws IOException
      */
-    private Path jar(Path path) throws IOException {
+    @SneakyThrows
+    private Path jar(Path path) {
         return FileSystems.newFileSystem(path, ClassLoader.getSystemClassLoader()).getPath("/");
     }
 
@@ -415,7 +416,7 @@ public class EnhanceLibrary extends Task {
          * @throws ClassNotFoundException
          */
         @SneakyThrows
-        static ExtensionDefinition of(String line) throws ClassNotFoundException {
+        static ExtensionDefinition of(String line) {
             String[] values = line.split(" ");
             Class extensionClass = Class.forName(values[0]);
             String[] params = values[2].split(",");

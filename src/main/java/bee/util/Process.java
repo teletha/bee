@@ -97,6 +97,7 @@ public class Process {
      */
     public Process inParallel() {
         this.sync = false;
+        this.showOutput = false;
 
         // API definition
         return this;
@@ -179,8 +180,10 @@ public class Process {
             if (sync || !userOutput) {
                 process.waitFor();
             }
-            process.destroy();
 
+            if (sync) {
+                process.destroy();
+            }
             return userOutput ? null : output.toString().trim();
         } catch (Exception e) {
             throw I.quiet(e);
