@@ -54,6 +54,8 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
         super.visitEnd();
     }
 
+    MethodVisitor mv;
+
     /**
      * @param definition
      */
@@ -67,13 +69,22 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
 
         int localIndex = params.length;
 
-        MethodVisitor mv = visitMethod(ACC_PUBLIC, definition.method.getName(), caller.getDescriptor(), definition.signature(), null);
+        mv = visitMethod(ACC_PUBLIC, definition.method.getName(), caller.getDescriptor(), definition.signature(), null);
         mv.visitCode();
         Label l0 = new Label();
         Label l1 = new Label();
         Label l2 = new Label();
         mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Exception");
         mv.visitLabel(l0);
+
+        Variable[] variables = new Variable[param.length];
+        variables[0] = new That();
+
+        for (int i = 1; i < variables.length; i++) {
+            variables[i] = new Param(params[i], i);
+        }
+        Variable parameters = declareLocalVariable(createArray(Object.class, variables));
+
         mv.visitIntInsn(BIPUSH, params.length);
         mv.visitTypeInsn(ANEWARRAY, "java/lang/Object"); // new Object[params.length]
         mv.visitInsn(DUP);
@@ -182,6 +193,24 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
     }
 
     /**
+     * @param createArray
+     * @return
+     */
+    private Variable declareLocalVariable(Array array) {
+        mv.visitVarInsn(ASTORE, localIndex); // store params into local variable
+        return new Variable();
+    }
+
+    /**
+     * @param class1
+     * @param variables
+     * @return
+     */
+    private <T> Array<T> createArray(Class<T> class1, Variable[] variables) {
+        return null;
+    }
+
+    /**
      * Helper method to write cast code. This cast mostly means down cast. (e.g. Object -> String,
      * Object -> int)
      *
@@ -217,5 +246,65 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
             mv.visitMethodInsn(INVOKESTATIC, wrapper
                     .getInternalName(), "valueOf", "(" + Type.getType(clazz).getDescriptor() + ")" + wrapper.getDescriptor(), false);
         }
+    }
+
+    /**
+     * @version 2016/12/14 1:32:07
+     */
+    private class Writer {
+
+    }
+
+    /**
+     * @version 2016/12/14 0:21:26
+     */
+    private class Variable {
+
+        private Class type;
+
+        private int index;
+
+        /**
+         * @param type
+         * @param index
+         */
+        private Variable(Class type, int index) {
+            this.type = type;
+            this.index = index;
+        }
+    }
+
+    /**
+     * @version 2016/12/14 1:33:42
+     */
+    private class That extends Variable {
+
+        /**
+         * 
+         */
+        private That() {
+            super(Object.class, 0);
+        }
+    }
+
+    /**
+     * @version 2016/12/14 1:33:40
+     */
+    private class Param extends Variable {
+
+        /**
+         * @param type
+         * @param index
+         */
+        public Param(Class type, int index) {
+            super(type, index);
+        }
+    }
+
+    /**
+     * @version 2016/12/14 1:35:14
+     */
+    private class Array<T> {
+
     }
 }
