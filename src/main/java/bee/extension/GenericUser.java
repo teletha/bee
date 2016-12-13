@@ -10,7 +10,6 @@
 package bee.extension;
 
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 /**
  * @version 2016/12/13 12:20:50
@@ -19,7 +18,6 @@ public class GenericUser {
 
     public static void main(String[] args) {
         Function<String, Integer> f = v -> 1;
-        Supplier with = f.with(1);
-        Supplier with2 = f.with("test");
+        System.out.println(f.with("a") + "  " + f.with2("test"));
     }
 }
