@@ -31,7 +31,7 @@ import kiss.I;
 import kiss.Table;
 
 /**
- * @version 2016/12/12 21:24:29
+ * @version 2016/12/13 16:07:08
  */
 public class JavaExtension {
 
@@ -108,7 +108,7 @@ public class JavaExtension {
                     jars.add(enhanced);
 
                     Path jar = jar(enhanced);
-                    Table<Class, JavaExtensionMethodDefinition> defs = Events.from(archives.getValue()).toTable(def -> def.target);
+                    Table<Class, JavaExtensionMethodDefinition> defs = Events.from(archives.getValue()).toTable(def -> def.targetClass);
 
                     for (Entry<Class, List<JavaExtensionMethodDefinition>> definitions : defs.entrySet()) {
                         Path classFile = jar.resolve(definitions.getKey().getName().replace('.', '/') + ".class");
