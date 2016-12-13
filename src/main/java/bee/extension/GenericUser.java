@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class GenericUser {
 
     public static void main(String[] args) {
-        Function<String, Integer> f = v -> 1;
-        System.out.println(f.with("a") + "  " + f.with2("test"));
+        Function<String, Integer> f = v -> v.length();
+        System.out.println(f.with2("abcd").get());
     }
 }

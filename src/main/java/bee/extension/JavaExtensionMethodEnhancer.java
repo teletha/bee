@@ -156,7 +156,7 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
 
         // invoke extension method
         mv.visitInsn(ACONST_NULL);
-        mv.visitVarInsn(ALOAD, 1); // load actual parameters
+        mv.visitVarInsn(ALOAD, localIndex); // load actual parameters
         mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;", false);
 
         // check return type
