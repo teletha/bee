@@ -166,17 +166,15 @@ public class Eclipse extends Task implements IDESupport {
         // Java extensions
         JavaExtension extension = I.make(JavaExtension.class);
 
-        if (extension.hasExtension()) {
-            boolean needEnhanceJRE = extension.hasJREExtension();
-            String JREName = needEnhanceJRE ? "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project.getProduct() : "";
-            doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
+        boolean needEnhanceJRE = extension.hasJREExtension();
+        String JREName = needEnhanceJRE ? "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project.getProduct() : "";
+        doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
 
-            if (needEnhanceJRE) {
-                // don't call in lambda because enhance process will be failed, why?
-                List<Path> JRE = extension.enhancedJRE();
+        if (needEnhanceJRE) {
+            // don't call in lambda because enhance process will be failed, why?
+            List<Path> JRE = extension.enhancedJRE();
 
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> addJRE(project.getProduct(), JRE)));
-            }
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> addJRE(project.getProduct(), JRE)));
         }
 
         // write file
@@ -424,7 +422,7 @@ public class Eclipse extends Task implements IDESupport {
          * </p>
          */
         private void close() {
-            Process.with().run(Arrays.asList("PowerShell", "Get-Process Eclipse | %{ $_.CloseMainWindow(); $_.WaitForExit() }"));
+            Process.with().run(Arrays.asList("PowerShell", "Get-Process Eclipse | %{ $_.CloseMainWindow(); $_.WaitForExit(10000) }"));
         }
 
         /**

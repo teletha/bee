@@ -1,3 +1,0 @@
-bee.extension.JavaExtension isNotEmpty java.lang.String
-bee.extension.JavaExtension isBlank java.lang.String
-bee.extension.JavaExtension isColorName java.lang.String
