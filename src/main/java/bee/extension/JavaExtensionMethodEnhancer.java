@@ -11,12 +11,8 @@ package bee.extension;
 
 import static jdk.internal.org.objectweb.asm.Opcodes.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
-import bee.extension.JavaExtensionMethodEnhancer.Writer.Instance;
-import bee.extension.JavaExtensionMethodEnhancer.Writer.Variable;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
 import jdk.internal.org.objectweb.asm.ClassWriter;
 import jdk.internal.org.objectweb.asm.Label;
@@ -26,9 +22,12 @@ import jdk.internal.org.objectweb.asm.Type;
 import kiss.I;
 
 /**
- * @version 2016/12/13 11:24:39
+ * @version 2016/12/14 15:55:59
  */
 class JavaExtensionMethodEnhancer extends ClassVisitor {
+
+    /** The target class internal name to extend. */
+    private final String extensionClassName;
 
     /** The definitions. */
     private final List<JavaExtensionMethodDefinition> definitions;
@@ -39,9 +38,10 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
      * @param writer An actual writer.
      * @param definitions A list of extension definitions.
      */
-    JavaExtensionMethodEnhancer(ClassWriter writer, List<JavaExtensionMethodDefinition> definitions) {
+    JavaExtensionMethodEnhancer(ClassWriter writer, Class target, List<JavaExtensionMethodDefinition> definitions) {
         super(Opcodes.ASM5, writer);
 
+        this.extensionClassName = Type.getInternalName(target);
         this.definitions = definitions;
     }
 
@@ -50,454 +50,181 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
      */
     @Override
     public void visitEnd() {
+        writeMethodInvoker();
+        writeClassLoader();
+
         // add extension methods
         for (JavaExtensionMethodDefinition def : definitions) {
-            java.lang.reflect.Method m = def.method;
-            Class[] parameters = m.getParameterTypes();
-            Class[] tail = Arrays.copyOfRange(parameters, 1, parameters.length);
+            String name = def.method.getName();
+            Class returnClass = def.method.getReturnType();
+            Type returnType = Type.getType(returnClass);
+            Class[] parameters = def.method.getParameterTypes();
+            Type[] tails = new Type[parameters.length - 1];
+            for (int i = 1; i < parameters.length; i++) {
+                tails[i - 1] = Type.getType(parameters[i]);
+            }
 
-            Writer.defineMethod(this, ACC_PUBLIC, m.getName(), m.getReturnType(), tail, m.getExceptionTypes(), def.signature(), w -> {
-                Label l0 = new Label();
-                Label l1 = new Label();
-                Label l2 = new Label();
-                w.visitTryCatchBlock(l0, l1, l2, "java/lang/Exception");
-                w.visitLabel(l0);
+            MethodVisitor mv = visitMethod(ACC_PUBLIC, name, Type.getMethodType(returnType, tails).getDescriptor(), def.signature(), null);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitLdcInsn(def.method.getDeclaringClass().getName());
+            mv.visitLdcInsn(name);
 
-                Instance[] variables = new Instance[parameters.length];
-                variables[0] = w.self;
-                for (int i = 1; i < parameters.length; i++) {
-                    variables[i] = w.param(i - 1);
-                }
-                Variable params = w.declareLocalVariable(w.createArray(Object.class, variables));
+            // new String[] {"ExtensionClassName", "param2ClassName", "param3ClassName", ...}
+            mv.visitIntInsn(BIPUSH, parameters.length);
+            mv.visitTypeInsn(ANEWARRAY, "java/lang/String");
+            for (int i = 0; i < parameters.length; i++) {
+                mv.visitInsn(DUP);
+                mv.visitIntInsn(BIPUSH, i);
+                mv.visitLdcInsn(parameters[i].getName());
+                mv.visitInsn(AASTORE);
+            }
 
-                Instance[] classNames = new Instance[parameters.length];
-                for (int i = 0; i < parameters.length; i++) {
-                    classNames[i] = w.string(parameters[i].getName());
-                }
-                Variable paramTypeNames = w.declareLocalVariable(w.createArray(String.class, classNames));
-                Variable paramTypes = w.declareLocalVariable(w.createArray(Class.class, parameters.length));
+            // new Object[] {this, param2, param3, ...}
+            mv.visitIntInsn(BIPUSH, parameters.length);
+            mv.visitTypeInsn(ANEWARRAY, "java/lang/Object");
+            mv.visitInsn(DUP);
+            mv.visitInsn(ICONST_0);
+            mv.visitVarInsn(ALOAD, 0);
+            mv.visitInsn(AASTORE); // first parameter must be 'this'
+            for (int i = 1; i < parameters.length; i++) {
+                mv.visitInsn(DUP);
+                mv.visitIntInsn(BIPUSH, i);
+                mv.visitVarInsn(Type.getType(parameters[i]).getOpcode(ILOAD), i);
+                wrap(parameters[i], mv);
+                mv.visitInsn(AASTORE);
+            }
 
-                // for loop to load parameter classes
-                Label l5 = new Label();
-                w.visitLabel(l5);
-                w.visitInsn(ICONST_0);
-                w.visitVarInsn(ISTORE, w.localIndex + 3); // int i = 0;
-                Label l6 = new Label();
-                w.visitLabel(l6);
-                Label l7 = new Label();
-                w.visitJumpInsn(GOTO, l7);
-                Label l8 = new Label();
-                w.visitLabel(l8);
-                w.visitVarInsn(ALOAD, w.localIndex + 2); // paramTypes
-                w.visitVarInsn(ILOAD, w.localIndex + 3); // i
-                w.visitVarInsn(ALOAD, w.localIndex + 1); // paramNames
-                w.visitVarInsn(ILOAD, w.localIndex + 3); // i
-                w.visitInsn(AALOAD); // paramNames[i]
-                w.visitInsn(ICONST_1); // true
-                w.visitMethodInsn(INVOKESTATIC, "java/lang/ClassLoader", "getSystemClassLoader", "()Ljava/lang/ClassLoader;", false);
-                w.visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;", false);
-                w.visitInsn(AASTORE);
-                Label l9 = new Label();
-                w.visitLabel(l9);
-                w.visitIincInsn(w.localIndex + 3, 1); // increment i
-                w.visitLabel(l7);
-                w.visitVarInsn(ILOAD, w.localIndex + 3);
-                w.visitVarInsn(ALOAD, w.localIndex + 2);
-                w.visitInsn(ARRAYLENGTH);
-                w.visitJumpInsn(IF_ICMPLT, l8);
+            // invoke method
+            mv.visitMethodInsn(INVOKESPECIAL, extensionClassName, "$call$", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;", false);
 
-                // load extension class
-                Label l10 = new Label();
-                w.visitLabel(l10);
-                w.visitLdcInsn(def.extensionClass.getName()); // class name
-                w.visitInsn(ICONST_1); // true
-                w.visitMethodInsn(INVOKESTATIC, "java/lang/ClassLoader", "getSystemClassLoader", "()Ljava/lang/ClassLoader;", false);
-                w.visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;", false);
-                w.visitVarInsn(ASTORE, w.localIndex + 3); // store extensionClass into
-                                                          // local
-                                                          // variable
+            // check return type
+            cast(returnClass, mv);
 
-                // load extension method
-                Label l11 = new Label();
-                w.visitLabel(l11);
-                w.visitVarInsn(ALOAD, w.localIndex + 3); // load extension class
-                w.visitLdcInsn(w.methodName); // load method name
-                w.visitVarInsn(ALOAD, w.localIndex + 2); // load parameter types
-                w.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;", false);
+            // return
+            mv.visitInsn(returnType.getOpcode(IRETURN));
 
-                // invoke extension method
-                w.visitInsn(ACONST_NULL);
-                w.visitVarInsn(ALOAD, w.localIndex); // load actual parameters
-                w.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;", false);
-
-                // check return type
-                w.cast(w.returnClass);
-
-                // return
-                w.visitLabel(l1);
-                w.visitInsn(w.returnType.getOpcode(IRETURN));
-
-                // catch exception
-                w.visitLabel(l2);
-                w.visitFrame(Opcodes.F_FULL, 1, new Object[] {Type.getInternalName(def.extensionClass)}, 1, new Object[] {
-                        "java/lang/Exception"});
-                w.visitVarInsn(ASTORE, 1);
-                Label l12 = new Label();
-                w.visitLabel(l12);
-                w.visitTypeInsn(NEW, "java/lang/RuntimeException");
-                w.visitInsn(DUP);
-                w.visitVarInsn(ALOAD, 1);
-                w.visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/Throwable;)V", false);
-                w.visitInsn(ATHROW);
-                w.visitMaxs(0, 0);
-            });
+            // clean up
+            mv.visitMaxs(0, 0);
+            mv.visitEnd();
         }
         super.visitEnd();
     }
 
     /**
-     * @version 2016/12/14 9:32:26
+     * Helper method to write cast code. This cast mostly means down cast. (e.g. Object -> String,
+     * Object -> int)
+     *
+     * @param clazz A class to cast.
+     * @return A class type to be casted.
      */
-    public static class Writer extends MethodVisitor {
+    private Type cast(Class clazz, MethodVisitor mv) {
+        Type type = Type.getType(clazz);
 
-        protected final String methodName;
-
-        protected final Class[] params;
-
-        protected final Class returnClass;
-
-        protected final Type returnType;
-
-        protected final int localIndex;
-
-        private int local;
-
-        public final Variable self;
-
-        // /**
-        // * @param createArray
-        // * @return
-        // */
-        // private Variable declareLocalVariable(Array array) {
-        // w.visitVarInsn(ASTORE, localIndex); // store params into local variable
-        // return new Variable();
-        // }
-
-        /**
-         * @param cv
-         * @param modifier
-         * @param name
-         * @param returnClass
-         * @param paramClass
-         * @param throwClass
-         * @param signature
-         * @param writer
-         */
-        private Writer(ClassVisitor cv, int modifier, String name, Class returnClass, Class[] paramClass, Class[] throwClass, String signature, Consumer<Writer> writer) {
-            super(Opcodes.ASM5, cv.visitMethod(modifier, name, Type.getMethodType(Type.getType(returnClass), convert(paramClass))
-                    .getDescriptor(), signature, null));
-
-            this.methodName = name;
-            this.params = paramClass;
-            this.localIndex = params.length + 1;
-            this.returnClass = returnClass;
-            this.returnType = Type.getType(returnClass);
-            this.self = new Self();
-            this.local = localIndex;
-
-            mv.visitCode();
-            writer.accept(this);
-            mv.visitEnd();
-        }
-
-        /**
-         * <p>
-         * Define new method.
-         * </p>
-         * 
-         * @param cv
-         * @param modifier
-         * @param name
-         * @param returnClass
-         * @param paramClass
-         * @param throwClass
-         * @param signature
-         * @return
-         */
-        public static void defineMethod(ClassVisitor cv, int modifier, String name, Class returnClass, Class[] paramClass, Class[] throwClass, String signature, Consumer<Writer> writer) {
-            new Writer(cv, modifier, name, returnClass, paramClass, throwClass, signature, writer);
-        }
-
-        /**
-         * @param type
-         * @param items
-         * @return
-         */
-        public <T> Array<T> createArray(Class<T> type, Instance[] items) {
-            return new Array(type, items);
-        }
-
-        /**
-         * @param type
-         * @param items
-         * @return
-         */
-        public <T> Array<T> createArray(Class<T> type, int size) {
-            return new Array(type, size);
-        }
-
-        // /**
-        // * @param createArray
-        // * @return
-        // */
-        // private Variable declareLocalVariable(Array array) {
-        // w.visitVarInsn(ASTORE, localIndex); // store params into local variable
-        // return new Variable();
-        // }
-
-        /**
-         * @param createArray
-         * @return
-         */
-        public Variable declareLocalVariable(Array array) {
-            Variable variable = new Variable(array.type, nextLocalId());
-            variable.set(array);
-
-            return variable;
-        }
-
-        private int nextLocalId() {
-            return local++;
-        }
-
-        /**
-         * <p>
-         * Convert {@link Class} to {@link Type}.
-         * </p>
-         * 
-         * @param items
-         * @return
-         */
-        private static Type[] convert(Class[] items) {
-            Type[] types = new Type[items.length];
-
-            for (int i = 0; i < types.length; i++) {
-                types[i] = Type.getType(items[i]);
-            }
-            return types;
-        }
-
-        /**
-         * Helper method to write cast code. This cast mostly means down cast. (e.g. Object ->
-         * String, Object -> int)
-         *
-         * @param clazz A class to cast.
-         * @return A class type to be casted.
-         */
-        protected Type cast(Class clazz) {
-            Type type = Type.getType(clazz);
-
-            if (clazz.isPrimitive()) {
-                if (clazz != Void.TYPE) {
-                    Type wrapper = Type.getType(I.wrap(clazz));
-                    mv.visitTypeInsn(CHECKCAST, wrapper.getInternalName());
-                    mv.visitMethodInsn(INVOKEVIRTUAL, wrapper
-                            .getInternalName(), clazz.getName() + "Value", "()" + type.getDescriptor(), false);
-                }
-            } else {
-                mv.visitTypeInsn(CHECKCAST, type.getInternalName());
-            }
-
-            // API definition
-            return type;
-        }
-
-        /**
-         * Helper method to write cast code. This cast mostly means up cast. (e.g. String -> Object,
-         * int -> Integer)
-         *
-         * @param clazz A primitive class type to wrap.
-         */
-        protected void wrap(Class clazz) {
-            if (clazz.isPrimitive() && clazz != Void.TYPE) {
+        if (clazz.isPrimitive()) {
+            if (clazz != Void.TYPE) {
                 Type wrapper = Type.getType(I.wrap(clazz));
-                mv.visitMethodInsn(INVOKESTATIC, wrapper
-                        .getInternalName(), "valueOf", "(" + Type.getType(clazz).getDescriptor() + ")" + wrapper.getDescriptor(), false);
+                mv.visitTypeInsn(CHECKCAST, wrapper.getInternalName());
+                mv.visitMethodInsn(INVOKEVIRTUAL, wrapper.getInternalName(), clazz.getName() + "Value", "()" + type.getDescriptor(), false);
             }
+        } else {
+            mv.visitTypeInsn(CHECKCAST, type.getInternalName());
         }
 
-        /**
-         * <p>
-         * Create parameter access.
-         * </p>
-         * 
-         * @param index
-         * @return
-         */
-        public Variable param(int index) {
-            if (index < 0) {
-                throw new IllegalArgumentException("Negative index is invalid in method parameters.");
-            }
+        // API definition
+        return type;
+    }
 
-            if (params.length <= index) {
-                throw new IllegalArgumentException("Out of index of " + methodName + " parameters. :" + index);
-            }
-            return new Param(params[index], index + 1);
+    /**
+     * Helper method to write cast code. This cast mostly means up cast. (e.g. String -> Object, int
+     * -> Integer)
+     *
+     * @param clazz A primitive class type to wrap.
+     */
+    private void wrap(Class clazz, MethodVisitor mv) {
+        if (clazz.isPrimitive() && clazz != Void.TYPE) {
+            Type wrapper = Type.getType(I.wrap(clazz));
+            mv.visitMethodInsn(INVOKESTATIC, wrapper
+                    .getInternalName(), "valueOf", "(" + Type.getType(clazz).getDescriptor() + ")" + wrapper.getDescriptor(), false);
         }
+    }
 
-        public Instance string(String value) {
-            return new StringExpression(value);
-        }
+    /**
+     * <p>
+     * Write helper method code. (COPY from ASMfier)
+     * </p>
+     */
+    private void writeMethodInvoker() {
+        MethodVisitor mv = visitMethod(ACC_PRIVATE, "$call$", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;", null, null);
+        Label l0 = new Label();
+        Label l1 = new Label();
+        Label l2 = new Label();
+        mv.visitTryCatchBlock(l0, l1, l2, "java/lang/Exception");
+        mv.visitLabel(l0);
+        mv.visitVarInsn(ALOAD, 3);
+        mv.visitInsn(ARRAYLENGTH);
+        mv.visitTypeInsn(ANEWARRAY, "java/lang/Class");
+        mv.visitVarInsn(ASTORE, 5);
+        mv.visitInsn(ICONST_0);
+        mv.visitVarInsn(ISTORE, 6);
+        Label l5 = new Label();
+        mv.visitJumpInsn(GOTO, l5);
+        Label l6 = new Label();
+        mv.visitLabel(l6);
+        mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] {"[Ljava/lang/Class;", Opcodes.INTEGER}, 0, null);
+        mv.visitVarInsn(ALOAD, 5);
+        mv.visitVarInsn(ILOAD, 6);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 3);
+        mv.visitVarInsn(ILOAD, 6);
+        mv.visitInsn(AALOAD);
+        mv.visitMethodInsn(INVOKESPECIAL, extensionClassName, "$class$", "(Ljava/lang/String;)Ljava/lang/Class;", false);
+        mv.visitInsn(AASTORE);
+        mv.visitIincInsn(6, 1);
+        mv.visitLabel(l5);
+        mv.visitFrame(Opcodes.F_SAME, 0, null, 0, null);
+        mv.visitVarInsn(ILOAD, 6);
+        mv.visitVarInsn(ALOAD, 5);
+        mv.visitInsn(ARRAYLENGTH);
+        mv.visitJumpInsn(IF_ICMPLT, l6);
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitMethodInsn(INVOKESPECIAL, extensionClassName, "$class$", "(Ljava/lang/String;)Ljava/lang/Class;", false);
+        mv.visitVarInsn(ALOAD, 2);
+        mv.visitVarInsn(ALOAD, 5);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Class", "getMethod", "(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;", false);
+        mv.visitInsn(ACONST_NULL);
+        mv.visitVarInsn(ALOAD, 4);
+        mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/reflect/Method", "invoke", "(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;", false);
+        mv.visitLabel(l1);
+        mv.visitInsn(ARETURN);
+        mv.visitLabel(l2);
+        mv.visitLineNumber(31, l2);
+        mv.visitFrame(Opcodes.F_FULL, 5, new Object[] {extensionClassName, "java/lang/String", "java/lang/String", "[Ljava/lang/String;",
+                "[Ljava/lang/Object;"}, 1, new Object[] {"java/lang/Exception"});
+        mv.visitVarInsn(ASTORE, 5);
+        mv.visitTypeInsn(NEW, "java/lang/RuntimeException");
+        mv.visitInsn(DUP);
+        mv.visitVarInsn(ALOAD, 5);
+        mv.visitMethodInsn(INVOKESPECIAL, "java/lang/RuntimeException", "<init>", "(Ljava/lang/Throwable;)V", false);
+        mv.visitInsn(ATHROW);
+        mv.visitMaxs(5, 7);
+        mv.visitEnd();
+    }
 
-        /**
-         * @version 2016/12/14 0:21:26
-         */
-        public class Variable extends Instance {
-
-            private Class type;
-
-            private int index;
-
-            /**
-             * @param type
-             * @param index
-             */
-            private Variable(Class type, int index) {
-                this.type = type;
-                this.index = index;
-            }
-
-            /**
-             * <p>
-             * Load variable.
-             * </p>
-             */
-            public void get() {
-                visitVarInsn(Type.getType(type).getOpcode(ILOAD), index);
-                wrap(type);
-            }
-
-            /**
-             * @param array
-             */
-            public void set(Instance instance) {
-                instance.write();
-                visitVarInsn(Type.getType(type).getOpcode(ISTORE), index);
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void write() {
-                get();
-            }
-        }
-
-        /**
-         * @version 2016/12/14 1:33:42
-         */
-        private class Self extends Variable {
-
-            /**
-             * 
-             */
-            private Self() {
-                super(Object.class, 0);
-            }
-        }
-
-        /**
-         * @version 2016/12/14 1:33:40
-         */
-        private class Param extends Variable {
-
-            /**
-             * @param type
-             * @param index
-             */
-            public Param(Class type, int index) {
-                super(type, index);
-            }
-        }
-
-        /**
-         * @version 2016/12/14 14:28:02
-         */
-        public class Instance {
-
-            public void write() {
-            }
-        }
-
-        /**
-         * @version 2016/12/14 14:34:23
-         */
-        public class StringExpression extends Instance {
-
-            private final String value;
-
-            /**
-             * @param value
-             */
-            private StringExpression(String value) {
-                this.value = value;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void write() {
-                visitLdcInsn(value);
-            }
-        }
-
-        /**
-         * @version 2016/12/14 1:35:14
-         */
-        private class Array<T> extends Instance {
-
-            private Class type;
-
-            private Instance[] items;
-
-            /**
-             * @param type
-             * @param items
-             */
-            public Array(Class type, Instance[] items) {
-                this.type = type;
-                this.items = items;
-            }
-
-            /**
-             * @param type
-             * @param items
-             */
-            public Array(Class type, int size) {
-                this.type = type;
-                this.items = new Instance[size];
-            }
-
-            /**
-             * <p>
-             * Initialize array.
-             * </p>
-             */
-            @Override
-            public void write() {
-                // new Type[items.length]
-                visitIntInsn(BIPUSH, items.length);
-                visitTypeInsn(ANEWARRAY, Type.getType(type).getInternalName());
-
-                for (int i = 0; i < items.length; i++) {
-                    visitInsn(DUP);
-                    visitIntInsn(BIPUSH, i); // array index
-                    if (items[i] != null) items[i].write();
-                    visitInsn(AASTORE); // store param into array
-                }
-            }
-        }
+    /**
+     * <p>
+     * Write helper method code. (COPY from ASMfier)
+     * </p>
+     */
+    private void writeClassLoader() {
+        MethodVisitor mv = visitMethod(ACC_PRIVATE, "$class$", "(Ljava/lang/String;)Ljava/lang/Class;", null, new String[] {
+                "java/lang/ClassNotFoundException"});
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitInsn(ICONST_1);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/ClassLoader", "getSystemClassLoader", "()Ljava/lang/ClassLoader;", false);
+        mv.visitMethodInsn(INVOKESTATIC, "java/lang/Class", "forName", "(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class;", false);
+        mv.visitInsn(ARETURN);
+        mv.visitMaxs(3, 2);
+        mv.visitEnd();
     }
 }

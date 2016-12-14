@@ -111,12 +111,13 @@ public class JavaExtension {
                     Table<Class, JavaExtensionMethodDefinition> defs = Events.from(archives.getValue()).toTable(def -> def.targetClass);
 
                     for (Entry<Class, List<JavaExtensionMethodDefinition>> definitions : defs.entrySet()) {
-                        Path classFile = jar.resolve(definitions.getKey().getName().replace('.', '/') + ".class");
+                        Class clazz = definitions.getKey();
+                        Path classFile = jar.resolve(clazz.getName().replace('.', '/') + ".class");
 
                         // start writing byte code
                         ClassReader reader = new ClassReader(Files.newInputStream(classFile));
                         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-                        reader.accept(new JavaExtensionMethodEnhancer(writer, definitions.getValue()), ClassReader.EXPAND_FRAMES);
+                        reader.accept(new JavaExtensionMethodEnhancer(writer, clazz, definitions.getValue()), ClassReader.EXPAND_FRAMES);
 
                         // write new byte code
                         Files.copy(new ByteArrayInputStream(writer.toByteArray()), classFile, StandardCopyOption.REPLACE_EXISTING);
