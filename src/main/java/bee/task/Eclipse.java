@@ -277,15 +277,31 @@ public class Eclipse extends Task implements IDESupport {
             XML root = I.xml(properties.getProperty("org.eclipse.jdt.launching.PREF_VM_XML"));
             XML vm = root.find("vm[name=\"" + name + "\"]");
 
-            Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
-            for (XML location : vm.find("libraryLocation")) {
-                if (location.attr("jreJar").matches(".+rt-.+\\.jar")) {
-                    location.attr("jreJar", jar);
+            if (vm.size() == 0) {
+                vm = root.find("vmType")
+                        .child("vm")
+                        .attr("name", name)
+                        .attr("id", name.hashCode())
+                        .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
+                        .attr("path", Platform.JavaRuntime.getParent().getParent());
+                XML locations = vm.child("libraryLocations");
+                for (Path path : jars) {
+                    locations.child("libraryLocation")
+                            .attr("jreJar", path)
+                            .attr("jreSrc", Platform.JavaHome.resolve("src.zip"))
+                            .attr("pkgRoot", "");
+                }
+            } else {
+                Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
+                for (XML location : vm.find("libraryLocation")) {
+                    if (location.attr("jreJar").matches(".+rt-.+\\.jar")) {
+                        location.attr("jreJar", jar);
 
-                    String doc = location.attr("jreSrc");
+                        String doc = location.attr("jreSrc");
 
-                    if (doc == null || doc.isEmpty()) {
-                        location.attr("jreSrc", Platform.JavaHome.resolve("src.zip"));
+                        if (doc == null || doc.isEmpty()) {
+                            location.attr("jreSrc", Platform.JavaHome.resolve("src.zip"));
+                        }
                     }
                 }
             }

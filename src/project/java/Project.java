@@ -36,9 +36,8 @@ public class Project extends bee.api.Project {
         require("org.apache.maven.wagon", "wagon-http-lightweight", "2.9");
         // require("org.eclipse.mylyn.github", "org.eclipse.egit.github.core",
         // "4.0.0.201506090130-r");
-        require("com.google.code.gson", "gson", "2.3.1");
+        // require("com.google.code.gson", "gson", "2.3.1");
         require("sun.jdk", "tools", "8.0").atSystem();
-        require("javax.inject", "javax.inject", "1");
 
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
