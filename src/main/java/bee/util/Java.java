@@ -10,9 +10,12 @@
 package bee.util;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -246,6 +249,13 @@ public class Java {
 
                 connector.stop();
             } catch (Throwable e) {
+                Path path = Paths.get("E:\\error.txt");
+                try {
+                    e.printStackTrace(new PrintWriter(path.toFile()));
+                } catch (FileNotFoundException e1) {
+                    throw I.quiet(e);
+                }
+
                 throw I.quiet(e);
             } finally {
                 if (listener.error != null) {
@@ -303,6 +313,7 @@ public class Java {
                 vm.args = Arrays.copyOfRange(args, 3, args.length);
                 vm.process();
             } catch (Throwable e) {
+                e.printStackTrace();
                 vm.ui.error(e);
             } finally {
                 System.exit(0);

@@ -194,7 +194,7 @@ public class Process {
             }
             return userOutput ? null : output.toString().trim();
         } catch (Exception e) {
-            throw I.quiet(e);
+            throw new Error("Command [" + command + "] is failed.", e);
         }
     }
 

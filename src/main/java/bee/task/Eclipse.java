@@ -311,9 +311,9 @@ public class Eclipse extends Task implements IDESupport {
             properties.store(Files.newBufferedWriter(temp), "");
 
             Java.with()
-                    .classPath(project.getClasses())
-                    .classPath(project.getTestClasses())
-                    .classPath(project.getDependency(Scope.Test))
+                    .classPath(I.locate(Bee.class))
+                    .classPath(I.locate(I.class))
+                    .encoding(project.getEncoding())
                     .run(UpdateEclipseConfiguration.class, eclipse.locateExe(), temp);
         } catch (IOException e) {
             throw I.quiet(e);
@@ -404,8 +404,13 @@ public class Eclipse extends Task implements IDESupport {
          * 
          * @return
          */
-        private Path locateJREPreference() {
-            return locateWorkspace().resolve(".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs");
+        private Path locateJREPreference() throws IOException {
+            Path prefs = locateWorkspace().resolve(".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs");
+
+            if (Files.notExists(prefs)) {
+                Files.createFile(prefs);
+            }
+            return prefs;
         }
 
         /**
@@ -435,7 +440,7 @@ public class Eclipse extends Task implements IDESupport {
             try {
                 Process.with()
                         .workingDirectory(eclipse.getParent())
-                        .run(Arrays.asList("cmd", "/c", "cd", "/d", eclipse.getParent().toString(), "&", eclipse.getFileName().toString()));
+                        .run(Arrays.asList("cmd", "/c", "start", "/d", eclipse.getParent().toString(), eclipse.getFileName().toString()));
             } catch (Throwable e) {
                 e.printStackTrace();
                 throw I.quiet(e);
@@ -448,7 +453,7 @@ public class Eclipse extends Task implements IDESupport {
          * </p>
          */
         private void close() {
-            Process.with().run(Arrays.asList("PowerShell", "Get-Process Eclipse | %{ $_.CloseMainWindow(); $_.WaitForExit(10000) }"));
+            Process.with().run(Arrays.asList("taskkill ", "/F", "/IM", "eclipse.exe", "/T"));
         }
 
         /**
