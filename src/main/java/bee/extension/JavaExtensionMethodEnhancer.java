@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 
+import bee.extension.JavaExtensionMethodEnhancer.Writer.Instance;
+import bee.extension.JavaExtensionMethodEnhancer.Writer.Variable;
 import jdk.internal.org.objectweb.asm.ClassVisitor;
 import jdk.internal.org.objectweb.asm.ClassWriter;
 import jdk.internal.org.objectweb.asm.Label;
@@ -61,53 +63,19 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
                 w.visitTryCatchBlock(l0, l1, l2, "java/lang/Exception");
                 w.visitLabel(l0);
 
-                // Variable[] variables = new Variable[param.length];
-                // variables[0] = new That();
-                //
-                // for (int i = 1; i < variables.length; i++) {
-                // variables[i] = new Param(params[i], i);
-                // }
-                // Variable parameters = declareLocalVariable(createArray(Object.class,
-                // variables));
-
-                w.visitIntInsn(BIPUSH, w.params.length);
-                w.visitTypeInsn(ANEWARRAY, "java/lang/Object"); // new
-                                                                // Object[params.length]
-                w.visitInsn(DUP);
-                w.visitInsn(ICONST_0);
-                w.visitVarInsn(ALOAD, 0);
-                w.visitInsn(AASTORE); // first parameter must be 'this'
-                for (int i = 1; i < w.params.length; i++) {
-                    w.visitInsn(DUP); // copy array
-                    w.visitIntInsn(BIPUSH, i); // array index
-                    w.visitVarInsn(Type.getType(w.params[i]).getOpcode(ILOAD), i); // load
-                                                                                   // param
-                    w.wrap(w.params[i]);
-                    w.visitInsn(AASTORE); // store param into array
+                Instance[] variables = new Instance[parameters.length];
+                variables[0] = w.self;
+                for (int i = 1; i < parameters.length; i++) {
+                    variables[i] = w.param(i - 1);
                 }
-                w.visitVarInsn(ASTORE, w.localIndex); // store params into local variable
+                Variable params = w.declareLocalVariable(w.createArray(Object.class, variables));
 
-                Label l3 = new Label();
-                w.visitLabel(l3);
-                w.visitIntInsn(BIPUSH, w.params.length);
-                w.visitTypeInsn(ANEWARRAY, "java/lang/String"); // new
-                                                                // String[params.length]
+                Instance[] classNames = new Instance[parameters.length];
                 for (int i = 0; i < parameters.length; i++) {
-                    w.visitInsn(DUP); // copy array
-                    w.visitIntInsn(BIPUSH, i); // array index
-                    w.visitLdcInsn(parameters[i].getName()); // load param type
-                    w.visitInsn(AASTORE); // store param into array
+                    classNames[i] = w.string(parameters[i].getName());
                 }
-                w.visitVarInsn(ASTORE, w.localIndex + 1); // store paramTypes into local
-                                                          // variable
-
-                Label l4 = new Label();
-                w.visitLabel(l4);
-                w.visitVarInsn(ALOAD, w.localIndex + 1);
-                w.visitInsn(ARRAYLENGTH); // calculate param length
-                w.visitTypeInsn(ANEWARRAY, "java/lang/Class"); // new Class[params.length]
-                w.visitVarInsn(ASTORE, w.localIndex + 2); // store types into local
-                                                          // variable
+                Variable paramTypeNames = w.declareLocalVariable(w.createArray(String.class, classNames));
+                Variable paramTypes = w.declareLocalVariable(w.createArray(Class.class, parameters.length));
 
                 // for loop to load parameter classes
                 Label l5 = new Label();
@@ -190,7 +158,7 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
     /**
      * @version 2016/12/14 9:32:26
      */
-    private static class Writer extends MethodVisitor {
+    public static class Writer extends MethodVisitor {
 
         protected final String methodName;
 
@@ -201,6 +169,10 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
         protected final Type returnType;
 
         protected final int localIndex;
+
+        private int local;
+
+        public final Variable self;
 
         // /**
         // * @param createArray
@@ -230,6 +202,8 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
             this.localIndex = params.length + 1;
             this.returnClass = returnClass;
             this.returnType = Type.getType(returnClass);
+            this.self = new Self();
+            this.local = localIndex;
 
             mv.visitCode();
             writer.accept(this);
@@ -255,12 +229,21 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
         }
 
         /**
-         * @param class1
-         * @param variables
+         * @param type
+         * @param items
          * @return
          */
-        public <T> Array<T> createArray(Class<T> class1, Variable[] variables) {
-            return null;
+        public <T> Array<T> createArray(Class<T> type, Instance[] items) {
+            return new Array(type, items);
+        }
+
+        /**
+         * @param type
+         * @param items
+         * @return
+         */
+        public <T> Array<T> createArray(Class<T> type, int size) {
+            return new Array(type, size);
         }
 
         // /**
@@ -271,6 +254,21 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
         // w.visitVarInsn(ASTORE, localIndex); // store params into local variable
         // return new Variable();
         // }
+
+        /**
+         * @param createArray
+         * @return
+         */
+        public Variable declareLocalVariable(Array array) {
+            Variable variable = new Variable(array.type, nextLocalId());
+            variable.set(array);
+
+            return variable;
+        }
+
+        private int nextLocalId() {
+            return local++;
+        }
 
         /**
          * <p>
@@ -327,58 +325,179 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
                         .getInternalName(), "valueOf", "(" + Type.getType(clazz).getDescriptor() + ")" + wrapper.getDescriptor(), false);
             }
         }
-    }
-
-    /**
-     * @version 2016/12/14 0:21:26
-     */
-    private class Variable {
-
-        private Class type;
-
-        private int index;
 
         /**
-         * @param type
-         * @param index
-         */
-        private Variable(Class type, int index) {
-            this.type = type;
-            this.index = index;
-        }
-    }
-
-    /**
-     * @version 2016/12/14 1:33:42
-     */
-    private class That extends Variable {
-
-        /**
+         * <p>
+         * Create parameter access.
+         * </p>
          * 
+         * @param index
+         * @return
          */
-        private That() {
-            super(Object.class, 0);
-        }
-    }
+        public Variable param(int index) {
+            if (index < 0) {
+                throw new IllegalArgumentException("Negative index is invalid in method parameters.");
+            }
 
-    /**
-     * @version 2016/12/14 1:33:40
-     */
-    private class Param extends Variable {
+            if (params.length <= index) {
+                throw new IllegalArgumentException("Out of index of " + methodName + " parameters. :" + index);
+            }
+            return new Param(params[index], index + 1);
+        }
+
+        public Instance string(String value) {
+            return new StringExpression(value);
+        }
 
         /**
-         * @param type
-         * @param index
+         * @version 2016/12/14 0:21:26
          */
-        public Param(Class type, int index) {
-            super(type, index);
+        public class Variable extends Instance {
+
+            private Class type;
+
+            private int index;
+
+            /**
+             * @param type
+             * @param index
+             */
+            private Variable(Class type, int index) {
+                this.type = type;
+                this.index = index;
+            }
+
+            /**
+             * <p>
+             * Load variable.
+             * </p>
+             */
+            public void get() {
+                visitVarInsn(Type.getType(type).getOpcode(ILOAD), index);
+                wrap(type);
+            }
+
+            /**
+             * @param array
+             */
+            public void set(Instance instance) {
+                instance.write();
+                visitVarInsn(Type.getType(type).getOpcode(ISTORE), index);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void write() {
+                get();
+            }
         }
-    }
 
-    /**
-     * @version 2016/12/14 1:35:14
-     */
-    private class Array<T> {
+        /**
+         * @version 2016/12/14 1:33:42
+         */
+        private class Self extends Variable {
 
+            /**
+             * 
+             */
+            private Self() {
+                super(Object.class, 0);
+            }
+        }
+
+        /**
+         * @version 2016/12/14 1:33:40
+         */
+        private class Param extends Variable {
+
+            /**
+             * @param type
+             * @param index
+             */
+            public Param(Class type, int index) {
+                super(type, index);
+            }
+        }
+
+        /**
+         * @version 2016/12/14 14:28:02
+         */
+        public class Instance {
+
+            public void write() {
+            }
+        }
+
+        /**
+         * @version 2016/12/14 14:34:23
+         */
+        public class StringExpression extends Instance {
+
+            private final String value;
+
+            /**
+             * @param value
+             */
+            private StringExpression(String value) {
+                this.value = value;
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void write() {
+                visitLdcInsn(value);
+            }
+        }
+
+        /**
+         * @version 2016/12/14 1:35:14
+         */
+        private class Array<T> extends Instance {
+
+            private Class type;
+
+            private Instance[] items;
+
+            /**
+             * @param type
+             * @param items
+             */
+            public Array(Class type, Instance[] items) {
+                this.type = type;
+                this.items = items;
+            }
+
+            /**
+             * @param type
+             * @param items
+             */
+            public Array(Class type, int size) {
+                this.type = type;
+                this.items = new Instance[size];
+            }
+
+            /**
+             * <p>
+             * Initialize array.
+             * </p>
+             */
+            @Override
+            public void write() {
+                // new Type[items.length]
+                visitIntInsn(BIPUSH, items.length);
+                visitTypeInsn(ANEWARRAY, Type.getType(type).getInternalName());
+
+                for (int i = 0; i < items.length; i++) {
+                    visitInsn(DUP);
+                    visitIntInsn(BIPUSH, i); // array index
+                    if (items[i] != null) items[i].write();
+                    visitInsn(AASTORE); // store param into array
+                }
+            }
+        }
     }
 }

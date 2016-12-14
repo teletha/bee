@@ -34,8 +34,9 @@ public class Project extends bee.api.Project {
         require(aetherGroup, "aether-transport-wagon", aetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.3.3");
         require("org.apache.maven.wagon", "wagon-http-lightweight", "2.9");
-        require("org.eclipse.mylyn.github", "org.eclipse.egit.github.core", "4.0.0.201506090130-r");
-        require("com.google.code.gson", "gson", "2.3.1");
+        // require("org.eclipse.mylyn.github", "org.eclipse.egit.github.core",
+        // "4.0.0.201506090130-r");
+        // require("com.google.code.gson", "gson", "2.3.1");
         require("sun.jdk", "tools", "8.0").atSystem();
         requireLombok();
 
