@@ -35,7 +35,6 @@ import bee.util.Process;
 import kiss.Events;
 import kiss.I;
 import kiss.XML;
-import lombok.SneakyThrows;
 
 /**
  * @version 2016/12/12 20:45:06
@@ -268,33 +267,41 @@ public class Eclipse extends Task implements IDESupport {
      * 
      * @return
      */
-    @SneakyThrows
     private void addJRE(String name, List<Path> jars) {
-        EclipseManipulator eclipse = new EclipseManipulator();
+        try {
+            EclipseManipulator eclipse = new EclipseManipulator();
 
-        Properties properties = new Properties();
-        properties.load(Files.newInputStream(eclipse.locateJREPreference()));
+            Properties properties = new Properties();
+            properties.load(Files.newInputStream(eclipse.locateJREPreference()));
 
-        XML root = I.xml(properties.getProperty("org.eclipse.jdt.launching.PREF_VM_XML"));
-        XML vm = root.find("vm[name=\"" + name + "\"]");
+            XML root = I.xml(properties.getProperty("org.eclipse.jdt.launching.PREF_VM_XML"));
+            XML vm = root.find("vm[name=\"" + name + "\"]");
 
-        Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
+            Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
+            for (XML location : vm.find("libraryLocation")) {
+                if (location.attr("jreJar").matches(".+rt-.+\\.jar")) {
+                    location.attr("jreJar", jar);
 
-        for (XML location : vm.find("libraryLocation")) {
-            if (location.attr("jreJar").matches(".+rt-.+\\.jar")) {
-                location.attr("jreJar", jar);
+                    String doc = location.attr("jreSrc");
+
+                    if (doc == null || doc.isEmpty()) {
+                        location.attr("jreSrc", Platform.JavaHome.resolve("src.zip"));
+                    }
+                }
             }
+
+            Path temp = I.locateTemporary();
+            properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", root.toString());
+            properties.store(Files.newBufferedWriter(temp), "");
+
+            Java.with()
+                    .classPath(project.getClasses())
+                    .classPath(project.getTestClasses())
+                    .classPath(project.getDependency(Scope.Test))
+                    .run(UpdateEclipseConfiguration.class, eclipse.locateExe(), temp);
+        } catch (IOException e) {
+            throw I.quiet(e);
         }
-
-        Path temp = I.locateTemporary();
-        properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", root.toString());
-        properties.store(Files.newBufferedWriter(temp), "");
-
-        Java.with()
-                .classPath(project.getClasses())
-                .classPath(project.getTestClasses())
-                .classPath(project.getDependency(Scope.Test))
-                .run(UpdateEclipseConfiguration.class, eclipse.locateExe(), temp);
     }
 
     /**
@@ -364,11 +371,14 @@ public class Eclipse extends Task implements IDESupport {
          * 
          * @return
          */
-        @SneakyThrows
         private Path locateWorkspace() {
-            Properties properties = new Properties();
-            properties.load(Files.newInputStream(eclipse.resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
-            return I.locate(properties.getProperty("RECENT_WORKSPACES"));
+            try {
+                Properties properties = new Properties();
+                properties.load(Files.newInputStream(eclipse.resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
+                return I.locate(properties.getProperty("RECENT_WORKSPACES"));
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
         }
 
         /**

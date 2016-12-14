@@ -38,7 +38,6 @@ public class Project extends bee.api.Project {
         // "4.0.0.201506090130-r");
         // require("com.google.code.gson", "gson", "2.3.1");
         require("sun.jdk", "tools", "8.0").atSystem();
-        requireLombok();
 
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");

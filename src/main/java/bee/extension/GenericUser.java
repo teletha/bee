@@ -9,6 +9,8 @@
  */
 package bee.extension;
 
+import java.lang.annotation.RetentionPolicy;
+import java.util.EnumMap;
 import java.util.function.Function;
 
 /**
@@ -19,5 +21,9 @@ public class GenericUser {
     public static void main(String[] args) {
         Function<String, Integer> f = v -> v.length();
         System.out.println(f.with2("abcd").get());
+
+        EnumMap map = new EnumMap(RetentionPolicy.class);
+        map.put(RetentionPolicy.RUNTIME, "OK");
+        map.dump();
     }
 }

@@ -9,6 +9,7 @@
  */
 package bee.extension;
 
+import java.util.EnumMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -29,6 +30,20 @@ public class Generics {
      */
     @Extension.Method
     public static <P, R> Supplier<R> with2(Function<P, R> function, P param) {
-        return () -> null;
+        return () -> function.apply(param);
+    }
+
+    /**
+     * <p>
+     * Apply parameter partialy.
+     * </p>
+     * 
+     * @param function A target function to apply parameter.
+     * @param param A fixed parameter.
+     * @return A partial applied function.
+     */
+    @Extension.Method
+    public static void dump(EnumMap function) {
+        System.out.println(function);
     }
 }
