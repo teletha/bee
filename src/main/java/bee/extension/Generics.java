@@ -29,7 +29,6 @@ public class Generics {
      */
     @Extension.Method
     public static <P, R> Supplier<R> with2(Function<P, R> function, P param) {
-        return () -> function.apply(param);
+        return () -> null;
     }
-
 }

@@ -152,6 +152,20 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
      * <p>
      * Write helper method code. (COPY from ASMfier)
      * </p>
+     * <pre>
+        private Object $call$(String extensionClassName, String extensionMethodName, String[] paramNames, Object[] params) {
+            try {
+                Class[] paramTypes = new Class[paramNames.length];
+        
+                for (int i = 0; i < paramTypes.length; i++) {
+                    paramTypes[i] = $class$(paramNames[i]);
+                }
+                return $class$(extensionClassName).getMethod(extensionMethodName, paramTypes).invoke(null, params);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+     * </pre>
      */
     private void writeMethodInvoker() {
         MethodVisitor mv = visitMethod(ACC_PRIVATE, "$call$", "(Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;", null, null);
@@ -215,6 +229,11 @@ class JavaExtensionMethodEnhancer extends ClassVisitor {
      * <p>
      * Write helper method code. (COPY from ASMfier)
      * </p>
+     * <pre>
+        private Class $class$(String name) throws ClassNotFoundException {
+            return Class.forName(name, true, ClassLoader.getSystemClassLoader());
+        }
+     * </pre>
      */
     private void writeClassLoader() {
         MethodVisitor mv = visitMethod(ACC_PRIVATE, "$class$", "(Ljava/lang/String;)Ljava/lang/Class;", null, new String[] {
