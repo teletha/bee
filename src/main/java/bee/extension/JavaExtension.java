@@ -115,12 +115,10 @@ public class JavaExtension {
                         Path classFile = jar.resolve(clazz.getName().replace('.', '/') + ".class");
 
                         // start writing byte code
-                        ClassReader reader = new ClassReader(Files.newInputStream(classFile));
-                        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-                        reader.accept(new JavaExtensionMethodEnhancer(writer, clazz, definitions.getValue()), ClassReader.EXPAND_FRAMES);
+                        byte[] bytes = enhanceMethodExtension(Files.readAllBytes(classFile), definitions.getValue());
 
                         // write new byte code
-                        Files.copy(new ByteArrayInputStream(writer.toByteArray()), classFile, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(new ByteArrayInputStream(bytes), classFile, StandardCopyOption.REPLACE_EXISTING);
                     }
 
                     // cleanup temporary files
@@ -133,6 +131,23 @@ public class JavaExtension {
             throw I.quiet(e);
         }
         return jars;
+    }
+
+    /**
+     * <p>
+     * Enhance class file with the specified definitions.
+     * </p>
+     * 
+     * @param classFile The byte code of the extened class file.
+     * @param definitions The definitions of extension method.
+     * @return The extended byte code.
+     */
+    private byte[] enhanceMethodExtension(byte[] classFile, List<JavaExtensionMethodDefinition> definitions) {
+        ClassReader reader = new ClassReader(classFile);
+        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
+        reader.accept(new JavaExtensionMethodEnhancer(writer, definitions.get(0).targetClass, definitions), ClassReader.EXPAND_FRAMES);
+
+        return writer.toByteArray();
     }
 
     /**

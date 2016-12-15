@@ -10,11 +10,9 @@
 package bee.task;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -515,7 +513,6 @@ public class Eclipse extends Task implements IDESupport {
                 // open eclipse
                 eclipse.open();
             } catch (Throwable e) {
-                e.printStackTrace(new PrintWriter(Paths.get("E:\\error.txt").toFile()));
                 throw I.quiet(e);
             }
         }
