@@ -27,4 +27,9 @@ public class Strings {
     public static String toCamel(String value) {
         return Character.toUpperCase(value.charAt(0)) + value.substring(1);
     }
+
+    @Extension.Method
+    public static boolean tester(String value) {
+        return false;
+    }
 }

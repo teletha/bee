@@ -10,9 +10,11 @@
 package bee.task;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
@@ -293,6 +295,7 @@ public class Eclipse extends Task implements IDESupport {
                 }
             } else {
                 Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
+
                 for (XML location : vm.find("libraryLocation")) {
                     if (location.attr("jreJar").matches(".+rt-.+\\.jar")) {
                         location.attr("jreJar", jar);
@@ -453,7 +456,7 @@ public class Eclipse extends Task implements IDESupport {
          * </p>
          */
         private void close() {
-            Process.with().run(Arrays.asList("taskkill ", "/F", "/IM", "eclipse.exe", "/T"));
+            Process.with().run(Arrays.asList("PowerShell", "Get-Process Eclipse | %{ $_.Kill(); $_.WaitForExit(10000) }"));
         }
 
         /**
@@ -497,19 +500,24 @@ public class Eclipse extends Task implements IDESupport {
          */
         @Override
         protected void process() throws Exception {
-            EclipseManipulator eclipse = new EclipseManipulator(I.locate(args[0]));
+            try {
+                EclipseManipulator eclipse = new EclipseManipulator(I.locate(args[0]));
 
-            // close eclipse
-            eclipse.close();
+                // close eclipse
+                eclipse.close();
 
-            // locate configuration
-            Path updater = I.locate(args[1]);
+                // locate configuration
+                Path updater = I.locate(args[1]);
 
-            // update configuration
-            I.copy(Files.newInputStream(updater), Files.newOutputStream(eclipse.locateJREPreference()), true);
+                // update configuration
+                I.copy(Files.newInputStream(updater), Files.newOutputStream(eclipse.locateJREPreference()), true);
 
-            // open eclipse
-            eclipse.open();
+                // open eclipse
+                eclipse.open();
+            } catch (Throwable e) {
+                e.printStackTrace(new PrintWriter(Paths.get("E:\\error.txt").toFile()));
+                throw I.quiet(e);
+            }
         }
     }
 }
