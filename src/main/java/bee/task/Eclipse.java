@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import bee.Bee;
 import bee.Platform;
@@ -34,6 +34,7 @@ import bee.util.PathPattern;
 import bee.util.Process;
 import kiss.Events;
 import kiss.I;
+import kiss.Variable;
 import kiss.XML;
 
 /**
@@ -61,7 +62,7 @@ public class Eclipse extends Task implements IDESupport {
 
         // check lombok
         if (project.hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
-            EclipseManipulator eclipse = new EclipseManipulator();
+            EclipseManipulator eclipse = EclipseManipulator.create();
             Library lombok = project.getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion()).iterator().next();
 
             if (!eclipse.isLomboked()) {
@@ -70,7 +71,7 @@ public class Eclipse extends Task implements IDESupport {
                         .classPath(I.class, Bee.class)
                         .classPath(lombok.getJar())
                         .encoding(project.getEncoding())
-                        .run(LombokInstaller.class, "install", eclipse.locateExe());
+                        .run(LombokInstaller.class, "install", eclipse.locate());
 
                 // restart eclipse
                 ui.warn("Restart your Eclipse to enable Lombok.");
@@ -269,7 +270,7 @@ public class Eclipse extends Task implements IDESupport {
      */
     private void addJRE(String name, List<Path> jars) {
         try {
-            EclipseManipulator eclipse = new EclipseManipulator();
+            EclipseManipulator eclipse = EclipseManipulator.create();
 
             Properties properties = new Properties();
             properties.load(Files.newInputStream(eclipse.locateJREPreference()));
@@ -315,7 +316,7 @@ public class Eclipse extends Task implements IDESupport {
                     .classPath(I.locate(Bee.class))
                     .classPath(I.locate(I.class))
                     .encoding(project.getEncoding())
-                    .run(UpdateEclipseConfiguration.class, eclipse.locateExe(), temp);
+                    .run(UpdateEclipseConfiguration.class, eclipse.locate(), temp);
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -339,156 +340,6 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * @version 2016/12/12 15:05:05
-     */
-    private static class EclipseManipulator {
-
-        /** The base eclipse.exe. */
-        private Path eclipse;
-
-        /**
-         * <p>
-         * Build eclipse related locator.
-         * </p>
-         * 
-         * @param eclipse
-         * @return
-         */
-        private EclipseManipulator() {
-            this(null);
-        }
-
-        /**
-         * <p>
-         * Build eclipse related locator.
-         * </p>
-         * 
-         * @param eclipse
-         * @return
-         */
-        private EclipseManipulator(Path eclipse) {
-            this.eclipse = eclipse == null ? locateActiveEclipse() : eclipse;
-        }
-
-        /**
-         * <p>
-         * Locate eclipse.exe.
-         * </p>
-         * 
-         * @return
-         */
-        private Path locateExe() {
-            return eclipse;
-        }
-
-        /**
-         * <p>
-         * Locate eclipse workspace directory which is activating now.
-         * </p>
-         * 
-         * @return
-         */
-        private Path locateWorkspace() {
-            try {
-                Properties properties = new Properties();
-                properties.load(Files.newInputStream(eclipse.resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
-                return I.locate(properties.getProperty("RECENT_WORKSPACES"));
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * <p>
-         * Locate eclipse workspace directory which is activating now.
-         * </p>
-         * 
-         * @return
-         */
-        private Path locateJREPreference() throws IOException {
-            Path prefs = locateWorkspace().resolve(".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs");
-
-            if (Files.notExists(prefs)) {
-                Files.createFile(prefs);
-            }
-            return prefs;
-        }
-
-        /**
-         * <p>
-         * Check whether the specified eclipse application is customized or not.
-         * </p>
-         * 
-         * @return A result.
-         */
-        private boolean isLomboked() {
-            try {
-                for (String line : Files.readAllLines(eclipse.resolveSibling("eclipse.ini"))) {
-                    if (line.contains("lombok.jar")) {
-                        return true;
-                    }
-                }
-                return false;
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * Open eclipse application.
-         */
-        private void open() {
-            try {
-                Process.with()
-                        .workingDirectory(eclipse.getParent())
-                        .run(Arrays.asList("cmd", "/c", "start", "/d", eclipse.getParent().toString(), eclipse.getFileName().toString()));
-            } catch (Throwable e) {
-                e.printStackTrace();
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * <p>
-         * Close eclipse application.
-         * </p>
-         */
-        private void close() {
-            Process.with().run(Arrays.asList("PowerShell", "Get-Process Eclipse | %{ $_.Kill(); $_.WaitForExit(10000) }"));
-        }
-
-        /**
-         * <p>
-         * Locate eclipse execution file which is activating now.
-         * </p>
-         * 
-         * @return
-         */
-        private static Path locateActiveEclipse() {
-            Path eclipse = null;
-
-            if (Platform.isWindows()) {
-                String result = Process.with().read(Arrays.asList("PowerShell", "Get-Process Eclipse | Format-List Path"));
-
-                if (result.startsWith("Path :")) {
-                    result = result.substring(6).trim();
-                }
-                eclipse = I.locate(result);
-            } else {
-                // If this exception will be thrown, it is bug of this program. So we must rethrow
-                // the wrapped error in here.
-                throw new Error("Not Implement for this platform.");
-            }
-
-            if (Files.exists(eclipse)) {
-                return eclipse;
-            } else {
-                throw new Error("Please activate eclipse application.");
-            }
-        }
-    }
-
-    /**
      * @version 2016/12/12 14:47:01
      */
     private static class UpdateEclipseConfiguration extends JVM {
@@ -499,7 +350,7 @@ public class Eclipse extends Task implements IDESupport {
         @Override
         protected void process() throws Exception {
             try {
-                EclipseManipulator eclipse = new EclipseManipulator(I.locate(args[0]));
+                EclipseManipulator eclipse = EclipseManipulator.create();
 
                 // close eclipse
                 eclipse.close();
@@ -515,6 +366,169 @@ public class Eclipse extends Task implements IDESupport {
             } catch (Throwable e) {
                 throw I.quiet(e);
             }
+        }
+    }
+
+    /**
+     * @version 2016/12/26 9:58:04
+     */
+    private static abstract class EclipseManipulator {
+
+        /**
+         * <p>
+         * Open eclipse application.
+         * </p>
+         */
+        abstract void open();
+
+        /**
+         * <p>
+         * Close eclipse application.
+         * </p>
+         */
+        abstract void close();
+
+        /**
+         * <p>
+         * Locate the active eclipse application.
+         * </p>
+         * 
+         * @return
+         */
+        abstract Variable<Path> locateActiveApplication();
+
+        /**
+         * <p>
+         * Locate the eclipse application.
+         * </p>
+         * 
+         * @return
+         */
+        final Variable<Path> locate() {
+            Preferences prefs = Preferences.userNodeForPackage(EclipseManipulator.class);
+            Variable<Path> application = Variable.of(prefs.get("eclipse", null)).map(I::locate);
+
+            if (application.isAbsent() || application.is(Files::notExists)) {
+                application.set(locateActiveApplication());
+
+                if (application.isPresent()) {
+                    prefs.put("eclipse", application.toString());
+                }
+            }
+            return application;
+        }
+
+        /**
+         * <p>
+         * Locate eclipse workspace directory which is activating now.
+         * </p>
+         * 
+         * @return
+         */
+        final Path locateWorkspace() {
+            try {
+                Properties properties = new Properties();
+                properties.load(Files.newInputStream(locate().get().resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
+                return I.locate(properties.getProperty("RECENT_WORKSPACES"));
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+
+        /**
+         * <p>
+         * Locate eclipse workspace directory which is activating now.
+         * </p>
+         * 
+         * @return
+         */
+        final Path locateJREPreference() throws IOException {
+            Path prefs = locateWorkspace().resolve(".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs");
+
+            if (Files.notExists(prefs)) {
+                Files.createFile(prefs);
+            }
+            return prefs;
+        }
+
+        /**
+         * <p>
+         * Check whether the specified eclipse application is customized or not.
+         * </p>
+         * 
+         * @return A result.
+         */
+        final boolean isLomboked() {
+            try {
+                for (String line : Files.readAllLines(locate().get().resolveSibling("eclipse.ini"))) {
+                    if (line.contains("lombok.jar")) {
+                        return true;
+                    }
+                }
+                return false;
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+
+        /**
+         * <p>
+         * Create the platform specific {@link EclipseManipulator}.
+         * </p>
+         * 
+         * @return
+         */
+        private static EclipseManipulator create() {
+            if (Platform.isWindows()) {
+                return new ForWindows();
+            } else {
+                throw new Error("Unsupported platform.");
+            }
+        }
+    }
+
+    /**
+     * @version 2016/12/26 9:58:41
+     */
+    private static class ForWindows extends EclipseManipulator {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        void open() {
+            Path eclipse = locate().get();
+
+            try {
+                Process.with()
+                        .workingDirectory(eclipse.getParent())
+                        .run("cmd", "/c", "start", "/d", eclipse.getParent(), eclipse.getFileName());
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw I.quiet(e);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        void close() {
+            Process.runWith("PowerShell", "Get-Process Eclipse | %{ $_.Kill(); $_.WaitForExit(10000) }");
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        Variable<Path> locateActiveApplication() {
+            String result = Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path");
+
+            if (result.startsWith("Path :")) {
+                result = result.substring(6).trim();
+            }
+
+            return Variable.of(result).map(I::locate).require(Files::exists);
         }
     }
 }

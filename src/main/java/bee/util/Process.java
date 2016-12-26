@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 import bee.Platform;
@@ -25,7 +26,7 @@ import kiss.I;
  * Utility for creating sub process.
  * </p>
  * 
- * @version 2016/09/08 10:46:51
+ * @version 2016/12/26 10:18:55
  */
 public class Process {
 
@@ -56,6 +57,28 @@ public class Process {
      */
     public static Process with() {
         return new Process();
+    }
+
+    /**
+     * <p>
+     * Shorthand to Process.with().run(commands).
+     * </p>
+     * 
+     * @param commands
+     */
+    public static void runWith(Object... commands) {
+        with().run(commands);
+    }
+
+    /**
+     * <p>
+     * Shorthand to Process.with().read(commands).
+     * </p>
+     * 
+     * @param commands
+     */
+    public static String readWith(Object... commands) {
+        return with().read(commands);
     }
 
     /**
@@ -122,10 +145,42 @@ public class Process {
      * Execute sub process.
      * </p>
      * 
+     * @param commands
+     */
+    public void run(Object... commands) {
+        List<String> list = new ArrayList();
+
+        for (Object command : commands) {
+            list.add(String.valueOf(command));
+        }
+        run(list);
+    }
+
+    /**
+     * <p>
+     * Execute sub process.
+     * </p>
+     * 
      * @param command
      */
     public void run(List<String> command) {
         run(command, true);
+    }
+
+    /**
+     * <p>
+     * Execute sub process and accept its result.
+     * </p>
+     * 
+     * @param commands
+     */
+    public String read(Object... commands) {
+        List<String> list = new ArrayList();
+
+        for (Object command : commands) {
+            list.add(String.valueOf(command));
+        }
+        return read(list);
     }
 
     /**
