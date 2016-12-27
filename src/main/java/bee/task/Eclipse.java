@@ -10,10 +10,11 @@
 package bee.task;
 
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -32,8 +33,9 @@ import bee.util.Java;
 import bee.util.Java.JVM;
 import bee.util.PathPattern;
 import bee.util.Process;
-import kiss.Events;
 import kiss.I;
+import kiss.Manageable;
+import kiss.Singleton;
 import kiss.Variable;
 import kiss.XML;
 
@@ -48,7 +50,7 @@ public class Eclipse extends Task implements IDESupport {
      * </p>
      */
     @Override
-    @Command("Generate configuration files for Eclipse.")
+    @Command(value = "Generate configuration files for Eclipse.", defaults = true)
     public void execute() {
         createClasspath(project.getRoot().resolve(".classpath"));
         createProject(project.getRoot().resolve(".project"));
@@ -85,6 +87,20 @@ public class Eclipse extends Task implements IDESupport {
     @Override
     public boolean exist(Project project) {
         return Files.isReadable(project.getRoot().resolve(".classpath"));
+    }
+
+    /**
+     * <p>
+     * Rewrite eclipse internal configuration.
+     * </p>
+     */
+    @Command("Rewrite eclipse internal configuration.")
+    public void rewrite() throws Exception {
+        EclipseManipulator eclipse = EclipseManipulator.create();
+
+        // eclipse.close();
+        eclipse.configJDTPreference();
+        // eclipse.open();
     }
 
     /**
@@ -171,10 +187,10 @@ public class Eclipse extends Task implements IDESupport {
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
 
         if (needEnhanceJRE) {
-            // don't call in lambda because enhance process will be failed, why?
-            List<Path> JRE = extension.enhancedJRE();
-
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> addJRE(project.getProduct(), JRE)));
+            // Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            String read = Process.with().workingDirectory(project.getRoot()).read("cmd", "/c", Platform.Bee, "eclipse:rewrite");
+            System.out.println(read);
+            // }));
         }
 
         // write file
@@ -262,67 +278,6 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
-     * Locate eclipse installed JRE preference.
-     * </p>
-     * 
-     * @return
-     */
-    private void addJRE(String name, List<Path> jars) {
-        try {
-            EclipseManipulator eclipse = EclipseManipulator.create();
-
-            Properties properties = new Properties();
-            properties.load(Files.newInputStream(eclipse.locateJREPreference()));
-
-            XML root = I.xml(properties.getProperty("org.eclipse.jdt.launching.PREF_VM_XML"));
-            XML vm = root.find("vm[name=\"" + name + "\"]");
-
-            if (vm.size() == 0) {
-                vm = root.find("vmType")
-                        .child("vm")
-                        .attr("name", name)
-                        .attr("id", name.hashCode())
-                        .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
-                        .attr("path", Platform.JavaRuntime.getParent().getParent());
-                XML locations = vm.child("libraryLocations");
-                for (Path path : jars) {
-                    locations.child("libraryLocation")
-                            .attr("jreJar", path)
-                            .attr("jreSrc", Platform.JavaHome.resolve("src.zip"))
-                            .attr("pkgRoot", "");
-                }
-            } else {
-                Path jar = Events.from(jars).take(path -> path.getFileName().toString().startsWith("rt-")).to().get();
-
-                for (XML location : vm.find("libraryLocation")) {
-                    if (location.attr("jreJar").matches(".+rt-.+\\.jar")) {
-                        location.attr("jreJar", jar);
-
-                        String doc = location.attr("jreSrc");
-
-                        if (doc == null || doc.isEmpty()) {
-                            location.attr("jreSrc", Platform.JavaHome.resolve("src.zip"));
-                        }
-                    }
-                }
-            }
-
-            Path temp = I.locateTemporary();
-            properties.setProperty("org.eclipse.jdt.launching.PREF_VM_XML", root.toString());
-            properties.store(Files.newBufferedWriter(temp), "");
-
-            Java.with()
-                    .classPath(I.locate(Bee.class))
-                    .classPath(I.locate(I.class))
-                    .encoding(project.getEncoding())
-                    .run(UpdateEclipseConfiguration.class, eclipse.locate(), temp);
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-    }
-
-    /**
      * @version 2016/12/12 14:44:57
      */
     private static class LombokInstaller extends JVM {
@@ -340,39 +295,23 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * @version 2016/12/12 14:47:01
-     */
-    private static class UpdateEclipseConfiguration extends JVM {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected void process() throws Exception {
-            try {
-                EclipseManipulator eclipse = EclipseManipulator.create();
-
-                // close eclipse
-                eclipse.close();
-
-                // locate configuration
-                Path updater = I.locate(args[1]);
-
-                // update configuration
-                I.copy(Files.newInputStream(updater), Files.newOutputStream(eclipse.locateJREPreference()), true);
-
-                // open eclipse
-                eclipse.open();
-            } catch (Throwable e) {
-                throw I.quiet(e);
-            }
-        }
-    }
-
-    /**
      * @version 2016/12/26 9:58:04
      */
+    @Manageable(lifestyle = Singleton.class)
     private static abstract class EclipseManipulator {
+
+        /** The property key. */
+        private static final String JREKey = "org.eclipse.jdt.launching.PREF_VM_XML";
+
+        /** The current project. */
+        private final Project project;
+
+        /**
+         * @param project
+         */
+        private EclipseManipulator(Project project) {
+            this.project = project;
+        }
 
         /**
          * <p>
@@ -395,7 +334,7 @@ public class Eclipse extends Task implements IDESupport {
          * 
          * @return
          */
-        abstract Variable<Path> locateActiveApplication();
+        abstract Variable<Path> locateActive();
 
         /**
          * <p>
@@ -409,10 +348,10 @@ public class Eclipse extends Task implements IDESupport {
             Variable<Path> application = Variable.of(prefs.get("eclipse", null)).map(I::locate);
 
             if (application.isAbsent() || application.is(Files::notExists)) {
-                application.set(locateActiveApplication());
+                application.set(locateActive());
 
                 if (application.isPresent()) {
-                    prefs.put("eclipse", application.toString());
+                    prefs.put("eclipse", application.get().toString());
                 }
             }
             return application;
@@ -453,6 +392,67 @@ public class Eclipse extends Task implements IDESupport {
 
         /**
          * <p>
+         * Write JDT related preference for the current project.
+         * </p>
+         */
+        final void configJDTPreference() throws IOException {
+            Path prefs = locateJREPreference();
+
+            try (Reader reader = Files.newBufferedReader(prefs); Writer writer = Files.newBufferedWriter(prefs)) {
+                // read as property file
+                Properties properties = new Properties();
+                properties.load(reader);
+
+                configJRE(properties);
+
+                // rewrite
+                properties.store(writer, "");
+            }
+        }
+
+        /**
+         * <p>
+         * Write the project specfiec JRE preference.
+         * </p>
+         * 
+         * @param properties
+         */
+        final void configJRE(Properties properties) {
+            String name = project.getProduct();
+
+            // read setting
+            XML root = I.xml(properties.getProperty(JREKey));
+
+            // search the named vm element
+            XML locations = root.find("vm[name=\"" + name + "\"] libraryLocations");
+
+            if (locations.size() == 0) {
+                locations = root.find("vmType")
+                        .child("vm")
+                        .attr("name", name)
+                        .attr("id", name.hashCode())
+                        .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
+                        .attr("path", Platform.JavaRuntime.getParent().getParent())
+                        .child("libraryLocations");
+            }
+
+            // remove all existing jars
+            locations.empty();
+
+            // add all specified jars
+            for (Path jar : I.make(JavaExtension.class).enhancedJRE()) {
+                locations.child("libraryLocation")
+                        .attr("jreJar", jar)
+                        .attr("jreSrc", Platform.JavaHome.resolve("src.zip"))
+                        .attr("pkgRoot", "");
+            }
+
+            // write setting
+            properties.setProperty(JREKey, root.toString());
+        }
+
+        /**
+         * <p>
          * Check whether the specified eclipse application is customized or not.
          * </p>
          * 
@@ -480,55 +480,62 @@ public class Eclipse extends Task implements IDESupport {
          */
         private static EclipseManipulator create() {
             if (Platform.isWindows()) {
-                return new ForWindows();
+                return I.make(ForWindows.class);
             } else {
                 throw new Error("Unsupported platform.");
             }
         }
-    }
-
-    /**
-     * @version 2016/12/26 9:58:41
-     */
-    private static class ForWindows extends EclipseManipulator {
 
         /**
-         * {@inheritDoc}
+         * @version 2016/12/26 9:58:41
          */
-        @Override
-        void open() {
-            Path eclipse = locate().get();
+        private static class ForWindows extends EclipseManipulator {
 
-            try {
-                Process.with()
-                        .workingDirectory(eclipse.getParent())
-                        .run("cmd", "/c", "start", "/d", eclipse.getParent(), eclipse.getFileName());
-            } catch (Throwable e) {
-                e.printStackTrace();
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        void close() {
-            Process.runWith("PowerShell", "Get-Process Eclipse | %{ $_.Kill(); $_.WaitForExit(10000) }");
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        Variable<Path> locateActiveApplication() {
-            String result = Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path");
-
-            if (result.startsWith("Path :")) {
-                result = result.substring(6).trim();
+            /**
+             * 
+             */
+            private ForWindows(Project project) {
+                super(project);
             }
 
-            return Variable.of(result).map(I::locate).require(Files::exists);
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            void open() {
+                Path eclipse = locate().get();
+
+                try {
+                    Process.with()
+                            .workingDirectory(eclipse.getParent())
+                            .run("cmd", "/c", "start", "/d", eclipse.getParent(), eclipse.getFileName());
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    throw I.quiet(e);
+                }
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            void close() {
+                Process.runWith("PowerShell", "Get-Process Eclipse | %{ $_.Kill(); $_.WaitForExit(10000) }");
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            Variable<Path> locateActive() {
+                String result = Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path");
+
+                if (result.startsWith("Path :")) {
+                    result = result.substring(6).trim();
+                }
+
+                return Variable.of(result).map(I::locate).require(Files::exists);
+            }
         }
     }
 }

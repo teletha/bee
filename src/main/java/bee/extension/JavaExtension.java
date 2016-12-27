@@ -9,12 +9,13 @@
  */
 package bee.extension;
 
+import static java.nio.file.StandardCopyOption.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -118,11 +119,11 @@ public class JavaExtension {
                         byte[] bytes = enhanceMethodExtension(Files.readAllBytes(classFile), definitions.getValue());
 
                         // write new byte code
-                        Files.copy(new ByteArrayInputStream(bytes), classFile, StandardCopyOption.REPLACE_EXISTING);
+                        Files.copy(new ByteArrayInputStream(bytes), classFile, REPLACE_EXISTING);
                     }
 
                     // cleanup temporary files
-                    I.delete(enhanced.getParent(), "zipfstmp*");
+                    // I.delete(enhanced.getParent(), "zipfstmp*");
 
                     ui.talk("Enhance " + archive.getFileName() + ".");
                 }
@@ -183,14 +184,15 @@ public class JavaExtension {
             }
         }
 
-        // create new library with time stamp
-        Path created = root.resolve(name + "-" + LocalDateTime.now().format(timestamp) + ".jar");
+        try {
+            // create new library with time stamp
+            Path local = root.resolve(name + "-" + LocalDateTime.now().format(timestamp) + ".jar");
 
-        // copy actual jar file
-        I.copy(original, created);
-
-        // API definition
-        return created;
+            // copy actual jar file
+            return Files.copy(original, local, COPY_ATTRIBUTES);
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**

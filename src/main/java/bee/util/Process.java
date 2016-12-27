@@ -249,7 +249,7 @@ public class Process {
             }
             return userOutput ? null : output.toString().trim();
         } catch (Exception e) {
-            throw new Error("Command [" + command + "] is failed.", e);
+            throw new Error("Command " + command + " is failed.", e);
         }
     }
 
