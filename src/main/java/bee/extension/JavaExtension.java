@@ -13,6 +13,7 @@ import static java.nio.file.StandardCopyOption.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -107,13 +108,14 @@ public class JavaExtension {
                 if (jars.remove(archive)) {
                     Path enhanced = manageLocalLibrary(archive);
                     jars.add(enhanced);
+                    System.out.println(Files.size(enhanced));
+                    FileSystem zip = jar(enhanced);
 
-                    Path jar = jar(enhanced);
                     Table<Class, JavaExtensionMethodDefinition> defs = Events.from(archives.getValue()).toTable(def -> def.targetClass);
 
                     for (Entry<Class, List<JavaExtensionMethodDefinition>> definitions : defs.entrySet()) {
                         Class clazz = definitions.getKey();
-                        Path classFile = jar.resolve(clazz.getName().replace('.', '/') + ".class");
+                        Path classFile = zip.getPath(clazz.getName().replace('.', '/') + ".class");
 
                         // start writing byte code
                         byte[] bytes = enhanceMethodExtension(Files.readAllBytes(classFile), definitions.getValue());
@@ -124,8 +126,8 @@ public class JavaExtension {
 
                     // cleanup temporary files
                     // I.delete(enhanced.getParent(), "zipfstmp*");
-
-                    ui.talk("Enhance " + archive.getFileName() + ".");
+                    System.out.println(Files.size(enhanced));
+                    ui.talk("Enhance " + archive + " to " + enhanced + ".");
                 }
             }
         } catch (IOException e) {
@@ -204,9 +206,9 @@ public class JavaExtension {
      * @return
      * @throws IOException
      */
-    private Path jar(Path path) {
+    private FileSystem jar(Path path) {
         try {
-            return FileSystems.newFileSystem(path, ClassLoader.getSystemClassLoader()).getPath("/");
+            return FileSystems.newFileSystem(path, ClassLoader.getSystemClassLoader());
         } catch (IOException e) {
             throw I.quiet(e);
         }
