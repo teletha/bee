@@ -62,7 +62,7 @@ public class Eclipse extends Task implements IDESupport {
 
         // check lombok
         if (project.hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
-            EclipseManipulator eclipse = EclipseManipulator.create();
+            Application eclipse = Application.create();
             Library lombok = project.getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion()).iterator().next();
 
             if (!eclipse.isLomboked()) {
@@ -94,11 +94,13 @@ public class Eclipse extends Task implements IDESupport {
      */
     @Command("Rewrite eclipse internal configuration.")
     public void rewrite() throws Exception {
-        EclipseManipulator eclipse = EclipseManipulator.create();
+        Application eclipse = Application.create();
 
-        eclipse.close();
+        boolean active = eclipse.isActive();
+
+        if (active) eclipse.close();
         eclipse.configJDTPreference();
-        eclipse.open();
+        if (active) eclipse.open();
     }
 
     /**
@@ -185,6 +187,11 @@ public class Eclipse extends Task implements IDESupport {
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
 
         if (needEnhanceJRE) {
+            Application eclipse = Application.create();
+
+            if (eclipse.isActive()) {
+
+            }
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 Process.with().workingDirectory(project.getRoot()).run("cmd", "/c", Platform.Bee, "eclipse:rewrite");
             }));
@@ -292,10 +299,10 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * @version 2016/12/26 9:58:04
+     * @version 2016/12/29 16:19:46
      */
     @Manageable(lifestyle = Singleton.class)
-    private static abstract class EclipseManipulator {
+    private static abstract class Application {
 
         /** The property key. */
         private static final String JREKey = "org.eclipse.jdt.launching.PREF_VM_XML";
@@ -306,7 +313,7 @@ public class Eclipse extends Task implements IDESupport {
         /**
          * @param project
          */
-        private EclipseManipulator(Project project) {
+        private Application(Project project) {
             this.project = project;
         }
 
@@ -326,6 +333,15 @@ public class Eclipse extends Task implements IDESupport {
 
         /**
          * <p>
+         * Check whether eclipse application is active or not.
+         * </p>
+         * 
+         * @return A result.
+         */
+        abstract boolean isActive();
+
+        /**
+         * <p>
          * Locate the active eclipse application.
          * </p>
          * 
@@ -341,7 +357,7 @@ public class Eclipse extends Task implements IDESupport {
          * @return
          */
         final Variable<Path> locate() {
-            Preferences prefs = Preferences.userNodeForPackage(EclipseManipulator.class);
+            Preferences prefs = Preferences.userNodeForPackage(Application.class);
             Variable<Path> application = Variable.of(prefs.get("eclipse", null)).map(I::locate);
 
             if (application.isAbsent() || application.is(Files::notExists)) {
@@ -417,10 +433,16 @@ public class Eclipse extends Task implements IDESupport {
 
             try {
                 // read setting
-                XML root = I.xml(properties.getProperty(JREKey));
+                String value = properties.getProperty(JREKey);
+
+                if (value == null || value.isEmpty()) {
+                    value = "<vmSettings defaultVM=\"57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1482986605076\"><vmType id=\"org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType\"><vm id=\"1482986605076\" name=\"Java\" path=\"" + Platform.JavaHome + "\"/></vmType></vmSettings>";
+                }
+
+                XML root = I.xml(value);
 
                 // search the named vm element
-                XML locations = root.find("vm[name=\"" + name + "\"] libraryLocations");
+                XML locations = root.find("vm[name=\"" + name + "\"] > libraryLocations");
 
                 if (locations.size() == 0) {
                     locations = root.find("vmType")
@@ -473,12 +495,12 @@ public class Eclipse extends Task implements IDESupport {
 
         /**
          * <p>
-         * Create the platform specific {@link EclipseManipulator}.
+         * Create the platform specific {@link Application}.
          * </p>
          * 
          * @return
          */
-        private static EclipseManipulator create() {
+        private static Application create() {
             if (Platform.isWindows()) {
                 return I.make(ForWindows.class);
             } else {
@@ -489,7 +511,7 @@ public class Eclipse extends Task implements IDESupport {
         /**
          * @version 2016/12/26 9:58:41
          */
-        private static class ForWindows extends EclipseManipulator {
+        private static class ForWindows extends Application {
 
             /**
              * 
@@ -521,6 +543,15 @@ public class Eclipse extends Task implements IDESupport {
             @Override
             void close() {
                 Process.runWith("PowerShell", "Get-Process Eclipse | %{ $_.Kill(); $_.WaitForExit(10000) }");
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            boolean isActive() {
+                String result = Process.readWith("PowerShell", "Get-Process | Format-List Name");
+                return result.contains("Name : eclipse");
             }
 
             /**
