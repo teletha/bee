@@ -108,26 +108,25 @@ public class JavaExtension {
                 if (jars.remove(archive)) {
                     Path enhanced = manageLocalLibrary(archive);
                     jars.add(enhanced);
-                    System.out.println(Files.size(enhanced));
-                    FileSystem zip = jar(enhanced);
 
-                    Table<Class, JavaExtensionMethodDefinition> defs = Events.from(archives.getValue()).toTable(def -> def.targetClass);
+                    try (FileSystem zip = jar(enhanced)) {
+                        Table<Class, JavaExtensionMethodDefinition> defs = Events.from(archives.getValue()).toTable(def -> def.targetClass);
 
-                    for (Entry<Class, List<JavaExtensionMethodDefinition>> definitions : defs.entrySet()) {
-                        Class clazz = definitions.getKey();
-                        Path classFile = zip.getPath(clazz.getName().replace('.', '/') + ".class");
+                        for (Entry<Class, List<JavaExtensionMethodDefinition>> definitions : defs.entrySet()) {
+                            Class clazz = definitions.getKey();
+                            Path classFile = zip.getPath(clazz.getName().replace('.', '/') + ".class");
 
-                        // start writing byte code
-                        byte[] bytes = enhanceMethodExtension(Files.readAllBytes(classFile), definitions.getValue());
+                            // start writing byte code
+                            byte[] bytes = enhanceMethodExtension(Files.readAllBytes(classFile), definitions.getValue());
 
-                        // write new byte code
-                        Files.copy(new ByteArrayInputStream(bytes), classFile, REPLACE_EXISTING);
+                            // write new byte code
+                            Files.copy(new ByteArrayInputStream(bytes), classFile, REPLACE_EXISTING);
+                        }
+
+                        // cleanup temporary files
+                        // I.delete(enhanced.getParent(), "zipfstmp*");
+                        ui.talk("Enhance " + archive + " to " + enhanced + ".");
                     }
-
-                    // cleanup temporary files
-                    // I.delete(enhanced.getParent(), "zipfstmp*");
-                    System.out.println(Files.size(enhanced));
-                    ui.talk("Enhance " + archive + " to " + enhanced + ".");
                 }
             }
         } catch (IOException e) {

@@ -10,8 +10,6 @@
 package bee.task;
 
 import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -98,9 +96,9 @@ public class Eclipse extends Task implements IDESupport {
     public void rewrite() throws Exception {
         EclipseManipulator eclipse = EclipseManipulator.create();
 
-        // eclipse.close();
+        eclipse.close();
         eclipse.configJDTPreference();
-        // eclipse.open();
+        eclipse.open();
     }
 
     /**
@@ -187,10 +185,9 @@ public class Eclipse extends Task implements IDESupport {
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
 
         if (needEnhanceJRE) {
-            // Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            String read = Process.with().workingDirectory(project.getRoot()).read("cmd", "/c", Platform.Bee, "eclipse:rewrite");
-            System.out.println(read);
-            // }));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                Process.with().workingDirectory(project.getRoot()).run("cmd", "/c", Platform.Bee, "eclipse:rewrite");
+            }));
         }
 
         // write file
@@ -398,16 +395,14 @@ public class Eclipse extends Task implements IDESupport {
         final void configJDTPreference() throws IOException {
             Path prefs = locateJREPreference();
 
-            try (Reader reader = Files.newBufferedReader(prefs); Writer writer = Files.newBufferedWriter(prefs)) {
-                // read as property file
-                Properties properties = new Properties();
-                properties.load(reader);
+            // read as property file
+            Properties properties = new Properties();
+            properties.load(Files.newInputStream(prefs));
 
-                configJRE(properties);
+            configJRE(properties);
 
-                // rewrite
-                properties.store(writer, "");
-            }
+            // rewrite, don't close output stream
+            properties.store(Files.newOutputStream(prefs), "");
         }
 
         /**
@@ -420,35 +415,40 @@ public class Eclipse extends Task implements IDESupport {
         final void configJRE(Properties properties) {
             String name = project.getProduct();
 
-            // read setting
-            XML root = I.xml(properties.getProperty(JREKey));
+            try {
+                // read setting
+                XML root = I.xml(properties.getProperty(JREKey));
 
-            // search the named vm element
-            XML locations = root.find("vm[name=\"" + name + "\"] libraryLocations");
+                // search the named vm element
+                XML locations = root.find("vm[name=\"" + name + "\"] libraryLocations");
 
-            if (locations.size() == 0) {
-                locations = root.find("vmType")
-                        .child("vm")
-                        .attr("name", name)
-                        .attr("id", name.hashCode())
-                        .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
-                        .attr("path", Platform.JavaRuntime.getParent().getParent())
-                        .child("libraryLocations");
+                if (locations.size() == 0) {
+                    locations = root.find("vmType")
+                            .child("vm")
+                            .attr("name", name)
+                            .attr("id", name.hashCode())
+                            .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
+                            .attr("path", Platform.JavaRuntime.getParent().getParent())
+                            .child("libraryLocations");
+                }
+
+                // remove all existing jars
+                locations.empty();
+
+                // add all specified jars
+                for (Path jar : I.make(JavaExtension.class).enhancedJRE()) {
+                    locations.child("libraryLocation")
+                            .attr("jreJar", jar)
+                            .attr("jreSrc", Platform.JavaHome.resolve("src.zip"))
+                            .attr("pkgRoot", "");
+                }
+
+                // write setting
+                properties.setProperty(JREKey, root.toString());
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw I.quiet(e);
             }
-
-            // remove all existing jars
-            locations.empty();
-
-            // add all specified jars
-            for (Path jar : I.make(JavaExtension.class).enhancedJRE()) {
-                locations.child("libraryLocation")
-                        .attr("jreJar", jar)
-                        .attr("jreSrc", Platform.JavaHome.resolve("src.zip"))
-                        .attr("pkgRoot", "");
-            }
-
-            // write setting
-            properties.setProperty(JREKey, root.toString());
         }
 
         /**
