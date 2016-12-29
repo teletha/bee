@@ -95,8 +95,7 @@ public abstract class Task implements Extensible {
      * Use other task from literal task expression.
      * </p>
      * 
-     * @param taskClass A task class.
-     * @return A target task.
+     * @param tasks A list of tasks.
      */
     protected final void require(String... tasks) {
         for (String task : tasks) {

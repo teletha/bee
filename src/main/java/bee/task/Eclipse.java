@@ -9,6 +9,7 @@
  */
 package bee.task;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -62,7 +63,7 @@ public class Eclipse extends Task implements IDESupport {
 
         // check lombok
         if (project.hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
-            Application eclipse = Application.create();
+            EclipseApplication eclipse = EclipseApplication.create();
             Library lombok = project.getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion()).iterator().next();
 
             if (!eclipse.isLomboked()) {
@@ -93,8 +94,8 @@ public class Eclipse extends Task implements IDESupport {
      * </p>
      */
     @Command("Rewrite eclipse internal configuration.")
-    public void rewrite() throws Exception {
-        Application eclipse = Application.create();
+    public void rewrite() {
+        EclipseApplication eclipse = EclipseApplication.create();
 
         boolean active = eclipse.isActive();
 
@@ -187,14 +188,7 @@ public class Eclipse extends Task implements IDESupport {
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
 
         if (needEnhanceJRE) {
-            Application eclipse = Application.create();
-
-            if (eclipse.isActive()) {
-
-            }
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                Process.with().workingDirectory(project.getRoot()).run("cmd", "/c", Platform.Bee, "eclipse:rewrite");
-            }));
+            require("eclipse:rewrite");
         }
 
         // write file
@@ -282,6 +276,26 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
+     * <p>
+     * Use other task from literal task expression. This method ensures that the task process is
+     * invoked by Bee.
+     * </p>
+     * 
+     * @param task A task name.
+     */
+    private void require(String task) {
+        EclipseApplication eclipse = EclipseApplication.create();
+
+        if (eclipse.isProcessOwner()) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                Process.with().workingDirectory(project.getRoot()).run("cmd", "/c", Platform.Bee, task);
+            }));
+        } else {
+            super.require(task);
+        }
+    }
+
+    /**
      * @version 2016/12/12 14:44:57
      */
     private static class LombokInstaller extends JVM {
@@ -302,7 +316,7 @@ public class Eclipse extends Task implements IDESupport {
      * @version 2016/12/29 16:19:46
      */
     @Manageable(lifestyle = Singleton.class)
-    private static abstract class Application {
+    private static abstract class EclipseApplication {
 
         /** The property key. */
         private static final String JREKey = "org.eclipse.jdt.launching.PREF_VM_XML";
@@ -313,7 +327,7 @@ public class Eclipse extends Task implements IDESupport {
         /**
          * @param project
          */
-        private Application(Project project) {
+        private EclipseApplication(Project project) {
             this.project = project;
         }
 
@@ -342,6 +356,22 @@ public class Eclipse extends Task implements IDESupport {
 
         /**
          * <p>
+         * Check whether this java process is invoked by eclipse application or not.
+         * </p>
+         */
+        final boolean isProcessOwner() {
+            Path directory = locate().get().getParent();
+
+            for (String lib : System.getProperty("java.library.path").split(File.pathSeparator)) {
+                if (I.locate(lib).equals(directory)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * <p>
          * Locate the active eclipse application.
          * </p>
          * 
@@ -357,7 +387,7 @@ public class Eclipse extends Task implements IDESupport {
          * @return
          */
         final Variable<Path> locate() {
-            Preferences prefs = Preferences.userNodeForPackage(Application.class);
+            Preferences prefs = Preferences.userNodeForPackage(EclipseApplication.class);
             Variable<Path> application = Variable.of(prefs.get("eclipse", null)).map(I::locate);
 
             if (application.isAbsent() || application.is(Files::notExists)) {
@@ -408,17 +438,21 @@ public class Eclipse extends Task implements IDESupport {
          * Write JDT related preference for the current project.
          * </p>
          */
-        final void configJDTPreference() throws IOException {
-            Path prefs = locateJREPreference();
+        final void configJDTPreference() {
+            try {
+                Path prefs = locateJREPreference();
 
-            // read as property file
-            Properties properties = new Properties();
-            properties.load(Files.newInputStream(prefs));
+                // read as property file
+                Properties properties = new Properties();
+                properties.load(Files.newInputStream(prefs));
 
-            configJRE(properties);
+                configJRE(properties);
 
-            // rewrite, don't close output stream
-            properties.store(Files.newOutputStream(prefs), "");
+                // rewrite, don't close output stream
+                properties.store(Files.newOutputStream(prefs), "");
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
         }
 
         /**
@@ -495,12 +529,12 @@ public class Eclipse extends Task implements IDESupport {
 
         /**
          * <p>
-         * Create the platform specific {@link Application}.
+         * Create the platform specific {@link EclipseApplication}.
          * </p>
          * 
          * @return
          */
-        private static Application create() {
+        private static EclipseApplication create() {
             if (Platform.isWindows()) {
                 return I.make(ForWindows.class);
             } else {
@@ -511,7 +545,7 @@ public class Eclipse extends Task implements IDESupport {
         /**
          * @version 2016/12/26 9:58:41
          */
-        private static class ForWindows extends Application {
+        private static class ForWindows extends EclipseApplication {
 
             /**
              * 
