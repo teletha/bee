@@ -73,7 +73,7 @@ public class Eclipse extends Task implements IDESupport {
                         .classPath(I.class, Bee.class)
                         .classPath(lombok.getJar())
                         .encoding(project.getEncoding())
-                        .run(LombokInstaller.class, "install", eclipse.locate());
+                        .run(LombokInstaller.class, "install", eclipse.locate().get());
 
                 // restart eclipse
                 ui.warn("Restart your Eclipse to enable Lombok.");
