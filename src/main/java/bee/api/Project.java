@@ -633,7 +633,7 @@ public class Project {
         Set<Path> libraries = new HashSet();
 
         try {
-            for (Library library : getDependency(Scope.Runtime)) {
+            for (Library library : getDependency(Scope.Provided)) {
                 Path file = FileSystems.newFileSystem(library.getJar(), ClassLoader.getSystemClassLoader())
                         .getPath("/")
                         .resolve("META-INF/services/javax.annotation.processing.Processor");

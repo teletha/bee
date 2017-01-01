@@ -188,7 +188,16 @@ public class Eclipse extends Task implements IDESupport {
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
 
         if (needEnhanceJRE) {
-            require("eclipse:rewrite");
+            String task = "eclipse:rewrite";
+            EclipseApplication eclipse = EclipseApplication.create();
+
+            if (eclipse.isProcessOwner()) {
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    Process.runWith(Platform.Bee, task);
+                }));
+            } else {
+                super.require(task);
+            }
         }
 
         // write file
@@ -273,26 +282,6 @@ public class Eclipse extends Task implements IDESupport {
      */
     private Path relative(Path path) {
         return project.getRoot().relativize(path);
-    }
-
-    /**
-     * <p>
-     * Use other task from literal task expression. This method ensures that the task process is
-     * invoked by Bee.
-     * </p>
-     * 
-     * @param task A task name.
-     */
-    private void require(String task) {
-        EclipseApplication eclipse = EclipseApplication.create();
-
-        if (eclipse.isProcessOwner()) {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                Process.with().workingDirectory(project.getRoot()).run("cmd", "/c", Platform.Bee, task);
-            }));
-        } else {
-            super.require(task);
-        }
     }
 
     /**
