@@ -22,6 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.wagon.Wagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagon;
+import org.apache.maven.wagon.providers.http.LightweightHttpWagonAuthenticator;
+import org.apache.maven.wagon.providers.http.LightweightHttpsWagon;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryListener;
@@ -53,7 +57,8 @@ import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
+import org.eclipse.aether.transport.wagon.WagonProvider;
+import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
@@ -110,7 +115,8 @@ public class Repository {
         // ============ RepositorySystem ============ //
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
+        locator.addService(TransporterFactory.class, WagonTransporterFactory.class);
+        locator.addService(WagonProvider.class, BeeWagonProvider.class);
         system = locator.getService(RepositorySystem.class);
 
         // ==================================================
@@ -707,6 +713,38 @@ public class Repository {
          */
         private static long toKB(long size) {
             return (size + 1023) / 1024;
+        }
+    }
+
+    /**
+     * @version 2015/06/23 10:45:33
+     */
+    private static class BeeWagonProvider implements WagonProvider {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Wagon lookup(String scheme) throws Exception {
+            if (scheme.equals("http")) {
+                LightweightHttpWagon wagon = new LightweightHttpWagon();
+                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+
+                return wagon;
+            } else if (scheme.equals("https")) {
+                LightweightHttpsWagon wagon = new LightweightHttpsWagon();
+                wagon.setAuthenticator(new LightweightHttpWagonAuthenticator());
+
+                return wagon;
+            }
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void release(Wagon wagon) {
         }
     }
 }
