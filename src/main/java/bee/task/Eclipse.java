@@ -99,9 +99,9 @@ public class Eclipse extends Task implements IDESupport {
 
         boolean active = eclipse.isActive();
 
-        if (active) eclipse.close();
-        eclipse.configJDTPreference();
-        if (active) eclipse.open();
+        // if (active) eclipse.close();
+        // eclipse.configJDTPreference();
+        // if (active) eclipse.open();
     }
 
     /**
