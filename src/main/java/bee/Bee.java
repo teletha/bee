@@ -18,6 +18,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Stopwatch;
+
 import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
@@ -29,7 +31,6 @@ import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import bee.util.PathPattern;
 import bee.util.Paths;
-import bee.util.Stopwatch;
 import kiss.I;
 
 /**
@@ -200,7 +201,7 @@ public class Bee {
      */
     public void execute(Task build) {
         String result = "SUCCESS";
-        Stopwatch stopwatch = new Stopwatch().start();
+        Stopwatch stopwatch = Stopwatch.createStarted();
 
         try {
             // =====================================
