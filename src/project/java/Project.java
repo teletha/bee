@@ -33,13 +33,10 @@ public class Project extends bee.api.Project {
         require(aetherGroup, "aether-transport-http", aetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.3.3");
         require("org.slf4j", "slf4j-nop", "1.7.22");
-        require("com.jfrog.bintray.client", "bintray-client-java-api", "0.9.1");
-        require("com.jfrog.bintray.client", "bintray-client-java-service", "0.9.1");
         require("sun.jdk", "tools", "8.0").atSystem();
 
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
-        unrequire("ch.qos.logback", "logback-classic");
 
         repository("https://repo.eclipse.org/content/repositories/egit-releases/");
     }
