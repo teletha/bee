@@ -74,7 +74,7 @@ import kiss.I;
 import kiss.Manageable;
 
 /**
- * @version 2017/01/05 13:53:19
+ * @version 2017/01/06 11:41:45
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
@@ -118,6 +118,7 @@ public class Repository {
         // ==================================================
         setLocalRepository(Platform.BeeLocalRepository);
         addRemoteRepository("central", "http://repo1.maven.org/maven2/");
+        addRemoteRepository("bintray", "http://jcenter.bintray.com/");
         addRemoteRepository("jboss", "http://repository.jboss.org/nexus/content/groups/public-jboss/");
         addRemoteRepository("jitpack", "https://jitpack.io/");
     }
