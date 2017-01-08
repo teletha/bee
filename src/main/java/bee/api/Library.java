@@ -17,7 +17,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import kiss.I;
 
 /**
- * @version 2016/11/08 17:38:00
+ * @version 2017/01/08 21:30:27
  */
 public class Library implements Comparable<Library> {
 
@@ -125,13 +125,13 @@ public class Library implements Comparable<Library> {
 
     /**
      * <p>
-     * Get jar file.
+     * Get jar path.
      * </p>
      * 
      * @return
      */
-    public Path getJar() {
-        return I.make(Repository.class).getLocalRepository().resolve(localPath(".jar"));
+    public String getJar() {
+        return localPath(".jar");
     }
 
     /**
@@ -141,11 +141,33 @@ public class Library implements Comparable<Library> {
      * 
      * @return
      */
-    public Path getSourceJar() {
+    public Path getLocalJar() {
+        return I.make(Repository.class).getLocalRepository().resolve(getJar());
+    }
+
+    /**
+     * <p>
+     * Get source jar path.
+     * </p>
+     * 
+     * @return
+     */
+    public String getSourceJar() {
+        return localPath("-sources.jar");
+    }
+
+    /**
+     * <p>
+     * Get source jar file.
+     * </p>
+     * 
+     * @return
+     */
+    public Path getLocalSourceJar() {
         Path path = I.make(Repository.class).resolveSource(this);
 
         if (path == null) {
-            return I.make(Repository.class).getLocalRepository().resolve(localPath("-sources.jar"));
+            return I.make(Repository.class).getLocalRepository().resolve(getSourceJar());
         } else {
             return path;
         }
@@ -153,13 +175,52 @@ public class Library implements Comparable<Library> {
 
     /**
      * <p>
+     * Get javadoc jar path.
+     * </p>
+     * 
+     * @return
+     */
+    public String getJavadocJar() {
+        return localPath("-javadoc.jar");
+    }
+
+    /**
+     * <p>
+     * Get javadoc jar file.
+     * </p>
+     * 
+     * @return
+     */
+    public Path getLocalJavadocJar() {
+        Path path = I.make(Repository.class).resolveSource(this);
+
+        if (path == null) {
+            return I.make(Repository.class).getLocalRepository().resolve(getJavadocJar());
+        } else {
+            return path;
+        }
+    }
+
+    /**
+     * <p>
+     * Get pom path.
+     * </p>
+     * 
+     * @return
+     */
+    public String getPOM() {
+        return localPath(".pom");
+    }
+
+    /**
+     * <p>
      * Get jar file.
      * </p>
      * 
      * @return
      */
-    public Path getPOM() {
-        return I.make(Repository.class).getLocalRepository().resolve(localPath(".pom"));
+    public Path getLocalPOM() {
+        return I.make(Repository.class).getLocalRepository().resolve(getPOM());
     }
 
     /**

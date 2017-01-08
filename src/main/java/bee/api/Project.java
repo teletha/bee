@@ -310,6 +310,17 @@ public class Project {
 
     /**
      * <p>
+     * Get the library of this project.
+     * </p>
+     * 
+     * @return
+     */
+    public Library getLibrary() {
+        return new Library(getGroup(), getProduct(), getVersion());
+    }
+
+    /**
+     * <p>
      * Find {@link Library} by name.
      * </p>
      * 
@@ -634,11 +645,11 @@ public class Project {
 
         try {
             for (Library library : getDependency(Scope.Provided)) {
-                Path file = FileSystems.newFileSystem(library.getJar(), ClassLoader.getSystemClassLoader())
+                Path file = FileSystems.newFileSystem(library.getLocalJar(), ClassLoader.getSystemClassLoader())
                         .getPath("/")
                         .resolve("META-INF/services/javax.annotation.processing.Processor");
                 if (Files.exists(file)) {
-                    libraries.add(library.getJar());
+                    libraries.add(library.getLocalJar());
                 }
             }
         } catch (IOException e) {

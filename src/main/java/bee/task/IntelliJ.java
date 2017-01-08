@@ -100,8 +100,8 @@ public class IntelliJ extends Task implements IDESupport {
      */
     private void library(Set<Library> libraries, XML root, Scope scope) {
         libraries.forEach(library -> {
-            Path jar = library.getJar();
-            Path source = library.getSourceJar();
+            Path jar = library.getLocalJar();
+            Path source = library.getLocalSourceJar();
 
             if (Files.exists(jar)) {
                 XML entry = root.child("orderEntry").attr("type", "module-library");

@@ -148,6 +148,7 @@ public class ZipArchiver {
                                 ZipEntry zip = new ZipEntry(path);
                                 zip.setSize(attrs.size());
                                 zip.setLastModifiedTime(attrs.lastModifiedTime());
+                                zip.setMethod(ZipEntry.DEFLATED);
 
                                 archiver.putNextEntry(zip);
                                 I.copy(Files.newInputStream(file), archiver, true);

@@ -70,7 +70,7 @@ public class Eclipse extends Task implements IDESupport {
                 // install lombok
                 Java.with()
                         .classPath(I.class, Bee.class)
-                        .classPath(lombok.getJar())
+                        .classPath(lombok.getLocalJar())
                         .encoding(project.getEncoding())
                         .run(LombokInstaller.class, "install", eclipse.locate().get());
 
@@ -158,8 +158,8 @@ public class Eclipse extends Task implements IDESupport {
 
         // library
         for (Library library : project.getDependency(Scope.Test)) {
-            Path jar = library.getJar();
-            Path source = library.getSourceJar();
+            Path jar = library.getLocalJar();
+            Path source = library.getLocalSourceJar();
 
             if (Files.exists(jar)) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
@@ -173,7 +173,7 @@ public class Eclipse extends Task implements IDESupport {
         // Bee API
         if (!project.equals(Bee.TOOL)) {
             for (Library lib : project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion())) {
-                doc.child("classpathentry").attr("kind", "lib").attr("path", lib.getJar()).attr("sourcepath", lib.getSourceJar());
+                doc.child("classpathentry").attr("kind", "lib").attr("path", lib.getLocalJar()).attr("sourcepath", lib.getLocalSourceJar());
             }
         }
 
@@ -209,7 +209,7 @@ public class Eclipse extends Task implements IDESupport {
      * Create factorypath file.
      * </p>
      * 
-     * @param file
+     * @param localFile
      */
     private void createFactorypath(boolean enable, Set<Path> processors) {
         XML doc = I.xml("factorypath");
@@ -231,7 +231,7 @@ public class Eclipse extends Task implements IDESupport {
      * Create factorypath file.
      * </p>
      * 
-     * @param file
+     * @param localFile
      */
     private void createAPT(boolean enable, Entry<String, String> option) {
         Properties properties = new Properties();
@@ -253,7 +253,7 @@ public class Eclipse extends Task implements IDESupport {
      * Create factorypath file.
      * </p>
      * 
-     * @param file
+     * @param localFile
      */
     private void createJDT(boolean enabled) {
         Path file = project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs");

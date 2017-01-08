@@ -76,7 +76,7 @@ public class JavaSyntaxSugar extends Task {
      * @param library
      */
     protected final void from(Library library) {
-        from(library.getJar());
+        from(library.getLocalJar());
     }
 
     /**

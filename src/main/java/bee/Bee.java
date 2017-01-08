@@ -224,7 +224,7 @@ public class Bee {
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                load(library.getJar());
+                load(library.getLocalJar());
             }
 
             // load new project

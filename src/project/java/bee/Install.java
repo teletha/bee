@@ -9,8 +9,11 @@
  */
 package bee;
 
+import bee.api.Repository;
+import kiss.I;
+
 /**
- * @version 2012/05/10 10:29:33
+ * @version 2017/01/08 20:58:44
  */
 public class Install extends bee.task.Install {
 
@@ -23,7 +26,7 @@ public class Install extends bee.task.Install {
     public void project() {
         require(Jar.class).merge();
 
-        // super.project();
+        I.make(Repository.class).install(project);
 
         BeeInstaller.install(project.locateJar());
     }

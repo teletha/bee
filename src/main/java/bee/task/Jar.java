@@ -106,7 +106,7 @@ public class Jar extends Task {
         archiver.add(project.getClasses());
 
         for (Library library : project.getDependency(Scope.Runtime)) {
-            archiver.add(library.getJar());
+            archiver.add(library.getLocalJar());
         }
         archiver.pack(output);
     }

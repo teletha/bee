@@ -89,7 +89,7 @@ public class Doc extends Task {
         options.add("-classpath");
         options.add(project.getDependency(Scope.Compile)
                 .stream()
-                .map(library -> "\"" + library.getJar().toString() + "\"")
+                .map(library -> "\"" + library.getLocalJar().toString() + "\"")
                 .collect(Collectors.joining(File.pathSeparator)));
 
         // sourcepath

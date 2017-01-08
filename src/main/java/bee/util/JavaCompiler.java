@@ -155,7 +155,7 @@ public class JavaCompiler {
      */
     public void addClassPath(Library library) {
         if (library != null) {
-            classpaths.add(library.getJar());
+            classpaths.add(library.getLocalJar());
         }
     }
 
