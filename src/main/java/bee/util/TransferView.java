@@ -20,12 +20,12 @@ import org.eclipse.aether.transfer.TransferResource;
 import bee.UserInterface;
 
 /**
- * @version 2015/06/23 12:26:51
+ * @version 2017/01/09 1:43:32
  */
 public class TransferView implements TransferListener {
 
-    /** The progress event interval. (ns) */
-    private static final long interval = 200 * 1000 * 1000;
+    /** The progress event interval. (ms) */
+    private static final long interval = 500 * 1000 * 1000;
 
     /** The last progress event time. */
     private long last = 0;
@@ -93,6 +93,9 @@ public class TransferView implements TransferListener {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void transferSucceeded(TransferEvent event) {
         // unregister item

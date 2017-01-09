@@ -85,23 +85,16 @@ public class Bintray extends Task {
         require(Install.class).project();
 
         Client client = new Client();
-
-        String orgnaization = "npc";
-        String repositoryName = "maven";
-
         Library library = project.getLibrary();
+        Repository repo = Repository.of(project.getGroup());
+        Package pack = Package.of(repo, library.name, project.getDescription());
 
-        Description desc = new Description(orgnaization, repositoryName);
-
-        Package pack = new Package();
-        pack.name = library.name;
-        pack.desc = project.getDescription();
-
-        client.get(desc, "repos/" + desc)
-                .errorResume(client.post(desc, "repos/" + desc))
-                .flatMap(r -> client.get(pack, "packages/" + desc + "/" + library.name))
-                .errorResume(client.post(pack, "packages/" + desc))
-                .flatMap(p -> client.get(new RepositoryFiles(), "packages/" + desc + "/" + library.name + "/files"))
+        Events.from(repo)
+                .flatMap(r -> client.get(repo, "repos/" + repo))
+                .errorResume(client.post(repo, "repos/" + repo))
+                .flatMap(r -> client.get(pack, "packages/" + pack))
+                .errorResume(client.post(pack, "packages/" + repo))
+                .flatMap(p -> client.get(new RepositoryFiles(), "packages/" + pack + "/files"))
                 .flatIterable(files -> {
                     RepositoryFiles completes = new RepositoryFiles();
                     completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
@@ -112,8 +105,7 @@ public class Bintray extends Task {
                     return completes;
                 })
                 .take(file -> Files.exists(file.local))
-                .flatMap(file -> client
-                        .put(new Up(), "maven/" + desc + "/" + library.name + "/" + file.path + ";publish=1;override=1", file.resource()))
+                .flatMap(file -> client.put(new Up(), "maven/" + pack + "/" + file.path + ";publish=1;override=1", file.resource()))
                 .to(r -> {
                     System.out.println(r.message);
                 }, e -> {
@@ -143,7 +135,7 @@ public class Bintray extends Task {
             CredentialsProvider provider = new BasicCredentialsProvider();
             provider.setCredentials(AuthScope.ANY, credentials);
 
-            this.client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
+            client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
         }
 
         /**
@@ -187,8 +179,6 @@ public class Bintray extends Task {
          * @return
          */
         private <T> Events<T> put(T value, String api, TransferResource resource) {
-            TransferView view = I.make(TransferView.class);
-
             HttpPut put = new HttpPut(fromPath(api));
             put.setEntity(new CountingHttpEntity(new FileEntity(resource.getFile(), type(resource)), view, resource));
 
@@ -208,12 +198,8 @@ public class Bintray extends Task {
             case "pom":
                 return ContentType.APPLICATION_XML;
 
-            case "md5":
-            case "sha1":
-                return ContentType.TEXT_PLAIN;
-
             default:
-                return ContentType.DEFAULT_BINARY;
+                return ContentType.APPLICATION_OCTET_STREAM;
             }
         }
 
@@ -256,6 +242,7 @@ public class Bintray extends Task {
                         break;
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     throw I.quiet(e);
                 }
                 return Disposable.Φ;
@@ -266,36 +253,32 @@ public class Bintray extends Task {
     /**
      * @version 2017/01/06 13:10:36
      */
-    private static class Description {
-
-        /** The name. */
-        public String name;
-
-        /** The repository name. */
-        public String repo;
+    private static class Repository {
 
         /** The repository owner. */
         public String owner;
 
-        /** The repository type. (default is maven) */
+        /** The name. (fixed) */
+        public String name = "maven";
+
+        /** The repository type. (fixed) */
         public String type = "maven";
 
         /** The repository description. */
         public String desc;
 
-        /** The response message. */
-        public String message;
-
         /**
          * <p>
-         * With name.
+         * With owner name.
          * </p>
          * 
-         * @param name
+         * @param owner
          */
-        public Description(String owner, String name) {
-            this.name = name;
-            this.owner = owner;
+        private static Repository of(String owner) {
+            Repository repo = new Repository();
+            repo.owner = owner;
+            repo.desc = "The " + owner + "'s Maven Repository.";
+            return repo;
         }
 
         /**
@@ -312,11 +295,33 @@ public class Bintray extends Task {
      */
     private static class Package {
 
+        private Repository repository;
+
         /** The name. */
         public String name;
 
         /** The description. */
         public String desc;
+
+        /**
+         * @param name
+         * @param desc
+         */
+        private static Package of(Repository repo, String name, String desc) {
+            Package p = new Package();
+            p.name = name;
+            p.desc = desc;
+            p.repository = repo;
+            return p;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return repository + "/" + name;
+        }
     }
 
     /**
@@ -470,6 +475,7 @@ public class Bintray extends Task {
         /** The resource to transfer. */
         private final TransferResource resource;
 
+        /** The transfered size. */
         private long transferred;
 
         /**
@@ -482,7 +488,6 @@ public class Bintray extends Task {
 
             this.view = view;
             this.resource = resource;
-            this.transferred = 0;
         }
 
         /**
@@ -508,8 +513,8 @@ public class Bintray extends Task {
          * {@inheritDoc}
          */
         @Override
-        public void close() throws IOException {
-            super.close();
+        public void flush() throws IOException {
+            super.flush();
 
             view.transferSucceeded(event());
         }
