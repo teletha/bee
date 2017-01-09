@@ -92,6 +92,9 @@ public class Project {
     /** The output base directory. */
     private Path output;
 
+    /** The version control system. */
+    private VersionControlSystem vcs;
+
     /**
      * 
      */
@@ -686,6 +689,30 @@ public class Project {
      */
     public final Path locateSourceJar() {
         return getOutput().resolve(getProduct() + "-" + getVersion() + "-sources.jar");
+    }
+
+    /**
+     * Get the VCS.
+     * 
+     * @return A uri of version control system.
+     */
+    public VersionControlSystem getVersionControlSystem() {
+        return vcs;
+    }
+
+    /**
+     * <p>
+     * Locate VCS.
+     * </p>
+     * 
+     * @param uri A uri of version control system.
+     */
+    protected final void versionControlSystem(String uri) {
+        try {
+            this.vcs = StandardVCS.of(new URI(uri));
+        } catch (URISyntaxException e) {
+            // ignore
+        }
     }
 
     /**

@@ -57,7 +57,7 @@ public class Bee {
     public static final Project TOOL = new Project() {
 
         {
-            product("npc", "Bee", "0.1");
+            product("npc", "bee", "0.1");
         }
     };
 

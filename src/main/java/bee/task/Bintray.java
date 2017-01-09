@@ -9,92 +9,51 @@
  */
 package bee.task;
 
-import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Map;
+import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.HttpEntityWrapper;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.eclipse.aether.RepositoryCache;
-import org.eclipse.aether.RepositoryListener;
-import org.eclipse.aether.RepositorySystemSession;
-import org.eclipse.aether.SessionData;
-import org.eclipse.aether.artifact.ArtifactTypeRegistry;
-import org.eclipse.aether.collection.DependencyGraphTransformer;
-import org.eclipse.aether.collection.DependencyManager;
-import org.eclipse.aether.collection.DependencySelector;
-import org.eclipse.aether.collection.DependencyTraverser;
-import org.eclipse.aether.collection.VersionFilter;
-import org.eclipse.aether.repository.AuthenticationSelector;
-import org.eclipse.aether.repository.LocalRepository;
-import org.eclipse.aether.repository.LocalRepositoryManager;
-import org.eclipse.aether.repository.MirrorSelector;
-import org.eclipse.aether.repository.ProxySelector;
-import org.eclipse.aether.repository.WorkspaceReader;
-import org.eclipse.aether.resolution.ArtifactDescriptorPolicy;
-import org.eclipse.aether.resolution.ResolutionErrorPolicy;
-import org.eclipse.aether.transfer.TransferEvent;
-import org.eclipse.aether.transfer.TransferEvent.RequestType;
-import org.eclipse.aether.transfer.TransferListener;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.aether.transfer.TransferResource;
 
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Task;
-import bee.util.Paths;
-import bee.util.TransferView;
-import kiss.Disposable;
+import bee.util.RESTClient;
 import kiss.Events;
 import kiss.I;
 
 /**
- * @version 2017/01/06 11:29:35
+ * @version 2017/01/10 1:08:40
  */
 public class Bintray extends Task {
 
-    @Command("Test Bintray")
-    public void rest() {
+    /** The bintray domain. */
+    private static final String uri = "https://api.bintray.com/";
+
+    private String name = "teletha";
+
+    private String key = "7d639e65a03d3714524a719f63ce818af7f7114a";
+
+    @Command("Deploy products to Bintray repository.")
+    public void deploy() {
         require(Install.class).project();
 
-        Client client = new Client();
+        RESTClient client = new RESTClient(name, key);
         Library library = project.getLibrary();
         Repository repo = Repository.of(project.getGroup());
-        Package pack = Package.of(repo, library.name, project.getDescription());
+        Package pack = Package.of(repo, project);
 
         Events.from(repo)
-                .flatMap(r -> client.get(repo, "repos/" + repo))
-                .errorResume(client.post(repo, "repos/" + repo))
-                .flatMap(r -> client.get(pack, "packages/" + pack))
-                .errorResume(client.post(pack, "packages/" + repo))
-                .flatMap(p -> client.get(new RepositoryFiles(), "packages/" + pack + "/files"))
+                .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
+                .errorResume(client.post(uri + "repos/" + repo, repo))
+                .flatMap(r -> client.patch(uri + "packages/" + pack, pack))
+                .errorResume(client.post(uri + "packages/" + repo, pack))
+                .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
                 .flatIterable(files -> {
                     RepositoryFiles completes = new RepositoryFiles();
                     completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
@@ -104,155 +63,17 @@ public class Bintray extends Task {
                     completes.removeAll(files);
                     return completes;
                 })
-                .take(file -> Files.exists(file.local))
-                .flatMap(file -> client.put(new Up(), "maven/" + pack + "/" + file.path + ";publish=1;override=1", file.resource()))
-                .to(r -> {
-                    System.out.println(r.message);
-                }, e -> {
-                    e.printStackTrace();
+                .take(file -> Files.exists(file.localFile))
+                .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource()))
+                .to(file -> {
+                    ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
                 });
-    }
-
-    /**
-     * @version 2017/01/06 13:59:11
-     */
-    private class Client {
-
-        private String name = "teletha";
-
-        private String key = "7d639e65a03d3714524a719f63ce818af7f7114a";
-
-        private final TransferView view = I.make(TransferView.class);
-
-        /** The actual http client. */
-        private final HttpClient client;
-
-        /**
-         * 
-         */
-        private Client() {
-            Credentials credentials = new UsernamePasswordCredentials(name, key);
-            CredentialsProvider provider = new BasicCredentialsProvider();
-            provider.setCredentials(AuthScope.ANY, credentials);
-
-            client = HttpClientBuilder.create().setDefaultCredentialsProvider(provider).build();
-        }
-
-        /**
-         * <p>
-         * Create GET request.
-         * </p>
-         * 
-         * @param api
-         * @return
-         */
-        private <T> Events<T> get(T value, String api) {
-            return request(value, new HttpGet(fromPath(api)));
-        }
-
-        /**
-         * <p>
-         * Create POST request.
-         * </p>
-         * 
-         * @param api
-         * @return
-         */
-        private <T> Events<T> post(T value, String api) {
-            StringBuilder builder = new StringBuilder();
-            I.write(value, builder);
-
-            HttpPost post = new HttpPost(fromPath(api));
-            post.setEntity(new StringEntity(builder.toString(), StandardCharsets.UTF_8));
-            post.setHeader("Accept", "application/json");
-            post.setHeader("Content-type", "application/json");
-
-            return request(value, post);
-        }
-
-        /**
-         * <p>
-         * Create PUT request.
-         * </p>
-         * 
-         * @param api
-         * @return
-         */
-        private <T> Events<T> put(T value, String api, TransferResource resource) {
-            HttpPut put = new HttpPut(fromPath(api));
-            put.setEntity(new CountingHttpEntity(new FileEntity(resource.getFile(), type(resource)), view, resource));
-
-            return request(value, put);
-        }
-
-        /**
-         * <p>
-         * Detect content-type.
-         * </p>
-         * 
-         * @param resource
-         * @return
-         */
-        private ContentType type(TransferResource resource) {
-            switch (Paths.getExtension(resource.getFile().toPath())) {
-            case "pom":
-                return ContentType.APPLICATION_XML;
-
-            default:
-                return ContentType.APPLICATION_OCTET_STREAM;
-            }
-        }
-
-        /**
-         * <p>
-         * Create REST API.
-         * </p>
-         * 
-         * @param api
-         * @return
-         */
-        private String fromPath(String api) {
-            return "https://api.bintray.com/" + api;
-        }
-
-        /**
-         * <p>
-         * Create request.
-         * </p>
-         * 
-         * @param type
-         * @param request
-         * @return
-         */
-        private <T> Events<T> request(T value, HttpUriRequest request) {
-            return new Events<T>(observer -> {
-                try {
-                    System.out.println(request.getURI());
-                    HttpResponse response = client.execute(request);
-
-                    switch (response.getStatusLine().getStatusCode()) {
-                    case HttpStatus.SC_OK:
-                    case HttpStatus.SC_CREATED:
-                        I.read(EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8), value);
-                        observer.accept(value);
-                        break;
-
-                    default:
-                        observer.error(new HttpException(response.toString()));
-                        break;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw I.quiet(e);
-                }
-                return Disposable.Φ;
-            });
-        }
     }
 
     /**
      * @version 2017/01/06 13:10:36
      */
+    @SuppressWarnings("unused")
     private static class Repository {
 
         /** The repository owner. */
@@ -293,8 +114,10 @@ public class Bintray extends Task {
     /**
      * @version 2017/01/08 15:59:24
      */
+    @SuppressWarnings("unused")
     private static class Package {
 
+        /** The owner repository. */
         private Repository repository;
 
         /** The name. */
@@ -303,15 +126,31 @@ public class Bintray extends Task {
         /** The description. */
         public String desc;
 
+        /** The web site. */
+        public String website_url;
+
+        /** The version control system. */
+        public String vcs_url;
+
+        /** The issure traker. */
+        public String issue_tracker_url;
+
+        /** The license list. */
+        public List<String> licenses = new ArrayList();
+
         /**
          * @param name
          * @param desc
          */
-        private static Package of(Repository repo, String name, String desc) {
+        private static Package of(Repository repo, Project project) {
             Package p = new Package();
-            p.name = name;
-            p.desc = desc;
             p.repository = repo;
+            p.name = project.getLibrary().name;
+            p.desc = project.getDescription();
+            p.licenses.add(project.getLicense().name());
+            p.website_url = project.getVersionControlSystem().uri();
+            p.vcs_url = project.getVersionControlSystem().uri();
+            p.issue_tracker_url = project.getVersionControlSystem().issue();
             return p;
         }
 
@@ -336,17 +175,11 @@ public class Bintray extends Task {
      */
     private static class RepositoryFile {
 
-        /** The file name. */
-        public String name;
-
         /** The file path. */
         public String path;
 
         /** The local file path. */
-        public Path local;
-
-        /** The file size. */
-        public long size;
+        public Path localFile;
 
         /** The file checksum. */
         public String sha1;
@@ -371,7 +204,7 @@ public class Bintray extends Task {
                 Project project = I.make(Project.class);
                 String repository = "http://" + project.getGroup() + ".bintray.com/maven";
 
-                return new TransferResource(repository, path, local.toFile(), null).setContentLength(Files.size(local));
+                return new TransferResource(repository, path, localFile.toFile(), null).setContentLength(Files.size(localFile));
             } catch (IOException e) {
                 throw I.quiet(e);
             }
@@ -389,36 +222,25 @@ public class Bintray extends Task {
         }
 
         /**
+         * <p>
+         * Create repository file.
+         * </p>
+         * 
          * @param path
-         * @param file
+         * @param filePath
          * @return
          */
-        public static RepositoryFile of(String path, Path file) {
+        public static RepositoryFile of(String path, Path filePath) {
             try {
-                MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-                sha1.update(Files.readAllBytes(file));
+                RepositoryFile file = new RepositoryFile();
+                file.path = path;
+                file.localFile = filePath;
+                file.sha1 = DigestUtils.shaHex(Files.readAllBytes(filePath));
 
-                RepositoryFile f = new RepositoryFile();
-                f.name = I.locate(path).getFileName().toString();
-                f.path = path;
-                f.local = file;
-                f.size = Files.size(file);
-                f.sha1 = String.valueOf(Hex.encodeHex(sha1.digest()));
-
-                return f;
-            } catch (NoSuchAlgorithmException e) {
-                throw I.quiet(e);
+                return file;
             } catch (IOException e) {
                 throw I.quiet(e);
             }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return "RepositoryFile [path=" + path + ", size=" + size + ", sha1=" + sha1 + "]";
         }
     }
 
@@ -428,312 +250,5 @@ public class Bintray extends Task {
     private static class Up {
 
         public String message;
-    }
-
-    /**
-     * @version 2017/01/08 16:09:59
-     */
-    private static class CountingHttpEntity extends HttpEntityWrapper {
-
-        /** The transfer view. */
-        private final TransferView view;
-
-        /** The resource to transfer. */
-        private final TransferResource resource;
-
-        /**
-         * @param entity
-         * @param listener
-         * @param resource
-         */
-        private CountingHttpEntity(HttpEntity entity, TransferView listener, TransferResource resource) {
-            super(entity);
-
-            this.view = listener;
-            this.resource = resource;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void writeTo(final OutputStream out) throws IOException {
-            this.wrappedEntity.writeTo(out instanceof CountingOutputStream ? out : new CountingOutputStream(out, view, resource));
-        }
-    }
-
-    /**
-     * @version 2017/01/08 16:09:55
-     */
-    private static class CountingOutputStream extends FilterOutputStream {
-
-        private static final RepositorySystemSession session = new Session();
-
-        /** The transfer view. */
-        private final TransferView view;
-
-        /** The resource to transfer. */
-        private final TransferResource resource;
-
-        /** The transfered size. */
-        private long transferred;
-
-        /**
-         * @param out
-         * @param view
-         * @param resource
-         */
-        private CountingOutputStream(OutputStream out, TransferView view, TransferResource resource) {
-            super(out);
-
-            this.view = view;
-            this.resource = resource;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(byte[] b, int off, int len) throws IOException {
-            out.write(b, off, len);
-            transferred += len;
-
-            view.transferProgressed(event());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(final int b) throws IOException {
-            write(new byte[] {(byte) b}, 0, 1);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void flush() throws IOException {
-            super.flush();
-
-            view.transferSucceeded(event());
-        }
-
-        /**
-         * <p>
-         * Create event.
-         * </p>
-         * 
-         * @return
-         */
-        private TransferEvent event() {
-            return new TransferEvent.Builder(session, resource).setRequestType(RequestType.PUT).setTransferredBytes(transferred).build();
-        }
-    }
-
-    /**
-     * @version 2017/01/08 23:25:25
-     */
-    private static class Session implements RepositorySystemSession {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean isOffline() {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean isIgnoreArtifactDescriptorRepositories() {
-            return false;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ResolutionErrorPolicy getResolutionErrorPolicy() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ArtifactDescriptorPolicy getArtifactDescriptorPolicy() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getChecksumPolicy() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String getUpdatePolicy() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public LocalRepository getLocalRepository() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public LocalRepositoryManager getLocalRepositoryManager() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public WorkspaceReader getWorkspaceReader() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public RepositoryListener getRepositoryListener() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public TransferListener getTransferListener() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Map<String, String> getSystemProperties() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Map<String, String> getUserProperties() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Map<String, Object> getConfigProperties() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public MirrorSelector getMirrorSelector() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ProxySelector getProxySelector() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public AuthenticationSelector getAuthenticationSelector() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ArtifactTypeRegistry getArtifactTypeRegistry() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public DependencyTraverser getDependencyTraverser() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public DependencyManager getDependencyManager() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public DependencySelector getDependencySelector() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public VersionFilter getVersionFilter() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public DependencyGraphTransformer getDependencyGraphTransformer() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public SessionData getData() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public RepositoryCache getCache() {
-            return null;
-        }
     }
 }
