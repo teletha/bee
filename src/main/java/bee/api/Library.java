@@ -192,7 +192,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Path getLocalJavadocJar() {
-        Path path = I.make(Repository.class).resolveSource(this);
+        Path path = I.make(Repository.class).resolveJavadoc(this);
 
         if (path == null) {
             return I.make(Repository.class).getLocalRepository().resolve(getJavadocJar());

@@ -67,6 +67,8 @@ public class Bintray extends Task {
                 .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource()))
                 .to(file -> {
                     ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
+                }, e -> {
+                    e.printStackTrace();
                 });
     }
 
@@ -231,16 +233,16 @@ public class Bintray extends Task {
          * @return
          */
         public static RepositoryFile of(String path, Path filePath) {
-            try {
-                RepositoryFile file = new RepositoryFile();
-                file.path = path;
-                file.localFile = filePath;
-                file.sha1 = DigestUtils.shaHex(Files.readAllBytes(filePath));
+            RepositoryFile file = new RepositoryFile();
+            file.path = path;
+            file.localFile = filePath;
 
-                return file;
+            try {
+                file.sha1 = DigestUtils.shaHex(Files.readAllBytes(filePath));
             } catch (IOException e) {
-                throw I.quiet(e);
+                // ignore
             }
+            return file;
         }
     }
 }

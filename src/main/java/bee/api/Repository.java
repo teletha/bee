@@ -251,6 +251,18 @@ public class Repository {
 
     /**
      * <p>
+     * Resolve the javadoc of the specified library.
+     * </p>
+     * 
+     * @param library
+     * @return
+     */
+    public Path resolveJavadoc(Library library) {
+        return resolve(library, "javadoc");
+    }
+
+    /**
+     * <p>
      * Resolve the source codes of the specified library.
      * </p>
      * 
@@ -258,13 +270,25 @@ public class Repository {
      * @return
      */
     public Path resolveSource(Library library) {
+        return resolve(library, "sources");
+    }
+
+    /**
+     * <p>
+     * Resolve the source codes of the specified library.
+     * </p>
+     * 
+     * @param library
+     * @return
+     */
+    private Path resolve(Library library, String suffix) {
         // collect remote repository
         List<RemoteRepository> repositories = new ArrayList();
         repositories.addAll(remoteRepositories);
         repositories.addAll(project.repositories);
 
         ArtifactRequest request = new ArtifactRequest();
-        request.setArtifact(new SubArtifact(library.artifact, "*-sources", "jar"));
+        request.setArtifact(new SubArtifact(library.artifact, "*-" + suffix, "jar"));
         request.setRepositories(repositories);
 
         try {
@@ -277,7 +301,6 @@ public class Repository {
         } catch (ArtifactResolutionException e) {
             return null;
         }
-
         return null;
     }
 
