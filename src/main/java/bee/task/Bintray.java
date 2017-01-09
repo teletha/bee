@@ -243,12 +243,4 @@ public class Bintray extends Task {
             }
         }
     }
-
-    /**
-     * @version 2017/01/08 17:34:10
-     */
-    private static class Up {
-
-        public String message;
-    }
 }
