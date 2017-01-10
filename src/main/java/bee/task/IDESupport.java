@@ -14,7 +14,7 @@ import bee.api.Project;
 import kiss.Extensible;
 
 /**
- * @version 2016/11/30 11:56:37
+ * @version 2017/01/10 13:15:45
  */
 public interface IDESupport extends Extensible {
     /**

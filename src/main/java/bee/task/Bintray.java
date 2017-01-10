@@ -20,11 +20,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.aether.transfer.TransferResource;
 
 import bee.api.Command;
-import bee.api.Library;
 import bee.api.Project;
 import bee.api.Task;
-import bee.util.RESTClient;
-import kiss.Events;
+import bee.util.Configuration;
 import kiss.I;
 
 /**
@@ -41,35 +39,53 @@ public class Bintray extends Task {
 
     @Command("Deploy products to Bintray repository.")
     public void deploy() {
-        require(Install.class).project();
+        Account account = Configuration.project(Account.class);
+        System.out.println(account.name() + "  " + account.key());
+        require(Git.class).gitignore();
 
-        RESTClient client = new RESTClient(name, key);
-        Library library = project.getLibrary();
-        Repository repo = Repository.of(project.getGroup());
-        Package pack = Package.of(repo, project);
+        // require(Install.class).project();
+        //
+        // RESTClient client = new RESTClient(name, key);
+        // Library library = project.getLibrary();
+        // Repository repo = Repository.of(project.getGroup());
+        // Package pack = Package.of(repo, project);
+        //
+        // Events.from(repo)
+        // .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
+        // .errorResume(client.post(uri + "repos/" + repo, repo))
+        // .flatMap(r -> client.patch(uri + "packages/" + pack, pack))
+        // .errorResume(client.post(uri + "packages/" + repo, pack))
+        // .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
+        // .flatIterable(files -> {
+        // RepositoryFiles completes = new RepositoryFiles();
+        // completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
+        // completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
+        // completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
+        // completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
+        // completes.removeAll(files);
+        // return completes;
+        // })
+        // .take(file -> Files.exists(file.localFile))
+        // .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path +
+        // ";publish=1;override=1", file, file.resource()))
+        // .to(file -> {
+        // ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() +
+        // "/maven/" + file.path + ".");
+        // }, e -> {
+        // e.printStackTrace();
+        // });
+    }
 
-        Events.from(repo)
-                .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
-                .errorResume(client.post(uri + "repos/" + repo, repo))
-                .flatMap(r -> client.patch(uri + "packages/" + pack, pack))
-                .errorResume(client.post(uri + "packages/" + repo, pack))
-                .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
-                .flatIterable(files -> {
-                    RepositoryFiles completes = new RepositoryFiles();
-                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
-                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
-                    completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
-                    completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
-                    completes.removeAll(files);
-                    return completes;
-                })
-                .take(file -> Files.exists(file.localFile))
-                .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource()))
-                .to(file -> {
-                    ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
-                }, e -> {
-                    e.printStackTrace();
-                });
+    /**
+     * @version 2017/01/10 10:02:07
+     */
+    public static interface Account {
+
+        /** The account name. */
+        public String name();
+
+        /** The API key. */
+        public String key();
     }
 
     /**

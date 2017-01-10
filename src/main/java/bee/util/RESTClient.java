@@ -74,6 +74,14 @@ public class RESTClient {
     private final HttpClient client;
 
     /**
+     * 
+     */
+    public RESTClient() {
+        this(builder -> {
+        });
+    }
+
+    /**
      * <p>
      * Create client with basic credentials.
      * </p>
@@ -97,6 +105,19 @@ public class RESTClient {
         HttpClientBuilder b = HttpClientBuilder.create();
         builder.accept(b);
         client = b.build();
+    }
+
+    /**
+     * <p>
+     * GET request.
+     * </p>
+     * 
+     * @param uri
+     * @param type
+     * @return
+     */
+    public <T> Events<String> get(String uri) {
+        return request(new HttpGet(uri), null);
     }
 
     /**
@@ -216,10 +237,16 @@ public class RESTClient {
                 case HttpStatus.SC_CREATED:
                     String body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 
-                    if (value != null && request.getMethod().equals("GET")) {
-                        I.read(body, value);
+                    if (request.getMethod().equals("GET")) {
+                        if (value == null || value instanceof String) {
+                            observer.accept((T) body);
+                        } else {
+                            I.read(body, value);
+                            observer.accept(value);
+                        }
+                    } else {
+                        observer.accept(value);
                     }
-                    observer.accept(value);
                     break;
 
                 default:

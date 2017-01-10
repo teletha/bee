@@ -56,6 +56,9 @@ public final class Platform {
     /** The platform type. */
     private static boolean isWindows;
 
+    /** The platform type. */
+    private static boolean isLinux;
+
     // initialization
     static {
         Path bin = null;
@@ -77,6 +80,7 @@ public final class Platform {
                         bin = directory;
                         java = linux;
                         bee = directory.resolve("bee");
+                        isLinux = true;
 
                         break root;
                     } else if (Files.exists(windows)) {
@@ -151,5 +155,16 @@ public final class Platform {
      */
     public static boolean isWindows() {
         return isWindows;
+    }
+
+    /**
+     * <p>
+     * Check platform.
+     * </p>
+     * 
+     * @return
+     */
+    public static boolean isLinux() {
+        return isLinux;
     }
 }
