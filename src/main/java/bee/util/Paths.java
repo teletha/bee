@@ -21,7 +21,7 @@ import bee.api.Project;
 import kiss.I;
 
 /**
- * @version 2012/03/28 23:39:51
+ * @version 2017/01/10 15:32:12
  */
 public class Paths {
 
@@ -142,33 +142,6 @@ public class Paths {
     }
 
     /**
-     * <p>
-     * Write text to file.
-     * </p>
-     * 
-     * @param path
-     * @param text
-     */
-    public static void write(Path path, String text) {
-        Objects.requireNonNull(path);
-        Objects.requireNonNull(text);
-
-        Project project = I.make(Project.class);
-
-        try {
-            Path directory = path.getParent();
-
-            if (Files.notExists(directory)) {
-                Files.createDirectories(directory);
-            }
-            Files.write(path, text.getBytes(project.getEncoding()));
-        } catch (IOException e) {
-            I.make(UserInterface.class).error("Fail to write [", project.getRoot().relativize(path), "]");
-            throw I.quiet(e);
-        }
-    }
-
-    /**
      * Writes bytes to a file. The {@code options} parameter specifies how the the file is created
      * or opened. If no options are present then this method works as if the
      * {@link StandardOpenOption#CREATE CREATE}, {@link StandardOpenOption#TRUNCATE_EXISTING
@@ -236,6 +209,26 @@ public class Paths {
      */
     public static boolean exist(Path path) {
         return path != null && Files.exists(path);
+    }
+
+    /**
+     * <p>
+     * Helper method to create file.
+     * </p>
+     * 
+     * @param file A file.
+     * @return A created file.
+     */
+    public static Path createFile(Path file) {
+        if (Files.isRegularFile(file) == false) {
+            try {
+                Files.createDirectories(file.getParent());
+                Files.createFile(file);
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+        return file;
     }
 
     /**

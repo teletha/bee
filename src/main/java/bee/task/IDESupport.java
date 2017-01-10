@@ -12,6 +12,7 @@ package bee.task;
 import bee.api.Command;
 import bee.api.Project;
 import kiss.Extensible;
+import kiss.model.Model;
 
 /**
  * @version 2017/01/10 13:15:45
@@ -33,4 +34,15 @@ public interface IDESupport extends Extensible {
      * @return
      */
     boolean exist(Project project);
+
+    /**
+     * <p>
+     * Compute IDE name.
+     * </p>
+     * 
+     * @return
+     */
+    default String name() {
+        return Model.of(getClass()).name;
+    }
 }

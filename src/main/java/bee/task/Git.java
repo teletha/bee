@@ -36,7 +36,7 @@ public class Git extends Task {
         // IDE
         for (IDESupport ide : I.find(IDESupport.class)) {
             if (ide.exist(project)) {
-                uri.add(ide.getClass().getSimpleName());
+                uri.add(ide.name());
             }
         }
 

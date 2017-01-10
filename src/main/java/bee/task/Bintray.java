@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.aether.transfer.TransferResource;
@@ -22,7 +23,8 @@ import org.eclipse.aether.transfer.TransferResource;
 import bee.api.Command;
 import bee.api.Project;
 import bee.api.Task;
-import bee.util.Configuration;
+import bee.util.Config;
+import bee.util.Config.Description;
 import kiss.I;
 
 /**
@@ -33,19 +35,14 @@ public class Bintray extends Task {
     /** The bintray domain. */
     private static final String uri = "https://api.bintray.com/";
 
-    private String name = "teletha";
-
-    private String key = "7d639e65a03d3714524a719f63ce818af7f7114a";
-
     @Command("Deploy products to Bintray repository.")
     public void deploy() {
-        Account account = Configuration.project(Account.class);
-        System.out.println(account.name() + "  " + account.key());
-        require(Git.class).gitignore();
-
         // require(Install.class).project();
-        //
-        // RESTClient client = new RESTClient(name, key);
+
+        Account account = Config.user(Account.class);
+        Supplier<String> S = account::name;
+
+        // RESTClient client = new RESTClient(account.name(), account.key());
         // Library library = project.getLibrary();
         // Repository repo = Repository.of(project.getGroup());
         // Package pack = Package.of(repo, project);
@@ -79,12 +76,13 @@ public class Bintray extends Task {
     /**
      * @version 2017/01/10 10:02:07
      */
+    @Description("Bintray Account Setting")
     public static interface Account {
 
-        /** The account name. */
+        @Description("Bintray account name")
         public String name();
 
-        /** The API key. */
+        @Description("Bintray API key (See https://bintray.com/profile/edit)")
         public String key();
     }
 

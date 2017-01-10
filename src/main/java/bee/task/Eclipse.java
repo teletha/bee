@@ -17,7 +17,6 @@ import java.nio.file.Path;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.prefs.Preferences;
 
 import bee.Bee;
 import bee.Platform;
@@ -28,6 +27,8 @@ import bee.api.Scope;
 import bee.api.Task;
 import bee.extension.JavaExtension;
 import bee.task.AnnotationProcessor.ProjectInfo;
+import bee.util.Config;
+import bee.util.Config.Description;
 import bee.util.Java;
 import bee.util.Java.JVM;
 import bee.util.PathPattern;
@@ -376,17 +377,7 @@ public class Eclipse extends Task implements IDESupport {
          * @return
          */
         final Variable<Path> locate() {
-            Preferences prefs = Preferences.userNodeForPackage(EclipseApplication.class);
-            Variable<Path> application = Variable.of(prefs.get("eclipse", null)).map(I::locate);
-
-            if (application.isAbsent() || application.is(Files::notExists)) {
-                application.set(locateActive());
-
-                if (application.isPresent()) {
-                    prefs.put("eclipse", application.get().toString());
-                }
-            }
-            return application;
+            return Variable.of(Config.user(Locator.class).locate());
         }
 
         /**
@@ -528,6 +519,18 @@ public class Eclipse extends Task implements IDESupport {
                 return I.make(ForWindows.class);
             } else {
                 throw new Error("Unsupported platform.");
+            }
+        }
+
+        /**
+         * @version 2017/01/10 15:49:34
+         */
+        @Description("Eclipse Location")
+        public interface Locator {
+
+            @Description("The location of eclipse application file.")
+            default Path locate() {
+                return EclipseApplication.create().locateActive().get();
             }
         }
 
