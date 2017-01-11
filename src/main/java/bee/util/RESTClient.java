@@ -9,10 +9,14 @@
  */
 package bee.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -20,6 +24,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
@@ -148,6 +153,19 @@ public class RESTClient {
 
     /**
      * <p>
+     * GET file request.
+     * </p>
+     * 
+     * @param uri
+     * @param type
+     * @return
+     */
+    public Events<Path> get(String uri, Path file) {
+        return request(new HttpGet(uri), file);
+    }
+
+    /**
+     * <p>
      * Create POST request.
      * </p>
      * 
@@ -235,13 +253,13 @@ public class RESTClient {
                 switch (response.getStatusLine().getStatusCode()) {
                 case HttpStatus.SC_OK:
                 case HttpStatus.SC_CREATED:
-                    String body = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-
                     if (request.getMethod().equals("GET")) {
                         if (value == null || value instanceof String) {
-                            observer.accept((T) body);
+                            observer.accept((T) readAsString(response));
+                        } else if (value instanceof Path) {
+                            observer.accept((T) readAsFile(response, (Path) value));
                         } else {
-                            I.read(body, value);
+                            I.read(readAsString(response), value);
                             observer.accept(value);
                         }
                     } else {
@@ -259,6 +277,39 @@ public class RESTClient {
             }
             return Disposable.Φ;
         });
+    }
+
+    /**
+     * <p>
+     * Helper method to read entity as {@link String}.
+     * </p>
+     * 
+     * @param response
+     * @return
+     * @throws IOException
+     * @throws ParseException
+     */
+    private String readAsString(HttpResponse response) throws ParseException, IOException {
+        return EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * <p>
+     * Helper method to read entity as {@link String}.
+     * </p>
+     * 
+     * @param response
+     * @return
+     * @throws IOException
+     * @throws IllegalStateException
+     */
+    private Path readAsFile(HttpResponse response, Path file) throws IllegalStateException, IOException {
+        BufferedInputStream input = new BufferedInputStream(response.getEntity().getContent());
+        BufferedOutputStream output = new BufferedOutputStream(Files.newOutputStream(file));
+
+        I.copy(input, output, true);
+
+        return file;
     }
 
     /**

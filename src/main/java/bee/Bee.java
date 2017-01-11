@@ -345,7 +345,8 @@ public class Bee {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
             // bee.execute("bintray");
-            bee.execute("install", "eclipse");
+            // bee.execute("install", "eclipse");
+            bee.execute("gnupg");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
