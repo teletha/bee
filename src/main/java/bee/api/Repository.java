@@ -9,6 +9,9 @@
  */
 package bee.api;
 
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -73,6 +76,21 @@ import kiss.Manageable;
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
+
+    /** The system class loader. */
+    private static final ClassLoader SYSTEM = ClassLoader.getSystemClassLoader();
+
+    /** The dynamic importer. */
+    private static final Method load;
+
+    static {
+        try {
+            load = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] {URL.class});
+            load.setAccessible(true);
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+    }
 
     /** The current processing project. */
     private final Project project;
@@ -412,6 +430,25 @@ public class Repository {
 
         // API definition
         return session;
+    }
+
+    /**
+     * <p>
+     * Load library and import it dynamically.
+     * </p>
+     * 
+     * @param group A group name.
+     * @param product A product name.
+     * @param version A product version.
+     */
+    public static void require(String group, String product, String version) {
+        for (Library library : I.make(Repository.class).collectDependency(group, product, version, Scope.Runtime)) {
+            try {
+                load.invoke(SYSTEM, library.getLocalJar().toUri().toURL());
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
+        }
     }
 
     /**

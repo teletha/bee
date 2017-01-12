@@ -346,7 +346,7 @@ public class Bee {
             Bee bee = new Bee();
             // bee.execute("bintray");
             // bee.execute("install", "eclipse");
-            bee.execute("gnupg");
+            bee.execute("pgp");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
