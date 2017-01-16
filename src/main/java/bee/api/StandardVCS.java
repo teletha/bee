@@ -92,7 +92,7 @@ abstract class StandardVCS implements VersionControlSystem {
          */
         @Override
         public String uriForRead() {
-            return uri() + ".git";
+            return "scm:git:" + uri() + ".git";
         }
 
         /**
@@ -100,7 +100,7 @@ abstract class StandardVCS implements VersionControlSystem {
          */
         @Override
         public String uriForWrite() {
-            return uri() + ".git";
+            return "scm:git:" + uri() + ".git";
         }
 
         /**

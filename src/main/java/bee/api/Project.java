@@ -793,19 +793,21 @@ public class Project {
         VersionControlSystem vcs = getVersionControlSystem();
 
         if (vcs != null) {
+            pom.child("url").text(vcs.uri());
+
             XML scm = pom.child("scm");
             scm.child("url").text(vcs.uri());
             scm.child("connection").text(vcs.uriForRead());
-            scm.child("connection").text(vcs.uriForWrite());
+            scm.child("developerConnection").text(vcs.uriForWrite());
 
             XML issue = pom.child("issueManagement");
             issue.child("system").text(vcs.name());
             issue.child("url").text(vcs.issue());
 
-            XML contributors = pom.child("contributors");
+            XML contributors = pom.child("developers");
 
             for (Contributor contributor : vcs.contributors()) {
-                XML xml = contributors.child("contributor");
+                XML xml = contributors.child("developer");
                 xml.child("name").text(contributor.getName());
                 xml.child("email").text(contributor.getEmail());
                 xml.child("url").text(contributor.getUrl());
