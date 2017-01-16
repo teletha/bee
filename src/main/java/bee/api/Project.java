@@ -692,6 +692,17 @@ public class Project {
     }
 
     /**
+     * <p>
+     * Locate product javadoc jar file.
+     * </p>
+     * 
+     * @return
+     */
+    public Path locateJavadocJar() {
+        return getOutput().resolve(getProduct() + "-" + getVersion() + "-javadoc.jar");
+    }
+
+    /**
      * Get the VCS.
      * 
      * @return A uri of version control system.

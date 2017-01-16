@@ -20,7 +20,7 @@ import bee.util.PathPattern;
 import bee.util.PathSet;
 
 /**
- * @version 2015/06/22 16:47:36
+ * @version 2017/01/16 14:40:35
  */
 public class Jar extends Task {
 
@@ -67,6 +67,19 @@ public class Jar extends Task {
 
         pack("project classes", new PathSet(project.getProjectClasses()), classes);
         pack("project sources", project.getProjectSourceSet(), sources);
+    }
+
+    /**
+     * <p>
+     * Package documentations and other resources.
+     * </p>
+     */
+    @Command("Package main documentations and other resources.")
+    public void document() {
+        Doc doc = require(Doc.class);
+        doc.javadoc();
+
+        pack("javadoc", new PathSet(doc.output), project.locateJavadocJar());
     }
 
     /**

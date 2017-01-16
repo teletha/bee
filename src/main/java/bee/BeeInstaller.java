@@ -101,7 +101,7 @@ public class BeeInstaller {
             archiver.add(source, "META-INF/services/**");
             archiver.pack(sources);
 
-            I.make(Repository.class).install(bee.Bee.API, classes, sources);
+            I.make(Repository.class).install(bee.Bee.API, classes, sources, null);
         } catch (IOException e) {
             throw I.quiet(e);
         }

@@ -15,20 +15,22 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.aether.transfer.TransferResource;
 
 import bee.api.Command;
+import bee.api.Library;
 import bee.api.Project;
 import bee.api.Task;
 import bee.util.Config;
 import bee.util.Config.Description;
+import bee.util.RESTClient;
+import kiss.Events;
 import kiss.I;
 
 /**
- * @version 2017/01/10 1:08:40
+ * @version 2017/01/16 14:47:15
  */
 public class Bintray extends Task {
 
@@ -37,40 +39,37 @@ public class Bintray extends Task {
 
     @Command("Deploy products to Bintray repository.")
     public void deploy() {
-        // require(Install.class).project();
+        require(Install.class).project();
 
         Account account = Config.user(Account.class);
-        Supplier<String> S = account::name;
 
-        // RESTClient client = new RESTClient(account.name(), account.key());
-        // Library library = project.getLibrary();
-        // Repository repo = Repository.of(project.getGroup());
-        // Package pack = Package.of(repo, project);
-        //
-        // Events.from(repo)
-        // .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
-        // .errorResume(client.post(uri + "repos/" + repo, repo))
-        // .flatMap(r -> client.patch(uri + "packages/" + pack, pack))
-        // .errorResume(client.post(uri + "packages/" + repo, pack))
-        // .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
-        // .flatIterable(files -> {
-        // RepositoryFiles completes = new RepositoryFiles();
-        // completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
-        // completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
-        // completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
-        // completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
-        // completes.removeAll(files);
-        // return completes;
-        // })
-        // .take(file -> Files.exists(file.localFile))
-        // .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path +
-        // ";publish=1;override=1", file, file.resource()))
-        // .to(file -> {
-        // ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() +
-        // "/maven/" + file.path + ".");
-        // }, e -> {
-        // e.printStackTrace();
-        // });
+        RESTClient client = new RESTClient(account.name(), account.key());
+        Library library = project.getLibrary();
+        Repository repo = Repository.of(project.getGroup());
+        Package pack = Package.of(repo, project);
+
+        Events.from(repo)
+                .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
+                .errorResume(client.post(uri + "repos/" + repo, repo))
+                .flatMap(r -> client.patch(uri + "packages/" + pack, pack))
+                .errorResume(client.post(uri + "packages/" + repo, pack))
+                .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
+                .flatIterable(files -> {
+                    RepositoryFiles completes = new RepositoryFiles();
+                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
+                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
+                    completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
+                    completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
+                    completes.removeAll(files);
+                    return completes;
+                })
+                .take(file -> Files.exists(file.localFile))
+                .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource()))
+                .to(file -> {
+                    ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
+                }, e -> {
+                    e.printStackTrace();
+                });
     }
 
     /**
@@ -103,6 +102,25 @@ public class Bintray extends Task {
 
         /** The repository description. */
         public String desc;
+
+        /**
+         * If set to true then the repo’s metadata will be automatically signed with Bintray GPG
+         * key.
+         */
+        public boolean gpg_sign_metadata = true;
+
+        /**
+         * If set to true then the repo’s files will be automatically signed with Bintray GPG key.
+         */
+        public boolean gpg_sign_files = true;
+
+        /**
+         * If set to true then the repo’s metadata and files will be signed automatically with the
+         * owner’s GPG key. this flag cannot be set true simultaneously with either of the bintray
+         * key falgs (files or metadata). this flag can be set true only if the repo’s owner
+         * supplied a private (and public) GPG key on his bintray profile.
+         */
+        public boolean gpg_use_owner_key = false;
 
         /**
          * <p>
@@ -201,14 +219,6 @@ public class Bintray extends Task {
         public String sha1;
 
         /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-            return Objects.hash(sha1);
-        }
-
-        /**
          * <p>
          * Create the resource to transfer.
          * </p>
@@ -224,6 +234,14 @@ public class Bintray extends Task {
             } catch (IOException e) {
                 throw I.quiet(e);
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int hashCode() {
+            return Objects.hash(sha1);
         }
 
         /**

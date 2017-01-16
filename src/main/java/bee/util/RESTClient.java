@@ -21,14 +21,12 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
@@ -39,6 +37,7 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.aether.RepositoryCache;
@@ -76,7 +75,7 @@ public class RESTClient {
     private final TransferView view = I.make(TransferView.class);
 
     /** The actual http client. */
-    private final HttpClient client;
+    private final CloseableHttpClient client;
 
     /**
      * 
@@ -107,9 +106,9 @@ public class RESTClient {
      * 
      */
     public RESTClient(Consumer<HttpClientBuilder> builder) {
-        HttpClientBuilder b = HttpClientBuilder.create();
-        builder.accept(b);
-        client = b.build();
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+        builder.accept(clientBuilder);
+        this.client = clientBuilder.build();
     }
 
     /**
@@ -249,29 +248,25 @@ public class RESTClient {
     private <T> Events<T> request(HttpUriRequest request, T value) {
         return new Events<T>(observer -> {
             try {
-                HttpResponse response = client.execute(request);
-                switch (response.getStatusLine().getStatusCode()) {
-                case HttpStatus.SC_OK:
-                case HttpStatus.SC_CREATED:
-                    if (request.getMethod().equals("GET")) {
-                        if (value == null || value instanceof String) {
-                            observer.accept((T) readAsString(response));
-                        } else if (value instanceof Path) {
-                            observer.accept((T) readAsFile(response, (Path) value));
-                        } else {
-                            I.read(readAsString(response), value);
-                            observer.accept(value);
+                observer.accept(client.execute(request, response -> {
+                    switch (response.getStatusLine().getStatusCode()) {
+                    case HttpStatus.SC_OK:
+                    case HttpStatus.SC_CREATED:
+                        if (request.getMethod().equals("GET")) {
+                            if (value == null || value instanceof String) {
+                                return (T) readAsString(response);
+                            } else if (value instanceof Path) {
+                                return (T) readAsFile(response, (Path) value);
+                            } else {
+                                return I.read(readAsString(response), value);
+                            }
                         }
-                    } else {
-                        observer.accept(value);
-                    }
-                    break;
+                        return value;
 
-                default:
-                    observer.error(new HttpException(response.toString()));
-                    break;
-                }
-                return Disposable.Φ;
+                    default:
+                        throw new IOException(response.toString());
+                    }
+                }));
             } catch (Exception e) {
                 observer.error(e);
             }

@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 import bee.api.Command;
 import kiss.Decoder;
@@ -124,6 +125,19 @@ public abstract class UserInterface {
      * <p>
      * Ask user about your question and return his/her answer.
      * </p>
+     * 
+     * @param question Your question message.
+     * @param validator Input validator.
+     * @return An answer.
+     */
+    public String ask(String question, Predicate<String> validator) {
+        return ask(question, (String) null, validator);
+    }
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her answer.
+     * </p>
      * <p>
      * UserInterface can display a default answer and user can use it with simple action. If the
      * returned answer is incompatible with the default anwser type, default answer will be
@@ -136,6 +150,26 @@ public abstract class UserInterface {
      * @return An answer.
      */
     public <T> T ask(String question, T defaultAnswer) {
+        return ask(question, defaultAnswer, null);
+    }
+
+    /**
+     * <p>
+     * Ask user about your question and return his/her answer.
+     * </p>
+     * <p>
+     * UserInterface can display a default answer and user can use it with simple action. If the
+     * returned answer is incompatible with the default anwser type, default answer will be
+     * returned.
+     * </p>
+     * 
+     * @param <T> Anwser type.
+     * @param question Your question message.
+     * @param defaultAnswer A default anwser.
+     * @param validator Input validator.
+     * @return An answer.
+     */
+    private <T> T ask(String question, T defaultAnswer, Predicate<T> validator) {
         StringBuilder builder = new StringBuilder();
         builder.append(question);
         if (defaultAnswer != null) builder.append(build(" [", defaultAnswer, "]"));
@@ -157,7 +191,12 @@ public abstract class UserInterface {
                     talk("Your input is empty, plese retry.");
 
                     // Retry!
-                    return ask(question, (T) null);
+                    return ask(question, (T) null, validator);
+                } else if (validator != null && !validator.test((T) answer)) {
+                    talk("Your input is invalid, plese retry.");
+
+                    // Retry!
+                    return ask(question, (T) null, validator);
                 }
 
                 // API definition

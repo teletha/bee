@@ -72,7 +72,7 @@ import kiss.I;
 import kiss.Manageable;
 
 /**
- * @version 2017/01/06 11:41:45
+ * @version 2017/01/16 14:34:43
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
@@ -203,7 +203,7 @@ public class Repository {
                 Project dummy = new Project();
                 dummy.product(library.group, library.name, library.version);
 
-                install(dummy, Platform.JavaTool, Platform.JavaHome.resolve("src.zip"));
+                install(dummy, Platform.JavaTool, Platform.JavaHome.resolve("src.zip"), null);
             }
 
             Dependency dependency = new Dependency(library.artifact, library.scope.toString());
@@ -341,7 +341,7 @@ public class Repository {
      * @param project A project to install.
      */
     public void install(Project project, Path classes) {
-        install(project, classes, project.locateSourceJar());
+        install(project, classes, project.locateSourceJar(), project.locateJavadocJar());
     }
 
     /**
@@ -351,7 +351,7 @@ public class Repository {
      * 
      * @param project A project to install.
      */
-    public void install(Project project, Path classes, Path sources) {
+    public void install(Project project, Path classes, Path sources, Path javadoc) {
         String group = project.getGroup();
         String product = project.getProduct();
         String version = project.getVersion();
@@ -365,6 +365,9 @@ public class Repository {
             request.addArtifact(new SubArtifact(jar, "", "pom", Paths.write(project.toString()).toFile()));
             if (Paths.exist(sources)) {
                 request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.toFile()));
+            }
+            if (Paths.exist(javadoc)) {
+                request.addArtifact(new SubArtifact(jar, "javadoc", "jar", javadoc.toFile()));
             }
             system.install(newSession(), request);
         } catch (InstallationException e) {

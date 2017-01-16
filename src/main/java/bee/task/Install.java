@@ -18,7 +18,7 @@ import bee.api.Task;
 import kiss.I;
 
 /**
- * @version 2015/06/22 16:36:56
+ * @version 2017/01/16 14:34:48
  */
 public class Install extends Task {
 
@@ -26,6 +26,7 @@ public class Install extends Task {
     public void project() {
         require(Test.class).test();
         require(Jar.class).source();
+        require(Jar.class).document();
 
         Repository repository = I.make(Repository.class);
         repository.install(project);
