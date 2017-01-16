@@ -10,6 +10,13 @@
 package bee.api;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.maven.model.Contributor;
+
+import bee.util.RESTClient;
+import kiss.I;
 
 /**
  * @version 2017/01/10 3:15:42
@@ -24,6 +31,14 @@ abstract class StandardVCS implements VersionControlSystem {
      */
     protected StandardVCS(URI uri) {
         this.uri = uri;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String name() {
+        return getClass().getSimpleName();
     }
 
     /**
@@ -53,7 +68,7 @@ abstract class StandardVCS implements VersionControlSystem {
     }
 
     /**
-     * @version 2017/01/10 3:16:13
+     * @version 2017/01/16 16:27:07
      */
     static class GitHub extends StandardVCS {
 
@@ -70,6 +85,68 @@ abstract class StandardVCS implements VersionControlSystem {
         @Override
         public String issue() {
             return uri() + "/issues";
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String uriForRead() {
+            return uri() + ".git";
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String uriForWrite() {
+            return uri() + ".git";
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public List<Contributor> contributors() {
+            Project project = I.make(Project.class);
+            RESTClient client = new RESTClient();
+            return client.get("https://api.github.com/repos/teletha/bee/contributors", new GithubContributors())
+                    .flatIterable(c -> c)
+                    .flatMap(c -> client.get(c.url, new GitHubUser()))
+                    .map(u -> {
+                        Contributor contributor = new Contributor();
+                        contributor.setEmail(u.email);
+                        contributor.setName(u.name);
+                        contributor.setUrl(u.html_url);
+                        return contributor;
+                    })
+                    .toList();
+        }
+
+        /**
+         * @version 2017/01/16 17:02:47
+         */
+        private static class GithubContributors extends ArrayList<GitHubContributor> {
+        }
+
+        /**
+         * @version 2017/01/16 17:00:23
+         */
+        private static class GitHubContributor {
+
+            public String url;
+        }
+
+        /**
+         * @version 2017/01/16 17:00:23
+         */
+        private static class GitHubUser {
+
+            public String name;
+
+            public String email;
+
+            public String html_url;
         }
     }
 }

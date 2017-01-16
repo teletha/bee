@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.lang.model.SourceVersion;
 
+import org.apache.maven.model.Contributor;
 import org.eclipse.aether.graph.Exclusion;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
@@ -763,6 +764,9 @@ public class Project {
         pom.child("groupId").text(getGroup());
         pom.child("artifactId").text(getProduct());
         pom.child("version").text(getVersion());
+        pom.child("packaging").text("jar");
+        pom.child("name").text(getProduct());
+        pom.child("descriotion").text(getDescription());
 
         XML dependencies = pom.child("dependencies");
 
@@ -779,6 +783,32 @@ public class Project {
                 XML exclusion = exclusions.child("exclusion");
                 exclusion.child("groupId").text(e.getGroupId());
                 exclusion.child("artifactId").text(e.getArtifactId());
+            }
+        }
+
+        XML license = pom.child("licenses").child("license");
+        license.child("name").text(this.license.fullName());
+        license.child("url").text(this.license.uri());
+
+        VersionControlSystem vcs = getVersionControlSystem();
+
+        if (vcs != null) {
+            XML scm = pom.child("scm");
+            scm.child("url").text(vcs.uri());
+            scm.child("connection").text(vcs.uriForRead());
+            scm.child("connection").text(vcs.uriForWrite());
+
+            XML issue = pom.child("issueManagement");
+            issue.child("system").text(vcs.name());
+            issue.child("url").text(vcs.issue());
+
+            XML contributors = pom.child("contributors");
+
+            for (Contributor contributor : vcs.contributors()) {
+                XML xml = contributors.child("contributor");
+                xml.child("name").text(contributor.getName());
+                xml.child("email").text(contributor.getEmail());
+                xml.child("url").text(contributor.getUrl());
             }
         }
 

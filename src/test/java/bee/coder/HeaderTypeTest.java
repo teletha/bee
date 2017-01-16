@@ -15,8 +15,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import bee.coder.HeaderStyle;
-import bee.coder.StandardHeaderStyle;
 import kiss.I;
 
 /**
@@ -305,6 +303,22 @@ public class HeaderTypeTest {
          */
         @Override
         public String uri() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String fullName() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String identifier() {
             return null;
         }
 

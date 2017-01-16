@@ -17,7 +17,7 @@ import java.util.List;
 import kiss.I;
 
 /**
- * @version 2015/06/16 12:11:16
+ * @version 2017/01/16 15:44:35
  */
 public interface License {
 
@@ -29,6 +29,24 @@ public interface License {
      * @return
      */
     String name();
+
+    /**
+     * <p>
+     * Retrieve the license full name.
+     * </p>
+     * 
+     * @return
+     */
+    String fullName();
+
+    /**
+     * <p>
+     * Retrieve the license identifier.
+     * </p>
+     * 
+     * @return
+     */
+    String identifier();
 
     /**
      * <p>

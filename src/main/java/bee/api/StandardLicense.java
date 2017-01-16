@@ -10,32 +10,62 @@
 package bee.api;
 
 /**
- * @version 2015/06/16 12:11:21
+ * @version 2017/01/16 15:44:31
  */
 public enum StandardLicense implements License {
 
-    Apache("http://opensource.org/licenses/Apache-2.0"),
+    Apache("2.0", "Apache License, Version $", "https://opensource.org/licenses/Apache-2.0"),
 
-    BSD("http://opensource.org/licenses/BSD-2-Clause"),
+    BSD("3-Clause ", "The $ BSD License", "https://opensource.org/licenses/BSD-2-Clause"),
 
-    EPL("http://opensource.org/licenses/EPL-1.0"),
+    EPL("1.0", "Eclipse Public License $", "https://opensource.org/licenses/EPL-1.0"),
 
-    GPL("http://opensource.org/licenses/GPL-3.0"),
+    GPL("3.0", "GNU General Public License version 3", "https://opensource.org/licenses/GPL-3.0"),
 
-    LGPL("http://opensource.org/licenses/LGPL-3.0"),
+    LGPL("3.0", "GNU Lesser General Public License version $", "https://opensource.org/licenses/LGPL-3.0"),
 
-    MIT("http://opensource.org/licenses/mit-license.php"),
+    MIT("", "The MIT License", "https://opensource.org/licenses/MIT"),
 
-    MPL("http://opensource.org/licenses/MPL-2.0");
+    MPL("2.0", "Mozilla Public License $", "https://opensource.org/licenses/MPL-2.0");
+
+    /** The license identifier. */
+    private final String id;
+
+    /** The license full name. */
+    private final String full;
 
     /** The license uri. */
     private final String uri;
 
     /**
-     * @param uii
+     * <p>
+     * Create {@link License}.
+     * </p>
+     * 
+     * @param version
+     * @param full
+     * @param uri
      */
-    private StandardLicense(String uii) {
-        this.uri = uii;
+    private StandardLicense(String version, String full, String uri) {
+        this.id = name() + (version.isEmpty() ? "" : "-" + version);
+        this.full = full.replace("$", version);
+        this.uri = uri;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String identifier() {
+        return id;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String fullName() {
+        return full;
     }
 
     /**
