@@ -35,10 +35,6 @@ public class Project extends bee.api.Project {
         require("org.slf4j", "slf4j-nop", "1.7.22");
         require("sun.jdk", "tools", "8.0").atSystem();
 
-        // For PGP
-        require("org.bouncycastle", "bcprov-jdk15on", "1.56");
-        require("org.bouncycastle", "bcpg-jdk15on", "1.56");
-
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
