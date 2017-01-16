@@ -21,6 +21,12 @@ public interface VersionControlSystem {
     /** The name. */
     String name();
 
+    /** The owner name. */
+    String owner();
+
+    /** The repository name. */
+    String repository();
+
     /** The uri. */
     String uri();
 

@@ -24,7 +24,7 @@ import kiss.I;
 abstract class StandardVCS implements VersionControlSystem {
 
     /** The VCS uri. */
-    private final URI uri;
+    protected final URI uri;
 
     /**
      * @param uri
@@ -77,6 +77,24 @@ abstract class StandardVCS implements VersionControlSystem {
          */
         private GitHub(URI uri) {
             super(uri);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String owner() {
+            String path = uri.getPath();
+            return path.substring(1, path.lastIndexOf("/"));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String repository() {
+            String path = uri.getPath();
+            return path.substring(path.lastIndexOf("/") + 1);
         }
 
         /**

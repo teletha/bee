@@ -23,6 +23,7 @@ import bee.api.Command;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Task;
+import bee.api.VersionControlSystem;
 import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.RESTClient;
@@ -50,7 +51,7 @@ public class Bintray extends Task {
 
         RESTClient client = new RESTClient(account.name(), account.key());
         Library library = project.getLibrary();
-        Repository repo = Repository.of(project.getGroup());
+        Repository repo = Repository.of(project);
         Package pack = Package.of(repo, project);
 
         Events.from(repo)
@@ -134,10 +135,11 @@ public class Bintray extends Task {
          * 
          * @param owner
          */
-        private static Repository of(String owner) {
+        private static Repository of(Project project) {
             Repository repo = new Repository();
-            repo.owner = owner;
-            repo.desc = "The " + owner + "'s Maven Repository.";
+            repo.owner = project.getGroup();
+            repo.desc = "The " + project.getGroup() + "'s Maven Repository.";
+
             return repo;
         }
 
@@ -177,6 +179,12 @@ public class Bintray extends Task {
         /** The license list. */
         public List<String> licenses = new ArrayList();
 
+        /** The github repository. */
+        public String github_repo;
+
+        /** The state. */
+        public boolean public_download_numbers = true;
+
         /**
          * @param name
          * @param desc
@@ -190,6 +198,11 @@ public class Bintray extends Task {
             p.website_url = project.getVersionControlSystem().uri();
             p.vcs_url = project.getVersionControlSystem().uri();
             p.issue_tracker_url = project.getVersionControlSystem().issue();
+
+            VersionControlSystem vcs = project.getVersionControlSystem();
+            p.github_repo = vcs.owner() + "/" + vcs.repository();
+            System.out.println(p.github_repo);
+
             return p;
         }
 
