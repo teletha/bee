@@ -20,12 +20,12 @@ import bee.api.Command;
 import bee.api.Task;
 
 /**
- * @version 2015/06/23 13:33:31
+ * @version 2017/01/17 10:55:11
  */
 public class Github extends Task {
 
     /** The github repository id. */
-    private final RepositoryId id = new RepositoryId("Teletha", project.getProduct());
+    private final RepositoryId id = new RepositoryId(project.getGroup(), project.getProduct());
 
     /** The github repository operator. */
     private final RepositoryService service = new RepositoryService();
