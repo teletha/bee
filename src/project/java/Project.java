@@ -33,6 +33,8 @@ public class Project extends bee.api.Project {
         require(aetherGroup, "aether-transport-http", aetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.3.3");
         require("org.slf4j", "slf4j-nop", "1.7.22");
+        require("org.eclipse.mylyn.github", "org.eclipse.egit.github.core", "4.6.0.201612231935-r");
+        require("com.google.code.gson", "gson", "2.8.0");
         require("sun.jdk", "tools", "8.0").atSystem();
 
         unrequire("org.codehaus.plexus", "plexus-classworlds");
