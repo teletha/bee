@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
+import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -204,7 +205,7 @@ public class Java {
      */
     public void run(Class<? extends JVM> mainClass, Object... arguments) {
         // create address
-        int port = NetworkAddressUtil.getPort();
+        int port = unboundedPort();
         String address = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/hello";
 
         List<String> command = new ArrayList();
@@ -262,6 +263,20 @@ public class Java {
                     throw I.quiet(listener.error);
                 }
             }
+        }
+    }
+
+    /**
+     * Search unbounded port.
+     * 
+     * @return
+     */
+    private int unboundedPort() {
+        try (Socket socket = new Socket()) {
+            socket.bind(null);
+            return socket.getLocalPort();
+        } catch (Exception e) {
+            throw I.quiet(e);
         }
     }
 
