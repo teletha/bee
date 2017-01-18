@@ -10,25 +10,19 @@
 package bee.task;
 
 import java.io.IOException;
-import java.util.List;
-
-import org.eclipse.egit.github.core.RepositoryId;
-import org.eclipse.egit.github.core.RepositoryTag;
-import org.eclipse.egit.github.core.service.RepositoryService;
 
 import bee.api.Command;
 import bee.api.Task;
+import bee.util.Config;
+import bee.util.Config.Description;
 
 /**
  * @version 2017/01/17 10:55:11
  */
 public class Github extends Task {
 
-    /** The github repository id. */
-    private final RepositoryId id = new RepositoryId(project.getGroup(), project.getProduct());
-
-    /** The github repository operator. */
-    private final RepositoryService service = new RepositoryService();
+    /** The account manager. */
+    private final GitHubAccount account = Config.project(GitHubAccount.class);
 
     /**
      * <p>
@@ -39,29 +33,15 @@ public class Github extends Task {
      */
     @Command("Generate GitHub repository.")
     public void release() throws Exception {
-        RepositoryTag current = findCurrentRelease();
-
-        if (current == null) {
-            // create current release
-        }
     }
 
     /**
-     * <p>
-     * Find the current release tag.
-     * </p>
-     *
-     * @return
-     * @throws Exception
+     * @version 2017/01/18 9:52:56
      */
-    private RepositoryTag findCurrentRelease() throws Exception {
-        List<RepositoryTag> tags = service.getTags(id);
+    @Description("Github Account")
+    private static class GitHubAccount {
 
-        for (RepositoryTag tag : tags) {
-            if (tag.getName().equals(project.getVersion())) {
-                return tag;
-            }
-        }
-        return null;
+        /** The login password */
+        public String password;
     }
 }
