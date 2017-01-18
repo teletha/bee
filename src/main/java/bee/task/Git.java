@@ -11,6 +11,8 @@ package bee.task;
 
 import static bee.Platform.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 
 import bee.api.Command;
@@ -43,5 +45,11 @@ public class Git extends Task {
         new RESTClient().get(uri.toString()).map(rule -> ".*" + EOL + "!/.gitignore" + EOL + rule).to(rule -> {
             makeFile(project.getRoot().resolve(".gitignore"), rule);
         });
+    }
+
+    List<String> update(List<String> lines) {
+        List<String> updated = new ArrayList();
+
+        return lines;
     }
 }
