@@ -14,15 +14,10 @@ import java.util.List;
 
 import org.junit.Test;
 
-import bee.BlinkProject;
-import kiss.I;
-
 /**
  * @version 2017/01/18 16:01:01
  */
-public class GitTest {
-
-    private BlinkProject project = I.make(BlinkProject.class);
+public class GitTest extends TaskTestBase {
 
     @Test
     public void update() throws Exception {
