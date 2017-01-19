@@ -27,12 +27,12 @@ public class GitTest extends TaskTestBase {
         List<String> updated = git.update(original);
         List<String> originalPart = updated.subList(0, original.size());
         List<String> additionalPart = updated.subList(original.size() + 1, updated.size());
-        assertListItem(original, originalPart);
+        assert listItem(original, originalPart);
         assert additionalPart.isEmpty() == false;
 
         List<String> latest = git.update(updated);
-        assertListItem(originalPart, latest.subList(0, original.size()));
-        assertListItem(additionalPart, latest.subList(original.size() + 1, latest.size()));
+        assert listItem(originalPart, latest.subList(0, original.size()));
+        assert listItem(additionalPart, latest.subList(original.size() + 1, latest.size()));
     }
 
     /**
@@ -61,11 +61,12 @@ public class GitTest extends TaskTestBase {
      * @param other
      * @return
      */
-    private void assertListItem(List<String> one, List<String> other) {
+    private boolean listItem(List<String> one, List<String> other) {
         assert one.size() == other.size();
 
         for (int i = 0; i < one.size(); i++) {
             assert one.get(i).equals(other.get(i));
         }
+        return true;
     }
 }
