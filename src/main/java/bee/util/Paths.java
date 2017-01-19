@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import bee.UserInterface;
@@ -248,6 +250,18 @@ public class Paths {
             }
         }
         return path;
+    }
+
+    /**
+     * @param ignore
+     * @return
+     */
+    public static List<String> readLines(Path file) {
+        try {
+            return Files.readAllLines(file);
+        } catch (IOException e) {
+            return new ArrayList();
+        }
     }
 
 }

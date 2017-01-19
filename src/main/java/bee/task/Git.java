@@ -11,25 +11,38 @@ package bee.task;
 
 import static bee.Platform.*;
 
-import java.util.ArrayList;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
 import bee.api.Command;
 import bee.api.Task;
+import bee.util.Paths;
 import bee.util.RESTClient;
 import kiss.I;
 
 /**
- * @version 2017/01/10 12:21:48
+ * @version 2017/01/19 10:29:59
  */
 public class Git extends Task {
 
     @Command("Generate .gitignore file.")
     public void gitignore() {
-        StringJoiner uri = new StringJoiner(",", "https://www.gitignore.io/api/", "");
-        uri.add("Java");
-        uri.add("Maven");
+        Path ignore = project.getRoot().resolve(".gitignore");
+
+        makeFile(ignore, update(Paths.readLines(ignore)));
+    }
+
+    /**
+     * <p>
+     * Update gitignore configuration.
+     * </p>
+     * 
+     * @param lines Lines to update.
+     * @return An updated lines.
+     */
+    List<String> update(List<String> lines) {
+        StringJoiner uri = new StringJoiner(",", "https://www.gitignore.io/api/", "").add("Java").add("Maven");
 
         // OS
         if (isWindows()) uri.add("Windows");
@@ -42,14 +55,11 @@ public class Git extends Task {
             }
         }
 
-        new RESTClient().get(uri.toString()).map(rule -> ".*" + EOL + "!/.gitignore" + EOL + rule).to(rule -> {
-            makeFile(project.getRoot().resolve(".gitignore"), rule);
-        });
-    }
-
-    List<String> update(List<String> lines) {
-        List<String> updated = new ArrayList();
-
-        return lines;
+        return new RESTClient().get(uri.toString())
+                .flatArray(rule -> rule.split(EOL))
+                .startWith(".*", "!/.gitignore")
+                .startWith(lines)
+                .distinct()
+                .toList();
     }
 }
