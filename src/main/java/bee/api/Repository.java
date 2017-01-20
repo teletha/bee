@@ -72,7 +72,7 @@ import kiss.I;
 import kiss.Manageable;
 
 /**
- * @version 2017/01/16 14:34:43
+ * @version 2017/01/20 14:59:27
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
@@ -198,8 +198,7 @@ public class Repository {
 
         for (Library library : libraries) {
             // install tools.jar if needed
-            if ((library.group.equals("sun.jdk") || library.group.equals("com.sun")) && library.name.equals("tools") && Files
-                    .notExists(library.getLocalJar())) {
+            if (library.isJavaTools() && Files.notExists(library.getLocalJar())) {
                 Project dummy = new Project();
                 dummy.product(library.group, library.name, library.version);
 

@@ -41,7 +41,7 @@ import kiss.I;
  * Bee represents a single project build process.
  * </p>
  * 
- * @version 2016/11/30 12:18:20
+ * @version 2017/01/20 14:51:27
  */
 public class Bee {
 

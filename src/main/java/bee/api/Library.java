@@ -293,4 +293,22 @@ public class Library implements Comparable<Library> {
 
         return builder.toString();
     }
+
+    /**
+     * <p>
+     * Helper method to check whether this {@link Library} is Java's tools or not.
+     * </p>
+     * 
+     * @return A result.
+     */
+    final boolean isJavaTools() {
+        if (!group.equals("sun.jdk") && !group.equals("com.sun") && !group.equals("jdk.tools") && !group.equals("jdk")) {
+            return false;
+        }
+
+        if (!name.equals("tools") && !name.equals("jdk.tools")) {
+            return false;
+        }
+        return true;
+    }
 }

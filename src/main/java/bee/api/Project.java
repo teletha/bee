@@ -338,6 +338,13 @@ public class Project {
     }
 
     /**
+     * Declare dependency against to Java tools library.
+     */
+    protected final Library requireJavaTools() {
+        return require("jdk.tools", "jdk.tools", getJavaVersion()).atSystem();
+    }
+
+    /**
      * Declare dependency against to Lombok library.
      */
     protected final Library requireLombok() {
@@ -777,6 +784,10 @@ public class Project {
             dependency.child("version").text(library.version);
             dependency.child("scope").text(library.scope.toString());
 
+            if (library.isJavaTools()) {
+                dependency.child("systemPath").text("${java.home}/../lib/tools.jar");
+            }
+
             XML exclusions = dependency.child("exclusions");
 
             for (Exclusion e : this.exclusions) {
@@ -822,6 +833,12 @@ public class Project {
                 xml.child("url").text(contributor.getUrl());
             }
         }
+
+        // maven properties
+        XML properties = pom.child("properties");
+        properties.child("maven.compiler.source").text(getJavaVersion());
+        properties.child("maven.compiler.target").text(getJavaVersion());
+        properties.child("maven.compiler.encoding").text(getEncoding().displayName());
 
         // write as pom
         return pom.toString();
