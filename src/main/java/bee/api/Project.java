@@ -766,7 +766,7 @@ public class Project {
         pom.child("version").text(getVersion());
         pom.child("packaging").text("jar");
         pom.child("name").text(getProduct());
-        pom.child("descriotion").text(getDescription());
+        pom.child("description").text(getDescription());
 
         XML dependencies = pom.child("dependencies");
 
