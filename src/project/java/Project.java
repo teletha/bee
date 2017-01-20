@@ -39,6 +39,7 @@ public class Project extends bee.api.Project {
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
         repository("https://repo.eclipse.org/content/repositories/egit-releases/");
+        repository("http://npc.bintray.com/maven");
 
         versionControlSystem("https://github.com/Teletha/Bee");
     }

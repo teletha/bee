@@ -790,6 +790,15 @@ public class Project {
         license.child("name").text(this.license.fullName());
         license.child("url").text(this.license.uri());
 
+        XML repositories = pom.child("repositories");
+
+        for (RemoteRepository repo : this.repositories) {
+            XML repository = repositories.child("repository");
+            repository.child("id").text(repo.getId());
+            repository.child("name").text(repo.getHost());
+            repository.child("url").text(repo.getUrl());
+        }
+
         VersionControlSystem vcs = getVersionControlSystem();
 
         if (vcs != null) {
