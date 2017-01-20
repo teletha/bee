@@ -33,15 +33,17 @@ public class Github extends Task {
      */
     @Command("Generate GitHub repository.")
     public void release() throws Exception {
+        // create pom file
+        makeFile(project.getRoot().resolve("pom.xml"), project.toString());
     }
 
     /**
      * @version 2017/01/18 9:52:56
      */
     @Description("Github Account")
-    private static class GitHubAccount {
+    protected static interface GitHubAccount {
 
         /** The login password */
-        public String password;
+        String password();
     }
 }

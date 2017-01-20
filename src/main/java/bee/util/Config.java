@@ -21,8 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
-
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 
 import bee.Platform;
 import bee.UserInterface;
