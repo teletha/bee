@@ -20,10 +20,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.aether.transfer.TransferResource;
 
 import bee.api.Command;
+import bee.api.Github;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Task;
-import bee.api.VersionControlSystem;
 import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.RESTClient;
@@ -199,8 +199,8 @@ public class Bintray extends Task {
             p.vcs_url = project.getVersionControlSystem().uri();
             p.issue_tracker_url = project.getVersionControlSystem().issue();
 
-            VersionControlSystem vcs = project.getVersionControlSystem();
-            p.github_repo = vcs.owner() + "/" + vcs.repository();
+            Github vcs = project.getVersionControlSystem();
+            p.github_repo = vcs.owner + "/" + vcs.repo;
             System.out.println(p.github_repo);
 
             return p;

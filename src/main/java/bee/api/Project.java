@@ -94,7 +94,7 @@ public class Project {
     private Path output;
 
     /** The version control system. */
-    private VersionControlSystem vcs;
+    private Github vcs;
 
     /**
      * 
@@ -715,7 +715,7 @@ public class Project {
      * 
      * @return A uri of version control system.
      */
-    public VersionControlSystem getVersionControlSystem() {
+    public Github getVersionControlSystem() {
         return vcs;
     }
 
@@ -810,7 +810,7 @@ public class Project {
             repository.child("url").text(repo.getUrl());
         }
 
-        VersionControlSystem vcs = getVersionControlSystem();
+        Github vcs = getVersionControlSystem();
 
         if (vcs != null) {
             pom.child("url").text(vcs.uri());

@@ -21,16 +21,13 @@ import kiss.I;
 /**
  * @version 2017/01/10 3:15:42
  */
-abstract class StandardVCS implements VersionControlSystem {
-
-    /** The VCS uri. */
-    protected final URI uri;
+abstract class StandardVCS extends Github {
 
     /**
      * @param uri
      */
     protected StandardVCS(URI uri) {
-        this.uri = uri;
+        super(uri);
     }
 
     /**
@@ -57,7 +54,7 @@ abstract class StandardVCS implements VersionControlSystem {
      * @param uri
      * @return
      */
-    static VersionControlSystem of(URI uri) {
+    static Github of(URI uri) {
         switch (uri.getHost()) {
         case "github.com":
             return new GitHub(uri);
@@ -77,24 +74,6 @@ abstract class StandardVCS implements VersionControlSystem {
          */
         private GitHub(URI uri) {
             super(uri);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String owner() {
-            String path = uri.getPath();
-            return path.substring(1, path.lastIndexOf("/"));
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String repository() {
-            String path = uri.getPath();
-            return path.substring(path.lastIndexOf("/") + 1);
         }
 
         /**
