@@ -49,9 +49,12 @@ public class Jitpack extends Task {
         github.releases().to(System.out::println);
 
         // check jitpack build
-        Variable<Builds> variable = new RESTClient()
+        Variable<String> variable = new RESTClient()
                 .get("https://jitpack.io/api/builds/com.github." + github.owner + "/" + github.repo, new Builds())
+                .map(b -> b.get("com.github." + github.owner).get(github.repo).get(project.getVersion()))
                 .to();
+
+        System.out.println(variable);
     }
 
     /**
