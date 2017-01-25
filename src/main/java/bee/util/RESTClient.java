@@ -27,6 +27,7 @@ import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
@@ -122,6 +123,18 @@ public class RESTClient {
      */
     public <T> Events<String> get(String uri) {
         return request(new HttpGet(uri), null);
+    }
+
+    /**
+     * <p>
+     * Create DELETE request.
+     * </p>
+     * 
+     * @param uri
+     * @return
+     */
+    public Events<String> delete(String uri) {
+        return request(new HttpDelete(uri), null);
     }
 
     /**
@@ -264,8 +277,20 @@ public class RESTClient {
                         }
                         return value;
 
+                    case HttpStatus.SC_NO_CONTENT:
+                        return value;
+
+                    case HttpStatus.SC_UNPROCESSABLE_ENTITY:
+                        throw new IOException(readAsString(response));
+
+                    case HttpStatus.SC_NOT_FOUND:
+                        if (request.getMethod().equals("DELETE")) {
+                            return value;
+                        }
+                        throw new IOException(readAsString(response));
+
                     default:
-                        throw new IOException(response.toString());
+                        throw new IOException(readAsString(response));
                     }
                 }));
             } catch (Exception e) {

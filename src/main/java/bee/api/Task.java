@@ -36,7 +36,7 @@ import kiss.XML;
 import kiss.model.Model;
 
 /**
- * @version 2016/11/30 12:30:02
+ * @version 2017/01/25 11:09:49
  */
 public abstract class Task implements Extensible {
 
@@ -110,7 +110,7 @@ public abstract class Task implements Extensible {
      * 
      * @param path
      */
-    protected final void makeDirectory(Path path) {
+    protected final Path makeDirectory(Path path) {
         if (path != null && Files.notExists(path)) {
             try {
                 Files.createDirectories(path);
@@ -120,6 +120,7 @@ public abstract class Task implements Extensible {
                 throw I.quiet(e);
             }
         }
+        return path;
     }
 
     /**
@@ -129,8 +130,8 @@ public abstract class Task implements Extensible {
      * 
      * @param path
      */
-    protected final void makeDirectory(Path base, String path) {
-        makeDirectory(base.resolve(path));
+    protected final Path makeDirectory(Path base, String path) {
+        return makeDirectory(base.resolve(path));
     }
 
     /**
@@ -141,7 +142,7 @@ public abstract class Task implements Extensible {
      * @param path A file path to write.
      * @param xml A file contents.
      */
-    protected final void makeFile(Path path, XML xml) {
+    protected final Path makeFile(Path path, XML xml) {
         makeDirectory(path.getParent());
 
         try {
@@ -151,6 +152,7 @@ public abstract class Task implements Extensible {
         } catch (IOException e) {
             throw I.quiet(e);
         }
+        return path;
     }
 
     /**
@@ -161,7 +163,7 @@ public abstract class Task implements Extensible {
      * @param path A file path to write.
      * @param properties A file contents.
      */
-    protected final void makeFile(Path path, Properties properties) {
+    protected final Path makeFile(Path path, Properties properties) {
         makeDirectory(path.getParent());
 
         try {
@@ -171,6 +173,7 @@ public abstract class Task implements Extensible {
         } catch (IOException e) {
             throw I.quiet(e);
         }
+        return path;
     }
 
     /**
@@ -181,8 +184,8 @@ public abstract class Task implements Extensible {
      * @param path A file path to write.
      * @param content A file content.
      */
-    protected final void makeFile(Path path, String content) {
-        makeFile(path, Arrays.asList(content.split(Platform.EOL)));
+    protected final Path makeFile(Path path, String content) {
+        return makeFile(path, Arrays.asList(content.split(Platform.EOL)));
     }
 
     /**
@@ -193,7 +196,7 @@ public abstract class Task implements Extensible {
      * @param path A file path to write.
      * @param content A file content.
      */
-    protected final void makeFile(Path path, Iterable<String> content) {
+    protected final Path makeFile(Path path, Iterable<String> content) {
         makeDirectory(path.getParent());
 
         try {
@@ -203,6 +206,7 @@ public abstract class Task implements Extensible {
         } catch (IOException e) {
             throw I.quiet(e);
         }
+        return path;
     }
 
     /**

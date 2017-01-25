@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 import bee.api.Command;
@@ -18,6 +19,7 @@ import bee.api.Task;
 import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.RESTClient;
+import kiss.Events;
 import kiss.Variable;
 
 /**
@@ -37,21 +39,39 @@ public class Jitpack extends Task {
      */
     @Command("Generate GitHub repository.")
     public void release() throws Exception {
+        // create pom file
+        Path pom = makeFile(project.getRoot().resolve("pom.xml"), project.toString());
+
         Github github = project.getVersionControlSystem();
 
-        // check pom file in github
-        if (!github.exist("pom.xml")) {
-            // create pom file
-            makeFile(project.getRoot().resolve("pom.xml"), project.toString());
+        // check equality of pom files
+        if (github.checkSame(pom)) {
+            System.out.println("SAME");
+        } else {
+            System.out.println("NON");
         }
 
         // retrieve latest commit
-        github.releases().to(System.out::println);
+        github.release().to(r -> {
+            System.out.println(r);
+        }, e -> {
+            e.printStackTrace();
+        });
 
         // check jitpack build
-        Variable<String> variable = new RESTClient()
-                .get("https://jitpack.io/api/builds/com.github." + github.owner + "/" + github.repo, new Builds())
+        String build = "https://jitpack.io/api/builds/com.github." + github.owner + "/" + github.repo;
+        RESTClient client = new RESTClient();
+
+        Variable<String> variable = client.get("https://jitpack.io/api/builds/com.github." + github.owner + "/" + github.repo, new Builds())
                 .map(b -> b.get("com.github." + github.owner).get(github.repo).get(project.getVersion()))
+                .flatMap(v -> {
+                    if (v == null) {
+                        return Events.from("NULL");
+                    } else if (v.equals("Error")) {
+                        return client.delete(build + "/" + project.getVersion());
+                    }
+                    return Events.from(v);
+                })
                 .to();
 
         System.out.println(variable);

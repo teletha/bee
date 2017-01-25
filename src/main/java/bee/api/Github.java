@@ -9,14 +9,23 @@
  */
 package bee.api;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.message.BasicHeader;
 import org.apache.maven.model.Contributor;
 
+import bee.util.Config;
 import bee.util.RESTClient;
+import kiss.Events;
+import kiss.I;
 import kiss.Variable;
 
 /**
@@ -86,6 +95,33 @@ public abstract class Github {
 
     /**
      * <p>
+     * Test whether the specified file is exist or not.
+     * </p>
+     * 
+     * @param filePath
+     * @return
+     */
+    public Content file(String filePath) {
+        return new RESTClient().get(uri("repos", owner, repo, "contents", filePath), new Content()).take(1).to().get();
+    }
+
+    /**
+     * @param pom
+     */
+    public boolean checkSame(Path file) {
+        try {
+            Project project = I.make(Project.class);
+            byte[] local = Files.readAllBytes(file);
+            byte[] remote = Base64.decodeBase64(file(project.getRoot().relativize(file).toString()).content);
+
+            return Arrays.equals(local, remote);
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
      * Retrieve all releases.
      * </p>
      * 
@@ -93,6 +129,28 @@ public abstract class Github {
      */
     public Variable<Releases> releases() {
         return new RESTClient().get(repo("releases"), new Releases()).to();
+    }
+
+    /**
+     * @return
+     */
+    public Events<Release> release() {
+        Project project = I.make(Project.class);
+        Account account = Config.project(Account.class);
+        RESTClient client = new RESTClient(builder -> {
+            builder.setDefaultHeaders(Arrays.asList(new BasicHeader("Authorization", "token " + account.password())));
+        });
+
+        Release release = new Release();
+        release.tag_name = project.getVersion();
+        return client.delete(repo("releases/" + project.getVersion())).flatMap(v -> client.post(repo("releases"), release));
+    }
+
+    /**
+     * @return
+     */
+    public Events<Release> release(String tag) {
+        return new RESTClient().get(repo("releases/tags/" + tag), new Release());
     }
 
     /**
@@ -125,6 +183,32 @@ public abstract class Github {
     }
 
     /**
+     * @version 2017/01/25 15:50:53
+     */
+    public static interface Account {
+        String name();
+
+        String password();
+    }
+
+    /**
+     * @version 2017/01/25 11:14:54
+     */
+    public static class Content {
+        public String type;
+
+        public String name;
+
+        public String path;
+
+        public String sha;
+
+        public int size;
+
+        public String content;
+    }
+
+    /**
      * @version 2017/01/21 10:25:45
      */
     public static class Releases extends ArrayList<Release> {
@@ -133,18 +217,39 @@ public abstract class Github {
     /**
      * @version 2017/01/21 10:25:55
      */
-    public static class Release {
+    public class Release {
+
+        public int id;
 
         public String tag_name;
 
         public String html_url;
+
+        public String target_commitish;
+
+        public String name;
+
+        public String body;
+
+        public boolean draft;
+
+        public boolean prerelease;
+
+        public Events<Release> update() {
+            Account account = Config.project(Account.class);
+            RESTClient client = new RESTClient(builder -> {
+                builder.setDefaultHeaders(Arrays.asList(new BasicHeader("Authorization", "token " + account.password())));
+            });
+
+            return client.delete(repo("releases/" + id)).flatMap(v -> client.post(repo("releases"), new Release()));
+        }
 
         /**
          * {@inheritDoc}
          */
         @Override
         public String toString() {
-            return "Release [name=" + tag_name + ", url=" + html_url + "]";
+            return "Release [id=" + id + ", tag_name=" + tag_name + ", html_url=" + html_url + ", target_commitish=" + target_commitish + ", name=" + name + ", body=" + body + ", draft=" + draft + ", prerelease=" + prerelease + "]";
         }
     }
 }
