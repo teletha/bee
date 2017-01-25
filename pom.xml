@@ -5,7 +5,7 @@
   <version>0.1</version>
   <packaging>jar</packaging>
   <name>bee</name>
-  <descriotion>Task based project builder for Java</descriotion>
+  <description>Task based project builder for Java</description>
   <dependencies>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
@@ -156,6 +156,7 @@
       <artifactId>tools</artifactId>
       <version>8.0</version>
       <scope>system</scope>
+      <systemPath>${java.home}/../lib/tools.jar</systemPath>
       <exclusions>
         <exclusion>
           <groupId>org.codehaus.plexus</groupId>
@@ -203,4 +204,9 @@
       <url>https://github.com/Teletha</url>
     </developer>
   </developers>
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
+  </properties>
 </project>
