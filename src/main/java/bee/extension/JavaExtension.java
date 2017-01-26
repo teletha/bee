@@ -22,12 +22,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Project;
 import bee.util.Paths;
-import jdk.internal.org.objectweb.asm.ClassReader;
-import jdk.internal.org.objectweb.asm.ClassWriter;
 import kiss.Events;
 import kiss.I;
 import kiss.Table;

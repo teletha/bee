@@ -343,7 +343,7 @@ class JavaExtensionMethodDefinition {
          * @return
          */
         private String write(Class type) {
-            String descriptor = jdk.internal.org.objectweb.asm.Type.getType(type).getDescriptor();
+            String descriptor = org.objectweb.asm.Type.getType(type).getDescriptor();
 
             return (declarations == null && type.isInterface() ? ":" : "") + descriptor;
         }
