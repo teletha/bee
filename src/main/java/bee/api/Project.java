@@ -842,6 +842,7 @@ public class Project {
         properties.child("maven.compiler.source").text(getJavaVersion());
         properties.child("maven.compiler.target").text(getJavaVersion());
         properties.child("maven.compiler.encoding").text(getEncoding().displayName());
+        properties.child("maven.compiler.compilerArgument").text("-proc:none");
 
         // write as pom
         return pom.toString();

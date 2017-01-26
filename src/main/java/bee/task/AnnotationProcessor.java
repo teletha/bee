@@ -36,7 +36,7 @@ import bee.util.PathPattern;
 import kiss.I;
 
 /**
- * @version 2012/11/10 2:20:33
+ * @version 2017/01/26 11:30:32
  */
 public class AnnotationProcessor implements Processor {
 
