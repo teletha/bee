@@ -838,11 +838,15 @@ public class Project {
         }
 
         // maven properties
-        XML properties = pom.child("properties");
-        properties.child("maven.compiler.source").text(getJavaVersion());
-        properties.child("maven.compiler.target").text(getJavaVersion());
-        properties.child("maven.compiler.encoding").text(getEncoding().displayName());
-        properties.child("maven.compiler.compilerArgument").text("-proc:none");
+        XML plugins = pom.child("plugins");
+        XML plugin = plugins.child("plugin");
+        plugin.child("artifactId").text("maven-compiler-plugin");
+        XML conf = plugin.child("configuration");
+        conf.child("source").text(getJavaVersion());
+        conf.child("target").text(getJavaVersion());
+        conf.child("encoding").text(getEncoding().displayName());
+        XML args = conf.child("compilerArgs");
+        args.child("arg").text("-proc:none");
 
         // write as pom
         return pom.toString();

@@ -230,10 +230,17 @@
       <url>https://github.com/Teletha</url>
     </developer>
   </developers>
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-    <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-    <maven.compiler.compilerArgument>-proc:none</maven.compiler.compilerArgument>
-  </properties>
+  <plugins>
+    <plugin>
+      <artifactId>maven-compiler-plugin</artifactId>
+      <configuration>
+        <source>8</source>
+        <target>8</target>
+        <encoding>UTF-8</encoding>
+        <compilerArgs>
+          <arg>-proc:none</arg>
+        </compilerArgs>
+      </configuration>
+    </plugin>
+  </plugins>
 </project>
