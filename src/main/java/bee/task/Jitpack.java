@@ -44,19 +44,19 @@ public class Jitpack extends Task {
 
         Github github = project.getVersionControlSystem();
 
-        // check equality of pom files
-        if (github.checkSame(pom)) {
-            System.out.println("SAME");
-        } else {
-            System.out.println("NON");
-        }
-
-        // retrieve latest commit
-        github.release().to(r -> {
-            System.out.println(r);
-        }, e -> {
-            e.printStackTrace();
-        });
+        // // check equality of pom files
+        // if (github.checkSame(pom)) {
+        // System.out.println("SAME");
+        // } else {
+        // System.out.println("NON");
+        // }
+        //
+        // // retrieve latest commit
+        // github.release().to(r -> {
+        // System.out.println(r);
+        // }, e -> {
+        // e.printStackTrace();
+        // });
 
         // check jitpack build
         String build = "https://jitpack.io/api/builds/com.github." + github.owner + "/" + github.repo;

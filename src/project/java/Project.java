@@ -24,8 +24,8 @@ public class Project extends bee.api.Project {
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
-        require("npc", "sinobu", "1.0");
-        require("npc", "antibug", "0.3").atTest();
+        require("com.github.teletha", "sinobu", "1.0");
+        require("com.github.teletha", "antibug", "0.3").atTest();
         require(aetherGroup, "aether-api", aetherVersion);
         require(aetherGroup, "aether-util", aetherVersion);
         require(aetherGroup, "aether-impl", aetherVersion);
@@ -39,8 +39,7 @@ public class Project extends bee.api.Project {
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
         repository("https://repo.eclipse.org/content/repositories/egit-releases/");
-        repository("http://npc.bintray.com/maven");
 
-        versionControlSystem("https://github.com/Teletha/Bee");
+        versionControlSystem("https://github.com/teletha/bee");
     }
 }

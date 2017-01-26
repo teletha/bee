@@ -72,10 +72,13 @@ import kiss.I;
 import kiss.Manageable;
 
 /**
- * @version 2017/01/20 14:59:27
+ * @version 2017/01/26 10:12:57
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
+
+    /** The path to remote repository. */
+    static final List<RemoteRepository> remoteRepositories = new CopyOnWriteArrayList();
 
     /** The system class loader. */
     private static final ClassLoader SYSTEM = ClassLoader.getSystemClassLoader();
@@ -87,9 +90,25 @@ public class Repository {
         try {
             load = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] {URL.class});
             load.setAccessible(true);
+
+            addRemoteRepository("central", "http://repo1.maven.org/maven2/");
+            addRemoteRepository("bintray", "http://jcenter.bintray.com/");
+            addRemoteRepository("jitpack", "https://jitpack.io/");
         } catch (Exception e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * <p>
+     * Add remote repository.
+     * </p>
+     * 
+     * @param name
+     * @param url
+     */
+    private static final void addRemoteRepository(String name, String url) {
+        remoteRepositories.add(new RemoteRepository.Builder(name, "default", url).build());
     }
 
     /** The current processing project. */
@@ -106,9 +125,6 @@ public class Repository {
 
     /** The path to local repository. */
     private LocalRepository localRepository;
-
-    /** The path to remote repository. */
-    private List<RemoteRepository> remoteRepositories = new CopyOnWriteArrayList();
 
     /**
      * Wiring components by hand.
@@ -130,10 +146,6 @@ public class Repository {
         // Initialize
         // ==================================================
         setLocalRepository(Platform.BeeLocalRepository);
-        addRemoteRepository("central", "http://repo1.maven.org/maven2/");
-        addRemoteRepository("bintray", "http://jcenter.bintray.com/");
-        addRemoteRepository("jboss", "http://repository.jboss.org/nexus/content/groups/public-jboss/");
-        addRemoteRepository("jitpack", "https://jitpack.io/");
     }
 
     /**
@@ -393,18 +405,6 @@ public class Repository {
      */
     public final void setLocalRepository(Path path) {
         this.localRepository = new LocalRepository(path.toAbsolutePath().toString());
-    }
-
-    /**
-     * <p>
-     * Add remote repository.
-     * </p>
-     * 
-     * @param name
-     * @param url
-     */
-    public final void addRemoteRepository(String name, String url) {
-        remoteRepositories.add(new RemoteRepository.Builder(name, "default", url).build());
     }
 
     /**

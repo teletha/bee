@@ -49,7 +49,7 @@ public class Bee {
     public static final Project API = new Project() {
 
         {
-            product("npc", "bee-api", "0.1");
+            product("com.github.teletha", "bee-api", "0.1");
         }
     };
 
@@ -57,7 +57,7 @@ public class Bee {
     public static final Project TOOL = new Project() {
 
         {
-            product("npc", "bee", "0.1");
+            product("com.github.teletha", "bee", "0.1");
         }
     };
 

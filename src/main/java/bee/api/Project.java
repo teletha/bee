@@ -801,9 +801,12 @@ public class Project {
         license.child("name").text(this.license.fullName());
         license.child("url").text(this.license.uri());
 
+        List<RemoteRepository> repos = new ArrayList();
+        repos.addAll(this.repositories);
+        repos.addAll(Repository.remoteRepositories);
         XML repositories = pom.child("repositories");
 
-        for (RemoteRepository repo : this.repositories) {
+        for (RemoteRepository repo : repos) {
             XML repository = repositories.child("repository");
             repository.child("id").text(repo.getId());
             repository.child("name").text(repo.getHost());

@@ -1,6 +1,6 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>npc</groupId>
+  <groupId>com.github.teletha</groupId>
   <artifactId>bee</artifactId>
   <version>0.1</version>
   <packaging>jar</packaging>
@@ -88,7 +88,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>npc</groupId>
+      <groupId>com.github.teletha</groupId>
       <artifactId>antibug</artifactId>
       <version>0.3</version>
       <scope>test</scope>
@@ -120,7 +120,7 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>npc</groupId>
+      <groupId>com.github.teletha</groupId>
       <artifactId>sinobu</artifactId>
       <version>1.0</version>
       <scope>compile</scope>
@@ -182,20 +182,30 @@
       <url>https://repo.eclipse.org/content/repositories/egit-releases/</url>
     </repository>
     <repository>
-      <id>npc.bintray.com</id>
-      <name>npc.bintray.com</name>
-      <url>http://npc.bintray.com/maven</url>
+      <id>central</id>
+      <name>repo1.maven.org</name>
+      <url>http://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>bintray</id>
+      <name>jcenter.bintray.com</name>
+      <url>http://jcenter.bintray.com/</url>
+    </repository>
+    <repository>
+      <id>jitpack</id>
+      <name>jitpack.io</name>
+      <url>https://jitpack.io/</url>
     </repository>
   </repositories>
-  <url>https://github.com/Teletha/Bee</url>
+  <url>https://github.com/teletha/bee</url>
   <scm>
-    <url>https://github.com/Teletha/Bee</url>
-    <connection>scm:git:https://github.com/Teletha/Bee.git</connection>
-    <developerConnection>scm:git:https://github.com/Teletha/Bee.git</developerConnection>
+    <url>https://github.com/teletha/bee</url>
+    <connection>scm:git:https://github.com/teletha/bee.git</connection>
+    <developerConnection>scm:git:https://github.com/teletha/bee.git</developerConnection>
   </scm>
   <issueManagement>
     <system>GitHub</system>
-    <url>https://github.com/Teletha/Bee/issues</url>
+    <url>https://github.com/teletha/bee/issues</url>
   </issueManagement>
   <developers>
     <developer>
