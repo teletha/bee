@@ -9,14 +9,19 @@
  */
 package bee.extension;
 
+import java.util.Arrays;
+
+import org.junit.Ignore;
+import org.junit.Test;
+
 /**
  * @version 2016/12/15 14:39:47
  */
 public class ExtensionUsageTest {
 
-    // @Test
-    // @Ignore
-    // public void use() {
-    // assert Arrays.asList("o", "k").join("").equals("ok");
-    // }
+    @Test
+    @Ignore
+    public void use() {
+        assert Arrays.asList("o", "k").join("").equals("ok");
+    }
 }
