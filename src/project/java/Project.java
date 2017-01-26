@@ -26,6 +26,7 @@ public class Project extends bee.api.Project {
 
         require("com.github.teletha", "sinobu", "1.0");
         require("com.github.teletha", "antibug", "0.3").atTest();
+        require("junit", "junit", "4.12").atProvided();
         require(aetherGroup, "aether-api", aetherVersion);
         require(aetherGroup, "aether-util", aetherVersion);
         require(aetherGroup, "aether-impl", aetherVersion);
