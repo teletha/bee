@@ -838,8 +838,7 @@ public class Project {
         }
 
         // maven properties
-        XML plugins = pom.child("plugins");
-        XML plugin = plugins.child("plugin");
+        XML plugin = pom.child("build").child("plugins").child("plugin");
         plugin.child("artifactId").text("maven-compiler-plugin");
         XML conf = plugin.child("configuration");
         conf.child("source").text(getJavaVersion());
