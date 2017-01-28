@@ -39,11 +39,6 @@ public class Bintray extends Task {
     private static final String uri = "https://api.bintray.com/";
 
     @Command("Deploy products to Bintray repository.")
-    public void deploy2() {
-        System.out.println(project.toString());
-    }
-
-    @Command("Deploy products to Bintray repository.")
     public void deploy() {
         require(Install.class).project();
 
@@ -148,7 +143,7 @@ public class Bintray extends Task {
          */
         @Override
         public String toString() {
-            return owner + "/" + name;
+            return owner.replaceAll("\\.", "-") + "/" + name;
         }
     }
 
