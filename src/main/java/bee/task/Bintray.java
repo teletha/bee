@@ -46,7 +46,7 @@ public class Bintray extends Task {
 
         RESTClient client = new RESTClient(account.name(), account.key());
         Library library = project.getLibrary();
-        Repository repo = Repository.of(project);
+        Repository repo = Repository.of(project.getVersionControlSystem());
         Package pack = Package.of(repo, project);
 
         Events.from(repo)
@@ -130,10 +130,10 @@ public class Bintray extends Task {
          * 
          * @param owner
          */
-        private static Repository of(Project project) {
+        private static Repository of(Github project) {
             Repository repo = new Repository();
-            repo.owner = project.getGroup();
-            repo.desc = "The " + project.getGroup() + "'s Maven Repository.";
+            repo.owner = project.owner;
+            repo.desc = "The " + project.owner + "'s Maven Repository.";
 
             return repo;
         }
