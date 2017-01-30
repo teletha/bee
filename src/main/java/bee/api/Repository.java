@@ -93,7 +93,6 @@ public class Repository {
 
             addRemoteRepository("central", "http://repo1.maven.org/maven2/");
             addRemoteRepository("bintray", "http://jcenter.bintray.com/");
-            addRemoteRepository("jitpack", "https://jitpack.io/");
         } catch (Exception e) {
             throw I.quiet(e);
         }
