@@ -803,7 +803,7 @@ public class Project {
 
         List<RemoteRepository> repos = new ArrayList();
         repos.addAll(this.repositories);
-        repos.addAll(Repository.remoteRepositories);
+        repos.addAll(Repository.buildinRepositories);
         XML repositories = pom.child("repositories");
 
         for (RemoteRepository repo : repos) {

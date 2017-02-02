@@ -78,7 +78,7 @@ import kiss.Manageable;
 public class Repository {
 
     /** The path to remote repository. */
-    static final List<RemoteRepository> remoteRepositories = new CopyOnWriteArrayList();
+    static final List<RemoteRepository> buildinRepositories = new CopyOnWriteArrayList();
 
     /** The system class loader. */
     private static final ClassLoader SYSTEM = ClassLoader.getSystemClassLoader();
@@ -91,8 +91,8 @@ public class Repository {
             load = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] {URL.class});
             load.setAccessible(true);
 
-            addRemoteRepository("central", "http://repo1.maven.org/maven2/");
-            addRemoteRepository("bintray", "http://jcenter.bintray.com/");
+            addRemoteRepository("Maven", "http://repo1.maven.org/maven2/");
+            addRemoteRepository("JCenter", "http://jcenter.bintray.com/");
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -107,7 +107,7 @@ public class Repository {
      * @param url
      */
     private static final void addRemoteRepository(String name, String url) {
-        remoteRepositories.add(new RemoteRepository.Builder(name, "default", url).build());
+        buildinRepositories.add(new RemoteRepository.Builder(name, "default", url).build());
     }
 
     /** The current processing project. */
@@ -200,7 +200,7 @@ public class Repository {
 
         // collect remote repository
         List<RemoteRepository> repositories = new ArrayList();
-        repositories.addAll(remoteRepositories);
+        repositories.addAll(buildinRepositories);
         repositories.addAll(project.repositories);
 
         // dependency dependencyCollector
@@ -312,7 +312,7 @@ public class Repository {
     private Path resolve(Library library, String suffix) {
         // collect remote repository
         List<RemoteRepository> repositories = new ArrayList();
-        repositories.addAll(remoteRepositories);
+        repositories.addAll(buildinRepositories);
         repositories.addAll(project.repositories);
 
         ArtifactRequest request = new ArtifactRequest();
