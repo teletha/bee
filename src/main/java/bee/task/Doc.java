@@ -162,7 +162,7 @@ public class Doc extends Task {
             }
 
             if (message.length() != 0) {
-                ui.talk(message);
+                ui.talk(message + "\r");
             }
         }
 
