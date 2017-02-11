@@ -9,6 +9,7 @@
  */
 package bee.api;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -145,8 +146,8 @@ public abstract class Task implements Extensible {
     protected final Path makeFile(Path path, XML xml) {
         makeDirectory(path.getParent());
 
-        try {
-            xml.to(Files.newBufferedWriter(path, StandardCharsets.UTF_8));
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            xml.to(writer);
 
             ui.talk("Make file [" + path.toAbsolutePath() + "]");
         } catch (IOException e) {

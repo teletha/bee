@@ -261,7 +261,6 @@ public class RESTClient {
     private <T> Events<T> request(HttpUriRequest request, T value) {
         return new Events<T>(observer -> {
             try {
-                System.out.println(request);
                 observer.accept(client.execute(request, response -> {
                     switch (response.getStatusLine().getStatusCode()) {
                     case HttpStatus.SC_OK:

@@ -185,6 +185,7 @@ public class Eclipse extends Task implements IDESupport {
         JavaExtension extension = I.make(JavaExtension.class);
 
         boolean needEnhanceJRE = extension.hasJREExtension();
+        needEnhanceJRE = false;
         String JREName = needEnhanceJRE ? "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project.getProduct() : "";
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
 
