@@ -30,15 +30,16 @@ import bee.UserInterface;
 import bee.util.Inputs;
 import kiss.Extensible;
 import kiss.I;
-import kiss.Manageable;
-import kiss.Singleton;
 import kiss.XML;
 import kiss.model.Model;
 
 /**
- * @version 2017/01/25 11:09:49
+ * @version 2017/03/04 13:26:53
  */
 public abstract class Task implements Extensible {
+
+    /** The common task repository. */
+    private static Map<String, Info> commons;
 
     /** The current processing project. */
     protected final Project project = I.make(Project.class);
@@ -59,7 +60,7 @@ public abstract class Task implements Extensible {
 
     @Command("Display help message for all commands of this task.")
     public void help() {
-        Info info = I.make(Tasks.class).info(computeTaskName(getClass()));
+        Info info = info(computeTaskName(getClass()));
 
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
             // display usage description for this command
@@ -87,7 +88,7 @@ public abstract class Task implements Extensible {
         if (taskClass == null) {
             throw new Error("You must specify task class.");
         }
-        return (T) I.make(I.make(Tasks.class).info(computeTaskName(taskClass)).task);
+        return (T) I.make(info(computeTaskName(taskClass)).task);
     }
 
     /**
@@ -99,7 +100,7 @@ public abstract class Task implements Extensible {
      */
     protected final void require(String... tasks) {
         for (String task : tasks) {
-            I.make(Tasks.class).execute(task);
+            execute(task);
         }
     }
 
@@ -225,132 +226,105 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * @version 2012/05/17 16:49:24
+     * <p>
+     * Execute literal expression task.
+     * </p>
+     * 
+     * @param input User task input.
      */
-    @Manageable(lifestyle = Singleton.class)
-    private static final class Tasks {
+    private static final void execute(String input) {
+        // parse command
+        if (input == null) {
+            return;
+        }
 
-        /** The common task repository. */
-        private final Map<String, Info> commons = new TreeMap();
+        // remove head and tail white space
+        input = input.trim();
 
-        /**
-         * <p>
-         * Execute literal expression task.
-         * </p>
-         * 
-         * @param input User task input.
-         */
-        private void execute(String input) {
-            // parse command
-            if (input == null) {
-                return;
+        if (input.length() == 0) {
+            return;
+        }
+
+        // analyze task name
+        String taskName = "";
+        String commandName = "";
+        int index = input.indexOf(':');
+
+        if (index == -1) {
+            taskName = input;
+        } else {
+            taskName = input.substring(0, index);
+            commandName = input.substring(index + 1);
+        }
+
+        // search task
+        Info info = info(taskName);
+
+        if (commandName.isEmpty()) {
+            commandName = info.defaultCommnad;
+        }
+
+        // search command
+        Method command = info.commands.get(commandName.toLowerCase());
+
+        if (command == null) {
+            TaskFailure failure = new TaskFailure("Task [", taskName, "] doesn't have the command [", commandName, "]. Task [", taskName, "] can use the following commands.");
+            for (Entry<String, String> entry : info.descriptions.entrySet()) {
+                failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
             }
+            throw failure;
+        }
 
-            // remove head and tail white space
-            input = input.trim();
+        // create task and initialize
+        Task task = I.make(info.task);
 
-            if (input.length() == 0) {
-                return;
+        // execute task
+        try {
+            command.invoke(task);
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
             }
+            throw I.quiet(e);
+        }
+    }
 
-            // analyze task name
-            String taskName = "";
-            String commandName = "";
-            int index = input.indexOf(':');
+    /**
+     * <p>
+     * Find task information by name.
+     * </p>
+     * 
+     * @param name A task name.
+     * @return A specified task.
+     */
+    private static final Info info(String name) {
+        if (name == null) {
+            throw new Error("You must specify task name.");
+        }
 
-            if (index == -1) {
-                taskName = input;
-            } else {
-                taskName = input.substring(0, index);
-                commandName = input.substring(index + 1);
-            }
+        if (commons == null) {
+            commons = new TreeMap();
 
-            // search task
-            Info info = info(taskName);
-
-            if (commandName.isEmpty()) {
-                commandName = info.defaultCommnad;
-            }
-
-            // search command
-            Method command = info.commands.get(commandName.toLowerCase());
-
-            if (command == null) {
-                TaskFailure failure = new TaskFailure("Task [", taskName, "] doesn't have the command [", commandName, "]. Task [", taskName, "] can use the following commands.");
-                for (Entry<String, String> entry : info.descriptions.entrySet()) {
-                    failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
-                }
-                throw failure;
-            }
-
-            // create task and initialize
-            Task task = I.make(info.task);
-
-            // execute task
-            try {
-                command.invoke(task);
-            } catch (Throwable e) {
-                if (e instanceof InvocationTargetException) {
-                    e = ((InvocationTargetException) e).getTargetException();
-                }
-                throw I.quiet(e);
+            for (Class<Task> task : I.findAs(Task.class)) {
+                String taskName = computeTaskName(task);
+                commons.put(taskName, new Info(taskName, task));
             }
         }
 
-        /**
-         * <p>
-         * Find task information by name.
-         * </p>
-         * 
-         * @param name A task name.
-         * @return A specified task.
-         */
-        private Info info(String name) {
-            if (name == null) {
-                throw new Error("You must specify task name.");
+        // search from common tasks
+        Info info = commons.get(name);
+
+        if (info == null) {
+            TaskFailure failure = new TaskFailure("Task [", name, "] is not found. You can use the following tasks.");
+            for (Entry<String, Info> entry : commons.entrySet()) {
+                info = entry.getValue();
+                failure.solve(entry.getKey(), " - ", info.descriptions.get(info.defaultCommnad));
             }
-
-            // search from common tasks
-            Info info = commons.get(name);
-
-            if (info == null) {
-                TaskFailure failure = new TaskFailure("Task [", name, "] is not found. You can use the following tasks.");
-                for (Entry<String, Info> entry : commons.entrySet()) {
-                    info = entry.getValue();
-                    failure.solve(entry.getKey(), " - ", info.descriptions.get(info.defaultCommnad));
-                }
-                throw failure;
-            }
-
-            // API definition
-            return info;
+            throw failure;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void load(Class<Task> clazz) {
-            if (clazz.isLocalClass() || clazz.isMemberClass() || clazz.isAnonymousClass()) {
-                return;
-            }
-
-            String name = computeTaskName(clazz);
-            commons.put(name, new Info(name, clazz));
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void unload(Class<Task> clazz) {
-            if (clazz.isLocalClass() || clazz.isMemberClass() || clazz.isAnonymousClass()) {
-                return;
-            }
-
-            String name = computeTaskName(clazz);
-            commons.remove(name);
-        }
+        // API definition
+        return info;
     }
 
     /**
