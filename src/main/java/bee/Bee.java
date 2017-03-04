@@ -90,8 +90,12 @@ public class Bee {
         I.load(Bee.class, true);
     }
 
-    private static void load(Path path) throws Exception {
-        addURL.invoke(ClassLoader.getSystemClassLoader(), path.toUri().toURL());
+    private static ClassLoader load(Path path) throws Exception {
+        ClassLoader loader = ClassLoader.getSystemClassLoader();
+
+        addURL.invoke(loader, path.toUri().toURL());
+
+        return loader;
     }
 
     /** The user interface. */
@@ -209,15 +213,12 @@ public class Bee {
             // =====================================
             ui.talk("Finding your project...");
 
-            // unload old project
-            I.unload(project.getProjectClasses());
-
             // build project definition
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
             load(project.getClasses());
-            load(project.getProjectClasses());
+            ClassLoader loader = load(project.getProjectClasses());
 
             // create your project
             inject((Project) Class.forName(ProjectFile).newInstance());
@@ -228,7 +229,7 @@ public class Bee {
             }
 
             // load new project
-            I.load(project.getProjectClasses());
+            I.load(loader.loadClass("Project"), false);
 
             // =====================================
             // build project develop environment
