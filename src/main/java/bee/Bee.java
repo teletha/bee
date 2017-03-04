@@ -346,7 +346,7 @@ public class Bee {
             Bee bee = new Bee();
             // bee.execute("doc");
             bee.execute("install");
-            // bee.execute("pgp");
+            // bee.execute("doc");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

@@ -213,12 +213,9 @@ public class Doc extends Task {
      * Create your custom javadoc view.
      * </p>
      * 
-     * @version 2012/11/09 15:51:00
+     * @version 2017/03/04 18:28:52
      */
     public static class CustomJavadoc extends Doclet implements Extensible {
-
-        /** The user interface to log. */
-        protected static final UserInterface ui = I.make(UserInterface.class);
 
         /** The root directory for Javadoc. */
         protected static Path outputDirectory;
@@ -232,6 +229,8 @@ public class Doc extends Task {
          * @return
          */
         public static boolean start(RootDoc root) {
+            UserInterface ui = I.make(UserInterface.class);
+
             ui.talk(outputDirectory);
 
             // build index.html
