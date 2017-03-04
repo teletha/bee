@@ -12,8 +12,7 @@ package bee.extension;
 /**
  * @version 2016/12/14 16:48:47
  */
-@Extension
-public class Strings {
+public class Strings implements Extension {
 
     /**
      * <p>

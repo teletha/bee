@@ -15,13 +15,12 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import kiss.Extensible;
+
 /**
  * @version 2016/12/13 9:14:33
  */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Extension {
+public interface Extension extends Extensible {
 
     /**
      * @version 2016/12/13 9:14:52

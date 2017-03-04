@@ -13,6 +13,8 @@ import static java.nio.file.StandardCopyOption.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -48,16 +50,21 @@ public class JavaExtension {
     private final Project project;
 
     /** The extension repository. */
-    private JavaExtensionRepository repository;
+    private Table<Path, JavaExtensionMethodDefinition> methods = new Table();
 
     /**
      * @param ui
      * @param project
      */
-    JavaExtension(UserInterface ui, Project project, JavaExtensionRepository repository) {
+    JavaExtension(UserInterface ui, Project project) {
         this.ui = ui;
         this.project = project;
-        this.repository = repository;
+
+        this.methods = Events.from(I.findAs(Extension.class))
+                .flatArray(clazz -> clazz.getMethods())
+                .take(this::validateExtensionMethod)
+                .map(JavaExtensionMethodDefinition::new)
+                .toTable(methods, m -> m.archive);
     }
 
     /**
@@ -68,7 +75,7 @@ public class JavaExtension {
      * @return A result.
      */
     public boolean hasExtension() {
-        return repository.hasExtension();
+        return methods.isEmpty() == false;
     }
 
     /**
@@ -79,7 +86,7 @@ public class JavaExtension {
      * @return A result.
      */
     public boolean hasJREExtension() {
-        return repository.hasJREExtension();
+        return methods.containsKey(Platform.JavaRuntime);
     }
 
     /**
@@ -102,7 +109,7 @@ public class JavaExtension {
      */
     public List<Path> enhance(List<Path> jars) {
         try {
-            for (Entry<Path, List<JavaExtensionMethodDefinition>> archives : repository.methods.entrySet()) {
+            for (Entry<Path, List<JavaExtensionMethodDefinition>> archives : methods.entrySet()) {
                 // copy original archive
                 Path archive = archives.getKey();
 
@@ -212,5 +219,36 @@ public class JavaExtension {
         } catch (IOException e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * <p>
+     * Validate method as extension.
+     * </p>
+     * 
+     * @param method A method to validate.
+     * @return A result.
+     */
+    private boolean validateExtensionMethod(Method method) {
+        // marker annotation
+        if (method.isAnnotationPresent(Extension.Method.class) == false) {
+            return false;
+        }
+
+        // public static modifier
+        int modifier = method.getModifiers();
+
+        if (Modifier.isPublic(modifier) == false || Modifier.isStatic(modifier) == false) {
+            return false;
+        }
+
+        // parameter type
+        Class[] types = method.getParameterTypes();
+
+        if (types.length == 0 || types[0].isPrimitive()) {
+            return false;
+        }
+
+        return true; // This is valid extension method.
     }
 }

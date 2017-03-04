@@ -28,7 +28,6 @@ import bee.Platform;
 import bee.TaskFailure;
 import bee.UserInterface;
 import bee.util.Inputs;
-import kiss.ClassListener;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
@@ -229,7 +228,7 @@ public abstract class Task implements Extensible {
      * @version 2012/05/17 16:49:24
      */
     @Manageable(lifestyle = Singleton.class)
-    private static final class Tasks implements ClassListener<Task> {
+    private static final class Tasks {
 
         /** The common task repository. */
         private final Map<String, Info> commons = new TreeMap();
