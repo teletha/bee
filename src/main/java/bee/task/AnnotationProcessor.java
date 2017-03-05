@@ -107,7 +107,7 @@ public class AnnotationProcessor implements Processor {
         try {
             for (TypeElement annotationType : annotations) {
                 for (Element element : round.getElementsAnnotatedWith(annotationType)) {
-                    Class annotationClass = Class.forName(annotationType.toString(), true, I.$loader);
+                    Class annotationClass = Class.forName(annotationType.toString());
                     AnnotationValidator validator = find(annotationClass);
 
                     if (validator != null) {
