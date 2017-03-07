@@ -362,7 +362,22 @@ public class Project {
      * @return A dependency.
      */
     protected final Library require(String projectName, String productName, String version) {
-        Library library = new Library(projectName, productName, version);
+        return require(projectName, productName, null, version);
+    }
+
+    /**
+     * <p>
+     * Declare dependency.
+     * </p>
+     * 
+     * @param projectName A project name.
+     * @param productName A product name.
+     * @param classifier A product classifier.
+     * @param version A product version.
+     * @return A dependency.
+     */
+    protected final Library require(String projectName, String productName, String classifier, String version) {
+        Library library = new Library(projectName, productName, classifier, version);
         libraries.add(library);
 
         // API definition

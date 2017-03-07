@@ -27,6 +27,9 @@ public class Library implements Comparable<Library> {
     /** The artifact name. */
     public final String name;
 
+    /** The artifact classfier. */
+    public final String classfier;
+
     /** The version identifier. */
     public final String version;
 
@@ -49,9 +52,20 @@ public class Library implements Comparable<Library> {
      * @param group
      * @param artifact
      * @param version
+     * @param classifier
      */
     Library(String group, String artifact, String version) {
-        this(new DefaultArtifact(group, artifact, "jar", version));
+        this(group, artifact, "", version);
+    }
+
+    /**
+     * @param group
+     * @param artifact
+     * @param classifier
+     * @param version
+     */
+    Library(String group, String artifact, String classifier, String version) {
+        this(new DefaultArtifact(group, artifact, classifier, "jar", version));
     }
 
     /**
@@ -61,6 +75,7 @@ public class Library implements Comparable<Library> {
         this.artifact = artifact;
         this.group = artifact.getGroupId();
         this.name = artifact.getArtifactId();
+        this.classfier = artifact.getClassifier();
         this.version = artifact.isSnapshot() ? artifact.getBaseVersion() : artifact.getVersion();
     }
 
