@@ -251,7 +251,9 @@ public class Library implements Comparable<Library> {
         builder.append(group.replace('.', '/')).append('/');
         builder.append(name).append('/');
         builder.append(version).append('/');
-        builder.append(name).append('-').append(version).append(suffix);
+        builder.append(name).append('-').append(version);
+        if (classfier.length() != 0) builder.append('-').append(classfier);
+        builder.append(suffix);
 
         return builder.toString();
     }
@@ -305,7 +307,9 @@ public class Library implements Comparable<Library> {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(name).append('-').append(version);
-
+        if (classfier.length() != 0) {
+            builder.append('-').append(classfier);
+        }
         return builder.toString();
     }
 

@@ -16,7 +16,7 @@ import org.junit.Test;
 import bee.BlinkProject;
 
 /**
- * @version 2015/06/08 16:05:49
+ * @version 2017/03/08 2:45:49
  */
 public class DependencyTest {
 
@@ -82,5 +82,12 @@ public class DependencyTest {
 
         dep = repo.collectDependency("org.skyscreamer", "jsonassert", "1.2.3", Scope.Test);
         assert dep.size() == 2;
+    }
+
+    @Test
+    public void test() {
+        Repository repo = new Repository(new BlinkProject());
+        Set<Library> dep = repo.collectDependency("org.bytedeco", "javacv-platform", "1.3.1", Scope.Test);
+        assert dep.size() == 84;
     }
 }
