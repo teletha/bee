@@ -413,17 +413,6 @@ public class Repository {
      * @return
      */
     private RepositorySystemSession newSession() {
-        return newSession(false);
-    }
-
-    /**
-     * <p>
-     * Create maven like new session.
-     * </p>
-     * 
-     * @return
-     */
-    private RepositorySystemSession newSession(boolean offline) {
         Set<DependencySelector> filters = new HashSet(dependencyFilters);
         filters.add(new ExclusionDependencySelector(project.exclusions));
 
@@ -434,7 +423,6 @@ public class Repository {
         session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
         session.setIgnoreArtifactDescriptorRepositories(true);
-        session.setOffline(offline);
 
         // event listener
         session.setTransferListener(I.make(TransferView.class));
