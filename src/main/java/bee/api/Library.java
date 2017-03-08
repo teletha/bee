@@ -10,6 +10,7 @@
 package bee.api;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -179,13 +180,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Path getLocalSourceJar() {
-        Path path = I.make(Repository.class).resolveSource(this);
-
-        if (path == null) {
-            return I.make(Repository.class).getLocalRepository().resolve(getSourceJar());
-        } else {
-            return path;
-        }
+        return I.make(Repository.class).resolveSource(this);
     }
 
     /**
@@ -207,13 +202,7 @@ public class Library implements Comparable<Library> {
      * @return
      */
     public Path getLocalJavadocJar() {
-        Path path = I.make(Repository.class).resolveJavadoc(this);
-
-        if (path == null) {
-            return I.make(Repository.class).getLocalRepository().resolve(getJavadocJar());
-        } else {
-            return path;
-        }
+        return I.make(Repository.class).resolveJavadoc(this);
     }
 
     /**
@@ -263,12 +252,7 @@ public class Library implements Comparable<Library> {
      */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((group == null) ? 0 : group.hashCode());
-        result = prime * result + ((version == null) ? 0 : version.hashCode());
-        return result;
+        return Objects.hash(group, name, classfier, version);
     }
 
     /**
@@ -276,20 +260,14 @@ public class Library implements Comparable<Library> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (getClass() != obj.getClass()) return false;
-        Library other = (Library) obj;
-        if (name == null) {
-            if (other.name != null) return false;
-        } else if (!name.equals(other.name)) return false;
-        if (group == null) {
-            if (other.group != null) return false;
-        } else if (!group.equals(other.group)) return false;
-        if (version == null) {
-            if (other.version != null) return false;
-        } else if (!version.equals(other.version)) return false;
-        return true;
+        if (obj instanceof Library) {
+            Library other = (Library) obj;
+
+            return Objects.equals(group, other.group) && Objects.equals(name, other.name) && Objects
+                    .equals(classfier, other.classfier) && Objects.equals(version, other.version);
+        } else {
+            return false;
+        }
     }
 
     /**

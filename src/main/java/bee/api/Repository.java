@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -125,6 +126,9 @@ public class Repository {
     /** The path to local repository. */
     private LocalRepository localRepository;
 
+    /** The user interface. */
+    private UserInterface ui = I.make(UserInterface.class);
+
     /**
      * Wiring components by hand.
      */
@@ -215,7 +219,6 @@ public class Repository {
                 if (node == null || node.getArtifact() == null) {
                     return true;
                 }
-
                 List<DependencyNode> list = new ArrayList();
 
                 for (int i = parents.size() - 1; 0 <= i; i--) {
@@ -230,7 +233,6 @@ public class Repository {
                 Scope root = Scope.by(list.get(0).getDependency().getScope());
                 return list.stream().allMatch(n -> root.accept(n.getDependency()));
             }));
-
             for (ArtifactResult dependency : result.getArtifactResults()) {
                 Artifact artifact = dependency.getArtifact();
 
@@ -273,7 +275,8 @@ public class Repository {
      * @return
      */
     public Path resolveJavadoc(Library library) {
-        return resolve(library, "javadoc");
+        Path resolved = resolve(library, "javadoc");
+        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getJavadocJar());
     }
 
     /**
@@ -285,8 +288,11 @@ public class Repository {
      * @return
      */
     public Path resolveSource(Library library) {
-        return resolve(library, "sources");
+        Path resolved = resolve(library, "sources");
+        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getSourceJar());
     }
+
+    private final Set<Integer> notFounds = new HashSet();
 
     /**
      * <p>
@@ -297,24 +303,30 @@ public class Repository {
      * @return
      */
     private Path resolve(Library library, String suffix) {
-        // collect remote repository
-        List<RemoteRepository> repositories = new ArrayList();
-        repositories.addAll(builtinRepositories);
-        repositories.addAll(project.repositories);
+        // If some classified artifact is missing, there is high possibility that another classified
+        // artifact with the same group, name and version is also missing.
+        Integer noClassified = Objects.hash(library.group, library.name, library.version, suffix);
 
-        ArtifactRequest request = new ArtifactRequest();
-        request.setArtifact(new SubArtifact(library.artifact, "*-" + suffix, "jar"));
-        request.setRepositories(repositories);
+        if (!notFounds.contains(noClassified)) {
+            SubArtifact sub = new SubArtifact(library.artifact, "*-" + suffix, "jar");
 
-        try {
-            ArtifactResult result = system.resolveArtifact(newSession(), request);
+            // collect remote repository
+            List<RemoteRepository> repositories = new ArrayList();
+            repositories.addAll(builtinRepositories);
+            repositories.addAll(project.repositories);
 
-            if (result.isResolved()) {
-                return result.getArtifact().getFile().toPath();
+            try {
+                ArtifactResult result = system.resolveArtifact(newSession(), new ArtifactRequest(sub, repositories, null));
+
+                if (result.isResolved()) {
+                    return result.getArtifact().getFile().toPath();
+                } else {
+                    ui.talk("Artifact [", sub, "] is not resolved.");
+                }
+            } catch (ArtifactResolutionException e) {
+                ui.talk("Artifact [", sub, "] is not found.");
+                notFounds.add(noClassified);
             }
-
-        } catch (ArtifactResolutionException e) {
-            return null;
         }
         return null;
     }
@@ -401,6 +413,17 @@ public class Repository {
      * @return
      */
     private RepositorySystemSession newSession() {
+        return newSession(false);
+    }
+
+    /**
+     * <p>
+     * Create maven like new session.
+     * </p>
+     * 
+     * @return
+     */
+    private RepositorySystemSession newSession(boolean offline) {
         Set<DependencySelector> filters = new HashSet(dependencyFilters);
         filters.add(new ExclusionDependencySelector(project.exclusions));
 
@@ -411,6 +434,7 @@ public class Repository {
         session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
         session.setIgnoreArtifactDescriptorRepositories(true);
+        session.setOffline(offline);
 
         // event listener
         session.setTransferListener(I.make(TransferView.class));
