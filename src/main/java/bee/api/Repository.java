@@ -78,7 +78,7 @@ import kiss.Manageable;
 public class Repository {
 
     /** The path to remote repository. */
-    static final List<RemoteRepository> buildinRepositories = new CopyOnWriteArrayList();
+    static final List<RemoteRepository> builtinRepositories = new CopyOnWriteArrayList();
 
     /** The system class loader. */
     private static final ClassLoader SYSTEM = ClassLoader.getSystemClassLoader();
@@ -107,7 +107,7 @@ public class Repository {
      * @param url
      */
     private static final void addRemoteRepository(String name, String url) {
-        buildinRepositories.add(new RemoteRepository.Builder(name, "default", url).build());
+        builtinRepositories.add(new RemoteRepository.Builder(name, "default", url).build());
     }
 
     /** The current processing project. */
@@ -169,19 +169,6 @@ public class Repository {
      * @param scope
      * @return
      */
-    public Set<Library> collectDependency(String group, String product, String version, Scope scope) {
-        return collectDependency(new Library(group, product, version), scope);
-    }
-
-    /**
-     * <p>
-     * Collect all dependencies in the specified scope.
-     * </p>
-     * 
-     * @param libraries
-     * @param scope
-     * @return
-     */
     public Set<Library> collectDependency(Library library, Scope scope) {
         return collectDependency(project, scope, Collections.singleton(library));
     }
@@ -200,7 +187,7 @@ public class Repository {
 
         // collect remote repository
         List<RemoteRepository> repositories = new ArrayList();
-        repositories.addAll(buildinRepositories);
+        repositories.addAll(builtinRepositories);
         repositories.addAll(project.repositories);
 
         // dependency dependencyCollector
@@ -312,7 +299,7 @@ public class Repository {
     private Path resolve(Library library, String suffix) {
         // collect remote repository
         List<RemoteRepository> repositories = new ArrayList();
-        repositories.addAll(buildinRepositories);
+        repositories.addAll(builtinRepositories);
         repositories.addAll(project.repositories);
 
         ArtifactRequest request = new ArtifactRequest();
@@ -443,7 +430,9 @@ public class Repository {
      * @param version A product version.
      */
     public static void require(String group, String product, String version) {
-        for (Library library : I.make(Repository.class).collectDependency(group, product, version, Scope.Runtime)) {
+        Library require = new Library(group, product, version);
+
+        for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
             try {
                 load.invoke(SYSTEM, library.getLocalJar().toUri().toURL());
             } catch (Exception e) {
