@@ -14,6 +14,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
+import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -69,11 +71,13 @@ import bee.Platform;
 import bee.UserInterface;
 import bee.util.Paths;
 import bee.util.TransferView;
+import kiss.Configurable;
 import kiss.I;
 import kiss.Manageable;
+import kiss.Variable;
 
 /**
- * @version 2017/01/26 10:12:57
+ * @version 2017/03/09 10:18:33
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
@@ -117,6 +121,9 @@ public class Repository {
     /** The root repository system. */
     private final RepositorySystem system;
 
+    /** The session. */
+    private final RepositorySystemSession session;
+
     /** The default dependency filter. */
     private final List<DependencySelector> dependencyFilters = new ArrayList();
 
@@ -149,6 +156,24 @@ public class Repository {
         // Initialize
         // ==================================================
         setLocalRepository(Platform.BeeLocalRepository);
+
+        // ============ RepositorySystemSession ============ //
+        Set<DependencySelector> filters = new HashSet(dependencyFilters);
+        filters.add(new ExclusionDependencySelector(project.exclusions));
+
+        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        session.setDependencySelector(new AndDependencySelector(filters));
+        session.setDependencyGraphTransformer(dependencyBuilder);
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
+        session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
+        session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
+        session.setIgnoreArtifactDescriptorRepositories(true);
+
+        // event listener
+        session.setTransferListener(I.make(TransferView.class));
+        session.setRepositoryListener(I.make(RepositoryView.class));
+
+        this.session = session;
     }
 
     /**
@@ -215,7 +240,7 @@ public class Repository {
         }
 
         try {
-            DependencyResult result = system.resolveDependencies(newSession(), new DependencyRequest(request, (node, parents) -> {
+            DependencyResult result = system.resolveDependencies(session, new DependencyRequest(request, (node, parents) -> {
                 if (node == null || node.getArtifact() == null) {
                     return true;
                 }
@@ -233,11 +258,12 @@ public class Repository {
                 Scope root = Scope.by(list.get(0).getDependency().getScope());
                 return list.stream().allMatch(n -> root.accept(n.getDependency()));
             }));
+
             for (ArtifactResult dependency : result.getArtifactResults()) {
                 Artifact artifact = dependency.getArtifact();
 
                 if (validateDependency(artifact)) {
-                    set.add(new Library(artifact));
+                    set.add(new Library(artifact, Variable.of(dependency.getRepository()).map(ArtifactRepository::getId)));
                 }
             }
             return set;
@@ -275,7 +301,7 @@ public class Repository {
      * @return
      */
     public Path resolveJavadoc(Library library) {
-        Path resolved = resolve(library, "javadoc");
+        Path resolved = resolveSubArtifact(library, "javadoc");
         return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getJavadocJar());
     }
 
@@ -288,11 +314,9 @@ public class Repository {
      * @return
      */
     public Path resolveSource(Library library) {
-        Path resolved = resolve(library, "sources");
+        Path resolved = resolveSubArtifact(library, "sources");
         return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getSourceJar());
     }
-
-    private final Set<Integer> notFounds = new HashSet();
 
     /**
      * <p>
@@ -302,21 +326,18 @@ public class Repository {
      * @param library
      * @return
      */
-    private Path resolve(Library library, String suffix) {
+    private Path resolveSubArtifact(Library library, String suffix) {
         // If some classified artifact is missing, there is high possibility that another classified
         // artifact with the same group, name and version is also missing.
-        Integer noClassified = Objects.hash(library.group, library.name, library.version, suffix);
 
-        if (!notFounds.contains(noClassified)) {
+        LibraryInfo info = LibraryInfo.of(library);
+
+        if (info.shouldAccessToSource()) {
             SubArtifact sub = new SubArtifact(library.artifact, "*-" + suffix, "jar");
-
-            // collect remote repository
-            List<RemoteRepository> repositories = new ArrayList();
-            repositories.addAll(builtinRepositories);
-            repositories.addAll(project.repositories);
+            ArtifactRequest request = new ArtifactRequest(sub, repository(library.repositoryId), null);
 
             try {
-                ArtifactResult result = system.resolveArtifact(newSession(), new ArtifactRequest(sub, repositories, null));
+                ArtifactResult result = system.resolveArtifact(session, request);
 
                 if (result.isResolved()) {
                     return result.getArtifact().getFile().toPath();
@@ -325,10 +346,32 @@ public class Repository {
                 }
             } catch (ArtifactResolutionException e) {
                 ui.talk("Artifact [", sub, "] is not found.");
-                notFounds.add(noClassified);
+                info.lastAccessToSource = LocalDate.now();
+                info.store();
             }
         }
         return null;
+    }
+
+    /**
+     * <p>
+     * Search repository by ID.
+     * </p>
+     * 
+     * @param id A repository identifier.
+     * @return A matched repository.
+     */
+    private List<RemoteRepository> repository(Variable<String> id) {
+        List<RemoteRepository> repositories = new ArrayList<>();
+        repositories.addAll(builtinRepositories);
+        repositories.addAll(project.repositories);
+
+        for (RemoteRepository repo : repositories) {
+            if (id.is(repo.getId())) {
+                return Collections.singletonList(repo);
+            }
+        }
+        return Collections.EMPTY_LIST;
     }
 
     /**
@@ -378,7 +421,7 @@ public class Repository {
             if (Paths.exist(javadoc)) {
                 request.addArtifact(new SubArtifact(jar, "javadoc", "jar", javadoc.toFile()));
             }
-            system.install(newSession(), request);
+            system.install(session, request);
         } catch (InstallationException e) {
             e.printStackTrace();
             throw I.quiet(e);
@@ -403,33 +446,6 @@ public class Repository {
      */
     public final void setLocalRepository(Path path) {
         this.localRepository = new LocalRepository(path.toAbsolutePath().toString());
-    }
-
-    /**
-     * <p>
-     * Create maven like new session.
-     * </p>
-     * 
-     * @return
-     */
-    private RepositorySystemSession newSession() {
-        Set<DependencySelector> filters = new HashSet(dependencyFilters);
-        filters.add(new ExclusionDependencySelector(project.exclusions));
-
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        session.setDependencySelector(new AndDependencySelector(filters));
-        session.setDependencyGraphTransformer(dependencyBuilder);
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
-        session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
-        session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
-        session.setIgnoreArtifactDescriptorRepositories(true);
-
-        // event listener
-        session.setTransferListener(I.make(TransferView.class));
-        session.setRepositoryListener(I.make(RepositoryView.class));
-
-        // API definition
-        return session;
     }
 
     /**
@@ -624,6 +640,56 @@ public class Repository {
         public void metadataDownloaded(RepositoryEvent event) {
             // ui.talk("Downloaded metadata " + event.getMetadata() + " from " +
             // event.getRepository());
+        }
+    }
+
+    /**
+     * @version 2017/03/09 14:17:27
+     */
+    private static final class LibraryInfo implements Configurable<LibraryInfo> {
+
+        /** The last access time to remote source. */
+        public LocalDate lastAccessToSource = LocalDate.MIN;
+
+        private final Library library;
+
+        /**
+         * @param library
+         */
+        private LibraryInfo(Library library) {
+            this.library = Objects.requireNonNull(library);
+        }
+
+        /**
+         * <p>
+         * Confirm whether we should check the source resource or not.
+         * </p>
+         * 
+         * @return
+         */
+        private boolean shouldAccessToSource() {
+            return lastAccessToSource.plusDays(7).isBefore(LocalDate.now());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Path locate() {
+            Path pom = library.getLocalPOM();
+            return pom.getParent().resolve(pom.getFileName().toString().replace(".pom", ".bee"));
+        }
+
+        /**
+         * <p>
+         * Build {@link Library} infomation.
+         * </p>
+         * 
+         * @param library
+         * @return
+         */
+        private static LibraryInfo of(Library library) {
+            return new LibraryInfo(library).restore();
         }
     }
 }

@@ -16,6 +16,7 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 
 import kiss.I;
+import kiss.Variable;
 
 /**
  * @version 2017/01/08 21:30:27
@@ -40,13 +41,16 @@ public class Library implements Comparable<Library> {
     /** The actual artifact. */
     final Artifact artifact;
 
+    /** The actual repository. */
+    public final Variable<String> repositoryId;
+
     /**
      * @param name
      * @param group
      * @param version
      */
     Library(String qualified) {
-        this(new DefaultArtifact(qualified));
+        this(new DefaultArtifact(qualified), null);
     }
 
     /**
@@ -66,18 +70,19 @@ public class Library implements Comparable<Library> {
      * @param version
      */
     Library(String group, String artifact, String classifier, String version) {
-        this(new DefaultArtifact(group, artifact, classifier, "jar", version));
+        this(new DefaultArtifact(group, artifact, classifier, "jar", version), null);
     }
 
     /**
      * 
      */
-    Library(Artifact artifact) {
+    Library(Artifact artifact, Variable<String> repositoryId) {
         this.artifact = artifact;
         this.group = artifact.getGroupId();
         this.name = artifact.getArtifactId();
         this.classfier = artifact.getClassifier();
         this.version = artifact.isSnapshot() ? artifact.getBaseVersion() : artifact.getVersion();
+        this.repositoryId = repositoryId == null ? Variable.empty() : repositoryId;
     }
 
     /**
