@@ -15,9 +15,9 @@ import bee.Bee;
  */
 public class Project extends bee.api.Project {
 
-    private String aetherGroup = "org.eclipse.aether";
+    String AetherGroup = "org.eclipse.aether";
 
-    private String aetherVersion = "1.1.0";
+    String AetherVersion = "1.1.0";
 
     {
         product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
@@ -27,14 +27,14 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "sinobu", "1.0");
         require("com.github.teletha", "antibug", "0.3").atTest();
         require("junit", "junit", "4.12").atProvided();
-        require(aetherGroup, "aether-api", aetherVersion);
-        require(aetherGroup, "aether-util", aetherVersion);
-        require(aetherGroup, "aether-impl", aetherVersion);
-        require(aetherGroup, "aether-connector-basic", aetherVersion);
-        require(aetherGroup, "aether-transport-http", aetherVersion);
+        require(AetherGroup, "aether-api", AetherVersion);
+        require(AetherGroup, "aether-util", AetherVersion);
+        require(AetherGroup, "aether-impl", AetherVersion);
+        require(AetherGroup, "aether-connector-basic", AetherVersion);
+        require(AetherGroup, "aether-transport-http", AetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
-        require("org.slf4j", "slf4j-nop", "1.7.22");
-        require("sun.jdk", "tools", "8.0").atSystem();
+        require("org.slf4j", "slf4j-nop", "1.7.24");
+        requireJavaTools().atSystem();
 
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");

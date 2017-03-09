@@ -218,18 +218,11 @@ public class Bee {
 
             // load project related classes in system class loader
             load(project.getClasses());
-            ClassLoader loader = load(project.getProjectClasses());
+            load(project.getProjectClasses());
 
             // create your project
-            inject((Project) Class.forName(ProjectFile).newInstance());
-
-            // load project related classes in system class loader
-            for (Library library : project.getDependency(Scope.Compile)) {
-                load(library.getLocalJar());
-            }
-
-            // load new project
-            I.load(loader.loadClass("Project"), false);
+            Class projectClass = Class.forName(ProjectFile);
+            inject((Project) projectClass.newInstance());
 
             // =====================================
             // build project develop environment
@@ -238,6 +231,14 @@ public class Bee {
 
             // start project build process
             ui.title("Building " + project.getProduct() + " " + project.getVersion());
+
+            // load project related classes in system class loader
+            for (Library library : project.getDependency(Scope.Compile)) {
+                load(library.getLocalJar());
+            }
+
+            // load new project
+            I.load(projectClass, false);
 
             // compose build
             builds.add(build);
@@ -346,8 +347,8 @@ public class Bee {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
             // bee.execute("doc");
-            bee.execute("install");
-            // bee.execute("ide");
+            // bee.execute("install");
+            bee.execute("ide");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
