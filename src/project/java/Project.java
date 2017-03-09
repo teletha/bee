@@ -35,7 +35,6 @@ public class Project extends bee.api.Project {
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
         require("org.slf4j", "slf4j-nop", "1.7.22");
         require("sun.jdk", "tools", "8.0").atSystem();
-        require("org.bytedeco", "javacv-platform", "1.3.1");
 
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
