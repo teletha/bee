@@ -259,7 +259,7 @@ public class RESTClient {
      * @return
      */
     private <T> Events<T> request(HttpUriRequest request, T value) {
-        return new Events<T>(observer -> {
+        return new Events<T>((observer, disposer) -> {
             try {
                 observer.accept(client.execute(request, response -> {
                     switch (response.getStatusLine().getStatusCode()) {
