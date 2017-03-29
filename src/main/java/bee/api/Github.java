@@ -24,8 +24,8 @@ import org.apache.maven.model.Contributor;
 
 import bee.util.Config;
 import bee.util.RESTClient;
-import kiss.Events;
 import kiss.I;
+import kiss.Signal;
 import kiss.Variable;
 
 /**
@@ -134,7 +134,7 @@ public abstract class Github {
     /**
      * @return
      */
-    public Events<Release> release() {
+    public Signal<Release> release() {
         Project project = I.make(Project.class);
         Account account = Config.project(Account.class);
         RESTClient client = new RESTClient(builder -> {
@@ -149,7 +149,7 @@ public abstract class Github {
     /**
      * @return
      */
-    public Events<Release> release(String tag) {
+    public Signal<Release> release(String tag) {
         return new RESTClient().get(repo("releases/tags/" + tag), new Release());
     }
 
@@ -235,7 +235,7 @@ public abstract class Github {
 
         public boolean prerelease;
 
-        public Events<Release> update() {
+        public Signal<Release> update() {
             Account account = Config.project(Account.class);
             RESTClient client = new RESTClient(builder -> {
                 builder.setDefaultHeaders(Arrays.asList(new BasicHeader("Authorization", "token " + account.password())));

@@ -31,8 +31,8 @@ import bee.Platform;
 import bee.UserInterface;
 import bee.api.Project;
 import bee.util.Paths;
-import kiss.Events;
 import kiss.I;
+import kiss.Signal;
 import kiss.Table;
 
 /**
@@ -60,7 +60,7 @@ public class JavaExtension {
         this.ui = ui;
         this.project = project;
 
-        this.methods = Events.from(I.findAs(Extension.class))
+        this.methods = Signal.from(I.findAs(Extension.class))
                 .flatArray(clazz -> clazz.getMethods())
                 .take(this::validateExtensionMethod)
                 .map(JavaExtensionMethodDefinition::new)
@@ -118,7 +118,7 @@ public class JavaExtension {
                     jars.add(enhanced);
 
                     try (FileSystem zip = jar(enhanced)) {
-                        Table<Class, JavaExtensionMethodDefinition> defs = Events.from(archives.getValue()).toTable(def -> def.targetClass);
+                        Table<Class, JavaExtensionMethodDefinition> defs = Signal.from(archives.getValue()).toTable(def -> def.targetClass);
 
                         for (Entry<Class, List<JavaExtensionMethodDefinition>> definitions : defs.entrySet()) {
                             Class clazz = definitions.getKey();

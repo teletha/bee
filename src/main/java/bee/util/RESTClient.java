@@ -65,8 +65,8 @@ import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
 
 import kiss.Disposable;
-import kiss.Events;
 import kiss.I;
+import kiss.Signal;
 
 /**
  * @version 2017/01/10 1:07:57
@@ -121,7 +121,7 @@ public class RESTClient {
      * @param type
      * @return
      */
-    public <T> Events<String> get(String uri) {
+    public <T> Signal<String> get(String uri) {
         return request(new HttpGet(uri), null);
     }
 
@@ -133,7 +133,7 @@ public class RESTClient {
      * @param uri
      * @return
      */
-    public Events<String> delete(String uri) {
+    public Signal<String> delete(String uri) {
         return request(new HttpDelete(uri), null);
     }
 
@@ -146,7 +146,7 @@ public class RESTClient {
      * @param type
      * @return
      */
-    public <T> Events<T> get(String uri, Class<T> type) {
+    public <T> Signal<T> get(String uri, Class<T> type) {
         return get(uri, I.make(type));
     }
 
@@ -159,7 +159,7 @@ public class RESTClient {
      * @param type
      * @return
      */
-    public <T> Events<T> get(String uri, T value) {
+    public <T> Signal<T> get(String uri, T value) {
         return request(new HttpGet(uri), value);
     }
 
@@ -172,7 +172,7 @@ public class RESTClient {
      * @param type
      * @return
      */
-    public Events<Path> get(String uri, Path file) {
+    public Signal<Path> get(String uri, Path file) {
         return request(new HttpGet(uri), file);
     }
 
@@ -184,7 +184,7 @@ public class RESTClient {
      * @param uri
      * @return
      */
-    public <T> Events<T> post(String uri, T value) {
+    public <T> Signal<T> post(String uri, T value) {
         StringBuilder builder = new StringBuilder();
         I.write(value, builder);
 
@@ -204,7 +204,7 @@ public class RESTClient {
      * @param uri
      * @return
      */
-    public <T> Events<T> patch(String uri, T value) {
+    public <T> Signal<T> patch(String uri, T value) {
         StringBuilder builder = new StringBuilder();
         I.write(value, builder);
 
@@ -224,7 +224,7 @@ public class RESTClient {
      * @param uri
      * @return
      */
-    public <T> Events<T> put(String uri, T value, TransferResource resource) {
+    public <T> Signal<T> put(String uri, T value, TransferResource resource) {
         HttpPut put = new HttpPut(uri);
         put.setEntity(new CountingHttpEntity(new FileEntity(resource.getFile(), type(resource)), view, resource));
 
@@ -258,8 +258,8 @@ public class RESTClient {
      * @param value
      * @return
      */
-    private <T> Events<T> request(HttpUriRequest request, T value) {
-        return new Events<T>((observer, disposer) -> {
+    private <T> Signal<T> request(HttpUriRequest request, T value) {
+        return new Signal<T>((observer, disposer) -> {
             try {
                 observer.accept(client.execute(request, response -> {
                     switch (response.getStatusLine().getStatusCode()) {
