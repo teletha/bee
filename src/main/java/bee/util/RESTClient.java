@@ -295,7 +295,7 @@ public class RESTClient {
             } catch (Exception e) {
                 observer.error(e);
             }
-            return Disposable.Φ;
+            return Disposable.empty();
         });
     }
 
