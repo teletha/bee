@@ -40,10 +40,6 @@ import kiss.I;
  */
 public class AnnotationProcessor implements Processor {
 
-    static {
-        I.load(AnnotationProcessor.class, true);
-    }
-
     /** The message notifier. */
     private Messager notifier;
 
