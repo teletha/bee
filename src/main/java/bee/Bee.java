@@ -16,6 +16,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -259,7 +260,8 @@ public class Bee {
         } finally {
             stopwatch.stop();
 
-            ui.title(String.format("Build %s\t%s\t%s", result, LocalDateTime.now(), stopwatch));
+            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            ui.title(String.format("Build %s \t %s \t %s", result, format.format(LocalDateTime.now()), stopwatch));
         }
     }
 
