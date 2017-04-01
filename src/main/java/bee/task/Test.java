@@ -9,8 +9,6 @@
  */
 package bee.task;
 
-import static bee.util.Inputs.*;
-
 import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -34,7 +32,7 @@ import bee.util.Java.JVM;
 import kiss.I;
 
 /**
- * @version 2016/10/12 14:54:35
+ * @version 2017/04/01 19:53:40
  */
 public class Test extends Task {
 
@@ -63,7 +61,7 @@ public class Test extends Task {
     }
 
     /**
-     * @version 2016/12/12 14:42:20
+     * @version 2017/04/01 19:53:45
      */
     private static final class Junit extends JVM {
 
@@ -83,12 +81,13 @@ public class Test extends Task {
             // execute test classes
             int runs = 0;
             int skips = 0;
+            int shows = 0;
             long times = 0;
             List<Failure> fails = new ArrayList();
             List<Failure> errors = new ArrayList();
 
             JUnitCore core = new JUnitCore();
-            ui.talk("Run\tFail\tError\tSkip\tTime(sec)");
+            ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
 
             for (Path path : tests) {
                 String fqcn = classes.relativize(path).toString();
@@ -114,11 +113,14 @@ public class Test extends Task {
                         }
                     }
 
+                    boolean show = fail.isEmpty() && error.isEmpty() && result.getIgnoreCount() == 0;
+
                     ui.talk(buildResult(result.getRunCount(), fail.size(), error.size(), result.getIgnoreCount(), result
-                            .getRunTime(), fqcn));
+                            .getRunTime(), fqcn) + (show ? "\r" : ""));
 
                     runs += result.getRunCount();
                     skips += result.getIgnoreCount();
+                    if (show) shows++;
                     times += result.getRunTime();
                     fails.addAll(fail);
                     errors.addAll(error);
@@ -129,8 +131,8 @@ public class Test extends Task {
                 }
             }
 
-            ui.talk("Run\tFail\tError\tSkip\tTime(sec)");
-            ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL"));
+            if (0 < shows) ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
+            ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + tests.size() + " classes)"));
 
             if (fails.size() != 0 || errors.size() != 0) {
                 TaskFailure failure = new TaskFailure("Test has failed.");
@@ -164,11 +166,7 @@ public class Test extends Task {
          */
         private String buildResult(int tests, int fails, int errors, int ignores, long time, String name) {
             StringBuilder builder = new StringBuilder();
-            builder.append(justify(String.valueOf(tests), 5)).append("\t");
-            builder.append(justify(String.valueOf(fails), 5)).append("\t");
-            builder.append(justify(String.valueOf(errors), 5)).append("\t");
-            builder.append(justify(String.valueOf(ignores), 5)).append("\t");
-            builder.append(justify(String.valueOf((float) time / 1000), 5)).append("\t\t\t").append(name);
+            builder.append(String.format("%-8d\t%-8d\t%-8d\t%-8d\t%.3f\t\t\t%s", tests, fails, errors, ignores, (float) time / 1000, name));
 
             if (errors != 0) {
                 builder.append("  <<<  ERROR!");

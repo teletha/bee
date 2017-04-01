@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -258,7 +259,7 @@ public class Bee {
         } finally {
             stopwatch.stop();
 
-            ui.title("BUILD " + result + "        TOTAL TIME: " + stopwatch);
+            ui.title(String.format("Build %s\t%s\t%s", result, LocalDateTime.now(), stopwatch));
         }
     }
 
@@ -346,8 +347,6 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            // bee.execute("doc");
-            // bee.execute("install");
             bee.execute("help");
         } else {
             Bee bee = new Bee();

@@ -108,28 +108,4 @@ public class Inputs {
         }
         return builder.toString();
     }
-
-    /**
-     * <p>
-     * Justify user input.
-     * </p>
-     * 
-     * @param input
-     * @param size
-     * @return
-     */
-    public static String justify(String input, int size) {
-        int length = input.length();
-
-        if (size <= length) {
-            return input;
-        }
-
-        StringBuilder builder = new StringBuilder(input);
-
-        for (int i = size - length; 0 < i; i--) {
-            builder.append(" ");
-        }
-        return builder.toString();
-    }
 }
