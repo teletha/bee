@@ -218,7 +218,7 @@ public class ZipArchiver {
          * {@inheritDoc}
          */
         @Override
-        public void dispose() {
+        public void vandalize() {
             try {
                 super.close();
             } catch (IOException e) {
