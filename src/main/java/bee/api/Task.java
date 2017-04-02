@@ -403,7 +403,7 @@ public abstract class Task implements Extensible {
         public TaskLifestyle(Class modelClass) {
             super(modelClass);
             enhancer.setSuperclass(modelClass);
-            enhancer.setCallback(I.make(CommandInterceptor.class));
+            enhancer.setCallback(I.make(Interceptor.class));
         }
 
         /**
@@ -419,7 +419,7 @@ public abstract class Task implements Extensible {
      * @version 2017/04/02 15:40:36
      */
     @Manageable(lifestyle = ProjectSpecific.class)
-    static class CommandInterceptor implements MethodInterceptor {
+    static class Interceptor implements MethodInterceptor {
 
         /** The executed commands results. */
         private final Map<String, Object> results = new HashMap();
@@ -430,7 +430,7 @@ public abstract class Task implements Extensible {
         /**
          * @param ui
          */
-        private CommandInterceptor(UserInterface ui) {
+        private Interceptor(UserInterface ui) {
             this.ui = ui;
         }
 
@@ -440,7 +440,7 @@ public abstract class Task implements Extensible {
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
             Command command = find(method);
-            System.out.println(method + "  " + command);
+
             if (command == null) {
                 return proxy.invokeSuper(obj, args);
             }
@@ -459,18 +459,30 @@ public abstract class Task implements Extensible {
             return result;
         }
 
+        /**
+         * <p>
+         * Find command annotaton.
+         * </p>
+         * 
+         * @param method
+         * @return
+         */
         private Command find(Method method) {
-            for (Entry<Method, List<Annotation>> entry : Model.collectAnnotatedMethods(method.getDeclaringClass()).entrySet()) {
-                System.out.println(entry.getKey() + " " + method);
-                if (entry.getKey().toString().equals(method.toString())) {
-                    for (Annotation annotation : entry.getValue()) {
-                        if (annotation.annotationType() == Command.class) {
-                            return (Command) annotation;
+            Class clazz = method.getDeclaringClass();
+
+            while (clazz != Object.class) {
+                for (Method m : clazz.getDeclaredMethods()) {
+                    if (m.getName().contentEquals(method.getName()) && Arrays
+                            .deepEquals(m.getParameterTypes(), method.getParameterTypes())) {
+                        Command command = m.getAnnotation(Command.class);
+
+                        if (command != null) {
+                            return command;
                         }
                     }
                 }
+                clazz = clazz.getSuperclass();
             }
-
             return null;
         }
     }
