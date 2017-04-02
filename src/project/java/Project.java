@@ -26,6 +26,7 @@ public class Project extends bee.api.Project {
 
         require("com.github.teletha", "sinobu", "1.0");
         require("com.github.teletha", "antibug", "0.3").atTest();
+        require("cglib", "cglib", "3.2.5");
         require("junit", "junit", "4.12").atProvided();
         require(AetherGroup, "aether-api", AetherVersion);
         require(AetherGroup, "aether-util", AetherVersion);
@@ -36,6 +37,7 @@ public class Project extends bee.api.Project {
         require("org.slf4j", "slf4j-nop", "1.7.24");
         requireJavaTools().atSystem();
 
+        unrequire("org.apache.ant", "ant"); // from cglib
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 

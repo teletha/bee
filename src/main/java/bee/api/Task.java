@@ -18,6 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,15 +28,21 @@ import java.util.TreeMap;
 import bee.Platform;
 import bee.TaskFailure;
 import bee.UserInterface;
+import bee.api.Task.TaskLifestyle;
 import bee.util.Inputs;
 import kiss.Extensible;
 import kiss.I;
+import kiss.Manageable;
 import kiss.XML;
 import kiss.model.Model;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
 /**
  * @version 2017/03/04 13:26:53
  */
+@Manageable(lifestyle = TaskLifestyle.class)
 public abstract class Task implements Extensible {
 
     /** The common task repository. */
@@ -380,6 +387,76 @@ public abstract class Task implements Extensible {
             } else if (descriptions.containsKey(name)) {
                 defaultCommnad = name;
             }
+        }
+    }
+
+    /**
+     * @version 2017/04/02 15:52:06
+     */
+    static class TaskLifestyle extends kiss.Prototype {
+
+        private final Enhancer enhancer = new Enhancer();
+
+        /**
+         * @param modelClass
+         */
+        public TaskLifestyle(Class modelClass) {
+            super(modelClass);
+            enhancer.setSuperclass(modelClass);
+            enhancer.setCallback(I.make(CommandInterceptor.class));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Object get() {
+            return enhancer.create();
+        }
+    }
+
+    /**
+     * @version 2017/04/02 15:40:36
+     */
+    @Manageable(lifestyle = ProjectSpecific.class)
+    static class CommandInterceptor implements MethodInterceptor {
+
+        /** The executed commands results. */
+        private final Map<String, Object> results = new HashMap();
+
+        /** The user interface. */
+        private final UserInterface ui;
+
+        /**
+         * @param ui
+         */
+        private CommandInterceptor(UserInterface ui) {
+            this.ui = ui;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+            Command annotation = method.getAnnotation(Command.class);
+
+            if (annotation == null) {
+                return proxy.invokeSuper(obj, args);
+            }
+
+            String name = Inputs.hyphenize(method.getDeclaringClass().getSimpleName()) + ":" + method.getName();
+
+            Object result = results.get(name);
+
+            if (!results.containsKey(name)) {
+                ui.startCommand(name, annotation);
+                result = proxy.invokeSuper(obj, args);
+                ui.endCommand(name, annotation);
+
+                results.put(name, result);
+            }
+            return result;
         }
     }
 }
