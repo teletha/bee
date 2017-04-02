@@ -108,41 +108,6 @@ public class Eclipse extends Task implements IDESupport {
 
     /**
      * <p>
-     * Rewrite sibling eclipse projects to use the current project directly.
-     * </p>
-     */
-    @Command("Rewrite sibling eclipse projects to use the current project directly.")
-    public void live() {
-        Path jar = I.make(Repository.class).resolveJar(Bee.API.getLibrary());
-
-        for (Path file : I.walk(project.getRoot().getParent(), "*/.classpath")) {
-            if (!file.startsWith(project.getRoot())) {
-                String targetProjectName = file.getParent().getFileName().toString();
-                String currentProjectName = project.getRoot().getFileName().toString();
-
-                try {
-                    XML root = I.xml(file);
-                    XML classpath = root.find("classpathentry[path=\"" + jar + "\"]");
-
-                    // use project source directly
-                    classpath.attr("kind", "src")
-                            .attr("combineaccessrules", "false")
-                            .attr("path", "/" + currentProjectName)
-                            .attr("sourcepath", null);
-
-                    // rewrite
-                    root.to(Files.newBufferedWriter(file));
-
-                    ui.talk("Project ", targetProjectName, " references ", currentProjectName, " directly.");
-                } catch (IOException e) {
-                    throw I.quiet(e);
-                }
-            }
-        }
-    }
-
-    /**
-     * <p>
      * Create project file.
      * </p>
      * 
@@ -320,6 +285,62 @@ public class Eclipse extends Task implements IDESupport {
      */
     private Path relative(Path path) {
         return project.getRoot().relativize(path);
+    }
+
+    /**
+     * <p>
+     * Rewrite sibling eclipse projects to use the current project directly.
+     * </p>
+     */
+    @Command("Rewrite sibling eclipse projects to use the current project directly.")
+    public void live() {
+        syncProject(true);
+    }
+
+    /**
+     * <p>
+     * Rewrite sibling eclipse projects to use the repository.
+     * </p>
+     */
+    @Command("Rewrite sibling eclipse projects to use the current project directly.")
+    public void repository() {
+        syncProject(false);
+    }
+
+    /**
+     * <p>
+     * Rewrite sibling eclipse projects.
+     * </p>
+     */
+    private void syncProject(boolean live) {
+        String jar = I.make(Repository.class).resolveJar(project.getLibrary()).toString();
+        String currentProjectName = project.getRoot().getFileName().toString();
+
+        String oldPath = live ? jar : "/" + currentProjectName;
+        String newPath = live ? "/" + currentProjectName : jar;
+
+        for (Path file : I.walk(project.getRoot().getParent(), "*/.classpath")) {
+            if (!file.startsWith(project.getRoot())) {
+                String targetProjectName = file.getParent().getFileName().toString();
+
+                try {
+                    XML root = I.xml(file);
+                    XML classpath = root.find("classpathentry[path=\"" + oldPath + "\"]");
+
+                    if (classpath.size() != 0) {
+                        // use project source directly
+                        classpath.attr("kind", live ? "src" : "lib").attr("path", newPath);
+
+                        // rewrite
+                        root.to(Files.newBufferedWriter(file));
+
+                        ui.talk("Project ", targetProjectName, " references ", currentProjectName, live ? " directly." : " in repository.");
+                    }
+                } catch (IOException e) {
+                    throw I.quiet(e);
+                }
+            }
+        }
     }
 
     /**
