@@ -77,7 +77,7 @@ import kiss.Manageable;
 import kiss.Variable;
 
 /**
- * @version 2017/03/09 10:18:33
+ * @version 2017/04/02 13:15:17
  */
 @Manageable(lifestyle = ProjectSpecific.class)
 public class Repository {
@@ -290,6 +290,19 @@ public class Repository {
         }
 
         return true;
+    }
+
+    /**
+     * <p>
+     * Resolve the jar of the specified library.
+     * </p>
+     * 
+     * @param library
+     * @return
+     */
+    public Path resolveJar(Library library) {
+        Path resolved = resolveSubArtifact(library, "");
+        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getJar());
     }
 
     /**

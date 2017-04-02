@@ -23,6 +23,7 @@ import bee.Platform;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Project;
+import bee.api.Repository;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.extension.JavaExtension;
@@ -103,6 +104,42 @@ public class Eclipse extends Task implements IDESupport {
         // if (active) eclipse.close();
         // eclipse.configJDTPreference();
         // if (active) eclipse.open();
+    }
+
+    /**
+     * <p>
+     * Rewrite sibling eclipse projects to use the current project directly.
+     * </p>
+     */
+    @Command("Rewrite sibling eclipse projects to use the current project directly.")
+    public void forceLive() {
+        Path jar = I.make(Repository.class).resolveJar(Bee.API.getLibrary());
+
+        for (Path file : I.walk(project.getRoot().getParent(), "*/.classpath")) {
+            if (!file.startsWith(project.getRoot())) {
+                String targetProjectName = file.getParent().getFileName().toString();
+                String currentProjectName = project.getRoot().getFileName().toString();
+
+                try {
+                    XML root = I.xml(file);
+                    XML classpath = root.find("classpathentry[path=\"" + jar + "\"]");
+
+                    // use project source directly
+                    classpath.attr("kind", "src")
+                            .attr("combineaccessrules", "false")
+                            .attr("path", "/" + currentProjectName)
+                            .attr("sourcepath", null);
+
+                    // rewrite
+                    root.to(Files.newBufferedWriter(file));
+
+                    ui.talk("Project ", targetProjectName, " references ", currentProjectName, " directly.");
+                } catch (IOException e) {
+                    throw I.quiet(e);
+                }
+                return;
+            }
+        }
     }
 
     /**
