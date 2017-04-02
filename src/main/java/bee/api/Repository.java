@@ -688,9 +688,9 @@ public class Repository {
          * {@inheritDoc}
          */
         @Override
-        public Path locate() {
+        public String locate() {
             Path pom = library.getLocalPOM();
-            return pom.getParent().resolve(pom.getFileName().toString().replace(".pom", ".bee"));
+            return pom.getParent().resolve(pom.getFileName().toString().replace(".pom", ".bee")).toString();
         }
 
         /**

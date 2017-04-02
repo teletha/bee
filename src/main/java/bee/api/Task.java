@@ -28,7 +28,7 @@ import java.util.TreeMap;
 import bee.Platform;
 import bee.TaskFailure;
 import bee.UserInterface;
-import bee.api.Task.TaskLifestyle;
+import bee.api.Task.Lifestyle;
 import bee.util.Inputs;
 import kiss.Extensible;
 import kiss.I;
@@ -42,7 +42,7 @@ import net.sf.cglib.proxy.MethodProxy;
 /**
  * @version 2017/03/04 13:26:53
  */
-@Manageable(lifestyle = TaskLifestyle.class)
+@Manageable(lifestyle = Lifestyle.class)
 public abstract class Task implements Extensible {
 
     /** The common task repository. */
@@ -393,14 +393,14 @@ public abstract class Task implements Extensible {
     /**
      * @version 2017/04/02 15:52:06
      */
-    static class TaskLifestyle extends kiss.Prototype {
+    static class Lifestyle extends kiss.Prototype {
 
         private final Enhancer enhancer = new Enhancer();
 
         /**
          * @param modelClass
          */
-        public TaskLifestyle(Class modelClass) {
+        public Lifestyle(Class modelClass) {
             super(modelClass);
             enhancer.setSuperclass(modelClass);
             enhancer.setCallback(I.make(Interceptor.class));
