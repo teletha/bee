@@ -439,9 +439,9 @@ public abstract class Task implements Extensible {
          */
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-            Command annotation = method.getAnnotation(Command.class);
-
-            if (annotation == null) {
+            Command command = find(method);
+            System.out.println(method + "  " + command);
+            if (command == null) {
                 return proxy.invokeSuper(obj, args);
             }
 
@@ -450,13 +450,28 @@ public abstract class Task implements Extensible {
             Object result = results.get(name);
 
             if (!results.containsKey(name)) {
-                ui.startCommand(name, annotation);
+                ui.startCommand(name, command);
                 result = proxy.invokeSuper(obj, args);
-                ui.endCommand(name, annotation);
+                ui.endCommand(name, command);
 
                 results.put(name, result);
             }
             return result;
+        }
+
+        private Command find(Method method) {
+            for (Entry<Method, List<Annotation>> entry : Model.collectAnnotatedMethods(method.getDeclaringClass()).entrySet()) {
+                System.out.println(entry.getKey() + " " + method);
+                if (entry.getKey().toString().equals(method.toString())) {
+                    for (Annotation annotation : entry.getValue()) {
+                        if (annotation.annotationType() == Command.class) {
+                            return (Command) annotation;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
