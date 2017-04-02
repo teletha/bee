@@ -112,7 +112,7 @@ public class Eclipse extends Task implements IDESupport {
      * </p>
      */
     @Command("Rewrite sibling eclipse projects to use the current project directly.")
-    public void forceLive() {
+    public void live() {
         Path jar = I.make(Repository.class).resolveJar(Bee.API.getLibrary());
 
         for (Path file : I.walk(project.getRoot().getParent(), "*/.classpath")) {
@@ -137,7 +137,6 @@ public class Eclipse extends Task implements IDESupport {
                 } catch (IOException e) {
                     throw I.quiet(e);
                 }
-                return;
             }
         }
     }
