@@ -28,7 +28,6 @@ import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.RESTClient;
 import kiss.I;
-import kiss.Signal;
 
 /**
  * @version 2017/01/16 14:47:15
@@ -49,7 +48,7 @@ public class Bintray extends Task {
         Repository repo = Repository.of(project.getVersionControlSystem());
         Package pack = Package.of(repo, project);
 
-        Signal.from(repo)
+        I.signal(repo)
                 .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
                 .errorResume(client.post(uri + "repos/" + repo, repo))
                 .flatMap(r -> client.patch(uri + "packages/" + pack, pack))

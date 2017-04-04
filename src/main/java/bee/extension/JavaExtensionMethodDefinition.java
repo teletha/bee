@@ -23,7 +23,6 @@ import java.util.StringJoiner;
 
 import bee.Platform;
 import kiss.I;
-import kiss.Signal;
 
 /**
  * @version 2016/12/13 15:34:13
@@ -126,7 +125,7 @@ class JavaExtensionMethodDefinition {
          */
         @Override
         public String toString() {
-            List<Type> declarations = Signal.from(types).skip(extensionClassTypes).toList();
+            List<Type> declarations = I.signal(types).skip(extensionClassTypes).toList();
 
             return declarations.isEmpty() ? "" : new SignatureWriter(null).write(declarations, "", "<", ">");
         }
