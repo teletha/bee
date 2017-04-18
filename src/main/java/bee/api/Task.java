@@ -393,7 +393,7 @@ public abstract class Task implements Extensible {
     /**
      * @version 2017/04/02 15:52:06
      */
-    static class Lifestyle extends kiss.Prototype {
+    static class Lifestyle extends kiss.Prototype<Object> {
 
         private final Enhancer enhancer = new Enhancer();
 
