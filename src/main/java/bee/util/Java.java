@@ -41,6 +41,7 @@ import bee.TaskFailure;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
+import filer.Filer;
 import kiss.Decoder;
 import kiss.Encoder;
 import kiss.I;
@@ -135,7 +136,7 @@ public class Java {
     public Java classPath(Class... classes) {
         if (classes != null) {
             for (Class clazz : classes) {
-                classPath(I.locate(clazz));
+                classPath(Filer.locate(clazz));
             }
         }
 

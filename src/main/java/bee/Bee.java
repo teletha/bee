@@ -33,6 +33,7 @@ import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import bee.util.PathPattern;
 import bee.util.Paths;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -143,7 +144,7 @@ public class Bee {
         }
 
         if (directory == null) {
-            directory = I.locate("");
+            directory = Filer.locate("");
         }
 
         if (Files.notExists(directory)) {
@@ -313,7 +314,7 @@ public class Bee {
             JavaCompiler compiler = new JavaCompiler();
             Path projectFile = project.getProjectDefinition();
             compiler.addSourceDirectory(new PathPattern(projectFile.getParent(), projectFile.getFileName().toString()));
-            compiler.addClassPath(I.locate(Bee.class));
+            compiler.addClassPath(Filer.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();
         }

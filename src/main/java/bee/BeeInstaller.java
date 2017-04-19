@@ -22,6 +22,7 @@ import java.util.List;
 import bee.api.Repository;
 import bee.util.JarArchiver;
 import bee.util.Paths;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -38,7 +39,7 @@ public class BeeInstaller {
      * </p>
      */
     public static final void main(String... args) {
-        install(I.locate(BeeInstaller.class));
+        install(Filer.locate(BeeInstaller.class));
     }
 
     /**
@@ -56,7 +57,7 @@ public class BeeInstaller {
             Path dest = BeeHome.resolve(fileName);
 
             // delete old files
-            for (Path jar : I.walk(BeeHome, "bee-*.jar")) {
+            for (Path jar : Filer.walk(BeeHome, "bee-*.jar")) {
                 try {
                     Files.delete(jar);
                 } catch (Exception e) {
@@ -68,7 +69,7 @@ public class BeeInstaller {
                 // The current bee.jar is newer.
                 // We should copy it to JDK directory.
                 // This process is mainly used by Bee users while install phase.
-                I.copy(source, dest);
+                Filer.copy(source, dest);
                 ui.talk("Install new bee library. [", dest, "]");
             }
 
@@ -89,13 +90,13 @@ public class BeeInstaller {
             ui.talk("Write new bat file. [", Bee, "]");
 
             // create bee-api library and sources
-            Path classes = I.locateTemporary();
+            Path classes = Filer.locateTemporary();
             JarArchiver archiver = new JarArchiver();
             archiver.add(source, "bee/**", "!**.java");
             archiver.add(source, "META-INF/services/**");
             archiver.pack(classes);
 
-            Path sources = I.locateTemporary();
+            Path sources = Filer.locateTemporary();
             archiver = new JarArchiver();
             archiver.add(source, "bee/**.java");
             archiver.add(source, "META-INF/services/**");

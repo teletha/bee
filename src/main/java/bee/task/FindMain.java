@@ -22,6 +22,7 @@ import org.objectweb.asm.Opcodes;
 
 import bee.api.Command;
 import bee.api.Task;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -120,7 +121,7 @@ public class FindMain extends Task {
             try {
                 require(Compile.class).source();
 
-                for (Path path : I.walk(project.getClasses(), "**.class")) {
+                for (Path path : Filer.walk(project.getClasses(), "**.class")) {
                     ClassReader reader = new ClassReader(Files.newInputStream(path));
                     reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 }

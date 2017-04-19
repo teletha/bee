@@ -40,6 +40,7 @@ import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import bee.util.PathSet;
+import filer.Filer;
 import kiss.I;
 import kiss.XML;
 
@@ -104,9 +105,9 @@ public class Project {
 
         if (projectClass.isMemberClass() || projectClass.isAnonymousClass()) {
             // fabric project
-            this.root = I.locate("").toAbsolutePath();
+            this.root = Filer.locate("").toAbsolutePath();
         } else {
-            Path archive = I.locate(projectClass);
+            Path archive = Filer.locate(projectClass);
 
             if (Files.isDirectory(archive)) {
                 // directory
@@ -543,7 +544,7 @@ public class Project {
     public PathSet getSourceSet() {
         PathSet set = new PathSet();
 
-        for (Path path : I.walkDirectory(getSources(), "*")) {
+        for (Path path : Filer.walkDirectory(getSources(), "*")) {
             set.add(path);
         }
         return set;
@@ -581,7 +582,7 @@ public class Project {
     public PathSet getTestSourceSet() {
         PathSet set = new PathSet();
 
-        for (Path path : I.walkDirectory(getTestSources(), "*")) {
+        for (Path path : Filer.walkDirectory(getTestSources(), "*")) {
             set.add(path);
         }
         return set;
@@ -619,7 +620,7 @@ public class Project {
     public PathSet getProjectSourceSet() {
         PathSet set = new PathSet();
 
-        for (Path path : I.walkDirectory(getProjectSources(), "*")) {
+        for (Path path : Filer.walkDirectory(getProjectSources(), "*")) {
             set.add(path);
         }
         return set;
@@ -686,7 +687,7 @@ public class Project {
         List<AnnotationValidator> validators = I.find(AnnotationValidator.class);
 
         if (!validators.isEmpty()) {
-            libraries.add(I.locate(Bee.class));
+            libraries.add(Filer.locate(Bee.class));
         }
 
         return libraries;

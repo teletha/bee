@@ -19,6 +19,7 @@ import java.util.List;
 
 import bee.Platform;
 import bee.UserInterface;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -212,7 +213,7 @@ public class Process {
             }
 
             if (directory == null) {
-                directory = I.locateTemporary();
+                directory = Filer.locateTemporary();
             }
 
             if (Files.notExists(directory)) {

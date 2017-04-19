@@ -51,6 +51,7 @@ import javax.tools.ToolProvider;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Library;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -184,7 +185,7 @@ public class JavaCompiler {
      */
     public void addSourceDirectory(String path) {
         if (path != null) {
-            addSourceDirectory(I.locate(path));
+            addSourceDirectory(Filer.locate(path));
         }
     }
 
@@ -246,7 +247,7 @@ public class JavaCompiler {
     public void addProcessor(Class<? extends Processor> processor) {
         if (processor != null && !processorClasses.contains(processor)) {
             processorClasses.add(processor.getName());
-            processorClassPaths.add(I.locate(processor).toAbsolutePath());
+            processorClassPaths.add(Filer.locate(processor).toAbsolutePath());
         }
     }
 

@@ -21,6 +21,7 @@ import bee.api.Scope;
 import bee.api.Task;
 import bee.util.Process;
 import bee.util.ZipArchiver;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -42,7 +43,7 @@ public class Exe extends Task {
      */
     public Exe() {
         try {
-            temporary = I.locateTemporary();
+            temporary = Filer.locateTemporary();
             zipOutput = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".zip");
 
             Files.createDirectories(temporary);

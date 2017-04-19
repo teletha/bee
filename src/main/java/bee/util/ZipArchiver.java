@@ -27,6 +27,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import bee.Platform;
+import filer.Filer;
 import kiss.Disposable;
 import kiss.I;
 
@@ -140,7 +141,7 @@ public class ZipArchiver {
                         Path base = Files.isDirectory(entry.base) ? entry.base : entry.base.getParent();
 
                         // scan entry
-                        I.walk(entry.base, entry.patterns).forEach(file -> {
+                        Filer.walk(entry.base, entry.patterns).forEach(file -> {
                             try {
                                 String path = entry.directory + base.relativize(file).toString().replace(File.separatorChar, '/');
                                 BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);

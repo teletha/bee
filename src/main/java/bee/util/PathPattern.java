@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import kiss.I;
+import filer.Filer;
 
 /**
  * @version 2012/03/26 15:45:26
@@ -60,6 +60,6 @@ public final class PathPattern {
      * @return
      */
     public List<Path> list(String... patterns) {
-        return I.walk(base, mix(patterns));
+        return Filer.walk(base, mix(patterns));
     }
 }

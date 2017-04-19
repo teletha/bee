@@ -18,6 +18,7 @@ import java.util.List;
 
 import bee.api.License;
 import bee.api.Project;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -122,10 +123,10 @@ public class BlinkProject extends Project {
      */
     public final Path importBy(Class model) {
         Path file = buildJavaSourceFilePath(model.getName());
-        Path original = I.locate("src/test/java").resolve(file);
+        Path original = Filer.locate("src/test/java").resolve(file);
         Path copy = getRoot().resolve("src/main/java").resolve(file);
 
-        I.copy(original, copy);
+        Filer.copy(original, copy);
 
         return copy;
     }
@@ -139,10 +140,10 @@ public class BlinkProject extends Project {
      */
     public final Path importByPackageOf(Class model) {
         Path directory = buildJavaSourceFilePath(model.getName()).getParent();
-        Path original = I.locate("src/test/java").resolve(directory);
+        Path original = Filer.locate("src/test/java").resolve(directory);
         Path copy = getRoot().resolve("src/main/java").resolve(directory);
 
-        I.copy(original, copy);
+        Filer.copy(original, copy);
 
         return copy;
     }
@@ -313,7 +314,7 @@ public class BlinkProject extends Project {
             initialized = true;
 
             // create root directory
-            root = I.locateTemporary();
+            root = Filer.locateTemporary();
         }
     }
 

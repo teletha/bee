@@ -15,6 +15,7 @@ import bee.api.Command;
 import bee.api.Project;
 import bee.api.Repository;
 import bee.api.Task;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -34,7 +35,7 @@ public class Install extends Task {
 
     @Command("Install local jar file into the local repository.")
     public void jar() {
-        Path selected = ui.ask("Select a jar file to install.", I.walk(project.getRoot(), "*.jar"));
+        Path selected = ui.ask("Select a jar file to install.", Filer.walk(project.getRoot(), "*.jar"));
         String group = ui.ask("Input group name.", selected.getFileName().toString());
         String product = ui.ask("Input product name.", group);
         String version = ui.ask("Input product version.", "1.0");

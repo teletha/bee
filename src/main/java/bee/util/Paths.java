@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import bee.UserInterface;
 import bee.api.Project;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -175,7 +176,7 @@ public class Paths {
     public static Path write(String text) {
         Objects.requireNonNull(text);
 
-        Path file = I.locateTemporary();
+        Path file = Filer.locateTemporary();
         Project project = I.make(Project.class);
 
         try {

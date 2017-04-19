@@ -34,6 +34,7 @@ import bee.util.Java;
 import bee.util.Java.JVM;
 import bee.util.PathPattern;
 import bee.util.Process;
+import filer.Filer;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
@@ -319,7 +320,7 @@ public class Eclipse extends Task implements IDESupport {
         String oldPath = live ? jar : "/" + currentProjectName;
         String newPath = live ? "/" + currentProjectName : jar;
 
-        for (Path file : I.walk(project.getRoot().getParent(), "*/.classpath")) {
+        for (Path file : Filer.walk(project.getRoot().getParent(), "*/.classpath")) {
             if (!file.startsWith(project.getRoot())) {
                 String targetProjectName = file.getParent().getFileName().toString();
 
@@ -411,7 +412,7 @@ public class Eclipse extends Task implements IDESupport {
             Path directory = locate().get().getParent();
 
             for (String lib : System.getProperty("java.library.path").split(File.pathSeparator)) {
-                if (I.locate(lib).equals(directory)) {
+                if (Filer.locate(lib).equals(directory)) {
                     return true;
                 }
             }
@@ -449,7 +450,7 @@ public class Eclipse extends Task implements IDESupport {
             try {
                 Properties properties = new Properties();
                 properties.load(Files.newInputStream(locate().get().resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
-                return I.locate(properties.getProperty("RECENT_WORKSPACES"));
+                return Filer.locate(properties.getProperty("RECENT_WORKSPACES"));
             } catch (IOException e) {
                 throw I.quiet(e);
             }
@@ -649,7 +650,7 @@ public class Eclipse extends Task implements IDESupport {
                     result = result.substring(6).trim();
                 }
 
-                return Variable.of(result).map(I::locate).require(Files::exists);
+                return Variable.of(result).map(Filer::locate).require(Files::exists);
             }
         }
     }

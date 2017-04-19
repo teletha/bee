@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import bee.Platform;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -56,7 +57,7 @@ class JavaExtensionMethodDefinition {
         this.extensionClass = method.getDeclaringClass();
         this.method = method;
 
-        Path path = I.locate(targetClass);
+        Path path = Filer.locate(targetClass);
         this.archive = path == null ? Platform.JavaRuntime : path;
     }
 

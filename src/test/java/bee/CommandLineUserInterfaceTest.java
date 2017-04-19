@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import antibug.CommandLineUser;
-import kiss.I;
+import filer.Filer;
 
 /**
  * @version 2012/04/15 15:15:50
@@ -95,13 +95,13 @@ public class CommandLineUserInterfaceTest {
     @Test
     @Ignore
     public void inputPath() throws Exception {
-        Path def = I.locate("default");
+        Path def = Filer.locate("default");
 
         user.willInput("path");
-        assert ui.ask("question", def).equals(I.locate("path"));
+        assert ui.ask("question", def).equals(Filer.locate("path"));
 
         user.willInput("path/with/directory");
-        assert ui.ask("question", def).equals(I.locate("path/with/directory"));
+        assert ui.ask("question", def).equals(Filer.locate("path/with/directory"));
 
         user.willInput("   ");
         assert ui.ask("question", def).equals(def);

@@ -31,6 +31,7 @@ import bee.Platform;
 import bee.UserInterface;
 import bee.api.Project;
 import bee.util.Paths;
+import filer.Filer;
 import kiss.I;
 import kiss.Table;
 
@@ -131,7 +132,7 @@ public class JavaExtension {
                         }
 
                         // cleanup temporary files
-                        // I.delete(enhanced.getParent(), "zipfstmp*");
+                        // Filer.delete(enhanced.getParent(), "zipfstmp*");
                         ui.talk("Enhance " + archive + " to " + enhanced + ".");
                     }
                 }
@@ -167,7 +168,7 @@ public class JavaExtension {
      * @return
      */
     private List<Path> collectJRE() {
-        return I.walk(Platform.JavaRuntime
+        return Filer.walk(Platform.JavaRuntime
                 .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!java*", "!security/*", "!deploy.jar");
     }
 
@@ -184,9 +185,9 @@ public class JavaExtension {
         Path root = Paths.createDirectory(project.getOutput().resolve("local-library"));
 
         // delete old libraries at later
-        for (Path path : I.walk(root, name + "-*.jar")) {
+        for (Path path : Filer.walk(root, name + "-*.jar")) {
             try {
-                I.delete(path);
+                Filer.delete(path);
             } catch (Exception e) {
                 // ignore
             }

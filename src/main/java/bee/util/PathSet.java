@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import kiss.I;
+import filer.Filer;
 
 /**
  * @version 2012/03/26 15:44:18
@@ -93,7 +93,7 @@ public class PathSet implements Iterable<PathPattern> {
         Paths.createDirectory(destination);
 
         for (PathPattern pattern : set) {
-            I.copy(pattern.base, destination, pattern.mix(patterns));
+            Filer.copy(pattern.base, destination, pattern.mix(patterns));
         }
     }
 
@@ -106,7 +106,7 @@ public class PathSet implements Iterable<PathPattern> {
      */
     public void moveTo(Path destination, String... patterns) {
         for (PathPattern pattern : set) {
-            I.move(pattern.base, destination, pattern.mix(patterns));
+            Filer.move(pattern.base, destination, pattern.mix(patterns));
         }
     }
 
@@ -119,7 +119,7 @@ public class PathSet implements Iterable<PathPattern> {
      */
     public void delete(String... patterns) {
         for (PathPattern pattern : set) {
-            I.delete(pattern.base, pattern.mix(patterns));
+            Filer.delete(pattern.base, pattern.mix(patterns));
         }
     }
 
@@ -142,7 +142,7 @@ public class PathSet implements Iterable<PathPattern> {
         List<Path> paths = new ArrayList();
 
         for (PathPattern pattern : set) {
-            paths.addAll(I.walk(pattern.base, pattern.mix()));
+            paths.addAll(Filer.walk(pattern.base, pattern.mix()));
         }
         return paths;
     }

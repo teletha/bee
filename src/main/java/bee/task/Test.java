@@ -29,6 +29,7 @@ import bee.api.Scope;
 import bee.api.Task;
 import bee.util.Java;
 import bee.util.Java.JVM;
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -70,8 +71,8 @@ public class Test extends Task {
          */
         @Override
         public void process() throws Exception {
-            Path classes = I.locate(args[0]);
-            List<Path> tests = I.walk(classes, "**Test.class");
+            Path classes = Filer.locate(args[0]);
+            List<Path> tests = Filer.walk(classes, "**Test.class");
 
             if (tests.isEmpty()) {
                 ui.talk("Nothing to test");

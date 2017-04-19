@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map.Entry;
 
+import filer.Filer;
 import kiss.I;
 
 /**
@@ -72,7 +73,7 @@ public final class Platform {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
                 for (String value : entry.getValue().split(File.pathSeparator)) {
-                    Path directory = I.locate(value);
+                    Path directory = Filer.locate(value);
                     Path linux = directory.resolve("javac");
                     Path windows = directory.resolve("javac.exe");
 
@@ -119,7 +120,7 @@ public final class Platform {
         for (Entry<String, String> entry : System.getenv().entrySet()) {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 for (String path : entry.getValue().split(File.pathSeparator)) {
-                    Path mvn = I.locate(path).resolve("mvn");
+                    Path mvn = Filer.locate(path).resolve("mvn");
 
                     if (Files.exists(mvn)) {
                         // maven is here
@@ -130,7 +131,7 @@ public final class Platform {
                             String location = I.xml(conf).find("localRepository").text();
 
                             if (location.length() != 0) {
-                                return I.locate(location);
+                                return Filer.locate(location);
                             }
                         }
                     }
