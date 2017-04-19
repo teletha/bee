@@ -325,7 +325,7 @@ public class Eclipse extends Task implements IDESupport {
                 String targetProjectName = file.getParent().getFileName().toString();
 
                 try {
-                    XML root = I.xml(file);
+                    XML root = I.xml(file.toFile());
                     XML classpath = root.find("classpathentry[path=\"" + oldPath + "\"]");
 
                     if (classpath.size() != 0) {

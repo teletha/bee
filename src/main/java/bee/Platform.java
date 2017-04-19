@@ -128,7 +128,7 @@ public final class Platform {
                         Path conf = home.resolve("conf/settings.xml");
 
                         if (Files.exists(conf)) {
-                            String location = I.xml(conf).find("localRepository").text();
+                            String location = I.xml(conf.toFile()).find("localRepository").text();
 
                             if (location.length() != 0) {
                                 return Filer.locate(location);
