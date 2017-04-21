@@ -345,6 +345,14 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Eclipse";
+    }
+
+    /**
      * @version 2016/12/12 14:44:57
      */
     private static class LombokInstaller extends JVM {

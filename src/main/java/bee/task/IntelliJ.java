@@ -120,4 +120,12 @@ public class IntelliJ extends Task implements IDESupport {
             }
         });
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "IntelliJ";
+    }
 }
