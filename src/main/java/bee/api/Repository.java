@@ -74,12 +74,13 @@ import bee.util.TransferView;
 import kiss.Configurable;
 import kiss.I;
 import kiss.Manageable;
+import kiss.Singleton;
 import kiss.Variable;
 
 /**
  * @version 2017/04/02 13:15:17
  */
-@Manageable(lifestyle = ProjectSpecific.class)
+@Manageable(lifestyle = Singleton.class)
 public class Repository {
 
     /** The path to remote repository. */

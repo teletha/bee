@@ -33,6 +33,7 @@ import bee.util.Inputs;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
+import kiss.Singleton;
 import kiss.XML;
 import kiss.model.Model;
 import net.sf.cglib.proxy.Enhancer;
@@ -418,7 +419,7 @@ public abstract class Task implements Extensible {
     /**
      * @version 2017/04/02 15:40:36
      */
-    @Manageable(lifestyle = ProjectSpecific.class)
+    @Manageable(lifestyle = Singleton.class)
     static class Interceptor implements MethodInterceptor {
 
         /** The executed commands results. */
