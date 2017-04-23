@@ -8,7 +8,11 @@
  *
  *          http://opensource.org/licenses/mit-license.php
  */
+import java.lang.reflect.Field;
+import java.util.TreeSet;
+
 import bee.Bee;
+import kiss.I;
 
 /**
  * @version 2016/04/21 14:11:15
@@ -45,5 +49,23 @@ public class Project extends bee.api.Project {
         repository("https://repo.eclipse.org/content/repositories/egit-releases/");
 
         versionControlSystem("https://github.com/teletha/bee");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        try {
+            Field libraries = bee.api.Project.class.getDeclaredField("libraries");
+            libraries.setAccessible(true);
+            Object stored = libraries.get(this);
+            libraries.set(this, new TreeSet());
+            String pom = super.toString();
+            libraries.set(this, stored);
+            return pom;
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
     }
 }
