@@ -140,26 +140,15 @@ public class AnnotationProcessor implements Processor {
     }
 
     /**
-     * @version 2017/04/23 22:19:36
+     * @version 2017/04/24 11:16:20
      */
-    public static class ProjectInfo implements Entry<String, String> {
+    static class ProjectInfo implements Entry<String, String> {
 
         /** The project root path. */
         private Path root;
 
         /** The source directories. */
         private List<Path> sources;
-
-        /** The source directories. */
-        private List<Path> tests;
-
-        /**
-         * 
-         */
-        public ProjectInfo() {
-            this(new Project() {
-            });
-        }
 
         /**
          * @param project
@@ -168,22 +157,10 @@ public class AnnotationProcessor implements Processor {
             setRoot(project.getRoot());
 
             this.sources = new ArrayList();
-            this.tests = new ArrayList();
 
             for (PathPattern path : project.getSourceSet()) {
                 this.sources.add(path.base);
             }
-
-            for (PathPattern path : project.getTestSourceSet()) {
-                this.tests.add(path.base);
-            }
-        }
-
-        /**
-         * @param env
-         */
-        public ProjectInfo(ProcessingEnvironment env) {
-            I.read(env.getOptions().get(getKey()), this);
         }
 
         /**
@@ -220,24 +197,6 @@ public class AnnotationProcessor implements Processor {
          */
         void setSources(List<Path> sources) {
             this.sources = sources;
-        }
-
-        /**
-         * Get the sources property of this {@link AnnotationProcessor.ProjectInfo}.
-         * 
-         * @return The sources property.
-         */
-        public List<Path> getTests() {
-            return tests;
-        }
-
-        /**
-         * Set the sources property of this {@link AnnotationProcessor.ProjectInfo}.
-         * 
-         * @param tests The tests value to set.
-         */
-        void setTests(List<Path> tests) {
-            this.tests = tests;
         }
 
         /**
