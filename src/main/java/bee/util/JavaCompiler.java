@@ -22,6 +22,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
@@ -553,7 +554,7 @@ public class JavaCompiler {
 
             // Invocation
             ErrorListener listener = new ErrorListener();
-            Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), I.$encoding));
+            Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
 
             CompilationTask task = compiler.getTask(null, manager, listener, options, null, manager.getJavaFileObjectsFromFiles(sources));
 

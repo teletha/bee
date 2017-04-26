@@ -12,6 +12,7 @@ package bee;
 import static bee.Platform.*;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
@@ -85,7 +86,7 @@ public class BeeInstaller {
                 // linux
                 // TODO
             }
-            Files.write(Bee, bat, I.$encoding);
+            Files.write(Bee, bat, StandardCharsets.UTF_8);
 
             ui.talk("Write new bat file. [", Bee, "]");
 
