@@ -135,6 +135,18 @@ public class Library implements Comparable<Library> {
 
     /**
      * <p>
+     * This library is needed at Pluggable Annotation Processing (JSR-269) phase.
+     * </p>
+     * 
+     * @return
+     */
+    public Library atAnnotation() {
+        scope = Scope.Annotation;
+        return this;
+    }
+
+    /**
+     * <p>
      * This library is needed at compile phase.
      * </p>
      * 

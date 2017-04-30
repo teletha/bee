@@ -35,7 +35,10 @@ public enum Scope {
     Provided(JavaScopes.PROVIDED),
 
     /** Depend at runtime phase only. */
-    System(JavaScopes.SYSTEM);
+    System(JavaScopes.SYSTEM),
+
+    /** Depend at Pluggable Annotation Processing phase only. */
+    Annotation("Pluggable Annotation Processing");
 
     /** The internal flag. */
     private final String type;
