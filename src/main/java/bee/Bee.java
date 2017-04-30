@@ -241,7 +241,7 @@ public class Bee {
             }
 
             // load new project
-            I.loadAll(projectClass);
+            I.load(projectClass, false);
 
             // compose build
             builds.add(build);

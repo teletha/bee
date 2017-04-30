@@ -28,7 +28,7 @@ import kiss.I;
 public class BlinkProject extends Project {
 
     static {
-        I.loadAll(Task.class);
+        I.load(Task.class, false);
     }
 
     /** The root. */
