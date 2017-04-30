@@ -18,6 +18,7 @@ import java.util.List;
 
 import bee.api.License;
 import bee.api.Project;
+import bee.api.Task;
 import filer.Filer;
 import kiss.I;
 
@@ -27,7 +28,7 @@ import kiss.I;
 public class BlinkProject extends Project {
 
     static {
-        I.load(Bee.class, false);
+        I.loadAll(Task.class);
     }
 
     /** The root. */

@@ -90,7 +90,7 @@ public class Bee {
             throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
         }
 
-        I.load(Bee.class, true);
+        I.load(UserInterfaceLisfestyle.class, true);
     }
 
     private static ClassLoader load(Path path) throws Exception {
@@ -241,7 +241,7 @@ public class Bee {
             }
 
             // load new project
-            I.load(projectClass, false);
+            I.loadAll(projectClass);
 
             // compose build
             builds.add(build);
