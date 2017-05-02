@@ -82,7 +82,7 @@ public class Test extends Task {
             // execute test classes
             int runs = 0;
             int skips = 0;
-            int shows = 0;
+            boolean shows = false;
             long times = 0;
             List<Failure> fails = new ArrayList();
             List<Failure> errors = new ArrayList();
@@ -114,14 +114,17 @@ public class Test extends Task {
                         }
                     }
 
-                    boolean show = fail.isEmpty() && error.isEmpty() && result.getIgnoreCount() == 0;
+                    boolean show = !fail.isEmpty() || !error.isEmpty() || result.getIgnoreCount() != 0;
+
+                    if (!shows) {
+                        shows = show;
+                    }
 
                     ui.talk(buildResult(result.getRunCount(), fail.size(), error.size(), result.getIgnoreCount(), result
-                            .getRunTime(), fqcn) + (show ? "\r" : ""));
+                            .getRunTime(), fqcn) + (show ? "" : "\r"));
 
                     runs += result.getRunCount();
                     skips += result.getIgnoreCount();
-                    if (show) shows++;
                     times += result.getRunTime();
                     fails.addAll(fail);
                     errors.addAll(error);
@@ -132,7 +135,7 @@ public class Test extends Task {
                 }
             }
 
-            if (0 < shows) ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
+            if (shows) ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
             ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + tests.size() + " classes)"));
 
             if (fails.size() != 0 || errors.size() != 0) {
@@ -192,12 +195,12 @@ public class Test extends Task {
                 StackTraceElement element = fail.getException().getStackTrace()[0];
                 int line = element.getClassName().equals(test.getName()) ? element.getLineNumber() : 0;
 
-                String target = desc.getClassName() + "." + desc.getMethodName();
+                String target = desc.getClassName() + "#" + desc.getMethodName();
 
                 if (line != 0) {
                     target = target + "(" + test.getSimpleName() + ".java:" + line + ")";
                 }
-                failure.solve("Fix " + target + "  >>>  " + fail.getMessage().trim().split("[\\r\\n]")[0]);
+                failure.solve("Fix " + target + "\r\n  >>>  " + fail.getMessage().trim().split("[\\r\\n]")[0]);
             }
         }
     }
