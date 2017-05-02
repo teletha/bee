@@ -71,10 +71,10 @@ import bee.Platform;
 import bee.UserInterface;
 import bee.util.Paths;
 import bee.util.TransferView;
-import kiss.Configurable;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
+import kiss.Storable;
 import kiss.Variable;
 
 /**
@@ -660,7 +660,7 @@ public class Repository {
     /**
      * @version 2017/03/09 14:17:27
      */
-    private static final class LibraryInfo implements Configurable<LibraryInfo> {
+    private static final class LibraryInfo implements Storable<LibraryInfo> {
 
         /** The last access time to remote source. */
         public LocalDate lastAccessToSource = LocalDate.MIN;
