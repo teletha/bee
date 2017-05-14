@@ -60,11 +60,11 @@ public class JavaExtension {
         this.ui = ui;
         this.project = project;
 
-        this.methods = I.signal(I.findAs(Extension.class))
+        I.signal(I.findAs(Extension.class))
                 .flatArray(clazz -> clazz.getMethods())
                 .take(this::validateExtensionMethod)
                 .map(JavaExtensionMethodDefinition::new)
-                .toTable(methods, m -> m.archive);
+                .to(e -> methods.push(e.archive, e));
     }
 
     /**
