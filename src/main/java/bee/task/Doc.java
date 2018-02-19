@@ -133,7 +133,7 @@ public class Doc extends Task {
             // success
         } else {
             // fail
-            throw new Error("Javadoc command is failed.");
+            ui.error("Javadoc command is failed.");
         }
     }
 
