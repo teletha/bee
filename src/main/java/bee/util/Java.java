@@ -77,6 +77,12 @@ public class Java {
     /** The execution type. */
     private boolean sync = true;
 
+    /** Xms option. */
+    private int initialMemory = 256;
+
+    /** Xmx option. */
+    private int maxMemory = 2048;
+
     /**
      * Hide Constructor.
      */
@@ -139,6 +145,21 @@ public class Java {
                 classPath(Filer.locate(clazz));
             }
         }
+
+        // API definition
+        return this;
+    }
+
+    /**
+     * Configure memory setting.
+     * 
+     * @param initialMemory A initial memory size (MB).
+     * @param maxMemory A max memory size (MB).
+     * @return
+     */
+    public Java memory(int initialMemory, int maxMemory) {
+        if (0 < initialMemory) this.initialMemory = initialMemory;
+        if (0 < maxMemory) this.maxMemory = maxMemory;
 
         // API definition
         return this;
@@ -222,6 +243,8 @@ public class Java {
         }
 
         command.add("-Dfile.encoding=UTF-8");
+        command.add("-Xms" + initialMemory + "m");
+        command.add("-Xmx" + maxMemory + "m");
 
         command.add(JVM.class.getName());
         command.add(address);
