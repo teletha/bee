@@ -10,9 +10,6 @@
 package bee;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
@@ -74,31 +71,14 @@ public class Bee {
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 
+    /** The root classloader for Bee. */
+    public static final BeeClassLoader ClassLoader = new BeeClassLoader();
+
     /** The project definition file name. */
     private static final String ProjectFile = "Project";
 
-    private static final Method addURL;
-
     static {
-        // Bee requires JDK(tools.jar) surely.
-        try {
-            addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            addURL.setAccessible(true);
-
-            load(Platform.JavaTool);
-        } catch (Exception e) {
-            throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
-        }
-
         I.load(UserInterfaceLisfestyle.class, true);
-    }
-
-    private static ClassLoader load(Path path) throws Exception {
-        ClassLoader loader = ClassLoader.getSystemClassLoader();
-
-        addURL.invoke(loader, path.toUri().toURL());
-
-        return loader;
     }
 
     /** The user interface. */
@@ -220,8 +200,8 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            load(project.getClasses());
-            load(project.getProjectClasses());
+            ClassLoader.add(project.getClasses());
+            ClassLoader.add(project.getProjectClasses());
 
             // create your project
             Class projectClass = Class.forName(ProjectFile);
@@ -237,7 +217,7 @@ public class Bee {
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                load(library.getLocalJar());
+                ClassLoader.add(library.getLocalJar());
             }
 
             // load new project
@@ -350,7 +330,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
+            bee.execute("test");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
