@@ -36,11 +36,7 @@ public final class Platform {
     /** The executable file for Java. */
     public static final Path Java;
 
-    /** The root directory for Java. */
     public static final Path JavaHome;
-
-    /** The rt.jar file for Java. */
-    public static final Path JavaRuntime;
 
     /** The tool.jar file for Java. */
     public static final Path JavaTool;
@@ -102,7 +98,6 @@ public final class Platform {
 
         Java = java;
         JavaHome = java.getParent().getParent();
-        JavaRuntime = JavaHome.resolve("jre/lib/rt.jar");
         JavaTool = JavaHome.resolve("lib/tools.jar");
         Bee = bee;
         BeeHome = JavaHome.resolve("lib/bee");
