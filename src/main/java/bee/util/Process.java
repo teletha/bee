@@ -23,11 +23,7 @@ import filer.Filer;
 import kiss.I;
 
 /**
- * <p>
- * Utility for creating sub process.
- * </p>
- * 
- * @version 2016/12/26 10:18:55
+ * @version 2018/03/29 8:25:35
  */
 public class Process {
 
@@ -255,7 +251,7 @@ public class Process {
     }
 
     /**
-     * @version 2015/06/18 1:55:33
+     * @version 2018/03/29 8:24:46
      */
     private static class ProcessReader extends Thread {
 
@@ -266,8 +262,8 @@ public class Process {
         private Appendable output;
 
         /**
-         * @param input
-         * @param systemOutput
+         * @param input A process output.
+         * @param output Bee input.
          */
         private ProcessReader(InputStreamReader input, Appendable output) {
             this.input = input;
@@ -281,11 +277,12 @@ public class Process {
          * {@inheritDoc}
          */
         @Override
-        public synchronized void start() {
+        public void run() {
             try {
                 int i = input.read();
 
                 while (i != -1) {
+                    System.out.print((char) i);
                     output.append((char) i);
 
                     // read next character
