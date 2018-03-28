@@ -230,10 +230,7 @@ public class Repository {
                 Project dummy = new Project();
                 dummy.product(library.group, library.name, library.version);
 
-                // install(dummy, Platform.JavaTool, Platform.JavaHome.resolve("src.zip"), null);
-                // If this exception will be thrown, it is bug of this program. So we must rethrow
-                // the wrapped error in here.
-                throw new Error("Tools.jar is deprecated.");
+                install(dummy, Platform.JavaTool, Platform.JavaHome.resolve("src.zip"), null);
             }
 
             Dependency dependency = new Dependency(library.artifact, library.scope.toString());

@@ -9,6 +9,7 @@
  */
 package bee.task;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -25,6 +26,7 @@ import bee.api.Project;
 import bee.api.Repository;
 import bee.api.Scope;
 import bee.api.Task;
+import bee.extension.JavaExtension;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.Config;
 import bee.util.Config.Description;
@@ -40,7 +42,7 @@ import kiss.Variable;
 import kiss.XML;
 
 /**
- * @version 2018/03/28 8:13:56
+ * @version 2016/12/12 20:45:06
  */
 public class Eclipse extends Task implements IDESupport {
 
@@ -87,6 +89,22 @@ public class Eclipse extends Task implements IDESupport {
     @Override
     public boolean exist(Project project) {
         return Files.isReadable(project.getRoot().resolve(".classpath"));
+    }
+
+    /**
+     * <p>
+     * Rewrite eclipse internal configuration.
+     * </p>
+     */
+    @Command("Rewrite eclipse internal configuration.")
+    public void rewrite() {
+        EclipseApplication eclipse = EclipseApplication.create();
+
+        boolean active = eclipse.isActive();
+
+        // if (active) eclipse.close();
+        // eclipse.configJDTPreference();
+        // if (active) eclipse.open();
     }
 
     /**
@@ -164,6 +182,27 @@ public class Eclipse extends Task implements IDESupport {
 
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
+
+        // Java extensions
+        JavaExtension extension = I.make(JavaExtension.class);
+
+        boolean needEnhanceJRE = extension.hasJREExtension();
+        needEnhanceJRE = false;
+        String JREName = needEnhanceJRE ? "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project.getProduct() : "";
+        doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
+
+        if (needEnhanceJRE) {
+            String task = "eclipse:rewrite";
+            EclipseApplication eclipse = EclipseApplication.create();
+
+            if (eclipse.isProcessOwner()) {
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    Process.runWith(Platform.Bee, task);
+                }));
+            } else {
+                super.require(task);
+            }
+        }
 
         // write file
         makeFile(file, doc);
@@ -336,10 +375,17 @@ public class Eclipse extends Task implements IDESupport {
     @Manageable(lifestyle = Singleton.class)
     private static abstract class EclipseApplication {
 
+        /** The property key. */
+        private static final String JREKey = "org.eclipse.jdt.launching.PREF_VM_XML";
+
+        /** The current project. */
+        private final Project project;
+
         /**
          * @param project
          */
-        private EclipseApplication() {
+        private EclipseApplication(Project project) {
+            this.project = project;
         }
 
         /**
@@ -367,6 +413,22 @@ public class Eclipse extends Task implements IDESupport {
 
         /**
          * <p>
+         * Check whether this java process is invoked by eclipse application or not.
+         * </p>
+         */
+        final boolean isProcessOwner() {
+            Path directory = locate().get().getParent();
+
+            for (String lib : System.getProperty("java.library.path").split(File.pathSeparator)) {
+                if (Filer.locate(lib).equals(directory)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * <p>
          * Locate the active eclipse application.
          * </p>
          * 
@@ -383,6 +445,113 @@ public class Eclipse extends Task implements IDESupport {
          */
         final Variable<Path> locate() {
             return Variable.of(Config.user(Locator.class).locate());
+        }
+
+        /**
+         * <p>
+         * Locate eclipse workspace directory which is activating now.
+         * </p>
+         * 
+         * @return
+         */
+        final Path locateWorkspace() {
+            try {
+                Properties properties = new Properties();
+                properties.load(Files.newInputStream(locate().get().resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
+                return Filer.locate(properties.getProperty("RECENT_WORKSPACES"));
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+
+        /**
+         * <p>
+         * Locate eclipse workspace directory which is activating now.
+         * </p>
+         * 
+         * @return
+         */
+        final Path locateJREPreference() throws IOException {
+            Path prefs = locateWorkspace().resolve(".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs");
+
+            if (Files.notExists(prefs)) {
+                Files.createFile(prefs);
+            }
+            return prefs;
+        }
+
+        /**
+         * <p>
+         * Write JDT related preference for the current project.
+         * </p>
+         */
+        final void configJDTPreference() {
+            try {
+                Path prefs = locateJREPreference();
+
+                // read as property file
+                Properties properties = new Properties();
+                properties.load(Files.newInputStream(prefs));
+
+                configJRE(properties);
+
+                // rewrite, don't close output stream
+                properties.store(Files.newOutputStream(prefs), "");
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+
+        /**
+         * <p>
+         * Write the project specfiec JRE preference.
+         * </p>
+         * 
+         * @param properties
+         */
+        final void configJRE(Properties properties) {
+            String name = project.getProduct();
+
+            try {
+                // read setting
+                String value = properties.getProperty(JREKey);
+
+                if (value == null || value.isEmpty()) {
+                    value = "<vmSettings defaultVM=\"57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1482986605076\"><vmType id=\"org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType\"><vm id=\"1482986605076\" name=\"Java\" path=\"" + Platform.JavaHome + "\"/></vmType></vmSettings>";
+                }
+
+                XML root = I.xml(value);
+
+                // search the named vm element
+                XML locations = root.find("vm[name=\"" + name + "\"] > libraryLocations");
+
+                if (locations.size() == 0) {
+                    locations = root.find("vmType")
+                            .child("vm")
+                            .attr("name", name)
+                            .attr("id", name.hashCode())
+                            .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
+                            .attr("path", Platform.JavaRuntime.getParent().getParent())
+                            .child("libraryLocations");
+                }
+
+                // remove all existing jars
+                locations.empty();
+
+                // add all specified jars
+                for (Path jar : I.make(JavaExtension.class).enhancedJRE()) {
+                    locations.child("libraryLocation")
+                            .attr("jreJar", jar)
+                            .attr("jreSrc", Platform.JavaHome.resolve("src.zip"))
+                            .attr("pkgRoot", "");
+                }
+
+                // write setting
+                properties.setProperty(JREKey, root.toString());
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw I.quiet(e);
+            }
         }
 
         /**
@@ -440,7 +609,8 @@ public class Eclipse extends Task implements IDESupport {
             /**
              * 
              */
-            private ForWindows() {
+            private ForWindows(Project project) {
+                super(project);
             }
 
             /**
