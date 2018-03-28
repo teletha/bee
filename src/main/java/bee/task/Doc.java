@@ -14,32 +14,26 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doclet;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.Parameter;
-import com.sun.javadoc.RootDoc;
-import com.sun.javadoc.SourcePosition;
-import com.sun.javadoc.Type;
-import com.sun.tools.doclets.standard.Standard;
-import com.sun.tools.javadoc.Main;
+import javax.tools.DocumentationTool;
+import javax.tools.DocumentationTool.DocumentationTask;
+import javax.tools.DocumentationTool.Location;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
+import javax.tools.ToolProvider;
 
-import bee.Bee;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
-import bee.util.PathPattern;
-import filer.Filer;
-import kiss.Extensible;
 import kiss.I;
 
 /**
@@ -50,9 +44,6 @@ public class Doc extends Task {
     /** The output root directory for javadoc. */
     protected Path output;
 
-    /** The custom doclet class. */
-    protected Class<? extends CustomJavadoc> doclet;
-
     /**
      * <p>
      * Generate javadoc with the specified doclet.
@@ -60,80 +51,65 @@ public class Doc extends Task {
      */
     @Command("Generate product javadoc.")
     public void javadoc() {
-        // specify output directory
-        if (output == null) {
-            output = project.getOutput().resolve("api");
-        }
+        try {
+            // specify output directory
+            if (output == null) {
+                output = project.getOutput().resolve("api");
+            }
 
-        if (Files.exists(output) && !Files.isDirectory(output)) {
-            throw new IllegalArgumentException("Javadoc output path is not directory. " + output.toAbsolutePath());
-        }
+            if (Files.exists(output) && !Files.isDirectory(output)) {
+                throw new IllegalArgumentException("Javadoc output path is not directory. " + output.toAbsolutePath());
+            }
 
-        // specify doclet
-        Class docletClass;
+            DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
+            StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
 
-        if (doclet == null) {
-            CustomJavadoc custom = ui.ask("Multiple doclets are found.", I.find(CustomJavadoc.class));
+            List<String> options = new CopyOnWriteArrayList();
 
-            if (custom == null || custom.getClass() == CustomJavadoc.class) {
-                docletClass = Standard.class;
+            // classpath
+            manager.setLocation(StandardLocation.CLASS_PATH, I.signal(project.getDependency(Scope.Compile))
+                    .map(library -> library.getLocalJar().toFile())
+                    .toList());
+
+            // sourcepath
+            manager.setLocation(StandardLocation.CLASS_PATH, I.signal(project.getSourceSet())
+                    .map(d -> d.base.toAbsolutePath().toFile())
+                    .toList());
+
+            // output
+            manager.setLocation(Location.DOCUMENTATION_OUTPUT, Collections.singleton(output.toAbsolutePath().toFile()));
+
+            // encoding
+            options.add("-encoding");
+            options.add("UTF-8");
+
+            // java sources
+            // for (PathPattern sources : project.getSourceSet()) {
+            // for (Path path : sources.list("**.java")) {
+            // options.add(path.toString());
+            // }
+            // }
+            List<File> list = I.signal(project.getSourceSet()).flatIterable(d -> d.list("**.java")).map(p -> p.toFile()).toList();
+
+            // external links
+            options.add("-link");
+            options.add("http://docs.oracle.com/javase/8/docs/api");
+
+            PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
+            DocumentationTask task = doc.getTask(writer, manager, null, null, options, manager.getJavaFileObjectsFromFiles(list));
+            Boolean result = task.call();
+            // int result = Main.execute("", new NoOperationWriter(), writer, writer,
+            // docletClass.getName(), docletClass.getClassLoader(), options
+            // .toArray(new String[options.size()]));
+
+            if (result) {
+                // success
             } else {
-                docletClass = custom.getClass();
+                // fail
+                ui.error("Javadoc command is failed.");
             }
-        } else {
-            docletClass = doclet;
-        }
-
-        List<String> options = new CopyOnWriteArrayList();
-
-        // classpath
-        options.add("-classpath");
-        options.add(project.getDependency(Scope.Compile)
-                .stream()
-                .map(library -> "\"" + library.getLocalJar().toString() + "\"")
-                .collect(Collectors.joining(File.pathSeparator)));
-
-        // sourcepath
-        options.add("-sourcepath");
-        options.add(StreamSupport.stream(project.getSourceSet().spliterator(), false)
-                .map(path -> "\"" + path.base.toAbsolutePath().toString() + "\"")
-                .collect(Collectors.joining(File.pathSeparator)));
-
-        // output
-        if (docletClass == Standard.class) {
-            options.add("-d");
-            options.add(output.toAbsolutePath().toString());
-        }
-
-        // encoding
-        options.add("-encoding");
-        options.add("UTF-8");
-
-        // java sources
-        for (PathPattern sources : project.getSourceSet()) {
-            for (Path path : sources.list("**.java")) {
-                options.add(path.toString());
-            }
-        }
-
-        // external links
-        options.add("-link");
-        options.add("http://docs.oracle.com/javase/8/docs/api");
-
-        // setup
-        CustomJavadoc.outputDirectory = output;
-
-        ui.talk("Use Doclet: " + docletClass.getName());
-
-        PrintWriter writer = new PrintWriter(I.make(UIWriter.class));
-        int result = Main.execute("", new NoOperationWriter(), writer, writer, docletClass.getName(), docletClass.getClassLoader(), options
-                .toArray(new String[options.size()]));
-
-        if (result == 1) {
-            // success
-        } else {
-            // fail
-            ui.error("Javadoc command is failed.");
+        } catch (Exception e) {
+            throw I.quiet(e);
         }
     }
 
@@ -206,79 +182,6 @@ public class Doc extends Task {
         @Override
         public void write(int b) throws IOException {
             // ignore
-        }
-    }
-
-    /**
-     * <p>
-     * Create your custom javadoc view.
-     * </p>
-     * 
-     * @version 2017/03/04 18:28:52
-     */
-    public static class CustomJavadoc extends Doclet implements Extensible {
-
-        /** The root directory for Javadoc. */
-        protected static Path outputDirectory;
-
-        /**
-         * <p>
-         * Start entry point.
-         * </p>
-         * 
-         * @param root
-         * @return
-         */
-        public static boolean start(RootDoc root) {
-            UserInterface ui = I.make(UserInterface.class);
-
-            ui.talk(outputDirectory);
-
-            // build index.html
-            Filer.copy(Filer.locate(Bee.class).resolve("bee/task/javadoc"), outputDirectory, "**");
-
-            for (ClassDoc classDoc : root.classes()) {
-                System.out.format("Class: %s\r\n", classDoc.name() + "  " + classDoc.qualifiedName());
-                for (MethodDoc methodDoc : classDoc.methods()) {
-                    write(methodDoc);
-                }
-            }
-            return false;
-        }
-
-        private static void write(MethodDoc methodDoc) {
-            // ソース位置
-            SourcePosition position = methodDoc.position();
-            int line = position.line();
-            String path;
-
-            try {
-                path = position.file().getCanonicalPath();
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-
-            // 修飾子
-            String modifiersName = methodDoc.modifiers();
-
-            // 戻り値
-            Type returnType = methodDoc.returnType();
-            String returnName = returnType.typeName();
-            if (returnType.dimension() != null) {
-                returnName += returnType.dimension();
-            }
-
-            // メソッド名
-            String methodName = methodDoc.name();
-
-            // パラメータ
-            String paramName = "";
-            for (Parameter parameter : methodDoc.parameters()) {
-                paramName += "".equals(paramName) ? parameter.toString() : ", " + parameter.toString();
-            }
-
-            System.out.format("\t[%s:%03d]", path, line);
-            System.out.format("%s %s %s(%s)\r\n", modifiersName, returnName, methodName, paramName);
         }
     }
 }
