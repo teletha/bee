@@ -85,7 +85,6 @@ public class Bee {
             addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
             addURL.setAccessible(true);
 
-            load(Platform.JavaTool);
         } catch (Exception e) {
             throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
         }
@@ -220,8 +219,8 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            load(project.getClasses());
-            load(project.getProjectClasses());
+            // load(project.getClasses());
+            // load(project.getProjectClasses());
 
             // create your project
             Class projectClass = Class.forName(ProjectFile);
@@ -237,7 +236,7 @@ public class Bee {
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                load(library.getLocalJar());
+                // load(library.getLocalJar());
             }
 
             // load new project
@@ -350,7 +349,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
+            bee.execute("doc");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

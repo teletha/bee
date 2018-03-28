@@ -79,7 +79,7 @@ public class Jar extends Task {
         Doc doc = require(Doc.class);
         doc.javadoc();
 
-        pack("javadoc", new PathSet(doc.output), project.locateJavadocJar());
+        // pack("javadoc", new PathSet(doc.output), project.locateJavadocJar());
     }
 
     /**

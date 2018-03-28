@@ -219,6 +219,7 @@ public class Process {
             if (!Files.isDirectory(directory)) {
                 directory = directory.getParent();
             }
+            builder.redirectErrorStream(true);
             builder.command(command);
 
             java.lang.Process process = builder.start();
@@ -234,7 +235,6 @@ public class Process {
 
             if (showOutput) {
                 new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), output);
-                new ProcessReader(new InputStreamReader(process.getErrorStream(), encoding), output);
             }
 
             if (sync || !userOutput) {
@@ -282,7 +282,6 @@ public class Process {
                 int i = input.read();
 
                 while (i != -1) {
-                    System.out.print((char) i);
                     output.append((char) i);
 
                     // read next character
