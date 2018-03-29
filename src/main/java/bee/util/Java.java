@@ -563,7 +563,7 @@ public class Java {
     /**
      * @version 2018/03/29 22:48:25
      */
-    private static class JVMTransporter extends StandardMBean implements Transporter {
+    static class JVMTransporter extends StandardMBean implements Transporter {
 
         /** The actual user interface. */
         private final UserInterface ui;
