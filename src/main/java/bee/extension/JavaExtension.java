@@ -24,9 +24,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Project;
@@ -34,6 +31,8 @@ import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
 import kiss.Table;
+import net.bytebuddy.jar.asm.ClassReader;
+import net.bytebuddy.jar.asm.ClassWriter;
 
 /**
  * @version 2016/12/13 16:07:08

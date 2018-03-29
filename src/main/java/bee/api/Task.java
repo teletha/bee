@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 import bee.Platform;
 import bee.TaskFailure;
@@ -36,9 +37,12 @@ import kiss.Manageable;
 import kiss.Singleton;
 import kiss.XML;
 import kiss.model.Model;
-import net.sf.cglib.proxy.Enhancer;
-import net.sf.cglib.proxy.MethodInterceptor;
-import net.sf.cglib.proxy.MethodProxy;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.Origin;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * @version 2017/03/04 13:26:53
@@ -392,19 +396,31 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * @version 2017/04/02 15:52:06
+     * @version 2018/03/29 11:50:35
      */
     static class Lifestyle extends kiss.Prototype<Object> {
 
-        private final Enhancer enhancer = new Enhancer();
+        private static final Interceptor interceptor = I.make(Interceptor.class);
+
+        private final Object enhanced;
 
         /**
          * @param modelClass
          */
         public Lifestyle(Class modelClass) {
             super(modelClass);
-            enhancer.setSuperclass(modelClass);
-            enhancer.setCallback(I.make(Interceptor.class));
+
+            try {
+                enhanced = new ByteBuddy().subclass(modelClass)
+                        .method(ElementMatchers.any())
+                        .intercept(MethodDelegation.to(interceptor))
+                        .make()
+                        .load(getClass().getClassLoader())
+                        .getLoaded()
+                        .newInstance();
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
         }
 
         /**
@@ -412,15 +428,15 @@ public abstract class Task implements Extensible {
          */
         @Override
         public Object get() {
-            return enhancer.create();
+            return enhanced;
         }
     }
 
     /**
-     * @version 2017/04/02 15:40:36
+     * @version 2018/03/29 11:50:31
      */
     @Manageable(lifestyle = Singleton.class)
-    static class Interceptor implements MethodInterceptor {
+    protected static class Interceptor {
 
         /** The executed commands results. */
         private final Map<String, Object> results = new HashMap();
@@ -435,15 +451,12 @@ public abstract class Task implements Extensible {
             this.ui = ui;
         }
 
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        @RuntimeType
+        public Object intercept(@SuperCall Callable<?> zuper, @Origin Method method) throws Exception {
             Command command = find(method);
 
             if (command == null) {
-                return proxy.invokeSuper(obj, args);
+                return zuper.call();
             }
 
             String name = Inputs.hyphenize(method.getDeclaringClass().getSimpleName()) + ":" + method.getName();
@@ -452,7 +465,7 @@ public abstract class Task implements Extensible {
 
             if (!results.containsKey(name)) {
                 ui.startCommand(name, command);
-                result = proxy.invokeSuper(obj, args);
+                result = zuper.call();
                 ui.endCommand(name, command);
 
                 results.put(name, result);
