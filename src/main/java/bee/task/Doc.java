@@ -27,12 +27,11 @@ import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
-import bee.util.PathPattern;
 import bee.util.Process;
 import kiss.I;
 
 /**
- * @version 2017/01/16 14:28:51
+ * @version 2018/03/29 20:46:30
  */
 public class Doc extends Task {
 
@@ -60,7 +59,10 @@ public class Doc extends Task {
 
         // lint
         command.add("-Xdoclint:none");
-        command.add("-quiet");
+        command.add("-Xmaxwarns");
+        command.add("1");
+        command.add("-Xmaxerrs");
+        command.add("1");
 
         // output
         command.add("-d");
@@ -70,36 +72,35 @@ public class Doc extends Task {
         command.add("-encoding");
         command.add(project.getEncoding().displayName());
 
+        // format
+        command.add("-javafx");
+
         // external links
         command.add("-link");
         command.add("http://docs.oracle.com/javase/8/docs/api");
 
         // sourcepath
         command.add("-sourcepath");
-        command.add(I.signal(project.getSourceSet())
+        I.signal(project.getSourceSet())
                 .startWith(project.getTestSourceSet())
                 .map(path -> path.base.toString())
                 .scan(Collectors.joining(File.pathSeparator))
-                .to().v);
+                .last()
+                .to(command::add);
 
         // classpath
         Set<Library> dependencies = project.getDependency(Scope.Test);
         if (!dependencies.isEmpty()) {
             command.add("-classpath");
-            command.add(dependencies.stream()
+            I.signal(dependencies)
                     .map(library -> library.getLocalJar().toString())
-                    .collect(Collectors.joining(File.pathSeparator)));
+                    .skip(path -> path.contains("sinobu"))
+                    .scan(Collectors.joining(File.pathSeparator))
+                    .last()
+                    .to(command::add);
         }
-        System.out.println(command);
 
         // java sources
-        for (PathPattern sources : project.getSourceSet()) {
-            for (Path path : sources.list("**.java")) {
-                command.add(path.toString());
-            }
-        }
-
-        // target sources
         I.signal(project.getSourceSet()).flatIterable(s -> s.list("**.java")).map(Path::toString).to(command::add);
 
         // execute
