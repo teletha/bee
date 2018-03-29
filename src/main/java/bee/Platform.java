@@ -42,9 +42,6 @@ public final class Platform {
     /** The rt.jar file for Java. */
     public static final Path JavaRuntime;
 
-    /** The tool.jar file for Java. */
-    public static final Path JavaTool;
-
     /** The executable file for Bee. */
     public static final Path Bee;
 
@@ -103,7 +100,6 @@ public final class Platform {
         Java = java;
         JavaHome = java.getParent().getParent();
         JavaRuntime = JavaHome.resolve("jre/lib/rt.jar");
-        JavaTool = JavaHome.resolve("lib/tools.jar");
         Bee = bee;
         BeeHome = JavaHome.resolve("lib/bee");
         BeeLocalRepository = searchLocalRepository();

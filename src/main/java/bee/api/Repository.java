@@ -217,14 +217,6 @@ public class Repository {
         request.setRepositories(repositories);
 
         for (Library library : libraries) {
-            // install tools.jar if needed
-            if (library.isJavaTools() && Files.notExists(library.getLocalJar())) {
-                Project dummy = new Project();
-                dummy.product(library.group, library.name, library.version);
-
-                install(dummy, Platform.JavaTool, Platform.JavaHome.resolve("src.zip"), null);
-            }
-
             Dependency dependency = new Dependency(library.artifact, library.scope.toString());
 
             if (scope.accept(dependency)) {
