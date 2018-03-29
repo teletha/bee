@@ -29,7 +29,6 @@ import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.MXBean;
 import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 import javax.management.remote.JMXConnector;
@@ -564,7 +563,7 @@ public class Java {
     /**
      * @version 2018/03/29 22:48:25
      */
-    private static final class JVMTransporter extends StandardMBean implements Transporter {
+    private static class JVMTransporter extends StandardMBean implements Transporter {
 
         /** The actual user interface. */
         private final UserInterface ui;
@@ -575,8 +574,8 @@ public class Java {
         /**
          * Listen sub process event.
          */
-        private JVMTransporter(UserInterface ui) throws NotCompliantMBeanException {
-            super(Transporter.class);
+        private JVMTransporter(UserInterface ui) {
+            super(Transporter.class, false);
 
             this.ui = ui;
         }
@@ -629,9 +628,8 @@ public class Java {
     }
 
     /**
-     * @version 2012/04/09 16:58:31
+     * @version 2018/03/30 0:19:47
      */
-    @SuppressWarnings("unused")
     private static final class StackTraceCodec implements Decoder<StackTraceElement>, Encoder<StackTraceElement> {
 
         /**

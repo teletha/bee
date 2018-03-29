@@ -73,6 +73,7 @@ public class Doc extends Task {
         command.add(project.getEncoding().displayName());
 
         // format
+        command.add("-html5");
         command.add("-javafx");
 
         // external links
