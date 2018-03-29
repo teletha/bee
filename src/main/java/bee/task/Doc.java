@@ -17,14 +17,17 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Command;
+import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
+import bee.util.PathPattern;
 import bee.util.Process;
 import kiss.I;
 
@@ -54,7 +57,10 @@ public class Doc extends Task {
 
         List<String> command = new CopyOnWriteArrayList();
         command.add("javadoc");
-        command.add("-verbose");
+
+        // lint
+        command.add("-Xdoclint:none");
+        command.add("-quiet");
 
         // output
         command.add("-d");
@@ -62,37 +68,41 @@ public class Doc extends Task {
 
         // encoding
         command.add("-encoding");
-        command.add("UTF-8");
-
-        // lint
-        command.add("-Xdoclint:none");
+        command.add(project.getEncoding().displayName());
 
         // external links
         command.add("-link");
         command.add("http://docs.oracle.com/javase/8/docs/api");
 
         // sourcepath
-        // command.add("-sourcepath");
-        // command.add("src/main/java");
-        //
-        // classpath
-        command.add("-classpath");
-        command.add(project.getDependency(Scope.Compile)
-                .stream()
-                // .filter(v -> !v.toString().contains("sinobu"))
-                .map(library -> library.getLocalJar().toString())
-                .collect(Collectors.joining(File.pathSeparator)));
+        command.add("-sourcepath");
+        command.add(I.signal(project.getSourceSet())
+                .startWith(project.getTestSourceSet())
+                .map(path -> path.base.toString())
+                .scan(Collectors.joining(File.pathSeparator))
+                .to().v);
 
-        // java sources
-        // root: for (PathPattern sources : project.getSourceSet()) {
-        // for (Path path : sources.list("**.java")) {
-        // command.add(path.toString());
-        // break root;
-        // }
-        // }
-        I.signal(project.getSourceSet()).flatIterable(s -> s.list("**.java")).map(Path::toString).to(command::add);
+        // classpath
+        Set<Library> dependencies = project.getDependency(Scope.Test);
+        if (!dependencies.isEmpty()) {
+            command.add("-classpath");
+            command.add(dependencies.stream()
+                    .map(library -> library.getLocalJar().toString())
+                    .collect(Collectors.joining(File.pathSeparator)));
+        }
         System.out.println(command);
 
+        // java sources
+        for (PathPattern sources : project.getSourceSet()) {
+            for (Path path : sources.list("**.java")) {
+                command.add(path.toString());
+            }
+        }
+
+        // target sources
+        I.signal(project.getSourceSet()).flatIterable(s -> s.list("**.java")).map(Path::toString).to(command::add);
+
+        // execute
         Process.with().run(command);
     }
 
