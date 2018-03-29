@@ -29,6 +29,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerInvocationHandler;
 import javax.management.MXBean;
 import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
 import javax.management.ObjectName;
 import javax.management.StandardMBean;
 import javax.management.remote.JMXConnector;
@@ -560,7 +561,7 @@ public class Java {
     }
 
     /**
-     * @version 2012/04/09 16:58:22
+     * @version 2018/03/29 22:48:25
      */
     private static final class JVMTransporter extends StandardMBean implements Transporter {
 
@@ -573,7 +574,7 @@ public class Java {
         /**
          * Listen sub process event.
          */
-        private JVMTransporter(UserInterface ui) throws Exception {
+        private JVMTransporter(UserInterface ui) throws NotCompliantMBeanException {
             super(Transporter.class);
 
             this.ui = ui;
