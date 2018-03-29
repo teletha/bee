@@ -353,6 +353,7 @@ public class Java {
                 vm.args = Arrays.copyOfRange(args, 3, args.length);
                 vm.process();
             } catch (Throwable e) {
+                e.printStackTrace();
                 vm.ui.error(e);
             } finally {
                 System.exit(0);
