@@ -33,6 +33,8 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "antibug", "0.3").atTest();
         require("com.google.guava", "guava", "21.0");
         require("cglib", "cglib", "3.2.5");
+        require("net.bytebuddy", "byte-buddy", "1.8.1");
+        require("net.bytebuddy", "byte-buddy-agent", "1.8.1");
         require("junit", "junit", "4.12").atProvided();
         require(AetherGroup, "aether-api", AetherVersion);
         require(AetherGroup, "aether-util", AetherVersion);

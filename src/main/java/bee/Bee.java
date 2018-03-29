@@ -10,15 +10,14 @@
 package bee;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.lang.instrument.Instrumentation;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarFile;
 
 import com.google.common.base.Stopwatch;
 
@@ -30,11 +29,13 @@ import bee.api.StandardLicense;
 import bee.api.Task;
 import bee.task.IDESupport;
 import bee.task.Prototype;
+import bee.util.JarArchiver;
 import bee.util.JavaCompiler;
 import bee.util.PathPattern;
 import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
+import net.bytebuddy.agent.ByteBuddyAgent;
 
 /**
  * <p>
@@ -77,27 +78,17 @@ public class Bee {
     /** The project definition file name. */
     private static final String ProjectFile = "Project";
 
-    private static final Method addURL;
+    private static Instrumentation inst;
 
     static {
         // Bee requires JDK(tools.jar) surely.
         try {
-            addURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-            addURL.setAccessible(true);
-
+            inst = ByteBuddyAgent.install();
         } catch (Exception e) {
             throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
         }
 
         I.load(UserInterfaceLisfestyle.class, true);
-    }
-
-    private static ClassLoader load(Path path) throws Exception {
-        ClassLoader loader = ClassLoader.getSystemClassLoader();
-
-        addURL.invoke(loader, path.toUri().toURL());
-
-        return loader;
     }
 
     /** The user interface. */
@@ -219,8 +210,8 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            // load(project.getClasses());
-            // load(project.getProjectClasses());
+            load(project.getClasses());
+            load(project.getProjectClasses());
 
             // create your project
             Class projectClass = Class.forName(ProjectFile);
@@ -236,7 +227,7 @@ public class Bee {
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                // load(library.getLocalJar());
+                load(library.getLocalJar());
             }
 
             // load new project
@@ -349,10 +340,31 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("doc");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
+        }
+    }
+
+    /**
+     * Dynamic path or module loading.
+     * 
+     * @param path
+     */
+    public static void load(Path path) {
+        try {
+            if (Files.isDirectory(path)) {
+                Path file = Filer.locateTemporary();
+                JarArchiver archiver = new JarArchiver();
+                archiver.add(path);
+                archiver.pack(file);
+                path = file;
+            }
+
+            inst.appendToSystemClassLoaderSearch(new JarFile(path.toFile()));
+        } catch (IOException e) {
+            throw I.quiet(e);
         }
     }
 

@@ -45,7 +45,7 @@ import kiss.I;
 import kiss.XML;
 
 /**
- * @version 2012/04/17 23:50:41
+ * @version 2018/03/29 9:26:47
  */
 public class Project {
 
@@ -114,7 +114,11 @@ public class Project {
                 this.root = archive.getParent().getParent();
             } else {
                 // some archive
-                this.root = archive;
+                if (archive.toString().contains("temporary")) {
+                    this.root = Filer.locate("").toAbsolutePath();
+                } else {
+                    this.root = archive;
+                }
             }
         }
 

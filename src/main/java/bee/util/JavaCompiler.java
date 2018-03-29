@@ -19,8 +19,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URI;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -56,31 +54,12 @@ import filer.Filer;
 import kiss.I;
 
 /**
- * @version 2012/11/12 13:22:59
+ * @version 2018/03/29 9:26:33
  */
 public class JavaCompiler {
 
     /** The actual java compiler. */
-    private static javax.tools.JavaCompiler compiler;
-
-    static {
-        compiler = ToolProvider.getSystemJavaCompiler();
-
-        if (compiler == null) {
-            // search tools.jar
-            Path tools = Platform.JavaHome.resolve("lib/tools.jar");
-
-            if (Files.exists(tools)) {
-                try {
-                    URLClassLoader loader = new URLClassLoader(new URL[] {tools.toUri().toURL()});
-
-                    compiler = (javax.tools.JavaCompiler) Class.forName("com.sun.tools.javac.api.JavacTool", true, loader).newInstance();
-                } catch (Exception e) {
-                    throw I.quiet(e);
-                }
-            }
-        }
-    }
+    private static javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
     /** The user interface. */
     private final UserInterface ui;

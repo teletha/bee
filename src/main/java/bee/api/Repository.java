@@ -9,9 +9,6 @@
  */
 package bee.api;
 
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -67,6 +64,7 @@ import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
 import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
 
+import bee.Bee;
 import bee.Platform;
 import bee.UserInterface;
 import bee.util.Paths;
@@ -89,14 +87,8 @@ public class Repository {
     /** The system class loader. */
     private static final ClassLoader SYSTEM = ClassLoader.getSystemClassLoader();
 
-    /** The dynamic importer. */
-    private static final Method load;
-
     static {
         try {
-            load = URLClassLoader.class.getDeclaredMethod("addURL", new Class[] {URL.class});
-            load.setAccessible(true);
-
             addRemoteRepository("Maven", "http://repo1.maven.org/maven2/");
             addRemoteRepository("JCenter", "http://jcenter.bintray.com/");
         } catch (Exception e) {
@@ -475,11 +467,7 @@ public class Repository {
         Library require = new Library(group, product, version);
 
         for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
-            try {
-                load.invoke(SYSTEM, library.getLocalJar().toUri().toURL());
-            } catch (Exception e) {
-                throw I.quiet(e);
-            }
+            Bee.load(library.getLocalJar());
         }
     }
 
