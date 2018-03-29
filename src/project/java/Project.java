@@ -23,6 +23,8 @@ public class Project extends bee.api.Project {
 
     String AetherVersion = "1.1.0";
 
+    String ByteBuddyVersion = "1.8.1";
+
     {
         product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
         producer("Nameless Production Committee");
@@ -32,7 +34,8 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "filer", "0.5");
         require("com.github.teletha", "antibug", "0.3").atTest();
         require("com.google.guava", "guava", "21.0");
-        require("net.bytebuddy", "byte-buddy-agent", "1.8.1");
+        require("net.bytebuddy", "byte-buddy", ByteBuddyVersion);
+        require("net.bytebuddy", "byte-buddy-agent", ByteBuddyVersion);
         require("junit", "junit", "4.12").atProvided();
         require(AetherGroup, "aether-api", AetherVersion);
         require(AetherGroup, "aether-util", AetherVersion);
@@ -42,9 +45,7 @@ public class Project extends bee.api.Project {
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
         require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
-        requireJavaTools().atSystem();
 
-        unrequire("org.apache.ant", "ant"); // from cglib
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
