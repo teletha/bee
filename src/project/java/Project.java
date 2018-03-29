@@ -42,7 +42,8 @@ public class Project extends bee.api.Project {
         require(AetherGroup, "aether-connector-basic", AetherVersion);
         require(AetherGroup, "aether-transport-http", AetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
-        require("org.slf4j", "slf4j-nop", "1.7.24");
+        require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
+        require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
         requireJavaTools().atSystem();
 
         unrequire("org.apache.ant", "ant"); // from cglib
