@@ -343,13 +343,6 @@ public class Project {
     }
 
     /**
-     * Declare dependency against to Java tools library.
-     */
-    protected final Library requireJavaTools() {
-        return require("jdk.tools", "jdk.tools", getJavaVersion()).atSystem();
-    }
-
-    /**
      * Declare dependency against to Lombok library.
      */
     protected final Library requireLombok() {
