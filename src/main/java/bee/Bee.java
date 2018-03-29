@@ -353,18 +353,20 @@ public class Bee {
      * @param path
      */
     public static void load(Path path) {
-        try {
-            if (Files.isDirectory(path)) {
-                Path file = Filer.locateTemporary();
-                JarArchiver archiver = new JarArchiver();
-                archiver.add(path);
-                archiver.pack(file);
-                path = file;
-            }
+        if (Files.exists(path)) {
+            try {
+                if (Files.isDirectory(path)) {
+                    Path file = Filer.locateTemporary();
+                    JarArchiver archiver = new JarArchiver();
+                    archiver.add(path);
+                    archiver.pack(file);
+                    path = file;
+                }
 
-            inst.appendToSystemClassLoaderSearch(new JarFile(path.toFile()));
-        } catch (IOException e) {
-            throw I.quiet(e);
+                inst.appendToSystemClassLoaderSearch(new JarFile(path.toFile()));
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
         }
     }
 
