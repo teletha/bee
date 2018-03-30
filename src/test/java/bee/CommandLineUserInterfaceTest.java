@@ -13,22 +13,19 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import antibug.CommandLineUser;
 import filer.Filer;
 
 /**
- * @version 2012/04/15 15:15:50
+ * @version 2018/03/31 3:11:03
  */
 public class CommandLineUserInterfaceTest {
 
-    @Rule
-    @ClassRule
-    public static final CommandLineUser user = new CommandLineUser();
+    @RegisterExtension
+    static final CommandLineUser user = new CommandLineUser();
 
     private CommandLineUserInterface ui = new CommandLineUserInterface();
 
@@ -93,7 +90,6 @@ public class CommandLineUserInterfaceTest {
     }
 
     @Test
-    @Ignore
     public void inputPath() throws Exception {
         Path def = Filer.locate("default");
 

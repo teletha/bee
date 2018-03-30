@@ -14,20 +14,18 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import antibug.CleanRoom;
 
 /**
- * @version 2011/03/15 18:30:55
+ * @version 2018/03/31 2:48:45
  */
 public class JarArchiverTest {
 
-    @Rule
-    @ClassRule
-    public static final CleanRoom room = new CleanRoom();
+    @RegisterExtension
+    static final CleanRoom room = new CleanRoom();
 
     @Test
     public void file() throws Exception {
