@@ -33,6 +33,14 @@ public class Install extends Task {
         repository.install(project);
     }
 
+    @Command(value = "Install project into the local repository forcibly.")
+    public void force() {
+        require(Jar.class).source();
+
+        Repository repository = I.make(Repository.class);
+        repository.install(project);
+    }
+
     @Command("Install local jar file into the local repository.")
     public void jar() {
         Path selected = ui.ask("Select a jar file to install.", Filer.walk(project.getRoot(), "*.jar"));
