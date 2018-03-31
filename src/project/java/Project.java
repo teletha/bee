@@ -33,15 +33,14 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "sinobu", "1.0");
         require("com.github.teletha", "filer", "0.5");
         require("com.github.teletha", "antibug", "0.3").atTest();
-        require("com.google.guava", "guava", "21.0");
         require("net.bytebuddy", "byte-buddy", ByteBuddyVersion);
         require("net.bytebuddy", "byte-buddy-agent", ByteBuddyVersion);
-        require("junit", "junit", "4.12").atProvided();
         require(AetherGroup, "aether-api", AetherVersion);
         require(AetherGroup, "aether-util", AetherVersion);
         require(AetherGroup, "aether-impl", AetherVersion);
         require(AetherGroup, "aether-connector-basic", AetherVersion);
         require(AetherGroup, "aether-transport-http", AetherVersion);
+        require("org.junit.platform", "junit-platform-launcher", "1.1.0");
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
         require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");

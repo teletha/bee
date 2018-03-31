@@ -12,12 +12,13 @@ package bee.task;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
 
 /**
- * @version 2012/04/02 9:37:56
+ * @version 2018/03/31 21:58:45
  */
 public class CompileTest {
 
@@ -90,12 +91,14 @@ public class CompileTest {
         assert Files.exists(C);
     }
 
-    @Test(expected = Throwable.class)
+    @Test
     public void compileInvalidSource() throws Exception {
-        BlinkProject project = new BlinkProject();
-        project.source("A", "invalid");
+        Assertions.assertThrows(Throwable.class, () -> {
+            BlinkProject project = new BlinkProject();
+            project.source("A", "invalid");
 
-        Compile compile = new Compile();
-        compile.source();
+            Compile compile = new Compile();
+            compile.source();
+        });
     }
 }

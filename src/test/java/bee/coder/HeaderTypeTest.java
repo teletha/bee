@@ -12,13 +12,13 @@ package bee.coder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import kiss.I;
 
 /**
- * @version 2015/06/15 16:55:54
+ * @version 2018/03/31 21:58:22
  */
 public class HeaderTypeTest {
 
@@ -279,7 +279,7 @@ public class HeaderTypeTest {
     /**
      * Clean up.
      */
-    @Before
+    @BeforeEach
     public void clean() {
         codeSource.clear();
         codeExpect.clear();

@@ -17,7 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
 import bee.api.Project;
@@ -32,7 +32,7 @@ import kiss.I;
 import kiss.model.Model;
 
 /**
- * @version 2012/11/11 16:26:26
+ * @version 2018/03/31 21:58:40
  */
 public class AnnotationValidatorTest {
 
@@ -158,8 +158,8 @@ public class AnnotationValidatorTest {
                 assert isSubClassOf(Bean.class);
                 assert isSubClassOf(Interface.class);
                 assert isSubClassOf(Object.class);
-                assert!isSubClassOf(HashMap.class);
-                assert!isSubClassOf(Serializable.class);
+                assert !isSubClassOf(HashMap.class);
+                assert !isSubClassOf(Serializable.class);
             }
         });
     }

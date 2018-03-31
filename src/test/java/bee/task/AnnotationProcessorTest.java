@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Set;
 
@@ -21,14 +21,14 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
 import bee.sample.Interface;
 import bee.util.JavaCompiler;
 
 /**
- * @version 2012/11/12 12:56:47
+ * @version 2018/03/31 21:58:34
  */
 public class AnnotationProcessorTest {
 

@@ -9,20 +9,20 @@
  */
 package bee.task;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 import bee.BlinkProject;
 import kiss.I;
 
 /**
- * @version 2017/01/19 11:14:17
+ * @version 2018/03/31 21:58:57
  */
 public abstract class TaskTestBase {
 
     /** The base project. */
     protected BlinkProject project;
 
-    @Before
+    @BeforeEach
     public void before() {
         project = I.make(BlinkProject.class);
     }

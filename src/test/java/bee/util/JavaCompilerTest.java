@@ -12,13 +12,13 @@ package bee.util;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
 import bee.sample.Interface;
 
 /**
- * @version 2012/11/12 13:18:11
+ * @version 2018/03/31 16:54:28
  */
 public class JavaCompilerTest {
 

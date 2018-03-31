@@ -12,10 +12,10 @@ package bee.task;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * @version 2017/01/18 16:01:01
+ * @version 2018/03/31 21:58:51
  */
 public class GitTest extends TaskTestBase {
 

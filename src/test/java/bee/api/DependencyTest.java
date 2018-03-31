@@ -11,12 +11,12 @@ package bee.api;
 
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
 
 /**
- * @version 2017/03/08 9:05:42
+ * @version 2018/03/31 21:58:09
  */
 public class DependencyTest {
 

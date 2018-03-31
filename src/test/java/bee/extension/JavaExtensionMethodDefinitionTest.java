@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * @version 2016/12/13 16:04:26
+ * @version 2018/03/31 21:58:27
  */
 public class JavaExtensionMethodDefinitionTest {
 
