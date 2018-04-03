@@ -27,7 +27,6 @@ import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
-import bee.util.Process;
 import kiss.I;
 
 /**
@@ -103,6 +102,10 @@ public class Doc extends Task {
 
         // java sources
         I.signal(project.getSourceSet()).flatIterable(s -> s.list("**.java")).map(Path::toString).to(command::add);
+
+        // ToolProvider.findFirst("javadoc").ifPresent(tool -> {
+        // tool.run(System.out, System.err, command.toArray(new String[command.size()]));
+        // });
 
         // execute
         Process.with().run(command);
