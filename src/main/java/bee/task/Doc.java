@@ -9,28 +9,34 @@
  */
 package bee.task;
 
-import java.io.File;
+import static javax.tools.DocumentationTool.Location.*;
+import static javax.tools.StandardLocation.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
+
+import javax.tools.DocumentationTool;
+import javax.tools.DocumentationTool.DocumentationTask;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
 
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Command;
-import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
 import kiss.I;
 
 /**
- * @version 2018/03/29 20:46:30
+ * @version 2018/04/04 11:22:37
  */
 public class Doc extends Task {
 
@@ -53,62 +59,48 @@ public class Doc extends Task {
             throw new IllegalArgumentException("Javadoc output path is not directory. " + output.toAbsolutePath());
         }
 
-        List<String> command = new CopyOnWriteArrayList();
-        command.add("javadoc");
+        List<String> options = new CopyOnWriteArrayList();
 
         // lint
-        command.add("-Xdoclint:none");
-        command.add("-Xmaxwarns");
-        command.add("1");
-        command.add("-Xmaxerrs");
-        command.add("1");
-
-        // output
-        command.add("-d");
-        command.add(output.toAbsolutePath().toString());
-
-        // encoding
-        command.add("-encoding");
-        command.add(project.getEncoding().displayName());
+        options.add("-Xdoclint:none");
+        options.add("-Xmaxwarns");
+        options.add("1");
+        options.add("-Xmaxerrs");
+        options.add("1");
 
         // format
-        command.add("-html5");
-        command.add("-javafx");
+        options.add("-html5");
+        options.add("-javafx");
 
         // external links
-        command.add("-link");
-        command.add("http://docs.oracle.com/javase/8/docs/api");
+        options.add("-link");
+        options.add("http://docs.oracle.com/javase/8/docs/api");
 
-        // sourcepath
-        command.add("-sourcepath");
-        I.signal(project.getSourceSet())
-                .startWith(project.getTestSourceSet())
-                .map(path -> path.base.toString())
-                .scan(Collectors.joining(File.pathSeparator))
-                .last()
-                .to(command::add);
+        try {
+            DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
+            StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
+            manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output));
+            manager.setLocationFromPaths(SOURCE_PATH, I.signal(project.getSourceSet())
+                    .map(source -> source.base)
+                    .merge(I.signal(project.getDependency(Scope.Compile))
+                            .map(lib -> lib.getLocalSourceJar())
+                            .take(path -> path.toString().contains("sinobu")))
+                    .toList());
+            manager.setLocationFromPaths(CLASS_PATH, I.signal(project.getDependency(Scope.Test))
+                    .map(library -> library.getLocalJar())
+                    .toList());
 
-        // classpath
-        Set<Library> dependencies = project.getDependency(Scope.Test);
-        if (!dependencies.isEmpty()) {
-            command.add("-classpath");
-            I.signal(dependencies)
-                    .map(library -> library.getLocalJar().toString())
-                    .skip(path -> path.contains("sinobu"))
-                    .scan(Collectors.joining(File.pathSeparator))
-                    .last()
-                    .to(command::add);
+            DocumentationTask task = doc.getTask(new UIWriter(ui), manager, null, null, options, manager
+                    .getJavaFileObjectsFromPaths(I.signal(project.getSourceSet()).flatIterable(source -> source.list("**.java")).toList()));
+
+            if (task.call()) {
+                ui.talk("Build javadoc : " + output);
+            } else {
+                ui.talk("Fail building javadoc.");
+            }
+        } catch (IOException e) {
+            throw I.quiet(e);
         }
-
-        // java sources
-        I.signal(project.getSourceSet()).flatIterable(s -> s.list("**.java")).map(Path::toString).to(command::add);
-
-        // ToolProvider.findFirst("javadoc").ifPresent(tool -> {
-        // tool.run(System.out, System.err, command.toArray(new String[command.size()]));
-        // });
-
-        // execute
-        Process.with().run(command);
     }
 
     /**

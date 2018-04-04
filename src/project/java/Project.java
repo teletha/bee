@@ -43,10 +43,12 @@ public class Project extends bee.api.Project {
         require("org.junit.platform", "junit-platform-launcher", "1.1.0");
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
-        require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
+        require("commons-logging", "commons-logging", "1.2");
+        // require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
 
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
+        unrequire("org.slf4j", "jcl-over-slf4j");
 
         repository("https://repo.eclipse.org/content/repositories/egit-releases/");
 
