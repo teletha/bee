@@ -13,8 +13,6 @@ import static javax.tools.DocumentationTool.Location.*;
 import static javax.tools.StandardLocation.*;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -104,7 +102,7 @@ public class Doc extends Task {
     }
 
     /**
-     * @version 2012/11/09 14:37:40
+     * @version 2018/04/04 11:25:57
      */
     private static class UIWriter extends Writer {
 
@@ -145,33 +143,6 @@ public class Doc extends Task {
          */
         @Override
         public void close() throws IOException {
-        }
-    }
-
-    /**
-     * @version 2014/07/26 21:29:15
-     */
-    private static class NoOperationWriter extends PrintWriter {
-
-        /**
-         * @param out
-         */
-        public NoOperationWriter() {
-            super(new NoOperationOutputStream());
-        }
-    }
-
-    /**
-     * @version 2014/07/26 21:30:07
-     */
-    private static class NoOperationOutputStream extends OutputStream {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void write(int b) throws IOException {
-            // ignore
         }
     }
 }
