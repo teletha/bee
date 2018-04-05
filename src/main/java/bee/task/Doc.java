@@ -53,6 +53,14 @@ public class Doc extends Task {
             output = project.getOutput().resolve("api");
         }
 
+        if (Files.notExists(output)) {
+            try {
+                Files.createDirectories(output);
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+
         if (Files.exists(output) && !Files.isDirectory(output)) {
             throw new IllegalArgumentException("Javadoc output path is not directory. " + output.toAbsolutePath());
         }
