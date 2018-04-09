@@ -11,7 +11,6 @@ package bee.task;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,19 +116,19 @@ public class FindMain extends Task {
      */
     private void analyze() {
         if (!analyzed) {
-            try {
-                require(Compile.class).source();
+            require(Compile.class).source();
 
-                for (Path path : Filer.walk(project.getClasses(), "**.class")) {
+            Filer.walk(project.getClasses(), "**.class").to(path -> {
+                try {
                     ClassReader reader = new ClassReader(Files.newInputStream(path));
                     reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                } catch (IOException e) {
+                    throw I.quiet(e);
                 }
+            });
 
-                // update
-                analyzed = true;
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
+            // update
+            analyzed = true;
         }
     }
 

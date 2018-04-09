@@ -540,10 +540,7 @@ public class Project {
      */
     public PathSet getSourceSet() {
         PathSet set = new PathSet();
-
-        for (Path path : Filer.walkDirectory(getSources(), "*")) {
-            set.add(path);
-        }
+        Filer.walkDirectory(getSources(), "*").to(set::add);
         return set;
     }
 
@@ -578,10 +575,7 @@ public class Project {
      */
     public PathSet getTestSourceSet() {
         PathSet set = new PathSet();
-
-        for (Path path : Filer.walkDirectory(getTestSources(), "*")) {
-            set.add(path);
-        }
+        Filer.walkDirectory(getTestSources(), "*").to(set::add);
         return set;
     }
 
@@ -616,10 +610,7 @@ public class Project {
      */
     public PathSet getProjectSourceSet() {
         PathSet set = new PathSet();
-
-        for (Path path : Filer.walkDirectory(getProjectSources(), "*")) {
-            set.add(path);
-        }
+        Filer.walkDirectory(getProjectSources(), "*").to(set::add);
         return set;
     }
 

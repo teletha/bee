@@ -58,13 +58,13 @@ public class BeeInstaller {
             Path dest = BeeHome.resolve(fileName);
 
             // delete old files
-            for (Path jar : Filer.walk(BeeHome, "bee-*.jar")) {
+            Filer.walk(BeeHome, "bee-*.jar").to(jar -> {
                 try {
                     Files.delete(jar);
                 } catch (Exception e) {
                     // we can't delete current processing jar file.
                 }
-            }
+            });
 
             if (Paths.getLastModified(source) != Paths.getLastModified(dest)) {
                 // The current bee.jar is newer.

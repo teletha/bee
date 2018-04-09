@@ -168,7 +168,8 @@ public class JavaExtension {
      */
     private List<Path> collectJRE() {
         return Filer.walk(Platform.JavaRuntime
-                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!java*", "!security/*", "!deploy.jar");
+                .getParent(), "**.jar", "!plugin.jar", "!management-agent.jar", "!jfxswt.jar", "!java*", "!security/*", "!deploy.jar")
+                .toList();
     }
 
     /**
@@ -184,13 +185,13 @@ public class JavaExtension {
         Path root = Paths.createDirectory(project.getOutput().resolve("local-library"));
 
         // delete old libraries at later
-        for (Path path : Filer.walk(root, name + "-*.jar")) {
+        Filer.walk(root, name + "-*.jar").to(path -> {
             try {
                 Filer.delete(path);
             } catch (Exception e) {
                 // ignore
             }
-        }
+        });
 
         try {
             // create new library with time stamp

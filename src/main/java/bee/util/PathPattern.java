@@ -60,6 +60,6 @@ public final class PathPattern {
      * @return
      */
     public List<Path> list(String... patterns) {
-        return Filer.walk(base, mix(patterns));
+        return Filer.walk(base, mix(patterns)).toList();
     }
 }

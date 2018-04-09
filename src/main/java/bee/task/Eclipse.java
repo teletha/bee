@@ -320,7 +320,7 @@ public class Eclipse extends Task implements IDESupport {
         String oldPath = live ? jar : "/" + currentProjectName;
         String newPath = live ? "/" + currentProjectName : jar;
 
-        for (Path file : Filer.walk(project.getRoot().getParent(), "*/.classpath")) {
+        Filer.walk(project.getRoot().getParent(), "*/.classpath").to(file -> {
             if (!file.startsWith(project.getRoot())) {
                 String targetProjectName = file.getParent().getFileName().toString();
 
@@ -341,7 +341,7 @@ public class Eclipse extends Task implements IDESupport {
                     throw I.quiet(e);
                 }
             }
-        }
+        });
     }
 
     /**

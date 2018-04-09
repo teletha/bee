@@ -142,7 +142,7 @@ public class PathSet implements Iterable<PathPattern> {
         List<Path> paths = new ArrayList();
 
         for (PathPattern pattern : set) {
-            paths.addAll(Filer.walk(pattern.base, pattern.mix()));
+            paths.addAll(Filer.walk(pattern.base, pattern.mix()).toList());
         }
         return paths;
     }
