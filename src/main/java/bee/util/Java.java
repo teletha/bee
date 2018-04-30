@@ -153,8 +153,10 @@ public class Java {
     /**
      * Configure memory setting.
      * 
-     * @param initialMemory A initial memory size (MB).
-     * @param maxMemory A max memory size (MB).
+     * @param initialMemory
+     *            A initial memory size (MB).
+     * @param maxMemory
+     *            A max memory size (MB).
      * @return
      */
     public Java memory(int initialMemory, int maxMemory) {
@@ -196,7 +198,8 @@ public class Java {
      * Set working directory.
      * </p>
      * 
-     * @param directory A location of working directory.
+     * @param directory
+     *            A location of working directory.
      */
     public Java workingDirectory(Path directory) {
         this.directory = directory;
@@ -210,7 +213,8 @@ public class Java {
      * Set {@link System#out} and {@link System#in} encoding.
      * </p>
      * 
-     * @param encoding A {@link Charset} to set.
+     * @param encoding
+     *            A {@link Charset} to set.
      * @return
      */
     public Java encoding(Charset encoding) {
@@ -320,7 +324,8 @@ public class Java {
          * Write sub-process code.
          * </p>
          * 
-         * @throws Exception Execution error.
+         * @throws Exception
+         *             Execution error.
          */
         protected abstract void process() throws Exception;
 
