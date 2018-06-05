@@ -18,7 +18,9 @@ import bee.api.Command;
 import bee.api.Task;
 import bee.coder.FileType;
 import bee.coder.StandardHeaderStyle;
-import bee.util.PathSet;
+import kiss.I;
+import kiss.Signal;
+import psychopath.Directory;
 
 /**
  * @version 2015/06/14 17:50:58
@@ -33,7 +35,7 @@ public class License extends Task {
      * @throws IOException
      */
     @Command("Write license header comment.")
-    public void update() throws IOException {
+    public void update() {
         update(project.getSourceSet());
         update(project.getTestSourceSet());
         update(project.getProjectSourceSet());
@@ -47,21 +49,26 @@ public class License extends Task {
      * @param set
      * @throws IOException
      */
-    private void update(PathSet set) throws IOException {
-        for (Path path : set.getFiles()) {
-            FileType type = FileType.of(path);
+    private void update(Signal<Directory> set) {
+        set.flatMap(Directory::walkFiles).to(file -> {
+            try {
+                Path path = file.asPath();
+                FileType type = FileType.of(path);
 
-            if (type.header() == StandardHeaderStyle.Unknown) {
-                ui.talk("Unknown Format ", project.getRoot().relativize(path));
-            } else {
-                List<String> source = Files.readAllLines(path, project.getEncoding());
-                List<String> converted = type.header().convert(source, project.getLicense());
+                if (type.header() == StandardHeaderStyle.Unknown) {
+                    ui.talk("Unknown Format ", project.getRoot().relativize(path));
+                } else {
+                    List<String> source = Files.readAllLines(path, project.getEncoding());
+                    List<String> converted = type.header().convert(source, project.getLicense());
 
-                if (converted != null) {
-                    Files.write(path, converted, project.getEncoding());
-                    ui.talk("Update ", project.getRoot().relativize(path));
+                    if (converted != null) {
+                        Files.write(path, converted, project.getEncoding());
+                        ui.talk("Update ", project.getRoot().relativize(path));
+                    }
                 }
+            } catch (IOException e) {
+                throw I.quiet(e);
             }
-        }
+        });
     }
 }

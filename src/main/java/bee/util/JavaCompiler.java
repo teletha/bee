@@ -52,6 +52,10 @@ import bee.UserInterface;
 import bee.api.Library;
 import filer.Filer;
 import kiss.I;
+import kiss.Signal;
+import kiss.Ⅱ;
+import psychopath.Directory;
+import psychopath.Locator;
 
 /**
  * @version 2018/03/29 9:26:33
@@ -65,7 +69,7 @@ public class JavaCompiler {
     private final UserInterface ui;
 
     /** The source directories. */
-    private final List<PathPattern> sources = new ArrayList();
+    private Signal<Ⅱ<Directory, psychopath.File>> sources = Signal.EMPTY;
 
     /** The classpath list. */
     private final List<Path> classpaths = new ArrayList();
@@ -181,7 +185,7 @@ public class JavaCompiler {
             if (!Files.isDirectory(directory)) {
                 directory = directory.getParent();
             }
-            addSourceDirectory(new PathPattern(directory, "**.java"));
+            sources = sources.merge(Locator.directory(directory).walkFilesRelatively("**.java"));
         }
     }
 
@@ -192,11 +196,9 @@ public class JavaCompiler {
      * 
      * @param outputDirectory Your source code directory.
      */
-    public void addSourceDirectory(PathSet directories) {
+    public void addSourceDirectory(Signal<Directory> directories) {
         if (directories != null) {
-            for (PathPattern pattern : directories) {
-                addSourceDirectory(new PathPattern(pattern.base, pattern.mix("**.java")));
-            }
+            sources = sources.merge(directories.flatMap(dir -> dir.walkFilesRelatively("**.java")));
         }
     }
 
@@ -207,9 +209,9 @@ public class JavaCompiler {
      * 
      * @param outputDirectory Your source code directory.
      */
-    public void addSourceDirectory(PathPattern directories) {
-        if (directories != null) {
-            sources.add(directories);
+    public void addSourceFile(Signal<Ⅱ<Directory, psychopath.File>> files) {
+        if (files != null) {
+            sources = sources.merge(files);
         }
     }
 
@@ -510,19 +512,17 @@ public class JavaCompiler {
             // =============================================
             List<File> sources = new ArrayList();
 
-            for (PathPattern directory : this.sources) {
-                for (Path sourceFile : directory.list()) {
-                    Path classsFile = output.resolve(directory.base.relativize(sourceFile.getParent()))
-                            .resolve(Paths.getName(sourceFile) + ".class");
+            this.sources.to(e -> {
+                psychopath.File sourceFile = e.ⅰ.file(e.ⅱ);
+                psychopath.File classFile = Locator.directory(output).file(e.ⅱ).extension("class");
 
-                    if (Paths.getLastModified(classsFile) < Paths.getLastModified(sourceFile)) {
-                        sources.add(sourceFile.toFile());
-                    }
+                if (classFile.lastModified() < sourceFile.lastModified()) {
+                    sources.add(sourceFile.asFile());
                 }
-            }
+            });
 
             options.add("-sourcepath");
-            options.add(I.join(File.pathSeparator, this.sources));
+            options.add(I.join(File.pathSeparator, this.sources.map(e -> e.ⅰ).distinct().toList()));
 
             // check compiling source size
             if (sources.isEmpty()) {

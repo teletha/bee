@@ -32,6 +32,7 @@ import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
 import kiss.I;
+import psychopath.File;
 
 /**
  * @version 2018/04/04 11:22:37
@@ -86,8 +87,8 @@ public class Doc extends Task {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
             manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output));
-            manager.setLocationFromPaths(SOURCE_PATH, I.signal(project.getSourceSet())
-                    .map(source -> source.base)
+            manager.setLocationFromPaths(SOURCE_PATH, project.getSourceSet()
+                    .map(source -> source.asPath())
                     .merge(I.signal(project.getDependency(Scope.Compile))
                             .map(lib -> lib.getLocalSourceJar())
                             .take(path -> path.toString().contains("sinobu")))
@@ -96,8 +97,11 @@ public class Doc extends Task {
                     .map(library -> library.getLocalJar())
                     .toList());
 
-            DocumentationTask task = doc.getTask(new UIWriter(ui), manager, null, null, options, manager
-                    .getJavaFileObjectsFromPaths(I.signal(project.getSourceSet()).flatIterable(source -> source.list("**.java")).toList()));
+            DocumentationTask task = doc
+                    .getTask(new UIWriter(ui), manager, null, null, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
+                            .flatMap(dir -> dir.walkFiles("**.java"))
+                            .map(File::asPath)
+                            .toList()));
 
             if (task.call()) {
                 ui.talk("Build javadoc : " + output);
