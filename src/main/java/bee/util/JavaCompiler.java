@@ -53,7 +53,6 @@ import bee.api.Library;
 import filer.Filer;
 import kiss.I;
 import kiss.Signal;
-import kiss.Ⅱ;
 import psychopath.Directory;
 import psychopath.Locator;
 
@@ -69,7 +68,7 @@ public class JavaCompiler {
     private final UserInterface ui;
 
     /** The source directories. */
-    private Signal<Ⅱ<Directory, psychopath.File>> sources = Signal.EMPTY;
+    private final List<Directory> sources = new ArrayList();
 
     /** The classpath list. */
     private final List<Path> classpaths = new ArrayList();
@@ -185,7 +184,7 @@ public class JavaCompiler {
             if (!Files.isDirectory(directory)) {
                 directory = directory.getParent();
             }
-            sources = sources.merge(Locator.directory(directory).walkFilesRelatively("**.java"));
+            sources.add(Locator.directory(directory));
         }
     }
 
@@ -198,20 +197,7 @@ public class JavaCompiler {
      */
     public void addSourceDirectory(Signal<Directory> directories) {
         if (directories != null) {
-            sources = sources.merge(directories.flatMap(dir -> dir.walkFilesRelatively("**.java")));
-        }
-    }
-
-    /**
-     * <p>
-     * Add the source code directory.
-     * </p>
-     * 
-     * @param outputDirectory Your source code directory.
-     */
-    public void addSourceFile(Signal<Ⅱ<Directory, psychopath.File>> files) {
-        if (files != null) {
-            sources = sources.merge(files);
+            sources.addAll(directories.toList());
         }
     }
 
@@ -512,17 +498,18 @@ public class JavaCompiler {
             // =============================================
             List<File> sources = new ArrayList();
 
-            this.sources.to(e -> {
-                psychopath.File sourceFile = e.ⅰ.file(e.ⅱ);
-                psychopath.File classFile = Locator.directory(output).file(e.ⅱ).extension("class");
+            for (Directory directory : this.sources) {
+                directory.walkFiles("**.java").to(sourceFile -> {
+                    psychopath.File classFile = Locator.directory(output).file(sourceFile.relativePath()).extension("class");
 
-                if (classFile.lastModified() < sourceFile.lastModified()) {
-                    sources.add(sourceFile.asFile());
-                }
-            });
+                    if (classFile.lastModified() < sourceFile.lastModified()) {
+                        sources.add(sourceFile.asFile());
+                    }
+                });
+            }
 
             options.add("-sourcepath");
-            options.add(I.join(File.pathSeparator, this.sources.map(e -> e.ⅰ).distinct().toList()));
+            options.add(I.join(File.pathSeparator, this.sources));
 
             // check compiling source size
             if (sources.isEmpty()) {

@@ -35,7 +35,6 @@ import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
-import psychopath.Locator;
 
 /**
  * <p>
@@ -303,7 +302,7 @@ public class Bee {
 
             JavaCompiler compiler = new JavaCompiler();
             Path projectFile = project.getProjectDefinition();
-            compiler.addSourceFile(Locator.directory(projectFile.getParent()).walkFilesRelatively(projectFile.getFileName().toString()));
+            compiler.addSourceDirectory(projectFile.getParent());
             compiler.addClassPath(Filer.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();
