@@ -52,9 +52,6 @@ import bee.UserInterface;
 import bee.api.Library;
 import filer.Filer;
 import kiss.I;
-import kiss.Signal;
-import psychopath.Directory;
-import psychopath.Locator;
 
 /**
  * @version 2018/03/29 9:26:33
@@ -68,7 +65,7 @@ public class JavaCompiler {
     private final UserInterface ui;
 
     /** The source directories. */
-    private final List<Directory> sources = new ArrayList();
+    private final List<PathPattern> sources = new ArrayList();
 
     /** The classpath list. */
     private final List<Path> classpaths = new ArrayList();
@@ -117,8 +114,8 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Set the user class path, overriding the user class path in the CLASSPATH environment
-     * variable. If threr is no classpath, the user class path consists of the current directory.
+     * Set the user class path, overriding the user class path in the CLASSPATH environment variable. If
+     * threr is no classpath, the user class path consists of the current directory.
      * </p>
      * 
      * @param path A classpath to add.
@@ -131,8 +128,8 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Set the user class path, overriding the user class path in the CLASSPATH environment
-     * variable. If threr is no classpath, the user class path consists of the current directory.
+     * Set the user class path, overriding the user class path in the CLASSPATH environment variable. If
+     * threr is no classpath, the user class path consists of the current directory.
      * </p>
      * 
      * @param path A classpath to add.
@@ -145,8 +142,8 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Set the user class path, overriding the user class path in the CLASSPATH environment
-     * variable. If threr is no classpath, the user class path consists of the current directory.
+     * Set the user class path, overriding the user class path in the CLASSPATH environment variable. If
+     * threr is no classpath, the user class path consists of the current directory.
      * </p>
      * 
      * @param path A classpath to add.
@@ -184,7 +181,7 @@ public class JavaCompiler {
             if (!Files.isDirectory(directory)) {
                 directory = directory.getParent();
             }
-            sources.add(Locator.directory(directory));
+            addSourceDirectory(new PathPattern(directory, "**.java"));
         }
     }
 
@@ -195,9 +192,24 @@ public class JavaCompiler {
      * 
      * @param outputDirectory Your source code directory.
      */
-    public void addSourceDirectory(Signal<Directory> directories) {
+    public void addSourceDirectory(PathSet directories) {
         if (directories != null) {
-            sources.addAll(directories.toList());
+            for (PathPattern pattern : directories) {
+                addSourceDirectory(new PathPattern(pattern.base, pattern.mix("**.java")));
+            }
+        }
+    }
+
+    /**
+     * <p>
+     * Add the source code directory.
+     * </p>
+     * 
+     * @param outputDirectory Your source code directory.
+     */
+    public void addSourceDirectory(PathPattern directories) {
+        if (directories != null) {
+            sources.add(directories);
         }
     }
 
@@ -238,8 +250,8 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Options to pass to annotation processors. These are not interpreted by javac directly, but
-     * are made available for use by individual processors.
+     * Options to pass to annotation processors. These are not interpreted by javac directly, but are
+     * made available for use by individual processors.
      * </p>
      * 
      * @param key A key name.
@@ -253,8 +265,8 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Options to pass to annotation processors. These are not interpreted by javac directly, but
-     * are made available for use by individual processors.
+     * Options to pass to annotation processors. These are not interpreted by javac directly, but are
+     * made available for use by individual processors.
      * </p>
      * 
      * @param key A key name.
@@ -268,8 +280,8 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Options to pass to annotation processors. These are not interpreted by javac directly, but
-     * are made available for use by individual processors.
+     * Options to pass to annotation processors. These are not interpreted by javac directly, but are
+     * made available for use by individual processors.
      * </p>
      * 
      * @param options A key-value set.
@@ -284,17 +296,17 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Set the destination directory for class files. If a class is part of a package, javac puts
-     * the class file in a subdirectory reflecting the package name, creating directories as needed.
-     * For example, if you specify -d c:\myclasses and the class is called com.mypackage.MyClass,
-     * then the class file is called c:\myclasses\com\mypackage\MyClass.class.
+     * Set the destination directory for class files. If a class is part of a package, javac puts the
+     * class file in a subdirectory reflecting the package name, creating directories as needed. For
+     * example, if you specify -d c:\myclasses and the class is called com.mypackage.MyClass, then the
+     * class file is called c:\myclasses\com\mypackage\MyClass.class.
      * </p>
      * <p>
      * If you don't use this method, this compiler use in-memory storage for compiled classes.
      * </p>
      * <p>
-     * Note that the directory specified by this method is not automatically added to your user
-     * class path.
+     * Note that the directory specified by this method is not automatically added to your user class
+     * path.
      * </p>
      * 
      * @param directory Your output directory. <code>null</code> value will reset to default.
@@ -305,9 +317,9 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Show a description of each use or override of a deprecated member or class. Without
-     * deprecation, java compiler shows a summary of the source files that use or override
-     * deprecated members or classes.
+     * Show a description of each use or override of a deprecated member or class. Without deprecation,
+     * java compiler shows a summary of the source files that use or override deprecated members or
+     * classes.
      * </p>
      * 
      * @param show
@@ -334,8 +346,8 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Generate all debugging information, including local variables. By default, only line number
-     * and source file information is generated.
+     * Generate all debugging information, including local variables. By default, only line number and
+     * source file information is generated.
      * </p>
      * 
      * @param generate
@@ -346,8 +358,7 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Verbose output. This includes information about each class loaded and each source file
-     * compiled.
+     * Verbose output. This includes information about each class loaded and each source file compiled.
      * </p>
      * 
      * @param verbose
@@ -396,11 +407,11 @@ public class JavaCompiler {
 
     /**
      * <p>
-     * Specify the directory where to place generated source files. The directory must already
-     * exist; javac will not create it. If a class is part of a package, the compiler puts the
-     * source file in a subdirectory reflecting the package name, creating directories as needed.
-     * For example, if you specify -s C:\mysrc and the class is called com.mypackage.MyClass, then
-     * the source file will be placed in C:\mysrc\com\mypackage\MyClass.java.
+     * Specify the directory where to place generated source files. The directory must already exist;
+     * javac will not create it. If a class is part of a package, the compiler puts the source file in a
+     * subdirectory reflecting the package name, creating directories as needed. For example, if you
+     * specify -s C:\mysrc and the class is called com.mypackage.MyClass, then the source file will be
+     * placed in C:\mysrc\com\mypackage\MyClass.java.
      * </p>
      * 
      * @param directory
@@ -462,7 +473,7 @@ public class JavaCompiler {
                 options.add("-proc:none");
             } else {
                 options.add("-processor");
-                options.add(I.join(",", processorClasses));
+                options.add(String.join(",", processorClasses));
                 options.add("-processorpath");
                 options.add(I.join(",", processorClassPaths));
 
@@ -498,14 +509,15 @@ public class JavaCompiler {
             // =============================================
             List<File> sources = new ArrayList();
 
-            for (Directory directory : this.sources) {
-                directory.walkFiles("**.java").to(sourceFile -> {
-                    psychopath.File classFile = Locator.directory(output).file(sourceFile.relativePath()).extension("class");
+            for (PathPattern directory : this.sources) {
+                for (Path sourceFile : directory.list()) {
+                    Path classsFile = output.resolve(directory.base.relativize(sourceFile.getParent()))
+                            .resolve(Paths.getName(sourceFile) + ".class");
 
-                    if (classFile.lastModified() < sourceFile.lastModified()) {
-                        sources.add(sourceFile.asFile());
+                    if (Paths.getLastModified(classsFile) < Paths.getLastModified(sourceFile)) {
+                        sources.add(sourceFile.toFile());
                     }
-                });
+                }
             }
 
             options.add("-sourcepath");
@@ -651,8 +663,8 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#list(javax.tools.JavaFileManager.Location,
-         *      java.lang.String, java.util.Set, boolean)
+         * @see javax.tools.JavaFileManager#list(javax.tools.JavaFileManager.Location, java.lang.String,
+         *      java.util.Set, boolean)
          */
         @Override
         public Iterable<JavaFileObject> list(Location location, String packageName, Set<Kind> kinds, boolean recurse) throws IOException {

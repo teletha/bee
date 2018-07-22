@@ -30,8 +30,6 @@ import bee.Platform;
 import filer.Filer;
 import kiss.Disposable;
 import kiss.I;
-import kiss.Signal;
-import psychopath.Directory;
 
 /**
  * @version 2015/07/14 2:48:03
@@ -55,7 +53,7 @@ public class ZipArchiver {
      * @param base A base path.
      * @param patterns "glob" include/exclude patterns.
      */
-    public void add(Signal<Directory> set) {
+    public void add(PathSet set) {
         if (set != null) {
             for (PathPattern pattern : set) {
                 add(pattern);

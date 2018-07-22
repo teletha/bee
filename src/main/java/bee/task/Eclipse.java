@@ -32,6 +32,7 @@ import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.Java;
 import bee.util.Java.JVM;
+import bee.util.PathPattern;
 import bee.util.Process;
 import filer.Filer;
 import kiss.I;
@@ -135,28 +136,28 @@ public class Eclipse extends Task implements IDESupport {
         XML doc = I.xml("classpath");
 
         // tests
-        project.getTestSourceSet().to(dir -> {
+        for (PathPattern path : project.getTestSourceSet()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(dir.asPath()))
-                    .attr("output", relative(project.getProjectClasses()));
-        });
+                    .attr("path", relative(path.base))
+                    .attr("output", relative(project.getTestClasses()));
+        }
 
         // sources
-        project.getSourceSet().to(dir -> {
+        for (PathPattern path : project.getSourceSet()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(dir.asPath()))
-                    .attr("output", relative(project.getProjectClasses()));
-        });
+                    .attr("path", relative(path.base))
+                    .attr("output", relative(project.getClasses()));
+        }
 
         // projects
-        project.getProjectSourceSet().to(dir -> {
+        for (PathPattern path : project.getProjectSourceSet()) {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(dir.asPath()))
+                    .attr("path", relative(path.base))
                     .attr("output", relative(project.getProjectClasses()));
-        });
+        }
 
         // library
         for (Library library : project.getDependency(Scope.Test)) {

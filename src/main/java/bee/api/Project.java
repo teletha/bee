@@ -39,12 +39,10 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
+import bee.util.PathSet;
 import filer.Filer;
 import kiss.I;
-import kiss.Signal;
 import kiss.XML;
-import psychopath.Directory;
-import psychopath.Locator;
 
 /**
  * @version 2018/03/29 9:26:47
@@ -540,8 +538,10 @@ public class Project {
      * 
      * @return
      */
-    public Signal<Directory> getSourceSet() {
-        return Locator.directory(getSources()).walkDirectories("*");
+    public PathSet getSourceSet() {
+        PathSet set = new PathSet();
+        Filer.walkDirectory(getSources(), "*").to(set::add);
+        return set;
     }
 
     /**
@@ -573,8 +573,10 @@ public class Project {
      * 
      * @return
      */
-    public Signal<Directory> getTestSourceSet() {
-        return Locator.directory(getTestSources()).walkDirectories("*");
+    public PathSet getTestSourceSet() {
+        PathSet set = new PathSet();
+        Filer.walkDirectory(getTestSources(), "*").to(set::add);
+        return set;
     }
 
     /**
@@ -606,8 +608,10 @@ public class Project {
      * 
      * @return
      */
-    public Signal<Directory> getProjectSourceSet() {
-        return Locator.directory(getProjectSources()).walkDirectories("*");
+    public PathSet getProjectSourceSet() {
+        PathSet set = new PathSet();
+        Filer.walkDirectory(getProjectSources(), "*").to(set::add);
+        return set;
     }
 
     /**

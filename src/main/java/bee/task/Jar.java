@@ -18,8 +18,6 @@ import bee.api.Task;
 import bee.util.JarArchiver;
 import bee.util.PathPattern;
 import bee.util.PathSet;
-import kiss.Signal;
-import psychopath.Directory;
 
 /**
  * @version 2017/01/16 14:40:35
@@ -94,25 +92,6 @@ public class Jar extends Task {
      * @param output
      */
     private void pack(String type, PathSet input, Path output) {
-        ui.talk("Build ", type, " jar: ", output);
-
-        JarArchiver archiver = new JarArchiver();
-        for (PathPattern path : input) {
-            archiver.add(path);
-        }
-        archiver.pack(output);
-    }
-
-    /**
-     * <p>
-     * Packing.
-     * </p>
-     * 
-     * @param type
-     * @param input
-     * @param output
-     */
-    private void pack(String type, Signal<Directory> input, Path output) {
         ui.talk("Build ", type, " jar: ", output);
 
         JarArchiver archiver = new JarArchiver();

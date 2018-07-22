@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +32,8 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import bee.api.Project;
+import bee.util.PathPattern;
 import kiss.I;
-import psychopath.Directory;
 
 /**
  * @version 2017/01/26 11:30:32
@@ -155,7 +156,11 @@ public class AnnotationProcessor implements Processor {
         ProjectInfo(Project project) {
             setRoot(project.getRoot());
 
-            this.sources = project.getSourceSet().map(Directory::asPath).toList();
+            this.sources = new ArrayList();
+
+            for (PathPattern path : project.getSourceSet()) {
+                this.sources.add(path.base);
+            }
         }
 
         /**

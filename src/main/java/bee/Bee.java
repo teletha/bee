@@ -31,6 +31,7 @@ import bee.task.IDESupport;
 import bee.task.Prototype;
 import bee.util.JarArchiver;
 import bee.util.JavaCompiler;
+import bee.util.PathPattern;
 import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
@@ -302,7 +303,7 @@ public class Bee {
 
             JavaCompiler compiler = new JavaCompiler();
             Path projectFile = project.getProjectDefinition();
-            compiler.addSourceDirectory(projectFile.getParent());
+            compiler.addSourceDirectory(new PathPattern(projectFile.getParent(), projectFile.getFileName().toString()));
             compiler.addClassPath(Filer.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();

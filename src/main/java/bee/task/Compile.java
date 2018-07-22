@@ -16,9 +16,7 @@ import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.util.JavaCompiler;
-import kiss.Signal;
-import psychopath.Directory;
-import psychopath.Locator;
+import bee.util.PathSet;
 
 /**
  * @version 2015/06/22 16:47:46
@@ -64,11 +62,9 @@ public class Compile extends Task {
      * @param input A source locations.
      * @param output A output location.
      */
-    private void compile(String type, Signal<Directory> input, Path output) {
+    private void compile(String type, PathSet input, Path output) {
         ui.talk("Copying ", type, " resources to ", output);
-        input.to(dir -> {
-            dir.copyTo(Locator.directory(output), "**", "!**.java");
-        });
+        input.copyTo(output, "**", "!**.java");
 
         ui.talk("Compiling ", type, " sources to ", output);
         JavaCompiler compiler = new JavaCompiler();
