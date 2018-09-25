@@ -59,7 +59,7 @@ public abstract class UserInterface {
         Object last = messages[messages.length - 1];
 
         if (last instanceof String && ((String) last).endsWith("\r")) {
-            write(build(messages));
+            write(build("[", messages));
         } else {
             write(build(messages, EOL));
         }
