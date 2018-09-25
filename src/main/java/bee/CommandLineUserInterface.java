@@ -55,7 +55,12 @@ class CommandLineUserInterface extends UserInterface {
             showCommandName();
             first = false;
         }
-        System.out.print(message);
+
+        if (message.endsWith("\r")) {
+            System.out.print("[2K" + message);
+        } else {
+            System.out.println(message);
+        }
     }
 
     /**
