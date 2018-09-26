@@ -34,7 +34,7 @@ public class Project extends bee.api.Project {
         require(AetherGroup, "aether-connector-basic", AetherVersion);
         require(AetherGroup, "aether-transport-http", AetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
-        require("org.junit.platform", "junit-platform-launcher", "1.1.0");
+        require("org.junit.platform", "junit-platform-launcher", "1.3.1");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
         require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
         require("com.github.teletha", "sinobu", "1.0");
