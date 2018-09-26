@@ -181,6 +181,7 @@ public class Eclipse extends Task implements IDESupport {
 
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
+        doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER");
 
         // write file
         makeFile(file, doc);
