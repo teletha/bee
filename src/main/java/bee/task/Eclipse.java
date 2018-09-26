@@ -26,7 +26,6 @@ import bee.api.Project;
 import bee.api.Repository;
 import bee.api.Scope;
 import bee.api.Task;
-import bee.extension.JavaExtension;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.Config;
 import bee.util.Config.Description;
@@ -182,27 +181,6 @@ public class Eclipse extends Task implements IDESupport {
 
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
-
-        // Java extensions
-        JavaExtension extension = I.make(JavaExtension.class);
-
-        boolean needEnhanceJRE = extension.hasJREExtension();
-        needEnhanceJRE = false;
-        String JREName = needEnhanceJRE ? "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/" + project.getProduct() : "";
-        doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER" + JREName);
-
-        if (needEnhanceJRE) {
-            String task = "eclipse:rewrite";
-            EclipseApplication eclipse = EclipseApplication.create();
-
-            if (eclipse.isProcessOwner()) {
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    Process.runWith(Platform.Bee, task);
-                }));
-            } else {
-                super.require(task);
-            }
-        }
 
         // write file
         makeFile(file, doc);
@@ -537,14 +515,6 @@ public class Eclipse extends Task implements IDESupport {
 
                 // remove all existing jars
                 locations.empty();
-
-                // add all specified jars
-                for (Path jar : I.make(JavaExtension.class).enhancedJRE()) {
-                    locations.child("libraryLocation")
-                            .attr("jreJar", jar)
-                            .attr("jreSrc", Platform.JavaHome.resolve("src.zip"))
-                            .attr("pkgRoot", "");
-                }
 
                 // write setting
                 properties.setProperty(JREKey, root.toString());

@@ -23,8 +23,6 @@ public class Project extends bee.api.Project {
 
     String AetherVersion = "[1.1.0,)";
 
-    String ByteBuddyVersion = "[1.8.0,)";
-
     {
         product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
         producer("Nameless Production Committee");
@@ -36,8 +34,6 @@ public class Project extends bee.api.Project {
         require(AetherGroup, "aether-connector-basic", AetherVersion);
         require(AetherGroup, "aether-transport-http", AetherVersion);
         require("org.apache.maven", "maven-aether-provider", "3.3.9");
-        require("net.bytebuddy", "byte-buddy", ByteBuddyVersion);
-        require("net.bytebuddy", "byte-buddy-agent", ByteBuddyVersion);
         require("org.junit.platform", "junit-platform-launcher", "1.1.0");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
         require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
