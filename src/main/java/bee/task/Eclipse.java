@@ -41,7 +41,7 @@ import kiss.Variable;
 import kiss.XML;
 
 /**
- * @version 2016/12/12 20:45:06
+ * @version 2018/09/27 11:39:31
  */
 public class Eclipse extends Task implements IDESupport {
 
@@ -88,22 +88,6 @@ public class Eclipse extends Task implements IDESupport {
     @Override
     public boolean exist(Project project) {
         return Files.isReadable(project.getRoot().resolve(".classpath"));
-    }
-
-    /**
-     * <p>
-     * Rewrite eclipse internal configuration.
-     * </p>
-     */
-    @Command("Rewrite eclipse internal configuration.")
-    public void rewrite() {
-        EclipseApplication eclipse = EclipseApplication.create();
-
-        boolean active = eclipse.isActive();
-
-        // if (active) eclipse.close();
-        // eclipse.configJDTPreference();
-        // if (active) eclipse.open();
     }
 
     /**
@@ -629,7 +613,13 @@ public class Eclipse extends Task implements IDESupport {
                     result = result.substring(6).trim();
                 }
 
-                return Variable.of(result).map(Filer::locate).require(Files::exists);
+                Path locate = Filer.locate(result);
+
+                if (Files.notExists(locate)) {
+                    return Variable.empty();
+                } else {
+                    return Variable.of(locate);
+                }
             }
         }
     }
