@@ -415,9 +415,9 @@ public abstract class Task implements Extensible {
                         .method(ElementMatchers.any())
                         .intercept(MethodDelegation.to(interceptor))
                         .make()
-                        .load(getClass().getClassLoader())
+                        .load(Task.class.getClassLoader())
                         .getLoaded()
-                        .newInstance();
+                        .getConstructors()[0].newInstance();
             } catch (Exception e) {
                 throw I.quiet(e);
             }

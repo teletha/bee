@@ -215,7 +215,7 @@ public class Bee {
 
             // create your project
             Class projectClass = Class.forName(ProjectFile);
-            inject((Project) projectClass.newInstance());
+            inject((Project) I.make(projectClass));
 
             // =====================================
             // build project develop environment
@@ -340,7 +340,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
+            bee.execute("help");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
