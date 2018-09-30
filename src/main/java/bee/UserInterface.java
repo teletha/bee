@@ -25,14 +25,17 @@ import java.util.function.Predicate;
 import bee.api.Command;
 import kiss.Decoder;
 import kiss.I;
+import kiss.Manageable;
+import kiss.Singleton;
 
 /**
  * <p>
  * Interactive user interface.
  * </p>
  * 
- * @version 2014/07/28 13:55:26
+ * @version 2018/09/30 12:50:21
  */
+@Manageable(lifestyle = Singleton.class)
 public abstract class UserInterface {
 
     /**

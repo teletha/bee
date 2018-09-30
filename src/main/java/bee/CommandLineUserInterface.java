@@ -15,7 +15,7 @@ import java.util.Deque;
 import bee.api.Command;
 
 /**
- * @version 2012/04/19 12:52:27
+ * @version 2018/09/30 12:49:55
  */
 class CommandLineUserInterface extends UserInterface {
 
@@ -24,6 +24,9 @@ class CommandLineUserInterface extends UserInterface {
 
     /** The command queue. */
     private Deque<String> commands = new ArrayDeque();
+
+    /** The view state. */
+    private boolean eraseNextLine = false;
 
     /**
      * {@inheritDoc}
@@ -56,8 +59,13 @@ class CommandLineUserInterface extends UserInterface {
             first = false;
         }
 
-        if (message.endsWith("\r")) {
-            System.out.print("[2K" + message);
+        if (eraseNextLine) {
+            message = "[2K" + message;
+        }
+        eraseNextLine = message.endsWith("\r");
+
+        if (eraseNextLine) {
+            System.out.print(message);
         } else {
             System.out.println(message);
         }
