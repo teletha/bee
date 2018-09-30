@@ -92,7 +92,7 @@ class CommandLineUserInterface extends UserInterface {
         String command = commands.pollLast();
 
         if (command != null) {
-            System.out.println("◆ " + command + " ◆");
+            System.out.println("◆ " + command.replace(":", " : ") + " ◆");
         }
     }
 }
