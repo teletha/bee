@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
 
+import org.junit.platform.commons.util.ReflectionUtils;
+
 import com.google.common.base.Stopwatch;
 
 import bee.api.Library;
@@ -215,7 +217,7 @@ public class Bee {
 
             // create your project
             Class projectClass = Class.forName(ProjectFile);
-            inject((Project) I.make(projectClass));
+            inject((Project) ReflectionUtils.newInstance(projectClass));
 
             // =====================================
             // build project develop environment
@@ -340,7 +342,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("help");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
