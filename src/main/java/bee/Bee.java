@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import org.junit.platform.commons.util.ReflectionUtils;
-
 import com.google.common.base.Stopwatch;
 
 import bee.api.Library;
@@ -217,7 +215,7 @@ public class Bee {
 
             // create your project
             Class projectClass = Class.forName(ProjectFile);
-            inject((Project) ReflectionUtils.newInstance(projectClass));
+            inject((Project) projectClass.getDeclaredConstructors()[0].newInstance());
 
             // =====================================
             // build project develop environment

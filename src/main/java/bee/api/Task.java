@@ -26,8 +26,6 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
-import org.junit.platform.commons.util.ReflectionUtils;
-
 import bee.Platform;
 import bee.TaskFailure;
 import bee.UserInterface;
@@ -404,7 +402,7 @@ public abstract class Task implements Extensible {
 
         private static final Interceptor interceptor = I.make(Interceptor.class);
 
-        private final Class enhanced;
+        private final Object enhanced;
 
         /**
          * @param modelClass
@@ -418,7 +416,8 @@ public abstract class Task implements Extensible {
                         .intercept(MethodDelegation.to(interceptor))
                         .make()
                         .load(getClass().getClassLoader())
-                        .getLoaded();
+                        .getLoaded()
+                        .getDeclaredConstructors()[0].newInstance();
             } catch (Exception e) {
                 throw I.quiet(e);
             }
@@ -429,7 +428,7 @@ public abstract class Task implements Extensible {
          */
         @Override
         public Object get() {
-            return ReflectionUtils.newInstance(enhanced);
+            return enhanced;
         }
     }
 
