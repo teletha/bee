@@ -38,6 +38,9 @@ import kiss.Singleton;
 @Manageable(lifestyle = Singleton.class)
 public abstract class UserInterface {
 
+    /** The for command line user interface. */
+    public static final UserInterface CLI = new CommandLineUserInterface();
+
     /**
      * <p>
      * Talk to user with decoration like title.
