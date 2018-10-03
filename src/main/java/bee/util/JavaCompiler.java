@@ -171,6 +171,15 @@ public class JavaCompiler {
     }
 
     /**
+     * Use all current classpath.
+     */
+    public void addCurrentClassPath() {
+        for (String path : System.getProperty("java.class.path").split(File.pathSeparator)) {
+            addClassPath(java.nio.file.Paths.get(path));
+        }
+    }
+
+    /**
      * Add source code
      * 
      * @param name A class name.
