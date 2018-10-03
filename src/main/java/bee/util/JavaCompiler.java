@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 
 import javax.annotation.processing.Processor;
@@ -174,10 +173,11 @@ public class JavaCompiler {
     /**
      * Add source code
      * 
+     * @param name A class name.
      * @param code A source code to compile.
      */
-    public void addSource(String code) {
-        codes.add(new Source(code));
+    public void addSource(String name, String code) {
+        codes.add(new Source(name, code));
     }
 
     /**
@@ -630,8 +630,8 @@ public class JavaCompiler {
         /**
          * @param code
          */
-        private Source(String code) {
-            super(URI.create("random://name" + new Random().nextInt()), Kind.SOURCE);
+        private Source(String name, String code) {
+            super(URI.create("string:///" + name.replace(".", "/") + Kind.SOURCE.extension), Kind.SOURCE);
             this.code = Objects.requireNonNull(code);
         }
 
