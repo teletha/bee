@@ -674,7 +674,7 @@ public class JavaCompiler {
         private final StandardJavaFileManager manager;
 
         /** The mapping for defined classes. */
-        private final Map<String, Class> classes = new HashMap();
+        private final Map<String, byte[]> bytes = new HashMap();
 
         /**
          * @param fileManager
@@ -684,7 +684,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.StandardJavaFileManager#getJavaFileObjectsFromFiles(java.lang.Iterable)
+         * {@inheritDoc}
          */
         @Override
         public Iterable<? extends JavaFileObject> getJavaFileObjectsFromFiles(Iterable<? extends File> files) {
@@ -692,7 +692,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.StandardJavaFileManager#getJavaFileObjects(java.io.File[])
+         * {@inheritDoc}
          */
         @Override
         public Iterable<? extends JavaFileObject> getJavaFileObjects(File... files) {
@@ -700,7 +700,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.StandardJavaFileManager#getJavaFileObjectsFromStrings(java.lang.Iterable)
+         * {@inheritDoc}
          */
         @Override
         public Iterable<? extends JavaFileObject> getJavaFileObjectsFromStrings(Iterable<String> names) {
@@ -708,7 +708,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.StandardJavaFileManager#getJavaFileObjects(java.lang.String[])
+         * {@inheritDoc}
          */
         @Override
         public Iterable<? extends JavaFileObject> getJavaFileObjects(String... names) {
@@ -716,8 +716,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.StandardJavaFileManager#setLocation(javax.tools.JavaFileManager.Location,
-         *      java.lang.Iterable)
+         * {@inheritDoc}
          */
         @Override
         public void setLocation(Location location, Iterable<? extends File> path) throws IOException {
@@ -725,7 +724,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.StandardJavaFileManager#getLocation(javax.tools.JavaFileManager.Location)
+         * {@inheritDoc}
          */
         @Override
         public Iterable<? extends File> getLocation(Location location) {
@@ -733,7 +732,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.OptionChecker#isSupportedOption(java.lang.String)
+         * {@inheritDoc}
          */
         @Override
         public int isSupportedOption(String option) {
@@ -741,8 +740,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#list(javax.tools.JavaFileManager.Location,
-         *      java.lang.String, java.util.Set, boolean)
+         * {@inheritDoc}
          */
         @Override
         public Iterable<JavaFileObject> list(Location location, String packageName, Set<Kind> kinds, boolean recurse) throws IOException {
@@ -750,8 +748,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#inferBinaryName(javax.tools.JavaFileManager.Location,
-         *      javax.tools.JavaFileObject)
+         * {@inheritDoc}
          */
         @Override
         public String inferBinaryName(Location location, JavaFileObject file) {
@@ -759,8 +756,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.StandardJavaFileManager#isSameFile(javax.tools.FileObject,
-         *      javax.tools.FileObject)
+         * {@inheritDoc}
          */
         @Override
         public boolean isSameFile(FileObject a, FileObject b) {
@@ -768,7 +764,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#handleOption(java.lang.String, java.util.Iterator)
+         * {@inheritDoc}
          */
         @Override
         public boolean handleOption(String current, Iterator<String> remaining) {
@@ -776,7 +772,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#hasLocation(javax.tools.JavaFileManager.Location)
+         * {@inheritDoc}
          */
         @Override
         public boolean hasLocation(Location location) {
@@ -784,7 +780,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#getClassLoader(javax.tools.JavaFileManager.Location)
+         * {@inheritDoc}
          */
         @Override
         public ClassLoader getClassLoader(Location location) {
@@ -792,17 +788,16 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#getJavaFileForInput(javax.tools.JavaFileManager.Location,
-         *      java.lang.String, javax.tools.JavaFileObject.Kind)
+         * {@inheritDoc}
          */
         @Override
         public JavaFileObject getJavaFileForInput(Location location, String className, Kind kind) throws IOException {
+            System.out.println(className);
             return manager.getJavaFileForInput(location, className, kind);
         }
 
         /**
-         * @see javax.tools.JavaFileManager#getJavaFileForOutput(javax.tools.JavaFileManager.Location,
-         *      java.lang.String, javax.tools.JavaFileObject.Kind, javax.tools.FileObject)
+         * {@inheritDoc}
          */
         @Override
         public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
@@ -814,8 +809,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#getFileForInput(javax.tools.JavaFileManager.Location,
-         *      java.lang.String, java.lang.String)
+         * {@inheritDoc}
          */
         @Override
         public FileObject getFileForInput(Location location, String packageName, String relativeName) throws IOException {
@@ -823,8 +817,7 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#getFileForOutput(javax.tools.JavaFileManager.Location,
-         *      java.lang.String, java.lang.String, javax.tools.FileObject)
+         * {@inheritDoc}
          */
         @Override
         public FileObject getFileForOutput(Location location, String packageName, String relativeName, FileObject sibling)
@@ -833,35 +826,48 @@ public class JavaCompiler {
         }
 
         /**
-         * @see javax.tools.JavaFileManager#flush()
+         * {@inheritDoc}
          */
         @Override
         public void flush() throws IOException {
             manager.flush();
-
-            // clean up
-            classes.clear();
         }
 
         /**
-         * @see javax.tools.JavaFileManager#close()
+         * {@inheritDoc}
          */
         @Override
         public void close() throws IOException {
             manager.close();
 
             // clean up
-            classes.clear();
+            bytes.clear();
         }
 
         /**
-         * @see java.lang.ClassLoader#findClass(java.lang.String)
+         * {@inheritDoc}
          */
         @Override
-        protected Class<?> findClass(String name) throws ClassNotFoundException {
-            Class clazz = classes.get(name);
+        protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            Class<?> clazz = findLoadedClass(name);
 
-            return clazz != null ? clazz : super.findClass(name);
+            if (clazz == null) {
+                try {
+                    byte[] b = bytes.get(name);
+
+                    if (b != null) {
+                        clazz = defineClass(name, b, 0, b.length);
+                    } else {
+                        clazz = findClass(name);
+                    }
+                } catch (ClassNotFoundException e) {
+                    clazz = super.loadClass(name, resolve);
+                }
+            }
+
+            if (resolve) resolveClass(clazz);
+
+            return clazz;
         }
 
         /**
@@ -880,7 +886,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#toUri()
+             * {@inheritDoc}
              */
             @Override
             public URI toUri() {
@@ -888,7 +894,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#getName()
+             * {@inheritDoc}
              */
             @Override
             public String getName() {
@@ -896,7 +902,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#openInputStream()
+             * {@inheritDoc}
              */
             @Override
             public InputStream openInputStream() throws IOException {
@@ -904,7 +910,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#openReader(boolean)
+             * {@inheritDoc}
              */
             @Override
             public Reader openReader(boolean ignoreEncodingErrors) throws IOException {
@@ -912,7 +918,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#getCharContent(boolean)
+             * {@inheritDoc}
              */
             @Override
             public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
@@ -920,7 +926,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#openWriter()
+             * {@inheritDoc}
              */
             @Override
             public Writer openWriter() throws IOException {
@@ -928,7 +934,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#getLastModified()
+             * {@inheritDoc}
              */
             @Override
             public long getLastModified() {
@@ -936,7 +942,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.FileObject#delete()
+             * {@inheritDoc}
              */
             @Override
             public boolean delete() {
@@ -944,7 +950,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.JavaFileObject#getKind()
+             * {@inheritDoc}
              */
             @Override
             public Kind getKind() {
@@ -952,8 +958,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.JavaFileObject#isNameCompatible(java.lang.String,
-             *      javax.tools.JavaFileObject.Kind)
+             * {@inheritDoc}
              */
             @Override
             public boolean isNameCompatible(String simpleName, Kind kind) {
@@ -961,7 +966,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.JavaFileObject#getNestingKind()
+             * {@inheritDoc}
              */
             @Override
             public NestingKind getNestingKind() {
@@ -969,7 +974,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.JavaFileObject#getAccessLevel()
+             * {@inheritDoc}
              */
             @Override
             public Modifier getAccessLevel() {
@@ -977,7 +982,7 @@ public class JavaCompiler {
             }
 
             /**
-             * @see javax.tools.SimpleJavaFileObject#openOutputStream()
+             * {@inheritDoc}
              */
             @Override
             public OutputStream openOutputStream() throws IOException {
@@ -985,17 +990,15 @@ public class JavaCompiler {
             }
 
             /**
-             * @see java.io.OutputStream#close()
+             * {@inheritDoc}
              */
             @Override
-            public void close() throws IOException {
+            public synchronized void close() throws IOException {
                 // close stream
                 super.close();
 
-                // define class
-                byte[] bytes = toByteArray();
-
-                classes.put(name, defineClass(name, bytes, 0, bytes.length));
+                // store byte code
+                bytes.put(name, toByteArray());
             }
         }
     }
