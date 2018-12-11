@@ -63,6 +63,18 @@ public class DependencyTest {
     }
 
     @Test
+    public void atAnnotation() {
+        BlinkProject project = new BlinkProject();
+        project.require("org.atteo.classindex", "classindex", "3.4").atAnnotation();
+
+        Repository repository = new Repository(project);
+        Set<Library> dependencies = repository.collectDependency(project, Scope.Annotation);
+        assert dependencies.size() == 1;
+        dependencies = repository.collectDependency(project, Scope.Runtime);
+        assert dependencies.size() == 0;
+    }
+
+    @Test
     public void external1() {
         BlinkProject project = new BlinkProject();
         project.require("org.skyscreamer", "jsonassert", "1.2.3");

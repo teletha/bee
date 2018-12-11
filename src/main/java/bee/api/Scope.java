@@ -17,9 +17,6 @@ import org.eclipse.aether.graph.DependencyFilter;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.artifact.JavaScopes;
 
-/**
- * @version 2016/06/30 11:14:45
- */
 public enum Scope {
 
     /** Depend at anytime. */
@@ -47,9 +44,7 @@ public enum Scope {
     private List<String> acceptable;
 
     /**
-     * <p>
      * Scope definition.
-     * </p>
      * 
      * @param type A scope type.
      * @param acceptables A list of acceptable scope types.
@@ -73,9 +68,7 @@ public enum Scope {
     }
 
     /**
-     * <p>
      * Test scope.
-     * </p>
      * 
      * @param dependency
      * @return
@@ -99,9 +92,7 @@ public enum Scope {
     }
 
     /**
-     * <p>
      * Find scope by keyword.
-     * </p>
      * 
      * @param keyword
      * @return
@@ -121,6 +112,10 @@ public enum Scope {
 
         if (keyword.equalsIgnoreCase("system")) {
             return System;
+        }
+
+        if (keyword.equalsIgnoreCase("Pluggable Annotation Processing")) {
+            return Annotation;
         }
         return Runtime;
     }
