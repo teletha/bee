@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.IOException;
 import java.net.URI;
@@ -659,7 +659,7 @@ public class Project {
         Set<Path> libraries = new HashSet();
 
         try {
-            for (Library library : getDependency(Scope.Provided)) {
+            for (Library library : getDependency(Scope.Annotation)) {
                 Path file = FileSystems.newFileSystem(library.getLocalJar(), ClassLoader.getSystemClassLoader())
                         .getPath("/")
                         .resolve("META-INF/services/javax.annotation.processing.Processor");
