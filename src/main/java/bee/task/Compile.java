@@ -16,7 +16,8 @@ import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.util.JavaCompiler;
-import bee.util.PathSet;
+import psychopath.Locator;
+import psychopath.Temporary;
 
 /**
  * @version 2015/06/22 16:47:46
@@ -30,7 +31,7 @@ public class Compile extends Task {
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
-        compile("main", project.getSourceSet(), project.getClasses());
+        compile("main", project.getSourceSet().asTemporary(), project.getClasses());
     }
 
     /**
@@ -40,7 +41,7 @@ public class Compile extends Task {
      */
     @Command("Compile test sources and copy other resources.")
     public void test() {
-        compile("test", project.getTestSourceSet(), project.getTestClasses());
+        compile("test", project.getTestSourceSet().asTemporary(), project.getTestClasses());
     }
 
     /**
@@ -50,7 +51,7 @@ public class Compile extends Task {
      */
     @Command("Compile project sources and copy other resources.")
     public void project() {
-        compile("project", project.getProjectSourceSet(), project.getProjectClasses());
+        compile("project", project.getProjectSourceSet().asTemporary(), project.getProjectClasses());
     }
 
     /**
@@ -62,9 +63,9 @@ public class Compile extends Task {
      * @param input A source locations.
      * @param output A output location.
      */
-    private void compile(String type, PathSet input, Path output) {
+    private void compile(String type, Temporary input, Path output) {
         ui.talk("Copying ", type, " resources to ", output);
-        input.copyTo(output, "**", "!**.java");
+        input.copyTo(Locator.directory(output), "**", "!**.java");
 
         ui.talk("Compiling ", type, " sources to ", output);
         JavaCompiler compiler = new JavaCompiler();

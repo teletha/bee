@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import filer.Filer;
+import psychopath.Locator;
+import psychopath.Temporary;
 
 /**
  * @version 2012/03/26 15:45:26
@@ -61,5 +63,9 @@ public final class PathPattern {
      */
     public List<Path> list(String... patterns) {
         return Filer.walk(base, mix(patterns)).toList();
+    }
+
+    public Temporary asTemporary() {
+        return Locator.temporary().add(Locator.directory(base), patterns.toArray(String[]::new));
     }
 }

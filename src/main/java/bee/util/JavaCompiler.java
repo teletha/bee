@@ -54,6 +54,9 @@ import bee.UserInterface;
 import bee.api.Library;
 import filer.Filer;
 import kiss.I;
+import psychopath.Directory;
+import psychopath.Locator;
+import psychopath.Temporary;
 
 /**
  * @version 2018/03/29 9:26:33
@@ -67,7 +70,7 @@ public class JavaCompiler {
     private final UserInterface ui;
 
     /** The source directories. */
-    private final List<PathPattern> sources = new ArrayList();
+    private final Temporary sources = Locator.temporary();
 
     /** The source codes. */
     private final List<JavaFileObject> codes = new ArrayList();
@@ -88,7 +91,7 @@ public class JavaCompiler {
     private final Map<String, String> processorOptions = new HashMap();
 
     /** The output directory. */
-    private Path output;
+    private Directory output;
 
     /** The source version. */
     private SourceVersion sourceVersion = SourceVersion.latest();
@@ -240,9 +243,22 @@ public class JavaCompiler {
      * 
      * @param outputDirectory Your source code directory.
      */
-    public void addSourceDirectory(PathPattern directories) {
+    public void addSourceDirectory(Temporary directories) {
         if (directories != null) {
             sources.add(directories);
+        }
+    }
+
+    /**
+     * <p>
+     * Add the source code directory.
+     * </p>
+     * 
+     * @param outputDirectory Your source code directory.
+     */
+    public void addSourceDirectory(PathPattern directories) {
+        if (directories != null) {
+            sources.add(directories.asTemporary());
         }
     }
 
@@ -258,7 +274,7 @@ public class JavaCompiler {
      * @param processor
      */
     public void addProcessor(Class<? extends Processor> processor) {
-        if (processor != null && !processorClasses.contains(processor)) {
+        if (processor != null && !processorClasses.contains(processor.getName())) {
             processorClasses.add(processor.getName());
             processorClassPaths.add(Filer.locate(processor).toAbsolutePath());
         }
@@ -345,7 +361,7 @@ public class JavaCompiler {
      * @param directory Your output directory. <code>null</code> value will reset to default.
      */
     public void setOutput(Path directory) {
-        this.output = directory;
+        this.output = Locator.directory(directory);
     }
 
     /**
@@ -463,138 +479,122 @@ public class JavaCompiler {
         // Build options
         ArrayList<String> options = new ArrayList();
 
-        try {
-            // =============================================
-            // Option
-            // =============================================
-            if (verbose) {
-                options.add("-verbose");
-            }
-
-            // =============================================
-            // Lint
-            // =============================================
-            if (deprication) {
-                options.add("-Xlint:deprecation");
-            }
-
-            if (nowarn) {
-                options.add("-Xlint:none");
-            }
-
-            // =============================================
-            // Output Directory
-            // =============================================
-            if (output != null) {
-                // Create direcotry if needed.
-                if (Files.notExists(output)) {
-                    Files.createDirectories(output);
-                }
-
-                // Output must be not file but directory.
-                if (!Files.isDirectory(output)) {
-                    output = output.getParent();
-                }
-
-                options.add("-d");
-                options.add(output.toAbsolutePath().toString());
-            }
-
-            // =============================================
-            // Annotation Processing Tools
-            // =============================================
-            if (processors.size() == 0 && processorClasses.size() == 0) {
-                options.add("-proc:none");
-            } else {
-                options.add("-processor");
-                options.add(String.join(",", processorClasses));
-                options.add("-processorpath");
-                options.add(I.join(",", processorClassPaths));
-
-                for (Entry<String, String> entry : processorOptions.entrySet()) {
-                    options.add("-A" + entry.getKey() + '=' + entry.getValue());
-                }
-            }
-
-            // =============================================
-            // Source encoding
-            // =============================================
-            options.add("-encoding");
-            options.add(encoding.displayName());
-
-            // =============================================
-            // Source and Target Version
-            // =============================================
-            options.add("-source");
-            options.add(normalize(sourceVersion));
-            options.add("-target");
-            options.add(normalize(targetVersion));
-
-            // =============================================
-            // Java Class Paths
-            // =============================================
-            if (classpaths.size() != 0) {
-                options.add("-cp");
-                options.add(I.join(File.pathSeparator, classpaths));
-            }
-
-            // =============================================
-            // Java Source Files
-            // =============================================
-            List<JavaFileObject> sources = new ArrayList(codes);
-
-            for (PathPattern directory : this.sources) {
-                for (Path sourceFile : directory.list()) {
-                    if (output == null) {
-                        sources.add(new Source(sourceFile));
-                    } else {
-                        Path classsFile = output.resolve(directory.base.relativize(sourceFile.getParent()))
-                                .resolve(Paths.getName(sourceFile) + ".class");
-
-                        if (Paths.getLastModified(classsFile) < Paths.getLastModified(sourceFile)) {
-                            sources.add(new Source(sourceFile));
-                        }
-                    }
-                }
-            }
-
-            options.add("-sourcepath");
-            options.add(I.join(File.pathSeparator, this.sources));
-
-            // check compiling source size
-            if (sources.isEmpty()) {
-                ui.talk("Nothing to compile - all classes are up to date");
-
-                return Thread.currentThread().getContextClassLoader();
-            }
-
-            // Invocation
-            ErrorListener listener = new ErrorListener();
-            Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
-
-            CompilationTask task = compiler.getTask(null, manager, listener, options, null, sources);
-
-            // =============================================
-            // Annotation Processing Tools
-            // =============================================
-            if (processors.size() != 0) {
-                task.setProcessors(processors);
-            }
-
-            boolean result = task.call();
-
-            if (result) {
-                ui.talk("Compile " + sources.size() + " sources.");
-            } else {
-                throw new Error("Compile is fail.");
-            }
-
-            return manager;
-        } catch (IOException e) {
-            // If this exception will be thrown, it is bug of this program. So we must rethrow the
-            // wrapped error in here.
-            throw I.quiet(e);
+        // =============================================
+        // Option
+        // =============================================
+        if (verbose) {
+            options.add("-verbose");
         }
+
+        // =============================================
+        // Lint
+        // =============================================
+        if (deprication) {
+            options.add("-Xlint:deprecation");
+        }
+
+        if (nowarn) {
+            options.add("-Xlint:none");
+        }
+
+        // =============================================
+        // Output Directory
+        // =============================================
+        if (output != null) {
+            // Create direcotry if needed.
+            output.create();
+
+            options.add("-d");
+            options.add(output.absolutize().toString());
+        }
+
+        // =============================================
+        // Annotation Processing Tools
+        // =============================================
+        if (processors.size() == 0 && processorClasses.size() == 0) {
+            options.add("-proc:none");
+        } else {
+            options.add("-processor");
+            options.add(String.join(",", processorClasses));
+            options.add("-processorpath");
+            options.add(I.join(",", processorClassPaths));
+
+            for (Entry<String, String> entry : processorOptions.entrySet()) {
+                options.add("-A" + entry.getKey() + '=' + entry.getValue());
+            }
+        }
+
+        // =============================================
+        // Source encoding
+        // =============================================
+        options.add("-encoding");
+        options.add(encoding.displayName());
+
+        // =============================================
+        // Source and Target Version
+        // =============================================
+        options.add("-source");
+        options.add(normalize(sourceVersion));
+        options.add("-target");
+        options.add(normalize(targetVersion));
+
+        // =============================================
+        // Java Class Paths
+        // =============================================
+        if (classpaths.size() != 0) {
+            options.add("-cp");
+            options.add(I.join(File.pathSeparator, classpaths));
+        }
+
+        // =============================================
+        // Java Source Files
+        // =============================================
+        List<JavaFileObject> sources = new ArrayList(codes);
+
+        this.sources.walkFilesWithBase().to(e -> {
+            if (output == null) {
+                sources.add(new Source(e.ⅱ));
+            } else {
+                psychopath.File classFile = output.directory(e.ⅰ.relativize(e.ⅱ.parent())).file(e.ⅱ.base() + ".class");
+
+                if (classFile.lastModified() < e.ⅱ.lastModified()) {
+                    sources.add(new Source(e.ⅱ));
+                }
+            }
+        });
+
+        options.add("-sourcepath");
+        options.add(I.join(File.pathSeparator, this.sources.walkFiles().toList()));
+
+        // check compiling source size
+        if (sources.isEmpty()) {
+            ui.talk("Nothing to compile - all classes are up to date");
+
+            return Thread.currentThread().getContextClassLoader();
+        }
+
+        // Invocation
+        ErrorListener listener = new ErrorListener();
+        Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
+
+        CompilationTask task = compiler.getTask(null, manager, listener, options, null, sources);
+
+        // =============================================
+        // Annotation Processing Tools
+        // =============================================
+        if (processors.size() != 0) {
+            task.setProcessors(processors);
+        }
+
+        boolean result = task.call();
+
+        if (result) {
+            ui.talk("Compile " + sources.size() + " sources.");
+        } else {
+            throw new Error("Compile is fail.");
+        }
+
+        return manager;
     }
 
     /**
@@ -650,6 +650,13 @@ public class JavaCompiler {
         private Source(Path file) {
             super(file.toUri(), Kind.SOURCE);
             this.file = file;
+        }
+
+        /**
+         * @param file
+         */
+        private Source(psychopath.File file) {
+            this(file.asJavaPath());
         }
 
         /**
