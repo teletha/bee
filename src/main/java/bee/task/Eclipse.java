@@ -119,12 +119,12 @@ public class Eclipse extends Task implements IDESupport {
         XML doc = I.xml("classpath");
 
         // tests
-        for (PathPattern path : project.getTestSourceSet()) {
+        project.getTestSourceSet().walkDirectories().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(path.base))
+                    .attr("path", relative(dir.asJavaPath()))
                     .attr("output", relative(project.getTestClasses()));
-        }
+        });
 
         // sources
         for (PathPattern path : project.getSourceSet()) {
@@ -135,12 +135,12 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // projects
-        for (PathPattern path : project.getProjectSourceSet()) {
+        project.getProjectSourceSet().walkDirectories().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(path.base))
+                    .attr("path", relative(dir.asJavaPath()))
                     .attr("output", relative(project.getProjectClasses()));
-        }
+        });
 
         // library
         for (Library library : project.getDependency(Scope.Test)) {

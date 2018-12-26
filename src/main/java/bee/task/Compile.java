@@ -41,7 +41,7 @@ public class Compile extends Task {
      */
     @Command("Compile test sources and copy other resources.")
     public void test() {
-        compile("test", project.getTestSourceSet().asTemporary(), project.getTestClasses());
+        compile("test", project.getTestSourceSet(), project.getTestClasses());
     }
 
     /**
@@ -51,7 +51,7 @@ public class Compile extends Task {
      */
     @Command("Compile project sources and copy other resources.")
     public void project() {
-        compile("project", project.getProjectSourceSet().asTemporary(), project.getProjectClasses());
+        compile("project", project.getProjectSourceSet(), project.getProjectClasses());
     }
 
     /**

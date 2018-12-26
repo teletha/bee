@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,6 +43,8 @@ import bee.util.PathSet;
 import filer.Filer;
 import kiss.I;
 import kiss.XML;
+import psychopath.Locator;
+import psychopath.Temporary;
 
 /**
  * @version 2018/03/29 9:26:47
@@ -573,10 +575,8 @@ public class Project {
      * 
      * @return
      */
-    public PathSet getTestSourceSet() {
-        PathSet set = new PathSet();
-        Filer.walkDirectory(getTestSources(), "*").to(set::add);
-        return set;
+    public Temporary getTestSourceSet() {
+        return Locator.temporary().add(Locator.directory(getTestSources()), "*");
     }
 
     /**
@@ -608,10 +608,8 @@ public class Project {
      * 
      * @return
      */
-    public PathSet getProjectSourceSet() {
-        PathSet set = new PathSet();
-        Filer.walkDirectory(getProjectSources(), "*").to(set::add);
-        return set;
+    public Temporary getProjectSourceSet() {
+        return Locator.temporary().add(Locator.directory(getProjectSources()), "*");
     }
 
     /**

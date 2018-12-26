@@ -36,7 +36,7 @@ public class Jar extends bee.task.Jar {
         JarArchiver archiver = new JarArchiver();
         archiver.setMainClass(main);
         archiver.add(project.getClasses());
-        archiver.add(project.getSourceSet());
+        archiver.add(project.getSourceSet().asTemporary());
 
         for (Library library : project.getDependency(Scope.Runtime)) {
             archiver.add(library.getLocalJar() /* , "!META-INF/**" */);

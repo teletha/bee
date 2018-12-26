@@ -228,21 +228,6 @@ public class JavaCompiler {
      * 
      * @param outputDirectory Your source code directory.
      */
-    public void addSourceDirectory(PathSet directories) {
-        if (directories != null) {
-            for (PathPattern pattern : directories) {
-                addSourceDirectory(new PathPattern(pattern.base, pattern.mix("**.java")));
-            }
-        }
-    }
-
-    /**
-     * <p>
-     * Add the source code directory.
-     * </p>
-     * 
-     * @param outputDirectory Your source code directory.
-     */
     public void addSourceDirectory(Temporary directories) {
         if (directories != null) {
             sources.add(directories);

@@ -16,8 +16,8 @@ import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.util.JarArchiver;
-import bee.util.PathPattern;
-import bee.util.PathSet;
+import psychopath.Locator;
+import psychopath.Temporary;
 
 /**
  * @version 2017/01/16 14:40:35
@@ -33,8 +33,8 @@ public class Jar extends Task {
     public void source() {
         require(Compile.class).source();
 
-        pack("main classes", new PathSet(project.getClasses()), project.locateJar());
-        pack("main sources", project.getSourceSet(), project.locateSourceJar());
+        pack("main classes", Locator.temporary().add(project.getClasses()), project.locateJar());
+        pack("main sources", project.getSourceSet().asTemporary(), project.locateSourceJar());
     }
 
     /**
@@ -49,7 +49,7 @@ public class Jar extends Task {
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test classes", new PathSet(project.getTestClasses()), classes);
+        pack("test classes", Locator.temporary().add(project.getTestClasses()), classes);
         pack("test sources", project.getTestSourceSet(), sources);
     }
 
@@ -65,7 +65,7 @@ public class Jar extends Task {
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project classes", new PathSet(project.getProjectClasses()), classes);
+        pack("project classes", Locator.temporary().add(project.getProjectClasses()), classes);
         pack("project sources", project.getProjectSourceSet(), sources);
     }
 
@@ -79,7 +79,7 @@ public class Jar extends Task {
         Doc doc = require(Doc.class);
         doc.javadoc();
 
-        pack("javadoc", new PathSet(doc.output), project.locateJavadocJar());
+        pack("javadoc", Locator.temporary().add(doc.output), project.locateJavadocJar());
     }
 
     /**
@@ -91,13 +91,11 @@ public class Jar extends Task {
      * @param input
      * @param output
      */
-    private void pack(String type, PathSet input, Path output) {
+    private void pack(String type, Temporary input, Path output) {
         ui.talk("Build ", type, " jar: ", output);
 
         JarArchiver archiver = new JarArchiver();
-        for (PathPattern path : input) {
-            archiver.add(path);
-        }
+        input.walkFiles().to(file -> archiver.add(file.asJavaPath()));
         archiver.pack(output);
     }
 
