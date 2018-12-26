@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import filer.Filer;
+import psychopath.Locator;
+import psychopath.Temporary;
 
 /**
  * @version 2012/03/26 15:44:18
@@ -145,5 +147,15 @@ public class PathSet implements Iterable<PathPattern> {
             paths.addAll(Filer.walk(pattern.base, pattern.mix()).toList());
         }
         return paths;
+    }
+
+    public Temporary asTemporary() {
+        Temporary temporary = Locator.temporary();
+
+        for (PathPattern pattern : set) {
+            temporary.add(Locator.directory(pattern.base), pattern.patterns.toArray(String[]::new));
+        }
+
+        return temporary;
     }
 }
