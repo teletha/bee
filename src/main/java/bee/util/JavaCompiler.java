@@ -536,7 +536,7 @@ public class JavaCompiler {
         // =============================================
         List<JavaFileObject> sources = new ArrayList(codes);
 
-        this.sources.walkFilesWithBase().to(e -> {
+        this.sources.walkFilesWithBase("**.java").to(e -> {
             if (output == null) {
                 sources.add(new Source(e.ⅱ));
             } else {

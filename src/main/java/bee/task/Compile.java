@@ -66,6 +66,10 @@ public class Compile extends Task {
     private void compile(String type, Temporary input, Path output) {
         ui.talk("Copying ", type, " resources to ", output);
         input.copyTo(Locator.directory(output), "**", "!**.java");
+        System.out.println(input + "  " + output);
+        input.walkFiles("**", "!**.java").to(e -> {
+            System.out.println(e + "  @@");
+        });
 
         ui.talk("Compiling ", type, " sources to ", output);
         JavaCompiler compiler = new JavaCompiler();

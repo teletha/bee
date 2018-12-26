@@ -609,7 +609,10 @@ public class Project {
      * @return
      */
     public Temporary getProjectSourceSet() {
-        return Locator.temporary().add(Locator.directory(getProjectSources()), "*");
+        Locator.temporary().add(Locator.directory(getProjectSources()).walkDirectories("*")).walkFiles("**", "!**.java").to(d -> {
+            System.out.println(d + "   @@@");
+        });
+        return Locator.temporary().add(Locator.directory(getProjectSources()).walkDirectories("*"));
     }
 
     /**
