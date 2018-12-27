@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -193,32 +193,12 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Add the source code directory.
-     * </p>
-     * 
-     * @param path A path to your source code directory.
-     */
-    public void addSourceDirectory(String path) {
-        if (path != null) {
-            addSourceDirectory(Filer.locate(path));
-        }
-    }
-
-    /**
-     * <p>
-     * Add the source code directory.
-     * </p>
      * 
      * @param directory Your source code directory.
      */
-    public void addSourceDirectory(Path directory) {
-        if (directory != null) {
-            if (!Files.isDirectory(directory)) {
-                directory = directory.getParent();
-            }
-            addSourceDirectory(new PathPattern(directory, "**.java"));
-        }
+    public void addSourceDirectory(Directory directory) {
+        sources.add(directory, "**.java");
     }
 
     /**
@@ -231,19 +211,6 @@ public class JavaCompiler {
     public void addSourceDirectory(Temporary directories) {
         if (directories != null) {
             sources.add(directories);
-        }
-    }
-
-    /**
-     * <p>
-     * Add the source code directory.
-     * </p>
-     * 
-     * @param outputDirectory Your source code directory.
-     */
-    public void addSourceDirectory(PathPattern directories) {
-        if (directories != null) {
-            sources.add(directories.asTemporary());
         }
     }
 

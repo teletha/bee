@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import bee.BlinkProject;
 import bee.sample.Interface;
 import bee.util.JavaCompiler;
+import psychopath.Locator;
 
 /**
  * @version 2018/03/31 21:58:34
@@ -40,7 +41,7 @@ public class AnnotationProcessorTest {
         ResourceAwareProcessor.initialized = false;
 
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getRoot());
+        compiler.addSourceDirectory(Locator.directory(project.getRoot()));
         compiler.setOutput(project.getOutput());
         compiler.addProcessor(ResourceAwareProcessor.class);
         compiler.compile();
@@ -59,7 +60,7 @@ public class AnnotationProcessorTest {
         processor.instance = false;
 
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getRoot());
+        compiler.addSourceDirectory(Locator.directory(project.getRoot()));
         compiler.setOutput(project.getOutput());
         compiler.addProcessor(processor);
         compiler.compile();

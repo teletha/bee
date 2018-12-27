@@ -68,20 +68,6 @@ public class ZipArchiver {
      * @param base A base path.
      * @param patterns "glob" include/exclude patterns.
      */
-    public void add(PathPattern path) {
-        if (path != null) {
-            entries.add(new Entry("", path.base, path.patterns.toArray(new String[path.patterns.size()])));
-        }
-    }
-
-    /**
-     * <p>
-     * Add pattern matching path.
-     * </p>
-     * 
-     * @param base A base path.
-     * @param patterns "glob" include/exclude patterns.
-     */
     public void add(Path base, String... patterns) {
         if (base != null) {
             entries.add(new Entry("", base, patterns));
