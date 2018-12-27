@@ -32,7 +32,6 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 
 import bee.api.Project;
-import bee.util.PathPattern;
 import kiss.I;
 
 /**
@@ -158,9 +157,9 @@ public class AnnotationProcessor implements Processor {
 
             this.sources = new ArrayList();
 
-            for (PathPattern path : project.getSourceSet()) {
-                this.sources.add(path.base);
-            }
+            project.getSourceSet().walkBase().to(dir -> {
+                this.sources.add(dir.asJavaPath());
+            });
         }
 
         /**

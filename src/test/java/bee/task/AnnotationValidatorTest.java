@@ -176,7 +176,7 @@ public class AnnotationValidatorTest {
         TestableProcessor processor = new TestableProcessor(validator);
 
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getSourceSet().asTemporary());
+        compiler.addSourceDirectory(project.getSourceSet());
         compiler.setOutput(project.getClasses());
         compiler.addProcessor(processor);
         compiler.addProcessorOption(new ProjectInfo(project));

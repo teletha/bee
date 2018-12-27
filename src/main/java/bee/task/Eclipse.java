@@ -31,7 +31,6 @@ import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.Java;
 import bee.util.Java.JVM;
-import bee.util.PathPattern;
 import bee.util.Process;
 import filer.Filer;
 import kiss.I;
@@ -127,12 +126,12 @@ public class Eclipse extends Task implements IDESupport {
         });
 
         // sources
-        for (PathPattern path : project.getSourceSet()) {
+        project.getSourceSet().walkDirectories().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(path.base))
+                    .attr("path", relative(dir.asJavaPath()))
                     .attr("output", relative(project.getClasses()));
-        }
+        });
 
         // projects
         project.getProjectSourceSet().walkDirectories().to(dir -> {

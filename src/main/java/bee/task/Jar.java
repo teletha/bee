@@ -34,7 +34,7 @@ public class Jar extends Task {
         require(Compile.class).source();
 
         pack("main classes", Locator.temporary().add(project.getClasses()), project.locateJar());
-        pack("main sources", project.getSourceSet().asTemporary(), project.locateSourceJar());
+        pack("main sources", project.getSourceSet(), project.locateSourceJar());
     }
 
     /**

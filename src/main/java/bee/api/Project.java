@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.IOException;
 import java.net.URI;
@@ -39,16 +39,12 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
-import bee.util.PathSet;
 import filer.Filer;
 import kiss.I;
 import kiss.XML;
 import psychopath.Locator;
 import psychopath.Temporary;
 
-/**
- * @version 2018/03/29 9:26:47
- */
 public class Project {
 
     /** The libraries. */
@@ -540,10 +536,8 @@ public class Project {
      * 
      * @return
      */
-    public PathSet getSourceSet() {
-        PathSet set = new PathSet();
-        Filer.walkDirectory(getSources(), "*").to(set::add);
-        return set;
+    public Temporary getSourceSet() {
+        return Locator.temporary().add(Locator.directory(getSources()).walkDirectories("*"));
     }
 
     /**
@@ -576,7 +570,7 @@ public class Project {
      * @return
      */
     public Temporary getTestSourceSet() {
-        return Locator.temporary().add(Locator.directory(getTestSources()), "*");
+        return Locator.temporary().add(Locator.directory(getTestSources()).walkDirectories("*"));
     }
 
     /**
@@ -609,9 +603,6 @@ public class Project {
      * @return
      */
     public Temporary getProjectSourceSet() {
-        Locator.temporary().add(Locator.directory(getProjectSources()).walkDirectories("*")).walkFiles("**", "!**.java").to(d -> {
-            System.out.println(d + "   @@@");
-        });
         return Locator.temporary().add(Locator.directory(getProjectSources()).walkDirectories("*"));
     }
 
