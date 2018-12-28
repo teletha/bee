@@ -55,8 +55,8 @@ import bee.api.Library;
 import filer.Filer;
 import kiss.I;
 import psychopath.Directory;
+import psychopath.Folder;
 import psychopath.Locator;
-import psychopath.Temporary;
 
 /**
  * @version 2018/03/29 9:26:33
@@ -70,7 +70,7 @@ public class JavaCompiler {
     private final UserInterface ui;
 
     /** The source directories. */
-    private final Temporary sources = Locator.temporary();
+    private final Folder sources = Locator.folder();
 
     /** The source codes. */
     private final List<JavaFileObject> codes = new ArrayList();
@@ -208,7 +208,7 @@ public class JavaCompiler {
      * 
      * @param outputDirectory Your source code directory.
      */
-    public void addSourceDirectory(Temporary directories) {
+    public void addSourceDirectory(Folder directories) {
         if (directories != null) {
             sources.add(directories);
         }

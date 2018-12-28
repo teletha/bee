@@ -303,7 +303,7 @@ public class Bee {
 
             JavaCompiler compiler = new JavaCompiler();
             Path projectFile = project.getProjectDefinition();
-            compiler.addSourceDirectory(Locator.temporary()
+            compiler.addSourceDirectory(Locator.folder()
                     .add(Locator.directory(projectFile.getParent()), projectFile.getFileName().toString()));
             compiler.addClassPath(Filer.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());

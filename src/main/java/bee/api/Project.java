@@ -42,8 +42,8 @@ import bee.task.AnnotationValidator;
 import filer.Filer;
 import kiss.I;
 import kiss.XML;
+import psychopath.Folder;
 import psychopath.Locator;
-import psychopath.Temporary;
 
 public class Project {
 
@@ -112,7 +112,7 @@ public class Project {
                 this.root = archive.getParent().getParent();
             } else {
                 // some archive
-                if (archive.toString().contains("temporary")) {
+                if (archive.toString().contains("Folder")) {
                     this.root = Filer.locate("").toAbsolutePath();
                 } else {
                     this.root = archive;
@@ -536,8 +536,8 @@ public class Project {
      * 
      * @return
      */
-    public Temporary getSourceSet() {
-        return Locator.temporary().add(Locator.directory(getSources()).walkDirectories("*"));
+    public Folder getSourceSet() {
+        return Locator.folder().add(Locator.directory(getSources()).walkDirectories("*"));
     }
 
     /**
@@ -569,8 +569,8 @@ public class Project {
      * 
      * @return
      */
-    public Temporary getTestSourceSet() {
-        return Locator.temporary().add(Locator.directory(getTestSources()).walkDirectories("*"));
+    public Folder getTestSourceSet() {
+        return Locator.folder().add(Locator.directory(getTestSources()).walkDirectories("*"));
     }
 
     /**
@@ -602,8 +602,8 @@ public class Project {
      * 
      * @return
      */
-    public Temporary getProjectSourceSet() {
-        return Locator.temporary().add(Locator.directory(getProjectSources()).walkDirectories("*"));
+    public Folder getProjectSourceSet() {
+        return Locator.folder().add(Locator.directory(getProjectSources()).walkDirectories("*"));
     }
 
     /**

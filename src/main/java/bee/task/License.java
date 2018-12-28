@@ -17,7 +17,7 @@ import bee.api.Command;
 import bee.api.Task;
 import bee.coder.FileType;
 import bee.coder.StandardHeaderStyle;
-import psychopath.Temporary;
+import psychopath.Folder;
 
 public class License extends Task {
 
@@ -43,7 +43,7 @@ public class License extends Task {
      * @param set
      * @throws IOException
      */
-    private void update(Temporary set) throws IOException {
+    private void update(Folder set) throws IOException {
         set.walkFiles().to(file -> {
             Path path = file.asJavaPath();
 

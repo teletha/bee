@@ -90,7 +90,7 @@ public class Doc extends Task {
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
             manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output));
             manager.setLocationFromPaths(SOURCE_PATH, project.getSourceSet()
-                    .walkBase()
+                    .entries()
                     .map(Location::asJavaPath)
                     .merge(I.signal(project.getDependency(Scope.Compile))
                             .map(lib -> lib.getLocalSourceJar())

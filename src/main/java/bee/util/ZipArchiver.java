@@ -30,7 +30,7 @@ import bee.Platform;
 import filer.Filer;
 import kiss.Disposable;
 import kiss.I;
-import psychopath.Temporary;
+import psychopath.Folder;
 
 /**
  * @version 2015/07/14 2:48:03
@@ -54,7 +54,7 @@ public class ZipArchiver {
      * @param base A base path.
      * @param patterns "glob" include/exclude patterns.
      */
-    public void add(Temporary set) {
+    public void add(Folder set) {
         if (set != null) {
             set.walkFiles().to(file -> add(file.asJavaPath()));
         }

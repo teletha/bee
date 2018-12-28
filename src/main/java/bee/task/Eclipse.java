@@ -118,7 +118,7 @@ public class Eclipse extends Task implements IDESupport {
         XML doc = I.xml("classpath");
 
         // tests
-        project.getTestSourceSet().walkDirectories().to(dir -> {
+        project.getTestSourceSet().entries().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(dir.asJavaPath()))
@@ -126,7 +126,7 @@ public class Eclipse extends Task implements IDESupport {
         });
 
         // sources
-        project.getSourceSet().walkDirectories().to(dir -> {
+        project.getSourceSet().entries().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(dir.asJavaPath()))
@@ -134,7 +134,7 @@ public class Eclipse extends Task implements IDESupport {
         });
 
         // projects
-        project.getProjectSourceSet().walkDirectories().to(dir -> {
+        project.getProjectSourceSet().entries().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(dir.asJavaPath()))
