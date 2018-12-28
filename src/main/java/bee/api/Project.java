@@ -112,7 +112,7 @@ public class Project {
                 this.root = archive.getParent().getParent();
             } else {
                 // some archive
-                if (archive.toString().contains("Folder")) {
+                if (archive.toString().contains("temporary")) {
                     this.root = Filer.locate("").toAbsolutePath();
                 } else {
                     this.root = archive;
