@@ -123,12 +123,14 @@ public class ZipArchiver {
                 try {
                     for (Entry entry : entries) {
                         // compute base directory
+                        System.out.println(entry.base);
                         Path base = Files.isDirectory(entry.base) ? entry.base : entry.base.getParent();
 
                         // scan entry
                         Filer.walk(entry.base, entry.patterns).to(file -> {
                             try {
                                 String path = entry.directory + base.relativize(file).toString().replace(File.separatorChar, '/');
+                                System.out.println(base + "   " + file + "   " + path);
                                 BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
 
                                 ZipEntry zip = new ZipEntry(path);

@@ -33,7 +33,8 @@ public class Jar extends Task {
     public void source() {
         require(Compile.class).source();
 
-        pack("main classes", Locator.folder().add(project.getClasses()), project.locateJar());
+        System.out.println(project.getClasses());
+        pack("main classes", Locator.folder().add(Locator.directory(project.getClasses())), project.locateJar());
         pack("main sources", project.getSourceSet(), project.locateSourceJar());
     }
 
@@ -94,9 +95,7 @@ public class Jar extends Task {
     private void pack(String type, Folder input, Path output) {
         ui.talk("Build ", type, " jar: ", output);
 
-        JarArchiver archiver = new JarArchiver();
-        input.walkFiles().to(file -> archiver.add(file.asJavaPath()));
-        archiver.pack(output);
+        input.packTo(Locator.file(output), "**");
     }
 
     /**
