@@ -17,7 +17,8 @@ import bee.api.Command;
 import bee.api.Task;
 import bee.coder.FileType;
 import bee.coder.StandardHeaderStyle;
-import psychopath.Folder;
+import kiss.Signal;
+import psychopath.Directory;
 
 public class License extends Task {
 
@@ -43,8 +44,8 @@ public class License extends Task {
      * @param set
      * @throws IOException
      */
-    private void update(Folder set) throws IOException {
-        set.walkFiles().to(file -> {
+    private void update(Signal<Directory> set) throws IOException {
+        set.flatMap(dir -> dir.walkFiles()).to(file -> {
             Path path = file.asJavaPath();
 
             FileType type = FileType.of(path);

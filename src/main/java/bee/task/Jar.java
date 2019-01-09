@@ -16,7 +16,9 @@ import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.util.JarArchiver;
-import psychopath.Folder;
+import kiss.I;
+import kiss.Signal;
+import psychopath.Directory;
 import psychopath.Locator;
 
 /**
@@ -33,8 +35,7 @@ public class Jar extends Task {
     public void source() {
         require(Compile.class).source();
 
-        System.out.println(project.getClasses());
-        pack("main classes", Locator.folder().add(Locator.directory(project.getClasses())), project.locateJar());
+        pack("main classes", I.signal(Locator.directory(project.getClasses())), project.locateJar());
         pack("main sources", project.getSourceSet(), project.locateSourceJar());
     }
 
@@ -50,7 +51,7 @@ public class Jar extends Task {
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test classes", Locator.folder().add(project.getTestClasses()), classes);
+        pack("test classes", I.signal(Locator.directory(project.getTestClasses())), classes);
         pack("test sources", project.getTestSourceSet(), sources);
     }
 
@@ -66,7 +67,7 @@ public class Jar extends Task {
         Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project classes", Locator.folder().add(project.getProjectClasses()), classes);
+        pack("project classes", I.signal(Locator.directory(project.getProjectClasses())), classes);
         pack("project sources", project.getProjectSourceSet(), sources);
     }
 
@@ -80,7 +81,7 @@ public class Jar extends Task {
         Doc doc = require(Doc.class);
         doc.javadoc();
 
-        pack("javadoc", Locator.folder().add(doc.output), project.locateJavadocJar());
+        pack("javadoc", I.signal(Locator.directory(doc.output)), project.locateJavadocJar());
     }
 
     /**
@@ -92,10 +93,15 @@ public class Jar extends Task {
      * @param input
      * @param output
      */
-    private void pack(String type, Folder input, Path output) {
+    private void pack(String type, Signal<Directory> input, Path output) {
         ui.talk("Build ", type, " jar: ", output);
 
-        input.packTo(Locator.file(output), "**");
+        JarArchiver archiver = new JarArchiver();
+
+        input.to(dir -> {
+            archiver.add(dir.asJavaPath(), "**");
+        });
+        archiver.pack(output);
     }
 
     /**

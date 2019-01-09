@@ -157,7 +157,7 @@ public class AnnotationProcessor implements Processor {
 
             this.sources = new ArrayList();
 
-            project.getSourceSet().entries().to(dir -> {
+            project.getSourceSet().to(dir -> {
                 this.sources.add(dir.asJavaPath());
             });
         }

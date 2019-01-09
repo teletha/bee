@@ -303,8 +303,7 @@ public class Bee {
 
             JavaCompiler compiler = new JavaCompiler();
             Path projectFile = project.getProjectDefinition();
-            compiler.addSourceDirectory(Locator.folder()
-                    .add(Locator.directory(projectFile.getParent()), projectFile.getFileName().toString()));
+            compiler.addSourceDirectory(Locator.directory(projectFile.getParent()));
             compiler.addClassPath(Filer.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();
@@ -341,7 +340,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("jar");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

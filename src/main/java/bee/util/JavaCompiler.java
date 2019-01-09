@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,6 +54,7 @@ import bee.UserInterface;
 import bee.api.Library;
 import filer.Filer;
 import kiss.I;
+import kiss.Signal;
 import psychopath.Directory;
 import psychopath.Folder;
 import psychopath.Locator;
@@ -208,7 +209,7 @@ public class JavaCompiler {
      * 
      * @param outputDirectory Your source code directory.
      */
-    public void addSourceDirectory(Folder directories) {
+    public void addSourceDirectory(Signal<Directory> directories) {
         if (directories != null) {
             sources.add(directories);
         }

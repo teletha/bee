@@ -9,9 +9,8 @@
  */
 package bee.task;
 
-import static javax.tools.DocumentationTool.Location.DOCUMENTATION_OUTPUT;
-import static javax.tools.StandardLocation.CLASS_PATH;
-import static javax.tools.StandardLocation.SOURCE_PATH;
+import static javax.tools.DocumentationTool.Location.*;
+import static javax.tools.StandardLocation.*;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -90,7 +89,6 @@ public class Doc extends Task {
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
             manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output));
             manager.setLocationFromPaths(SOURCE_PATH, project.getSourceSet()
-                    .entries()
                     .map(Location::asJavaPath)
                     .merge(I.signal(project.getDependency(Scope.Compile))
                             .map(lib -> lib.getLocalSourceJar())
@@ -100,8 +98,11 @@ public class Doc extends Task {
                     .map(library -> library.getLocalJar())
                     .toList());
 
-            DocumentationTask task = doc.getTask(new UIWriter(ui), manager, null, null, options, manager
-                    .getJavaFileObjectsFromPaths(project.getSourceSet().walkFiles("**.java").map(File::asJavaPath).toList()));
+            DocumentationTask task = doc
+                    .getTask(new UIWriter(ui), manager, null, null, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
+                            .flatMap(dir -> dir.walkFiles("**.java"))
+                            .map(File::asJavaPath)
+                            .toList()));
 
             if (task.call()) {
                 ui.talk("Build javadoc : " + output);

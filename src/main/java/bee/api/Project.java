@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,8 +41,9 @@ import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import filer.Filer;
 import kiss.I;
+import kiss.Signal;
 import kiss.XML;
-import psychopath.Folder;
+import psychopath.Directory;
 import psychopath.Locator;
 
 public class Project {
@@ -536,8 +537,8 @@ public class Project {
      * 
      * @return
      */
-    public Folder getSourceSet() {
-        return Locator.folder().add(Locator.directory(getSources()).walkDirectories("*"));
+    public Signal<Directory> getSourceSet() {
+        return Locator.directory(getSources()).walkDirectories("*");
     }
 
     /**
@@ -569,8 +570,8 @@ public class Project {
      * 
      * @return
      */
-    public Folder getTestSourceSet() {
-        return Locator.folder().add(Locator.directory(getTestSources()).walkDirectories("*"));
+    public Signal<Directory> getTestSourceSet() {
+        return Locator.directory(getTestSources()).walkDirectories("*");
     }
 
     /**
@@ -602,8 +603,8 @@ public class Project {
      * 
      * @return
      */
-    public Folder getProjectSourceSet() {
-        return Locator.folder().add(Locator.directory(getProjectSources()).walkDirectories("*"));
+    public Signal<Directory> getProjectSourceSet() {
+        return Locator.directory(getProjectSources()).walkDirectories("*");
     }
 
     /**
