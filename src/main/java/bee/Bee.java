@@ -44,8 +44,6 @@ import psychopath.Locator;
  * <p>
  * Bee represents a single project build process.
  * </p>
- * 
- * @version 2017/01/20 14:51:27
  */
 public class Bee {
 
@@ -53,7 +51,7 @@ public class Bee {
     public static final Project API = new Project() {
 
         {
-            product("com.github.teletha", "bee-api", "0.2");
+            product("com.github.teletha", "bee-api", "0.3");
         }
     };
 
@@ -61,14 +59,14 @@ public class Bee {
     public static final Project TOOL = new Project() {
 
         {
-            product("com.github.teletha", "bee", "0.2");
+            product("com.github.teletha", "bee", "0.3");
         }
     };
 
     public static final Project Lombok = new Project() {
 
         {
-            product("org.projectlombok", "lombok", "1.16.10");
+            product("org.projectlombok", "lombok", "1.18.4");
         }
     };
 
