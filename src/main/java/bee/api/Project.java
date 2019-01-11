@@ -39,11 +39,11 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
-import filer.Filer;
 import kiss.I;
 import kiss.Signal;
 import kiss.XML;
 import psychopath.Directory;
+import psychopath.Location;
 import psychopath.Locator;
 
 public class Project {
@@ -61,7 +61,7 @@ public class Project {
     final Map<Class, Object> associates = new ConcurrentHashMap();
 
     /** The project root directory. */
-    private Path root;
+    private Directory root;
 
     /** The product group. */
     private String productGroup = "";
@@ -104,19 +104,19 @@ public class Project {
 
         if (projectClass.isMemberClass() || projectClass.isAnonymousClass()) {
             // fabric project
-            this.root = Filer.locate("").toAbsolutePath();
+            this.root = Locator.directory("").absolutize();
         } else {
-            Path archive = Filer.locate(projectClass);
+            Location archive = Locator.locate(projectClass);
 
-            if (Files.isDirectory(archive)) {
+            if (archive.isDirectory()) {
                 // directory
-                this.root = archive.getParent().getParent();
+                this.root = archive.parent().parent();
             } else {
                 // some archive
                 if (archive.toString().contains("temporary")) {
-                    this.root = Filer.locate("").toAbsolutePath();
+                    this.root = Locator.directory("").absolutize();
                 } else {
-                    this.root = archive;
+                    this.root = archive.asDirectory();
                 }
             }
         }
@@ -134,7 +134,7 @@ public class Project {
      * @return A root directory of this project.
      */
     public Path getRoot() {
-        return root;
+        return root.asJavaPath();
     }
 
     /**
@@ -668,7 +668,7 @@ public class Project {
         List<AnnotationValidator> validators = I.find(AnnotationValidator.class);
 
         if (!validators.isEmpty()) {
-            libraries.add(Filer.locate(Bee.class));
+            libraries.add(Locator.locate(Bee.class).asJavaPath());
         }
 
         return libraries;
