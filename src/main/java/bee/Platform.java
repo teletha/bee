@@ -9,15 +9,12 @@
  */
 package bee;
 
-import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map.Entry;
 
-import filer.Filer;
 import kiss.I;
 import psychopath.Directory;
+import psychopath.File;
 import psychopath.Locator;
 
 /**
@@ -32,13 +29,13 @@ public final class Platform {
     public static final String EOL = System.getProperty("line.separator");
 
     /** The executable file for Java. */
-    public static final psychopath.File Java;
+    public static final File Java;
 
     /** The root directory for Java. */
     public static final Directory JavaHome;
 
     /** The executable file for Bee. */
-    public static final psychopath.File Bee;
+    public static final File Bee;
 
     /** The root directory for Bee. */
     public static final Directory BeeHome;
@@ -55,8 +52,8 @@ public final class Platform {
     // initialization
     static {
         Directory bin = null;
-        psychopath.File java = null;
-        psychopath.File bee = null;
+        File javaExe = null;
+        File beeExe = null;
 
         // Search Java SDK from path. Don't use java.home system property to avoid JRE.
         root: for (Entry<String, String> entry : System.getenv().entrySet()) {
@@ -64,22 +61,22 @@ public final class Platform {
             // Microsoft Windows systems it is typically not.
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
-                for (String value : entry.getValue().split(File.pathSeparator)) {
+                for (String value : entry.getValue().split(java.io.File.pathSeparator)) {
                     Directory directory = Locator.directory(value);
-                    psychopath.File linux = directory.file("javac");
-                    psychopath.File windows = directory.file("javac.exe");
+                    File linux = directory.file("javac");
+                    File windows = directory.file("javac.exe");
 
                     if (linux.isPresent()) {
                         bin = directory;
-                        java = linux;
-                        bee = directory.file("bee");
+                        javaExe = linux;
+                        beeExe = directory.file("bee");
                         isLinux = true;
 
                         break root;
                     } else if (windows.isPresent()) {
                         bin = directory;
-                        java = windows;
-                        bee = directory.file("bee.bat");
+                        javaExe = windows;
+                        beeExe = directory.file("bee.bat");
                         isWindows = true;
 
                         break root;
@@ -88,37 +85,35 @@ public final class Platform {
             }
         }
 
-        if (bin == null || java == null) {
+        if (bin == null || javaExe == null) {
             throw new Error("Java SDK is not found in your environment path.");
         }
 
-        Java = java;
-        JavaHome = java.parent().parent();
-        Bee = bee;
+        Java = javaExe;
+        JavaHome = javaExe.parent().parent();
+        Bee = beeExe;
         BeeHome = JavaHome.directory("lib/bee");
         BeeLocalRepository = searchLocalRepository();
     }
 
     /**
-     * <p>
      * Search maven home directory.
-     * </p>
      * 
      * @return
      */
     private static Directory searchLocalRepository() {
         for (Entry<String, String> entry : System.getenv().entrySet()) {
             if (entry.getKey().equalsIgnoreCase("path")) {
-                for (String path : entry.getValue().split(File.pathSeparator)) {
-                    Path mvn = Filer.locate(path).resolve("mvn");
+                for (String path : entry.getValue().split(java.io.File.pathSeparator)) {
+                    File mvn = Locator.directory(path).file("mvn");
 
-                    if (Files.exists(mvn)) {
+                    if (mvn.isPresent()) {
                         // maven is here
-                        Path home = mvn.getParent().getParent();
-                        Path conf = home.resolve("conf/settings.xml");
+                        Directory home = mvn.parent().parent();
+                        File conf = home.file("conf/settings.xml");
 
-                        if (Files.exists(conf)) {
-                            String location = I.xml(conf.toFile()).find("localRepository").text();
+                        if (conf.isPresent()) {
+                            String location = I.xml(conf.asJavaFile()).find("localRepository").text();
 
                             if (location.length() != 0) {
                                 return Locator.directory(location);
@@ -138,9 +133,7 @@ public final class Platform {
     }
 
     /**
-     * <p>
      * Check platform.
-     * </p>
      * 
      * @return
      */
@@ -149,9 +142,7 @@ public final class Platform {
     }
 
     /**
-     * <p>
      * Check platform.
-     * </p>
      * 
      * @return
      */
