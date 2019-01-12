@@ -14,7 +14,6 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
@@ -30,6 +29,7 @@ import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.JavaCompiler;
 import kiss.I;
 import kiss.model.Model;
+import psychopath.File;
 
 /**
  * @version 2018/03/31 21:58:40
@@ -107,7 +107,7 @@ public class AnnotationValidatorTest {
     @Test
     public void sourceFile() throws Exception {
         BlinkProject project = new BlinkProject();
-        final Path source = project.importBy(Bean.class);
+        File source = project.importBy(Bean.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
 
@@ -117,7 +117,7 @@ public class AnnotationValidatorTest {
             @Override
             protected void validate(SourceAnnotation annotation) {
                 try {
-                    assert Files.isSameFile(source, getSourceFile());
+                    assert Files.isSameFile(source.asJavaPath(), getSourceFile());
                 } catch (IOException e) {
                     throw I.quiet(e);
                 }

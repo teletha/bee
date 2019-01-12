@@ -17,12 +17,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import antibug.CommandLineUser;
-import filer.Filer;
 
-/**
- * @version 2018/03/31 3:11:03
- */
-public class CommandLineUserInterfaceTest {
+class CommandLineUserInterfaceTest {
 
     @RegisterExtension
     static final CommandLineUser user = new CommandLineUser();
@@ -30,7 +26,7 @@ public class CommandLineUserInterfaceTest {
     private CommandLineUserInterface ui = new CommandLineUserInterface();
 
     @Test
-    public void input() throws Exception {
+    void input() {
         String expected = "expected value";
 
         user.willInput(expected);
@@ -41,7 +37,7 @@ public class CommandLineUserInterfaceTest {
     }
 
     @Test
-    public void inputEmpty() throws Exception {
+    void inputEmpty() {
         String expected = "expected value";
 
         user.willInput("");
@@ -53,7 +49,7 @@ public class CommandLineUserInterfaceTest {
     }
 
     @Test
-    public void inputWithDefault() throws Exception {
+    void inputWithDefault() {
         String expected = "expected value";
 
         user.willInput(expected);
@@ -64,7 +60,7 @@ public class CommandLineUserInterfaceTest {
     }
 
     @Test
-    public void inputEmptyWithDefault() throws Exception {
+    void inputEmptyWithDefault() {
         String expected = "expected value";
 
         user.willInput("");
@@ -75,7 +71,7 @@ public class CommandLineUserInterfaceTest {
     }
 
     @Test
-    public void inputInt() throws Exception {
+    void inputInt() {
         user.willInput("1");
         assert ui.ask("question", 10) == 1;
 
@@ -90,21 +86,21 @@ public class CommandLineUserInterfaceTest {
     }
 
     @Test
-    public void inputPath() throws Exception {
-        Path def = Filer.locate("default");
+    void inputPath() {
+        Path def = Path.of("default");
 
         user.willInput("path");
-        assert ui.ask("question", def).equals(Filer.locate("path"));
+        assert ui.ask("question", def).equals(Path.of("path"));
 
         user.willInput("path/with/directory");
-        assert ui.ask("question", def).equals(Filer.locate("path/with/directory"));
+        assert ui.ask("question", def).equals(Path.of("path/with/directory"));
 
         user.willInput("   ");
         assert ui.ask("question", def).equals(def);
     }
 
     @Test
-    public void select() throws Exception {
+    void select() {
         List<String> items = new ArrayList();
         items.add("one");
         items.add("two");

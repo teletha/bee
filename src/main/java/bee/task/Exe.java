@@ -9,7 +9,6 @@
  */
 package bee.task;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,37 +20,21 @@ import bee.api.Scope;
 import bee.api.Task;
 import bee.util.Process;
 import bee.util.ZipArchiver;
-import filer.Filer;
 import kiss.I;
+import psychopath.Directory;
 import psychopath.File;
+import psychopath.Locator;
 
-/**
- * @version 2016/07/01 15:10:46
- */
 public class Exe extends Task {
 
     /** The temporary directory. */
-    private final Path temporary;
+    private final Directory temporary = Locator.temporaryDirectory();
 
     /** The output for the generated zip file. */
-    private final File zipOutput;
+    private final File zipOutput = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip");
 
     /** The location for icon of exe file. */
     protected Path icon;
-
-    /**
-     * 
-     */
-    public Exe() {
-        try {
-            temporary = Filer.locateTemporary();
-            zipOutput = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip");
-
-            Files.createDirectories(temporary);
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-    }
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
@@ -87,15 +70,15 @@ public class Exe extends Task {
      * @param suffix
      */
     private void build(ZipArchiver archiver, String suffix) {
-        Path builder = temporary.resolve("exewrap" + suffix + ".exe");
-        Path exe = temporary.resolve(project.getProduct() + suffix + ".exe");
+        File builder = temporary.file("exewrap" + suffix + ".exe");
+        File exe = temporary.file(project.getProduct() + suffix + ".exe");
 
         try {
             // search main classes
             String main = require(FindMain.class).main();
 
             // unzip exe builder
-            I.copy(Exe.class.getResourceAsStream("exewrap" + suffix + ".exe"), Files.newOutputStream(builder), true);
+            I.copy(Exe.class.getResourceAsStream("exewrap" + suffix + ".exe"), builder.newOutputStream(), true);
 
             // build command line
             List<String> command = new ArrayList();
@@ -108,20 +91,20 @@ public class Exe extends Task {
             command.add("-j");
             command.add(project.locateJar().toString());
             command.add("-o");
-            command.add(exe.toAbsolutePath().toString());
+            command.add(exe.absolutize().toString());
             if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
                 command.add("-i");
                 command.add(icon.toString());
             }
 
             // execute exe builder
-            Process.with().workingDirectory(builder.getParent()).ignoreOutput().run(command);
-            ui.talk("Write " + exe.getFileName() + ".");
+            Process.with().workingDirectory(builder.parent().asJavaPath()).ignoreOutput().run(command);
+            ui.talk("Write " + exe.name() + ".");
         } catch (Exception e) {
             throw I.quiet(e);
         }
 
         // pack
-        archiver.add(exe);
+        archiver.add(exe.asArchive());
     }
 }

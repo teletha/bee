@@ -19,7 +19,6 @@ import java.util.List;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Task;
-import filer.Filer;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
@@ -125,12 +124,12 @@ public class BlinkProject extends Project {
      * 
      * @param model A class to import.
      */
-    public final Path importBy(Class model) {
-        Path file = buildJavaSourceFilePath(model.getName());
-        Path original = Filer.locate("src/test/java").resolve(file);
-        Path copy = getRoot().asJavaPath().resolve("src/main/java").resolve(file);
+    public final File importBy(Class model) {
+        File file = buildJavaSourceFilePath(model.getName());
+        File original = Locator.directory("src/test/java").file(file);
+        File copy = getRoot().directory("src/main/java").file(file);
 
-        Filer.copy(original, copy);
+        original.copyTo(copy);
 
         return copy;
     }
@@ -142,12 +141,12 @@ public class BlinkProject extends Project {
      * 
      * @param model A sample class to import.
      */
-    public final Path importByPackageOf(Class model) {
-        Path directory = buildJavaSourceFilePath(model.getName()).getParent();
-        Path original = Filer.locate("src/test/java").resolve(directory);
-        Path copy = getRoot().asJavaPath().resolve("src/main/java").resolve(directory);
+    public final Directory importByPackageOf(Class model) {
+        Directory directory = buildJavaSourceFilePath(model.getName()).parent();
+        Directory original = Locator.directory("src/test/java").directory(directory);
+        Directory copy = getRoot().directory("src/main/java").directory(directory);
 
-        Filer.copy(original, copy);
+        original.copyTo(copy);
 
         return copy;
     }
@@ -236,8 +235,8 @@ public class BlinkProject extends Project {
      * @param fqcn
      * @return
      */
-    private Path buildJavaSourceFilePath(String fqcn) {
-        return Paths.get(fqcn.replace('.', '/').concat(".java"));
+    private File buildJavaSourceFilePath(String fqcn) {
+        return Locator.file(fqcn.replace('.', '/').concat(".java"));
     }
 
     /**

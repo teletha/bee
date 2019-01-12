@@ -9,9 +9,6 @@
  */
 package bee.util;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-
 import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
@@ -26,10 +23,10 @@ public class JavaCompilerTest {
     @Test
     public void outputPresent() throws Exception {
         BlinkProject project = new BlinkProject();
-        Path source = project.importBy(Interface.class);
+        File source = project.importBy(Interface.class);
         File bytecode = project.locateByteCode(Interface.class);
 
-        assert Files.exists(source);
+        assert source.isPresent();
         assert bytecode.isAbsent();
 
         project.getClasses().create();
@@ -40,17 +37,17 @@ public class JavaCompilerTest {
         compiler.setOutput(project.getClasses());
         compiler.compile();
 
-        assert Files.exists(source);
+        assert source.isPresent();
         assert bytecode.isPresent();
     }
 
     @Test
     public void outputAbsent() throws Exception {
         BlinkProject project = new BlinkProject();
-        Path source = project.importBy(Interface.class);
+        File source = project.importBy(Interface.class);
         File bytecode = project.locateByteCode(Interface.class);
 
-        assert Files.exists(source);
+        assert source.isPresent();
         assert bytecode.isAbsent();
 
         project.getClasses().create();
@@ -64,7 +61,7 @@ public class JavaCompilerTest {
         compiler.setOutput(project.getClasses());
         compiler.compile();
 
-        assert Files.exists(source);
+        assert source.isPresent();
         assert bytecode.isPresent();
     }
 }
