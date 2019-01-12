@@ -9,11 +9,8 @@
  */
 package bee.task;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -23,7 +20,6 @@ import bee.Platform;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Project;
-import bee.api.Repository;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.task.AnnotationProcessor.ProjectInfo;
@@ -32,13 +28,13 @@ import bee.util.Config.Description;
 import bee.util.Java;
 import bee.util.Java.JVM;
 import bee.util.Process;
-import filer.Filer;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 import kiss.Variable;
 import kiss.XML;
 import psychopath.Directory;
+import psychopath.File;
 import psychopath.Location;
 
 public class Eclipse extends Task implements IDESupport {
@@ -51,8 +47,8 @@ public class Eclipse extends Task implements IDESupport {
     @Override
     @Command(value = "Generate configuration files for Eclipse.", defaults = true)
     public void execute() {
-        createClasspath(project.getRoot().asJavaPath().resolve(".classpath"));
-        createProject(project.getRoot().asJavaPath().resolve(".project"));
+        createClasspath(project.getRoot().file(".classpath"));
+        createProject(project.getRoot().file(".project"));
 
         Set<Location> processors = project.getAnnotationProcessors();
         boolean enableAnnotationProcessor = !processors.isEmpty();
@@ -85,7 +81,7 @@ public class Eclipse extends Task implements IDESupport {
      */
     @Override
     public boolean exist(Project project) {
-        return Files.isReadable(project.getRoot().asJavaPath().resolve(".classpath"));
+        return project.getRoot().file(".classpath").isReadable();
     }
 
     /**
@@ -95,7 +91,7 @@ public class Eclipse extends Task implements IDESupport {
      * 
      * @param file
      */
-    private void createProject(Path file) {
+    private void createProject(File file) {
         XML doc = I.xml("projectDescription");
         doc.child("name").text(project.getProduct());
         doc.child("comment").text(project.getDescription());
@@ -113,7 +109,7 @@ public class Eclipse extends Task implements IDESupport {
      * 
      * @param file
      */
-    private void createClasspath(Path file) {
+    private void createClasspath(File file) {
         XML doc = I.xml("classpath");
 
         // tests
@@ -136,8 +132,8 @@ public class Eclipse extends Task implements IDESupport {
 
         // library
         for (Library library : project.getDependency(Scope.Test)) {
-            psychopath.File jar = library.getLocalJar();
-            psychopath.File source = library.getLocalSourceJar();
+            File jar = library.getLocalJar();
+            File source = library.getLocalSourceJar();
 
             if (jar.isPresent()) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
@@ -215,17 +211,17 @@ public class Eclipse extends Task implements IDESupport {
      * @param localFile
      */
     private void createJDT(boolean enabled) {
-        Path file = project.getRoot().asJavaPath().resolve(".settings/org.eclipse.jdt.core.prefs");
+        File file = project.getRoot().file(".settings/org.eclipse.jdt.core.prefs");
 
         try {
-            if (Files.notExists(file)) {
+            if (file.isAbsent()) {
                 makeFile(file, "");
             }
 
             Properties doc = new Properties();
-            doc.load(Files.newInputStream(file));
+            doc.load(file.newInputStream());
             doc.put("org.eclipse.jdt.core.compiler.processAnnotations", enabled ? "enabled" : "disabled");
-            doc.store(Files.newOutputStream(file), "");
+            doc.store(file.newOutputStream(), "");
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -244,62 +240,6 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
-     * Rewrite sibling eclipse projects to use the current project directly.
-     * </p>
-     */
-    @Command("Rewrite sibling eclipse projects to use the current project directly.")
-    public void live() {
-        syncProject(true);
-    }
-
-    /**
-     * <p>
-     * Rewrite sibling eclipse projects to use the repository.
-     * </p>
-     */
-    @Command("Rewrite sibling eclipse projects to use the current project directly.")
-    public void repository() {
-        syncProject(false);
-    }
-
-    /**
-     * <p>
-     * Rewrite sibling eclipse projects.
-     * </p>
-     */
-    private void syncProject(boolean live) {
-        String jar = I.make(Repository.class).resolveJar(project.getLibrary()).toString();
-        String currentProjectName = project.getRoot().asJavaPath().getFileName().toString();
-
-        String oldPath = live ? jar : "/" + currentProjectName;
-        String newPath = live ? "/" + currentProjectName : jar;
-
-        Filer.walk(project.getRoot().asJavaPath().getParent(), "*/.classpath").to(file -> {
-            if (!file.startsWith(project.getRoot().asJavaPath())) {
-                String targetProjectName = file.getParent().getFileName().toString();
-
-                try {
-                    XML root = I.xml(file.toFile());
-                    XML classpath = root.find("classpathentry[path=\"" + oldPath + "\"]");
-
-                    if (classpath.size() != 0) {
-                        // use project source directly
-                        classpath.attr("kind", live ? "src" : "lib").attr("path", newPath);
-
-                        // rewrite
-                        root.to(Files.newBufferedWriter(file));
-
-                        ui.talk("Project ", targetProjectName, " references ", currentProjectName, live ? " directly." : " in repository.");
-                    }
-                } catch (IOException e) {
-                    throw I.quiet(e);
-                }
-            }
-        });
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -308,7 +248,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * @version 2016/12/12 14:44:57
+     * 
      */
     private static class LombokInstaller extends JVM {
 
@@ -325,62 +265,10 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * @version 2016/12/29 16:19:46
+     * 
      */
     @Manageable(lifestyle = Singleton.class)
     private static abstract class EclipseApplication {
-
-        /** The property key. */
-        private static final String JREKey = "org.eclipse.jdt.launching.PREF_VM_XML";
-
-        /** The current project. */
-        private final Project project;
-
-        /**
-         * @param project
-         */
-        private EclipseApplication(Project project) {
-            this.project = project;
-        }
-
-        /**
-         * <p>
-         * Open eclipse application.
-         * </p>
-         */
-        abstract void open();
-
-        /**
-         * <p>
-         * Close eclipse application.
-         * </p>
-         */
-        abstract void close();
-
-        /**
-         * <p>
-         * Check whether eclipse application is active or not.
-         * </p>
-         * 
-         * @return A result.
-         */
-        abstract boolean isActive();
-
-        /**
-         * <p>
-         * Check whether this java process is invoked by eclipse application or not.
-         * </p>
-         */
-        final boolean isProcessOwner() {
-            Path directory = locate().get().getParent();
-
-            for (String lib : System.getProperty("java.library.path").split(File.pathSeparator)) {
-                if (Filer.locate(lib).equals(directory)) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
         /**
          * <p>
@@ -389,7 +277,7 @@ public class Eclipse extends Task implements IDESupport {
          * 
          * @return
          */
-        abstract Variable<Path> locateActive();
+        abstract Variable<File> locateActive();
 
         /**
          * <p>
@@ -398,107 +286,8 @@ public class Eclipse extends Task implements IDESupport {
          * 
          * @return
          */
-        final Variable<Path> locate() {
+        final Variable<File> locate() {
             return Variable.of(Config.user(Locator.class).locate());
-        }
-
-        /**
-         * <p>
-         * Locate eclipse workspace directory which is activating now.
-         * </p>
-         * 
-         * @return
-         */
-        final Path locateWorkspace() {
-            try {
-                Properties properties = new Properties();
-                properties.load(Files.newInputStream(locate().get().resolveSibling("configuration/.settings/org.eclipse.ui.ide.prefs")));
-                return Filer.locate(properties.getProperty("RECENT_WORKSPACES"));
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * <p>
-         * Locate eclipse workspace directory which is activating now.
-         * </p>
-         * 
-         * @return
-         */
-        final Path locateJREPreference() throws IOException {
-            Path prefs = locateWorkspace().resolve(".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs");
-
-            if (Files.notExists(prefs)) {
-                Files.createFile(prefs);
-            }
-            return prefs;
-        }
-
-        /**
-         * <p>
-         * Write JDT related preference for the current project.
-         * </p>
-         */
-        final void configJDTPreference() {
-            try {
-                Path prefs = locateJREPreference();
-
-                // read as property file
-                Properties properties = new Properties();
-                properties.load(Files.newInputStream(prefs));
-
-                configJRE(properties);
-
-                // rewrite, don't close output stream
-                properties.store(Files.newOutputStream(prefs), "");
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * <p>
-         * Write the project specfiec JRE preference.
-         * </p>
-         * 
-         * @param properties
-         */
-        final void configJRE(Properties properties) {
-            String name = project.getProduct();
-
-            try {
-                // read setting
-                String value = properties.getProperty(JREKey);
-
-                if (value == null || value.isEmpty()) {
-                    value = "<vmSettings defaultVM=\"57,org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType13,1482986605076\"><vmType id=\"org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType\"><vm id=\"1482986605076\" name=\"Java\" path=\"" + Platform.JavaHome + "\"/></vmType></vmSettings>";
-                }
-
-                XML root = I.xml(value);
-
-                // search the named vm element
-                XML locations = root.find("vm[name=\"" + name + "\"] > libraryLocations");
-
-                if (locations.size() == 0) {
-                    locations = root.find("vmType")
-                            .child("vm")
-                            .attr("name", name)
-                            .attr("id", name.hashCode())
-                            .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
-                            .attr("path", Platform.JavaRuntime.parent().parent())
-                            .child("libraryLocations");
-                }
-
-                // remove all existing jars
-                locations.empty();
-
-                // write setting
-                properties.setProperty(JREKey, root.toString());
-            } catch (Throwable e) {
-                e.printStackTrace();
-                throw I.quiet(e);
-            }
         }
 
         /**
@@ -509,16 +298,12 @@ public class Eclipse extends Task implements IDESupport {
          * @return A result.
          */
         final boolean isLomboked() {
-            try {
-                for (String line : Files.readAllLines(locate().get().resolveSibling("eclipse.ini"))) {
-                    if (line.contains("lombok.jar")) {
-                        return true;
-                    }
+            for (String line : locate().get().parent().file("eclipse.ini").lines().toList()) {
+                if (line.contains("lombok.jar")) {
+                    return true;
                 }
-                return false;
-            } catch (IOException e) {
-                throw I.quiet(e);
             }
+            return false;
         }
 
         /**
@@ -543,71 +328,30 @@ public class Eclipse extends Task implements IDESupport {
         public interface Locator {
 
             @Description("The location of eclipse application file.")
-            default Path locate() {
+            default File locate() {
                 return EclipseApplication.create().locateActive().get();
             }
         }
 
         /**
-         * @version 2016/12/26 9:58:41
+         * 
          */
         private static class ForWindows extends EclipseApplication {
 
             /**
-             * 
-             */
-            private ForWindows(Project project) {
-                super(project);
-            }
-
-            /**
              * {@inheritDoc}
              */
             @Override
-            void open() {
-                Path eclipse = locate().get();
-
-                try {
-                    Process.with()
-                            .workingDirectory(eclipse.getParent())
-                            .run("cmd", "/c", "start", "/d", eclipse.getParent(), eclipse.getFileName());
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    throw I.quiet(e);
-                }
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            void close() {
-                Process.runWith("PowerShell", "Get-Process Eclipse | %{ $_.Kill(); $_.WaitForExit(10000) }");
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            boolean isActive() {
-                String result = Process.readWith("PowerShell", "Get-Process | Format-List Name");
-                return result.contains("Name : eclipse");
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            Variable<Path> locateActive() {
+            Variable<File> locateActive() {
                 String result = Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path");
 
                 if (result.startsWith("Path :")) {
                     result = result.substring(6).trim();
                 }
 
-                Path locate = Filer.locate(result);
+                File locate = psychopath.Locator.file(result);
 
-                if (Files.notExists(locate)) {
+                if (locate.isAbsent()) {
                     return Variable.empty();
                 } else {
                     return Variable.of(locate);

@@ -21,11 +21,7 @@ import psychopath.Directory;
 import psychopath.Locator;
 
 /**
- * <p>
  * Define platform specific default configurations.
- * </p>
- * 
- * @version 2016/12/10 18:19:44
  */
 public final class Platform {
 
@@ -40,9 +36,6 @@ public final class Platform {
 
     /** The root directory for Java. */
     public static final Directory JavaHome;
-
-    /** The rt.jar file for Java. */
-    public static final psychopath.File JavaRuntime;
 
     /** The executable file for Bee. */
     public static final psychopath.File Bee;
@@ -101,7 +94,6 @@ public final class Platform {
 
         Java = java;
         JavaHome = java.parent().parent();
-        JavaRuntime = JavaHome.file("jre/lib/rt.jar");
         Bee = bee;
         BeeHome = JavaHome.directory("lib/bee");
         BeeLocalRepository = searchLocalRepository();
