@@ -9,9 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.Bee;
-import static bee.Platform.BeeHome;
-import static bee.Platform.JavaHome;
+import static bee.Platform.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -24,9 +22,9 @@ import java.util.List;
 
 import bee.api.Repository;
 import bee.util.JarArchiver;
-import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
+import psychopath.File;
 import psychopath.Locator;
 
 /**
@@ -43,7 +41,7 @@ public class BeeInstaller {
      * </p>
      */
     public static final void main(String... args) {
-        install(Filer.locate(BeeInstaller.class));
+        install(Locator.locate(BeeInstaller.class).asFile());
     }
 
     /**
@@ -53,27 +51,27 @@ public class BeeInstaller {
      * 
      * @param source
      */
-    public static final void install(Path source) {
+    public static final void install(File source) {
         UserInterface ui = I.make(UserInterface.class);
 
         try {
-            String fileName = "bee-" + format.format(new Date(Files.getLastModifiedTime(source).toMillis())) + ".jar";
-            Path dest = BeeHome.resolve(fileName);
+            String fileName = "bee-" + format.format(new Date(source.lastModified())) + ".jar";
+            psychopath.File dest = BeeHome.file(fileName);
 
             // delete old files
-            Filer.walk(BeeHome, "bee-*.jar").to(jar -> {
+            BeeHome.walkFiles("bee-*.jar").to(jar -> {
                 try {
-                    Files.delete(jar);
+                    jar.delete();
                 } catch (Exception e) {
                     // we can't delete current processing jar file.
                 }
             });
 
-            if (Paths.getLastModified(source) != Paths.getLastModified(dest)) {
+            if (source.lastModified() != dest.lastModified()) {
                 // The current bee.jar is newer.
                 // We should copy it to JDK directory.
                 // This process is mainly used by Bee users while install phase.
-                Filer.copy(source, dest);
+                source.copyTo(dest);
                 ui.talk("Install new bee library. [", dest, "]");
             }
 
@@ -97,18 +95,20 @@ public class BeeInstaller {
             // create bee-api library and sources
             Path classes = Filer.locateTemporary();
             JarArchiver archiver = new JarArchiver();
-            archiver.add(source, "bee/**", "!**.java");
-            archiver.add(source, "META-INF/services/**");
+            archiver.add(source.asJavaPath(), "bee/**", "!**.java");
+            archiver.add(source.asJavaPath(), "META-INF/services/**");
             archiver.pack(classes);
 
             Path sources = Filer.locateTemporary();
             archiver = new JarArchiver();
-            archiver.add(source, "bee/**.java");
-            archiver.add(source, "META-INF/services/**");
+            archiver.add(source.asJavaPath(), "bee/**.java");
+            archiver.add(source.asJavaPath(), "META-INF/services/**");
             archiver.pack(sources);
 
             I.make(Repository.class).install(bee.Bee.API, classes, Locator.file(sources), null);
-        } catch (IOException e) {
+        } catch (
+
+        IOException e) {
             throw I.quiet(e);
         }
     }

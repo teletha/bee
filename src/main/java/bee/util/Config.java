@@ -17,9 +17,6 @@ import java.lang.annotation.Target;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Properties;
 import java.util.function.Supplier;
 
@@ -27,6 +24,8 @@ import bee.Platform;
 import bee.UserInterface;
 import bee.api.Project;
 import kiss.I;
+import psychopath.Directory;
+import psychopath.File;
 
 /**
  * <p>
@@ -46,7 +45,7 @@ public class Config {
      * @return A configuration.
      */
     public static <T> T project(Class<T> type) {
-        return config(I.make(Project.class).getRoot().asJavaPath().resolve(".bee"), type);
+        return config(I.make(Project.class).getRoot().directory(".bee"), type);
     }
 
     /**
@@ -58,7 +57,7 @@ public class Config {
      * @return A configuration.
      */
     public static <T> T user(Class<T> type) {
-        return config(Platform.BeeHome.resolve("config").resolve(System.getProperty("user.name")), type);
+        return config(Platform.BeeHome.directory("config").directory(System.getProperty("user.name")), type);
     }
 
     /**
@@ -82,7 +81,7 @@ public class Config {
      * @return A configuration.
      */
     public static <T> T system(Class<T> type) {
-        return config(Platform.BeeHome.resolve("config").resolve("@system@"), type);
+        return config(Platform.BeeHome.directory("config").directory("@system@"), type);
     }
 
     /**
@@ -94,15 +93,15 @@ public class Config {
      * @param type A configuration type.
      * @return A configuration.
      */
-    private static <T> T config(Path directory, Class<T> type) {
+    private static <T> T config(Directory directory, Class<T> type) {
         String name = name(type);
-        Path file = directory.resolve(name + ".txt");
-        Paths.createFile(file);
+        File file = directory.file(name + ".txt");
+        file.create();
         I.make(UserInterface.class).talk("Use configuration from [" + file + "].");
 
         return I.make(type, (proxy, method, args) -> {
             Properties properties = new Properties();
-            properties.load(Files.newBufferedReader(file, StandardCharsets.UTF_8));
+            properties.load(file.newBufferedReader());
 
             String key = method.getName();
             String value = properties.getProperty(key);
@@ -123,7 +122,7 @@ public class Config {
                 }
 
                 properties.setProperty(key, value);
-                properties.store(Files.newBufferedWriter(file, StandardCharsets.UTF_8), "Bee local configuration.");
+                properties.store(file.newBufferedWriter(), "Bee local configuration.");
             }
             return I.transform(value, method.getReturnType());
         });

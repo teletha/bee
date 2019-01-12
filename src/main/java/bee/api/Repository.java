@@ -69,7 +69,6 @@ import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import bee.Bee;
 import bee.Platform;
 import bee.UserInterface;
-import bee.util.Paths;
 import bee.util.TransferView;
 import kiss.I;
 import kiss.Manageable;
@@ -427,11 +426,11 @@ public class Repository {
         try {
             InstallRequest request = new InstallRequest();
             request.addArtifact(jar);
-            request.addArtifact(new SubArtifact(jar, "", "pom", Paths.write(project.toString()).toFile()));
-            if (sources.isPresent()) {
+            request.addArtifact(new SubArtifact(jar, "", "pom", Locator.temporaryFile().text(product.toString()).asJavaFile()));
+            if (sources != null && sources.isPresent()) {
                 request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.asJavaFile()));
             }
-            if (javadoc.isPresent()) {
+            if (javadoc != null && javadoc.isPresent()) {
                 request.addArtifact(new SubArtifact(jar, "javadoc", "jar", javadoc.asJavaFile()));
             }
             system.install(session, request);
@@ -457,8 +456,8 @@ public class Repository {
      * 
      * @param path The local value to set.
      */
-    public final void setLocalRepository(Path path) {
-        this.localRepository = new LocalRepository(path.toAbsolutePath().toString());
+    public final void setLocalRepository(Directory path) {
+        this.localRepository = new LocalRepository(path.absolutize().toString());
     }
 
     /**

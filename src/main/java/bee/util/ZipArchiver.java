@@ -54,10 +54,8 @@ public class ZipArchiver {
      * @param base A base path.
      * @param patterns "glob" include/exclude patterns.
      */
-    public void add(Directory set) {
-        if (set != null) {
-            set.walkFiles().to(file -> add(file.asJavaPath()));
-        }
+    public void add(Directory base, String... patterns) {
+        add(base.asJavaPath(), patterns);
     }
 
     /**

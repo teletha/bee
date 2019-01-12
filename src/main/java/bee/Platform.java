@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 
 import filer.Filer;
 import kiss.I;
+import psychopath.Directory;
+import psychopath.Locator;
 
 /**
  * <p>
@@ -46,10 +48,10 @@ public final class Platform {
     public static final Path Bee;
 
     /** The root directory for Bee. */
-    public static final Path BeeHome;
+    public static final Directory BeeHome;
 
     /** The local repository. */
-    public static final Path BeeLocalRepository;
+    public static final Directory BeeLocalRepository;
 
     /** The platform type. */
     private static boolean isWindows;
@@ -101,7 +103,7 @@ public final class Platform {
         JavaHome = java.getParent().getParent();
         JavaRuntime = JavaHome.resolve("jre/lib/rt.jar");
         Bee = bee;
-        BeeHome = JavaHome.resolve("lib/bee");
+        BeeHome = Locator.directory(JavaHome.resolve("lib/bee"));
         BeeLocalRepository = searchLocalRepository();
     }
 
@@ -112,7 +114,7 @@ public final class Platform {
      * 
      * @return
      */
-    private static Path searchLocalRepository() {
+    private static Directory searchLocalRepository() {
         for (Entry<String, String> entry : System.getenv().entrySet()) {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 for (String path : entry.getValue().split(File.pathSeparator)) {
@@ -127,14 +129,14 @@ public final class Platform {
                             String location = I.xml(conf.toFile()).find("localRepository").text();
 
                             if (location.length() != 0) {
-                                return Filer.locate(location);
+                                return Locator.directory(location);
                             }
                         }
                     }
                 }
             }
         }
-        return BeeHome.resolve("repository");
+        return BeeHome.directory("repository");
     }
 
     /**
