@@ -11,8 +11,6 @@ package bee;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -31,9 +29,9 @@ import bee.task.IDESupport;
 import bee.task.Prototype;
 import bee.util.JarArchiver;
 import bee.util.JavaCompiler;
-import filer.Filer;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
+import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
 import psychopath.Locator;
@@ -105,7 +103,7 @@ public class Bee {
      * </p>
      */
     public Bee() {
-        this((Path) null, null);
+        this((Directory) null, null);
     }
 
     /**
@@ -127,25 +125,18 @@ public class Bee {
      * @param directory A project root directory.
      * @param ui A user interface.
      */
-    public Bee(Path directory, UserInterface ui) {
+    public Bee(Directory directory, UserInterface ui) {
         if (ui == null) {
             ui = new CommandLineUserInterface();
         }
 
         if (directory == null) {
-            directory = Filer.locate("");
+            directory = Locator.directory("");
         }
+        directory.create();
 
-        if (Files.notExists(directory)) {
-            try {
-                directory = Files.createDirectories(directory);
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-
-        if (!Files.isDirectory(directory)) {
-            directory = directory.getParent();
+        if (!directory.isDirectory()) {
+            directory = directory.parent();
         }
 
         // set up

@@ -41,11 +41,12 @@ import bee.TaskFailure;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
-import filer.Filer;
 import kiss.Decoder;
 import kiss.Encoder;
 import kiss.I;
 import psychopath.Directory;
+import psychopath.Location;
+import psychopath.Locator;
 
 /**
  * @version 2016/12/12 14:40:20
@@ -124,9 +125,9 @@ public class Java {
      * 
      * @param path
      */
-    public Java classPath(Path path) {
+    public Java classPath(Location path) {
         if (path != null) {
-            classpaths.add(path.toAbsolutePath());
+            classpaths.add(path.absolutize().asJavaPath());
         }
 
         // API definition
@@ -143,7 +144,7 @@ public class Java {
     public Java classPath(Class... classes) {
         if (classes != null) {
             for (Class clazz : classes) {
-                classPath(Filer.locate(clazz));
+                classPath(Locator.locate(clazz));
             }
         }
 

@@ -66,7 +66,7 @@ public class Eclipse extends Task implements IDESupport {
                 // install lombok
                 Java.with()
                         .classPath(I.class, Bee.class)
-                        .classPath(lombok.getLocalJar().asJavaPath())
+                        .classPath(lombok.getLocalJar())
                         .encoding(project.getEncoding())
                         .run(LombokInstaller.class, "install", eclipse.locate().get());
 

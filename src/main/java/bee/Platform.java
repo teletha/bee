@@ -12,7 +12,6 @@ package bee;
 import java.nio.charset.Charset;
 import java.util.Map.Entry;
 
-import filer.Filer;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
@@ -22,8 +21,6 @@ import psychopath.Locator;
  * Define platform specific default configurations.
  */
 public final class Platform {
-
-    Filer filer;
 
     /** The encoding. */
     public static final Charset Encoding = Charset.forName(System.getProperty("sun.jnu.encoding"));

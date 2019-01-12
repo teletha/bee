@@ -48,8 +48,8 @@ public class Test extends Task {
             Directory report = project.getOutput().directory("test-reports");
             report.create();
             Java.with()
-                    .classPath(project.getClasses().asJavaPath())
-                    .classPath(project.getTestClasses().asJavaPath())
+                    .classPath(project.getClasses())
+                    .classPath(project.getTestClasses())
                     .classPath(project.getDependency(Scope.Test))
                     .classPath(Bee.class)
                     .enableAssertion()
