@@ -35,7 +35,7 @@ import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
-import psychopath.Locator;
+import psychopath.File;
 
 /**
  * <p>
@@ -259,9 +259,9 @@ public class Bee {
      * Create project skeleton.
      * </p>
      */
-    private void buildProjectDefinition(Path definition) throws Exception {
+    private void buildProjectDefinition(File definition) throws Exception {
         // create project sources if needed
-        if (Files.notExists(definition)) {
+        if (definition.isAbsent()) {
             ui.talk("Project definition is not found. [" + definition + "]");
 
             if (!ui.confirm("Create new project?")) {
@@ -279,7 +279,7 @@ public class Bee {
             // build temporary project
             inject(new FavricProject(group, name, version, license));
 
-            Paths.write(definition, project.toDefinition());
+            definition.text(project.toDefinition());
             ui.talk("Generate project definition.");
 
             // build project architecture
@@ -296,12 +296,12 @@ public class Bee {
         }
 
         // compile project sources if needed
-        if (Paths.getLastModified(definition) > Paths.getLastModified(project.getProjectDefintionClass())) {
+        if (definition.lastModified() > Paths.getLastModified(project.getProjectDefintionClass())) {
             ui.talk("Compile project sources.");
 
             JavaCompiler compiler = new JavaCompiler();
-            Path projectFile = project.getProjectDefinition();
-            compiler.addSourceDirectory(Locator.directory(projectFile.getParent()));
+            File projectFile = project.getProjectDefinition();
+            compiler.addSourceDirectory(projectFile.parent());
             compiler.addClassPath(Filer.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();

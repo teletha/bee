@@ -626,8 +626,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getProjectDefinition() {
-        return input.file("project/java/Project.java").asJavaPath();
+    public File getProjectDefinition() {
+        return input.file("project/java/Project.java");
     }
 
     /**
