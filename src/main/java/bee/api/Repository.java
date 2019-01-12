@@ -77,6 +77,7 @@ import kiss.Manageable;
 import kiss.Singleton;
 import kiss.Storable;
 import kiss.Variable;
+import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
@@ -291,7 +292,7 @@ public class Repository {
      */
     public Path resolveJar(Library library) {
         Path resolved = resolveSubArtifact(library, "");
-        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getJar());
+        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().file(library.getJar()).asJavaPath();
     }
 
     /**
@@ -304,7 +305,7 @@ public class Repository {
      */
     public Path resolveJavadoc(Library library) {
         Path resolved = resolveSubArtifact(library, "javadoc");
-        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getJavadocJar());
+        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().file(library.getJavadocJar()).asJavaPath();
     }
 
     /**
@@ -317,7 +318,7 @@ public class Repository {
      */
     public Path resolveSource(Library library) {
         Path resolved = resolveSubArtifact(library, "sources");
-        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().resolve(library.getSourceJar());
+        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().file(library.getSourceJar()).asJavaPath();
     }
 
     /**
@@ -480,8 +481,8 @@ public class Repository {
      * 
      * @return
      */
-    public final Path getLocalRepository() {
-        return localRepository.getBasedir().toPath();
+    public final Directory getLocalRepository() {
+        return Locator.directory(localRepository.getBasedir().toPath());
     }
 
     /**
@@ -506,7 +507,7 @@ public class Repository {
         Library require = new Library(group, product, version);
 
         for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
-            Bee.load(Locator.locate(library.getLocalJar()));
+            Bee.load(library.getLocalJar());
         }
     }
 
@@ -717,8 +718,8 @@ public class Repository {
          */
         @Override
         public String locate() {
-            Path pom = library.getLocalPOM();
-            return pom.getParent().resolve(pom.getFileName().toString().replace(".pom", ".bee")).toString();
+            File pom = library.getLocalPOM();
+            return pom.parent().file(pom.name().replace(".pom", ".bee")).path();
         }
 
         /**

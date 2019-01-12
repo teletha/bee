@@ -9,9 +9,8 @@
  */
 package bee.task;
 
-import static javax.tools.DocumentationTool.Location.DOCUMENTATION_OUTPUT;
-import static javax.tools.StandardLocation.CLASS_PATH;
-import static javax.tools.StandardLocation.SOURCE_PATH;
+import static javax.tools.DocumentationTool.Location.*;
+import static javax.tools.StandardLocation.*;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -88,7 +87,7 @@ public class Doc extends Task {
                             .take(path -> path.toString().contains("sinobu")))
                     .toList());
             manager.setLocationFromPaths(CLASS_PATH, I.signal(project.getDependency(Scope.Test))
-                    .map(library -> library.getLocalJar())
+                    .map(library -> library.getLocalJar().asJavaPath())
                     .toList());
 
             DocumentationTask task = doc

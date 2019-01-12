@@ -654,11 +654,11 @@ public class Project {
 
         try {
             for (Library library : getDependency(Scope.Annotation)) {
-                Path file = FileSystems.newFileSystem(library.getLocalJar(), ClassLoader.getSystemClassLoader())
+                Path file = FileSystems.newFileSystem(library.getLocalJar().asJavaPath(), ClassLoader.getSystemClassLoader())
                         .getPath("/")
                         .resolve("META-INF/services/javax.annotation.processing.Processor");
                 if (Files.exists(file)) {
-                    libraries.add(Locator.file(library.getLocalJar()));
+                    libraries.add(library.getLocalJar());
                 }
             }
         } catch (IOException e) {

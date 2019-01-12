@@ -66,7 +66,7 @@ public class Exe extends Task {
 
             zip.add("lib", project.locateJar().asJavaPath());
             for (Library library : project.getDependency(Scope.Runtime)) {
-                zip.add("lib", library.getLocalJar());
+                zip.add("lib", library.getLocalJar().asJavaPath());
             }
 
             ui.talk("Packing application and libraries.");

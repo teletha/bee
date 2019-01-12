@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -154,7 +154,7 @@ public class JavaCompiler {
      */
     public void addClassPath(Library library) {
         if (library != null) {
-            classpaths.add(library.getLocalJar());
+            classpaths.add(library.getLocalJar().asJavaPath());
         }
     }
 

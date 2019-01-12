@@ -40,7 +40,7 @@ public class Jar extends bee.task.Jar {
         });
 
         for (Library library : project.getDependency(Scope.Runtime)) {
-            archiver.add(library.getLocalJar() /* , "!META-INF/**" */);
+            archiver.add(library.getLocalJar().asJavaPath() /* , "!META-INF/**" */);
         }
         archiver.pack(output.asJavaPath());
     }

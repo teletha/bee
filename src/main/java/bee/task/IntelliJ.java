@@ -22,6 +22,7 @@ import bee.api.Task;
 import kiss.I;
 import kiss.XML;
 import psychopath.Directory;
+import psychopath.File;
 
 /**
  * @version 2016/11/30 11:50:50
@@ -101,10 +102,10 @@ public class IntelliJ extends Task implements IDESupport {
      */
     private void library(Set<Library> libraries, XML root, Scope scope) {
         libraries.forEach(library -> {
-            Path jar = library.getLocalJar();
+            File jar = library.getLocalJar();
             Path source = library.getLocalSourceJar();
 
-            if (Files.exists(jar)) {
+            if (jar.isPresent()) {
                 XML entry = root.child("orderEntry").attr("type", "module-library");
 
                 if (scope == Scope.Test) {

@@ -109,7 +109,7 @@ public class Java {
     public Java classPath(Collection<Library> paths) {
         if (paths != null) {
             for (Library library : paths) {
-                classpaths.add(library.getLocalJar());
+                classpaths.add(library.getLocalJar().asJavaPath());
             }
         }
 

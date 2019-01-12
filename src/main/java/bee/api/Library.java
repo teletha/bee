@@ -17,6 +17,7 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 
 import kiss.I;
 import kiss.Variable;
+import psychopath.File;
 
 /**
  * @version 2017/01/08 21:30:27
@@ -174,8 +175,8 @@ public class Library implements Comparable<Library> {
      * 
      * @return
      */
-    public Path getLocalJar() {
-        return I.make(Repository.class).getLocalRepository().resolve(getJar());
+    public File getLocalJar() {
+        return I.make(Repository.class).getLocalRepository().file(getJar());
     }
 
     /**
@@ -240,8 +241,8 @@ public class Library implements Comparable<Library> {
      * 
      * @return
      */
-    public Path getLocalPOM() {
-        return I.make(Repository.class).getLocalRepository().resolve(getPOM());
+    public File getLocalPOM() {
+        return I.make(Repository.class).getLocalRepository().file(getPOM());
     }
 
     /**

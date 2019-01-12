@@ -70,7 +70,7 @@ public class Eclipse extends Task implements IDESupport {
                 // install lombok
                 Java.with()
                         .classPath(I.class, Bee.class)
-                        .classPath(lombok.getLocalJar())
+                        .classPath(lombok.getLocalJar().asJavaPath())
                         .encoding(project.getEncoding())
                         .run(LombokInstaller.class, "install", eclipse.locate().get());
 
@@ -136,10 +136,10 @@ public class Eclipse extends Task implements IDESupport {
 
         // library
         for (Library library : project.getDependency(Scope.Test)) {
-            Path jar = library.getLocalJar();
+            psychopath.File jar = library.getLocalJar();
             Path source = library.getLocalSourceJar();
 
-            if (Files.exists(jar)) {
+            if (jar.isPresent()) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
 
                 if (Files.exists(source)) {

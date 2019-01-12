@@ -56,8 +56,8 @@ public class Bintray extends Task {
                 .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
                 .flatIterable(files -> {
                     RepositoryFiles completes = new RepositoryFiles();
-                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
-                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
+                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM().asJavaPath()));
+                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar().asJavaPath()));
                     completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
                     completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
                     completes.removeAll(files);
