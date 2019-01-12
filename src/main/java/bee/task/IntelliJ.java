@@ -47,7 +47,7 @@ public class IntelliJ extends Task implements IDESupport {
      */
     @Override
     public boolean exist(Project project) {
-        return Files.isReadable(project.getRoot().resolve(".idea/modules.xml"));
+        return Files.isReadable(project.getRoot().asJavaPath().resolve(".idea/modules.xml"));
     }
 
     /**

@@ -9,10 +9,9 @@
  */
 package bee.task;
 
-import java.nio.file.Path;
-
 import bee.api.Command;
 import bee.api.Task;
+import psychopath.File;
 
 /**
  * @version 2017/03/08 1:46:27
@@ -21,7 +20,7 @@ public class Pom extends Task {
 
     @Command("Generate pom file.")
     public void gitignore() {
-        Path pom = project.getRoot().resolve("pom.xml");
+        File pom = project.getRoot().file("pom.xml");
 
         makeFile(pom, project.toString());
     }

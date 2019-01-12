@@ -21,6 +21,8 @@ import bee.api.Project;
 import bee.api.Task;
 import filer.Filer;
 import kiss.I;
+import psychopath.Directory;
+import psychopath.Locator;
 
 /**
  * @version 2012/11/12 13:20:32
@@ -32,7 +34,7 @@ public class BlinkProject extends Project {
     }
 
     /** The root. */
-    private Path root;
+    private Directory root;
 
     /** The initialization state. */
     private boolean initialized;
@@ -50,7 +52,7 @@ public class BlinkProject extends Project {
      * {@inheritDoc}
      */
     @Override
-    public Path getRoot() {
+    public Directory getRoot() {
         initialize();
 
         return root;
@@ -125,7 +127,7 @@ public class BlinkProject extends Project {
     public final Path importBy(Class model) {
         Path file = buildJavaSourceFilePath(model.getName());
         Path original = Filer.locate("src/test/java").resolve(file);
-        Path copy = getRoot().resolve("src/main/java").resolve(file);
+        Path copy = getRoot().asJavaPath().resolve("src/main/java").resolve(file);
 
         Filer.copy(original, copy);
 
@@ -142,7 +144,7 @@ public class BlinkProject extends Project {
     public final Path importByPackageOf(Class model) {
         Path directory = buildJavaSourceFilePath(model.getName()).getParent();
         Path original = Filer.locate("src/test/java").resolve(directory);
-        Path copy = getRoot().resolve("src/main/java").resolve(directory);
+        Path copy = getRoot().asJavaPath().resolve("src/main/java").resolve(directory);
 
         Filer.copy(original, copy);
 
@@ -157,7 +159,7 @@ public class BlinkProject extends Project {
      * @param fqcn A fully qualified class name.
      */
     public final Path source(String fqcn, String... contents) {
-        return createJavaSource(fqcn, getRoot().resolve("src/main/java/" + fqcn.replace('.', '/') + ".java"), contents);
+        return createJavaSource(fqcn, getRoot().asJavaPath().resolve("src/main/java/" + fqcn.replace('.', '/') + ".java"), contents);
     }
 
     /**
@@ -168,7 +170,7 @@ public class BlinkProject extends Project {
      * @param fqcn A fully qualified class name.
      */
     public final Path sourceTest(String fqcn) {
-        return createJavaSource(fqcn, getRoot().resolve("src/test/java/" + fqcn.replace('.', '/') + ".java"));
+        return createJavaSource(fqcn, getRoot().asJavaPath().resolve("src/test/java/" + fqcn.replace('.', '/') + ".java"));
     }
 
     /**
@@ -179,7 +181,7 @@ public class BlinkProject extends Project {
      * @param fqcn A fully qualified class name.
      */
     public final Path sourceProject(String fqcn) {
-        return createJavaSource(fqcn, getRoot().resolve("src/project/java/" + fqcn.replace('.', '/') + ".java"));
+        return createJavaSource(fqcn, getRoot().asJavaPath().resolve("src/project/java/" + fqcn.replace('.', '/') + ".java"));
     }
 
     /**
@@ -257,7 +259,7 @@ public class BlinkProject extends Project {
      * @param fqcn A fully qualified file name.
      */
     public final Path resource(String fqcn) {
-        return createFile(fqcn, getRoot().resolve("src/main/resources/" + fqcn));
+        return createFile(fqcn, getRoot().asJavaPath().resolve("src/main/resources/" + fqcn));
     }
 
     /**
@@ -268,7 +270,7 @@ public class BlinkProject extends Project {
      * @param fqcn A fully qualified file name.
      */
     public final Path resourceTest(String fqcn) {
-        return createFile(fqcn, getRoot().resolve("src/test/resources/" + fqcn));
+        return createFile(fqcn, getRoot().asJavaPath().resolve("src/test/resources/" + fqcn));
     }
 
     /**
@@ -279,7 +281,7 @@ public class BlinkProject extends Project {
      * @param fqcn A fully qualified file name.
      */
     public final Path resourceProject(String fqcn) {
-        return createFile(fqcn, getRoot().resolve("src/project/resources/" + fqcn));
+        return createFile(fqcn, getRoot().asJavaPath().resolve("src/project/resources/" + fqcn));
     }
 
     /**
@@ -315,7 +317,7 @@ public class BlinkProject extends Project {
             initialized = true;
 
             // create root directory
-            root = Filer.locateTemporary();
+            root = Locator.temporaryDirectory();
         }
     }
 

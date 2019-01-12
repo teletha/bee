@@ -9,14 +9,12 @@
  */
 package bee.task;
 
-import java.nio.file.Path;
-
 import bee.api.Command;
 import bee.api.Project;
 import bee.api.Repository;
 import bee.api.Task;
-import filer.Filer;
 import kiss.I;
+import psychopath.File;
 
 /**
  * @version 2017/01/16 14:34:48
@@ -43,8 +41,8 @@ public class Install extends Task {
 
     @Command("Install local jar file into the local repository.")
     public void jar() {
-        Path selected = ui.ask("Select a jar file to install.", Filer.walk(project.getRoot(), "*.jar").toList());
-        String group = ui.ask("Input group name.", selected.getFileName().toString());
+        File selected = ui.ask("Select a jar file to install.", project.getRoot().walkFiles("*.jar").toList());
+        String group = ui.ask("Input group name.", selected.name());
         String product = ui.ask("Input product name.", group);
         String version = ui.ask("Input product version.", "1.0");
 

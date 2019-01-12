@@ -52,8 +52,8 @@ public class Eclipse extends Task implements IDESupport {
     @Override
     @Command(value = "Generate configuration files for Eclipse.", defaults = true)
     public void execute() {
-        createClasspath(project.getRoot().resolve(".classpath"));
-        createProject(project.getRoot().resolve(".project"));
+        createClasspath(project.getRoot().asJavaPath().resolve(".classpath"));
+        createProject(project.getRoot().asJavaPath().resolve(".project"));
 
         Set<Path> processors = project.getAnnotationProcessors();
         boolean enableAnnotationProcessor = !processors.isEmpty();
@@ -86,7 +86,7 @@ public class Eclipse extends Task implements IDESupport {
      */
     @Override
     public boolean exist(Project project) {
-        return Files.isReadable(project.getRoot().resolve(".classpath"));
+        return Files.isReadable(project.getRoot().asJavaPath().resolve(".classpath"));
     }
 
     /**
@@ -189,7 +189,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // write file
-        makeFile(project.getRoot().resolve(".factorypath"), doc);
+        makeFile(project.getRoot().asJavaPath().resolve(".factorypath"), doc);
     }
 
     /**
@@ -211,7 +211,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // write file
-        makeFile(project.getRoot().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), properties);
+        makeFile(project.getRoot().asJavaPath().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), properties);
     }
 
     /**
@@ -222,7 +222,7 @@ public class Eclipse extends Task implements IDESupport {
      * @param localFile
      */
     private void createJDT(boolean enabled) {
-        Path file = project.getRoot().resolve(".settings/org.eclipse.jdt.core.prefs");
+        Path file = project.getRoot().asJavaPath().resolve(".settings/org.eclipse.jdt.core.prefs");
 
         try {
             if (Files.notExists(file)) {
@@ -247,7 +247,7 @@ public class Eclipse extends Task implements IDESupport {
      * @return
      */
     private Path relative(Path path) {
-        return project.getRoot().relativize(path);
+        return project.getRoot().asJavaPath().relativize(path);
     }
 
     /**
@@ -277,13 +277,13 @@ public class Eclipse extends Task implements IDESupport {
      */
     private void syncProject(boolean live) {
         String jar = I.make(Repository.class).resolveJar(project.getLibrary()).toString();
-        String currentProjectName = project.getRoot().getFileName().toString();
+        String currentProjectName = project.getRoot().asJavaPath().getFileName().toString();
 
         String oldPath = live ? jar : "/" + currentProjectName;
         String newPath = live ? "/" + currentProjectName : jar;
 
-        Filer.walk(project.getRoot().getParent(), "*/.classpath").to(file -> {
-            if (!file.startsWith(project.getRoot())) {
+        Filer.walk(project.getRoot().asJavaPath().getParent(), "*/.classpath").to(file -> {
+            if (!file.startsWith(project.getRoot().asJavaPath())) {
                 String targetProjectName = file.getParent().getFileName().toString();
 
                 try {

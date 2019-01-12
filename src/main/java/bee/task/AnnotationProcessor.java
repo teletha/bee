@@ -33,6 +33,7 @@ import javax.lang.model.util.Types;
 
 import bee.api.Project;
 import kiss.I;
+import psychopath.Directory;
 
 /**
  * @version 2017/01/26 11:30:32
@@ -144,7 +145,7 @@ public class AnnotationProcessor implements Processor {
     static class ProjectInfo implements Entry<String, String> {
 
         /** The project root path. */
-        private Path root;
+        private Directory root;
 
         /** The source directories. */
         private List<Path> sources;
@@ -167,7 +168,7 @@ public class AnnotationProcessor implements Processor {
          * 
          * @return The projectRoot property.
          */
-        public Path getRoot() {
+        public Directory getRoot() {
             return root;
         }
 
@@ -176,7 +177,7 @@ public class AnnotationProcessor implements Processor {
          * 
          * @param projectRoot The projectRoot value to set.
          */
-        void setRoot(Path projectRoot) {
+        void setRoot(Directory projectRoot) {
             this.root = projectRoot;
         }
 

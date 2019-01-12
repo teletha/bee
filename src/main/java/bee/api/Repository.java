@@ -77,6 +77,7 @@ import kiss.Manageable;
 import kiss.Singleton;
 import kiss.Storable;
 import kiss.Variable;
+import psychopath.File;
 
 /**
  * @version 2017/04/02 13:15:17
@@ -403,6 +404,17 @@ public class Repository {
      * 
      * @param project A project to install.
      */
+    public void install(Project project, File classes) {
+        install(project, classes, project.locateSourceJar(), project.locateJavadocJar());
+    }
+
+    /**
+     * <p>
+     * Install project into the local repository.
+     * </p>
+     * 
+     * @param project A project to install.
+     */
     public void install(Project project, Path classes, Path sources, Path javadoc) {
         String group = project.getGroup();
         String product = project.getProduct();
@@ -410,6 +422,38 @@ public class Repository {
 
         // create artifact for project
         Artifact jar = new DefaultArtifact(group, product, "", "jar", version, null, classes.toFile());
+
+        try {
+            InstallRequest request = new InstallRequest();
+            request.addArtifact(jar);
+            request.addArtifact(new SubArtifact(jar, "", "pom", Paths.write(project.toString()).toFile()));
+            if (Paths.exist(sources)) {
+                request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.toFile()));
+            }
+            if (Paths.exist(javadoc)) {
+                request.addArtifact(new SubArtifact(jar, "javadoc", "jar", javadoc.toFile()));
+            }
+            system.install(session, request);
+        } catch (InstallationException e) {
+            e.printStackTrace();
+            throw I.quiet(e);
+        }
+    }
+
+    /**
+     * <p>
+     * Install project into the local repository.
+     * </p>
+     * 
+     * @param project A project to install.
+     */
+    public void install(Project project, File classes, Path sources, Path javadoc) {
+        String group = project.getGroup();
+        String product = project.getProduct();
+        String version = project.getVersion();
+
+        // create artifact for project
+        Artifact jar = new DefaultArtifact(group, product, "", "jar", version, null, classes.asJavaFile());
 
         try {
             InstallRequest request = new InstallRequest();

@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.IOException;
 import java.net.URI;
@@ -133,8 +133,8 @@ public class Project {
      * 
      * @return A root directory of this project.
      */
-    public Path getRoot() {
-        return root.asJavaPath();
+    public Directory getRoot() {
+        return root;
     }
 
     /**
@@ -452,11 +452,11 @@ public class Project {
      */
     protected final void setInput(Path input) {
         if (input == null) {
-            input = getRoot().resolve("src");
+            input = getRoot().asJavaPath().resolve("src");
         }
 
         if (!input.isAbsolute()) {
-            input = getRoot().resolve(input);
+            input = getRoot().asJavaPath().resolve(input);
         }
         this.input = input;
     }
@@ -473,7 +473,7 @@ public class Project {
         if (input == null) {
             input = "src";
         }
-        setInput(getRoot().resolve(input));
+        setInput(getRoot().asJavaPath().resolve(input));
     }
 
     /**
@@ -495,11 +495,11 @@ public class Project {
      */
     protected final void setOutput(Path output) {
         if (output == null) {
-            output = getRoot().resolve("target");
+            output = getRoot().asJavaPath().resolve("target");
         }
 
         if (!output.isAbsolute()) {
-            output = getRoot().resolve(output);
+            output = getRoot().asJavaPath().resolve(output);
         }
         this.output = output;
     }
@@ -516,7 +516,7 @@ public class Project {
         if (output == null) {
             output = "target";
         }
-        setOutput(getRoot().resolve(output));
+        setOutput(getRoot().asJavaPath().resolve(output));
     }
 
     /**

@@ -139,7 +139,7 @@ public class Paths {
             }
             Files.write(path, lines, project.getEncoding());
         } catch (IOException e) {
-            I.make(UserInterface.class).error("Fail to write [", project.getRoot().relativize(path), "]");
+            I.make(UserInterface.class).error("Fail to write [", path, "]");
             throw I.quiet(e);
         }
     }
@@ -184,7 +184,7 @@ public class Paths {
 
             return file;
         } catch (IOException e) {
-            I.make(UserInterface.class).error("Fail to write [", project.getRoot().relativize(file), "]");
+            I.make(UserInterface.class).error("Fail to write [", file, "]");
             throw I.quiet(e);
         }
     }

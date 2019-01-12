@@ -10,7 +10,6 @@
 package bee.task;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 import bee.api.Command;
@@ -46,19 +45,17 @@ public class License extends Task {
      */
     private void update(Signal<Directory> set) throws IOException {
         set.flatMap(dir -> dir.walkFiles()).to(file -> {
-            Path path = file.asJavaPath();
-
-            FileType type = FileType.of(path);
+            FileType type = FileType.of(file);
 
             if (type.header() == StandardHeaderStyle.Unknown) {
-                ui.talk("Unknown Format ", project.getRoot().relativize(path));
+                ui.talk("Unknown Format ", project.getRoot().relativize(file));
             } else {
                 List<String> source = file.lines(project.getEncoding()).toList();
                 List<String> converted = type.header().convert(source, project.getLicense());
 
                 if (converted != null) {
                     file.text(project.getEncoding(), converted);
-                    ui.talk("Update ", project.getRoot().relativize(path));
+                    ui.talk("Update ", project.getRoot().relativize(file));
                 }
             }
         });

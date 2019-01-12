@@ -271,7 +271,7 @@ public class Bee {
 
             ui.title("Create New Project");
 
-            String name = ui.ask("Product name", project.getRoot().getFileName().toString());
+            String name = ui.ask("Product name", project.getRoot().name());
             String group = ui.ask("Product group", name.toLowerCase().replaceAll("\\s+", "."));
             String version = ui.ask("Product version", "1.0");
             StandardLicense license = ui.ask("Product license", StandardLicense.class);

@@ -46,7 +46,7 @@ public class Config {
      * @return A configuration.
      */
     public static <T> T project(Class<T> type) {
-        return config(I.make(Project.class).getRoot().resolve(".bee"), type);
+        return config(I.make(Project.class).getRoot().asJavaPath().resolve(".bee"), type);
     }
 
     /**

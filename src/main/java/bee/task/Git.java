@@ -9,28 +9,26 @@
  */
 package bee.task;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
+import static bee.Platform.isLinux;
+import static bee.Platform.isWindows;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.StringJoiner;
 
 import bee.api.Command;
 import bee.api.Task;
-import bee.util.Paths;
 import bee.util.RESTClient;
 import kiss.I;
+import psychopath.File;
 
-/**
- * @version 2017/01/19 10:29:59
- */
 public class Git extends Task {
 
     @Command("Generate .gitignore file.")
     public void gitignore() {
-        Path ignore = project.getRoot().resolve(".gitignore");
+        File ignore = project.getRoot().file(".gitignore");
 
-        makeFile(ignore, update(Paths.readLines(ignore)));
+        makeFile(ignore, update(ignore.lines().toList()));
     }
 
     /**

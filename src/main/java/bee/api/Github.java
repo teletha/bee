@@ -112,7 +112,7 @@ public abstract class Github {
         try {
             Project project = I.make(Project.class);
             byte[] local = Files.readAllBytes(file);
-            byte[] remote = Base64.decodeBase64(file(project.getRoot().relativize(file).toString()).content);
+            byte[] remote = Base64.decodeBase64(file(project.getRoot().asJavaPath().relativize(file).toString()).content);
 
             return Arrays.equals(local, remote);
         } catch (IOException e) {

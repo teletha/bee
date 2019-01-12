@@ -43,6 +43,8 @@ import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
 import net.bytebuddy.matcher.ElementMatchers;
+import psychopath.Directory;
+import psychopath.File;
 
 /**
  * @version 2017/03/04 13:26:53
@@ -141,6 +143,22 @@ public abstract class Task implements Extensible {
      * Utility method for task.
      * </p>
      * 
+     * @param directory
+     */
+    protected final Directory makeDirectory(Directory directory) {
+        if (directory != null && directory.isAbsent()) {
+            directory.create();
+
+            ui.talk("Make directory [" + directory.absolutize() + "]");
+        }
+        return directory;
+    }
+
+    /**
+     * <p>
+     * Utility method for task.
+     * </p>
+     * 
      * @param path
      */
     protected final Path makeDirectory(Path base, String path) {
@@ -166,6 +184,27 @@ public abstract class Task implements Extensible {
             throw I.quiet(e);
         }
         return path;
+    }
+
+    /**
+     * <p>
+     * Utility method to write xml file.
+     * </p>
+     * 
+     * @param file A file path to write.
+     * @param xml A file contents.
+     */
+    protected final File makeFile(File file, XML xml) {
+        makeDirectory(file.parent());
+
+        try (BufferedWriter writer = file.newBufferedWriter()) {
+            xml.to(writer);
+
+            ui.talk("Make file [" + file.absolutize() + "]");
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+        return file;
     }
 
     /**
@@ -206,6 +245,18 @@ public abstract class Task implements Extensible {
      * Utility method to write file.
      * </p>
      * 
+     * @param file A file path to write.
+     * @param content A file content.
+     */
+    protected final File makeFile(File file, String content) {
+        return makeFile(file, Arrays.asList(content.split(Platform.EOL)));
+    }
+
+    /**
+     * <p>
+     * Utility method to write file.
+     * </p>
+     * 
      * @param path A file path to write.
      * @param content A file content.
      */
@@ -220,6 +271,23 @@ public abstract class Task implements Extensible {
             throw I.quiet(e);
         }
         return path;
+    }
+
+    /**
+     * <p>
+     * Utility method to write file.
+     * </p>
+     * 
+     * @param file A file path to write.
+     * @param content A file content.
+     */
+    protected final File makeFile(File file, Iterable<String> content) {
+        makeDirectory(file.parent());
+
+        file.text(content);
+        ui.talk("Make file [" + file.absolutize() + "]");
+
+        return file;
     }
 
     /**
