@@ -27,14 +27,11 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import bee.Platform;
-import filer.Filer;
 import kiss.Disposable;
 import kiss.I;
 import psychopath.Directory;
+import psychopath.Locator;
 
-/**
- * @version 2015/07/14 2:48:03
- */
 public class ZipArchiver {
 
     /** The default encoding. */
@@ -121,13 +118,13 @@ public class ZipArchiver {
                 try {
                     for (Entry entry : entries) {
                         // compute base directory
-                        Path base = Files.isDirectory(entry.base) ? entry.base : entry.base.getParent();
+                        Directory base = Locator.directory(Files.isDirectory(entry.base) ? entry.base : entry.base.getParent());
 
                         // scan entry
-                        Filer.walk(entry.base, entry.patterns).to(file -> {
+                        Locator.directory(entry.base).walkFiles(entry.patterns).to(file -> {
                             try {
                                 String path = entry.directory + base.relativize(file).toString().replace(File.separatorChar, '/');
-                                BasicFileAttributes attrs = Files.readAttributes(file, BasicFileAttributes.class);
+                                BasicFileAttributes attrs = file.attribute();
 
                                 ZipEntry zip = new ZipEntry(path);
                                 zip.setSize(attrs.size());
@@ -135,7 +132,7 @@ public class ZipArchiver {
                                 zip.setMethod(ZipEntry.DEFLATED);
 
                                 archiver.putNextEntry(zip);
-                                I.copy(Files.newInputStream(file), archiver, true);
+                                I.copy(file.newInputStream(), archiver, true);
                                 archiver.closeEntry();
                             } catch (IOException e) {
                                 // ignore
