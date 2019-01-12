@@ -67,7 +67,7 @@ public class Compile extends Task {
     private void compile(String type, Signal<Directory> input, Path output) {
         ui.talk("Copying ", type, " resources to ", output);
         input.to(dir -> {
-            dir.copyTo(Locator.directory(output), "**", "!**.java");
+            dir.copyTo(Locator.directory(output), o -> o.glob("**", "!**.java").ignoreRoot());
         });
 
         ui.talk("Compiling ", type, " sources to ", output);
