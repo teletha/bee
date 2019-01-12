@@ -9,14 +9,13 @@
  */
 package bee.task;
 
-import static javax.tools.DocumentationTool.Location.*;
-import static javax.tools.StandardLocation.*;
+import static javax.tools.DocumentationTool.Location.DOCUMENTATION_OUTPUT;
+import static javax.tools.StandardLocation.CLASS_PATH;
+import static javax.tools.StandardLocation.SOURCE_PATH;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,6 +31,7 @@ import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
 import kiss.I;
+import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
 
@@ -41,7 +41,7 @@ import psychopath.Location;
 public class Doc extends Task {
 
     /** The output root directory for javadoc. */
-    protected Path output;
+    protected Directory output;
 
     /**
      * <p>
@@ -52,19 +52,12 @@ public class Doc extends Task {
     public void javadoc() {
         // specify output directory
         if (output == null) {
-            output = project.getOutput().resolve("api");
+            output = project.getOutput().directory("api");
         }
+        output.create();
 
-        if (Files.notExists(output)) {
-            try {
-                Files.createDirectories(output);
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-
-        if (Files.exists(output) && !Files.isDirectory(output)) {
-            throw new IllegalArgumentException("Javadoc output path is not directory. " + output.toAbsolutePath());
+        if (!output.isDirectory()) {
+            throw new IllegalArgumentException("Javadoc output path is not directory. " + output.absolutize());
         }
 
         List<String> options = new CopyOnWriteArrayList();
@@ -87,7 +80,7 @@ public class Doc extends Task {
         try {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
-            manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output));
+            manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
             manager.setLocationFromPaths(SOURCE_PATH, project.getSourceSet()
                     .map(Location::asJavaPath)
                     .merge(I.signal(project.getDependency(Scope.Compile))

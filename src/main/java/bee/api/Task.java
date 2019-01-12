@@ -167,6 +167,17 @@ public abstract class Task implements Extensible {
 
     /**
      * <p>
+     * Utility method for task.
+     * </p>
+     * 
+     * @param path
+     */
+    protected final Directory makeDirectory(Directory base, String path) {
+        return makeDirectory(base.directory(path));
+    }
+
+    /**
+     * <p>
      * Utility method to write xml file.
      * </p>
      * 

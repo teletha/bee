@@ -9,7 +9,9 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.Bee;
+import static bee.Platform.BeeHome;
+import static bee.Platform.JavaHome;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -25,6 +27,7 @@ import bee.util.JarArchiver;
 import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
+import psychopath.Locator;
 
 /**
  * @version 2015/06/22 11:53:31
@@ -104,7 +107,7 @@ public class BeeInstaller {
             archiver.add(source, "META-INF/services/**");
             archiver.pack(sources);
 
-            I.make(Repository.class).install(bee.Bee.API, classes, sources, null);
+            I.make(Repository.class).install(bee.Bee.API, classes, Locator.file(sources), null);
         } catch (IOException e) {
             throw I.quiet(e);
         }

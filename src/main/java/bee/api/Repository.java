@@ -405,7 +405,7 @@ public class Repository {
      * @param project A project to install.
      */
     public void install(Project project, File classes) {
-        install(project, classes, project.locateSourceJar(), project.locateJavadocJar());
+        install(project, classes.asJavaPath(), project.locateSourceJar(), project.locateJavadocJar());
     }
 
     /**
@@ -415,7 +415,7 @@ public class Repository {
      * 
      * @param project A project to install.
      */
-    public void install(Project project, Path classes, Path sources, Path javadoc) {
+    public void install(Project project, Path classes, File sources, File javadoc) {
         String group = project.getGroup();
         String product = project.getProduct();
         String version = project.getVersion();
@@ -427,11 +427,11 @@ public class Repository {
             InstallRequest request = new InstallRequest();
             request.addArtifact(jar);
             request.addArtifact(new SubArtifact(jar, "", "pom", Paths.write(project.toString()).toFile()));
-            if (Paths.exist(sources)) {
-                request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.toFile()));
+            if (sources.isPresent()) {
+                request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.asJavaFile()));
             }
-            if (Paths.exist(javadoc)) {
-                request.addArtifact(new SubArtifact(jar, "javadoc", "jar", javadoc.toFile()));
+            if (javadoc.isPresent()) {
+                request.addArtifact(new SubArtifact(jar, "javadoc", "jar", javadoc.asJavaFile()));
             }
             system.install(session, request);
         } catch (InstallationException e) {

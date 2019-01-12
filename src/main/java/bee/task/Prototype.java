@@ -9,10 +9,9 @@
  */
 package bee.task;
 
-import java.nio.file.Path;
-
 import bee.api.Command;
 import bee.api.Task;
+import psychopath.Directory;
 
 /**
  * @version 2015/06/22 16:47:25
@@ -22,7 +21,7 @@ public class Prototype extends Task {
     @Command("Generate standard Java project skelton.")
     public void java() {
         String packageName = project.getGroup().replaceAll("\\.", "/");
-        Path sources = project.getInput();
+        Directory sources = project.getInput();
 
         makeDirectory(sources, "main/java/" + packageName);
         makeDirectory(sources, "main/resources/" + packageName);

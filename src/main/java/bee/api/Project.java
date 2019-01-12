@@ -43,6 +43,7 @@ import kiss.I;
 import kiss.Signal;
 import kiss.XML;
 import psychopath.Directory;
+import psychopath.File;
 import psychopath.Location;
 import psychopath.Locator;
 
@@ -88,10 +89,10 @@ public class Project {
     private SourceVersion requirementJavaVersion;
 
     /** The input base directory. */
-    private Path input;
+    private Directory input;
 
     /** The output base directory. */
-    private Path output;
+    private Directory output;
 
     /** The version control system. */
     private Github vcs;
@@ -121,8 +122,8 @@ public class Project {
             }
         }
 
-        setInput((Path) null);
-        setOutput((Path) null);
+        setInput((Directory) null);
+        setOutput((Directory) null);
         license((StandardLicense) null);
     }
 
@@ -438,7 +439,7 @@ public class Project {
      * 
      * @return The base input directory.
      */
-    public Path getInput() {
+    public Directory getInput() {
         return input;
     }
 
@@ -450,13 +451,13 @@ public class Project {
      * 
      * @param input The base input directory to set.
      */
-    protected final void setInput(Path input) {
+    protected final void setInput(Directory input) {
         if (input == null) {
-            input = getRoot().asJavaPath().resolve("src");
+            input = getRoot().directory("src");
         }
 
         if (!input.isAbsolute()) {
-            input = getRoot().asJavaPath().resolve(input);
+            input = getRoot().directory(input);
         }
         this.input = input;
     }
@@ -473,7 +474,7 @@ public class Project {
         if (input == null) {
             input = "src";
         }
-        setInput(getRoot().asJavaPath().resolve(input));
+        setInput(getRoot().directory(input));
     }
 
     /**
@@ -481,7 +482,7 @@ public class Project {
      * 
      * @return The base output directory.
      */
-    public Path getOutput() {
+    public Directory getOutput() {
         return output;
     }
 
@@ -493,13 +494,13 @@ public class Project {
      * 
      * @param output The base output directory to set.
      */
-    protected final void setOutput(Path output) {
+    protected final void setOutput(Directory output) {
         if (output == null) {
-            output = getRoot().asJavaPath().resolve("target");
+            output = getRoot().directory("target");
         }
 
         if (!output.isAbsolute()) {
-            output = getRoot().asJavaPath().resolve(output);
+            output = getRoot().directory(output);
         }
         this.output = output;
     }
@@ -516,7 +517,7 @@ public class Project {
         if (output == null) {
             output = "target";
         }
-        setOutput(getRoot().asJavaPath().resolve(output));
+        setOutput(getRoot().directory(output));
     }
 
     /**
@@ -527,7 +528,7 @@ public class Project {
      * @return
      */
     public Path getSources() {
-        return input.resolve("main");
+        return input.directory("main").asJavaPath();
     }
 
     /**
@@ -549,7 +550,7 @@ public class Project {
      * @return
      */
     public Path getClasses() {
-        return output.resolve("classes");
+        return output.directory("classes").asJavaPath();
     }
 
     /**
@@ -560,7 +561,7 @@ public class Project {
      * @return
      */
     public Path getTestSources() {
-        return input.resolve("test");
+        return input.directory("test").asJavaPath();
     }
 
     /**
@@ -582,7 +583,7 @@ public class Project {
      * @return
      */
     public Path getTestClasses() {
-        return output.resolve("test-classes");
+        return output.directory("test-classes").asJavaPath();
     }
 
     /**
@@ -593,7 +594,7 @@ public class Project {
      * @return
      */
     public Path getProjectSources() {
-        return input.resolve("project");
+        return input.directory("project").asJavaPath();
     }
 
     /**
@@ -615,7 +616,7 @@ public class Project {
      * @return
      */
     public Path getProjectClasses() {
-        return output.resolve("project-classes");
+        return output.directory("project-classes").asJavaPath();
     }
 
     /**
@@ -626,7 +627,7 @@ public class Project {
      * @return
      */
     public Path getProjectDefinition() {
-        return input.resolve("project/java/Project.java");
+        return input.file("project/java/Project.java").asJavaPath();
     }
 
     /**
@@ -681,8 +682,8 @@ public class Project {
      * 
      * @return
      */
-    public final Path locateJar() {
-        return getOutput().resolve(getProduct() + "-" + getVersion() + ".jar");
+    public final File locateJar() {
+        return getOutput().file(getProduct() + "-" + getVersion() + ".jar");
     }
 
     /**
@@ -692,8 +693,8 @@ public class Project {
      * 
      * @return
      */
-    public final Path locateSourceJar() {
-        return getOutput().resolve(getProduct() + "-" + getVersion() + "-sources.jar");
+    public final File locateSourceJar() {
+        return getOutput().file(getProduct() + "-" + getVersion() + "-sources.jar");
     }
 
     /**
@@ -703,8 +704,8 @@ public class Project {
      * 
      * @return
      */
-    public Path locateJavadocJar() {
-        return getOutput().resolve(getProduct() + "-" + getVersion() + "-javadoc.jar");
+    public File locateJavadocJar() {
+        return getOutput().file(getProduct() + "-" + getVersion() + "-javadoc.jar");
     }
 
     /**

@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -315,6 +315,27 @@ public class JavaCompiler {
      */
     public void setOutput(Path directory) {
         this.output = Locator.directory(directory);
+    }
+
+    /**
+     * <p>
+     * Set the destination directory for class files. If a class is part of a package, javac puts
+     * the class file in a subdirectory reflecting the package name, creating directories as needed.
+     * For example, if you specify -d c:\myclasses and the class is called com.mypackage.MyClass,
+     * then the class file is called c:\myclasses\com\mypackage\MyClass.class.
+     * </p>
+     * <p>
+     * If you don't use this method, this compiler use in-memory storage for compiled classes.
+     * </p>
+     * <p>
+     * Note that the directory specified by this method is not automatically added to your user
+     * class path.
+     * </p>
+     * 
+     * @param directory Your output directory. <code>null</code> value will reset to default.
+     */
+    public void setOutput(Directory directory) {
+        this.output = directory;
     }
 
     /**

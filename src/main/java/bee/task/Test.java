@@ -9,7 +9,6 @@
  */
 package bee.task;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +32,7 @@ import bee.util.Java;
 import bee.util.Java.JVM;
 import filer.Filer;
 import kiss.I;
+import psychopath.Directory;
 
 /**
  * @version 2018/03/31 22:00:15
@@ -46,8 +46,8 @@ public class Test extends Task {
         compile.test();
 
         try {
-            Path report = project.getOutput().resolve("test-reports");
-            Files.createDirectories(report);
+            Directory report = project.getOutput().directory("test-reports");
+            report.create();
             Java.with()
                     .classPath(project.getClasses())
                     .classPath(project.getTestClasses())

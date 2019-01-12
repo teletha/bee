@@ -9,8 +9,6 @@
  */
 package bee.task;
 
-import java.nio.file.Path;
-
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
@@ -19,6 +17,7 @@ import bee.util.JarArchiver;
 import kiss.I;
 import kiss.Signal;
 import psychopath.Directory;
+import psychopath.File;
 import psychopath.Locator;
 
 /**
@@ -48,8 +47,8 @@ public class Jar extends Task {
     public void test() {
         require(Compile.class).test();
 
-        Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
-        Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
+        File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
+        File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
         pack("test classes", I.signal(Locator.directory(project.getTestClasses())), classes);
         pack("test sources", project.getTestSourceSet(), sources);
@@ -64,8 +63,8 @@ public class Jar extends Task {
     public void project() {
         require(Compile.class).project();
 
-        Path classes = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
-        Path sources = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
+        File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
+        File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
         pack("project classes", I.signal(Locator.directory(project.getProjectClasses())), classes);
         pack("project sources", project.getProjectSourceSet(), sources);
@@ -81,7 +80,7 @@ public class Jar extends Task {
         Doc doc = require(Doc.class);
         doc.javadoc();
 
-        pack("javadoc", I.signal(Locator.directory(doc.output)), project.locateJavadocJar());
+        pack("javadoc", I.signal(doc.output), project.locateJavadocJar());
     }
 
     /**
@@ -93,7 +92,7 @@ public class Jar extends Task {
      * @param input
      * @param output
      */
-    private void pack(String type, Signal<Directory> input, Path output) {
+    private void pack(String type, Signal<Directory> input, File output) {
         ui.talk("Build ", type, " jar: ", output);
 
         JarArchiver archiver = new JarArchiver();
@@ -101,7 +100,7 @@ public class Jar extends Task {
         input.to(dir -> {
             archiver.add(dir.asJavaPath(), "**");
         });
-        archiver.pack(output);
+        archiver.pack(output.asJavaPath());
     }
 
     /**
@@ -114,7 +113,7 @@ public class Jar extends Task {
         require(Compile.class).source();
         String main = require(FindMain.class).main();
 
-        Path output = project.locateJar();
+        File output = project.locateJar();
         ui.talk("Build merged classes jar: ", output);
 
         JarArchiver archiver = new JarArchiver();
@@ -124,6 +123,6 @@ public class Jar extends Task {
         for (Library library : project.getDependency(Scope.Runtime)) {
             archiver.add(library.getLocalJar());
         }
-        archiver.pack(output);
+        archiver.pack(output.asJavaPath());
     }
 }

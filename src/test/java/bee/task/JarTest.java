@@ -10,12 +10,11 @@
 package bee.task;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
+import psychopath.File;
 
 class JarTest {
 
@@ -26,14 +25,14 @@ class JarTest {
         project.source("test.B");
         project.resource("C");
 
-        Path A = project.locateJar();
+        File A = project.locateJar();
 
-        assert Files.notExists(A);
+        assert A.isAbsent();
 
         Jar jar = new Jar();
         jar.source();
 
-        assert Files.exists(A);
-        assert Files.size(A) != 0;
+        assert A.isPresent();
+        assert A.size() != 0;
     }
 }

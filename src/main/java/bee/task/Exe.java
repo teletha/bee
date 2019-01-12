@@ -23,6 +23,7 @@ import bee.util.Process;
 import bee.util.ZipArchiver;
 import filer.Filer;
 import kiss.I;
+import psychopath.File;
 
 /**
  * @version 2016/07/01 15:10:46
@@ -33,7 +34,7 @@ public class Exe extends Task {
     private final Path temporary;
 
     /** The output for the generated zip file. */
-    private final Path zipOutput;
+    private final File zipOutput;
 
     /** The location for icon of exe file. */
     protected Path icon;
@@ -44,7 +45,7 @@ public class Exe extends Task {
     public Exe() {
         try {
             temporary = Filer.locateTemporary();
-            zipOutput = project.getOutput().resolve(project.getProduct() + "-" + project.getVersion() + ".zip");
+            zipOutput = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip");
 
             Files.createDirectories(temporary);
         } catch (IOException e) {
@@ -53,7 +54,7 @@ public class Exe extends Task {
     }
 
     @Command("Generate windows exe file which executes the main class.")
-    public Path build() {
+    public File build() {
         require(Jar.class).source();
 
         try {
@@ -63,13 +64,13 @@ public class Exe extends Task {
             build(zip, "");
             build(zip, "64");
 
-            zip.add("lib", project.locateJar());
+            zip.add("lib", project.locateJar().asJavaPath());
             for (Library library : project.getDependency(Scope.Runtime)) {
                 zip.add("lib", library.getLocalJar());
             }
 
             ui.talk("Packing application and libraries.");
-            zip.pack(zipOutput);
+            zip.pack(zipOutput.asJavaPath());
 
             return zipOutput;
         } catch (Exception e) {
