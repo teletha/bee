@@ -36,6 +36,8 @@ import filer.Filer;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import psychopath.File;
+import psychopath.Location;
+import psychopath.Locator;
 
 /**
  * <p>
@@ -208,7 +210,7 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            load(project.getClasses());
+            load(Locator.locate(project.getClasses()));
             load(project.getProjectClasses());
 
             // create your project
@@ -225,7 +227,7 @@ public class Bee {
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                load(library.getLocalJar());
+                load(Locator.locate(library.getLocalJar()));
             }
 
             // load new project
@@ -350,18 +352,18 @@ public class Bee {
      * 
      * @param path
      */
-    public static void load(Path path) {
-        if (Files.exists(path)) {
+    public static void load(Location path) {
+        if (path.isPresent()) {
             try {
-                if (Files.isDirectory(path)) {
-                    Path file = Filer.locateTemporary();
+                if (path.isDirectory()) {
+                    File file = Locator.temporaryFile();
                     JarArchiver archiver = new JarArchiver();
-                    archiver.add(path);
-                    archiver.pack(file);
+                    archiver.add(path.asJavaPath());
+                    archiver.pack(file.asJavaPath());
                     path = file;
                 }
 
-                inst.appendToSystemClassLoaderSearch(new JarFile(path.toFile()));
+                inst.appendToSystemClassLoaderSearch(new JarFile(path.asJavaFile()));
             } catch (IOException e) {
                 throw I.quiet(e);
             }

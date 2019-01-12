@@ -66,7 +66,7 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project classes", I.signal(Locator.directory(project.getProjectClasses())), classes);
+        pack("project classes", I.signal(project.getProjectClasses()), classes);
         pack("project sources", project.getProjectSourceSet(), sources);
     }
 

@@ -38,7 +38,7 @@ public class IntelliJ extends Task implements IDESupport {
     public void execute() {
         createModule(project.getSources(), project.getClasses(), Scope.Compile);
         createModule(project.getTestSources(), project.getTestClasses(), Scope.Test);
-        createModule(project.getProjectSources(), project.getProjectClasses(), Scope.System);
+        createModule(project.getProjectSources(), project.getProjectClasses().asJavaPath(), Scope.System);
 
         ui.talk("Create IDEA configuration files.");
     }

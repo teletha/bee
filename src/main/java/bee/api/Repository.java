@@ -78,6 +78,7 @@ import kiss.Singleton;
 import kiss.Storable;
 import kiss.Variable;
 import psychopath.File;
+import psychopath.Locator;
 
 /**
  * @version 2017/04/02 13:15:17
@@ -505,7 +506,7 @@ public class Repository {
         Library require = new Library(group, product, version);
 
         for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
-            Bee.load(library.getLocalJar());
+            Bee.load(Locator.locate(library.getLocalJar()));
         }
     }
 

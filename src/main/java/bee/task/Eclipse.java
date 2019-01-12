@@ -138,7 +138,7 @@ public class Eclipse extends Task implements IDESupport {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(dir.asJavaPath()))
-                    .attr("output", relative(project.getProjectClasses()));
+                    .attr("output", relative(project.getProjectClasses().asJavaPath()));
         });
 
         // library

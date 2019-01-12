@@ -52,7 +52,7 @@ public class Compile extends Task {
      */
     @Command("Compile project sources and copy other resources.")
     public void project() {
-        compile("project", project.getProjectSourceSet(), project.getProjectClasses());
+        compile("project", project.getProjectSourceSet(), project.getProjectClasses().asJavaPath());
     }
 
     /**
@@ -80,6 +80,6 @@ public class Compile extends Task {
         compiler.compile();
 
         // load project related classes
-        Bee.load(project.getClasses());
+        Bee.load(Locator.locate(project.getClasses()));
     }
 }
