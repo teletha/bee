@@ -9,18 +9,13 @@
  */
 package bee.coder;
 
-import java.nio.file.Path;
 import java.util.List;
 
-import bee.util.Paths;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
 
-/**
- * @version 2015/06/17 11:12:33
- */
 public interface FileType extends Extensible {
 
     /**
@@ -62,16 +57,6 @@ public interface FileType extends Extensible {
      */
     static FileType of(psychopath.File file) {
         return of(file.extension());
-    }
-
-    /**
-     * Search {@link FileType} by extension.
-     * 
-     * @param path A path to file.
-     * @return An associated {@link FileType}.
-     */
-    static FileType of(Path path) {
-        return of(Paths.getExtension(path));
     }
 
     /**

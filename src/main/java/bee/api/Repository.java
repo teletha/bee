@@ -443,38 +443,6 @@ public class Repository {
 
     /**
      * <p>
-     * Install project into the local repository.
-     * </p>
-     * 
-     * @param project A project to install.
-     */
-    public void install(Project project, File classes, Path sources, Path javadoc) {
-        String group = project.getGroup();
-        String product = project.getProduct();
-        String version = project.getVersion();
-
-        // create artifact for project
-        Artifact jar = new DefaultArtifact(group, product, "", "jar", version, null, classes.asJavaFile());
-
-        try {
-            InstallRequest request = new InstallRequest();
-            request.addArtifact(jar);
-            request.addArtifact(new SubArtifact(jar, "", "pom", Paths.write(project.toString()).toFile()));
-            if (Paths.exist(sources)) {
-                request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.toFile()));
-            }
-            if (Paths.exist(javadoc)) {
-                request.addArtifact(new SubArtifact(jar, "javadoc", "jar", javadoc.toFile()));
-            }
-            system.install(session, request);
-        } catch (InstallationException e) {
-            e.printStackTrace();
-            throw I.quiet(e);
-        }
-    }
-
-    /**
-     * <p>
      * Get the local repository path.
      * </p>
      * 

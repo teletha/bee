@@ -67,6 +67,7 @@ import org.eclipse.aether.transfer.TransferResource;
 import kiss.Disposable;
 import kiss.I;
 import kiss.Signal;
+import psychopath.Locator;
 
 /**
  * @version 2017/01/10 1:07:57
@@ -240,7 +241,7 @@ public class RESTClient {
      * @return
      */
     private ContentType type(TransferResource resource) {
-        switch (Paths.getExtension(resource.getFile().toPath())) {
+        switch (Locator.locate(resource.getFile()).extension()) {
         case "pom":
             return ContentType.APPLICATION_XML;
 
