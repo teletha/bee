@@ -52,16 +52,13 @@ import javax.tools.ToolProvider;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Library;
-import filer.Filer;
 import kiss.I;
 import kiss.Signal;
 import psychopath.Directory;
 import psychopath.Folder;
+import psychopath.Location;
 import psychopath.Locator;
 
-/**
- * @version 2018/03/29 9:26:33
- */
 public class JavaCompiler {
 
     /** The actual java compiler. */
@@ -77,7 +74,7 @@ public class JavaCompiler {
     private final List<JavaFileObject> codes = new ArrayList();
 
     /** The classpath list. */
-    private final List<Path> classpaths = new ArrayList();
+    private final List<Location> classpaths = new ArrayList();
 
     /** The annotation processors. */
     private final List<Processor> processors = new ArrayList();
@@ -86,7 +83,7 @@ public class JavaCompiler {
     private final List<String> processorClasses = new ArrayList();
 
     /** The annotation processor's locations. */
-    private final Set<Path> processorClassPaths = new HashSet();
+    private final Set<Location> processorClassPaths = new HashSet();
 
     /** The annotation processor's options. */
     private final Map<String, String> processorOptions = new HashMap();
@@ -138,7 +135,7 @@ public class JavaCompiler {
      * 
      * @param path A classpath to add.
      */
-    public void addClassPath(Path path) {
+    public void addClassPath(Location path) {
         if (path != null) {
             classpaths.add(path);
         }
@@ -154,7 +151,7 @@ public class JavaCompiler {
      */
     public void addClassPath(Library library) {
         if (library != null) {
-            classpaths.add(library.getLocalJar().asJavaPath());
+            classpaths.add(library.getLocalJar());
         }
     }
 
@@ -179,7 +176,7 @@ public class JavaCompiler {
      */
     public void addCurrentClassPath() {
         for (String path : System.getProperty("java.class.path").split(File.pathSeparator)) {
-            addClassPath(java.nio.file.Paths.get(path));
+            addClassPath(Locator.locate(path));
         }
     }
 
@@ -229,7 +226,7 @@ public class JavaCompiler {
     public void addProcessor(Class<? extends Processor> processor) {
         if (processor != null && !processorClasses.contains(processor.getName())) {
             processorClasses.add(processor.getName());
-            processorClassPaths.add(Filer.locate(processor).toAbsolutePath());
+            processorClassPaths.add(Locator.locate(processor).absolutize());
         }
     }
 

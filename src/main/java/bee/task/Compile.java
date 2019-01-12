@@ -69,7 +69,7 @@ public class Compile extends Task {
 
         ui.talk("Compiling ", type, " sources to ", output);
         JavaCompiler compiler = new JavaCompiler();
-        compiler.addClassPath(project.getClasses().asJavaPath());
+        compiler.addClassPath(project.getClasses());
         compiler.addClassPath(project.getDependency(Scope.Test));
         compiler.addSourceDirectory(input);
         compiler.setOutput(output);
