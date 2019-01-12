@@ -98,7 +98,7 @@ public class Exe extends Task {
             }
 
             // execute exe builder
-            Process.with().workingDirectory(builder.parent().asJavaPath()).ignoreOutput().run(command);
+            Process.with().workingDirectory(builder.parent()).ignoreOutput().run(command);
             ui.talk("Write " + exe.name() + ".");
         } catch (Exception e) {
             throw I.quiet(e);

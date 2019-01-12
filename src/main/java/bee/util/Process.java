@@ -12,15 +12,14 @@ package bee.util;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import bee.Platform;
 import bee.UserInterface;
-import filer.Filer;
 import kiss.I;
+import psychopath.Directory;
+import psychopath.Locator;
 
 /**
  * @version 2018/03/29 8:25:35
@@ -28,7 +27,7 @@ import kiss.I;
 public class Process {
 
     /** The working directory. */
-    private Path directory;
+    private Directory directory;
 
     /** {@link System#out} and {@link System#in} encoding. */
     private Charset encoding;
@@ -86,7 +85,7 @@ public class Process {
      * @param directory A working directory.
      * @return Fluent API.
      */
-    public Process workingDirectory(Path directory) {
+    public Process workingDirectory(Directory directory) {
         this.directory = directory;
 
         // API definition
@@ -209,15 +208,15 @@ public class Process {
             }
 
             if (directory == null) {
-                directory = Filer.locateTemporary();
+                directory = Locator.temporaryDirectory();
             }
 
-            if (Files.notExists(directory)) {
-                directory = Files.createDirectories(directory);
+            if (directory.isAbsent()) {
+                directory.create();
             }
 
-            if (!Files.isDirectory(directory)) {
-                directory = directory.getParent();
+            if (!directory.isDirectory()) {
+                directory = directory.parent();
             }
             builder.redirectErrorStream(true);
             builder.command(command);

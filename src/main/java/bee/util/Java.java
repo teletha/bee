@@ -259,7 +259,7 @@ public class Java {
 
         if (!sync) {
             // build sub-process for java
-            Process.with().workingDirectory(directory.asJavaPath()).encoding(encoding).inParallel().run(command);
+            Process.with().workingDirectory(directory).encoding(encoding).inParallel().run(command);
         } else {
             JVMTransporter listener = I.make(JVMTransporter.class);
 
@@ -272,7 +272,7 @@ public class Java {
                 connector.start();
 
                 // build sub-process for java
-                Process.with().workingDirectory(directory.asJavaPath()).encoding(encoding).run(command);
+                Process.with().workingDirectory(directory).encoding(encoding).run(command);
 
                 connector.stop();
             } catch (Throwable e) {
