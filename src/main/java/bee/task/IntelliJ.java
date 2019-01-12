@@ -21,6 +21,7 @@ import bee.api.Scope;
 import bee.api.Task;
 import kiss.I;
 import kiss.XML;
+import psychopath.Directory;
 
 /**
  * @version 2016/11/30 11:50:50
@@ -55,11 +56,11 @@ public class IntelliJ extends Task implements IDESupport {
      * Create module configuration.
      * </p>
      * 
-     * @param file A configuration file.
+     * @param directory A configuration file.
      * @param output A class output directory.
      * @param scope A curretn scope.
      */
-    private void createModule(Path file, Path output, Scope scope) {
+    private void createModule(Directory directory, Path output, Scope scope) {
         XML doc = I.xml("module").attr("type", "JAVA_MODULE").attr("version", 4);
         XML component = doc.child("component").attr("name", "NewModuleRootManager").attr("inherit-compiler-output", false);
         component.child("output").attr("url", output);
@@ -75,7 +76,7 @@ public class IntelliJ extends Task implements IDESupport {
 
         switch (scope) {
         case Test: // For Test Module
-            component.child("orderEntry").attr("type", "module").attr("module-name", project.getSources().getFileName());
+            component.child("orderEntry").attr("type", "module").attr("module-name", project.getSources().name());
             break;
 
         case System: // For Project Module
@@ -86,7 +87,7 @@ public class IntelliJ extends Task implements IDESupport {
         }
 
         // write file
-        makeFile(file.resolve(file.getFileName() + ".iml"), doc);
+        makeFile(directory.file(directory.name() + ".iml"), doc);
     }
 
     /**

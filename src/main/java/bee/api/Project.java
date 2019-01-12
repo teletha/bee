@@ -527,8 +527,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getSources() {
-        return input.directory("main").asJavaPath();
+    public Directory getSources() {
+        return input.directory("main");
     }
 
     /**
@@ -539,7 +539,7 @@ public class Project {
      * @return
      */
     public Signal<Directory> getSourceSet() {
-        return Locator.directory(getSources()).walkDirectories("*");
+        return getSources().walkDirectories("*");
     }
 
     /**
@@ -560,8 +560,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getTestSources() {
-        return input.directory("test").asJavaPath();
+    public Directory getTestSources() {
+        return input.directory("test");
     }
 
     /**
@@ -572,7 +572,7 @@ public class Project {
      * @return
      */
     public Signal<Directory> getTestSourceSet() {
-        return Locator.directory(getTestSources()).walkDirectories("*");
+        return getTestSources().walkDirectories("*");
     }
 
     /**
@@ -593,8 +593,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getProjectSources() {
-        return input.directory("project").asJavaPath();
+    public Directory getProjectSources() {
+        return input.directory("project");
     }
 
     /**
@@ -605,7 +605,7 @@ public class Project {
      * @return
      */
     public Signal<Directory> getProjectSourceSet() {
-        return Locator.directory(getProjectSources()).walkDirectories("*");
+        return getProjectSources().walkDirectories("*");
     }
 
     /**
