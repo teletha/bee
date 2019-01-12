@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
 import bee.sample.Interface;
+import psychopath.File;
 
 /**
  * @version 2018/03/31 16:54:28
@@ -26,13 +27,13 @@ public class JavaCompilerTest {
     public void outputPresent() throws Exception {
         BlinkProject project = new BlinkProject();
         Path source = project.importBy(Interface.class);
-        Path bytecode = project.locateByteCode(Interface.class);
+        File bytecode = project.locateByteCode(Interface.class);
 
         assert Files.exists(source);
-        assert Files.notExists(bytecode);
+        assert bytecode.isAbsent();
 
-        Files.createDirectories(project.getClasses());
-        assert Files.exists(project.getClasses());
+        project.getClasses().create();
+        assert project.getClasses().isPresent();
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(project.getSourceSet());
@@ -40,20 +41,23 @@ public class JavaCompilerTest {
         compiler.compile();
 
         assert Files.exists(source);
-        assert Files.exists(bytecode);
+        assert bytecode.isPresent();
     }
 
     @Test
     public void outputAbsent() throws Exception {
         BlinkProject project = new BlinkProject();
         Path source = project.importBy(Interface.class);
-        Path bytecode = project.locateByteCode(Interface.class);
+        File bytecode = project.locateByteCode(Interface.class);
 
         assert Files.exists(source);
-        assert Files.notExists(bytecode);
+        assert bytecode.isAbsent();
 
-        Files.deleteIfExists(project.getClasses());
-        assert Files.notExists(project.getClasses());
+        project.getClasses().create();
+        assert project.getClasses().isPresent();
+
+        project.getClasses().delete();
+        assert project.getClasses().isAbsent();
 
         JavaCompiler compiler = new JavaCompiler();
         compiler.addSourceDirectory(project.getSourceSet());
@@ -61,6 +65,6 @@ public class JavaCompilerTest {
         compiler.compile();
 
         assert Files.exists(source);
-        assert Files.exists(bytecode);
+        assert bytecode.isPresent();
     }
 }

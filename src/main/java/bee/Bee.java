@@ -31,7 +31,6 @@ import bee.task.IDESupport;
 import bee.task.Prototype;
 import bee.util.JarArchiver;
 import bee.util.JavaCompiler;
-import bee.util.Paths;
 import filer.Filer;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -210,7 +209,7 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            load(Locator.locate(project.getClasses()));
+            load(project.getClasses());
             load(project.getProjectClasses());
 
             // create your project
@@ -298,7 +297,7 @@ public class Bee {
         }
 
         // compile project sources if needed
-        if (definition.lastModified() > Paths.getLastModified(project.getProjectDefintionClass())) {
+        if (definition.lastModified() > project.getProjectDefintionClass().lastModified()) {
             ui.talk("Compile project sources.");
 
             JavaCompiler compiler = new JavaCompiler();

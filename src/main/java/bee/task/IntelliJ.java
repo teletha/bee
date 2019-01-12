@@ -38,7 +38,7 @@ public class IntelliJ extends Task implements IDESupport {
     public void execute() {
         createModule(project.getSources(), project.getClasses(), Scope.Compile);
         createModule(project.getTestSources(), project.getTestClasses(), Scope.Test);
-        createModule(project.getProjectSources(), project.getProjectClasses().asJavaPath(), Scope.System);
+        createModule(project.getProjectSources(), project.getProjectClasses(), Scope.System);
 
         ui.talk("Create IDEA configuration files.");
     }
@@ -60,7 +60,7 @@ public class IntelliJ extends Task implements IDESupport {
      * @param output A class output directory.
      * @param scope A curretn scope.
      */
-    private void createModule(Directory directory, Path output, Scope scope) {
+    private void createModule(Directory directory, Directory output, Scope scope) {
         XML doc = I.xml("module").attr("type", "JAVA_MODULE").attr("version", 4);
         XML component = doc.child("component").attr("name", "NewModuleRootManager").attr("inherit-compiler-output", false);
         component.child("output").attr("url", output);

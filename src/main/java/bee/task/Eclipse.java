@@ -38,6 +38,7 @@ import kiss.Manageable;
 import kiss.Singleton;
 import kiss.Variable;
 import kiss.XML;
+import psychopath.Directory;
 
 /**
  * @version 2018/09/27 11:39:31
@@ -119,26 +120,20 @@ public class Eclipse extends Task implements IDESupport {
 
         // tests
         project.getTestSourceSet().to(dir -> {
-            doc.child("classpathentry")
-                    .attr("kind", "src")
-                    .attr("path", relative(dir.asJavaPath()))
-                    .attr("output", relative(project.getTestClasses()));
+            doc.child("classpathentry").attr("kind", "src").attr("path", relative(dir)).attr("output", relative(project.getTestClasses()));
         });
 
         // sources
         project.getSourceSet().to(dir -> {
-            doc.child("classpathentry")
-                    .attr("kind", "src")
-                    .attr("path", relative(dir.asJavaPath()))
-                    .attr("output", relative(project.getClasses()));
+            doc.child("classpathentry").attr("kind", "src").attr("path", relative(dir)).attr("output", relative(project.getClasses()));
         });
 
         // projects
         project.getProjectSourceSet().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
-                    .attr("path", relative(dir.asJavaPath()))
-                    .attr("output", relative(project.getProjectClasses().asJavaPath()));
+                    .attr("path", relative(dir))
+                    .attr("output", relative(project.getProjectClasses()));
         });
 
         // library
@@ -246,8 +241,8 @@ public class Eclipse extends Task implements IDESupport {
      * @param path
      * @return
      */
-    private Path relative(Path path) {
-        return project.getRoot().asJavaPath().relativize(path);
+    private Directory relative(Directory path) {
+        return project.getRoot().relativize(path);
     }
 
     /**

@@ -10,13 +10,11 @@
 package bee.task;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 import bee.api.Command;
 import bee.api.Task;
-import filer.Filer;
 import kiss.I;
 import net.bytebuddy.jar.asm.ClassReader;
 import net.bytebuddy.jar.asm.ClassVisitor;
@@ -118,9 +116,9 @@ public class FindMain extends Task {
         if (!analyzed) {
             require(Compile.class).source();
 
-            Filer.walk(project.getClasses(), "**.class").to(path -> {
+            project.getClasses().walkFiles("**.class").to(file -> {
                 try {
-                    ClassReader reader = new ClassReader(Files.newInputStream(path));
+                    ClassReader reader = new ClassReader(file.newInputStream());
                     reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 } catch (IOException e) {
                     throw I.quiet(e);

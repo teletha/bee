@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
+import psychopath.File;
 
 /**
  * @version 2018/03/31 21:58:45
@@ -29,20 +30,20 @@ public class CompileTest {
         project.source("test.B");
         project.resource("C");
 
-        Path A = project.locateMainOutput("A.class");
-        Path B = project.locateMainOutput("test/B.class");
-        Path C = project.locateMainOutput("C");
+        File A = project.locateMainOutput("A.class");
+        File B = project.locateMainOutput("test/B.class");
+        File C = project.locateMainOutput("C");
 
-        assert Files.notExists(A);
-        assert Files.notExists(B);
-        assert Files.notExists(C);
+        assert A.isAbsent();
+        assert B.isAbsent();
+        assert C.isAbsent();
 
         Compile compile = new Compile();
         compile.source();
 
-        assert Files.exists(A);
-        assert Files.exists(B);
-        assert Files.exists(C);
+        assert A.isPresent();
+        assert B.isPresent();
+        assert C.isPresent();
     }
 
     @Test
@@ -52,20 +53,20 @@ public class CompileTest {
         project.sourceTest("test.B");
         project.resourceTest("C");
 
-        Path A = project.locateTestOutput("A.class");
-        Path B = project.locateTestOutput("test/B.class");
-        Path C = project.locateTestOutput("C");
+        File A = project.locateTestOutput("A.class");
+        File B = project.locateTestOutput("test/B.class");
+        File C = project.locateTestOutput("C");
 
-        assert Files.notExists(A);
-        assert Files.notExists(B);
-        assert Files.notExists(C);
+        assert A.isAbsent();
+        assert B.isAbsent();
+        assert C.isAbsent();
 
         Compile compile = new Compile();
         compile.test();
 
-        assert Files.exists(A);
-        assert Files.exists(B);
-        assert Files.exists(C);
+        assert A.isPresent();
+        assert B.isPresent();
+        assert C.isPresent();
     }
 
     @Test

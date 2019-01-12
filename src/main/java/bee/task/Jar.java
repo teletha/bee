@@ -18,7 +18,6 @@ import kiss.I;
 import kiss.Signal;
 import psychopath.Directory;
 import psychopath.File;
-import psychopath.Locator;
 
 /**
  * @version 2017/01/16 14:40:35
@@ -34,7 +33,7 @@ public class Jar extends Task {
     public void source() {
         require(Compile.class).source();
 
-        pack("main classes", I.signal(Locator.directory(project.getClasses())), project.locateJar());
+        pack("main classes", I.signal(project.getClasses()), project.locateJar());
         pack("main sources", project.getSourceSet(), project.locateSourceJar());
     }
 
@@ -50,7 +49,7 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test classes", I.signal(Locator.directory(project.getTestClasses())), classes);
+        pack("test classes", I.signal(project.getTestClasses()), classes);
         pack("test sources", project.getTestSourceSet(), sources);
     }
 

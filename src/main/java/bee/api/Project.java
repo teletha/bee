@@ -549,8 +549,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getClasses() {
-        return output.directory("classes").asJavaPath();
+    public Directory getClasses() {
+        return output.directory("classes");
     }
 
     /**
@@ -582,8 +582,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getTestClasses() {
-        return output.directory("test-classes").asJavaPath();
+    public Directory getTestClasses() {
+        return output.directory("test-classes");
     }
 
     /**
@@ -637,8 +637,8 @@ public class Project {
      * 
      * @return
      */
-    public Path getProjectDefintionClass() {
-        return getProjectClasses().asJavaPath().resolve("Project.class");
+    public File getProjectDefintionClass() {
+        return getProjectClasses().file("Project.class");
     }
 
     /**

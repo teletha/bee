@@ -22,6 +22,7 @@ import bee.api.Task;
 import filer.Filer;
 import kiss.I;
 import psychopath.Directory;
+import psychopath.File;
 import psychopath.Locator;
 
 /**
@@ -75,7 +76,7 @@ public class BlinkProject extends Project {
      * @param clazz A target class.
      * @return A source code location.
      */
-    public final Path locateByteCode(Class clazz) {
+    public final File locateByteCode(Class clazz) {
         Path file = buildJavaBytecodeFilePath(clazz.getName());
 
         return locateMainOutput(file.toString());
@@ -89,8 +90,8 @@ public class BlinkProject extends Project {
      * @param path A relative path to file.
      * @return A located file path.
      */
-    public final Path locateMainOutput(String path) {
-        return getClasses().resolve(path);
+    public final File locateMainOutput(String path) {
+        return getClasses().file(path);
     }
 
     /**
@@ -101,8 +102,8 @@ public class BlinkProject extends Project {
      * @param path A relative path to file.
      * @return A located file path.
      */
-    public final Path locateTestOutput(String path) {
-        return getTestClasses().resolve(path);
+    public final File locateTestOutput(String path) {
+        return getTestClasses().file(path);
     }
 
     /**
