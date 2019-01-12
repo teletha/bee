@@ -28,6 +28,7 @@ import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.RESTClient;
 import kiss.I;
+import psychopath.File;
 
 /**
  * @version 2017/01/16 14:47:15
@@ -56,8 +57,8 @@ public class Bintray extends Task {
                 .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
                 .flatIterable(files -> {
                     RepositoryFiles completes = new RepositoryFiles();
-                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM().asJavaPath()));
-                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar().asJavaPath()));
+                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
+                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
                     completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
                     completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
                     completes.removeAll(files);
@@ -276,16 +277,11 @@ public class Bintray extends Task {
          * @param filePath
          * @return
          */
-        public static RepositoryFile of(String path, Path filePath) {
+        public static RepositoryFile of(String path, File filePath) {
             RepositoryFile file = new RepositoryFile();
             file.path = path;
-            file.localFile = filePath;
-
-            try {
-                file.sha1 = DigestUtils.shaHex(Files.readAllBytes(filePath));
-            } catch (IOException e) {
-                // ignore
-            }
+            file.localFile = filePath.asJavaPath();
+            file.sha1 = DigestUtils.shaHex(filePath.bytes());
             return file;
         }
     }

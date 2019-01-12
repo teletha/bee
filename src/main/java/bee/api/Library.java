@@ -9,7 +9,6 @@
  */
 package bee.api;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 import org.eclipse.aether.artifact.Artifact;
@@ -19,9 +18,6 @@ import kiss.I;
 import kiss.Variable;
 import psychopath.File;
 
-/**
- * @version 2017/01/08 21:30:27
- */
 public class Library implements Comparable<Library> {
 
     /** The group name. */
@@ -197,7 +193,7 @@ public class Library implements Comparable<Library> {
      * 
      * @return
      */
-    public Path getLocalSourceJar() {
+    public File getLocalSourceJar() {
         return I.make(Repository.class).resolveSource(this);
     }
 
@@ -219,7 +215,7 @@ public class Library implements Comparable<Library> {
      * 
      * @return
      */
-    public Path getLocalJavadocJar() {
+    public File getLocalJavadocJar() {
         return I.make(Repository.class).resolveJavadoc(this);
     }
 

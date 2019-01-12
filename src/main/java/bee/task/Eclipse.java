@@ -137,12 +137,12 @@ public class Eclipse extends Task implements IDESupport {
         // library
         for (Library library : project.getDependency(Scope.Test)) {
             psychopath.File jar = library.getLocalJar();
-            Path source = library.getLocalSourceJar();
+            psychopath.File source = library.getLocalSourceJar();
 
             if (jar.isPresent()) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
 
-                if (Files.exists(source)) {
+                if (source.isPresent()) {
                     child.attr("sourcepath", source);
                 }
             }

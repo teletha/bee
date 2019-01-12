@@ -9,7 +9,6 @@
  */
 package bee.api;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -290,9 +289,9 @@ public class Repository {
      * @param library
      * @return
      */
-    public Path resolveJar(Library library) {
-        Path resolved = resolveSubArtifact(library, "");
-        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().file(library.getJar()).asJavaPath();
+    public File resolveJar(Library library) {
+        File resolved = resolveSubArtifact(library, "");
+        return resolved != null && resolved.isPresent() ? resolved : getLocalRepository().file(library.getJar());
     }
 
     /**
@@ -303,9 +302,9 @@ public class Repository {
      * @param library
      * @return
      */
-    public Path resolveJavadoc(Library library) {
-        Path resolved = resolveSubArtifact(library, "javadoc");
-        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().file(library.getJavadocJar()).asJavaPath();
+    public File resolveJavadoc(Library library) {
+        File resolved = resolveSubArtifact(library, "javadoc");
+        return resolved != null && resolved.isPresent() ? resolved : getLocalRepository().file(library.getJavadocJar());
     }
 
     /**
@@ -316,9 +315,9 @@ public class Repository {
      * @param library
      * @return
      */
-    public Path resolveSource(Library library) {
-        Path resolved = resolveSubArtifact(library, "sources");
-        return resolved != null && Files.exists(resolved) ? resolved : getLocalRepository().file(library.getSourceJar()).asJavaPath();
+    public File resolveSource(Library library) {
+        File resolved = resolveSubArtifact(library, "sources");
+        return resolved != null && resolved.isPresent() ? resolved : getLocalRepository().file(library.getSourceJar());
     }
 
     /**
@@ -329,7 +328,7 @@ public class Repository {
      * @param library
      * @return
      */
-    private Path resolveSubArtifact(Library library, String suffix) {
+    private File resolveSubArtifact(Library library, String suffix) {
         // If some classified artifact is missing, there is high possibility that another classified
         // artifact with the same group, name and version is also missing.
 
@@ -343,7 +342,7 @@ public class Repository {
                 ArtifactResult result = system.resolveArtifact(session, request);
 
                 if (result.isResolved()) {
-                    return result.getArtifact().getFile().toPath();
+                    return Locator.file(result.getArtifact().getFile().toPath());
                 } else {
                     ui.talk("Artifact [", sub, "] is not resolved.");
                 }

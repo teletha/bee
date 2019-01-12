@@ -10,7 +10,6 @@
 package bee.task;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Set;
 
 import bee.Bee;
@@ -103,7 +102,7 @@ public class IntelliJ extends Task implements IDESupport {
     private void library(Set<Library> libraries, XML root, Scope scope) {
         libraries.forEach(library -> {
             File jar = library.getLocalJar();
-            Path source = library.getLocalSourceJar();
+            File source = library.getLocalSourceJar();
 
             if (jar.isPresent()) {
                 XML entry = root.child("orderEntry").attr("type", "module-library");
@@ -115,7 +114,7 @@ public class IntelliJ extends Task implements IDESupport {
                 XML lib = entry.child("library").attr("name", library.toString());
                 lib.child("CLASSES").child("root").attr("url", "jar://" + jar + "!/");
 
-                if (Files.exists(source)) {
+                if (source.isPresent()) {
                     lib.child("JAVADOC");
                     lib.child("SOURCES").child("root").attr("url", "jar://" + source + "!/");
                 }
