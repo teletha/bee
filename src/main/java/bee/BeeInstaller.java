@@ -11,7 +11,6 @@ package bee;
 
 import static bee.Platform.*;
 
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +18,6 @@ import java.util.List;
 
 import bee.api.Repository;
 import bee.util.JarArchiver;
-import filer.Filer;
 import kiss.I;
 import psychopath.File;
 import psychopath.Locator;
@@ -87,18 +85,18 @@ public class BeeInstaller {
         ui.talk("Write new bat file. [", Bee, "]");
 
         // create bee-api library and sources
-        Path classes = Filer.locateTemporary();
+        File classes = Locator.temporaryFile();
         JarArchiver archiver = new JarArchiver();
         archiver.add(source.asJavaPath(), "bee/**", "!**.java");
         archiver.add(source.asJavaPath(), "META-INF/services/**");
-        archiver.pack(classes);
+        archiver.pack(classes.asJavaPath());
 
-        Path sources = Filer.locateTemporary();
+        File sources = Locator.temporaryFile();
         archiver = new JarArchiver();
         archiver.add(source.asJavaPath(), "bee/**.java");
         archiver.add(source.asJavaPath(), "META-INF/services/**");
-        archiver.pack(sources);
+        archiver.pack(sources.asJavaPath());
 
-        I.make(Repository.class).install(bee.Bee.API, classes, Locator.file(sources), null);
+        I.make(Repository.class).install(bee.Bee.API, classes, source, null);
     }
 }

@@ -9,7 +9,6 @@
  */
 package bee.api;
 
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -393,7 +392,7 @@ public class Repository {
      * 
      * @param project A project to install.
      */
-    public void install(Project project, Path classes) {
+    public void install(Project project, File classes) {
         install(project, classes, project.locateSourceJar(), project.locateJavadocJar());
     }
 
@@ -404,24 +403,13 @@ public class Repository {
      * 
      * @param project A project to install.
      */
-    public void install(Project project, File classes) {
-        install(project, classes.asJavaPath(), project.locateSourceJar(), project.locateJavadocJar());
-    }
-
-    /**
-     * <p>
-     * Install project into the local repository.
-     * </p>
-     * 
-     * @param project A project to install.
-     */
-    public void install(Project project, Path classes, File sources, File javadoc) {
+    public void install(Project project, File classes, File sources, File javadoc) {
         String group = project.getGroup();
         String product = project.getProduct();
         String version = project.getVersion();
 
         // create artifact for project
-        Artifact jar = new DefaultArtifact(group, product, "", "jar", version, null, classes.toFile());
+        Artifact jar = new DefaultArtifact(group, product, "", "jar", version, null, classes.asJavaFile());
 
         try {
             InstallRequest request = new InstallRequest();

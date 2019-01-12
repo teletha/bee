@@ -30,7 +30,6 @@ import bee.api.Scope;
 import bee.api.Task;
 import bee.util.Java;
 import bee.util.Java.JVM;
-import filer.Filer;
 import kiss.I;
 import psychopath.Directory;
 
@@ -72,7 +71,7 @@ public class Test extends Task {
          */
         @Override
         public void process() throws Exception {
-            Set<Path> classes = I.set(Filer.locate(args[0]));
+            Set<Path> classes = I.set(Path.of(args[0]));
 
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(DiscoverySelectors.selectClasspathRoots(classes))
