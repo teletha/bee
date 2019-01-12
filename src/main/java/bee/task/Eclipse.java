@@ -486,7 +486,7 @@ public class Eclipse extends Task implements IDESupport {
                             .attr("name", name)
                             .attr("id", name.hashCode())
                             .attr("javadocURL", "http://docs.oracle.com/javase/jp/8/docs/api/")
-                            .attr("path", Platform.JavaRuntime.getParent().getParent())
+                            .attr("path", Platform.JavaRuntime.parent().parent())
                             .child("libraryLocations");
                 }
 

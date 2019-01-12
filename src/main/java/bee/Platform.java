@@ -36,16 +36,16 @@ public final class Platform {
     public static final String EOL = System.getProperty("line.separator");
 
     /** The executable file for Java. */
-    public static final Path Java;
+    public static final psychopath.File Java;
 
     /** The root directory for Java. */
-    public static final Path JavaHome;
+    public static final Directory JavaHome;
 
     /** The rt.jar file for Java. */
-    public static final Path JavaRuntime;
+    public static final psychopath.File JavaRuntime;
 
     /** The executable file for Bee. */
-    public static final Path Bee;
+    public static final psychopath.File Bee;
 
     /** The root directory for Bee. */
     public static final Directory BeeHome;
@@ -61,9 +61,9 @@ public final class Platform {
 
     // initialization
     static {
-        Path bin = null;
-        Path java = null;
-        Path bee = null;
+        Directory bin = null;
+        psychopath.File java = null;
+        psychopath.File bee = null;
 
         // Search Java SDK from path. Don't use java.home system property to avoid JRE.
         root: for (Entry<String, String> entry : System.getenv().entrySet()) {
@@ -72,21 +72,21 @@ public final class Platform {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
                 for (String value : entry.getValue().split(File.pathSeparator)) {
-                    Path directory = Filer.locate(value);
-                    Path linux = directory.resolve("javac");
-                    Path windows = directory.resolve("javac.exe");
+                    Directory directory = Locator.directory(value);
+                    psychopath.File linux = directory.file("javac");
+                    psychopath.File windows = directory.file("javac.exe");
 
-                    if (Files.exists(linux)) {
+                    if (linux.isPresent()) {
                         bin = directory;
                         java = linux;
-                        bee = directory.resolve("bee");
+                        bee = directory.file("bee");
                         isLinux = true;
 
                         break root;
-                    } else if (Files.exists(windows)) {
+                    } else if (windows.isPresent()) {
                         bin = directory;
                         java = windows;
-                        bee = directory.resolve("bee.bat");
+                        bee = directory.file("bee.bat");
                         isWindows = true;
 
                         break root;
@@ -100,10 +100,10 @@ public final class Platform {
         }
 
         Java = java;
-        JavaHome = java.getParent().getParent();
-        JavaRuntime = JavaHome.resolve("jre/lib/rt.jar");
+        JavaHome = java.parent().parent();
+        JavaRuntime = JavaHome.file("jre/lib/rt.jar");
         Bee = bee;
-        BeeHome = Locator.directory(JavaHome.resolve("lib/bee"));
+        BeeHome = JavaHome.directory("lib/bee");
         BeeLocalRepository = searchLocalRepository();
     }
 

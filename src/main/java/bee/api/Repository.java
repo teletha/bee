@@ -426,7 +426,7 @@ public class Repository {
         try {
             InstallRequest request = new InstallRequest();
             request.addArtifact(jar);
-            request.addArtifact(new SubArtifact(jar, "", "pom", Locator.temporaryFile().text(product.toString()).asJavaFile()));
+            request.addArtifact(new SubArtifact(jar, "", "pom", Locator.temporaryFile().text(project.toString()).asJavaFile()));
             if (sources != null && sources.isPresent()) {
                 request.addArtifact(new SubArtifact(jar, "sources", "jar", sources.asJavaFile()));
             }
