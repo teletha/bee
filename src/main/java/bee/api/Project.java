@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -648,9 +648,9 @@ public class Project {
      * 
      * @return
      */
-    public Set<Path> getAnnotationProcessors() {
+    public Set<Location> getAnnotationProcessors() {
         // search javax.annotation.processing.Processor file in libraries
-        Set<Path> libraries = new HashSet();
+        Set<Location> libraries = new HashSet();
 
         try {
             for (Library library : getDependency(Scope.Annotation)) {
@@ -658,7 +658,7 @@ public class Project {
                         .getPath("/")
                         .resolve("META-INF/services/javax.annotation.processing.Processor");
                 if (Files.exists(file)) {
-                    libraries.add(library.getLocalJar());
+                    libraries.add(Locator.file(library.getLocalJar()));
                 }
             }
         } catch (IOException e) {
@@ -669,7 +669,7 @@ public class Project {
         List<AnnotationValidator> validators = I.find(AnnotationValidator.class);
 
         if (!validators.isEmpty()) {
-            libraries.add(Locator.locate(Bee.class).asJavaPath());
+            libraries.add(Locator.locate(Bee.class));
         }
 
         return libraries;

@@ -39,10 +39,8 @@ import kiss.Singleton;
 import kiss.Variable;
 import kiss.XML;
 import psychopath.Directory;
+import psychopath.Location;
 
-/**
- * @version 2018/09/27 11:39:31
- */
 public class Eclipse extends Task implements IDESupport {
 
     /**
@@ -56,7 +54,7 @@ public class Eclipse extends Task implements IDESupport {
         createClasspath(project.getRoot().asJavaPath().resolve(".classpath"));
         createProject(project.getRoot().asJavaPath().resolve(".project"));
 
-        Set<Path> processors = project.getAnnotationProcessors();
+        Set<Location> processors = project.getAnnotationProcessors();
         boolean enableAnnotationProcessor = !processors.isEmpty();
         createFactorypath(enableAnnotationProcessor, processors);
         createAPT(enableAnnotationProcessor, new ProjectInfo(project));
@@ -172,10 +170,10 @@ public class Eclipse extends Task implements IDESupport {
      * 
      * @param localFile
      */
-    private void createFactorypath(boolean enable, Set<Path> processors) {
+    private void createFactorypath(boolean enable, Set<Location> processors) {
         XML doc = I.xml("factorypath");
 
-        for (Path processor : processors) {
+        for (Location processor : processors) {
             doc.child("factorypathentry")
                     .attr("kind", "EXTJAR")
                     .attr("id", processor)
