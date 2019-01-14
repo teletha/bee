@@ -19,10 +19,10 @@ import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
 import bee.util.Process;
-import bee.util.ZipArchiver;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
+import psychopath.Folder;
 import psychopath.Locator;
 
 public class Exe extends Task {
@@ -42,11 +42,12 @@ public class Exe extends Task {
 
         try {
             // pack with dependency libraries
-            ZipArchiver zip = new ZipArchiver();
+            Folder folder = Locator.folder();
 
-            build(zip, "");
-            build(zip, "64");
+            build(folder, "");
+            build(folder, "64");
 
+            folder.add(project.locateJar());
             zip.add("lib", project.locateJar().asJavaPath());
             for (Library library : project.getDependency(Scope.Runtime)) {
                 zip.add("lib", library.getLocalJar().asJavaPath());
@@ -66,10 +67,10 @@ public class Exe extends Task {
      * Helper method to build windows native application launcher.
      * </p>
      * 
-     * @param archiver
+     * @param folder
      * @param suffix
      */
-    private void build(ZipArchiver archiver, String suffix) {
+    private void build(Folder folder, String suffix) {
         File builder = temporary.file("exewrap" + suffix + ".exe");
         File exe = temporary.file(project.getProduct() + suffix + ".exe");
 
@@ -105,6 +106,6 @@ public class Exe extends Task {
         }
 
         // pack
-        archiver.add(exe.asArchive());
+        folder.add(exe);
     }
 }
