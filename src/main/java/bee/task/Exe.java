@@ -47,16 +47,15 @@ public class Exe extends Task {
             build(folder, "");
             build(folder, "64");
 
-            folder.add(project.locateJar());
-            zip.add("lib", project.locateJar().asJavaPath());
-            for (Library library : project.getDependency(Scope.Runtime)) {
-                zip.add("lib", library.getLocalJar().asJavaPath());
-            }
+            folder.addIn("lib", lib -> {
+                lib.add(project.locateJar());
+                for (Library library : project.getDependency(Scope.Runtime)) {
+                    lib.add(library.getLocalJar());
+                }
+            });
 
             ui.talk("Packing application and libraries.");
-            zip.pack(zipOutput.asJavaPath());
-
-            return zipOutput;
+            return folder.packTo(zipOutput);
         } catch (Exception e) {
             throw I.quiet(e);
         }
