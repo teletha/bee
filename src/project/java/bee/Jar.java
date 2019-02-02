@@ -15,8 +15,6 @@ import bee.task.Compile;
 import bee.task.FindMain;
 import bee.util.JarArchiver;
 import psychopath.File;
-import psychopath.Folder;
-import psychopath.Locator;
 
 public class Jar extends bee.task.Jar {
 
@@ -31,12 +29,12 @@ public class Jar extends bee.task.Jar {
         File output = project.locateJar();
         ui.talk("Build merged classes jar: ", output);
 
-        Folder folder = Locator.folder();
-        folder.add(project.getClasses(), o -> o.strip());
-        for (Library library : project.getDependency(Scope.Runtime)) {
-            folder.add(library.getLocalJar().asArchive(), o -> o.glob("!META-INF/**"));
-        }
-        folder.packTo(output.extension("zip"));
+        // Folder folder = Locator.folder();
+        // folder.add(project.getClasses(), o -> o.strip());
+        // for (Library library : project.getDependency(Scope.Runtime)) {
+        // folder.add(library.getLocalJar().asArchive(), o -> o.glob("!META-INF/**"));
+        // }
+        // folder.packTo(output.extension("zip"));
 
         JarArchiver archiver = new JarArchiver();
         archiver.setMainClass(main);
