@@ -131,7 +131,9 @@ public class Eclipse extends Task implements IDESupport {
         });
 
         // library
-        for (Library library : project.getDependency(Scope.Test)) {
+        for (Library library : I.signal(project.getDependency(Scope.Test))
+                .concat(I.signal(project.getDependency(Scope.Annotation)))
+                .toList()) {
             File jar = library.getLocalJar();
             File source = library.getLocalSourceJar();
 
