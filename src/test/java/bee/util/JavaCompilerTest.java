@@ -53,7 +53,7 @@ public class JavaCompilerTest {
         project.getClasses().create();
         assert project.getClasses().isPresent();
 
-        project.getClasses().deleteNow();
+        project.getClasses().delete();
         assert project.getClasses().isAbsent();
 
         JavaCompiler compiler = new JavaCompiler();
