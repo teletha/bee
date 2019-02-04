@@ -55,7 +55,7 @@ public class Exe extends Task {
             });
 
             ui.talk("Packing application and libraries.");
-            return folder.packTo(zipOutput);
+            return folder.packToNow(zipOutput);
         } catch (Exception e) {
             throw I.quiet(e);
         }

@@ -9,7 +9,9 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.Bee;
+import static bee.Platform.BeeHome;
+import static bee.Platform.JavaHome;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -55,7 +57,7 @@ public class BeeInstaller {
         // delete old files
         BeeHome.walkFiles("bee-*.jar").to(jar -> {
             try {
-                jar.delete();
+                jar.deleteNow();
             } catch (Exception e) {
                 // we can't delete current processing jar file.
             }

@@ -146,7 +146,7 @@ public class BlinkProject extends Project {
         Directory original = Locator.directory("src/test/java").directory(directory);
         Directory copy = getRoot().directory("src/main/java").directory(directory);
 
-        original.copyTo(copy);
+        original.copyToNow(copy);
 
         return copy;
     }
