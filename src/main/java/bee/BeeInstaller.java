@@ -67,7 +67,7 @@ public class BeeInstaller {
             // The current bee.jar is newer.
             // We should copy it to JDK directory.
             // This process is mainly used by Bee users while install phase.
-            source.copyTo(dest);
+            source.copyToNow(dest);
             ui.talk("Install new bee library. [", dest, "]");
         }
 
