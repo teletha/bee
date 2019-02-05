@@ -16,8 +16,6 @@ import bee.api.Task;
 import bee.util.JavaCompiler;
 import kiss.Signal;
 import psychopath.Directory;
-import psychopath.Folder;
-import psychopath.Locator;
 
 /**
  * @version 2015/06/22 16:47:46
@@ -32,13 +30,6 @@ public class Compile extends Task {
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
         compile("main", project.getSourceSet(), project.getClasses());
-
-        Folder folder = Locator.folder();
-        folder.entries();
-        folder.walkDirectories();
-        folder.walkFiles();
-        folder.walkDirectoriesWithBase();
-        folder.walkFilesWithBase();
     }
 
     /**
