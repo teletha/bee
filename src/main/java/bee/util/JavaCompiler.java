@@ -522,7 +522,7 @@ public class JavaCompiler {
         // =============================================
         List<JavaFileObject> sources = new ArrayList(codes);
 
-        this.sources.walkFilesWithBase("**.java").to(e -> {
+        this.sources.walkFileWithBase("**.java").to(e -> {
             if (output == null) {
                 sources.add(new Source(e.ⅱ));
             } else {
@@ -535,7 +535,7 @@ public class JavaCompiler {
         });
 
         options.add("-sourcepath");
-        options.add(I.join(File.pathSeparator, this.sources.walkFiles().toList()));
+        options.add(I.join(File.pathSeparator, this.sources.walkFile().toList()));
 
         // check compiling source size
         if (sources.isEmpty()) {

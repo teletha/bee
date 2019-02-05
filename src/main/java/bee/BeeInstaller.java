@@ -53,7 +53,7 @@ public class BeeInstaller {
         psychopath.File dest = BeeHome.file(fileName);
 
         // delete old files
-        BeeHome.walkFiles("bee-*.jar").to(jar -> {
+        BeeHome.walkFile("bee-*.jar").to(jar -> {
             try {
                 jar.delete();
             } catch (Exception e) {

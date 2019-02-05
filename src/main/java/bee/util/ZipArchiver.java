@@ -121,7 +121,7 @@ public class ZipArchiver {
                         Directory base = Locator.directory(Files.isDirectory(entry.base) ? entry.base : entry.base.getParent());
 
                         // scan entry
-                        Locator.directory(entry.base).walkFiles(entry.patterns).to(file -> {
+                        Locator.directory(entry.base).walkFile(entry.patterns).to(file -> {
                             try {
                                 String path = entry.directory + base.relativize(file).toString().replace(File.separatorChar, '/');
                                 BasicFileAttributes attrs = file.attribute();

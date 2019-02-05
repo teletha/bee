@@ -92,7 +92,7 @@ public class Doc extends Task {
 
             DocumentationTask task = doc
                     .getTask(new UIWriter(ui), manager, null, null, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
-                            .flatMap(dir -> dir.walkFiles("**.java"))
+                            .flatMap(dir -> dir.walkFile("**.java"))
                             .map(File::asJavaPath)
                             .toList()));
 

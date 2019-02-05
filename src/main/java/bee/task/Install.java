@@ -41,7 +41,7 @@ public class Install extends Task {
 
     @Command("Install local jar file into the local repository.")
     public void jar() {
-        File selected = ui.ask("Select a jar file to install.", project.getRoot().walkFiles("*.jar").toList());
+        File selected = ui.ask("Select a jar file to install.", project.getRoot().walkFile("*.jar").toList());
         String group = ui.ask("Input group name.", selected.name());
         String product = ui.ask("Input product name.", group);
         String version = ui.ask("Input product version.", "1.0");

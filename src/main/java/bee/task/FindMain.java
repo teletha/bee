@@ -116,7 +116,7 @@ public class FindMain extends Task {
         if (!analyzed) {
             require(Compile.class).source();
 
-            project.getClasses().walkFiles("**.class").to(file -> {
+            project.getClasses().walkFile("**.class").to(file -> {
                 try {
                     ClassReader reader = new ClassReader(file.newInputStream());
                     reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);

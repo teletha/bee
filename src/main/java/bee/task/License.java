@@ -44,7 +44,7 @@ public class License extends Task {
      * @throws IOException
      */
     private void update(Signal<Directory> set) throws IOException {
-        set.flatMap(dir -> dir.walkFiles()).to(file -> {
+        set.flatMap(dir -> dir.walkFile()).to(file -> {
             FileType type = FileType.of(file);
 
             if (type.header() == StandardHeaderStyle.Unknown) {

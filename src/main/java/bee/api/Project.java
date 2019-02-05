@@ -539,7 +539,7 @@ public class Project {
      * @return
      */
     public Signal<Directory> getSourceSet() {
-        return getSources().walkDirectories("*");
+        return getSources().walkDirectory("*");
     }
 
     /**
@@ -572,7 +572,7 @@ public class Project {
      * @return
      */
     public Signal<Directory> getTestSourceSet() {
-        return getTestSources().walkDirectories("*");
+        return getTestSources().walkDirectory("*");
     }
 
     /**
@@ -605,7 +605,7 @@ public class Project {
      * @return
      */
     public Signal<Directory> getProjectSourceSet() {
-        return getProjectSources().walkDirectories("*");
+        return getProjectSources().walkDirectory("*");
     }
 
     /**
