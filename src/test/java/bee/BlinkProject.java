@@ -129,7 +129,7 @@ public class BlinkProject extends Project {
         File original = Locator.directory("src/test/java").file(file);
         File copy = getRoot().directory("src/main/java").file(file);
 
-        original.copyToNow(copy);
+        original.copyTo(copy);
 
         return copy;
     }

@@ -27,7 +27,6 @@ import bee.api.StandardLicense;
 import bee.api.Task;
 import bee.task.IDESupport;
 import bee.task.Prototype;
-import bee.util.JarArchiver;
 import bee.util.JavaCompiler;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -35,6 +34,7 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
 import psychopath.Locator;
+import psychopath.Option;
 
 /**
  * <p>
@@ -346,11 +346,7 @@ public class Bee {
         if (path.isPresent()) {
             try {
                 if (path.isDirectory()) {
-                    File file = Locator.temporaryFile();
-                    JarArchiver archiver = new JarArchiver();
-                    archiver.add(path.asJavaPath());
-                    archiver.pack(file.asJavaPath());
-                    path = file;
+                    path = path.packToTemporary(Option::strip);
                 }
 
                 inst.appendToSystemClassLoaderSearch(new JarFile(path.asJavaFile()));
