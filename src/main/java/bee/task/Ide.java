@@ -14,8 +14,6 @@ import java.util.function.Consumer;
 import bee.api.Command;
 import bee.api.Task;
 import kiss.I;
-import psychopath.Locator;
-import psychopath.PathOperatable;
 
 /**
  * @version 2016/11/30 12:22:21
@@ -33,17 +31,6 @@ public class Ide extends Task {
         task(IDESupport::execute);
 
         ui.talk("Generate IDE configuration files.");
-
-        PathOperatable o = Locator.folder();
-        o.walkFile(op -> op);
-        o.walkFile("");
-        o.walkFileWithBase(oo -> oo);
-        o.walkFileWithBase("");
-
-        o.walkDirectory(op -> op);
-        o.walkDirectory("");
-        o.walkDirectoryWithBase(oo -> oo);
-        o.walkDirectoryWithBase("");
     }
 
     /**
