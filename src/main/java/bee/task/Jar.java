@@ -9,15 +9,19 @@
  */
 package bee.task;
 
+import java.util.jar.Attributes.Name;
+
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.api.Task;
-import bee.util.JarArchiver;
 import kiss.I;
 import kiss.Signal;
 import psychopath.Directory;
 import psychopath.File;
+import psychopath.Folder;
+import psychopath.Locator;
+import psychopath.Option;
 
 /**
  * @version 2017/01/16 14:40:35
@@ -94,12 +98,7 @@ public class Jar extends Task {
     private void pack(String type, Signal<Directory> input, File output) {
         ui.talk("Build ", type, " jar: ", output);
 
-        JarArchiver archiver = new JarArchiver();
-
-        input.to(dir -> {
-            archiver.add(dir.asJavaPath(), "**");
-        });
-        archiver.pack(output.asJavaPath());
+        Locator.folder().add(input, Option::strip).packTo(output);
     }
 
     /**
@@ -110,18 +109,24 @@ public class Jar extends Task {
     @Command("Package all main classes and resources with dependencies.")
     public void merge() {
         require(Compile.class).source();
-        String main = require(FindMain.class).main();
+
+        // create manifest
+        File manifest = Locator.temporaryFile("MANIFEST.MF").text(
+                /* Manifest contents */
+                Name.MANIFEST_VERSION + ": 1.0", // version must be first
+                Name.MAIN_CLASS + ": " + require(FindMain.class).main() // detect main class
+        );
 
         File output = project.locateJar();
         ui.talk("Build merged classes jar: ", output);
 
-        JarArchiver archiver = new JarArchiver();
-        archiver.setMainClass(main);
-        archiver.add(project.getClasses());
+        Folder folder = Locator.folder();
+        folder.add(project.getClasses(), o -> o.strip());
+        folder.add(manifest, o -> o.allocateIn("META-INF"));
 
         for (Library library : project.getDependency(Scope.Runtime)) {
-            archiver.add(library.getLocalJar().asJavaPath());
+            folder.add(library.getLocalJar().asArchive());
         }
-        archiver.pack(output.asJavaPath());
+        folder.packTo(output);
     }
 }

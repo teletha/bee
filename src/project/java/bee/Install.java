@@ -10,11 +10,9 @@
 package bee;
 
 import bee.api.Repository;
+import bee.task.Jar;
 import kiss.I;
 
-/**
- * @version 2017/01/08 20:58:44
- */
 public class Install extends bee.task.Install {
 
     /**
