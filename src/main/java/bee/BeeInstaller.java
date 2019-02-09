@@ -9,9 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.Bee;
-import static bee.Platform.BeeHome;
-import static bee.Platform.JavaHome;
+import static bee.Platform.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,9 +81,11 @@ public class BeeInstaller {
         ui.talk("Write new bat file. [", Bee, "]");
 
         // create bee-api library and sources
-        File classes = Locator.folder().add(source, "bee/**", "!**.java").add(source, "META-INF/services/**").packToTemporary();
-        File sources = Locator.folder().add(source, "bee/**.java").add(source, "META-INF/services/**").packToTemporary();
+        File classes = Locator.folder()
+                .add(source.asArchive(), "bee/**", "!**.java")
+                .add(source.asArchive(), "META-INF/services/**")
+                .packToTemporary();
 
-        I.make(Repository.class).install(bee.Bee.API, classes, sources, null);
+        I.make(Repository.class).install(bee.Bee.API, classes);
     }
 }

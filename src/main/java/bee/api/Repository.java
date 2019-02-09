@@ -410,7 +410,7 @@ public class Repository {
 
         // create artifact for project
         Artifact jar = new DefaultArtifact(group, product, "", "jar", version, null, classes.asJavaFile());
-
+        System.out.println(classes + "  " + sources + "  " + javadoc);
         try {
             InstallRequest request = new InstallRequest();
             request.addArtifact(jar);

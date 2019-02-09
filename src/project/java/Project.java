@@ -16,7 +16,7 @@ import kiss.I;
 
 public class Project extends bee.api.Project {
 
-    String ResolverVersion = "[1.3.1)";
+    String ResolverVersion = "1.3.1";
 
     String ByteBuddyVersion = "[1.8.0,)";
 
@@ -34,7 +34,7 @@ public class Project extends bee.api.Project {
 
         require("net.bytebuddy", "byte-buddy", ByteBuddyVersion);
         require("net.bytebuddy", "byte-buddy-agent", ByteBuddyVersion);
-        require("org.junit.platform", "junit-platform-launcher", "1.3.1");
+        require("org.junit.platform", "junit-platform-launcher", "1.4.0");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
         require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
         require("com.github.teletha", "sinobu", "1.0");
