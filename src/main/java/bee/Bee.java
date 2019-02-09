@@ -11,13 +11,13 @@ package bee;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
-
-import com.google.common.base.Stopwatch;
 
 import bee.api.Library;
 import bee.api.License;
@@ -46,11 +46,13 @@ import psychopath.Option;
  */
 public class Bee {
 
+    private static final String version = "0.4.1";
+
     /** The api project. */
     public static final Project API = new Project() {
 
         {
-            product("com.github.teletha", "bee-api", "0.4");
+            product("com.github.teletha", "bee-api", version);
         }
     };
 
@@ -58,7 +60,7 @@ public class Bee {
     public static final Project TOOL = new Project() {
 
         {
-            product("com.github.teletha", "bee", "0.4");
+            product("com.github.teletha", "bee", version);
         }
     };
 
@@ -188,7 +190,7 @@ public class Bee {
      */
     public void execute(Task build) {
         String result = "SUCCESS";
-        Stopwatch stopwatch = Stopwatch.createStarted();
+        LocalTime start = LocalTime.now();
 
         try {
             // =====================================
@@ -239,10 +241,10 @@ public class Bee {
                 ui.error(e);
             }
         } finally {
-            stopwatch.stop();
+            LocalTime end = LocalTime.now();
 
             DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            ui.title(String.format("Build %s \t %s \t %s", result, format.format(LocalDateTime.now()), stopwatch));
+            ui.title(String.format("Build %s \t %s \t %s", result, format.format(LocalDateTime.now()), Duration.between(start, end)));
         }
     }
 

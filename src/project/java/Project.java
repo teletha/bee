@@ -14,14 +14,9 @@ import java.util.TreeSet;
 import bee.Bee;
 import kiss.I;
 
-/**
- * @version 2016/04/21 14:11:15
- */
 public class Project extends bee.api.Project {
 
-    String AetherGroup = "org.eclipse.aether";
-
-    String AetherVersion = "[1.1.0,)";
+    String ResolverVersion = "[1.3.1)";
 
     String ByteBuddyVersion = "[1.8.0,)";
 
@@ -30,12 +25,13 @@ public class Project extends bee.api.Project {
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
-        require(AetherGroup, "aether-api", AetherVersion);
-        require(AetherGroup, "aether-util", AetherVersion);
-        require(AetherGroup, "aether-impl", AetherVersion);
-        require(AetherGroup, "aether-connector-basic", AetherVersion);
-        require(AetherGroup, "aether-transport-http", AetherVersion);
-        require("org.apache.maven", "maven-aether-provider", "3.3.9");
+        require("org.apache.maven", "maven-resolver-provider", "3.6.0");
+        require("org.apache.maven.resolver", "maven-resolver-api", ResolverVersion);
+        require("org.apache.maven.resolver", "maven-resolver-util", ResolverVersion);
+        require("org.apache.maven.resolver", "maven-resolver-impl", ResolverVersion);
+        require("org.apache.maven.resolver", "maven-resolver-connector-basic", ResolverVersion);
+        require("org.apache.maven.resolver", "maven-resolver-transport-http", ResolverVersion);
+
         require("net.bytebuddy", "byte-buddy", ByteBuddyVersion);
         require("net.bytebuddy", "byte-buddy-agent", ByteBuddyVersion);
         require("org.junit.platform", "junit-platform-launcher", "1.3.1");

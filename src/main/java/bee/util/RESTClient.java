@@ -63,6 +63,7 @@ import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferEvent.RequestType;
 import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
+import org.eclipse.aether.transform.FileTransformerManager;
 
 import kiss.Disposable;
 import kiss.I;
@@ -636,6 +637,14 @@ public class RESTClient {
          */
         @Override
         public RepositoryCache getCache() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public FileTransformerManager getFileTransformerManager() {
             return null;
         }
     }

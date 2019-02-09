@@ -15,13 +15,10 @@ import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
 
-/**
- * @version 2018/03/31 21:58:09
- */
-public class DependencyTest {
+class DependencyTest {
 
     @Test
-    public void empty() {
+    void empty() {
         BlinkProject project = new BlinkProject();
         Repository repository = new Repository(project);
         Set<Library> dependencies = repository.collectDependency(project, Scope.Compile);
@@ -29,7 +26,7 @@ public class DependencyTest {
     }
 
     @Test
-    public void external() {
+    void external() {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm", "5.0");
 
@@ -39,7 +36,7 @@ public class DependencyTest {
     }
 
     @Test
-    public void atTest1() {
+    void atTest1() {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm", "5.0.4").atTest();
 
@@ -51,7 +48,7 @@ public class DependencyTest {
     }
 
     @Test
-    public void atTest2() {
+    void atTest2() {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm-tree", "5.0.4").atTest();
 
@@ -63,7 +60,7 @@ public class DependencyTest {
     }
 
     @Test
-    public void atAnnotation() {
+    void atAnnotation() {
         BlinkProject project = new BlinkProject();
         project.require("org.atteo.classindex", "classindex", "3.4").atAnnotation();
 
@@ -75,7 +72,7 @@ public class DependencyTest {
     }
 
     @Test
-    public void external1() {
+    void external1() {
         BlinkProject project = new BlinkProject();
         project.require("org.skyscreamer", "jsonassert", "1.2.3");
 
@@ -87,7 +84,7 @@ public class DependencyTest {
     }
 
     @Test
-    public void byLibrary() {
+    void byLibrary() {
         Library library = new Library("org.skyscreamer", "jsonassert", "1.2.3");
         Repository repo = new Repository(new BlinkProject());
         Set<Library> dep = repo.collectDependency(library, Scope.Runtime);
@@ -98,7 +95,7 @@ public class DependencyTest {
     }
 
     @Test
-    public void byLibraryWithClassifier() {
+    void byLibraryWithClassifier() {
         Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
         Repository repo = new Repository(new BlinkProject());
         Set<Library> dep = repo.collectDependency(library, Scope.Test);
