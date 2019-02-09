@@ -9,7 +9,9 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.Bee;
+import static bee.Platform.BeeHome;
+import static bee.Platform.JavaHome;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,14 +19,10 @@ import java.util.Date;
 import java.util.List;
 
 import bee.api.Repository;
-import bee.util.JarArchiver;
 import kiss.I;
 import psychopath.File;
 import psychopath.Locator;
 
-/**
- * @version 2015/06/22 11:53:31
- */
 public class BeeInstaller {
 
     /** The date formatter. */
@@ -85,18 +83,9 @@ public class BeeInstaller {
         ui.talk("Write new bat file. [", Bee, "]");
 
         // create bee-api library and sources
-        File classes = Locator.temporaryFile();
-        JarArchiver archiver = new JarArchiver();
-        archiver.add(source.asJavaPath(), "bee/**", "!**.java");
-        archiver.add(source.asJavaPath(), "META-INF/services/**");
-        archiver.pack(classes.asJavaPath());
+        File classes = Locator.folder().add(source, "bee/**", "!**.java").add(source, "META-INF/services/**").packToTemporary();
+        File sources = Locator.folder().add(source, "bee/**.java").add(source, "META-INF/services/**").packToTemporary();
 
-        File sources = Locator.temporaryFile();
-        archiver = new JarArchiver();
-        archiver.add(source.asJavaPath(), "bee/**.java");
-        archiver.add(source.asJavaPath(), "META-INF/services/**");
-        archiver.pack(sources.asJavaPath());
-
-        I.make(Repository.class).install(bee.Bee.API, classes, source, null);
+        I.make(Repository.class).install(bee.Bee.API, classes, sources, null);
     }
 }
