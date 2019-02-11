@@ -46,7 +46,7 @@ import psychopath.Option;
  */
 public class Bee {
 
-    private static final String version = "0.4.1";
+    private static final String version = "0.5";
 
     /** The api project. */
     public static final Project API = new Project() {
@@ -88,6 +88,7 @@ public class Bee {
         }
 
         I.load(UserInterfaceLisfestyle.class, true);
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
 
     /** The user interface. */

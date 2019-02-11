@@ -37,7 +37,8 @@ public class Project extends bee.api.Project {
         require("org.junit.platform", "junit-platform-launcher", "1.4.0");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
         require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
-        require("com.github.teletha", "sinobu", "1.0");
+        require("org.eclipse.mylyn.github", "org.eclipse.egit.github.core", "2.1.5");
+        require("com.github.teletha", "sinobu", "[1.2,)");
         require("com.github.teletha", "psychopath", "0.9");
         require("com.github.teletha", "antibug", "0.6").atTest();
 

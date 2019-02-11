@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import bee.Fail;
+
 /**
  * @version 2018/03/31 21:58:51
  */
@@ -33,6 +35,11 @@ public class GitTest extends TaskTestBase {
         List<String> latest = git.update(updated);
         assert listItem(originalPart, latest.subList(0, original.size()));
         assert listItem(additionalPart, latest.subList(original.size() + 1, latest.size()));
+    }
+
+    @Test
+    void testName() {
+        Fail.when("as".length() == 2, "Define #CALLER #GETTER #SETTER in your project.");
     }
 
     /**

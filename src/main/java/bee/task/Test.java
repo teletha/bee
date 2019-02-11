@@ -24,7 +24,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
 import bee.Bee;
-import bee.TaskFailure;
+import bee.Fail;
 import bee.api.Command;
 import bee.api.Scope;
 import bee.api.Task;
@@ -125,7 +125,7 @@ public class Test extends Task {
 
                 ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
                 if (fails.size() != 0 || errors.size() != 0) {
-                    TaskFailure failure = new TaskFailure("Test has failed.");
+                    Fail failure = new Fail("Test has failed.");
                     buildFailure(failure, errors);
                     buildFailure(failure, fails);
                     throw failure;
@@ -226,13 +226,13 @@ public class Test extends Task {
 
             /**
              * <p>
-             * Build {@link TaskFailure}.
+             * Build {@link Fail}.
              * </p>
              * 
              * @param failure A current resolver.
              * @param list A list of test results.
              */
-            private void buildFailure(TaskFailure failure, List<Failure> list) {
+            private void buildFailure(Fail failure, List<Failure> list) {
                 for (Failure fail : list) {
                     String className = fail.container.getLegacyReportingName();
                     StackTraceElement element = fail.error.getStackTrace()[0];

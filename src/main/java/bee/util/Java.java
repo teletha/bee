@@ -37,7 +37,7 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
-import bee.TaskFailure;
+import bee.Fail;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
@@ -499,8 +499,8 @@ public class Java {
                 Cause cause = new Cause();
                 cause.message = throwable.getMessage();
 
-                if (throwable instanceof TaskFailure) {
-                    TaskFailure failure = (TaskFailure) throwable;
+                if (throwable instanceof Fail) {
+                    Fail failure = (Fail) throwable;
                     cause.reason = failure.reason;
                     cause.solution.addAll(failure.solution);
                 }
@@ -619,7 +619,7 @@ public class Java {
      * @version 2014/07/28 14:16:07
      */
     @SuppressWarnings("serial")
-    private static final class Cause extends TaskFailure {
+    private static final class Cause extends Fail {
 
         /** The error message. */
         @SuppressWarnings("unused")

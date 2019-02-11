@@ -37,6 +37,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
 
 import bee.Bee;
+import bee.Fail;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import kiss.I;
@@ -714,6 +715,8 @@ public class Project {
      * @return A uri of version control system.
      */
     public Github getVersionControlSystem() {
+        Fail.when(vcs == null, "Describe Project#versionControlSystem in your project class.");
+
         return vcs;
     }
 
