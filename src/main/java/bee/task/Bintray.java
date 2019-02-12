@@ -46,7 +46,7 @@ public class Bintray extends Task {
 
         RESTClient client = new RESTClient(account.name(), account.key());
         Library library = project.getLibrary();
-        Repository repo = Repository.of(project.getVersionControlSystem());
+        Repository repo = Repository.of(project.exactVersionControlSystem());
         Package pack = Package.of(repo, project);
 
         I.signal(repo)
@@ -190,11 +190,11 @@ public class Bintray extends Task {
             p.name = project.getLibrary().name;
             p.desc = project.getDescription();
             p.licenses.add(project.getLicense().name());
-            p.website_url = project.getVersionControlSystem().uri();
-            p.vcs_url = project.getVersionControlSystem().uri();
-            p.issue_tracker_url = project.getVersionControlSystem().issue();
+            p.website_url = project.exactVersionControlSystem().uri();
+            p.vcs_url = project.exactVersionControlSystem().uri();
+            p.issue_tracker_url = project.exactVersionControlSystem().issue();
 
-            Github vcs = project.getVersionControlSystem();
+            Github vcs = project.exactVersionControlSystem();
             p.github_repo = vcs.owner + "/" + vcs.repo;
             System.out.println(p.github_repo);
 
@@ -281,7 +281,7 @@ public class Bintray extends Task {
             RepositoryFile file = new RepositoryFile();
             file.path = path;
             file.localFile = filePath.asJavaPath();
-            file.sha1 = DigestUtils.shaHex(filePath.bytes());
+            file.sha1 = DigestUtils.sha1Hex(filePath.bytes());
             return file;
         }
     }

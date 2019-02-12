@@ -42,6 +42,7 @@ import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import kiss.I;
 import kiss.Signal;
+import kiss.Variable;
 import kiss.XML;
 import psychopath.Directory;
 import psychopath.File;
@@ -714,10 +715,17 @@ public class Project {
      * 
      * @return A uri of version control system.
      */
-    public Github getVersionControlSystem() {
-        Fail.when(vcs == null, "Describe Project#versionControlSystem in your project class.");
+    public final Github exactVersionControlSystem() {
+        return getVersionControlSystem().exact(Fail::new, "You must describe Project#versionControlSystem in your project file.");
+    }
 
-        return vcs;
+    /**
+     * Get the VCS.
+     * 
+     * @return A uri of version control system.
+     */
+    public Variable<Github> getVersionControlSystem() {
+        return Variable.of(vcs);
     }
 
     /**
@@ -814,9 +822,7 @@ public class Project {
             repository.child("url").text(repo.getUrl());
         }
 
-        Github vcs = getVersionControlSystem();
-
-        if (vcs != null) {
+        getVersionControlSystem().to(vcs -> {
             pom.child("url").text(vcs.uri());
 
             XML scm = pom.child("scm");
@@ -836,7 +842,7 @@ public class Project {
                 xml.child("email").text(contributor.getEmail());
                 xml.child("url").text(contributor.getUrl());
             }
-        }
+        });
 
         // maven properties
         XML plugin = pom.child("build").child("plugins").child("plugin");
