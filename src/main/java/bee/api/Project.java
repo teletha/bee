@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.IOException;
 import java.net.URI;
@@ -716,6 +716,8 @@ public class Project {
      * @return A uri of version control system.
      */
     public final Github exactVersionControlSystem() {
+        Book.rule(Project::getVersionControlSystem, );
+        
         return getVersionControlSystem().exact(Fail::new, "You must describe Project#versionControlSystem in your project file.");
     }
 
