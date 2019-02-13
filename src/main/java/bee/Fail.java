@@ -74,8 +74,8 @@ public class Fail extends Error {
         if (size == 0) {
             builder.append("No solution.");
         } else {
-            for (String solution : this.solution) {
-                builder.append("・").append(solution).append(EOL);
+            for (int i = 0; i < solution.size(); i++) {
+                builder.append(i + 1).append(" ").append(solution.get(i)).append(EOL);
             }
         }
         return builder.toString().trim();
