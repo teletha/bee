@@ -13,6 +13,7 @@ import static bee.Platform.EOL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import bee.util.Notation;
 import kiss.I;
@@ -85,12 +86,12 @@ public class Fail extends Error {
         if (size == 0) {
             builder.append("No solution.");
         } else {
-            builder.append("Solution").append(EOL);
-            for (int i = 0; i < solution.size(); i++) {
-                builder.append("\t・ ").append(solution.get(i)).append(EOL);
-            }
+            Notation notation = new Notation();
+            notation.title("Solution");
+            notation.list(solution, Function.identity());
+            builder.append(notation);
         }
-        return builder.toString().trim();
+        return builder.toString();
     }
 
     /**

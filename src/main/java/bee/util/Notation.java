@@ -109,6 +109,7 @@ public class Notation {
         items.to(item -> {
             builder.append(INDENT.repeat(level)).append("* ").append(descriptor.apply(item)).append(EOL);
         });
+        builder.append(EOL);
     }
 
     /**
