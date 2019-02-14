@@ -67,7 +67,6 @@ import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.transform.FileTransformerManager;
 
 import bee.Fail;
-import kiss.Disposable;
 import kiss.I;
 import kiss.Signal;
 import psychopath.Locator;
@@ -77,7 +76,7 @@ import psychopath.Locator;
  */
 public class RESTClient {
 
-    private final TransferView view = I.make(TransferView.class);
+    private final TransferInterface view = I.make(TransferInterface.class);
 
     /** The actual http client. */
     private final CloseableHttpClient client;
@@ -296,10 +295,11 @@ public class RESTClient {
                         throw fail(request, value, response);
                     }
                 }));
+                observer.complete();
             } catch (Throwable e) {
                 observer.error(e);
             }
-            return Disposable.empty();
+            return disposer;
         });
     }
 
@@ -365,7 +365,7 @@ public class RESTClient {
     private static class CountingHttpEntity extends HttpEntityWrapper {
 
         /** The transfer view. */
-        private final TransferView view;
+        private final TransferInterface view;
 
         /** The resource to transfer. */
         private final TransferResource resource;
@@ -375,7 +375,7 @@ public class RESTClient {
          * @param listener
          * @param resource
          */
-        private CountingHttpEntity(HttpEntity entity, TransferView listener, TransferResource resource) {
+        private CountingHttpEntity(HttpEntity entity, TransferInterface listener, TransferResource resource) {
             super(entity);
 
             this.view = listener;
@@ -386,8 +386,9 @@ public class RESTClient {
          * {@inheritDoc}
          */
         @Override
-        public void writeTo(final OutputStream out) throws IOException {
-            this.wrappedEntity.writeTo(out instanceof CountingOutputStream ? out : new CountingOutputStream(out, view, resource));
+        public void writeTo(OutputStream out) throws IOException {
+            new Error().printStackTrace();
+            super.writeTo(new CountingOutputStream(out, view, resource));
         }
     }
 
@@ -399,7 +400,7 @@ public class RESTClient {
         private static final RepositorySystemSession session = new Session();
 
         /** The transfer view. */
-        private final TransferView view;
+        private final TransferInterface view;
 
         /** The resource to transfer. */
         private final TransferResource resource;
@@ -412,7 +413,7 @@ public class RESTClient {
          * @param view
          * @param resource
          */
-        private CountingOutputStream(OutputStream out, TransferView view, TransferResource resource) {
+        private CountingOutputStream(OutputStream out, TransferInterface view, TransferResource resource) {
             super(out);
 
             this.view = view;
@@ -434,7 +435,7 @@ public class RESTClient {
          * {@inheritDoc}
          */
         @Override
-        public void write(final int b) throws IOException {
+        public void write(int b) throws IOException {
             write(new byte[] {(byte) b}, 0, 1);
         }
 
@@ -444,8 +445,17 @@ public class RESTClient {
         @Override
         public void flush() throws IOException {
             super.flush();
-
+            System.out.println("FLUSH");
             view.transferSucceeded(event());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() throws IOException {
+            System.out.println("CLOSE");
+            super.close();
         }
 
         /**

@@ -19,10 +19,7 @@ import org.eclipse.aether.transfer.TransferResource;
 
 import bee.UserInterface;
 
-/**
- * @version 2017/01/09 1:43:32
- */
-public class TransferView implements TransferListener {
+public class TransferInterface implements TransferListener {
 
     /** The progress event interval. (ms) */
     private static final long interval = 500 * 1000 * 1000;
@@ -43,7 +40,7 @@ public class TransferView implements TransferListener {
      * 
      * @param ui A user interface to notify.
      */
-    private TransferView(UserInterface ui) {
+    private TransferInterface(UserInterface ui) {
         this.ui = ui;
     }
 
@@ -58,7 +55,8 @@ public class TransferView implements TransferListener {
      * {@inheritDoc}
      */
     @Override
-    public void transferStarted(TransferEvent paramTransferEvent) throws TransferCancelledException {
+    public void transferStarted(TransferEvent event) throws TransferCancelledException {
+        System.out.println("Start " + event);
     }
 
     /**
@@ -104,6 +102,7 @@ public class TransferView implements TransferListener {
         TransferResource resource = event.getResource();
         long contentLength = event.getTransferredBytes();
         if (contentLength >= 0) {
+            last = System.nanoTime();
             String type = (event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploaded" : "Downloaded");
             String name = resource.getResourceName();
             String len = contentLength >= 1024 ? toKB(contentLength) + " KB" : contentLength + " B";
@@ -119,6 +118,7 @@ public class TransferView implements TransferListener {
     public void transferFailed(TransferEvent event) {
         // unregister item
         downloading.remove(event.getResource());
+        System.out.println("Failed " + event);
     }
 
     /**

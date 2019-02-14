@@ -68,7 +68,7 @@ import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import bee.Bee;
 import bee.Platform;
 import bee.UserInterface;
-import bee.util.TransferView;
+import bee.util.TransferInterface;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;
@@ -165,7 +165,7 @@ public class Repository {
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
 
         // event listener
-        session.setTransferListener(I.make(TransferView.class));
+        session.setTransferListener(I.make(TransferInterface.class));
         session.setRepositoryListener(I.make(RepositoryView.class));
 
         this.session = session;

@@ -240,7 +240,7 @@ public class Bintray extends Task {
                 Project project = I.make(Project.class);
                 String repository = "http://" + project.getGroup() + ".bintray.com/maven";
 
-                return new TransferResource(repository, path, localFile.toFile(), null).setContentLength(Files.size(localFile));
+                return new TransferResource(null, repository, path, localFile.toFile(), null).setContentLength(Files.size(localFile));
             } catch (IOException e) {
                 throw I.quiet(e);
             }
