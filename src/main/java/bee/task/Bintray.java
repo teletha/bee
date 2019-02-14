@@ -48,31 +48,27 @@ public class Bintray extends Task {
         Library library = project.getLibrary();
         Repository repo = Repository.of(project.exactVersionControlSystem());
         Package pack = Package.of(repo, project);
-        System.out.println(repo + "    @@  " + pack);
 
-        I.signal(repo).flatMap(r -> {
-            System.out.println("update repos");
-            return client.patch(uri + "repos/" + repo, repo);
-        }).errorResume(client.post(uri + "repos/" + repo, repo)).flatMap(r -> {
-            System.out.println("update package");
-            return client.patch(uri + "packages/" + pack, pack);
-        }).errorResume(client.post(uri + "packages/" + repo, pack)).flatMap(p -> {
-            System.out.println("get file");
-            return client.get(uri + "packages/" + pack + "/files", new RepositoryFiles());
-        }).flatIterable(files -> {
-            RepositoryFiles completes = new RepositoryFiles();
-            completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
-            completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
-            completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
-            completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
-            completes.removeAll(files);
-            return completes;
-        }).take(file -> Files.exists(file.localFile)).flatMap(file -> {
-            System.out.println(file.path + "    " + file.resource());
-            return client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource());
-        }).to(file -> {
-            ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
-        });
+        I.signal(repo)
+                .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
+                .errorResume(client.post(uri + "repos/" + repo, repo))
+                .flatMap(r -> client.patch(uri + "packages/" + pack, pack))
+                .errorResume(client.post(uri + "packages/" + repo, pack))
+                .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
+                .flatIterable(files -> {
+                    RepositoryFiles completes = new RepositoryFiles();
+                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
+                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
+                    completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
+                    completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
+                    completes.removeAll(files);
+                    return completes;
+                })
+                .take(file -> Files.exists(file.localFile))
+                .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource()))
+                .to(file -> {
+                    ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
+                });
     }
 
     /**
@@ -145,7 +141,7 @@ public class Bintray extends Task {
          */
         @Override
         public String toString() {
-            return owner.replaceAll("\\.", "-") + "/" + name;
+            return owner.replaceAll("\\.", "-").toLowerCase() + "/" + name.toLowerCase();
         }
     }
 
@@ -176,11 +172,14 @@ public class Bintray extends Task {
         /** The license list. */
         public List<String> licenses = new ArrayList();
 
-        /** The github repository. */
-        public String github_repo;
+        // /** The github repository. */
+        // public String github_repo;
+        //
+        // /** The github release note. */
+        // public String github_release_notes_file = "RELEASE.txt";
 
         /** The state. */
-        public boolean public_download_numbers = true;
+        public boolean public_download_numbers = false;
 
         /**
          * @param name
@@ -196,10 +195,6 @@ public class Bintray extends Task {
             p.vcs_url = project.exactVersionControlSystem().uri();
             p.issue_tracker_url = project.exactVersionControlSystem().issue();
 
-            Github vcs = project.exactVersionControlSystem();
-            p.github_repo = vcs.owner + "/" + vcs.repo;
-            System.out.println(p.github_repo);
-
             return p;
         }
 
@@ -208,7 +203,7 @@ public class Bintray extends Task {
          */
         @Override
         public String toString() {
-            return repository + "/" + name;
+            return repository + "/" + name.toLowerCase();
         }
     }
 
