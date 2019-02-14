@@ -108,8 +108,6 @@ public class Jar extends Task {
      */
     @Command("Package all main classes and resources with dependencies.")
     public void merge() {
-        require(Compile.class).source();
-
         // create manifest
         File manifest = Locator.temporaryFile("MANIFEST.MF").text(
                 /* Manifest contents */

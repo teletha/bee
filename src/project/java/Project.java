@@ -25,7 +25,7 @@ public class Project extends bee.api.Project {
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
-        require("org.apache.maven", "maven-resolver-provider", "3.6.0");
+        require("org.apache.maven", "maven-resolver-provider", "[3.6.0,)");
         require("org.apache.maven.resolver", "maven-resolver-api", ResolverVersion);
         require("org.apache.maven.resolver", "maven-resolver-util", ResolverVersion);
         require("org.apache.maven.resolver", "maven-resolver-impl", ResolverVersion);
@@ -34,17 +34,14 @@ public class Project extends bee.api.Project {
 
         require("net.bytebuddy", "byte-buddy", ByteBuddyVersion);
         require("net.bytebuddy", "byte-buddy-agent", ByteBuddyVersion);
-        require("org.junit.platform", "junit-platform-launcher", "1.4.0");
+        require("org.junit.platform", "junit-platform-launcher", "[1.4.0,)");
         require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
         require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
         require("com.github.teletha", "sinobu", "[1.2,)");
-        require("com.github.teletha", "psychopath", "0.9");
-        require("com.github.teletha", "antibug", "0.6").atTest();
-
+        require("com.github.teletha", "psychopath", "[0.9,)");
+        require("com.github.teletha", "antibug", "[0.6,)").atTest();
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
-
-        repository("https://repo.eclipse.org/content/repositories/egit-releases/");
 
         versionControlSystem("https://github.com/teletha/bee");
     }

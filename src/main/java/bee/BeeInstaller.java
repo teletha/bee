@@ -11,9 +11,8 @@ package bee;
 
 import static bee.Platform.*;
 
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import bee.api.Repository;
@@ -24,7 +23,7 @@ import psychopath.Locator;
 public class BeeInstaller {
 
     /** The date formatter. */
-    private static final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     /**
      * <p>
@@ -45,7 +44,7 @@ public class BeeInstaller {
     public static final void install(File source) {
         UserInterface ui = I.make(UserInterface.class);
 
-        String fileName = "bee-" + format.format(new Date(source.lastModified())) + ".jar";
+        String fileName = "bee-" + format.format(source.lastModifiedDateTime()) + ".jar";
         psychopath.File dest = BeeHome.file(fileName);
 
         // delete old files

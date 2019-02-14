@@ -62,6 +62,7 @@ public class Bintray extends Task {
                     completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
                     completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
                     completes.removeAll(files);
+                    System.out.println(completes);
                     return completes;
                 })
                 .take(file -> Files.exists(file.localFile))
@@ -263,6 +264,14 @@ public class Bintray extends Task {
                 return false;
             }
             return Objects.equals(sha1, ((RepositoryFile) obj).sha1);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return path + "[" + localFile + "]";
         }
 
         /**
