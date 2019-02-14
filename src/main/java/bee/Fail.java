@@ -9,18 +9,20 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import bee.util.Notation;
+import kiss.I;
+import kiss.WiseConsumer;
 
 @SuppressWarnings("serial")
 public class Fail extends Error {
 
-    /** The message, */
-    public String reason;
+    /** The reason, */
+    public Notation reason = new Notation();
 
     /** The solution messages. */
     public List<String> solution = new ArrayList<String>();
@@ -32,10 +34,8 @@ public class Fail extends Error {
      * 
      * @param reason
      */
-    public Fail(String reason) {
-        super(reason);
-
-        this.reason = reason;
+    public Fail() {
+        this(I.NoOP.asConsumer());
     }
 
     /**
@@ -45,8 +45,19 @@ public class Fail extends Error {
      * 
      * @param reason
      */
-    public Fail(Object... reason) {
-        this(UserInterface.build(reason));
+    public Fail(String reason) {
+        this($ -> $.p(reason));
+    }
+
+    /**
+     * <p>
+     * Create failure with reason message.
+     * </p>
+     * 
+     * @param reason
+     */
+    public Fail(WiseConsumer<Notation> reason) {
+        reason.accept(this.reason);
     }
 
     /**
@@ -67,15 +78,16 @@ public class Fail extends Error {
      */
     @Override
     public String getMessage() {
-        StringBuilder builder = new StringBuilder(reason).append(EOL);
+        StringBuilder builder = new StringBuilder(reason.toString()).append(EOL);
 
         int size = solution.size();
 
         if (size == 0) {
             builder.append("No solution.");
         } else {
+            builder.append("Solution").append(EOL);
             for (int i = 0; i < solution.size(); i++) {
-                builder.append(i + 1).append(" ").append(solution.get(i)).append(EOL);
+                builder.append("\t・ ").append(solution.get(i)).append(EOL);
             }
         }
         return builder.toString().trim();
@@ -85,15 +97,7 @@ public class Fail extends Error {
      * {@inheritDoc}
      */
     @Override
-    public void printStackTrace(PrintStream stream) {
-        printStackTrace(new PrintWriter(stream));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void printStackTrace(PrintWriter writer) {
-        writer.append(getLocalizedMessage());
+    public StackTraceElement[] getStackTrace() {
+        return super.getStackTrace();
     }
 }

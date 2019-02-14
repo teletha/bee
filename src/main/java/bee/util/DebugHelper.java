@@ -19,7 +19,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import bee.Fail;
 import kiss.I;
 import kiss.WiseTriConsumer;
 import kiss.WiseTriFunction;
@@ -29,13 +28,6 @@ import net.bytebuddy.jar.asm.Type;
  * 
  */
 public class DebugHelper {
-
-    public static <T> T necessary(T value, Object... solution) {
-        if (value == null) {
-            throw new Fail().solve(solution);
-        }
-        return value;
-    }
 
     public static <P> String $(DebugConsumer<P> lambda) {
         return methodNameFromLambda(lambda);

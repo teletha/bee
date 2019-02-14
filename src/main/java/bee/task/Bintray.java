@@ -48,29 +48,31 @@ public class Bintray extends Task {
         Library library = project.getLibrary();
         Repository repo = Repository.of(project.exactVersionControlSystem());
         Package pack = Package.of(repo, project);
+        System.out.println(repo + "    @@  " + pack);
 
-        I.signal(repo)
-                .flatMap(r -> client.patch(uri + "repos/" + repo, repo))
-                .errorResume(client.post(uri + "repos/" + repo, repo))
-                .flatMap(r -> client.patch(uri + "packages/" + pack, pack))
-                .errorResume(client.post(uri + "packages/" + repo, pack))
-                .flatMap(p -> client.get(uri + "packages/" + pack + "/files", new RepositoryFiles()))
-                .flatIterable(files -> {
-                    RepositoryFiles completes = new RepositoryFiles();
-                    completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
-                    completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
-                    completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
-                    completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
-                    completes.removeAll(files);
-                    return completes;
-                })
-                .take(file -> Files.exists(file.localFile))
-                .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource()))
-                .to(file -> {
-                    ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
-                }, e -> {
-                    e.printStackTrace();
-                });
+        I.signal(repo).flatMap(r -> {
+            System.out.println("update repos");
+            return client.patch(uri + "repos/" + repo, repo);
+        }).errorResume(client.post(uri + "repos/" + repo, repo)).flatMap(r -> {
+            System.out.println("update package");
+            return client.patch(uri + "packages/" + pack, pack);
+        }).errorResume(client.post(uri + "packages/" + repo, pack)).flatMap(p -> {
+            System.out.println("get file");
+            return client.get(uri + "packages/" + pack + "/files", new RepositoryFiles());
+        }).flatIterable(files -> {
+            RepositoryFiles completes = new RepositoryFiles();
+            completes.add(RepositoryFile.of(library.getPOM(), library.getLocalPOM()));
+            completes.add(RepositoryFile.of(library.getJar(), library.getLocalJar()));
+            completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
+            completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
+            completes.removeAll(files);
+            return completes;
+        }).take(file -> Files.exists(file.localFile)).flatMap(file -> {
+            System.out.println(file.path + "    " + file.resource());
+            return client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource());
+        }).to(file -> {
+            ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
+        });
     }
 
     /**
@@ -108,12 +110,12 @@ public class Bintray extends Task {
          * If set to true then the repo’s metadata will be automatically signed with Bintray GPG
          * key.
          */
-        public boolean gpg_sign_metadata = true;
+        public boolean gpg_sign_metadata = false;
 
         /**
          * If set to true then the repo’s files will be automatically signed with Bintray GPG key.
          */
-        public boolean gpg_sign_files = true;
+        public boolean gpg_sign_files = false;
 
         /**
          * If set to true then the repo’s metadata and files will be signed automatically with the

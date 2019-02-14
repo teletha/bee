@@ -26,8 +26,8 @@ import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
-import bee.Platform;
 import bee.Fail;
+import bee.Platform;
 import bee.UserInterface;
 import bee.api.Task.Lifestyle;
 import bee.util.Inputs;
@@ -359,7 +359,7 @@ public abstract class Task implements Extensible {
         Method command = info.commands.get(commandName.toLowerCase());
 
         if (command == null) {
-            Fail failure = new Fail("Task [", taskName, "] doesn't have the command [", commandName, "]. Task [", taskName, "] can use the following commands.");
+            Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
             for (Entry<String, String> entry : info.descriptions.entrySet()) {
                 failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
             }
@@ -406,7 +406,7 @@ public abstract class Task implements Extensible {
         Info info = commons.get(name);
 
         if (info == null) {
-            Fail failure = new Fail("Task [", name, "] is not found. You can use the following tasks.");
+            Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
             for (Entry<String, Info> entry : commons.entrySet()) {
                 info = entry.getValue();
                 failure.solve(entry.getKey(), " - ", info.descriptions.get(info.defaultCommnad));

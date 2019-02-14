@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.ParseException;
@@ -65,6 +66,7 @@ import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.transform.FileTransformerManager;
 
+import bee.Fail;
 import kiss.Disposable;
 import kiss.I;
 import kiss.Signal;
@@ -288,16 +290,39 @@ public class RESTClient {
                         if (request.getMethod().equals("DELETE")) {
                             return value;
                         }
-                        throw new IOException(readAsString(response));
+                        throw fail(request, value, response);
 
                     default:
-                        throw new IOException(readAsString(response));
+                        throw fail(request, value, response);
                     }
                 }));
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 observer.error(e);
             }
             return Disposable.empty();
+        });
+    }
+
+    /**
+     * Build {@link Fail} for http access.
+     * 
+     * @param request
+     * @param value
+     * @param response
+     * @return
+     */
+    private Fail fail(HttpRequest request, Object value, HttpResponse response) {
+        return new Fail($ -> {
+            $.p("Failed to request " + request.getRequestLine().getMethod() + " " + request.getRequestLine().getUri());
+            $.section(() -> {
+                $.title("Request");
+                $.list(request.getAllHeaders(), header -> header.getName() + " : " + header.getValue());
+                $.p(I.write(value));
+
+                $.title("Response");
+                $.list(response.getAllHeaders(), header -> header.getName() + " : " + header.getValue());
+                $.p(readAsString(response));
+            });
         });
     }
 
