@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -57,17 +58,18 @@ public class Bee {
     };
 
     /** The build tool project. */
-    public static final Project TOOL = new Project() {
+    public static final Project Tool = new Project() {
 
         {
             product("com.github.teletha", "bee", version);
         }
     };
 
+    /** The lombok project. */
     public static final Project Lombok = new Project() {
 
         {
-            product("org.projectlombok", "lombok", "1.18.4");
+            product("org.projectlombok", "lombok", "1.18.6");
         }
     };
 
@@ -197,7 +199,7 @@ public class Bee {
             // =====================================
             // build your project
             // =====================================
-            ui.talk("Finding your project...");
+            ui.talk("Finding your project...   (Bee" + version + "  Java" + Runtime.version() + ")");
 
             // build project definition
             buildProjectDefinition(project.getProjectDefinition());
@@ -244,8 +246,9 @@ public class Bee {
         } finally {
             LocalTime end = LocalTime.now();
 
-            DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            ui.title(String.format("Build %s \t %s \t %s", result, format.format(LocalDateTime.now()), Duration.between(start, end)));
+            String dateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
+            String duration = Duration.between(start, end).truncatedTo(ChronoUnit.MILLIS).toString().substring(2).toLowerCase();
+            ui.title(String.format("Build %s \t %s \t %s", result, dateTime, duration));
         }
     }
 

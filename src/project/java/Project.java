@@ -21,7 +21,7 @@ public class Project extends bee.api.Project {
     String ByteBuddyVersion = "[1.8.0,)";
 
     {
-        product(Bee.TOOL.getGroup(), Bee.TOOL.getProduct(), Bee.TOOL.getVersion());
+        product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), Bee.Tool.getVersion());
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 

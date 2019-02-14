@@ -80,7 +80,7 @@ public class IntelliJ extends Task implements IDESupport {
             break;
 
         case System: // For Project Module
-            if (!project.equals(Bee.TOOL)) {
+            if (!project.equals(Bee.Tool)) {
                 library(project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion()), component, Scope.System);
             }
             break;
