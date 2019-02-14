@@ -62,7 +62,6 @@ public class Bintray extends Task {
                     completes.add(RepositoryFile.of(library.getSourceJar(), library.getLocalSourceJar()));
                     completes.add(RepositoryFile.of(library.getJavadocJar(), library.getLocalJavadocJar()));
                     completes.removeAll(files);
-                    System.out.println(completes);
                     return completes;
                 })
                 .take(file -> Files.exists(file.localFile))
