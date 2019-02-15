@@ -18,29 +18,33 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.ParseException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.util.EntityUtils;
 import org.eclipse.aether.RepositoryCache;
 import org.eclipse.aether.RepositoryListener;
@@ -71,9 +75,6 @@ import kiss.I;
 import kiss.Signal;
 import psychopath.Locator;
 
-/**
- * @version 2017/01/10 1:07:57
- */
 public class RESTClient {
 
     private final TransferInterface view = I.make(TransferInterface.class);
@@ -81,11 +82,14 @@ public class RESTClient {
     /** The actual http client. */
     private final CloseableHttpClient client;
 
+    /** The context. */
+    private final HttpClientContext context;
+
     /**
      * 
      */
     public RESTClient() {
-        this(builder -> {
+        this((builder, context) -> {
         });
     }
 
@@ -98,20 +102,29 @@ public class RESTClient {
      * @param password
      */
     public RESTClient(String name, String password) {
-        this(builder -> {
-            CredentialsProvider provider = new BasicCredentialsProvider();
+        this((builder, context) -> {
+            SystemDefaultCredentialsProvider provider = new SystemDefaultCredentialsProvider();
             provider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(name, password));
 
-            builder.setDefaultCredentialsProvider(provider);
+            // builder.setDefaultCredentialsProvider(provider);
+
+            AuthCache authCache = new BasicAuthCache();
+            authCache.put(new HttpHost("localhost", 8080, "http"), new BasicScheme());
+
+            // Add AuthCache to the execution context
+            context.setCredentialsProvider(provider);
+            context.setAuthCache(authCache);
+
         });
     }
 
     /**
      * 
      */
-    public RESTClient(Consumer<HttpClientBuilder> builder) {
+    public RESTClient(BiConsumer<HttpClientBuilder, HttpClientContext> builder) {
+        this.context = HttpClientContext.create();
         HttpClientBuilder clientBuilder = HttpClientBuilder.create();
-        builder.accept(clientBuilder);
+        builder.accept(clientBuilder, context);
         this.client = clientBuilder.build();
     }
 
@@ -294,7 +307,7 @@ public class RESTClient {
                     default:
                         throw fail(request, value, response);
                     }
-                }));
+                }, context));
                 observer.complete();
             } catch (Throwable e) {
                 observer.error(e);
@@ -387,7 +400,6 @@ public class RESTClient {
          */
         @Override
         public void writeTo(OutputStream out) throws IOException {
-            new Error().printStackTrace();
             super.writeTo(new CountingOutputStream(out, view, resource));
         }
     }
@@ -445,17 +457,7 @@ public class RESTClient {
         @Override
         public void flush() throws IOException {
             super.flush();
-            System.out.println("FLUSH");
             view.transferSucceeded(event());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void close() throws IOException {
-            System.out.println("CLOSE");
-            super.close();
         }
 
         /**

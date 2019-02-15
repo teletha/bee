@@ -56,7 +56,6 @@ public class TransferInterface implements TransferListener {
      */
     @Override
     public void transferStarted(TransferEvent event) throws TransferCancelledException {
-        System.out.println("Start " + event);
     }
 
     /**
@@ -102,7 +101,6 @@ public class TransferInterface implements TransferListener {
         TransferResource resource = event.getResource();
         long contentLength = event.getTransferredBytes();
         if (contentLength >= 0) {
-            last = System.nanoTime();
             String type = (event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploaded" : "Downloaded");
             String name = resource.getResourceName();
             String len = contentLength >= 1024 ? toKB(contentLength) + " KB" : contentLength + " B";
@@ -118,7 +116,6 @@ public class TransferInterface implements TransferListener {
     public void transferFailed(TransferEvent event) {
         // unregister item
         downloading.remove(event.getResource());
-        System.out.println("Failed " + event);
     }
 
     /**

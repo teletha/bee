@@ -137,7 +137,7 @@ public abstract class Github {
     public Signal<Release> release() {
         Project project = I.make(Project.class);
         Account account = Config.project(Account.class);
-        RESTClient client = new RESTClient(builder -> {
+        RESTClient client = new RESTClient((builder, context) -> {
             builder.setDefaultHeaders(Arrays.asList(new BasicHeader("Authorization", "token " + account.password())));
         });
 
@@ -237,7 +237,7 @@ public abstract class Github {
 
         public Signal<Release> update() {
             Account account = Config.project(Account.class);
-            RESTClient client = new RESTClient(builder -> {
+            RESTClient client = new RESTClient((builder, context) -> {
                 builder.setDefaultHeaders(Arrays.asList(new BasicHeader("Authorization", "token " + account.password())));
             });
 
