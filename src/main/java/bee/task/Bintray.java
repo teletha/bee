@@ -66,9 +66,7 @@ public class Bintray extends Task {
                 })
                 .take(file -> Files.exists(file.localFile))
                 .flatMap(file -> client.put(uri + "maven/" + pack + "/" + file.path + ";publish=1;override=1", file, file.resource()))
-                .to(file -> {
-                    ui.talk("Upload " + file.localFile + " to https://dl.bintray.com/" + project.getGroup() + "/maven/" + file.path + ".");
-                });
+                .to(I.NoOP);
     }
 
     /**

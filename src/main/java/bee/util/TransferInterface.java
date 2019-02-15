@@ -76,9 +76,8 @@ public class TransferInterface implements TransferListener {
 
             for (Map.Entry<TransferResource, TransferEvent> entry : downloading.entrySet()) {
                 TransferResource resource = entry.getKey();
-                String name = resource.getResourceName();
 
-                message.append(name.substring(name.lastIndexOf('/') + 1));
+                message.append(name(resource));
                 message.append(" (");
                 message.append(format(entry.getValue().getTransferredBytes(), resource.getContentLength()));
                 message.append(")   ");
@@ -101,11 +100,13 @@ public class TransferInterface implements TransferListener {
         TransferResource resource = event.getResource();
         long contentLength = event.getTransferredBytes();
         if (contentLength >= 0) {
-            String type = (event.getRequestType() == TransferEvent.RequestType.PUT ? "Uploaded" : "Downloaded");
-            String name = resource.getResourceName();
             String len = contentLength >= 1024 ? toKB(contentLength) + " KB" : contentLength + " B";
 
-            ui.talk(type, ": ", name.substring(name.lastIndexOf('/') + 1), " (", len, ")");
+            if (event.getRequestType() == TransferEvent.RequestType.GET) {
+                ui.talk("Downloaded : " + name(resource) + " (" + len + ") from [" + resource.getRepositoryUrl() + "]");
+            } else {
+                ui.talk("Uploaded : " + name(resource) + " (" + len + ") to [" + resource.getRepositoryUrl() + "]");
+            }
         }
     }
 
@@ -124,6 +125,16 @@ public class TransferInterface implements TransferListener {
     @Override
     public void transferCorrupted(TransferEvent event) {
         ui.error(event.getException());
+    }
+
+    /**
+     * Compute readable resource name.
+     * 
+     * @param resource
+     * @return
+     */
+    private static String name(TransferResource resource) {
+        return resource.getResourceName().substring(resource.getResourceName().lastIndexOf('/') + 1);
     }
 
     /**
