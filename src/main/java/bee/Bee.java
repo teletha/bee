@@ -336,7 +336,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("bintray");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
