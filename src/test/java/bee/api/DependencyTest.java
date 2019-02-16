@@ -79,7 +79,7 @@ class DependencyTest {
         Repository repository = new Repository(project);
         Set<Library> dependencies = repository.collectDependency(project, Scope.Runtime);
         assert dependencies.size() == 2;
-        dependencies = repository.collectDependency(project, Scope.Test);
+        dependencies = repository.collectDependency(project, Scope.Test, Scope.Compile);
         assert dependencies.size() == 2;
     }
 
@@ -90,7 +90,7 @@ class DependencyTest {
         Set<Library> dep = repo.collectDependency(library, Scope.Runtime);
         assert dep.size() == 2;
 
-        dep = repo.collectDependency(library, Scope.Test);
+        dep = repo.collectDependency(library, Scope.Test, Scope.Compile);
         assert dep.size() == 2;
     }
 
@@ -98,7 +98,7 @@ class DependencyTest {
     void byLibraryWithClassifier() {
         Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
         Repository repo = new Repository(new BlinkProject());
-        Set<Library> dep = repo.collectDependency(library, Scope.Test);
+        Set<Library> dep = repo.collectDependency(library, Scope.Test, Scope.Compile);
         assert dep.size() == 84;
     }
 }

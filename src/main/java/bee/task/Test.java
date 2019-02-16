@@ -50,7 +50,7 @@ public class Test extends Task {
             Java.with()
                     .classPath(project.getClasses())
                     .classPath(project.getTestClasses())
-                    .classPath(project.getDependency(Scope.Test))
+                    .classPath(project.getDependency(Scope.Test, Scope.Compile))
                     .classPath(Bee.class)
                     .enableAssertion()
                     .encoding(project.getEncoding())

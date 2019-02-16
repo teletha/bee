@@ -86,7 +86,7 @@ public class Doc extends Task {
                             .map(lib -> lib.getLocalSourceJar().asJavaPath())
                             .take(path -> path.toString().contains("sinobu")))
                     .toList());
-            manager.setLocationFromPaths(CLASS_PATH, I.signal(project.getDependency(Scope.Test))
+            manager.setLocationFromPaths(CLASS_PATH, I.signal(project.getDependency(Scope.Test, Scope.Compile))
                     .map(library -> library.getLocalJar().asJavaPath())
                     .toList());
 

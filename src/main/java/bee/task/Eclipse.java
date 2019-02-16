@@ -11,6 +11,7 @@ package bee.task;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -118,10 +119,7 @@ public class Eclipse extends Task implements IDESupport {
                     .attr("kind", "src")
                     .attr("path", relative(dir))
                     .attr("output", relative(project.getTestClasses()))
-                    .child("attributes")
-                    .child("attribute")
-                    .attr("name", "test")
-                    .attr("value", true);
+                    .effect(this::assignVisibleForTest);
         });
 
         // sources
@@ -134,13 +132,33 @@ public class Eclipse extends Task implements IDESupport {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(dir))
-                    .attr("output", relative(project.getProjectClasses()));
+                    .attr("output", relative(project.getProjectClasses()))
+                    .effect(this::assignVisibleForTest);
         });
 
         // library
-        for (Library library : I.signal(project.getDependency(Scope.Test))
+        List<Library> libraries = I.signal(project.getDependency(Scope.Compile))
                 .concat(I.signal(project.getDependency(Scope.Annotation)))
-                .toList()) {
+                .toList();
+
+        // test library
+        Set<Library> tests = project.getDependency(Scope.Test);
+        tests.removeAll(libraries);
+
+        for (Library library : tests) {
+            File jar = library.getLocalJar();
+            File source = library.getLocalSourceJar();
+
+            if (jar.isPresent()) {
+                XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar).effect(this::assignVisibleForTest);
+
+                if (source.isPresent()) {
+                    child.attr("sourcepath", source);
+                }
+            }
+        }
+
+        for (Library library : libraries) {
             File jar = library.getLocalJar();
             File source = library.getLocalSourceJar();
 
@@ -156,7 +174,11 @@ public class Eclipse extends Task implements IDESupport {
         // Bee API
         if (!project.equals(Bee.Tool)) {
             for (Library lib : project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion())) {
-                doc.child("classpathentry").attr("kind", "lib").attr("path", lib.getLocalJar()).attr("sourcepath", lib.getLocalSourceJar());
+                doc.child("classpathentry")
+                        .attr("kind", "lib")
+                        .attr("path", lib.getLocalJar())
+                        .attr("sourcepath", lib.getLocalSourceJar())
+                        .effect(this::assignVisibleForTest);
             }
         }
 
@@ -166,6 +188,18 @@ public class Eclipse extends Task implements IDESupport {
 
         // write file
         makeFile(file, doc);
+    }
+
+    /**
+     * Helper to assign visible for test attribute.
+     * 
+     * @param xml
+     * @return
+     */
+    private XML assignVisibleForTest(XML xml) {
+        xml.child("attributes").child("attribute").attr("name", "test").attr("value", true);
+
+        return xml;
     }
 
     /**
