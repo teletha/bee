@@ -177,11 +177,11 @@ public class Repository {
      * </p>
      * 
      * @param libraries
-     * @param scope
+     * @param scopes
      * @return
      */
-    public Set<Library> collectDependency(Project project, Scope scope) {
-        return collectDependency(project, scope, project.libraries);
+    public Set<Library> collectDependency(Project project, Scope... scopes) {
+        return collectDependency(project, scopes, project.libraries);
     }
 
     /**
@@ -190,11 +190,11 @@ public class Repository {
      * </p>
      * 
      * @param libraries
-     * @param scope
+     * @param scopes
      * @return
      */
-    public Set<Library> collectDependency(Library library, Scope scope) {
-        return collectDependency(project, scope, Collections.singleton(library));
+    public Set<Library> collectDependency(Library library, Scope... scopes) {
+        return collectDependency(project, scopes, Collections.singleton(library));
     }
 
     /**
@@ -203,10 +203,10 @@ public class Repository {
      * </p>
      * 
      * @param libraries
-     * @param scope
+     * @param scopes
      * @return
      */
-    private Set<Library> collectDependency(Project project, Scope scope, Set<Library> libraries) {
+    private Set<Library> collectDependency(Project project, Scope[] scopes, Set<Library> libraries) {
         Set<Library> set = new TreeSet();
 
         // collect remote repository
@@ -221,8 +221,10 @@ public class Repository {
         for (Library library : libraries) {
             Dependency dependency = new Dependency(library.artifact, library.scope.toString());
 
-            if (scope.accept(dependency)) {
-                request.addDependency(dependency);
+            for (Scope scope : scopes) {
+                if (scope.accept(dependency)) {
+                    request.addDependency(dependency);
+                }
             }
         }
 

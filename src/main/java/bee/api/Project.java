@@ -313,11 +313,11 @@ public class Project {
      * @param scope
      * @return
      */
-    public Set<Library> getDependency(Scope scope) {
-        if (scope == null) {
+    public Set<Library> getDependency(Scope... scopes) {
+        if (scopes == null) {
             return Collections.emptySet();
         }
-        return I.make(Repository.class).collectDependency(this, scope);
+        return I.make(Repository.class).collectDependency(this, scopes);
     }
 
     /**

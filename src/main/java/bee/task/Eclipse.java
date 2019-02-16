@@ -114,7 +114,14 @@ public class Eclipse extends Task implements IDESupport {
 
         // tests
         project.getTestSourceSet().to(dir -> {
-            doc.child("classpathentry").attr("kind", "src").attr("path", relative(dir)).attr("output", relative(project.getTestClasses()));
+            doc.child("classpathentry")
+                    .attr("kind", "src")
+                    .attr("path", relative(dir))
+                    .attr("output", relative(project.getTestClasses()))
+                    .child("attributes")
+                    .child("attribute")
+                    .attr("name", "test")
+                    .attr("value", true);
         });
 
         // sources
