@@ -142,7 +142,7 @@ public class FindMain extends Task {
         
          */
         private Search() {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM7);
         }
 
         /**
