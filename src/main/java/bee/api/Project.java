@@ -354,6 +354,19 @@ public class Project {
 
     /**
      * <p>
+     * Declare dependency for latest version.
+     * </p>
+     * 
+     * @param projectName A project name.
+     * @param productName A product name.
+     * @return A dependency.
+     */
+    protected final Library require(String projectName, String productName) {
+        return require(projectName, productName, null, "LATEST");
+    }
+
+    /**
+     * <p>
      * Declare dependency.
      * </p>
      * 
