@@ -304,7 +304,21 @@ public class Repository {
      */
     public File resolveJavadoc(Library library) {
         File resolved = resolveSubArtifact(library, "javadoc");
-        return resolved != null && resolved.isPresent() ? resolved : getLocalRepository().file(library.getJavadocJar());
+
+        if (resolved != null && resolved.isPresent()) {
+            return resolved;
+        }
+
+        resolved = getLocalRepository().file(library.getJavadocJar());
+
+        if (resolved.isPresent()) {
+            return resolved;
+        }
+
+        if (!library.classfier.isEmpty()) {
+            return resolveSource(new Library(library.group, library.name, library.version));
+        }
+        return resolved;
     }
 
     /**
@@ -317,7 +331,21 @@ public class Repository {
      */
     public File resolveSource(Library library) {
         File resolved = resolveSubArtifact(library, "sources");
-        return resolved != null && resolved.isPresent() ? resolved : getLocalRepository().file(library.getSourceJar());
+
+        if (resolved != null && resolved.isPresent()) {
+            return resolved;
+        }
+
+        resolved = getLocalRepository().file(library.getSourceJar());
+
+        if (resolved.isPresent()) {
+            return resolved;
+        }
+
+        if (!library.classfier.isEmpty()) {
+            return resolveSource(new Library(library.group, library.name, library.version));
+        }
+        return resolved;
     }
 
     /**
