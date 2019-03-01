@@ -363,18 +363,31 @@ public class Bee {
     }
 
     /**
-     * @version 2012/11/03 1:47:40
+     * 
      */
     private static class CommandLineTask extends Task {
 
         /** The task list. */
-        private final String[] tasks;
+        private final List<String> tasks = new ArrayList();
 
         /**
          * @param tasks
          */
         private CommandLineTask(String[] tasks) {
-            this.tasks = tasks;
+            for (String task : tasks) {
+                if (task.startsWith("-D")) {
+                    task = task.substring(2);
+                    int index = task.indexOf("=");
+
+                    if (index != -1) {
+                        String key = task.substring(0, index);
+                        String value = task.substring(index + 1);
+                        System.setProperty(key, value);
+                    }
+                } else {
+                    this.tasks.add(task);
+                }
+            }
         }
 
         /**
@@ -382,7 +395,7 @@ public class Bee {
          */
         @Override
         public void execute() {
-            require(tasks);
+            require(tasks.toArray(new String[tasks.size()]));
         }
     }
 
