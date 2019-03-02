@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2019 Nameless Production Committee
  *
@@ -7,11 +8,8 @@
  *
  *          https://opensource.org/licenses/MIT
  */
-package bee;
+import bee.BeeInstaller;
 
-/**
- * @version 2012/05/18 10:56:43
- */
 public class FindMain extends bee.task.FindMain {
 
     {

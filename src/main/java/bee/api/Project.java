@@ -698,7 +698,7 @@ public class Project {
      * 
      * @return
      */
-    public final File locateJar() {
+    public File locateJar() {
         return getOutput().file(getProduct() + "-" + getVersion() + ".jar");
     }
 
@@ -709,7 +709,7 @@ public class Project {
      * 
      * @return
      */
-    public final File locateSourceJar() {
+    public File locateSourceJar() {
         return getOutput().file(getProduct() + "-" + getVersion() + "-sources.jar");
     }
 

@@ -1,3 +1,4 @@
+
 /*
  * Copyright (C) 2019 Nameless Production Committee
  *
@@ -7,8 +8,8 @@
  *
  *          https://opensource.org/licenses/MIT
  */
-package bee;
 
+import bee.BeeInstaller;
 import bee.api.Repository;
 import bee.task.Jar;
 import kiss.I;
