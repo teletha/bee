@@ -31,7 +31,6 @@ import bee.api.Task;
 import bee.util.Java;
 import bee.util.Java.JVM;
 import kiss.I;
-import psychopath.Directory;
 
 /**
  * @version 2018/03/31 22:00:15
@@ -40,25 +39,17 @@ public class Test extends Task {
 
     @Command("Test product codes.")
     public void test() {
-        Compile compile = require(Compile.class);
-        compile.source();
-        compile.test();
+        require(Compile::source, Compile::test);
 
-        try {
-            Directory report = project.getOutput().directory("test-reports");
-            report.create();
-            Java.with()
-                    .classPath(project.getClasses())
-                    .classPath(project.getTestClasses())
-                    .classPath(project.getDependency(Scope.Test, Scope.Compile))
-                    .classPath(Bee.class)
-                    .enableAssertion()
-                    .encoding(project.getEncoding())
-                    .workingDirectory(project.getRoot())
-                    .run(Junit.class, project.getTestClasses(), report);
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
+        Java.with()
+                .classPath(project.getClasses())
+                .classPath(project.getTestClasses())
+                .classPath(project.getDependency(Scope.Test, Scope.Compile))
+                .classPath(Bee.class)
+                .enableAssertion()
+                .encoding(project.getEncoding())
+                .workingDirectory(project.getRoot())
+                .run(Junit.class, project.getTestClasses(), project.getOutput().directory("test-reports").create());
     }
 
     /**

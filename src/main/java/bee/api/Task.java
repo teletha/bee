@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -25,12 +26,14 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ForkJoinPool;
 
 import bee.Fail;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Task.Lifestyle;
 import bee.util.Inputs;
+import bee.util.lambda.ReflectableConsumer;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
@@ -103,6 +106,20 @@ public abstract class Task implements Extensible {
             throw new Error("You must specify task class.");
         }
         return (T) I.make(info(computeTaskName(taskClass)).task);
+    }
+
+    protected final <T extends Task> void require(ReflectableConsumer<T>... tasks) {
+        List<Callable<?>> calls = new ArrayList();
+
+        for (ReflectableConsumer<T> task : tasks) {
+            calls.add(() -> {
+                task.accept(require((Class<T>) task.clazz()));
+                return null;
+            });
+        }
+
+        ForkJoinPool.commonPool().invokeAll(calls);
+        ui.talk("COMPLETE");
     }
 
     /**
