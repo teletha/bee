@@ -17,7 +17,6 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 
 import bee.Fail;
 import bee.Platform;
@@ -109,17 +108,31 @@ public abstract class Task implements Extensible {
     }
 
     protected final <T extends Task> void require(ReflectableConsumer<T>... tasks) {
-        List<Callable<?>> calls = new ArrayList();
+        I.signal(tasks).join(t -> I.schedule(1, TimeUnit.MILLISECONDS, true, t));
+        I.signal(tasks).flatMap2(task -> I.signal(task).join(t -> I.schedule(1, TimeUnit.MILLISECONDS, true, t)).map(v -> {
+            T require = require((Class<T>) v.clazz());
+            task.accept(require);
+            return "opk";
+        })).buffer().to(v -> {
 
-        for (ReflectableConsumer<T> task : tasks) {
-            calls.add(() -> {
-                task.accept(require((Class<T>) task.clazz()));
-                return null;
-            });
-        }
+            System.out.println(v);
+        }, e -> {
 
-        ForkJoinPool.commonPool().invokeAll(calls);
-        ui.talk("COMPLETE");
+        }, () -> {
+            System.out.println("END");
+        });
+
+        // List<Callable<?>> calls = new ArrayList();
+        //
+        // for (ReflectableConsumer<T> task : tasks) {
+        // calls.add(() -> {
+        // task.accept(require((Class<T>) task.clazz()));
+        // return null;
+        // });
+        // }
+
+        // ForkJoinPool.commonPool().invokeAll(calls);
+        System.out.println("COMPLETE");
     }
 
     /**
