@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import bee.Fail;
 import bee.Platform;
@@ -107,32 +106,16 @@ public abstract class Task implements Extensible {
         return (T) I.make(info(computeTaskName(taskClass)).task);
     }
 
+    /**
+     * Use other tasks.
+     * 
+     * @param tasks
+     */
     protected final <T extends Task> void require(ReflectableConsumer<T>... tasks) {
-        I.signal(tasks).join(t -> I.schedule(1, TimeUnit.MILLISECONDS, true, t));
-        I.signal(tasks).flatMap2(task -> I.signal(task).join(t -> I.schedule(1, TimeUnit.MILLISECONDS, true, t)).map(v -> {
-            T require = require((Class<T>) v.clazz());
-            task.accept(require);
-            return "opk";
-        })).buffer().to(v -> {
-
-            System.out.println(v);
-        }, e -> {
-
-        }, () -> {
-            System.out.println("END");
-        });
-
-        // List<Callable<?>> calls = new ArrayList();
-        //
-        // for (ReflectableConsumer<T> task : tasks) {
-        // calls.add(() -> {
-        // task.accept(require((Class<T>) task.clazz()));
-        // return null;
-        // });
-        // }
-
-        // ForkJoinPool.commonPool().invokeAll(calls);
-        System.out.println("COMPLETE");
+        I.signal(tasks).joinAll(task -> {
+            task.accept(require((Class<T>) task.clazz()));
+            return null;
+        }).to(I.NoOP);
     }
 
     /**
