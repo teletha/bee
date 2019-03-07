@@ -27,12 +27,6 @@ import psychopath.Locator;
 
 public class Exe extends Task {
 
-    /** The temporary directory. */
-    private final Directory temporary = Locator.temporaryDirectory();
-
-    /** The output for the generated zip file. */
-    private final File zipOutput = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip");
-
     /** The location for icon of exe file. */
     protected Path icon;
 
@@ -53,7 +47,8 @@ public class Exe extends Task {
             }
 
             ui.talk("Packing application and libraries.");
-            return folder.packTo(zipOutput);
+
+            return folder.packTo(project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip"));
         } catch (Exception e) {
             throw I.quiet(e);
         }
@@ -68,6 +63,7 @@ public class Exe extends Task {
      * @param suffix
      */
     private void build(Folder folder, String suffix) {
+        Directory temporary = Locator.temporaryDirectory();
         File builder = temporary.file("exewrap" + suffix + ".exe");
         File exe = temporary.file(project.getProduct() + suffix + ".exe");
 
