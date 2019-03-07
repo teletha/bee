@@ -53,7 +53,7 @@ class CommandLineUserInterface extends UserInterface {
      * {@inheritDoc}
      */
     @Override
-    protected void write(String message) {
+    public void write(String message) {
         if (first) {
             showCommandName();
             first = false;

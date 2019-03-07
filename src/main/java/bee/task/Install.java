@@ -16,16 +16,12 @@ import bee.api.Task;
 import kiss.I;
 import psychopath.File;
 
-/**
- * @version 2017/01/16 14:34:48
- */
 public class Install extends Task {
 
     @Command(defaults = true, value = "Install project into the local repository.")
     public void project() {
-        require(Test.class).test();
-        require(Jar.class).source();
-        require(Jar.class).document();
+        require(Test::test);
+        require(Jar::source, Jar::document);
 
         Repository repository = I.make(Repository.class);
         repository.install(project);
@@ -33,7 +29,7 @@ public class Install extends Task {
 
     @Command(value = "Install project into the local repository forcibly.")
     public void force() {
-        require(Jar.class).source();
+        require(Jar::source);
 
         Repository repository = I.make(Repository.class);
         repository.install(project);

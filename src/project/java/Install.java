@@ -23,10 +23,7 @@ public class Install extends bee.task.Install {
      */
     @Override
     public void project() {
-        Jar jar = require(Jar.class);
-        jar.source();
-        jar.document();
-        jar.merge();
+        require(Jar::source, Jar::document, Jar::merge);
 
         I.make(Repository.class).install(project);
 

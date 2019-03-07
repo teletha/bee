@@ -21,9 +21,6 @@ import net.bytebuddy.jar.asm.ClassVisitor;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 
-/**
- * @version 2017/01/26 11:22:59
- */
 public class FindMain extends Task {
 
     /** In subclass, you can specify the fully qualified class name for project main class. */
@@ -114,7 +111,7 @@ public class FindMain extends Task {
      */
     private void analyze() {
         if (!analyzed) {
-            require(Compile.class).source();
+            require(Compile::source);
 
             project.getClasses().walkFile("**.class").to(file -> {
                 try {

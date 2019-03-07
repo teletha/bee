@@ -288,7 +288,7 @@ public class Bee {
                  */
                 @Override
                 public void execute() {
-                    require(Prototype.class).java();
+                    require(Prototype::java);
                 }
             });
         }

@@ -40,7 +40,7 @@ public class Bintray extends Task {
 
     @Command("Deploy products to Bintray repository.")
     public void deploy() {
-        require(Install.class).project();
+        require(Install::project);
 
         Account account = Config.user(Account.class);
 

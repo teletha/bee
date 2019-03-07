@@ -23,9 +23,6 @@ import psychopath.Folder;
 import psychopath.Locator;
 import psychopath.Option;
 
-/**
- * @version 2017/01/16 14:40:35
- */
 public class Jar extends Task {
 
     /**
@@ -35,7 +32,7 @@ public class Jar extends Task {
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
     public void source() {
-        require(Compile.class).source();
+        require(Compile::source);
 
         pack("main classes", I.signal(project.getClasses()), project.locateJar());
         pack("main sources", project.getSourceSet(), project.locateSourceJar());
@@ -48,7 +45,7 @@ public class Jar extends Task {
      */
     @Command("Package test classes and other resources.")
     public void test() {
-        require(Compile.class).test();
+        require(Compile::test);
 
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
@@ -64,7 +61,7 @@ public class Jar extends Task {
      */
     @Command("Package project classes and other resources.")
     public void project() {
-        require(Compile.class).project();
+        require(Compile::project);
 
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
@@ -80,8 +77,7 @@ public class Jar extends Task {
      */
     @Command("Package main documentations and other resources.")
     public void document() {
-        Doc doc = require(Doc.class);
-        doc.javadoc();
+        Doc doc = require(Doc::javadoc);
 
         pack("javadoc", I.signal(doc.output), project.locateJavadocJar());
     }
@@ -112,7 +108,7 @@ public class Jar extends Task {
         File manifest = Locator.temporaryFile("MANIFEST.MF").text(
                 /* Manifest contents */
                 Name.MANIFEST_VERSION + ": 1.0", // version must be first
-                Name.MAIN_CLASS + ": " + require(FindMain.class).main() // detect main class
+                Name.MAIN_CLASS + ": " + require(FindMain::main) // detect main class
         );
 
         File output = project.locateJar();

@@ -32,6 +32,7 @@ import bee.UserInterface;
 import bee.api.Task.Lifestyle;
 import bee.util.Inputs;
 import bee.util.lambda.ReflectableConsumer;
+import bee.util.lambda.ReflectableFunction;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
@@ -92,18 +93,30 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
-     * Use other task from task specific API.
-     * </p>
+     * Use other tasks.
      * 
-     * @param taskClass A task class.
-     * @return A target task.
+     * @param task
      */
-    protected final <T extends Task> T require(Class<T> taskClass) {
-        if (taskClass == null) {
-            throw new Error("You must specify task class.");
-        }
-        return (T) I.make(info(computeTaskName(taskClass)).task);
+    protected final <T extends Task, R> R require(ReflectableFunction<T, R> task) {
+        return I.signal(task).joinAll(t -> {
+            T instance = (T) I.make(info(computeTaskName(t.clazz())).task);
+
+            return task.apply(instance);
+        }).to().v;
+    }
+
+    /**
+     * Use other tasks.
+     * 
+     * @param task
+     */
+    protected final <T extends Task> T require(ReflectableConsumer<T> task) {
+        return I.signal(task).joinAll(t -> {
+            T instance = (T) I.make(info(computeTaskName(t.clazz())).task);
+
+            task.accept(instance);
+            return instance;
+        }).to().v;
     }
 
     /**
@@ -113,9 +126,47 @@ public abstract class Task implements Extensible {
      */
     protected final <T extends Task> void require(ReflectableConsumer<T>... tasks) {
         I.signal(tasks).joinAll(task -> {
-            task.accept(require((Class<T>) task.clazz()));
+            T instance = (T) I.make(info(computeTaskName(task.clazz())).task);
+
+            task.accept(instance);
             return null;
         }).to(I.NoOP);
+    }
+
+    /**
+     * 
+     */
+    private class BufferUI extends UserInterface {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(String message) {
+
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Appendable getInterface() {
+            return null;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void startCommand(String name, Command command) {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void endCommand(String name, Command command) {
+        }
     }
 
     /**

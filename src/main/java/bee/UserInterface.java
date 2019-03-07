@@ -514,7 +514,7 @@ public abstract class UserInterface {
      * 
      * @param message
      */
-    protected abstract void write(String message);
+    public abstract void write(String message);
 
     /**
      * <p>

@@ -38,7 +38,7 @@ public class Exe extends Task {
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
-        require(Jar.class).source();
+        require(Jar::source);
 
         try {
             // pack with dependency libraries
@@ -73,7 +73,7 @@ public class Exe extends Task {
 
         try {
             // search main classes
-            String main = require(FindMain.class).main();
+            String main = require(FindMain::main);
 
             // unzip exe builder
             I.copy(Exe.class.getResourceAsStream("exewrap" + suffix + ".exe"), builder.newOutputStream(), true);

@@ -481,7 +481,7 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            protected void write(String message) {
+            public void write(String message) {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
                 throw new Error();

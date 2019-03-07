@@ -34,7 +34,7 @@ public class Null {
          * {@inheritDoc}
          */
         @Override
-        protected void write(String message) {
+        public void write(String message) {
         }
 
         /**
