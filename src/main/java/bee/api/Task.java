@@ -19,10 +19,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
@@ -61,7 +63,7 @@ public abstract class Task implements Extensible {
     protected final Project project = I.make(Project.class);
 
     /** The user interface. */
-    protected final UserInterface ui = I.make(UserInterface.class);
+    protected UserInterface ui = I.make(UserInterface.class);
 
     /**
      * <p>
@@ -124,26 +126,70 @@ public abstract class Task implements Extensible {
      * 
      * @param tasks
      */
-    protected final <T extends Task> void require(ReflectableConsumer<T>... tasks) {
+    protected final <T extends Task> void require(ReflectableConsumer<? super T>... tasks) {
+        LinkedList<ParallelUI> list = new LinkedList();
+
         I.signal(tasks).joinAll(task -> {
+            ParallelUI ui = new ParallelUI();
+            list.add(ui);
+
             T instance = (T) I.make(info(computeTaskName(task.clazz())).task);
+            instance.ui = ui;
 
             task.accept(instance);
+
             return null;
         }).to(I.NoOP);
+
+        for (ParallelUI ui : list) {
+            ui.clear();
+        }
+    }
+
+    /**
+     * Use other tasks.
+     * 
+     * @param tasks
+     */
+    protected final <T1 extends Task, T2 extends Task> void require2(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2) {
+        LinkedList<ParallelUI> list = new LinkedList();
+
+        I.signal(task1, task2).joinAll(task -> {
+            ParallelUI ui = new ParallelUI();
+            list.add(ui);
+
+            Task instance = I.make(info(computeTaskName(task.clazz())).task);
+            instance.ui = ui;
+
+            task.accept(instance);
+
+            return null;
+        }).to(I.NoOP);
+
+        for (ParallelUI ui : list) {
+            ui.clear();
+        }
     }
 
     /**
      * 
      */
-    private class BufferUI extends UserInterface {
+    private class ParallelUI extends UserInterface {
+
+        private Queue<Runnable> messages = new LinkedList();
+
+        private ParallelUI next;
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void write(String message) {
-
+        public synchronized void write(String message) {
+            if (message == null) {
+                ui.write(message);
+            } else {
+                messages.add(() -> ui.write(message));
+            }
         }
 
         /**
@@ -151,21 +197,38 @@ public abstract class Task implements Extensible {
          */
         @Override
         public Appendable getInterface() {
-            return null;
+            return ui.getInterface();
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void startCommand(String name, Command command) {
+        public synchronized void startCommand(String name, Command command) {
+            if (messages == null) {
+                ui.startCommand(name, command);
+            } else {
+                messages.add(() -> ui.startCommand(name, command));
+            }
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void endCommand(String name, Command command) {
+        public synchronized void endCommand(String name, Command command) {
+            if (messages == null) {
+                ui.endCommand(name, command);
+            } else {
+                messages.add(() -> ui.endCommand(name, command));
+            }
+        }
+
+        private synchronized void clear() {
+            while (messages.isEmpty() == false) {
+                messages.poll().run();
+            }
+            messages = null;
         }
     }
 
