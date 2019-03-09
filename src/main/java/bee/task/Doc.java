@@ -34,30 +34,15 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
 
-/**
- * @version 2018/04/04 11:22:37
- */
 public class Doc extends Task {
 
-    /** The output root directory for javadoc. */
-    protected Directory output;
-
     /**
-     * <p>
      * Generate javadoc with the specified doclet.
-     * </p>
      */
     @Command("Generate product javadoc.")
-    public void javadoc() {
+    public Directory javadoc() {
         // specify output directory
-        if (output == null) {
-            output = project.getOutput().directory("api");
-        }
-        output.create();
-
-        if (!output.isDirectory()) {
-            throw new IllegalArgumentException("Javadoc output path is not directory. " + output.absolutize());
-        }
+        Directory output = project.getOutput().directory("api").create();
 
         List<String> options = new CopyOnWriteArrayList();
 
@@ -104,6 +89,7 @@ public class Doc extends Task {
         } catch (IOException e) {
             throw I.quiet(e);
         }
+        return output;
     }
 
     /**

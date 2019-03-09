@@ -77,9 +77,9 @@ public class Jar extends Task {
      */
     @Command("Package main documentations and other resources.")
     public void document() {
-        Doc doc = require(Doc::javadoc);
+        Directory output = require(Doc::javadoc);
 
-        pack("javadoc", I.signal(doc.output), project.locateJavadocJar());
+        pack("javadoc", I.signal(output), project.locateJavadocJar());
     }
 
     /**
