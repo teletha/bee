@@ -14,8 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import bee.api.Command;
+import bee.api.Project;
 import bee.api.Task;
 import kiss.I;
+import kiss.Manageable;
+import kiss.Singleton;
 import net.bytebuddy.jar.asm.ClassReader;
 import net.bytebuddy.jar.asm.ClassVisitor;
 import net.bytebuddy.jar.asm.MethodVisitor;
@@ -32,18 +35,6 @@ public class FindMain extends Task {
     /** In subclass, you can specify the fully qualified class name for project agentmain class. */
     protected String agentmain;
 
-    /** The main classes. */
-    private List<String> mains = new ArrayList();
-
-    /** The premain classes. */
-    private List<String> premains = new ArrayList();
-
-    /** The agentmain classes. */
-    private List<String> agentmains = new ArrayList();
-
-    /** The state. */
-    private boolean analyzed = false;
-
     /**
      * <p>
      * Find main class.
@@ -54,9 +45,7 @@ public class FindMain extends Task {
     @Command(value = "Find main class.", defaults = true)
     public String main() {
         if (main == null) {
-            analyze();
-
-            main = ui.ask("Multiple main classes were detected. Which one do you use?", mains);
+            main = ui.ask("Multiple main classes were detected. Which one do you use?", I.make(Search.class).mains);
         }
 
         ui.talk("Using ", main, " as main class.");
@@ -74,9 +63,7 @@ public class FindMain extends Task {
     @Command("Find premain class.")
     public String premain() {
         if (premain == null) {
-            analyze();
-
-            premain = ui.ask("Multiple premain classes were detected. Which one do you use?", premains);
+            premain = ui.ask("Multiple premain classes were detected. Which one do you use?", I.make(Search.class).premains);
         }
 
         ui.talk("Using ", premain, " as premain class.");
@@ -94,9 +81,7 @@ public class FindMain extends Task {
     @Command("Find agentmain class.")
     public String agentmain() {
         if (agentmain == null) {
-            analyze();
-
-            agentmain = ui.ask("Multiple agentmain classes were detected. Which one do you use?", agentmains);
+            agentmain = ui.ask("Multiple agentmain classes were detected. Which one do you use?", I.make(Search.class).agentmains);
         }
 
         ui.talk("Using ", agentmain, " as agentmain class.");
@@ -105,32 +90,19 @@ public class FindMain extends Task {
     }
 
     /**
-     * <p>
-     * Analyze project classes.
-     * </p>
+     * 
      */
-    private void analyze() {
-        if (!analyzed) {
-            require(Compile::source);
+    @Manageable(lifestyle = Singleton.class)
+    private static class Search extends ClassVisitor {
 
-            project.getClasses().walkFile("**.class").to(file -> {
-                try {
-                    ClassReader reader = new ClassReader(file.newInputStream());
-                    reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-                } catch (IOException e) {
-                    throw I.quiet(e);
-                }
-            });
+        /** The main classes. */
+        private List<String> mains = new ArrayList();
 
-            // update
-            analyzed = true;
-        }
-    }
+        /** The premain classes. */
+        private List<String> premains = new ArrayList();
 
-    /**
-     * @version 2012/04/11 14:20:51
-     */
-    private class Search extends ClassVisitor {
+        /** The agentmain classes. */
+        private List<String> agentmains = new ArrayList();
 
         /** The current processing internal class name. */
         private String internalClassName;
@@ -140,6 +112,15 @@ public class FindMain extends Task {
          */
         private Search() {
             super(Opcodes.ASM7);
+
+            I.make(Project.class).getClasses().walkFile("**.class").to(file -> {
+                try {
+                    ClassReader reader = new ClassReader(file.newInputStream());
+                    reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                } catch (IOException e) {
+                    throw I.quiet(e);
+                }
+            });
         }
 
         /**
