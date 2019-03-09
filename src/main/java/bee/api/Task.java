@@ -545,33 +545,16 @@ public abstract class Task implements Extensible {
 
         private static final Interceptor interceptor = I.make(Interceptor.class);
 
-        private final Object enhanced;
-
         /**
          * @param modelClass
          */
         public Lifestyle(Class modelClass) {
-            super(modelClass);
-
-            try {
-                enhanced = new ByteBuddy().subclass(modelClass)
-                        .method(ElementMatchers.any())
-                        .intercept(MethodDelegation.to(interceptor))
-                        .make()
-                        .load(getClass().getClassLoader())
-                        .getLoaded()
-                        .getDeclaredConstructors()[0].newInstance();
-            } catch (Exception e) {
-                throw I.quiet(e);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Object get() {
-            return enhanced;
+            super(new ByteBuddy().subclass(modelClass)
+                    .method(ElementMatchers.any())
+                    .intercept(MethodDelegation.to(interceptor))
+                    .make()
+                    .load(Thread.currentThread().getContextClassLoader())
+                    .getLoaded());
         }
     }
 

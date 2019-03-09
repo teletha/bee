@@ -18,8 +18,6 @@ public class Project extends bee.api.Project {
 
     String ResolverVersion = "1.3.1";
 
-    String ByteBuddyVersion = "[1.8.0,)";
-
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), Bee.Tool.getVersion());
         producer("Nameless Production Committee");
@@ -32,14 +30,14 @@ public class Project extends bee.api.Project {
         require("org.apache.maven.resolver", "maven-resolver-connector-basic", ResolverVersion);
         require("org.apache.maven.resolver", "maven-resolver-transport-http", ResolverVersion);
 
-        require("net.bytebuddy", "byte-buddy", ByteBuddyVersion);
-        require("net.bytebuddy", "byte-buddy-agent", ByteBuddyVersion);
+        require("net.bytebuddy", "byte-buddy");
+        require("net.bytebuddy", "byte-buddy-agent");
         require("org.junit.platform", "junit-platform-launcher", "[1.4.0,)");
-        require("org.slf4j", "slf4j-nop", "1.8.0-beta2");
-        require("org.slf4j", "jcl-over-slf4j", "1.8.0-beta2");
-        require("com.github.teletha", "sinobu", "[1.2,)");
-        require("com.github.teletha", "psychopath", "[0.9,)");
-        require("com.github.teletha", "antibug", "[0.6,)").atTest();
+        require("org.slf4j", "slf4j-nop");
+        require("org.slf4j", "jcl-over-slf4j");
+        require("com.github.teletha", "sinobu");
+        require("com.github.teletha", "psychopath");
+        require("com.github.teletha", "antibug").atTest();
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
