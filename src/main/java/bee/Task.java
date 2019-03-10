@@ -95,9 +95,9 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * Use other tasks.
+     * Execute required tasks.
      * 
-     * @param task
+     * @param task A task to execute.
      */
     protected final <T extends Task, R> R require(ReflectableFunction<T, R> task) {
         return I.signal(task).joinAll(t -> {
@@ -115,9 +115,9 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * Use other tasks.
+     * Execute required tasks.
      * 
-     * @param task
+     * @param task A task to execute.
      */
     protected final <T extends Task> T require(ReflectableConsumer<T> task) {
         return (T) requireParallel(new ReflectableConsumer[] {task});
@@ -728,7 +728,6 @@ public abstract class Task implements Extensible {
             Object result = results.get(name);
 
             if (!results.containsKey(name)) {
-                results.put(name, null);
                 task.ui.startCommand(name, command);
                 result = zuper.call();
                 task.ui.endCommand(name, command);
