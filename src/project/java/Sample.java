@@ -10,33 +10,51 @@
  */
 import bee.api.Command;
 import bee.api.Task;
-import bee.task.Compile;
+import kiss.I;
 
 public class Sample extends Task {
 
     @Command("main start")
     public void main() {
-        require(Compile::source, Compile::test);
         require2(A::main, B::main);
+
+        ui.talk("FINISH MAIN");
     }
 
     /**
      * 
      */
-    public static class A extends Task {
-        @Command("A start")
-        public void main() {
+    public static class HeavyTask extends Task {
 
+        protected void wait(int count) {
+            for (int i = 0; i < count; i++) {
+                try {
+                    Thread.sleep(500);
+                    ui.talk(i + " at " + getClass().getSimpleName());
+                } catch (InterruptedException e) {
+                    throw I.quiet(e);
+                }
+            }
         }
     }
 
     /**
      * 
      */
-    public static class B extends Task {
+    public static class A extends HeavyTask {
+        @Command("A start")
+        public void main() {
+            wait(5);
+        }
+    }
+
+    /**
+     * 
+     */
+    public static class B extends HeavyTask {
         @Command("B start")
         public void main() {
-
+            wait(10);
         }
     }
 }

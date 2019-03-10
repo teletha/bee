@@ -152,9 +152,18 @@ public abstract class Task implements Extensible {
      * @param tasks
      */
     protected final <T1 extends Task, T2 extends Task> void require2(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2) {
+        require3(new ReflectableConsumer[] {task1, task2});
+    }
+
+    /**
+     * Use other tasks.
+     * 
+     * @param tasks
+     */
+    private void require3(ReflectableConsumer<Task>[] tasks) {
         LinkedList<ParallelUI> list = new LinkedList();
 
-        I.signal(task1, task2).joinAll(task -> {
+        I.signal(tasks).joinAll(task -> {
             ParallelUI ui = new ParallelUI();
             list.add(ui);
 
@@ -164,7 +173,11 @@ public abstract class Task implements Extensible {
             task.accept(instance);
 
             return null;
-        }).to(I.NoOP);
+        }).to(I.NoOP, e -> {
+            e.printStackTrace();
+        }, () -> {
+
+        });
 
         for (ParallelUI ui : list) {
             ui.clear();
