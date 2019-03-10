@@ -250,7 +250,6 @@ public class Repository {
 
             for (ArtifactResult dependency : result.getArtifactResults()) {
                 Artifact artifact = dependency.getArtifact();
-
                 if (validateDependency(artifact)) {
                     set.add(new Library(artifact, Variable.of(dependency.getRepository()).map(ArtifactRepository::getId)));
                 }

@@ -23,7 +23,7 @@ public enum Scope {
     Compile(JavaScopes.COMPILE, JavaScopes.PROVIDED, JavaScopes.SYSTEM),
 
     /** Depend at test phase only. */
-    Test(JavaScopes.TEST),
+    Test(JavaScopes.TEST, JavaScopes.COMPILE),
 
     /** Depend at runtime phase only. */
     Runtime(JavaScopes.RUNTIME, JavaScopes.COMPILE),
