@@ -101,9 +101,16 @@ public abstract class Task implements Extensible {
      */
     protected final <T extends Task, R> R require(ReflectableFunction<T, R> task) {
         return I.signal(task).joinAll(t -> {
-            T instance = (T) I.make(info(computeTaskName(t.clazz())).task);
+            ParallelInterface p = new ParallelInterface(null);
+            p.start();
 
-            return task.apply(instance);
+            T instance = (T) I.make(info(computeTaskName(t.clazz())).task);
+            instance.ui = p;
+
+            R result = task.apply(instance);
+            p.finish();
+
+            return result;
         }).to().v;
     }
 
@@ -113,12 +120,7 @@ public abstract class Task implements Extensible {
      * @param task
      */
     protected final <T extends Task> T require(ReflectableConsumer<T> task) {
-        return I.signal(task).joinAll(t -> {
-            T instance = (T) I.make(info(computeTaskName(t.clazz())).task);
-
-            task.accept(instance);
-            return instance;
-        }).to().v;
+        return (T) requireParallel(new ReflectableConsumer[] {task});
     }
 
     /**
@@ -172,7 +174,7 @@ public abstract class Task implements Extensible {
      * 
      * @param tasks
      */
-    private void requireParallel(ReflectableConsumer<Task>[] tasks) {
+    private Task requireParallel(ReflectableConsumer<Task>[] tasks) {
         ConcurrentLinkedDeque<ParallelInterface> parallels = new ConcurrentLinkedDeque();
         ParallelInterface parallel = null;
 
@@ -181,7 +183,7 @@ public abstract class Task implements Extensible {
         }
         parallels.peekFirst().start();
 
-        I.signal(tasks).joinAll(task -> {
+        return I.signal(tasks).joinAll(task -> {
             ParallelInterface p = parallels.pollFirst();
 
             Task instance = I.make(info(computeTaskName(task.clazz())).task);
@@ -189,8 +191,8 @@ public abstract class Task implements Extensible {
             task.accept(instance);
             p.finish();
 
-            return null;
-        }).to(I.NoOP);
+            return instance;
+        }).to().v;
     }
 
     /**
@@ -229,7 +231,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        protected synchronized void write(String message) {
+        protected void write(String message) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.write(message));
@@ -245,7 +247,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        protected synchronized void startCommand(String name, Command command) {
+        protected void startCommand(String name, Command command) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.startCommand(name, command));
@@ -261,7 +263,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        protected synchronized void endCommand(String name, Command command) {
+        protected void endCommand(String name, Command command) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.endCommand(name, command));
@@ -711,7 +713,7 @@ public abstract class Task implements Extensible {
     protected static class Interceptor {
 
         /** The executed commands results. */
-        private final Map<String, Object> results = new HashMap();
+        private static final Map<String, Object> results = new HashMap();
 
         @RuntimeType
         public Object intercept(@This Task task, @SuperCall Callable<?> zuper, @Origin Method method) throws Exception {
@@ -726,6 +728,7 @@ public abstract class Task implements Extensible {
             Object result = results.get(name);
 
             if (!results.containsKey(name)) {
+                results.put(name, null);
                 task.ui.startCommand(name, command);
                 result = zuper.call();
                 task.ui.endCommand(name, command);
