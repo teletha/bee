@@ -12,8 +12,8 @@ package bee.task;
 import java.io.IOException;
 import java.util.List;
 
+import bee.Task;
 import bee.api.Command;
-import bee.api.Task;
 import bee.coder.FileType;
 import bee.coder.StandardHeaderStyle;
 import kiss.Signal;

@@ -13,11 +13,11 @@ import java.nio.file.Files;
 import java.util.Set;
 
 import bee.Bee;
+import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.api.Task;
 import kiss.I;
 import kiss.XML;
 import psychopath.Directory;

@@ -25,9 +25,9 @@ import org.junit.platform.launcher.core.LauncherFactory;
 
 import bee.Bee;
 import bee.Fail;
+import bee.Task;
 import bee.api.Command;
 import bee.api.Scope;
-import bee.api.Task;
 import bee.util.Java;
 import bee.util.Java.JVM;
 import kiss.I;

@@ -19,11 +19,11 @@ import java.util.Objects;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.aether.transfer.TransferResource;
 
+import bee.Task;
 import bee.api.Command;
 import bee.api.Github;
 import bee.api.Library;
 import bee.api.Project;
-import bee.api.Task;
 import bee.util.Config;
 import bee.util.Config.Description;
 import bee.util.RESTClient;

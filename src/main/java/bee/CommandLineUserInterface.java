@@ -14,9 +14,6 @@ import java.util.Deque;
 
 import bee.api.Command;
 
-/**
- * @version 2018/09/30 12:49:55
- */
 class CommandLineUserInterface extends UserInterface {
 
     /** The task state. */
@@ -32,7 +29,7 @@ class CommandLineUserInterface extends UserInterface {
      * {@inheritDoc}
      */
     @Override
-    public void startCommand(String name, Command command) {
+    protected void startCommand(String name, Command command) {
         first = true;
         commands.add(name);
     }
@@ -41,7 +38,7 @@ class CommandLineUserInterface extends UserInterface {
      * {@inheritDoc}
      */
     @Override
-    public void endCommand(String name, Command command) {
+    protected void endCommand(String name, Command command) {
         if (first) {
             showCommandName();
         }
@@ -53,7 +50,7 @@ class CommandLineUserInterface extends UserInterface {
      * {@inheritDoc}
      */
     @Override
-    public void write(String message) {
+    protected void write(String message) {
         if (first) {
             showCommandName();
             first = false;

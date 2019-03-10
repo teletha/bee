@@ -13,9 +13,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import bee.Task;
 import bee.api.Command;
 import bee.api.Project;
-import bee.api.Task;
 import kiss.I;
 import kiss.Manageable;
 import kiss.Singleton;

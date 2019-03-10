@@ -7,7 +7,7 @@
  *
  *          https://opensource.org/licenses/MIT
  */
-package bee.api;
+package bee;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -29,10 +29,9 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import bee.Fail;
-import bee.Platform;
-import bee.UserInterface;
-import bee.api.Task.Lifestyle;
+import bee.Task.Lifestyle;
+import bee.api.Command;
+import bee.api.Project;
 import bee.util.Inputs;
 import bee.util.lambda.ReflectableConsumer;
 import bee.util.lambda.ReflectableFunction;
@@ -230,7 +229,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        public synchronized void write(String message) {
+        protected synchronized void write(String message) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.write(message));
@@ -246,7 +245,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        public synchronized void startCommand(String name, Command command) {
+        protected synchronized void startCommand(String name, Command command) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.startCommand(name, command));
@@ -262,7 +261,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        public synchronized void endCommand(String name, Command command) {
+        protected synchronized void endCommand(String name, Command command) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.endCommand(name, command));

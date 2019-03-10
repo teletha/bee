@@ -17,14 +17,11 @@ import kiss.I;
 public class Install extends bee.task.Install {
 
     /**
-     * <p>
      * Install the current Bee into your environment.
-     * </p>
      */
     @Override
     public void project() {
-        require(Jar::source, Jar::document);
-        require(Jar::merge);
+        require(Jar::source, Jar::document, Jar::merge);
 
         I.make(Repository.class).install(project);
 

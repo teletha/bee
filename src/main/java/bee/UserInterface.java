@@ -29,11 +29,7 @@ import kiss.Manageable;
 import kiss.Singleton;
 
 /**
- * <p>
  * Interactive user interface.
- * </p>
- * 
- * @version 2018/09/30 12:50:21
  */
 @Manageable(lifestyle = Singleton.class)
 public abstract class UserInterface {
@@ -509,15 +505,6 @@ public abstract class UserInterface {
 
     /**
      * <p>
-     * Write message to user.
-     * </p>
-     * 
-     * @param message
-     */
-    public abstract void write(String message);
-
-    /**
-     * <p>
      * Get underlaying message listener.
      * </p>
      * 
@@ -527,13 +514,22 @@ public abstract class UserInterface {
 
     /**
      * <p>
+     * Write message to user.
+     * </p>
+     * 
+     * @param message
+     */
+    protected abstract void write(String message);
+
+    /**
+     * <p>
      * Display message about command starts.
      * </p>
      * 
      * @param name A command name.
      * @param command A coommand info.
      */
-    public abstract void startCommand(String name, Command command);
+    protected abstract void startCommand(String name, Command command);
 
     /**
      * <p>
@@ -543,5 +539,5 @@ public abstract class UserInterface {
      * @param name A command name.
      * @param command A coommand info.
      */
-    public abstract void endCommand(String name, Command command);
+    protected abstract void endCommand(String name, Command command);
 }

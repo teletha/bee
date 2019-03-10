@@ -8,8 +8,8 @@
  *
  *          https://opensource.org/licenses/MIT
  */
+import bee.Task;
 import bee.api.Command;
-import bee.api.Task;
 import kiss.I;
 
 public class Sample extends Task {

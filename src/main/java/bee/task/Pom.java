@@ -9,8 +9,8 @@
  */
 package bee.task;
 
+import bee.Task;
 import bee.api.Command;
-import bee.api.Task;
 import psychopath.File;
 
 /**

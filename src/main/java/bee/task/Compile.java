@@ -10,9 +10,9 @@
 package bee.task;
 
 import bee.Bee;
+import bee.Task;
 import bee.api.Command;
 import bee.api.Scope;
-import bee.api.Task;
 import bee.util.JavaCompiler;
 import kiss.Signal;
 import psychopath.Directory;

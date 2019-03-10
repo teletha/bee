@@ -18,11 +18,11 @@ import java.util.Set;
 
 import bee.Bee;
 import bee.Platform;
+import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.api.Task;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.Config;
 import bee.util.Config.Description;

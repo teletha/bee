@@ -11,8 +11,8 @@ package bee.task;
 
 import java.util.function.Consumer;
 
+import bee.Task;
 import bee.api.Command;
-import bee.api.Task;
 import kiss.I;
 
 /**

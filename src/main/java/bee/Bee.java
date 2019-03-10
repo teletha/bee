@@ -25,7 +25,6 @@ import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.api.StandardLicense;
-import bee.api.Task;
 import bee.task.IDESupport;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
@@ -336,7 +335,7 @@ public class Bee {
     public static void main(String[] tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("test");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

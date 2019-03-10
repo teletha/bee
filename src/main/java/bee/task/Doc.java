@@ -25,10 +25,10 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import bee.Platform;
+import bee.Task;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Scope;
-import bee.api.Task;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;

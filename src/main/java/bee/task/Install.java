@@ -9,10 +9,10 @@
  */
 package bee.task;
 
+import bee.Task;
 import bee.api.Command;
 import bee.api.Project;
 import bee.api.Repository;
-import bee.api.Task;
 import kiss.I;
 import psychopath.File;
 
@@ -39,7 +39,7 @@ public class Install extends Task {
     }
 
     /**
-     * @version 2016/10/15 21:13:19
+     * 
      */
     private static class TemporaryProject extends Project {
 
@@ -49,6 +49,5 @@ public class Install extends Task {
         private TemporaryProject(String group, String product, String version) {
             product(group, product, version);
         }
-
     }
 }

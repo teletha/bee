@@ -11,10 +11,10 @@ package bee.task;
 
 import java.util.jar.Attributes.Name;
 
+import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
-import bee.api.Task;
 import kiss.I;
 import kiss.Signal;
 import psychopath.Directory;

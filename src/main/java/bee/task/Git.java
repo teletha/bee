@@ -16,8 +16,8 @@ import static bee.Platform.isWindows;
 import java.util.List;
 import java.util.StringJoiner;
 
+import bee.Task;
 import bee.api.Command;
-import bee.api.Task;
 import bee.util.RESTClient;
 import kiss.I;
 import psychopath.File;
