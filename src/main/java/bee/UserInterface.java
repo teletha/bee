@@ -427,7 +427,11 @@ public abstract class UserInterface {
                 } else if (CharSequence.class.isAssignableFrom(type)) {
                     builder.append((CharSequence) message);
                 } else if (Throwable.class.isAssignableFrom(type)) {
-                    buildError(builder, (Throwable) message);
+                    Throwable e = (Throwable) message;
+                    while (e.getCause() != null) {
+                        e = e.getCause();
+                    }
+                    buildError(builder, e);
                 } else if (List.class.isAssignableFrom(type)) {
                     buildList(builder, (List) message);
                 } else {

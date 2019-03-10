@@ -45,6 +45,7 @@ public class Sample extends Task {
         @Command("A start")
         public void main() {
             wait(4);
+            throw new IllegalAccessError();
         }
     }
 
@@ -55,6 +56,7 @@ public class Sample extends Task {
         @Command("B start")
         public void main() {
             wait(8);
+            throw new IllegalAccessError();
         }
     }
 
