@@ -16,7 +16,7 @@ public class Sample extends Task {
 
     @Command("main start")
     public void main() {
-        require2(A::main, B::main);
+        require(A::main, B::main, C::main);
 
         ui.talk("FINISH MAIN");
     }
@@ -44,7 +44,7 @@ public class Sample extends Task {
     public static class A extends HeavyTask {
         @Command("A start")
         public void main() {
-            wait(5);
+            wait(4);
         }
     }
 
@@ -54,7 +54,17 @@ public class Sample extends Task {
     public static class B extends HeavyTask {
         @Command("B start")
         public void main() {
-            wait(10);
+            wait(8);
+        }
+    }
+
+    /**
+     * 
+     */
+    public static class C extends HeavyTask {
+        @Command("C start")
+        public void main() {
+            wait(12);
         }
     }
 }

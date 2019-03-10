@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import bee.Fail;
 import bee.Platform;
@@ -38,7 +39,6 @@ import bee.util.lambda.ReflectableFunction;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Manageable;
-import kiss.Singleton;
 import kiss.XML;
 import kiss.model.Model;
 import net.bytebuddy.ByteBuddy;
@@ -46,6 +46,7 @@ import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.Origin;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import net.bytebuddy.implementation.bind.annotation.SuperCall;
+import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
 import psychopath.Directory;
 import psychopath.File;
@@ -122,87 +123,99 @@ public abstract class Task implements Extensible {
     }
 
     /**
+     * Execute required tasks in parallel.
+     * 
+     * @param task1 A task to execute.
+     * @param task2 A task to execute.
+     */
+    protected final <T1 extends Task, T2 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2) {
+        requireParallel(new ReflectableConsumer[] {task1, task2});
+    }
+
+    /**
+     * Execute required tasks in parallel.
+     * 
+     * @param task1 A task to execute.
+     * @param task2 A task to execute.
+     * @param task3 A task to execute.
+     */
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2, ReflectableConsumer<T3> task3) {
+        requireParallel(new ReflectableConsumer[] {task1, task2, task3});
+    }
+
+    /**
+     * Execute required tasks in parallel.
+     * 
+     * @param task1 A task to execute.
+     * @param task2 A task to execute.
+     * @param task3 A task to execute.
+     * @param task4 A task to execute.
+     */
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2, ReflectableConsumer<T3> task3, ReflectableConsumer<T4> task4) {
+        requireParallel(new ReflectableConsumer[] {task1, task2, task3, task4});
+    }
+
+    /**
+     * Execute required tasks in parallel.
+     * 
+     * @param task1 A task to execute.
+     * @param task2 A task to execute.
+     * @param task3 A task to execute.
+     * @param task4 A task to execute.
+     * @param task5 A task to execute.
+     */
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task, T5 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2, ReflectableConsumer<T3> task3, ReflectableConsumer<T4> task4, ReflectableConsumer<T5> task5) {
+        requireParallel(new ReflectableConsumer[] {task1, task2, task3, task4, task5});
+    }
+
+    /**
      * Use other tasks.
      * 
      * @param tasks
      */
-    protected final <T extends Task> void require(ReflectableConsumer<? super T>... tasks) {
-        LinkedList<ParallelUI> list = new LinkedList();
+    private void requireParallel(ReflectableConsumer<Task>[] tasks) {
+        ConcurrentLinkedDeque<ParallelInterface> parallels = new ConcurrentLinkedDeque();
+        ParallelInterface parallel = null;
+
+        for (int i = 0; i < tasks.length; i++) {
+            parallels.offerFirst(parallel = new ParallelInterface(parallel));
+        }
+        parallels.peekFirst().start();
 
         I.signal(tasks).joinAll(task -> {
-            ParallelUI ui = new ParallelUI();
-            list.add(ui);
+            ParallelInterface p = parallels.pollFirst();
 
-            T instance = (T) I.make(info(computeTaskName(task.clazz())).task);
-            instance.ui = ui;
-
+            Task instance = I.make(info(computeTaskName(task.clazz())).task);
+            instance.ui = p;
             task.accept(instance);
+            p.finish();
 
             return null;
         }).to(I.NoOP);
-
-        for (ParallelUI ui : list) {
-            ui.clear();
-        }
-    }
-
-    /**
-     * Use other tasks.
-     * 
-     * @param tasks
-     */
-    protected final <T1 extends Task, T2 extends Task> void require2(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2) {
-        require3(new ReflectableConsumer[] {task1, task2});
-    }
-
-    /**
-     * Use other tasks.
-     * 
-     * @param tasks
-     */
-    private void require3(ReflectableConsumer<Task>[] tasks) {
-        LinkedList<ParallelUI> list = new LinkedList();
-
-        I.signal(tasks).joinAll(task -> {
-            ParallelUI ui = new ParallelUI();
-            list.add(ui);
-
-            Task instance = I.make(info(computeTaskName(task.clazz())).task);
-            instance.ui = ui;
-
-            task.accept(instance);
-
-            return null;
-        }).to(I.NoOP, e -> {
-            e.printStackTrace();
-        }, () -> {
-
-        });
-
-        for (ParallelUI ui : list) {
-            ui.clear();
-        }
     }
 
     /**
      * 
      */
-    private class ParallelUI extends UserInterface {
+    private class ParallelInterface extends UserInterface {
 
+        /** The message mode. */
+        // buffering(0) → buffered(2)
+        // ↓
+        // processing(1)
+        private int mode = 0;
+
+        /** The message buffer. */
         private Queue<Runnable> messages = new LinkedList();
 
-        private ParallelUI next;
+        /** The next task's interface. */
+        private final ParallelInterface next;
 
         /**
-         * {@inheritDoc}
+         * @param next
          */
-        @Override
-        public synchronized void write(String message) {
-            if (message == null) {
-                ui.write(message);
-            } else {
-                messages.add(() -> ui.write(message));
-            }
+        private ParallelInterface(ParallelInterface next) {
+            this.next = next;
         }
 
         /**
@@ -217,11 +230,31 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
+        public synchronized void write(String message) {
+            switch (mode) {
+            case 0:
+                messages.add(() -> ui.write(message));
+                break;
+
+            case 1:
+                ui.write(message);
+                break;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public synchronized void startCommand(String name, Command command) {
-            if (messages == null) {
-                ui.startCommand(name, command);
-            } else {
+            switch (mode) {
+            case 0:
                 messages.add(() -> ui.startCommand(name, command));
+                break;
+
+            case 1:
+                ui.startCommand(name, command);
+                break;
             }
         }
 
@@ -230,18 +263,57 @@ public abstract class Task implements Extensible {
          */
         @Override
         public synchronized void endCommand(String name, Command command) {
-            if (messages == null) {
-                ui.endCommand(name, command);
-            } else {
+            switch (mode) {
+            case 0:
                 messages.add(() -> ui.endCommand(name, command));
+                break;
+
+            case 1:
+                ui.endCommand(name, command);
+                break;
             }
         }
 
-        private synchronized void clear() {
-            while (messages.isEmpty() == false) {
-                messages.poll().run();
+        /**
+         * Invoke when the task was finished.
+         */
+        private void finish() {
+            switch (mode) {
+            case 0: // buffering
+                mode = 2;
+                break;
+
+            case 1: // processing
+                if (next != null) next.start();
+                break;
+
+            case 2: // buffered
+                break;
             }
-            messages = null;
+        }
+
+        /**
+         * Invoke when the task is processing.
+         */
+        private void start() {
+            switch (mode) {
+            case 0: // buffering
+                mode = 1;
+                while (!messages.isEmpty()) {
+                    messages.poll().run();
+                }
+                break;
+
+            case 1: // processing
+                break;
+
+            case 2: // buffered
+                while (!messages.isEmpty()) {
+                    messages.poll().run();
+                }
+                if (next != null) next.start();
+                break;
+            }
         }
     }
 
@@ -615,11 +687,11 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * @version 2018/03/29 11:50:35
+     * 
      */
     static class Lifestyle extends kiss.Prototype<Object> {
 
-        private static final Interceptor interceptor = I.make(Interceptor.class);
+        private static final Interceptor interceptor = new Interceptor();
 
         /**
          * @param modelClass
@@ -635,26 +707,15 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * @version 2018/03/29 11:50:31
+     * 
      */
-    @Manageable(lifestyle = Singleton.class)
     protected static class Interceptor {
 
         /** The executed commands results. */
         private final Map<String, Object> results = new HashMap();
 
-        /** The user interface. */
-        private final UserInterface ui;
-
-        /**
-         * @param ui
-         */
-        private Interceptor(UserInterface ui) {
-            this.ui = ui;
-        }
-
         @RuntimeType
-        public Object intercept(@SuperCall Callable<?> zuper, @Origin Method method) throws Exception {
+        public Object intercept(@This Task task, @SuperCall Callable<?> zuper, @Origin Method method) throws Exception {
             Command command = find(method);
 
             if (command == null) {
@@ -666,10 +727,9 @@ public abstract class Task implements Extensible {
             Object result = results.get(name);
 
             if (!results.containsKey(name)) {
-                ui.startCommand(name, command);
+                task.ui.startCommand(name, command);
                 result = zuper.call();
-                ui.endCommand(name, command);
-
+                task.ui.endCommand(name, command);
                 results.put(name, result);
             }
             return result;

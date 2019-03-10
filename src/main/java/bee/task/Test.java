@@ -39,6 +39,7 @@ public class Test extends Task {
 
     @Command("Test product codes.")
     public void test() {
+        // require(Compile::source);
         require(Compile::source, Compile::test);
 
         Java.with()
