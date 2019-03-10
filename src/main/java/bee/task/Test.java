@@ -66,6 +66,13 @@ public class Test extends Task {
             Set<Path> classes = I.set(Path.of(args[0]));
 
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
+                    // .configurationParameter("junit.jupiter.execution.parallel.enabled", "true")
+                    // .configurationParameter("junit.jupiter.execution.parallel.mode.default",
+                    // "concurrent")
+                    // .configurationParameter("junit.jupiter.execution.parallel.config.strategy",
+                    // "fixed")
+                    // .configurationParameter("junit.jupiter.execution.parallel.config.fixed.parallelism",
+                    // "2")
                     .selectors(DiscoverySelectors.selectClasspathRoots(classes))
                     .build();
             LauncherFactory.create().execute(request, new Summury());
