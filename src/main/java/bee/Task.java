@@ -231,7 +231,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        protected void write(String message) {
+        protected synchronized void write(String message) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.write(message));
@@ -247,7 +247,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        protected void startCommand(String name, Command command) {
+        protected synchronized void startCommand(String name, Command command) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.startCommand(name, command));
@@ -263,7 +263,7 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        protected void endCommand(String name, Command command) {
+        protected synchronized void endCommand(String name, Command command) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.endCommand(name, command));
@@ -278,7 +278,7 @@ public abstract class Task implements Extensible {
         /**
          * Invoke when the task was finished.
          */
-        private void finish() {
+        private synchronized void finish() {
             switch (mode) {
             case 0: // buffering
                 mode = 2;
@@ -296,7 +296,7 @@ public abstract class Task implements Extensible {
         /**
          * Invoke when the task is processing.
          */
-        private void start() {
+        private synchronized void start() {
             switch (mode) {
             case 0: // buffering
                 mode = 1;
