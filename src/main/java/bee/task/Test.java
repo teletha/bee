@@ -32,14 +32,13 @@ import bee.util.Java;
 import bee.util.Java.JVM;
 import kiss.I;
 
-/**
- * @version 2018/03/31 22:00:15
- */
 public class Test extends Task {
+
+    /** The threshold time (ms) to show the prolonged test. */
+    public static int showProlongedTest = 1000;
 
     @Command("Test product codes.")
     public void test() {
-        // require(Compile::source);
         require(Compile::source, Compile::test);
 
         Java.with()
@@ -50,13 +49,16 @@ public class Test extends Task {
                 .enableAssertion()
                 .encoding(project.getEncoding())
                 .workingDirectory(project.getRoot())
-                .run(Junit.class, project.getTestClasses(), project.getOutput().directory("test-reports").create());
+                .run(Junit.class, project.getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
     }
 
     /**
-     * @version 2018/03/31 21:50:18
+     * 
      */
     private static final class Junit extends JVM implements TestExecutionListener {
+
+        /** The threshold time (ns) to show the prolonged test. */
+        private long showProlongedTime = Test.showProlongedTest * 1000000;
 
         /**
          * {@inheritDoc}
@@ -64,6 +66,7 @@ public class Test extends Task {
         @Override
         public void process() throws Exception {
             Set<Path> classes = I.set(Path.of(args[0]));
+            showProlongedTime = Long.parseLong(args[2]) * 1000000;
 
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     // .configurationParameter("junit.jupiter.execution.parallel.enabled", "true")
@@ -172,7 +175,7 @@ public class Test extends Task {
                         long elapsed = System.nanoTime() - container.startTime;
                         times += elapsed;
 
-                        boolean show = 0 < container.failures || 0 < container.errors || 0 < container.skips;
+                        boolean show = 0 < container.failures || 0 < container.errors || 0 < container.skips || showProlongedTime <= elapsed;
 
                         if (!shows) {
                             shows = show;
