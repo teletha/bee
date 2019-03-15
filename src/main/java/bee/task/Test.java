@@ -69,20 +69,13 @@ public class Test extends Task {
             showProlongedTime = Long.parseLong(args[2]) * 1000000;
 
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                    // .configurationParameter("junit.jupiter.execution.parallel.enabled", "true")
-                    // .configurationParameter("junit.jupiter.execution.parallel.mode.default",
-                    // "concurrent")
-                    // .configurationParameter("junit.jupiter.execution.parallel.config.strategy",
-                    // "fixed")
-                    // .configurationParameter("junit.jupiter.execution.parallel.config.fixed.parallelism",
-                    // "2")
                     .selectors(DiscoverySelectors.selectClasspathRoots(classes))
                     .build();
             LauncherFactory.create().execute(request, new Summury());
         }
 
         /**
-         * @version 2018/03/31 19:10:18
+         * 
          */
         private class Summury implements TestExecutionListener {
 
@@ -114,7 +107,7 @@ public class Test extends Task {
              * {@inheritDoc}
              */
             @Override
-            public void testPlanExecutionStarted(TestPlan testPlan) {
+            public synchronized void testPlanExecutionStarted(TestPlan testPlan) {
                 ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
             }
 
@@ -122,7 +115,7 @@ public class Test extends Task {
              * {@inheritDoc}
              */
             @Override
-            public void testPlanExecutionFinished(TestPlan testPlan) {
+            public synchronized void testPlanExecutionFinished(TestPlan testPlan) {
                 if (shows) ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
 
                 ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
@@ -138,7 +131,7 @@ public class Test extends Task {
              * {@inheritDoc}
              */
             @Override
-            public void executionSkipped(TestIdentifier identifier, String reason) {
+            public synchronized void executionSkipped(TestIdentifier identifier, String reason) {
                 if (identifier.isContainer()) {
                     suites++;
                 } else {
@@ -151,7 +144,7 @@ public class Test extends Task {
              * {@inheritDoc}
              */
             @Override
-            public void executionStarted(TestIdentifier identifier) {
+            public synchronized void executionStarted(TestIdentifier identifier) {
                 if (identifier.isContainer()) {
                     suites++;
                     identifier.getSource().ifPresent(source -> {
@@ -169,7 +162,7 @@ public class Test extends Task {
              * {@inheritDoc}
              */
             @Override
-            public void executionFinished(TestIdentifier identifier, TestExecutionResult result) {
+            public synchronized void executionFinished(TestIdentifier identifier, TestExecutionResult result) {
                 if (identifier.isContainer()) {
                     identifier.getSource().ifPresent(source -> {
                         long elapsed = System.nanoTime() - container.startTime;
