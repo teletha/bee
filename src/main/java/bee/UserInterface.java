@@ -35,7 +35,7 @@ import kiss.Singleton;
 public abstract class UserInterface {
 
     /** The for command line user interface. */
-    public static final UserInterface CLI = new CommandLineUserInterface();
+    public static final UserInterface CLI = new CommandLineUserInterface(); // use constructor
 
     /**
      * <p>

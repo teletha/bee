@@ -131,7 +131,7 @@ public class Bee {
      */
     public Bee(Directory directory, UserInterface ui) {
         if (ui == null) {
-            ui = new CommandLineUserInterface();
+            ui = UserInterface.CLI;
         }
 
         if (directory == null) {

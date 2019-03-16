@@ -13,9 +13,6 @@ import kiss.Lifestyle;
 import kiss.Manageable;
 import kiss.Singleton;
 
-/**
- * @version 2011/07/11 16:58:39
- */
 @Manageable(lifestyle = Singleton.class)
 class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
 
@@ -24,7 +21,7 @@ class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
 
     // default setting
     static {
-        local.set(new CommandLineUserInterface());
+        local.set(UserInterface.CLI);
     }
 
     /**
