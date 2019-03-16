@@ -71,6 +71,16 @@ class CommandLineUserInterface extends UserInterface {
      */
     @Override
     protected synchronized void write(String message) {
+        write(message, true);
+    }
+
+    /**
+     * Write message actually.
+     * 
+     * @param message A message.
+     * @param enforceLine A line feed status.
+     */
+    private synchronized void write(String message, boolean enforceLine) {
         if (first) {
             showCommandName();
             first = false;
@@ -81,7 +91,7 @@ class CommandLineUserInterface extends UserInterface {
         }
         eraseNextLine = message.endsWith("\r");
 
-        if (eraseNextLine) {
+        if (eraseNextLine || !enforceLine) {
             standardOutput.print(message);
         } else {
             standardOutput.println(message);
@@ -97,7 +107,7 @@ class CommandLineUserInterface extends UserInterface {
             showCommandName();
             first = false;
         }
-        return standardOutput;
+        return System.out; // use delegator
     }
 
     /**
@@ -122,7 +132,7 @@ class CommandLineUserInterface extends UserInterface {
          * 
          */
         public Delegator() {
-            super(new ByteArrayOutputStream(), true, Platform.Encoding);
+            super(new ByteArrayOutputStream(), false, Platform.Encoding);
         }
 
         /**
@@ -130,7 +140,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void write(byte[] b) throws IOException {
-            write(String.valueOf(b));
+            write(String.valueOf(b), false);
         }
 
         /**
@@ -162,7 +172,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void write(int b) {
-            write(String.valueOf(b));
+            write(String.valueOf(b), false);
         }
 
         /**
@@ -170,7 +180,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void write(byte[] buf, int off, int len) {
-            write(new String(buf, off, len));
+            write(new String(buf, off, len), false);
         }
 
         /**
@@ -178,7 +188,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(boolean b) {
-            write(String.valueOf(b));
+            write(String.valueOf(b), false);
         }
 
         /**
@@ -186,7 +196,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(char c) {
-            write(String.valueOf(c));
+            write(String.valueOf(c), false);
         }
 
         /**
@@ -194,7 +204,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(int i) {
-            write(String.valueOf(i));
+            write(String.valueOf(i), false);
         }
 
         /**
@@ -202,7 +212,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(long l) {
-            write(String.valueOf(l));
+            write(String.valueOf(l), false);
         }
 
         /**
@@ -210,7 +220,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(float f) {
-            write(String.valueOf(f));
+            write(String.valueOf(f), false);
         }
 
         /**
@@ -218,7 +228,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(double d) {
-            write(String.valueOf(d));
+            write(String.valueOf(d), false);
         }
 
         /**
@@ -226,7 +236,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(char[] s) {
-            write(String.valueOf(s));
+            write(String.valueOf(s), false);
         }
 
         /**
@@ -234,7 +244,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(String s) {
-            write(s);
+            write(s, false);
         }
 
         /**
@@ -242,7 +252,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void print(Object obj) {
-            write(String.valueOf(obj));
+            write(String.valueOf(obj), false);
         }
 
         /**
@@ -250,7 +260,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println() {
-            write(Platform.EOL);
+            write("", true);
         }
 
         /**
@@ -258,7 +268,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(boolean x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
 
         /**
@@ -266,7 +276,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(char x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
 
         /**
@@ -274,7 +284,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(int x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
 
         /**
@@ -282,7 +292,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(long x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
 
         /**
@@ -290,7 +300,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(float x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
 
         /**
@@ -298,7 +308,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(double x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
 
         /**
@@ -306,7 +316,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(char[] x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
 
         /**
@@ -314,7 +324,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(String x) {
-            write(x);
+            write(x, true);
         }
 
         /**
@@ -322,7 +332,7 @@ class CommandLineUserInterface extends UserInterface {
          */
         @Override
         public void println(Object x) {
-            write(String.valueOf(x));
+            write(String.valueOf(x), true);
         }
     }
 }
