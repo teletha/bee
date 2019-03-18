@@ -37,6 +37,7 @@ import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
+import bee.Bee;
 import bee.Fail;
 import bee.UserInterface;
 import bee.api.Command;
@@ -333,7 +334,7 @@ public class Java {
          */
         public static void main(String[] args) throws Exception {
             // load stacktrace codec
-            I.load(StackTraceCodec.class, true);
+            I.load(Bee.class);
 
             // execute main process
             JVM vm = (JVM) I.make(Class.forName(args[2]));

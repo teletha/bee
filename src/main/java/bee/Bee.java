@@ -88,7 +88,7 @@ public class Bee {
             throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
         }
 
-        I.load(UserInterfaceLisfestyle.class, true);
+        I.load(Bee.class);
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
 
@@ -225,7 +225,7 @@ public class Bee {
             }
 
             // load new project
-            I.load(projectClass, false);
+            I.load(projectClass);
 
             // compose build
             builds.add(build);

@@ -29,7 +29,7 @@ import psychopath.Locator;
 public class BlinkProject extends Project {
 
     static {
-        I.load(Task.class, false);
+        I.load(Task.class);
     }
 
     /** The root. */
