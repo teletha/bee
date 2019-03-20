@@ -86,6 +86,9 @@ public class Java {
     /** Xmx option. */
     private int maxMemory = 2048;
 
+    /** The system properties. */
+    private final List<String> properties = new ArrayList();
+
     /**
      * Hide Constructor.
      */
@@ -224,6 +227,22 @@ public class Java {
     }
 
     /**
+     * Set system property for this JVM.
+     * 
+     * @param key A property key.
+     * @param value A property value.
+     * @return
+     */
+    public Java systemProperty(String key, Object value) {
+        if (key != null && key.length() != 0 && value != null) {
+            properties.add("-D" + key + "=\"" + value + "\"");
+        }
+
+        // API definition
+        return this;
+    }
+
+    /**
      * <p>
      * Execute this java command.
      * </p>
@@ -245,6 +264,9 @@ public class Java {
             command.add("-ea");
         }
 
+        for (String property : properties) {
+            command.add(property);
+        }
         command.add("-Dfile.encoding=UTF-8");
         command.add("-Xms" + initialMemory + "m");
         command.add("-Xmx" + maxMemory + "m");
