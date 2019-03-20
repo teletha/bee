@@ -250,7 +250,7 @@ public class Process {
     }
 
     /**
-     * @version 2018/03/29 8:24:46
+     * 
      */
     private static class ProcessReader extends Thread {
 
@@ -278,13 +278,15 @@ public class Process {
         @Override
         public void run() {
             try {
-                int i = input.read();
+                char[] buffer = new char[8192];
 
-                while (i != -1) {
-                    output.append((char) i);
+                int size = input.read(buffer);
+
+                while (size != -1) {
+                    output.append(new String(buffer, 0, size));
 
                     // read next character
-                    i = input.read();
+                    size = input.read(buffer);
                 }
             } catch (IOException e) {
                 throw I.quiet(e);
