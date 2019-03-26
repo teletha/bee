@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.EOL;
+import static bee.Platform.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class Fail extends Error {
      * @param reason
      */
     public Fail() {
-        this(I.NoOP.asConsumer());
+        this(I.NoOP.append());
     }
 
     /**
