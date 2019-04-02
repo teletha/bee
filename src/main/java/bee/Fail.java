@@ -36,7 +36,7 @@ public class Fail extends Error {
      * @param reason
      */
     public Fail() {
-        this(I.NoOP.append());
+        this(I.NoOP.as());
     }
 
     /**
