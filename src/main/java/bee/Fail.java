@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.function.Function;
 
 import bee.util.Notation;
-import kiss.I;
 import kiss.WiseConsumer;
 
 @SuppressWarnings("serial")
@@ -36,7 +35,8 @@ public class Fail extends Error {
      * @param reason
      */
     public Fail() {
-        this(I.NoOP.as());
+        this(e -> {
+        });
     }
 
     /**
