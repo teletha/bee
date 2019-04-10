@@ -14,9 +14,6 @@ package bee.coder;
  */
 public class JavaCoder {
 
-    /** The end of line. */
-    private final String EOL = "\r\n";
-
     /** The code buffer. */
     private final StringBuilder code = new StringBuilder();
 

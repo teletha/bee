@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
 import static javax.tools.Diagnostic.Kind.*;
 
 import java.io.PrintWriter;
@@ -25,7 +25,6 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
-import javax.tools.StandardLocation;
 
 import bee.task.AnnotationProcessor.ProjectInfo;
 import kiss.Extensible;
@@ -44,17 +43,6 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
 
     /** The actual notifier. */
     private Messager messager;
-
-    /**
-     * <p>
-     * The file util.
-     * </p>
-     * <p>
-     * Eclipse supports only {@value StandardLocation#CLASS_OUTPUT} and
-     * {@value StandardLocation#SOURCE_OUTPUT}.
-     * </p>
-     */
-    private Filer filer;
 
     /** The element util. */
     private Elements util;
@@ -78,7 +66,6 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     final void initialize(Element element, Messager messager, Filer filer, Elements util, Types types, ProjectInfo info) {
         this.element = element;
         this.messager = messager;
-        this.filer = filer;
         this.util = util;
         this.types = types;
         this.info = info;

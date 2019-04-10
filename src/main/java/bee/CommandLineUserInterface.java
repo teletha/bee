@@ -23,6 +23,7 @@ class CommandLineUserInterface extends UserInterface {
     private final PrintStream standardOutput;
 
     /** The original standard error. */
+    @SuppressWarnings("unused")
     private final PrintStream standardError;
 
     /** The task state. */

@@ -195,7 +195,6 @@ public class Test extends Task {
                         break;
 
                     case ABORTED:
-                        container.aborts++;
                         break;
                     }
                 }
@@ -255,9 +254,6 @@ public class Test extends Task {
 
                 /** The number of runed tests. */
                 private int runs;
-
-                /** The number of aborted tests. */
-                private int aborts;
 
                 /** The number of skiped tests. */
                 private int skips;

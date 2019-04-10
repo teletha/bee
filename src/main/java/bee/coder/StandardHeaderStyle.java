@@ -66,10 +66,13 @@ public enum StandardHeaderStyle implements HeaderStyle {
     /** The pattern of end line. */
     private final Pattern endLineDetectionPattern;
 
+    @SuppressWarnings("unused")
     private final boolean allowBlankLines;
 
+    @SuppressWarnings("unused")
     private final boolean isMultiline;
 
+    @SuppressWarnings("unused")
     private final boolean padLines;
 
     /**

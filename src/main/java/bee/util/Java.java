@@ -655,6 +655,7 @@ public class Java {
     /**
      * @version 2018/03/30 0:19:47
      */
+    @SuppressWarnings("unused")
     private static final class StackTraceCodec implements Decoder<StackTraceElement>, Encoder<StackTraceElement> {
 
         /**

@@ -211,6 +211,7 @@ public abstract class Github {
     /**
      * @version 2017/01/21 10:25:45
      */
+    @SuppressWarnings("serial")
     public static class Releases extends ArrayList<Release> {
     }
 
