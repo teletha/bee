@@ -84,6 +84,9 @@ public class IntelliJ extends Task implements IDESupport {
                 library(project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion()), component, Scope.System);
             }
             break;
+
+        default:
+            break;
         }
 
         // write file
