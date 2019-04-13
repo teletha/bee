@@ -9,10 +9,10 @@
  */
 package bee;
 
+import bee.api.Project;
 import kiss.Lifestyle;
 import kiss.Manageable;
 import kiss.Singleton;
-import bee.api.Project;
 
 /**
  * @version 2012/03/27 16:16:00
@@ -27,7 +27,7 @@ class ProjectLifestyle implements Lifestyle<Project> {
      * {@inheritDoc}
      */
     @Override
-    public Project get() {
+    public Project GET() throws Throwable {
         return local.get();
     }
 }
