@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -87,6 +88,9 @@ public class JavaCompiler {
 
     /** The annotation processor's options. */
     private final Map<String, String> processorOptions = new HashMap();
+
+    /** The error manager. */
+    private final List<Diagnostic<? extends JavaFileObject>> error = new ArrayList();
 
     /** The output directory. */
     private Directory output;
@@ -437,8 +441,17 @@ public class JavaCompiler {
      * 
      * @param directory
      */
-    public void setGeneratedSourceDirectory(File directory) {
+    private void setGeneratedSourceDirectory(File directory) {
 
+    }
+
+    /**
+     * List up all cumulative errors.
+     * 
+     * @return
+     */
+    public List<Diagnostic<? extends JavaFileObject>> errors() {
+        return Collections.unmodifiableList(error);
     }
 
     /**
@@ -578,6 +591,8 @@ public class JavaCompiler {
          */
         @Override
         public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+            error.add(diagnostic);
+
             switch (diagnostic.getKind()) {
             case ERROR:
                 ui.error(diagnostic.toString());
