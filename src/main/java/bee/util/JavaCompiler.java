@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -89,9 +88,6 @@ public class JavaCompiler {
     /** The annotation processor's options. */
     private final Map<String, String> processorOptions = new HashMap();
 
-    /** The error manager. */
-    private final List<Diagnostic<? extends JavaFileObject>> error = new ArrayList();
-
     /** The output directory. */
     private Directory output;
 
@@ -112,6 +108,9 @@ public class JavaCompiler {
 
     /** The nowarn flag. */
     private boolean nowarn = false;
+
+    /** The error listener. */
+    private DiagnosticListener<JavaFileObject> error;
 
     /**
      * <p>
@@ -431,6 +430,15 @@ public class JavaCompiler {
     }
 
     /**
+     * Set compiling error listener.
+     * 
+     * @param listener
+     */
+    public void setErrorListener(DiagnosticListener<JavaFileObject> listener) {
+        this.error = listener;
+    }
+
+    /**
      * <p>
      * Specify the directory where to place generated source files. The directory must already
      * exist; javac will not create it. If a class is part of a package, the compiler puts the
@@ -443,15 +451,6 @@ public class JavaCompiler {
      */
     private void setGeneratedSourceDirectory(File directory) {
 
-    }
-
-    /**
-     * List up all cumulative errors.
-     * 
-     * @return
-     */
-    public List<Diagnostic<? extends JavaFileObject>> errors() {
-        return Collections.unmodifiableList(error);
     }
 
     /**
@@ -557,11 +556,15 @@ public class JavaCompiler {
             return Thread.currentThread().getContextClassLoader();
         }
 
-        // Invocation
-        ErrorListener listener = new ErrorListener();
-        Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
+        // Error handling
+        if (error == null) {
+            error = new ErrorListener();
+        }
 
-        CompilationTask task = compiler.getTask(null, manager, listener, options, null, sources);
+        // Invocation
+        Manager manager = new Manager(compiler.getStandardFileManager(error, Locale.getDefault(), StandardCharsets.UTF_8));
+
+        CompilationTask task = compiler.getTask(null, manager, error, options, null, sources);
 
         // =============================================
         // Annotation Processing Tools
@@ -582,17 +585,14 @@ public class JavaCompiler {
     }
 
     /**
-     * @version 2010/12/18 11:51:46
+     * 
      */
     private class ErrorListener implements DiagnosticListener<JavaFileObject> {
-
         /**
-         * @see javax.tools.DiagnosticListener#report(javax.tools.Diagnostic)
+         * {@inheritDoc}
          */
         @Override
         public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-            error.add(diagnostic);
-
             switch (diagnostic.getKind()) {
             case ERROR:
                 ui.error(diagnostic.toString());
