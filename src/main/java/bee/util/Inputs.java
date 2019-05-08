@@ -82,8 +82,20 @@ public class Inputs {
         case RELEASE_8:
             return "8";
 
+        case RELEASE_9:
+            return "9";
+
+        case RELEASE_10:
+            return "10";
+
+        case RELEASE_11:
+            return "11";
+
+        case RELEASE_12:
+            return "12";
+
         default:
-            return "8";
+            return "12";
         }
     }
 
