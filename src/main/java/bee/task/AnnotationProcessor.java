@@ -79,7 +79,7 @@ public class AnnotationProcessor implements Processor {
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.RELEASE_8;
+        return SourceVersion.latest();
     }
 
     /**
