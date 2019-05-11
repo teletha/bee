@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -659,7 +660,7 @@ public class JavaCompiler {
     }
 
     /**
-     * @version 2010/12/19 10:20:30
+     * 
      */
     private class Manager extends SecureClassLoader implements StandardJavaFileManager {
 
@@ -674,6 +675,14 @@ public class JavaCompiler {
          */
         public Manager(StandardJavaFileManager manager) {
             this.manager = manager;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Path asPath(FileObject file) {
+            return manager.asPath(file);
         }
 
         /**
@@ -720,6 +729,15 @@ public class JavaCompiler {
          * {@inheritDoc}
          */
         @Override
+        public void setLocationForModule(javax.tools.JavaFileManager.Location location, String moduleName, Collection<? extends Path> paths)
+                throws IOException {
+            manager.setLocationForModule(location, moduleName, paths);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public Iterable<? extends File> getLocation(Location location) {
             return manager.getLocation(location);
         }
@@ -744,8 +762,25 @@ public class JavaCompiler {
          * {@inheritDoc}
          */
         @Override
+        public Iterable<Set<javax.tools.JavaFileManager.Location>> listLocationsForModules(javax.tools.JavaFileManager.Location location)
+                throws IOException {
+            return manager.listLocationsForModules(location);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public String inferBinaryName(Location location, JavaFileObject file) {
             return manager.inferBinaryName(location, file);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String inferModuleName(javax.tools.JavaFileManager.Location location) throws IOException {
+            return manager.inferModuleName(location);
         }
 
         /**
@@ -785,7 +820,6 @@ public class JavaCompiler {
          */
         @Override
         public JavaFileObject getJavaFileForInput(Location location, String className, Kind kind) throws IOException {
-            System.out.println(className);
             return manager.getJavaFileForInput(location, className, kind);
         }
 
