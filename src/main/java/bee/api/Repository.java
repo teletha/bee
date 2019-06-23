@@ -255,8 +255,6 @@ public class Repository {
                 }
             }
             return set;
-        } catch (ClassCastException e) {
-            return Collections.EMPTY_SET;
         } catch (Exception e) {
             throw I.quiet(e);
         }
