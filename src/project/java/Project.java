@@ -16,17 +16,20 @@ import kiss.I;
 
 public class Project extends bee.api.Project {
 
+    String resolver = "1.3.3";
+
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), Bee.Tool.getVersion());
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
         require("org.apache.maven", "maven-resolver-provider");
-        require("org.apache.maven.resolver", "maven-resolver-api");
-        require("org.apache.maven.resolver", "maven-resolver-util");
-        require("org.apache.maven.resolver", "maven-resolver-impl");
-        require("org.apache.maven.resolver", "maven-resolver-connector-basic");
-        require("org.apache.maven.resolver", "maven-resolver-transport-http");
+        require("org.apache.maven.resolver", "maven-resolver-api", resolver);
+        require("org.apache.maven.resolver", "maven-resolver-spi", resolver);
+        require("org.apache.maven.resolver", "maven-resolver-util", resolver);
+        require("org.apache.maven.resolver", "maven-resolver-impl", resolver);
+        require("org.apache.maven.resolver", "maven-resolver-connector-basic", resolver);
+        require("org.apache.maven.resolver", "maven-resolver-transport-http", resolver);
 
         require("net.bytebuddy", "byte-buddy");
         require("net.bytebuddy", "byte-buddy-agent");
