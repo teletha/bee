@@ -115,6 +115,7 @@ abstract class StandardVCS extends Github {
                         contributor.setUrl(u.html_url);
                         return contributor;
                     })
+                    .skipError()
                     .toList();
         }
 
