@@ -9,15 +9,22 @@
  */
 package bee.task;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes.Name;
+import java.util.jar.Manifest;
+
+import javax.lang.model.SourceVersion;
 
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
+import bee.util.Inputs;
 import bee.util.Process;
 import kiss.I;
 import psychopath.Directory;
@@ -32,6 +39,30 @@ public class Exe extends Task {
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
+        // search main classes
+        String main = require(FindMain::main);
+
+        // search main class in MANIFEST.MF
+        File file = project.getSourceSet()
+                .flatMap(dir -> dir.walkFile("META-INF/MANIFEST.MF"))
+                .first()
+                .to()
+                .or(project.getSources().file("resources/META-INF/MANIFEST.MF"));
+
+        try {
+            Manifest manifest = new Manifest(file.newInputStream());
+            Object userDefinedMainClass = manifest.getMainAttributes().get(Name.MAIN_CLASS.toString());
+            if (userDefinedMainClass == null) {
+                try (OutputStream out = file.newOutputStream()) {
+                    manifest.getMainAttributes().putValue(Name.MANIFEST_VERSION.toString(), "1.0");
+                    manifest.getMainAttributes().putValue(Name.MAIN_CLASS.toString(), main);
+                    manifest.write(out);
+                }
+            }
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
+
         require(Jar::source);
 
         try {
@@ -68,8 +99,6 @@ public class Exe extends Task {
         File exe = temporary.file(project.getProduct() + suffix + ".exe");
 
         try {
-            // search main classes
-            String main = require(FindMain::main);
 
             // unzip exe builder
             I.copy(Exe.class.getResourceAsStream("exewrap" + suffix + ".exe"), builder.newOutputStream(), true);
@@ -79,9 +108,9 @@ public class Exe extends Task {
             command.add(builder.toString());
             command.add("-e");
             command.add("SINGLE");
-            command.add("-M");
-            command.add(main);
             command.add("-g");
+            command.add("-t");
+            command.add(Inputs.normalize(SourceVersion.latest()));
             command.add("-j");
             command.add(project.locateJar().toString());
             command.add("-o");

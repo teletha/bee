@@ -11,9 +11,6 @@ package bee.util;
 
 import javax.lang.model.SourceVersion;
 
-/**
- * @version 2016/10/12 14:32:06
- */
 public class Inputs {
 
     /**
@@ -94,8 +91,11 @@ public class Inputs {
         case RELEASE_12:
             return "12";
 
+        case RELEASE_13:
+            return "13";
+
         default:
-            return "12";
+            return "13";
         }
     }
 
