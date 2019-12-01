@@ -116,7 +116,7 @@ public class FindMain extends Task {
             I.make(Project.class).getClasses().walkFile("**.class").to(file -> {
                 try {
                     ClassReader reader = new ClassReader(file.newInputStream());
-                    reader.accept(new Search(), ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
+                    reader.accept(this, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
                 } catch (IOException e) {
                     throw I.quiet(e);
                 }
