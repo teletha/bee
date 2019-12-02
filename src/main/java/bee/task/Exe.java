@@ -106,8 +106,6 @@ public class Exe extends Task {
             // build command line
             List<String> command = new ArrayList();
             command.add(builder.toString());
-            command.add("-e");
-            command.add("SINGLE");
             command.add("-g");
             command.add("-t");
             command.add(Inputs.normalize(SourceVersion.latest()));
