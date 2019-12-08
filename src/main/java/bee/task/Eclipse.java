@@ -30,7 +30,7 @@ import bee.util.Java;
 import bee.util.Java.JVM;
 import bee.util.Process;
 import kiss.I;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.Singleton;
 import kiss.Variable;
 import kiss.XML;
@@ -308,7 +308,7 @@ public class Eclipse extends Task implements IDESupport {
     /**
      * 
      */
-    @Manageable(lifestyle = Singleton.class)
+    @Managed(value = Singleton.class)
     private static abstract class EclipseApplication {
 
         /**

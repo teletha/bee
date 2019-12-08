@@ -25,13 +25,13 @@ import java.util.function.Predicate;
 import bee.api.Command;
 import kiss.Decoder;
 import kiss.I;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.Singleton;
 
 /**
  * Interactive user interface.
  */
-@Manageable(lifestyle = Singleton.class)
+@Managed(value = Singleton.class)
 public abstract class UserInterface {
 
     /** The for command line user interface. */

@@ -37,7 +37,7 @@ import bee.util.lambda.ReflectableConsumer;
 import bee.util.lambda.ReflectableFunction;
 import kiss.Extensible;
 import kiss.I;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.XML;
 import kiss.model.Model;
 import net.bytebuddy.ByteBuddy;
@@ -53,7 +53,7 @@ import psychopath.File;
 /**
  * @version 2017/03/04 13:26:53
  */
-@Manageable(lifestyle = Lifestyle.class)
+@Managed(value = Lifestyle.class)
 public abstract class Task implements Extensible {
 
     /** The common task repository. */

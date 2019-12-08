@@ -17,7 +17,7 @@ import bee.Task;
 import bee.api.Command;
 import bee.api.Project;
 import kiss.I;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.Singleton;
 import net.bytebuddy.jar.asm.ClassReader;
 import net.bytebuddy.jar.asm.ClassVisitor;
@@ -92,7 +92,7 @@ public class FindMain extends Task {
     /**
      * 
      */
-    @Manageable(lifestyle = Singleton.class)
+    @Managed(value = Singleton.class)
     private static class Search extends ClassVisitor {
 
         /** The main classes. */

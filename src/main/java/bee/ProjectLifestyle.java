@@ -11,13 +11,13 @@ package bee;
 
 import bee.api.Project;
 import kiss.Lifestyle;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.Singleton;
 
 /**
  * @version 2012/03/27 16:16:00
  */
-@Manageable(lifestyle = Singleton.class)
+@Managed(value = Singleton.class)
 class ProjectLifestyle implements Lifestyle<Project> {
 
     /** The actual store. */

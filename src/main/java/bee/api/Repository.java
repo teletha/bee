@@ -70,7 +70,7 @@ import bee.Platform;
 import bee.UserInterface;
 import bee.util.TransferInterface;
 import kiss.I;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.Singleton;
 import kiss.Storable;
 import kiss.Variable;
@@ -81,7 +81,7 @@ import psychopath.Locator;
 /**
  * @version 2017/04/02 13:15:17
  */
-@Manageable(lifestyle = Singleton.class)
+@Managed(value = Singleton.class)
 public class Repository {
 
     /** The path to remote repository. */

@@ -10,10 +10,10 @@
 package bee;
 
 import kiss.Lifestyle;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.Singleton;
 
-@Manageable(lifestyle = Singleton.class)
+@Managed(value = Singleton.class)
 class UserInterfaceLisfestyle implements Lifestyle<UserInterface> {
 
     /** The actual store. */

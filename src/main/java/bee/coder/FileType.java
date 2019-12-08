@@ -13,7 +13,7 @@ import java.util.List;
 
 import kiss.Extensible;
 import kiss.I;
-import kiss.Manageable;
+import kiss.Managed;
 import kiss.Singleton;
 
 public interface FileType extends Extensible {
@@ -62,7 +62,7 @@ public interface FileType extends Extensible {
     /**
      * @version 2015/06/17 10:49:59
      */
-    @Manageable(lifestyle = Singleton.class)
+    @Managed(value = Singleton.class)
     class File implements FileType {
 
         /** The extension. */
