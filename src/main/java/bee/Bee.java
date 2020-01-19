@@ -332,7 +332,7 @@ public class Bee {
      * 
      * @param tasks A list of task commands
      */
-    public static void main(String[] tasks) {
+    public static void main(String... tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
             bee.execute("install");
