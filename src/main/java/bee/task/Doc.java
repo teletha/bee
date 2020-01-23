@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static javax.tools.DocumentationTool.Location.DOCUMENTATION_OUTPUT;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +24,6 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import antibug.doc.Javadoc;
 import bee.Platform;
 import bee.Task;
 import bee.UserInterface;
@@ -31,7 +32,6 @@ import bee.api.Scope;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
-import psychopath.Location;
 
 public class Doc extends Task {
 
@@ -40,25 +40,6 @@ public class Doc extends Task {
      */
     @Command("Generate product javadoc.")
     public Directory javadoc() {
-        if (false) {
-            Directory out = project.getOutput().directory("new-api");
-
-            List<Location> list = I.signal(project.getDependency(Scope.Test, Scope.Compile))
-                    .map(library -> library.getLocalJar())
-                    .as(Location.class)
-                    .toList();
-
-            Javadoc.with.sources(project.getSourceSet().toList())
-                    .output(out)
-                    .product(project.getProduct())
-                    .project(project.getGroup())
-                    .version(project.getVersion())
-                    .classpath(list)
-                    .useExternalJDKDoc()
-                    .build();
-            return out;
-        }
-
         // specify output directory
         Directory output = project.getOutput().directory("api").create();
 
@@ -82,12 +63,13 @@ public class Doc extends Task {
         try {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
-            manager.setLocationFromPaths(DocumentationTool.Location.DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
-            manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet()
-                    .map(Location::asJavaPath)
-                    // .merge(I.signal(project.getDependency(Scope.Compile)).map(lib ->
-                    // lib.getLocalSourceJar().asJavaPath()))
-                    .toList());
+            manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
+            // manager.setLocationFromPaths(SOURCE_PATH, project.getSourceSet()
+            // .map(Location::asJavaPath)
+            // .merge(I.signal(project.getDependency(Scope.Compile)).map(lib ->
+            // lib.getLocalJar().asJavaPath()))
+            // // .take(path -> path.toString().contains("sinobu")))
+            // .toList());
             manager.setLocationFromPaths(StandardLocation.CLASS_PATH, I.signal(project.getDependency(Scope.Test, Scope.Compile))
                     .map(library -> library.getLocalJar().asJavaPath())
                     .toList());
