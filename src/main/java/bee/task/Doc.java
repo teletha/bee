@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static javax.tools.DocumentationTool.Location.*;
+import static javax.tools.DocumentationTool.Location.DOCUMENTATION_OUTPUT;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -24,7 +24,6 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import antibug.doc.Javadoc;
 import bee.Platform;
 import bee.Task;
 import bee.UserInterface;
@@ -35,8 +34,11 @@ import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
+import stoneforge.javadoc.Javadoc;
 
 public class Doc extends Task {
+
+    protected boolean useMordernDoc = false;
 
     /**
      * Generate javadoc with the specified doclet.
@@ -46,24 +48,34 @@ public class Doc extends Task {
         // specify output directory
         Directory output = project.getOutput().directory("api").create();
 
+        Class<? extends Doclet> doclet = null;
         List<String> options = new CopyOnWriteArrayList();
 
-        // lint
-        options.add("-Xdoclint:none");
-        options.add("-Xmaxwarns");
-        options.add("1");
-        options.add("-Xmaxerrs");
-        options.add("1");
+        if (useMordernDoc) {
+            // lint
+            options.add("-Xdoclint:none");
+            options.add("-Xmaxwarns");
+            options.add("1");
+            options.add("-Xmaxerrs");
+            options.add("1");
 
-        // format
-        options.add("-html5");
-        options.add("-javafx");
+            // format
+            options.add("-html5");
+            options.add("-javafx");
 
-        // external links
-        options.add("-link");
-        options.add("https://docs.oracle.com/en/java/javase/12/docs/api/");
+            // external links
+            options.add("-link");
+            options.add("https://docs.oracle.com/en/java/javase/12/docs/api/");
+        } else {
+            doclet = Javadoc.with.sources(project.getSourceSet().toList())
+                    .output(project.getOutput().directory("new-api"))
+                    .product(project.getProduct())
+                    .project(project.getGroup())
+                    .version(project.getVersion())
+                    .useExternalJDKDoc()
+                    .buildDocletClass();
+        }
 
-        Locale.setDefault(Locale.ENGLISH);
         try {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
@@ -74,19 +86,6 @@ public class Doc extends Task {
                             .map(lib -> lib.getLocalSourceJar().asJavaPath())
                             .take(path -> path.toString().contains("sinobu")))
                     .toList());
-            // manager.setLocationFromPaths(StandardLocation.CLASS_PATH,
-            // I.signal(project.getDependency(Scope.Test, Scope.Compile))
-            // .map(library -> library.getLocalJar().asJavaPath())
-            // .toList());
-
-            Class<? extends Doclet> doclet = Javadoc.with.sources(project.getSourceSet().toList())
-                    .output(project.getOutput().directory("new-api"))
-                    .product(project.getProduct())
-                    .project(project.getGroup())
-                    .version(project.getVersion())
-                    .useExternalJDKDoc()
-                    .buildDocletClass();
-            options.clear();
 
             DocumentationTask task = doc
                     .getTask(new UIWriter(ui), manager, null, doclet, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()

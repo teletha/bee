@@ -38,10 +38,10 @@ public class Project extends bee.api.Project {
         require("org.slf4j", "slf4j-nop");
         require("org.slf4j", "jcl-over-slf4j");
         require("org.slf4j", "jul-to-slf4j");
+        require("com.github.teletha", "antibug").atTest();
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
-        require("com.github.teletha", "stylist");
-        require("com.github.teletha", "antibug");
+        require("com.github.teletha", "stoneforge");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
