@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static javax.tools.DocumentationTool.Location.DOCUMENTATION_OUTPUT;
+import static javax.tools.DocumentationTool.Location.*;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -24,14 +24,17 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import antibug.doc.Javadoc;
 import bee.Platform;
 import bee.Task;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Scope;
+import jdk.javadoc.doclet.Doclet;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
+import psychopath.Location;
 
 public class Doc extends Task {
 
@@ -60,22 +63,33 @@ public class Doc extends Task {
         options.add("-link");
         options.add("https://docs.oracle.com/en/java/javase/12/docs/api/");
 
+        Locale.setDefault(Locale.ENGLISH);
         try {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
             manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
-            // manager.setLocationFromPaths(SOURCE_PATH, project.getSourceSet()
-            // .map(Location::asJavaPath)
-            // .merge(I.signal(project.getDependency(Scope.Compile)).map(lib ->
-            // lib.getLocalJar().asJavaPath()))
-            // // .take(path -> path.toString().contains("sinobu")))
-            // .toList());
-            manager.setLocationFromPaths(StandardLocation.CLASS_PATH, I.signal(project.getDependency(Scope.Test, Scope.Compile))
-                    .map(library -> library.getLocalJar().asJavaPath())
+            manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet()
+                    .map(Location::asJavaPath)
+                    .merge(I.signal(project.getDependency(Scope.Compile))
+                            .map(lib -> lib.getLocalSourceJar().asJavaPath())
+                            .take(path -> path.toString().contains("sinobu")))
                     .toList());
+            // manager.setLocationFromPaths(StandardLocation.CLASS_PATH,
+            // I.signal(project.getDependency(Scope.Test, Scope.Compile))
+            // .map(library -> library.getLocalJar().asJavaPath())
+            // .toList());
+
+            Class<? extends Doclet> doclet = Javadoc.with.sources(project.getSourceSet().toList())
+                    .output(project.getOutput().directory("new-api"))
+                    .product(project.getProduct())
+                    .project(project.getGroup())
+                    .version(project.getVersion())
+                    .useExternalJDKDoc()
+                    .buildDocletClass();
+            options.clear();
 
             DocumentationTask task = doc
-                    .getTask(new UIWriter(ui), manager, null, null, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
+                    .getTask(new UIWriter(ui), manager, null, doclet, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
                             .flatMap(dir -> dir.walkFile("**.java"))
                             .map(File::asJavaPath)
                             .toList()));
