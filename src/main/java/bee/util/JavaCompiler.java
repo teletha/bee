@@ -866,9 +866,6 @@ public class JavaCompiler {
         @Override
         public void close() throws IOException {
             manager.close();
-
-            // clean up
-            bytes.clear();
         }
 
         /**
