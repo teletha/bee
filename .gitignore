@@ -94,6 +94,20 @@ hs_err_pid*
 *.rar
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 # End of https://www.gitignore.io/api/Java,Maven,Windows,Eclipse
+# Edit at https://www.gitignore.io/?templates=Java,Maven,Windows,Eclipse
+# CDT- autotools
+.autotools
+# Annotation Processing
+.apt_generated/
+### Eclipse Patch ###
+.apt_generated
+.sts4-cache/
+*.nar
+.mvn/wrapper/maven-wrapper.jar
+# Dump file
+*.stackdump
+[Dd]esktop.ini
+*.msix
 
 # Created by https://www.gitignore.io/api/Java,Maven,Windows,Eclipse
 # Edit at https://www.gitignore.io/?templates=Java,Maven,Windows,Eclipse
@@ -203,10 +217,12 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
 
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
+Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
 
@@ -230,4 +246,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/Java,Maven,Windows,Eclipse
-

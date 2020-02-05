@@ -9,8 +9,6 @@
  */
 package bee.task;
 
-import static javax.tools.DocumentationTool.Location.DOCUMENTATION_OUTPUT;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +50,14 @@ public class Doc extends Task {
         List<String> options = new CopyOnWriteArrayList();
 
         if (useMordernDoc) {
-            // lint
+            doclet = Javadoc.with.sources(project.getSourceSet().toList())
+                    .output(project.getOutput().directory("new-api"))
+                    .product(project.getProduct())
+                    .project(project.getGroup())
+                    .version(project.getVersion())
+                    // .useExternalJDKDoc()
+                    .buildDocletClass();
+        } else {
             options.add("-Xdoclint:none");
             options.add("-Xmaxwarns");
             options.add("1");
@@ -66,20 +71,12 @@ public class Doc extends Task {
             // external links
             options.add("-link");
             options.add("https://docs.oracle.com/en/java/javase/12/docs/api/");
-        } else {
-            doclet = Javadoc.with.sources(project.getSourceSet().toList())
-                    .output(project.getOutput().directory("new-api"))
-                    .product(project.getProduct())
-                    .project(project.getGroup())
-                    .version(project.getVersion())
-                    .useExternalJDKDoc()
-                    .buildDocletClass();
         }
 
         try {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
             StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
-            manager.setLocationFromPaths(DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
+            manager.setLocationFromPaths(DocumentationTool.Location.DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
             manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet()
                     .map(Location::asJavaPath)
                     .merge(I.signal(project.getDependency(Scope.Compile))
