@@ -234,6 +234,7 @@ public class Eclipse extends Task implements IDESupport {
         properties.put("eclipse.preferences.version", "1");
         properties.put("org.eclipse.jdt.apt.aptEnabled", String.valueOf(enable));
         properties.put("org.eclipse.jdt.apt.genSrcDir", "src/main/auto");
+        properties.put("org.eclipse.jdt.apt.genTestSrcDir", "src/test/auto");
         properties.put("org.eclipse.jdt.apt.reconcileEnabled", String.valueOf(enable));
 
         if (option != null) {
