@@ -16,7 +16,7 @@ import kiss.I;
 
 public class Project extends bee.api.Project {
 
-    String resolver = "1.4.1";
+    String resolver = "1.4.2";
 
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), Bee.Tool.getVersion());
