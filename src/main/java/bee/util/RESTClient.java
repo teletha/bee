@@ -287,7 +287,7 @@ public class RESTClient {
                             } else if (value instanceof Path) {
                                 return (T) readAsFile(response, (Path) value);
                             } else {
-                                return I.json(readAsString(response)).to(value);
+                                return I.json(readAsString(response)).as(value);
                             }
                         }
                         return value;

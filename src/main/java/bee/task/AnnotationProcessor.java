@@ -92,7 +92,7 @@ public class AnnotationProcessor implements Processor {
         this.util = environment.getElementUtils();
         this.types = environment.getTypeUtils();
         this.options = environment.getOptions();
-        this.info = I.json(options.get(ProjectInfo.class.getName())).to(ProjectInfo.class);
+        this.info = I.json(options.get(ProjectInfo.class.getName())).as(ProjectInfo.class);
     }
 
     /**

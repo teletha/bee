@@ -634,7 +634,7 @@ public class Java {
          */
         @Override
         public void error(String error) {
-            this.error = I.json(error).to(new Cause());
+            this.error = I.json(error).as(new Cause());
         }
     }
 
