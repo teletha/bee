@@ -1,3 +1,4 @@
+package bee;
 
 /*
  * Copyright (C) 2020 Nameless Production Committee
