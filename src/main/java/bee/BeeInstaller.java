@@ -70,7 +70,8 @@ public class BeeInstaller {
         if (Bee.name().endsWith(".bat")) {
             // windows use JDK full path to avoid using JRE
             bat.add("@echo off");
-            bat.add(JavaHome.file("bin/java") + " -Xms256m -Xmx2048m -cp \"" + dest.toString() + "\" " + Bee.class.getName() + " %*");
+            bat.add(JavaHome.file("bin/java") + " --enable-preview -Xms256m -Xmx2048m -cp \"" + dest.toString() + "\" " + Bee.class
+                    .getName() + " %*");
         } else {
             // linux
             // TODO
