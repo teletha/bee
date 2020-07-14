@@ -208,7 +208,12 @@ public class Bee {
             load(project.getProjectClasses());
 
             // create your project
-            Class projectClass = Class.forName(ProjectFile);
+            String projectFQCN = project.getProjectClasses()
+                    .relativize(project.getProjectDefintionClass())
+                    .path()
+                    .replace('/', '.')
+                    .replace(".class", "");
+            Class projectClass = Class.forName(projectFQCN);
             inject((Project) projectClass.getDeclaredConstructors()[0].newInstance());
 
             // =====================================
@@ -297,8 +302,7 @@ public class Bee {
             ui.talk("Compile project sources.");
 
             JavaCompiler compiler = new JavaCompiler();
-            File projectFile = project.getProjectDefinition();
-            compiler.addSourceDirectory(projectFile.parent());
+            compiler.addSourceDirectory(definition.parent());
             compiler.addClassPath(Locator.locate(Bee.class));
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();

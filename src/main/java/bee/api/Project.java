@@ -9,9 +9,6 @@
  */
 package bee.api;
 
-import static bee.util.DebugHelper.*;
-import static bee.util.Inputs.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,6 +38,8 @@ import bee.Bee;
 import bee.Fail;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
+import bee.util.DebugHelper;
+import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
 import kiss.Variable;
@@ -184,9 +183,9 @@ public class Project {
      * @param productVersion A product version.
      */
     protected final void product(String productPackage, String productName, String productVersion) {
-        this.productGroup = normalize(productPackage, "YourPackage");
-        this.productName = normalize(productName, "YourProduct");
-        this.productVersion = normalize(productVersion, "1.0");
+        this.productGroup = Inputs.normalize(productPackage, "YourPackage");
+        this.productName = Inputs.normalize(productName, "YourProduct");
+        this.productVersion = Inputs.normalize(productVersion, "1.0");
     }
 
     /**
@@ -406,7 +405,7 @@ public class Project {
      * @return A Java version requirement.
      */
     public String getJavaVersion() {
-        return normalize(requirementJavaVersion);
+        return Inputs.normalize(requirementJavaVersion);
     }
 
     /**
@@ -643,7 +642,12 @@ public class Project {
      * @return
      */
     public File getProjectDefinition() {
-        return input.file("project/java/Project.java");
+        File file = input.file("project/java/Project.java");
+
+        if (file.isAbsent()) {
+            file = input.directory("project/java").walkFile("**/Project.java").first().to().exact();
+        }
+        return file;
     }
 
     /**
@@ -654,7 +658,7 @@ public class Project {
      * @return
      */
     public File getProjectDefintionClass() {
-        return getProjectClasses().file("Project.class");
+        return getProjectClasses().file(input.directory("project/java").relativize(getProjectDefinition())).extension("class");
     }
 
     /**
@@ -732,7 +736,7 @@ public class Project {
     public final Github exactVersionControlSystem() {
         return getVersionControlSystem().or(() -> {
             throw new Fail("Version control system is not found.")
-                    .solve("Describe ", $(this::versionControlSystem), " in your project file.");
+                    .solve("Describe ", DebugHelper.$(this::versionControlSystem), " in your project file.");
         });
     }
 
