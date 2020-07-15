@@ -113,7 +113,7 @@ public final class Platform {
                         File conf = home.file("conf/settings.xml");
 
                         if (conf.isPresent()) {
-                            String location = I.xml(conf.asJavaFile()).find("localRepository").text();
+                            String location = I.xml(conf.asJavaPath()).find("localRepository").text();
 
                             if (location.length() != 0) {
                                 return Locator.directory(location);
