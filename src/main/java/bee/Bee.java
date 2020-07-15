@@ -75,9 +75,6 @@ public class Bee {
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 
-    /** The project definition file name. */
-    private static final String ProjectFile = "Project";
-
     private static Instrumentation inst;
 
     static {
