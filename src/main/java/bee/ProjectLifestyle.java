@@ -27,7 +27,7 @@ class ProjectLifestyle implements Lifestyle<Project> {
      * {@inheritDoc}
      */
     @Override
-    public Project GET() throws Throwable {
+    public Project call() throws Exception {
         return local.get();
     }
 }
