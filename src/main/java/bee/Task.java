@@ -29,7 +29,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
-import bee.Task.Lifestyle;
+import bee.Task.InterceptedSingleton;
 import bee.api.Command;
 import bee.api.Project;
 import bee.util.Inputs;
@@ -37,6 +37,7 @@ import bee.util.lambda.ReflectableConsumer;
 import bee.util.lambda.ReflectableFunction;
 import kiss.Extensible;
 import kiss.I;
+import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.XML;
 import kiss.model.Model;
@@ -53,7 +54,7 @@ import psychopath.File;
 /**
  * @version 2017/03/04 13:26:53
  */
-@Managed(value = Lifestyle.class)
+@Managed(value = InterceptedSingleton.class)
 public abstract class Task implements Extensible {
 
     /** The common task repository. */
@@ -690,20 +691,32 @@ public abstract class Task implements Extensible {
     /**
      * 
      */
-    static class Lifestyle extends kiss.Prototype<Object> {
+    static class InterceptedSingleton implements Lifestyle<Object> {
 
         private static final Interceptor interceptor = new Interceptor();
+
+        private final Object singleton;
 
         /**
          * @param modelClass
          */
-        public Lifestyle(Class modelClass) {
-            super(new ByteBuddy().subclass(modelClass)
-                    .method(ElementMatchers.any())
-                    .intercept(MethodDelegation.to(interceptor))
-                    .make()
-                    .load(Thread.currentThread().getContextClassLoader())
-                    .getLoaded());
+        public InterceptedSingleton(Class modelClass) {
+            singleton = I
+                    .prototype(new ByteBuddy().subclass(modelClass)
+                            .method(ElementMatchers.any())
+                            .intercept(MethodDelegation.to(interceptor))
+                            .make()
+                            .load(Thread.currentThread().getContextClassLoader())
+                            .getLoaded())
+                    .get();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Object call() {
+            return singleton;
         }
     }
 
