@@ -695,20 +695,18 @@ public abstract class Task implements Extensible {
 
         private static final Interceptor interceptor = new Interceptor();
 
-        private final Object singleton;
+        private final Lifestyle lifestyle;
 
         /**
          * @param modelClass
          */
         public InterceptedSingleton(Class modelClass) {
-            singleton = I
-                    .prototype(new ByteBuddy().subclass(modelClass)
-                            .method(ElementMatchers.any())
-                            .intercept(MethodDelegation.to(interceptor))
-                            .make()
-                            .load(Thread.currentThread().getContextClassLoader())
-                            .getLoaded())
-                    .get();
+            lifestyle = I.prototype(new ByteBuddy().subclass(modelClass)
+                    .method(ElementMatchers.any())
+                    .intercept(MethodDelegation.to(interceptor))
+                    .make()
+                    .load(Thread.currentThread().getContextClassLoader())
+                    .getLoaded());
         }
 
         /**
@@ -716,7 +714,7 @@ public abstract class Task implements Extensible {
          */
         @Override
         public Object call() {
-            return singleton;
+            return lifestyle.get();
         }
     }
 
