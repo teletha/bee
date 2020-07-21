@@ -73,29 +73,8 @@ public class Inputs {
         case RELEASE_6:
             return "1.6";
 
-        case RELEASE_7:
-            return "7";
-
-        case RELEASE_8:
-            return "8";
-
-        case RELEASE_9:
-            return "9";
-
-        case RELEASE_10:
-            return "10";
-
-        case RELEASE_11:
-            return "11";
-
-        case RELEASE_12:
-            return "12";
-
-        case RELEASE_13:
-            return "13";
-
         default:
-            return "13";
+            return version.name().substring(8);
         }
     }
 
