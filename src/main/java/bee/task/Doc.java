@@ -58,6 +58,9 @@ public class Doc extends Task {
                     // .useExternalJDKDoc()
                     .buildDocletClass();
         } else {
+            options.add("--enable-preview");
+            options.add("--release");
+            options.add("14");
             options.add("-Xdoclint:none");
             options.add("-Xmaxwarns");
             options.add("1");
