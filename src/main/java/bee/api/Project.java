@@ -645,7 +645,7 @@ public class Project {
         File file = input.file("project/java/Project.java");
 
         if (file.isAbsent()) {
-            file = input.directory("project/java").walkFile("**/Project.java").first().to().exact();
+            file = input.directory("project/java").walkFile("**/Project.java").first().to().or(file);
         }
         return file;
     }
