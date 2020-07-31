@@ -889,9 +889,12 @@ public class Project {
         // compiler-plugin
         XML plugin = plugins.child("plugin");
         plugin.child("artifactId").text("maven-compiler-plugin");
+        plugin.child("version").text("3.8.1");
         XML conf = plugin.child("configuration");
-        conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
-        conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
+        SourceVersion source = getJavaSourceVersion();
+        SourceVersion target = getJavaClassVersion();
+        conf.child("source").text(Inputs.normalize(source));
+        conf.child("target").text(Inputs.normalize(source.compareTo(target) > 0 ? source : target));
         conf.child("encoding").text(getEncoding().displayName());
         XML args = conf.child("compilerArgs");
         args.child("arg").text("-proc:none");
@@ -900,6 +903,8 @@ public class Project {
         plugin = plugins.child("plugin");
         plugin.child("artifactId").text("maven-surefire-plugin");
         plugin.child("version").text("3.0.0-M5");
+        conf = plugin.child("configuration");
+        conf.child("argLine").text("--enable-preview");
 
         // write as pom
         return pom.toString();
