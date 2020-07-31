@@ -90,6 +90,9 @@ public class Project {
     /** The requirement of Java version. */
     private SourceVersion requirementJavaVersion;
 
+    /** The requirement of class file version. */
+    private SourceVersion classFileVersion;
+
     /** The input base directory. */
     private Directory input;
 
@@ -398,9 +401,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns Java version requirement.
-     * </p>
      * 
      * @return A Java version requirement.
      */
@@ -409,14 +410,30 @@ public class Project {
     }
 
     /**
-     * <p>
      * Declare Java version requirement.
-     * </p>
      * 
      * @param version A Java version to require.
      */
     protected final void require(SourceVersion version) {
         this.requirementJavaVersion = version;
+    }
+
+    /**
+     * Returns Java class file version requirement.
+     * 
+     * @return A Java class file version requirement.
+     */
+    public String getTargetVersion() {
+        return Inputs.normalize(classFileVersion);
+    }
+
+    /**
+     * Declare Java class file version requirement.
+     * 
+     * @param version A Java class file version to require.
+     */
+    protected final void target(SourceVersion version) {
+        this.classFileVersion = version;
     }
 
     /**
