@@ -38,7 +38,8 @@ public class Compile extends Task {
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
-        compile("main", project.getSourceSet(), project.getClasses());
+        compile("main", project.getSourceSet(), project
+                .getClasses(), project.getJavaSourceVersion().compareTo(project.getJavaClassVersion()) > 0);
     }
 
     /**
@@ -48,7 +49,7 @@ public class Compile extends Task {
      */
     @Command("Compile test sources and copy other resources.")
     public void test() {
-        compile("test", project.getTestSourceSet(), project.getTestClasses());
+        compile("test", project.getTestSourceSet(), project.getTestClasses(), false);
     }
 
     /**
@@ -58,7 +59,7 @@ public class Compile extends Task {
      */
     @Command("Compile project sources and copy other resources.")
     public void project() {
-        compile("project", project.getProjectSourceSet(), project.getProjectClasses());
+        compile("project", project.getProjectSourceSet(), project.getProjectClasses(), false);
     }
 
     /**
@@ -70,7 +71,7 @@ public class Compile extends Task {
      * @param input A source locations.
      * @param output A output location.
      */
-    private void compile(String type, Signal<Directory> input, Directory output) {
+    private void compile(String type, Signal<Directory> input, Directory output, boolean modifyVersion) {
         ui.talk("Copying ", type, " resources to ", output);
         input.to(dir -> {
             dir.observeCopyingTo(output, o -> o.glob("**", "!**.java").strip()).skipError().to();
@@ -85,7 +86,7 @@ public class Compile extends Task {
         compiler.setNoWarn();
         compiler.compile();
 
-        if (project.getJavaSourceVersion().compareTo(project.getJavaClassVersion()) > 0) {
+        if (modifyVersion) {
             String oldVersion = Inputs.normalize(project.getJavaSourceVersion());
             String newVersion = Inputs.normalize(project.getJavaClassVersion());
             ui.talk("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
