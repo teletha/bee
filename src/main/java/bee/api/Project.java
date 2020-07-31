@@ -884,7 +884,10 @@ public class Project {
         });
 
         // maven properties
-        XML plugin = pom.child("build").child("plugins").child("plugin");
+        XML plugins = pom.child("build").child("plugins");
+
+        // compiler-plugin
+        XML plugin = plugins.child("plugin");
         plugin.child("artifactId").text("maven-compiler-plugin");
         XML conf = plugin.child("configuration");
         conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
@@ -892,6 +895,11 @@ public class Project {
         conf.child("encoding").text(getEncoding().displayName());
         XML args = conf.child("compilerArgs");
         args.child("arg").text("-proc:none");
+
+        // surefire-plugin
+        plugin = plugins.child("plugin");
+        plugin.child("artifactId").text("maven-surefire-plugin");
+        plugin.child("version").text("3.0.0-M5");
 
         // write as pom
         return pom.toString();

@@ -1,19 +1,5 @@
 package bee;
 
-/*
- * Copyright (C) 2020 Nameless Production Committee
- *
- * Licensed under the MIT License (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *          https://opensource.org/licenses/MIT
- */
-import java.lang.reflect.Field;
-import java.util.TreeSet;
-
-import kiss.I;
-
 public class Project extends bee.api.Project {
 
     String resolver = "1.4.2";
@@ -46,23 +32,5 @@ public class Project extends bee.api.Project {
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
         versionControlSystem("https://github.com/teletha/bee");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        try {
-            Field libraries = bee.api.Project.class.getDeclaredField("libraries");
-            libraries.setAccessible(true);
-            Object stored = libraries.get(this);
-            libraries.set(this, new TreeSet());
-            String pom = super.toString();
-            libraries.set(this, stored);
-            return pom;
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
     }
 }
