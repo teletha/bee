@@ -26,9 +26,6 @@ import net.bytebuddy.jar.asm.ClassWriter;
 import net.bytebuddy.jar.asm.Opcodes;
 import psychopath.Directory;
 
-/**
- * @version 2015/06/22 16:47:46
- */
 public class Compile extends Task {
 
     /**
