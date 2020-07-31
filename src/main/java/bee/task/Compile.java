@@ -9,12 +9,21 @@
  */
 package bee.task;
 
+import java.io.ByteArrayInputStream;
+
+import javax.lang.model.SourceVersion;
+
 import bee.Bee;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Scope;
+import bee.util.Inputs;
 import bee.util.JavaCompiler;
 import kiss.Signal;
+import net.bytebuddy.jar.asm.ClassReader;
+import net.bytebuddy.jar.asm.ClassVisitor;
+import net.bytebuddy.jar.asm.ClassWriter;
+import net.bytebuddy.jar.asm.Opcodes;
 import psychopath.Directory;
 
 /**
@@ -76,7 +85,85 @@ public class Compile extends Task {
         compiler.setNoWarn();
         compiler.compile();
 
+        if (project.getJavaSourceVersion().compareTo(project.getJavaClassVersion()) > 0) {
+            String oldVersion = Inputs.normalize(project.getJavaSourceVersion());
+            String newVersion = Inputs.normalize(project.getJavaClassVersion());
+            ui.talk("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+
+            project.getClasses().walkFile("**.class").to(file -> {
+                ClassReader classReader = new ClassReader(file.bytes());
+                ClassWriter writer = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES);
+                ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
+                classReader.accept(modification, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
+                file.write(new ByteArrayInputStream(writer.toByteArray()));
+            });
+        }
+
         // load project related classes
         Bee.load(project.getClasses());
+    }
+
+    /**
+     * 
+     */
+    private static class Modify extends ClassVisitor {
+
+        private final int version;
+
+        public Modify(SourceVersion ver, ClassVisitor classVisitor) {
+            super(Opcodes.ASM8, classVisitor);
+            switch (ver) {
+            case RELEASE_1:
+                version = Opcodes.V1_1;
+                break;
+            case RELEASE_2:
+                version = Opcodes.V1_2;
+                break;
+            case RELEASE_3:
+                version = Opcodes.V1_3;
+                break;
+            case RELEASE_4:
+                version = Opcodes.V1_4;
+                break;
+            case RELEASE_5:
+                version = Opcodes.V1_5;
+                break;
+            case RELEASE_6:
+                version = Opcodes.V1_6;
+                break;
+            case RELEASE_7:
+                version = Opcodes.V1_7;
+                break;
+            case RELEASE_8:
+                version = Opcodes.V1_8;
+                break;
+            case RELEASE_9:
+                version = Opcodes.V9;
+                break;
+            case RELEASE_10:
+                version = Opcodes.V10;
+                break;
+            case RELEASE_11:
+                version = Opcodes.V11;
+                break;
+            case RELEASE_12:
+                version = Opcodes.V12;
+                break;
+            case RELEASE_13:
+                version = Opcodes.V13;
+                break;
+            default:
+                version = Opcodes.V14;
+                break;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+            super.visit(this.version, access, name, signature, superName, interfaces);
+        }
     }
 }

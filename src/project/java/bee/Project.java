@@ -12,7 +12,6 @@ package bee;
 import java.lang.reflect.Field;
 import java.util.TreeSet;
 
-import bee.Bee;
 import kiss.I;
 
 public class Project extends bee.api.Project {
