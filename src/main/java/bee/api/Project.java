@@ -88,7 +88,7 @@ public class Project {
     private Charset encoding = StandardCharsets.UTF_8;
 
     /** The requirement of Java version. */
-    private SourceVersion requirementJavaVersion;
+    private SourceVersion sourceFileVersion;
 
     /** The requirement of class file version. */
     private SourceVersion classFileVersion;
@@ -405,8 +405,17 @@ public class Project {
      * 
      * @return A Java version requirement.
      */
-    public String getJavaVersion() {
-        return Inputs.normalize(requirementJavaVersion);
+    public String getJavaSourceVersion() {
+        return Inputs.normalize(sourceFileVersion);
+    }
+
+    /**
+     * Returns Java version requirement.
+     * 
+     * @return A Java version requirement.
+     */
+    public String getJavaClassVersion() {
+        return Inputs.normalize(classFileVersion);
     }
 
     /**
@@ -415,25 +424,17 @@ public class Project {
      * @param version A Java version to require.
      */
     protected final void require(SourceVersion version) {
-        this.requirementJavaVersion = version;
+        this.sourceFileVersion = version;
     }
 
     /**
-     * Returns Java class file version requirement.
+     * Declare Java version requirement.
      * 
-     * @return A Java class file version requirement.
+     * @param version A Java version to require.
      */
-    public String getTargetVersion() {
-        return Inputs.normalize(classFileVersion);
-    }
-
-    /**
-     * Declare Java class file version requirement.
-     * 
-     * @param version A Java class file version to require.
-     */
-    protected final void target(SourceVersion version) {
-        this.classFileVersion = version;
+    protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion) {
+        this.sourceFileVersion = sourceVersion;
+        this.classFileVersion = targetVersion;
     }
 
     /**
@@ -886,8 +887,8 @@ public class Project {
         XML plugin = pom.child("build").child("plugins").child("plugin");
         plugin.child("artifactId").text("maven-compiler-plugin");
         XML conf = plugin.child("configuration");
-        conf.child("source").text(getJavaVersion());
-        conf.child("target").text(getJavaVersion());
+        conf.child("source").text(getJavaSourceVersion());
+        conf.child("target").text(getJavaSourceVersion());
         conf.child("encoding").text(getEncoding().displayName());
         XML args = conf.child("compilerArgs");
         args.child("arg").text("-proc:none");
