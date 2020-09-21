@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.lang.model.SourceVersion;
 import javax.tools.DocumentationTool;
 import javax.tools.DocumentationTool.DocumentationTask;
 import javax.tools.StandardJavaFileManager;
@@ -27,6 +28,7 @@ import bee.Task;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Scope;
+import bee.util.Inputs;
 import jdk.javadoc.doclet.Doclet;
 import kiss.I;
 import psychopath.Directory;
@@ -60,7 +62,7 @@ public class Doc extends Task {
         } else {
             options.add("--enable-preview");
             options.add("--release");
-            options.add("14");
+            options.add(Inputs.normalize(SourceVersion.latest()));
             options.add("-Xdoclint:none");
             options.add("-Xmaxwarns");
             options.add("1");
