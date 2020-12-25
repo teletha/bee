@@ -903,7 +903,7 @@ public class Project {
         XML depend = depends.child("dependency");
         depend.child("groupId").text("org.codehaus.plexus");
         depend.child("artifactId").text("plexus-compiler-eclipse");
-        depend.child("version").text("LATEST");
+        depend.child("version").text("2.8.8");
 
         // surefire-plugin
         plugin = plugins.child("plugin");
