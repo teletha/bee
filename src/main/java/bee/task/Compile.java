@@ -150,8 +150,11 @@ public class Compile extends Task {
             case RELEASE_13:
                 version = Opcodes.V13;
                 break;
-            default:
+            case RELEASE_14:
                 version = Opcodes.V14;
+                break;
+            default:
+                version = Opcodes.V15;
                 break;
             }
         }

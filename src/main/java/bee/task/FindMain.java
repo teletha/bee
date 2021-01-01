@@ -111,7 +111,7 @@ public class FindMain extends Task {
         
          */
         private Search() {
-            super(Opcodes.ASM7);
+            super(Opcodes.ASM9);
 
             I.make(Project.class).getClasses().walkFile("**.class").to(file -> {
                 try {
