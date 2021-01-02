@@ -113,7 +113,6 @@ public class Jar extends Task {
 
                 dir.walkFile("**.class").to(file -> {
                     File modifiedFile = modified.file(dir.relativize(file));
-                    System.out.println(modifiedFile);
                     ClassReader classReader = new ClassReader(file.bytes());
                     ClassWriter writer = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES);
                     ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
