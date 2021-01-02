@@ -267,7 +267,7 @@ public class Java {
         for (String property : properties) {
             command.add(property);
         }
-        command.add("--enable-preview");
+        // command.add("--enable-preview");
         command.add("-Dfile.encoding=UTF-8");
         command.add("-Xms" + initialMemory + "m");
         command.add("-Xmx" + maxMemory + "m");
@@ -342,18 +342,14 @@ public class Java {
         protected String[] args;
 
         /**
-         * <p>
          * Write sub-process code.
-         * </p>
          * 
          * @throws Exception Execution error.
          */
         protected abstract void process() throws Exception;
 
         /**
-         * <p>
          * Main method is activation point of sub process JVM.
-         * </p>
          */
         public static void main(String[] args) throws Exception {
             // load stacktrace codec
@@ -386,13 +382,10 @@ public class Java {
         }
 
         /**
-         * <p>
          * This class is {@link UserInterface} wrapper of {@link Transporter} for interprocess
          * communication.
-         * </p>
          * <p>
          * Must be non-static class to hide from class scanning.
-         * </p>
          * 
          * @version 2012/04/09 16:58:06
          */

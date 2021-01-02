@@ -25,7 +25,7 @@ public class Project extends bee.api.Project {
         require("org.slf4j", "jcl-over-slf4j");
         require("org.slf4j", "jul-to-slf4j");
         require("com.github.teletha", "antibug").atTest();
-        require("com.github.teletha", "sinobu", "[2.0,)");
+        require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
         require("com.github.teletha", "stoneforge");
         unrequire("org.codehaus.plexus", "plexus-classworlds");

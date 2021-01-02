@@ -17,7 +17,6 @@ import java.util.List;
 
 import bee.api.Repository;
 import kiss.I;
-import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
@@ -81,20 +80,11 @@ public class BeeInstaller {
 
         ui.talk("Write new bat file. [", Bee, "]");
 
-        // ============================================================
-        // FIXME JDK's bug? ZipFileSystem can's parse jar well, so unpack directly and repack the
-        // collected files.
-        // ============================================================
         // create bee-api library and sources
-        // File api = Locator.folder()
-        // .add(source.asArchive(), "bee/**", "!**.java")
-        // .add(source.asArchive(), "META-INF/services/**")
-        // .packToTemporary();
-
-        // create bee-api library and sources
-        Directory temp = source.unpackToTemporary();
-        File api = Locator.folder().add(temp, "bee/**", "!**.java").add(temp, "META-INF/services/**").packToTemporary(o -> o.strip());
-        I.make(Repository.class).install(bee.Bee.API, api);
+        File api = Locator.folder()
+                .add(source.asArchive(), "bee/**", "!**.java")
+                .add(source.asArchive(), "META-INF/services/**")
+                .packToTemporary();
 
         I.make(Repository.class).install(bee.Bee.API, api);
     }
