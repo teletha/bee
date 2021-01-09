@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -546,7 +546,7 @@ public class JavaCompiler {
             } else {
                 psychopath.File classFile = output.directory(e.ⅰ.relativize(e.ⅱ.parent())).file(e.ⅱ.base() + ".class");
 
-                if (classFile.lastModified() < e.ⅱ.lastModified()) {
+                if (classFile.lastModifiedMilli() < e.ⅱ.lastModifiedMilli()) {
                     sources.add(new Source(e.ⅱ));
                 }
             }

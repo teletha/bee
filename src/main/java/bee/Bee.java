@@ -295,7 +295,7 @@ public class Bee {
         }
 
         // compile project sources if needed
-        if (definition.lastModified() > project.getProjectDefintionClass().lastModified()) {
+        if (definition.lastModifiedMilli() > project.getProjectDefintionClass().lastModifiedMilli()) {
             ui.talk("Compile project sources.");
 
             JavaCompiler compiler = new JavaCompiler();

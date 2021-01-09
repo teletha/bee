@@ -117,7 +117,7 @@ public class Jar extends Task {
                     ClassWriter writer = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES);
                     ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
                     classReader.accept(modification, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
-                    modifiedFile.write(new ByteArrayInputStream(writer.toByteArray()));
+                    modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
                 });
 
                 return modified;
