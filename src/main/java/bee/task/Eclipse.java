@@ -93,14 +93,16 @@ public class Eclipse extends Task implements IDESupport {
      * @param file
      */
     private void createProject(File file) {
-        XML doc = I.xml("projectDescription");
-        doc.child("name").text(project.getProduct());
-        doc.child("comment").text(project.getDescription());
-        doc.child("buildSpec").child("buildCommand").child("name").text("org.eclipse.jdt.core.javabuilder");
-        doc.child("natures").child("nature").text("org.eclipse.jdt.core.javanature");
+        if (file.isAbsent()) {
+            XML doc = I.xml("projectDescription");
+            doc.child("name").text(project.getProduct());
+            doc.child("comment").text(project.getDescription());
+            doc.child("buildSpec").child("buildCommand").child("name").text("org.eclipse.jdt.core.javabuilder");
+            doc.child("natures").child("nature").text("org.eclipse.jdt.core.javanature");
 
-        // write file
-        makeFile(file, doc);
+            // write file
+            makeFile(file, doc);
+        }
     }
 
     /**
