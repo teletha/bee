@@ -62,6 +62,10 @@ public final class Platform {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
                 for (String value : entry.getValue().split(java.io.File.pathSeparator)) {
+                    if (value.contains("Eclipse") && value.contains("plugins")) {
+                        continue;
+                    }
+
                     Directory directory = Locator.directory(value);
                     File linux = directory.file("javac");
                     File windows = directory.file("javac.exe");
@@ -114,7 +118,6 @@ public final class Platform {
 
                         if (conf.isPresent()) {
                             String location = I.xml(conf.asJavaPath()).find("localRepository").text();
-
                             if (location.length() != 0) {
                                 return Locator.directory(location);
                             }
