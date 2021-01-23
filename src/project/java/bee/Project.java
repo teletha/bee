@@ -11,7 +11,7 @@ package bee;
 
 public class Project extends bee.api.Project {
 
-    String resolver = "1.4.2";
+    String resolver = "1.6.1";
 
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), Bee.Tool.getVersion());
