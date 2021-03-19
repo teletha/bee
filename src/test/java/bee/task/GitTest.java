@@ -14,13 +14,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-/**
- * @version 2018/03/31 21:58:51
- */
-public class GitTest extends TaskTestBase {
+class GitTest extends TaskTestBase {
 
     @Test
-    public void update() throws Exception {
+    public void update() {
         Git git = new Git();
 
         List<String> original = lines("ok");

@@ -90,7 +90,7 @@ public class Repository {
     static {
         try {
             addRemoteRepository("Maven", "https://repo1.maven.org/maven2/");
-            addRemoteRepository("JCenter", "https://jcenter.bintray.com/");
+            addRemoteRepository("JitPack", "https://jitpack.io/");
         } catch (Exception e) {
             throw I.quiet(e);
         }

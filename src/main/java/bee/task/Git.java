@@ -18,7 +18,6 @@ import java.util.StringJoiner;
 
 import bee.Task;
 import bee.api.Command;
-import bee.util.RESTClient;
 import kiss.I;
 import psychopath.File;
 
@@ -53,7 +52,7 @@ public class Git extends Task {
             }
         }
 
-        return new RESTClient().get(uri.toString())
+        return I.http(uri.toString(), String.class)
                 .flatArray(rule -> rule.split(EOL))
                 .startWith(".*", "!/.gitignore")
                 .startWith(lines)
