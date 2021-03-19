@@ -19,18 +19,11 @@ import java.util.List;
 import java.util.StringJoiner;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.http.message.BasicHeader;
 import org.apache.maven.model.Contributor;
 
-import bee.util.Config;
-import bee.util.RESTClient;
 import kiss.I;
-import kiss.Signal;
-import kiss.Variable;
+import kiss.JSON;
 
-/**
- * @version 2017/01/16 16:27:13
- */
 public abstract class Github {
 
     /** The uri. */
@@ -73,40 +66,35 @@ public abstract class Github {
     public abstract String issue();
 
     /**
-     * <p>
      * List of contributors.
-     * </p>
      * 
      * @return
      */
     public abstract List<Contributor> contributors();
 
     /**
-     * <p>
      * Test whether the specified file is exist or not.
-     * </p>
      * 
      * @param filePath
      * @return
      */
     public boolean exist(String filePath) {
-        return new RESTClient().get(uri("repos", owner, repo, "contents", filePath)).take(1).toBinary().get();
+        return I.http(uri("repos", owner, repo, "contents", filePath), JSON.class).take(1).toBinary().next();
     }
 
     /**
-     * <p>
      * Test whether the specified file is exist or not.
-     * </p>
      * 
      * @param filePath
      * @return
      */
     public Content file(String filePath) {
-        return new RESTClient().get(uri("repos", owner, repo, "contents", filePath), new Content()).take(1).to().get();
+        return I.http(uri("repos", owner, repo, "contents", filePath), Content.class).take(1).to().next();
     }
 
     /**
-     * @param pom
+     * @param file
+     * @return
      */
     public boolean checkSame(Path file) {
         try {
@@ -121,54 +109,7 @@ public abstract class Github {
     }
 
     /**
-     * <p>
-     * Retrieve all releases.
-     * </p>
-     * 
-     * @return
-     */
-    public Variable<Releases> releases() {
-        return new RESTClient().get(repo("releases"), new Releases()).to();
-    }
-
-    /**
-     * @return
-     */
-    public Signal<Release> release() {
-        Project project = I.make(Project.class);
-        Account account = Config.project(Account.class);
-        RESTClient client = new RESTClient((builder, context) -> {
-            builder.setDefaultHeaders(Arrays.asList(new BasicHeader("Authorization", "token " + account.password())));
-        });
-
-        Release release = new Release();
-        release.tag_name = project.getVersion();
-        return client.delete(repo("releases/" + project.getVersion())).flatMap(v -> client.post(repo("releases"), release));
-    }
-
-    /**
-     * @return
-     */
-    public Signal<Release> release(String tag) {
-        return new RESTClient().get(repo("releases/tags/" + tag), new Release());
-    }
-
-    /**
-     * <p>
      * Helper method to create URI.
-     * </p>
-     * 
-     * @param paths
-     * @return
-     */
-    private String repo(String path) {
-        return uri("repos", owner, repo, path);
-    }
-
-    /**
-     * <p>
-     * Helper method to create URI.
-     * </p>
      * 
      * @param paths
      * @return
@@ -183,7 +124,7 @@ public abstract class Github {
     }
 
     /**
-     * @version 2017/01/25 15:50:53
+     * Repository related model.
      */
     public static interface Account {
         String name();
@@ -192,7 +133,7 @@ public abstract class Github {
     }
 
     /**
-     * @version 2017/01/25 11:14:54
+     * Repository related model.
      */
     public static class Content {
         public String type;
@@ -209,14 +150,14 @@ public abstract class Github {
     }
 
     /**
-     * @version 2017/01/21 10:25:45
+     * Repository related model.
      */
     @SuppressWarnings("serial")
     public static class Releases extends ArrayList<Release> {
     }
 
     /**
-     * @version 2017/01/21 10:25:55
+     * Repository related model.
      */
     public class Release {
 
@@ -236,18 +177,6 @@ public abstract class Github {
 
         public boolean prerelease;
 
-        public Signal<Release> update() {
-            Account account = Config.project(Account.class);
-            RESTClient client = new RESTClient((builder, context) -> {
-                builder.setDefaultHeaders(Arrays.asList(new BasicHeader("Authorization", "token " + account.password())));
-            });
-
-            return client.delete(repo("releases/" + id)).flatMap(v -> client.post(repo("releases"), new Release()));
-        }
-
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return "Release [id=" + id + ", tag_name=" + tag_name + ", html_url=" + html_url + ", target_commitish=" + target_commitish + ", name=" + name + ", body=" + body + ", draft=" + draft + ", prerelease=" + prerelease + "]";

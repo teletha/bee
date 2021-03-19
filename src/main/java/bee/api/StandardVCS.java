@@ -15,12 +15,18 @@ import java.util.List;
 
 import org.apache.maven.model.Contributor;
 
-import bee.util.RESTClient;
+import bee.Bee;
+import kiss.I;
 
-/**
- * @version 2017/01/10 3:15:42
- */
 abstract class StandardVCS extends Github {
+
+    public static void main(String[] args) throws InterruptedException {
+        I.load(Bee.class);
+
+        GitHub hub = new GitHub(URI.create("https://github.com/Teletha/Sinobu"));
+
+        Thread.sleep(1000 * 5);
+    }
 
     /**
      * @param uri
@@ -64,7 +70,7 @@ abstract class StandardVCS extends Github {
     }
 
     /**
-     * @version 2017/01/16 16:27:07
+     * Repository model.
      */
     static class GitHub extends StandardVCS {
 
@@ -104,10 +110,9 @@ abstract class StandardVCS extends Github {
          */
         @Override
         public List<Contributor> contributors() {
-            RESTClient client = new RESTClient();
-            return client.get("https://api.github.com/repos/teletha/bee/contributors", new GithubContributors())
+            return I.http("https://api.github.com/repos/teletha/bee/contributors", GithubContributors.class)
                     .flatIterable(c -> c)
-                    .flatMap(c -> client.get(c.url, new GitHubUser()))
+                    .flatMap(c -> I.http(c.url, GitHubUser.class))
                     .map(u -> {
                         Contributor contributor = new Contributor();
                         contributor.setEmail(u.email);
@@ -120,14 +125,14 @@ abstract class StandardVCS extends Github {
         }
 
         /**
-         * @version 2017/01/16 17:02:47
+         * Repository related model.
          */
         @SuppressWarnings("serial")
         private static class GithubContributors extends ArrayList<GitHubContributor> {
         }
 
         /**
-         * @version 2017/01/16 17:00:23
+         * Repository related model.
          */
         private static class GitHubContributor {
 
@@ -135,7 +140,7 @@ abstract class StandardVCS extends Github {
         }
 
         /**
-         * @version 2017/01/16 17:00:23
+         * Repository related model.
          */
         private static class GitHubUser {
 
