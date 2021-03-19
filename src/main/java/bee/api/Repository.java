@@ -169,9 +169,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Collect all dependencies in the specified scope.
-     * </p>
      * 
      * @param libraries
      * @param scopes
@@ -182,9 +180,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Collect all dependencies in the specified scope.
-     * </p>
      * 
      * @param libraries
      * @param scopes
@@ -195,9 +191,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Collect all dependencies in the specified scope.
-     * </p>
      * 
      * @param libraries
      * @param scopes
@@ -258,9 +252,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Validate artifact.
-     * </p>
      * 
      * @param artifact
      * @return
@@ -278,9 +270,21 @@ public class Repository {
     }
 
     /**
-     * <p>
+     * Resolve the latest version of the specified library.
+     * 
+     * @param library
+     * @return
+     */
+    public String resolveLatestVersion(Library library) {
+        try {
+            return system.resolveArtifact(session, new ArtifactRequest(library.artifact, repository(), null)).getArtifact().getVersion();
+        } catch (Exception e) {
+            return library.version;
+        }
+    }
+
+    /**
      * Resolve the jar of the specified library.
-     * </p>
      * 
      * @param library
      * @return
@@ -291,9 +295,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Resolve the javadoc of the specified library.
-     * </p>
      * 
      * @param library
      * @return
@@ -318,9 +320,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Resolve the source codes of the specified library.
-     * </p>
      * 
      * @param library
      * @return
@@ -345,9 +345,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Resolve the source codes of the specified library.
-     * </p>
      * 
      * @param library
      * @return
@@ -380,9 +378,19 @@ public class Repository {
     }
 
     /**
-     * <p>
+     * Retrieve all repositories.
+     * 
+     * @return
+     */
+    private List<RemoteRepository> repository() {
+        List<RemoteRepository> repositories = new ArrayList();
+        repositories.addAll(builtinRepositories);
+        repositories.addAll(project.repositories);
+        return repositories;
+    }
+
+    /**
      * Search repository by ID.
-     * </p>
      * 
      * @param id A repository identifier.
      * @return A matched repository.
@@ -401,9 +409,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Install project into the local repository.
-     * </p>
      * 
      * @param project A project to install.
      */
@@ -412,9 +418,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Install project into the local repository.
-     * </p>
      * 
      * @param project A project to install.
      */
@@ -423,9 +427,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Install project into the local repository.
-     * </p>
      * 
      * @param project A project to install.
      */
@@ -455,9 +457,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Get the local repository path.
-     * </p>
      * 
      * @return
      */
@@ -475,9 +475,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Load library and import it dynamically.
-     * </p>
      * 
      * @param group A group name.
      * @param product A product name.

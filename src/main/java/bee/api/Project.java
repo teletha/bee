@@ -829,7 +829,8 @@ public class Project {
             XML dependency = dependencies.child("dependency");
             dependency.child("groupId").text(library.group);
             dependency.child("artifactId").text(library.name);
-            dependency.child("version").text(library.version);
+            dependency.child("version")
+                    .text(library.version.equals("LATEST") ? I.make(Repository.class).resolveLatestVersion(library) : library.version);
             dependency.child("scope").text(library.scope.toString());
 
             if (library.isJavaTools()) {

@@ -13,9 +13,6 @@ import bee.Task;
 import bee.api.Command;
 import psychopath.File;
 
-/**
- * @version 2017/03/08 1:46:27
- */
 public class Pom extends Task {
 
     @Command("Generate pom file.")
