@@ -78,9 +78,6 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
-/**
- * @version 2017/04/02 13:15:17
- */
 @Managed(value = Singleton.class)
 public class Repository {
 

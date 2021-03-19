@@ -73,7 +73,7 @@ public class Project {
     private String productName = "";
 
     /** The product version. */
-    private String productVersion = "1.0";
+    private String productVersion = "1.1";
 
     /** The product description. */
     private String description = "";

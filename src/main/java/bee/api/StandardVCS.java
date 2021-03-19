@@ -15,18 +15,9 @@ import java.util.List;
 
 import org.apache.maven.model.Contributor;
 
-import bee.Bee;
 import kiss.I;
 
 abstract class StandardVCS extends Github {
-
-    public static void main(String[] args) throws InterruptedException {
-        I.load(Bee.class);
-
-        GitHub hub = new GitHub(URI.create("https://github.com/Teletha/Sinobu"));
-
-        Thread.sleep(1000 * 5);
-    }
 
     /**
      * @param uri
