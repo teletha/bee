@@ -895,16 +895,21 @@ public class Project {
         SourceVersion source = getJavaSourceVersion();
         SourceVersion target = getJavaClassVersion();
         conf.child("compilerId").text("eclipse");
-        conf.child("source").text(Inputs.normalize(source));
-        conf.child("target").text(Inputs.normalize(source.compareTo(target) > 0 ? source : target));
+        // ecj 3.25.0 doesn't supports java 16 yet
+        conf.child("source").text(Inputs.normalize(source, SourceVersion.RELEASE_15));
+        conf.child("target").text(Inputs.normalize(source.compareTo(target) > 0 ? source : target, SourceVersion.RELEASE_15));
         conf.child("encoding").text(getEncoding().displayName());
         XML args = conf.child("compilerArgs");
         args.child("arg").text("-proc:none");
         XML depends = plugin.child("dependencies");
-        XML depend = depends.child("dependency");
-        depend.child("groupId").text("org.codehaus.plexus");
-        depend.child("artifactId").text("plexus-compiler-eclipse");
-        depend.child("version").text("2.8.8");
+        XML dependCompilerAPI = depends.child("dependency");
+        dependCompilerAPI.child("groupId").text("org.codehaus.plexus");
+        dependCompilerAPI.child("artifactId").text("plexus-compiler-eclipse");
+        dependCompilerAPI.child("version").text("2.8.8");
+        XML dependECJ = depends.child("dependency");
+        dependECJ.child("groupId").text("org.eclipse.jdt");
+        dependECJ.child("artifactId").text("ecj");
+        dependECJ.child("version").text("3.25.0");
 
         // surefire-plugin
         plugin = plugins.child("plugin");
