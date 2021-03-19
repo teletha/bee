@@ -28,8 +28,8 @@ public class Project extends bee.api.Project {
 
         require("net.bytebuddy", "byte-buddy");
         require("net.bytebuddy", "byte-buddy-agent");
-        require("org.junit.platform", "junit-platform-engine");
-        require("org.junit.platform", "junit-platform-launcher");
+        require("org.junit.platform", "junit-platform-engine", "1.7.1");
+        require("org.junit.platform", "junit-platform-launcher", "1.7.1");
         require("org.slf4j", "slf4j-nop");
         require("org.slf4j", "jcl-over-slf4j");
         require("org.slf4j", "jul-to-slf4j");

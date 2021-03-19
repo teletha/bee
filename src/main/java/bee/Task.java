@@ -612,7 +612,10 @@ public abstract class Task implements Extensible {
 
             for (Class<Task> task : I.findAs(Task.class)) {
                 String taskName = computeTaskName(task);
-                commons.put(taskName, new Info(taskName, task));
+                Info info = new Info(taskName, task);
+                if (!info.descriptions.isEmpty()) {
+                    commons.put(taskName, info);
+                }
             }
         }
 

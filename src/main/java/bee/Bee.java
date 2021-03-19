@@ -46,7 +46,7 @@ import psychopath.Option;
  */
 public class Bee {
 
-    private static final String version = "0.6.0";
+    private static final String version = "0.7.0";
 
     /** The api project. */
     public static final Project API = new Project() {
