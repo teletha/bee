@@ -11,7 +11,9 @@ package bee;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -28,13 +30,13 @@ import java.util.Queue;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import bee.Task.InterceptedSingleton;
 import bee.api.Command;
 import bee.api.Project;
 import bee.util.Inputs;
-import bee.util.lambda.ReflectableConsumer;
-import bee.util.lambda.ReflectableFunction;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Lifestyle;
@@ -100,12 +102,12 @@ public abstract class Task implements Extensible {
      * 
      * @param task A task to execute.
      */
-    protected final <T extends Task, R> R require(ReflectableFunction<T, R> task) {
+    protected final <T extends Task, R> R require(ValuedTaskRef<T, R> task) {
         return I.signal(task).joinAll(t -> {
             ParallelInterface p = new ParallelInterface(null);
             p.start();
 
-            T instance = (T) I.make(info(computeTaskName(t.clazz())).task);
+            T instance = (T) I.make(info(computeTaskName(clazz(t))).task);
             instance.ui = p;
 
             R result = task.apply(instance);
@@ -120,8 +122,8 @@ public abstract class Task implements Extensible {
      * 
      * @param task A task to execute.
      */
-    protected final <T extends Task> T require(ReflectableConsumer<T> task) {
-        return (T) requireParallel(new ReflectableConsumer[] {task});
+    protected final <T extends Task> T require(TaskRef<T> task) {
+        return (T) requireParallel(new TaskRef[] {task});
     }
 
     /**
@@ -130,8 +132,8 @@ public abstract class Task implements Extensible {
      * @param task1 A task to execute.
      * @param task2 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2) {
-        requireParallel(new ReflectableConsumer[] {task1, task2});
+    protected final <T1 extends Task, T2 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2) {
+        requireParallel(new TaskRef[] {task1, task2});
     }
 
     /**
@@ -141,8 +143,8 @@ public abstract class Task implements Extensible {
      * @param task2 A task to execute.
      * @param task3 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task, T3 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2, ReflectableConsumer<T3> task3) {
-        requireParallel(new ReflectableConsumer[] {task1, task2, task3});
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2, TaskRef<T3> task3) {
+        requireParallel(new TaskRef[] {task1, task2, task3});
     }
 
     /**
@@ -153,8 +155,8 @@ public abstract class Task implements Extensible {
      * @param task3 A task to execute.
      * @param task4 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2, ReflectableConsumer<T3> task3, ReflectableConsumer<T4> task4) {
-        requireParallel(new ReflectableConsumer[] {task1, task2, task3, task4});
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2, TaskRef<T3> task3, TaskRef<T4> task4) {
+        requireParallel(new TaskRef[] {task1, task2, task3, task4});
     }
 
     /**
@@ -166,8 +168,8 @@ public abstract class Task implements Extensible {
      * @param task4 A task to execute.
      * @param task5 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task, T5 extends Task> void require(ReflectableConsumer<T1> task1, ReflectableConsumer<T2> task2, ReflectableConsumer<T3> task3, ReflectableConsumer<T4> task4, ReflectableConsumer<T5> task5) {
-        requireParallel(new ReflectableConsumer[] {task1, task2, task3, task4, task5});
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task, T5 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2, TaskRef<T3> task3, TaskRef<T4> task4, TaskRef<T5> task5) {
+        requireParallel(new TaskRef[] {task1, task2, task3, task4, task5});
     }
 
     /**
@@ -175,7 +177,7 @@ public abstract class Task implements Extensible {
      * 
      * @param tasks
      */
-    private Task requireParallel(ReflectableConsumer<Task>[] tasks) {
+    private Task requireParallel(TaskRef<Task>[] tasks) {
         ConcurrentLinkedDeque<ParallelInterface> parallels = new ConcurrentLinkedDeque();
         ParallelInterface parallel = null;
 
@@ -187,7 +189,7 @@ public abstract class Task implements Extensible {
         return I.signal(tasks).joinAll(task -> {
             ParallelInterface p = parallels.pollFirst();
 
-            Task instance = I.make(info(computeTaskName(task.clazz())).task);
+            Task instance = I.make(info(computeTaskName(clazz(task))).task);
             instance.ui = p;
             task.accept(instance);
             p.finish();
@@ -775,6 +777,35 @@ public abstract class Task implements Extensible {
                 clazz = clazz.getSuperclass();
             }
             return null;
+        }
+    }
+
+    /**
+     * 
+     */
+    public interface TaskRef<T> extends Consumer<T>, Serializable {
+    }
+
+    /**
+     * 
+     */
+    public interface ValuedTaskRef<T, R> extends Function<T, R>, Serializable {
+    }
+
+    /**
+     * Get the declared class of the specified lambda.
+     * 
+     * @param lambda
+     * @return
+     */
+    private static Class clazz(Serializable lambda) {
+        try {
+            Method m = lambda.getClass().getDeclaredMethod("writeReplace");
+            m.setAccessible(true);
+            SerializedLambda s = (SerializedLambda) m.invoke(lambda);
+            return I.type(s.getImplClass().replaceAll("/", "."));
+        } catch (Exception e) {
+            throw I.quiet(e);
         }
     }
 }
