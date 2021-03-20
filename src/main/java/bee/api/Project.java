@@ -133,9 +133,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Return project root directory.
-     * </p>
      * 
      * @return A root directory of this project.
      */
@@ -144,9 +142,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Return product group.
-     * </p>
      * 
      * @return The product group.
      */
@@ -155,9 +151,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Return product name.
-     * </p>
      * 
      * @return The product name.
      */
@@ -166,9 +160,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Return product version.
-     * </p>
      * 
      * @return The product version.
      */
@@ -177,24 +169,20 @@ public class Project {
     }
 
     /**
-     * <p>
      * Declare product package, name and version.
-     * </p>
      * 
      * @param productPackage A product package name.
      * @param productName A product name.
      * @param productVersion A product version.
      */
-    protected final void product(String productPackage, String productName, String productVersion) {
+    protected final void product(CharSequence productPackage, CharSequence productName, CharSequence productVersion) {
         this.productGroup = Inputs.normalize(productPackage, "YourPackage");
         this.productName = Inputs.normalize(productName, "YourProduct");
         this.productVersion = Inputs.normalize(productVersion, "1.0");
     }
 
     /**
-     * <p>
      * Return product description.
-     * </p>
      * 
      * @return The product description.
      */
@@ -203,9 +191,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Declare product description.
-     * </p>
      * 
      * @param description A product description.
      */
@@ -217,9 +203,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Return product producer.
-     * </p>
      * 
      * @return The product producer.
      */
@@ -228,9 +212,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Declare product producer.
-     * </p>
      * 
      * @param producer A product producer.
      */
@@ -242,9 +224,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns project license.
-     * </p>
      * 
      * @return
      */
@@ -253,9 +233,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Set product license.
-     * </p>
      * 
      * @param license
      */
@@ -267,9 +245,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns project encoding.
-     * </p>
      * 
      * @return
      */
@@ -278,9 +254,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Set product encoding.
-     * </p>
      * 
      * @param encoding
      */
@@ -292,9 +266,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Check whether this project depends on the specified product or not.
-     * </p>
      * 
      * @param projectName A project name to search.
      * @param productName A product name to search.
@@ -308,9 +280,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Resolve all dependencies for the specified scope.
-     * </p>
      * 
      * @param scope
      * @return
@@ -323,9 +293,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Get the library of this project.
-     * </p>
      * 
      * @return
      */
@@ -334,9 +302,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Find {@link Library} by name.
-     * </p>
      * 
      * @param projectName
      * @param productName
@@ -355,9 +321,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Declare dependency for latest version.
-     * </p>
      * 
      * @param projectName A project name.
      * @param productName A product name.
@@ -368,9 +332,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Declare dependency.
-     * </p>
      * 
      * @param projectName A project name.
      * @param productName A product name.
@@ -382,9 +344,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Declare dependency.
-     * </p>
      * 
      * @param projectName A project name.
      * @param productName A product name.
@@ -438,9 +398,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Exclude the specified library from transitive dependency resolution.
-     * </p>
      * 
      * @param projectName A project name.
      * @param productName A product name.
@@ -450,9 +408,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Add new repository by URI.
-     * </p>
      * 
      * @param uri
      */
@@ -477,10 +433,8 @@ public class Project {
     }
 
     /**
-     * <p>
      * Set base directory of input. <code>null</code> will set default directory. A relative path
      * will be resolved from project root directory.
-     * </p>
      * 
      * @param input The base input directory to set.
      */
@@ -496,10 +450,8 @@ public class Project {
     }
 
     /**
-     * <p>
      * Set base directory of input. <code>null</code> will set default directory. A relative path
      * will be resolved from project root directory.
-     * </p>
      * 
      * @param input The base input directory to set.
      */
@@ -520,10 +472,8 @@ public class Project {
     }
 
     /**
-     * <p>
      * Set base directory of output. <code>null</code> will set default directory. A relative path
      * will be resolved from project root directory.
-     * </p>
      * 
      * @param output The base output directory to set.
      */
@@ -539,10 +489,8 @@ public class Project {
     }
 
     /**
-     * <p>
      * Set base directory of output. <code>null</code> will set default directory. A relative path
      * will be resolved from project root directory.
-     * </p>
      * 
      * @param output The base output directory to set.
      */
@@ -554,9 +502,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns source directories.
-     * </p>
      * 
      * @return
      */
@@ -565,9 +511,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns source directories.
-     * </p>
      * 
      * @return
      */
@@ -576,9 +520,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns class directory.
-     * </p>
      * 
      * @return
      */
@@ -587,9 +529,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns test source directories.
-     * </p>
      * 
      * @return
      */
@@ -598,9 +538,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns test source directories.
-     * </p>
      * 
      * @return
      */
@@ -609,9 +547,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns test class directory.
-     * </p>
      * 
      * @return
      */
@@ -620,9 +556,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns project source directories.
-     * </p>
      * 
      * @return
      */
@@ -631,9 +565,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns project source directories.
-     * </p>
      * 
      * @return
      */
@@ -642,9 +574,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns project class directory.
-     * </p>
      * 
      * @return
      */
@@ -653,9 +583,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns project source file.
-     * </p>
      * 
      * @return
      */
@@ -669,9 +597,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns project source file.
-     * </p>
      * 
      * @return
      */
@@ -680,9 +606,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Resolve all annotation processor for this project.
-     * </p>
      * 
      * @return
      */
@@ -714,9 +638,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Locate product jar file.
-     * </p>
      * 
      * @return
      */
@@ -725,9 +647,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Locate product source jar file.
-     * </p>
      * 
      * @return
      */
@@ -736,9 +656,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Locate product javadoc jar file.
-     * </p>
      * 
      * @return
      */
@@ -768,9 +686,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Locate VCS.
-     * </p>
      * 
      * @param uri A uri of version control system.
      */
@@ -923,9 +839,7 @@ public class Project {
     }
 
     /**
-     * <p>
      * Returns literal project definition.
-     * </p>
      * 
      * @return
      */

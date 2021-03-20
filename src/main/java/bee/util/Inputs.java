@@ -22,20 +22,20 @@ public class Inputs {
      * @param defaultValue A default value.
      * @return A normalized input.
      */
-    public static String normalize(String input, String defaultValue) {
+    public static String normalize(CharSequence input, String defaultValue) {
         if (input == null) {
             input = defaultValue;
         }
 
         // trim whitespcae
-        input = input.trim();
+        input = input.toString().trim();
 
         if (input.length() == 0) {
             input = defaultValue;
         }
 
         // API definition
-        return input;
+        return input.toString();
     }
 
     /**
