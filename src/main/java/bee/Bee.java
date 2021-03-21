@@ -37,12 +37,9 @@ import psychopath.Locator;
 import psychopath.Option;
 
 /**
- * <p>
  * Task based project builder for Java.
- * </p>
  * <p>
  * Bee represents a single project build process.
- * </p>
  */
 public class Bee {
 
@@ -99,18 +96,14 @@ public class Bee {
     private final List<Task> builds = new ArrayList();
 
     /**
-     * <p>
      * Create project builder in current location.
-     * </p>
      */
     public Bee() {
         this((Directory) null, null);
     }
 
     /**
-     * <p>
      * Create project builder with the specified {@link UserInterface}.
-     * </p>
      * 
      * @param ui A user interface.
      */
@@ -119,9 +112,7 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Create project builder in the specified location.
-     * </p>
      * 
      * @param directory A project root directory.
      * @param ui A user interface.
@@ -146,9 +137,7 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Inject {@link Project}.
-     * </p>
      */
     private void inject(Project project) {
         this.project = project;
@@ -170,9 +159,7 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Execute tasks from the given command expression.
-     * </p>
      * 
      * @param tasks A command literal.
      */
@@ -181,9 +168,7 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Build project.
-     * </p>
      * 
      * @param build
      */
@@ -254,9 +239,7 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Create project skeleton.
-     * </p>
      */
     private void buildProjectDefinition(File definition) throws Exception {
         // create project sources if needed
@@ -307,9 +290,7 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Build develop environemnt.
-     * </p>
      */
     private void buildDevelopEnvironment() {
         List<IDESupport> supports = I.find(IDESupport.class);
@@ -327,16 +308,14 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Launch bee at the current location with commandline user interface.
-     * </p>
      * 
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
+            bee.execute("git");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

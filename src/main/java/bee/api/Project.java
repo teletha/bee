@@ -151,6 +151,16 @@ public class Project {
     }
 
     /**
+     * Internal setter for property access.
+     * 
+     * @param groupName
+     */
+    @SuppressWarnings("unused")
+    private void setGroup(String groupName) {
+        this.productGroup = groupName;
+    }
+
+    /**
      * Return product name.
      * 
      * @return The product name.
@@ -160,12 +170,32 @@ public class Project {
     }
 
     /**
+     * Internal setter for property access.
+     * 
+     * @param productName
+     */
+    @SuppressWarnings("unused")
+    private void setProduct(String productName) {
+        this.productName = productName;
+    }
+
+    /**
      * Return product version.
      * 
      * @return The product version.
      */
     public String getVersion() {
         return productVersion;
+    }
+
+    /**
+     * Internal setter for property access.
+     * 
+     * @param version
+     */
+    @SuppressWarnings("unused")
+    private void setVersion(String version) {
+        this.productVersion = version;
     }
 
     /**
@@ -853,5 +883,35 @@ public class Project {
         code.add("}");
 
         return StandardHeaderStyle.SlashStar.convert(code, license);
+    }
+
+    /**
+     * Return the reference of the specified file's text.
+     * 
+     * @param file A path to the target text file.
+     * @return A file contents.
+     */
+    protected static CharSequence ref(String file) {
+        return ref(Locator.file(file));
+    }
+
+    /**
+     * Return the reference of the specified file's text.
+     * 
+     * @param file A target text file.
+     * @return A file contents.
+     */
+    protected static CharSequence ref(Path file) {
+        return ref(Locator.file(file));
+    }
+
+    /**
+     * Return the reference of the specified file's text.
+     * 
+     * @param file A target text file.
+     * @return A file contents.
+     */
+    protected static CharSequence ref(File file) {
+        return Inputs.ref(file);
     }
 }

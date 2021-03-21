@@ -23,17 +23,32 @@ import psychopath.File;
 
 public class Git extends Task {
 
-    @Command("Generate .gitignore file.")
+    @Command(value = "Generate .gitignore file.", defaults = true)
     public void gitignore() {
         File ignore = project.getRoot().file(".gitignore");
 
         makeFile(ignore, update(ignore.lines().toList()));
+
+        if (project.getVersionControlSystem().isPresent()) {
+            github();
+        }
+    }
+
+    @Command("Generate utilities for Github integration.")
+    public void github() {
+        makeFile(".github/workflows/release-please.yml", I.express(readResource("github-release-please-action.yml"), project));
+        makeFile("version.txt", project.getVersion());
+        makeFile(project.getProjectDefinition(), line -> {
+            if (line.trim().startsWith("product(")) {
+                return line.replaceAll(",[^,]+\\);", ", ref(\"version.txt\"));");
+            } else {
+                return line;
+            }
+        });
     }
 
     /**
-     * <p>
      * Update gitignore configuration.
-     * </p>
      * 
      * @param lines Lines to update.
      * @return An updated lines.
@@ -53,8 +68,9 @@ public class Git extends Task {
         }
 
         return I.http(uri.toString(), String.class)
+                .waitForTerminate()
                 .flatArray(rule -> rule.split(EOL))
-                .startWith(".*", "!/.gitignore")
+                .startWith(".*", "!/.gitignore", "!/.github")
                 .startWith(lines)
                 .distinct()
                 .toList();

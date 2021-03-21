@@ -14,7 +14,7 @@ public class Project extends bee.api.Project {
     String resolver = "1.6.1";
 
     {
-        product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), Bee.Tool.getVersion());
+        product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 

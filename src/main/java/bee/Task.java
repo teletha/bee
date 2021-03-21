@@ -16,9 +16,11 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,6 +43,7 @@ import kiss.Extensible;
 import kiss.I;
 import kiss.Lifestyle;
 import kiss.Managed;
+import kiss.WiseFunction;
 import kiss.XML;
 import kiss.model.Model;
 import net.bytebuddy.ByteBuddy;
@@ -322,9 +325,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Use other task from literal task expression.
-     * </p>
      * 
      * @param tasks A list of tasks.
      */
@@ -335,9 +336,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method for task.
-     * </p>
      * 
      * @param path
      */
@@ -355,9 +354,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method for task.
-     * </p>
      * 
      * @param directory
      */
@@ -371,9 +368,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method for task.
-     * </p>
      * 
      * @param path
      */
@@ -382,9 +377,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method for task.
-     * </p>
      * 
      * @param path
      */
@@ -393,9 +386,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method to write xml file.
-     * </p>
      * 
      * @param path A file path to write.
      * @param xml A file contents.
@@ -414,9 +405,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method to write xml file.
-     * </p>
      * 
      * @param file A file path to write.
      * @param xml A file contents.
@@ -435,9 +424,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method to write property file.
-     * </p>
      * 
      * @param path A file path to write.
      * @param properties A file contents.
@@ -456,9 +443,17 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method to write file.
-     * </p>
+     * 
+     * @param path A file path to write.
+     * @param content A file content.
+     */
+    protected final Path makeFile(String path, String content) {
+        return makeFile(Paths.get(path), content);
+    }
+
+    /**
+     * Utility method to write file.
      * 
      * @param path A file path to write.
      * @param content A file content.
@@ -468,9 +463,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method to write file.
-     * </p>
      * 
      * @param file A file path to write.
      * @param content A file content.
@@ -480,9 +473,17 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method to write file.
-     * </p>
+     * 
+     * @param path A file path to write.
+     * @param content A file content.
+     */
+    protected final Path makeFile(String path, Iterable<String> content) {
+        return makeFile(Paths.get(path), content);
+    }
+
+    /**
+     * Utility method to write file.
      * 
      * @param path A file path to write.
      * @param content A file content.
@@ -501,9 +502,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Utility method to write file.
-     * </p>
      * 
      * @param file A file path to write.
      * @param content A file content.
@@ -518,9 +517,31 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
+     * Utility method to write file.
+     * 
+     * @param file A file path to write.
+     * @param replacer A file content replacer.
+     */
+    protected final File makeFile(File file, WiseFunction<String, String> replacer) {
+        return makeFile(file, file.lines().map(replacer).toList());
+    }
+
+    /**
+     * Read the text from the specified resource file.
+     * 
+     * @param relativePathFromCallerClass
+     * @return
+     */
+    protected final String readResource(String relativePathFromCallerClass) {
+        try {
+            return Files.readString(Path.of(getClass().getResource(relativePathFromCallerClass).toURI()), StandardCharsets.UTF_8);
+        } catch (IOException | URISyntaxException e) {
+            throw I.quiet(e);
+        }
+    }
+
+    /**
      * Compute human-readable task name.
-     * </p>
      * 
      * @param taskClass A target task.
      * @return A task name.
@@ -533,9 +554,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Execute literal expression task.
-     * </p>
      * 
      * @param input User task input.
      */
@@ -597,9 +616,7 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * <p>
      * Find task information by name.
-     * </p>
      * 
      * @param name A task name.
      * @return A specified task.
