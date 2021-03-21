@@ -9,14 +9,16 @@
  */
 package bee;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,6 +36,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import bee.Task.InterceptedSingleton;
 import bee.api.Command;
@@ -533,9 +536,12 @@ public abstract class Task implements Extensible {
      * @return
      */
     protected final String readResource(String relativePathFromCallerClass) {
-        try {
-            return Files.readString(Path.of(getClass().getResource(relativePathFromCallerClass).toURI()), StandardCharsets.UTF_8);
-        } catch (IOException | URISyntaxException e) {
+        try (InputStream is = getClass().getResourceAsStream(relativePathFromCallerClass)) {
+            if (is == null) return null;
+            try (InputStreamReader isr = new InputStreamReader(is); BufferedReader reader = new BufferedReader(isr)) {
+                return reader.lines().collect(Collectors.joining(System.lineSeparator()));
+            }
+        } catch (IOException e) {
             throw I.quiet(e);
         }
     }
