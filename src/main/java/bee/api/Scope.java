@@ -55,9 +55,7 @@ public enum Scope {
     }
 
     /**
-     * <p>
      * Returns dependency filter.
-     * </p>
      * 
      * @return
      */

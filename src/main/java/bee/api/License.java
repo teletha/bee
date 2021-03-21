@@ -16,51 +16,38 @@ import java.util.List;
 
 import kiss.I;
 
-/**
- * @version 2017/01/16 15:44:35
- */
 public interface License {
 
     /**
-     * <p>
      * Retrieve the license name.
-     * </p>
      * 
      * @return
      */
     String name();
 
     /**
-     * <p>
      * Retrieve the license full name.
-     * </p>
      * 
      * @return
      */
     String fullName();
 
     /**
-     * <p>
      * Retrieve the license identifier.
-     * </p>
      * 
      * @return
      */
     String identifier();
 
     /**
-     * <p>
      * Retrieve the license uri.
-     * </p>
      * 
      * @return
      */
     String uri();
 
     /**
-     * <p>
      * Write lisence text.
-     * </p>
      * 
      * @return
      */
