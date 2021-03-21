@@ -9,14 +9,17 @@
  */
 package bee.util;
 
+import java.nio.file.Path;
+
 import javax.lang.model.SourceVersion;
+
+import psychopath.File;
+import psychopath.Locator;
 
 public class Inputs {
 
     /**
-     * <p>
      * Normalize user input.
-     * </p>
      * 
      * @param input A user input.
      * @param defaultValue A default value.
@@ -39,9 +42,7 @@ public class Inputs {
     }
 
     /**
-     * <p>
      * Normalize {@link SourceVersion} to human-readable version number.
-     * </p>
      * 
      * @param version A target version.
      * @return A version number.
@@ -51,9 +52,7 @@ public class Inputs {
     }
 
     /**
-     * <p>
      * Normalize {@link SourceVersion} to human-readable version number.
-     * </p>
      * 
      * @param version A target version.
      * @return A version number.
@@ -95,9 +94,7 @@ public class Inputs {
     }
 
     /**
-     * <p>
      * Hyphenize user input.
-     * </p>
      * 
      * @param input A user input.
      * @return A hyphenized input.
@@ -114,5 +111,87 @@ public class Inputs {
             builder.append(Character.toLowerCase(c));
         }
         return builder.toString();
+    }
+
+    /**
+     * Return the reference of the specified file's text.
+     * 
+     * @param file A path to the target text file.
+     * @return A file contents.
+     */
+    public static CharSequence ref(String file) {
+        return ref(Locator.file(file));
+    }
+
+    /**
+     * Return the reference of the specified file's text.
+     * 
+     * @param file A target text file.
+     * @return A file contents.
+     */
+    public static CharSequence ref(Path file) {
+        return ref(Locator.file(file));
+    }
+
+    /**
+     * Return the reference of the specified file's text.
+     * 
+     * @param file A target text file.
+     * @return A file contents.
+     */
+    public static CharSequence ref(File file) {
+        return new CharSequence() {
+
+            private long modified = file.lastModifiedMilli();
+
+            private String text = file.text();
+
+            /**
+             * Update contents.
+             */
+            private void update() {
+                long time = file.lastModifiedMilli();
+                if (modified != time) {
+                    modified = time;
+                    text = file.text();
+                }
+            }
+
+            @Override
+            public CharSequence subSequence(int start, int end) {
+                update();
+                return text.subSequence(start, end);
+            }
+
+            @Override
+            public int length() {
+                update();
+                return text.length();
+            }
+
+            @Override
+            public char charAt(int index) {
+                update();
+                return text.charAt(index);
+            }
+
+            @Override
+            public int hashCode() {
+                update();
+                return text.hashCode();
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                update();
+                return text.equals(obj);
+            }
+
+            @Override
+            public String toString() {
+                update();
+                return text.toString();
+            }
+        };
     }
 }
