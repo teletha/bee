@@ -1,9 +1,9 @@
 on:
   push:
     branches:
-      - [main, master]
+      - master
       
-name: release-please
+name: Release Please
 jobs:
   release-please:
     runs-on: ubuntu-latest
