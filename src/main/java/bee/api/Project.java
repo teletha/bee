@@ -93,6 +93,9 @@ public class Project {
     /** The requirement of class file version. */
     private SourceVersion classFileVersion;
 
+    /** The requirement of class file version. */
+    private SourceVersion testClassFileVersion;
+
     /** The input base directory. */
     private Directory input;
 
@@ -409,6 +412,15 @@ public class Project {
     }
 
     /**
+     * Returns Java version requirement.
+     * 
+     * @return A Java version requirement.
+     */
+    public SourceVersion getJavaTestClassVersion() {
+        return testClassFileVersion == null ? SourceVersion.latest() : testClassFileVersion;
+    }
+
+    /**
      * Declare Java version requirement.
      * 
      * @param version A Java version to require.
@@ -423,8 +435,18 @@ public class Project {
      * @param version A Java version to require.
      */
     protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion) {
+        require(sourceVersion, targetVersion, targetVersion);
+    }
+
+    /**
+     * Declare Java version requirement.
+     * 
+     * @param version A Java version to require.
+     */
+    protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion, SourceVersion testTargetVersion) {
         this.sourceFileVersion = sourceVersion;
         this.classFileVersion = targetVersion;
+        this.testClassFileVersion = testTargetVersion;
     }
 
     /**
@@ -838,15 +860,16 @@ public class Project {
         plugin.child("artifactId").text("maven-compiler-plugin");
         plugin.child("version").text("3.8.1");
         XML conf = plugin.child("configuration");
-        SourceVersion source = getJavaSourceVersion();
-        SourceVersion target = getJavaClassVersion();
         conf.child("compilerId").text("eclipse");
         // ecj 3.25.0 doesn't supports java 16 yet
-        conf.child("source").text(Inputs.normalize(source, SourceVersion.RELEASE_15));
-        conf.child("target").text(Inputs.normalize(source.compareTo(target) > 0 ? source : target, SourceVersion.RELEASE_15));
+        conf.child("source").text(Inputs.normalize(getJavaSourceVersion(), SourceVersion.RELEASE_15));
+        conf.child("target").text(Inputs.normalize(getJavaClassVersion(), SourceVersion.RELEASE_15));
+        conf.child("testSource").text(Inputs.normalize(getJavaSourceVersion(), SourceVersion.RELEASE_15));
+        conf.child("testTarget").text(Inputs.normalize(getJavaTestClassVersion(), SourceVersion.RELEASE_15));
         conf.child("encoding").text(getEncoding().displayName());
         XML args = conf.child("compilerArgs");
         args.child("arg").text("-proc:none");
+        args.child("arg").text("--enable-preview");
         XML depends = plugin.child("dependencies");
         XML dependCompilerAPI = depends.child("dependency");
         dependCompilerAPI.child("groupId").text("org.codehaus.plexus");
