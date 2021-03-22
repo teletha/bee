@@ -15,10 +15,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.StringJoiner;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.maven.model.Contributor;
 
 import kiss.I;
@@ -100,7 +100,7 @@ public abstract class Github {
         try {
             Project project = I.make(Project.class);
             byte[] local = Files.readAllBytes(file);
-            byte[] remote = Base64.decodeBase64(file(project.getRoot().asJavaPath().relativize(file).toString()).content);
+            byte[] remote = Base64.getDecoder().decode(file(project.getRoot().asJavaPath().relativize(file).toString()).content);
 
             return Arrays.equals(local, remote);
         } catch (IOException e) {

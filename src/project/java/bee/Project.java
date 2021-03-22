@@ -11,7 +11,7 @@ package bee;
 
 public class Project extends bee.api.Project {
 
-    String resolver = "1.6.1";
+    String resolver = "1.6.2";
 
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
@@ -36,8 +36,11 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "antibug").atTest();
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
+        unrequire("commons-codec", "commons-codec");
+        unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
+        unrequire("javax.inject", "javax.inject");
 
         versionControlSystem("https://github.com/teletha/bee");
     }
