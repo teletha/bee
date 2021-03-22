@@ -36,7 +36,6 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "antibug").atTest();
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
-        require("com.github.teletha", "stoneforge");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 

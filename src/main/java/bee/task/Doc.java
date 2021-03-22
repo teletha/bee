@@ -34,7 +34,6 @@ import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
-import stoneforge.javadoc.Javadoc;
 
 public class Doc extends Task {
 
@@ -50,33 +49,22 @@ public class Doc extends Task {
 
         Class<? extends Doclet> doclet = null;
         List<String> options = new CopyOnWriteArrayList();
+        options.add("--enable-preview");
+        options.add("--release");
+        options.add(Inputs.normalize(SourceVersion.latest()));
+        options.add("-Xdoclint:none");
+        options.add("-Xmaxwarns");
+        options.add("1");
+        options.add("-Xmaxerrs");
+        options.add("1");
 
-        if (useMordernDoc) {
-            doclet = Javadoc.with.sources(project.getSourceSet().toList())
-                    .output(project.getOutput().directory("new-api"))
-                    .product(project.getProduct())
-                    .project(project.getGroup())
-                    .version(project.getVersion())
-                    // .useExternalJDKDoc()
-                    .buildDocletClass();
-        } else {
-            options.add("--enable-preview");
-            options.add("--release");
-            options.add(Inputs.normalize(SourceVersion.latest()));
-            options.add("-Xdoclint:none");
-            options.add("-Xmaxwarns");
-            options.add("1");
-            options.add("-Xmaxerrs");
-            options.add("1");
+        // format
+        options.add("-html5");
+        options.add("-javafx");
 
-            // format
-            options.add("-html5");
-            options.add("-javafx");
-
-            // external links
-            options.add("-link");
-            options.add("https://docs.oracle.com/en/java/javase/12/docs/api/");
-        }
+        // external links
+        options.add("-link");
+        options.add("https://docs.oracle.com/en/java/javase/12/docs/api/");
 
         try {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
