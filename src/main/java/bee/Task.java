@@ -19,8 +19,6 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -340,24 +338,17 @@ public abstract class Task implements Extensible {
     /**
      * Utility method for task.
      * 
-     * @param directory
+     * @param path
      */
-    protected final Directory makeDirectory(Directory directory) {
-        if (directory != null && directory.isAbsent()) {
+    protected final Directory makeDirectory(Directory base, String path) {
+        Directory directory = base.directory(path);
+
+        if (directory.isAbsent()) {
             directory.create();
 
             ui.talk("Make directory [" + directory.absolutize() + "]");
         }
         return directory;
-    }
-
-    /**
-     * Utility method for task.
-     * 
-     * @param path
-     */
-    protected final Directory makeDirectory(Directory base, String path) {
-        return makeDirectory(base.directory(path));
     }
 
     /**
@@ -367,8 +358,6 @@ public abstract class Task implements Extensible {
      * @param xml A file contents.
      */
     protected final File makeFile(File file, XML xml) {
-        makeDirectory(file.parent());
-
         try (BufferedWriter writer = file.newBufferedWriter()) {
             xml.to(writer);
 
@@ -435,8 +424,6 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(File file, Iterable<String> content) {
-        makeDirectory(file.parent());
-
         file.text(content);
         ui.talk("Make file [" + file.absolutize() + "]");
 

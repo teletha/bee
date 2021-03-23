@@ -11,14 +11,11 @@ package bee.task;
 
 import bee.Task;
 import bee.api.Command;
-import psychopath.File;
 
 public class Pom extends Task {
 
     @Command("Generate pom file.")
-    public void gitignore() {
-        File pom = project.getRoot().file("pom.xml");
-
-        makeFile(pom, project.toString());
+    public void build() {
+        makeFile("pom.xml", project.toString());
     }
 }

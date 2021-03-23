@@ -13,9 +13,6 @@ import bee.Task;
 import bee.api.Command;
 import psychopath.Directory;
 
-/**
- * @version 2015/06/22 16:47:25
- */
 public class Prototype extends Task {
 
     @Command("Generate standard Java project skelton.")
