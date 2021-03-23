@@ -37,8 +37,6 @@ import psychopath.Location;
 
 public class Doc extends Task {
 
-    protected boolean useMordernDoc = false;
-
     /**
      * Generate javadoc with the specified doclet.
      */

@@ -19,10 +19,8 @@ import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -58,6 +56,7 @@ import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
 import psychopath.Directory;
 import psychopath.File;
+import psychopath.Locator;
 
 /**
  * @version 2017/03/04 13:26:53
@@ -341,24 +340,6 @@ public abstract class Task implements Extensible {
     /**
      * Utility method for task.
      * 
-     * @param path
-     */
-    protected final Path makeDirectory(Path path) {
-        if (path != null && Files.notExists(path)) {
-            try {
-                Files.createDirectories(path);
-
-                ui.talk("Make directory [" + path.toAbsolutePath() + "]");
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
-        }
-        return path;
-    }
-
-    /**
-     * Utility method for task.
-     * 
      * @param directory
      */
     protected final Directory makeDirectory(Directory directory) {
@@ -375,36 +356,8 @@ public abstract class Task implements Extensible {
      * 
      * @param path
      */
-    protected final Path makeDirectory(Path base, String path) {
-        return makeDirectory(base.resolve(path));
-    }
-
-    /**
-     * Utility method for task.
-     * 
-     * @param path
-     */
     protected final Directory makeDirectory(Directory base, String path) {
         return makeDirectory(base.directory(path));
-    }
-
-    /**
-     * Utility method to write xml file.
-     * 
-     * @param path A file path to write.
-     * @param xml A file contents.
-     */
-    protected final Path makeFile(Path path, XML xml) {
-        makeDirectory(path.getParent());
-
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            xml.to(writer);
-
-            ui.talk("Make file [" + path.toAbsolutePath() + "]");
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-        return path;
     }
 
     /**
@@ -432,13 +385,13 @@ public abstract class Task implements Extensible {
      * @param path A file path to write.
      * @param properties A file contents.
      */
-    protected final Path makeFile(Path path, Properties properties) {
-        makeDirectory(path.getParent());
+    protected final File makeFile(File path, Properties properties) {
+        path.parent().create();
 
         try {
-            properties.store(Files.newOutputStream(path), "");
+            properties.store(path.newOutputStream(), "");
 
-            ui.talk("Make file [" + path.toAbsolutePath() + "]");
+            ui.talk("Make file [" + path.absolutize() + "]");
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -451,18 +404,8 @@ public abstract class Task implements Extensible {
      * @param path A file path to write.
      * @param content A file content.
      */
-    protected final Path makeFile(String path, String content) {
-        return makeFile(Paths.get(path), content);
-    }
-
-    /**
-     * Utility method to write file.
-     * 
-     * @param path A file path to write.
-     * @param content A file content.
-     */
-    protected final Path makeFile(Path path, String content) {
-        return makeFile(path, Arrays.asList(content.split(Platform.EOL)));
+    protected final File makeFile(String path, String content) {
+        return makeFile(Locator.file(path), content);
     }
 
     /**
@@ -481,27 +424,8 @@ public abstract class Task implements Extensible {
      * @param path A file path to write.
      * @param content A file content.
      */
-    protected final Path makeFile(String path, Iterable<String> content) {
-        return makeFile(Paths.get(path), content);
-    }
-
-    /**
-     * Utility method to write file.
-     * 
-     * @param path A file path to write.
-     * @param content A file content.
-     */
-    protected final Path makeFile(Path path, Iterable<String> content) {
-        makeDirectory(path.getParent());
-
-        try {
-            Files.write(path, content, StandardCharsets.UTF_8);
-
-            ui.talk("Make file [" + path.toAbsolutePath() + "]");
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-        return path;
+    protected final File makeFile(String path, Iterable<String> content) {
+        return makeFile(Locator.file(path), content);
     }
 
     /**

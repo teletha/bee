@@ -35,7 +35,7 @@ import psychopath.Locator;
 public class Exe extends Task {
 
     /** The location for icon of exe file. */
-    protected Path icon;
+    public static Path icon;
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
@@ -86,9 +86,7 @@ public class Exe extends Task {
     }
 
     /**
-     * <p>
      * Helper method to build windows native application launcher.
-     * </p>
      * 
      * @param folder
      * @param suffix

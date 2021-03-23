@@ -221,7 +221,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // write file
-        makeFile(project.getRoot().asJavaPath().resolve(".factorypath"), doc);
+        makeFile(project.getRoot().file(".factorypath"), doc);
     }
 
     /**
@@ -244,7 +244,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // write file
-        makeFile(project.getRoot().asJavaPath().resolve(".settings/org.eclipse.jdt.apt.core.prefs"), properties);
+        makeFile(project.getRoot().file(".settings/org.eclipse.jdt.apt.core.prefs"), properties);
     }
 
     /**
