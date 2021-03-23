@@ -10,12 +10,24 @@
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>antibug</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -24,14 +36,26 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>net.bytebuddy</groupId>
-			<artifactId>byte-buddy</artifactId>
-			<version>1.10.22</version>
+			<groupId>org.ow2.asm</groupId>
+			<artifactId>asm</artifactId>
+			<version>9.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -46,8 +70,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -62,8 +98,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -78,8 +126,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -94,8 +154,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -110,8 +182,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -122,12 +206,24 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-api</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -138,12 +234,24 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-connector-basic</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -154,12 +262,24 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-impl</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -174,8 +294,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -186,12 +318,24 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-spi</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -202,12 +346,24 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-transport-http</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -218,12 +374,24 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-util</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -238,8 +406,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -254,8 +434,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -270,24 +462,20 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
+					<groupId>javax.inject</groupId>
+					<artifactId>javax.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
 					<artifactId>plexus-component-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.github.teletha</groupId>
-			<artifactId>stoneforge</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-component-annotations</artifactId>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
@@ -332,11 +520,14 @@
 				<version>3.8.1</version>
 				<configuration>
 					<compilerId>eclipse</compilerId>
-					<source>16</source>
-					<target>16</target>
+					<source>15</source>
+					<target>15</target>
+					<testSource>15</testSource>
+					<testTarget>15</testTarget>
 					<encoding>UTF-8</encoding>
 					<compilerArgs>
 						<arg>-proc:none</arg>
+						<arg>--enable-preview</arg>
 					</compilerArgs>
 				</configuration>
 				<dependencies>
@@ -344,6 +535,11 @@
 						<groupId>org.codehaus.plexus</groupId>
 						<artifactId>plexus-compiler-eclipse</artifactId>
 						<version>2.8.8</version>
+					</dependency>
+					<dependency>
+						<groupId>org.eclipse.jdt</groupId>
+						<artifactId>ecj</artifactId>
+						<version>3.25.0</version>
 					</dependency>
 				</dependencies>
 			</plugin>
