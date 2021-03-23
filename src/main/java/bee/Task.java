@@ -9,7 +9,21 @@
  */
 package bee;
 
-import static net.bytebuddy.jar.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACONST_NULL;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ASTORE;
+import static org.objectweb.asm.Opcodes.GETFIELD;
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.IFNE;
+import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.POP;
+import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.V16;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,7 +32,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,15 +44,20 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeMap;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import bee.Task.InterceptedSingleton;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
+import bee.Task.TaskLifestyle;
 import bee.api.Command;
 import bee.api.Project;
+import bee.util.EnhancedClassWriter;
+import bee.util.EnhancedMethodWriter;
 import bee.util.Inputs;
 import kiss.Extensible;
 import kiss.I;
@@ -48,15 +66,6 @@ import kiss.Managed;
 import kiss.WiseFunction;
 import kiss.XML;
 import kiss.model.Model;
-import net.bytebuddy.implementation.bind.annotation.Origin;
-import net.bytebuddy.implementation.bind.annotation.RuntimeType;
-import net.bytebuddy.implementation.bind.annotation.SuperCall;
-import net.bytebuddy.implementation.bind.annotation.This;
-import net.bytebuddy.jar.asm.ClassWriter;
-import net.bytebuddy.jar.asm.Label;
-import net.bytebuddy.jar.asm.MethodVisitor;
-import net.bytebuddy.jar.asm.Opcodes;
-import net.bytebuddy.jar.asm.Type;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
@@ -64,7 +73,7 @@ import psychopath.Locator;
 /**
  * @version 2017/03/04 13:26:53
  */
-@Managed(value = InterceptedSingleton.class)
+@Managed(value = TaskLifestyle.class)
 public abstract class Task implements Extensible {
 
     /** The common task repository. */
@@ -632,38 +641,93 @@ public abstract class Task implements Extensible {
         }
     }
 
+    /** The executed commands results. */
+    static final Map<String, Object> results = new HashMap();
+
     /**
      * 
      */
-    static class InterceptedSingleton implements Lifestyle<Object> {
-
-        private static final Interceptor interceptor = new Interceptor();
+    static class TaskLifestyle implements Lifestyle<Object> {
 
         private final Lifestyle lifestyle;
 
         /**
-         * @param modelClass
+         * @param model
          */
-        public InterceptedSingleton(Class modelClass) {
-            String className = "bee.Task$Enhanced$" + modelClass.getSimpleName();
-            Intercepting intercepting = new Intercepting(className, modelClass);
+        public TaskLifestyle(Class model) {
+            String parent = Type.getInternalName(model);
 
-            try {
-                MethodHandles.privateLookupIn(Task.class, MethodHandles.lookup()).defineClass(intercepting.write());
+            EnhancedClassWriter writer = new EnhancedClassWriter(Task.class, "MemoizedTask$" + model.getSimpleName());
+            writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
 
-                Class clazz = I.type(className);
-                lifestyle = I.prototype(clazz);
+            // constructor
+            EnhancedMethodWriter mw = writer.writeMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+            mw.visitVarInsn(ALOAD, 0);
+            mw.visitMethodInsn(INVOKESPECIAL, parent, "<init>", "()V", false);
+            mw.visitInsn(RETURN);
+            mw.visitMaxs(1, 1);
+            mw.visitEnd();
 
-            } catch (IllegalAccessException e) {
-                throw I.quiet(e);
+            // overwrite command methods
+            for (Method m : model.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(Command.class)) {
+                    String methodName = m.getName();
+                    String methodDesc = Type.getMethodDescriptor(m);
+                    Type returnType = Type.getReturnType(m);
+                    boolean valued = m.getReturnType() != void.class;
+
+                    mw = writer.writeMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
+                    mw.visitLdcInsn(model.getSimpleName() + ":" + methodName);
+                    mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
+                    mw.visitVarInsn(ASTORE, 1);
+                    mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+                    mw.visitVarInsn(ALOAD, 1);
+                    mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
+                    mw.visitVarInsn(ASTORE, 2);
+                    mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+                    mw.visitVarInsn(ALOAD, 1);
+                    mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "containsKey", "(Ljava/lang/Object;)Z", true);
+                    Label label3 = new Label();
+                    mw.visitJumpInsn(IFNE, label3);
+                    mw.visitVarInsn(ALOAD, 0);
+                    mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
+                    mw.visitVarInsn(ALOAD, 1);
+                    mw.visitInsn(ACONST_NULL);
+                    mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "startCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
+                    mw.visitVarInsn(ALOAD, 0);
+                    mw.visitMethodInsn(INVOKESPECIAL, parent, methodName, methodDesc, false);
+                    if (valued) {
+                        mw.wrap(returnType);
+                        mw.visitVarInsn(Opcodes.ASTORE, 2);
+                    }
+
+                    mw.visitVarInsn(ALOAD, 0);
+                    mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
+                    mw.visitVarInsn(ALOAD, 1);
+                    mw.visitInsn(ACONST_NULL);
+                    mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "endCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
+
+                    mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+                    mw.visitVarInsn(ALOAD, 1);
+                    mw.visitVarInsn(ALOAD, 2);
+                    mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
+                    mw.visitInsn(POP);
+
+                    mw.visitLabel(label3);
+                    if (valued) {
+                        mw.visitVarInsn(Opcodes.ALOAD, 2);
+                        mw.unwrap(returnType);
+                        mw.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
+                    } else {
+                        mw.visitInsn(RETURN);
+                    }
+                    mw.visitMaxs(0, 0);
+                    mw.visitEnd();
+                }
             }
+            writer.visitEnd();
 
-            // lifestyle = I.prototype(new ByteBuddy().subclass(modelClass)
-            // .method(ElementMatchers.any())
-            // .intercept(MethodDelegation.to(interceptor))
-            // .make()
-            // .load(Thread.currentThread().getContextClassLoader())
-            // .getLoaded());
+            lifestyle = I.prototype(writer.define());
         }
 
         /**
@@ -672,155 +736,6 @@ public abstract class Task implements Extensible {
         @Override
         public Object call() {
             return lifestyle.get();
-        }
-    }
-
-    public static <T> Class<T> intercept(Class packageBase, String className, Class<T> baseClass, Function<Method, Intercept<T>> enhancer) {
-        return null;
-    }
-
-    public static interface Intercept<T> {
-
-        void intercept(T instance, Callable superCall, Method method);
-    }
-
-    /**
-     * 
-     */
-    static class Intercepting {
-
-        private final String className;
-
-        private final Class model;
-
-        private final String parent;
-
-        /**
-         * @param model
-         */
-        private Intercepting(String className, Class model) {
-            this.className = className;
-            this.model = model;
-            this.parent = Type.getInternalName(model);
-        }
-
-        private byte[] write() {
-            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-            writer.visit(V16, ACC_PUBLIC | ACC_SUPER, className.replace('.', '/'), null, parent, null);
-
-            // constructor
-            MethodVisitor mv = writer.visitMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-            mv.visitVarInsn(ALOAD, 0);
-            mv.visitMethodInsn(INVOKESPECIAL, parent, "<init>", "()V", false);
-            mv.visitInsn(RETURN);
-            mv.visitMaxs(1, 1);
-            mv.visitEnd();
-
-            // overwrite command methods
-            for (Method m : model.getDeclaredMethods()) {
-                if (m.isAnnotationPresent(Command.class)) {
-                    String methodName = m.getName();
-                    String methodDesc = Type.getMethodDescriptor(m);
-
-                    mv = writer.visitMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
-                    mv.visitCode();
-                    mv.visitLdcInsn(model.getSimpleName() + ":" + methodName);
-                    mv.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
-                    mv.visitVarInsn(ASTORE, 1);
-                    mv.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-                    mv.visitVarInsn(ASTORE, 2);
-                    mv.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "containsKey", "(Ljava/lang/Object;)Z", true);
-                    Label label3 = new Label();
-                    mv.visitJumpInsn(IFNE, label3);
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "startCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitMethodInsn(INVOKESPECIAL, parent, methodName, methodDesc, false);
-                    mv.visitVarInsn(ALOAD, 0);
-                    mv.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitInsn(ACONST_NULL);
-                    mv.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "endCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
-                    mv.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                    mv.visitVarInsn(ALOAD, 1);
-                    mv.visitVarInsn(ALOAD, 2);
-                    mv.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
-                    mv.visitInsn(POP);
-                    mv.visitLabel(label3);
-                    mv.visitLineNumber(32, label3);
-                    mv.visitFrame(Opcodes.F_APPEND, 2, new Object[] {"java/lang/String", "java/lang/Object"}, 0, null);
-                    mv.visitInsn(RETURN);
-                    mv.visitMaxs(0, 0);
-                    mv.visitEnd();
-                }
-            }
-
-            writer.visitEnd();
-            return writer.toByteArray();
-        }
-    }
-
-    /** The executed commands results. */
-    protected static final Map<String, Object> results = new HashMap();
-
-    /**
-     * 
-     */
-    protected static class Interceptor {
-
-        @RuntimeType
-        public Object intercept(@This Task task, @SuperCall Callable<?> zuper, @Origin Method method) throws Exception {
-            Command command = find(method);
-
-            if (command == null) {
-                return zuper.call();
-            }
-
-            String name = Inputs.hyphenize(method.getDeclaringClass().getSimpleName()) + ":" + method.getName();
-
-            Object result = results.get(name);
-
-            if (!results.containsKey(name)) {
-                task.ui.startCommand(name, command);
-                result = zuper.call();
-                task.ui.endCommand(name, command);
-                results.put(name, result);
-            }
-            return result;
-        }
-
-        /**
-         * <p>
-         * Find command annotaton.
-         * </p>
-         * 
-         * @param method
-         * @return
-         */
-        private Command find(Method method) {
-            Class clazz = method.getDeclaringClass();
-
-            while (clazz != Object.class) {
-                for (Method m : clazz.getDeclaredMethods()) {
-                    if (m.getName().contentEquals(method.getName()) && Arrays
-                            .deepEquals(m.getParameterTypes(), method.getParameterTypes())) {
-                        Command command = m.getAnnotation(Command.class);
-
-                        if (command != null) {
-                            return command;
-                        }
-                    }
-                }
-                clazz = clazz.getSuperclass();
-            }
-            return null;
         }
     }
 

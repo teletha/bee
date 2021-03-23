@@ -19,10 +19,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.objectweb.asm.Type;
+
 import kiss.I;
 import kiss.WiseTriConsumer;
 import kiss.WiseTriFunction;
-import net.bytebuddy.jar.asm.Type;
 
 /**
  * 

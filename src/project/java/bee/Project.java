@@ -26,8 +26,8 @@ public class Project extends bee.api.Project {
         require("org.apache.maven.resolver", "maven-resolver-connector-basic", resolver);
         require("org.apache.maven.resolver", "maven-resolver-transport-http", resolver);
 
-        require("net.bytebuddy", "byte-buddy");
         require("net.bytebuddy", "byte-buddy-agent");
+        require("org.ow2.asm", "asm");
         require("org.junit.platform", "junit-platform-engine", "1.7.1");
         require("org.junit.platform", "junit-platform-launcher", "1.7.1");
         require("org.slf4j", "slf4j-nop");

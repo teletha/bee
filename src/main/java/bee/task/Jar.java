@@ -14,6 +14,11 @@ import java.util.jar.Attributes.Name;
 
 import javax.lang.model.SourceVersion;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
@@ -21,10 +26,6 @@ import bee.api.Scope;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
-import net.bytebuddy.jar.asm.ClassReader;
-import net.bytebuddy.jar.asm.ClassVisitor;
-import net.bytebuddy.jar.asm.ClassWriter;
-import net.bytebuddy.jar.asm.Opcodes;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Folder;

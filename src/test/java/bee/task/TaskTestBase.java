@@ -14,9 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import bee.BlinkProject;
 import kiss.I;
 
-/**
- * @version 2018/03/31 21:58:57
- */
 public abstract class TaskTestBase {
 
     /** The base project. */
