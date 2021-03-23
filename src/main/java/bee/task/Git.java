@@ -9,9 +9,7 @@
  */
 package bee.task;
 
-import static bee.Platform.EOL;
-import static bee.Platform.isLinux;
-import static bee.Platform.isWindows;
+import static bee.Platform.*;
 
 import java.util.List;
 import java.util.StringJoiner;

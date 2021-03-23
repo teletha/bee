@@ -33,9 +33,7 @@ class GitTest extends TaskTestBase {
     }
 
     /**
-     * <p>
      * Create lines.
-     * </p>
      * 
      * @param lines
      * @return
@@ -50,9 +48,7 @@ class GitTest extends TaskTestBase {
     }
 
     /**
-     * <p>
      * Test item matching
-     * </p>
      * 
      * @param one
      * @param other

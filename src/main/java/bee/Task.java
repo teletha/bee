@@ -9,21 +9,7 @@
  */
 package bee;
 
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
-import static org.objectweb.asm.Opcodes.ACONST_NULL;
-import static org.objectweb.asm.Opcodes.ALOAD;
-import static org.objectweb.asm.Opcodes.ASTORE;
-import static org.objectweb.asm.Opcodes.GETFIELD;
-import static org.objectweb.asm.Opcodes.GETSTATIC;
-import static org.objectweb.asm.Opcodes.IFNE;
-import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
-import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
-import static org.objectweb.asm.Opcodes.INVOKESTATIC;
-import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
-import static org.objectweb.asm.Opcodes.POP;
-import static org.objectweb.asm.Opcodes.RETURN;
-import static org.objectweb.asm.Opcodes.V16;
+import static org.objectweb.asm.Opcodes.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -70,9 +56,6 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
-/**
- * @version 2017/03/04 13:26:53
- */
 @Managed(value = TaskLifestyle.class)
 public abstract class Task implements Extensible {
 
@@ -461,7 +444,7 @@ public abstract class Task implements Extensible {
      * @return
      */
     protected final String readResource(String relativePathFromCallerClass) {
-        try (InputStream is = getClass().getResourceAsStream(relativePathFromCallerClass)) {
+        try (InputStream is = getClass().getSuperclass().getResourceAsStream(relativePathFromCallerClass)) {
             if (is == null) return null;
             try (InputStreamReader isr = new InputStreamReader(is); BufferedReader reader = new BufferedReader(isr)) {
                 return reader.lines().collect(Collectors.joining(System.lineSeparator()));
@@ -655,79 +638,77 @@ public abstract class Task implements Extensible {
          * @param model
          */
         public TaskLifestyle(Class model) {
-            String parent = Type.getInternalName(model);
+            lifestyle = I.prototype(EnhancedClassWriter.define(Task.class, "Memoized" + model.getSimpleName(), writer -> {
+                String parent = Type.getInternalName(model);
+                writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
 
-            EnhancedClassWriter writer = new EnhancedClassWriter(Task.class, "MemoizedTask$" + model.getSimpleName());
-            writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
+                // constructor
+                EnhancedMethodWriter mw = writer.writeMethod(ACC_PUBLIC, "<init>", "()V", null, null);
+                mw.visitVarInsn(ALOAD, 0);
+                mw.visitMethodInsn(INVOKESPECIAL, parent, "<init>", "()V", false);
+                mw.visitInsn(RETURN);
+                mw.visitMaxs(1, 1);
+                mw.visitEnd();
 
-            // constructor
-            EnhancedMethodWriter mw = writer.writeMethod(ACC_PUBLIC, "<init>", "()V", null, null);
-            mw.visitVarInsn(ALOAD, 0);
-            mw.visitMethodInsn(INVOKESPECIAL, parent, "<init>", "()V", false);
-            mw.visitInsn(RETURN);
-            mw.visitMaxs(1, 1);
-            mw.visitEnd();
+                // overwrite command methods
+                for (Method m : model.getDeclaredMethods()) {
+                    if (m.isAnnotationPresent(Command.class)) {
+                        String methodName = m.getName();
+                        String methodDesc = Type.getMethodDescriptor(m);
+                        Type returnType = Type.getReturnType(m);
+                        boolean valued = m.getReturnType() != void.class;
 
-            // overwrite command methods
-            for (Method m : model.getDeclaredMethods()) {
-                if (m.isAnnotationPresent(Command.class)) {
-                    String methodName = m.getName();
-                    String methodDesc = Type.getMethodDescriptor(m);
-                    Type returnType = Type.getReturnType(m);
-                    boolean valued = m.getReturnType() != void.class;
+                        mw = writer.writeMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
+                        mw.visitLdcInsn(model.getSimpleName() + ":" + methodName);
+                        mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
+                        mw.visitVarInsn(ASTORE, 1);
+                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
+                        mw.visitVarInsn(ASTORE, 2);
+                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "containsKey", "(Ljava/lang/Object;)Z", true);
+                        Label label3 = new Label();
+                        mw.visitJumpInsn(IFNE, label3);
+                        mw.visitVarInsn(ALOAD, 0);
+                        mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
+                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitInsn(ACONST_NULL);
+                        mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "startCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
+                        mw.visitVarInsn(ALOAD, 0);
+                        mw.visitMethodInsn(INVOKESPECIAL, parent, methodName, methodDesc, false);
+                        if (valued) {
+                            mw.wrap(returnType);
+                            mw.visitVarInsn(Opcodes.ASTORE, 2);
+                        }
 
-                    mw = writer.writeMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
-                    mw.visitLdcInsn(model.getSimpleName() + ":" + methodName);
-                    mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
-                    mw.visitVarInsn(ASTORE, 1);
-                    mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                    mw.visitVarInsn(ALOAD, 1);
-                    mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-                    mw.visitVarInsn(ASTORE, 2);
-                    mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                    mw.visitVarInsn(ALOAD, 1);
-                    mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "containsKey", "(Ljava/lang/Object;)Z", true);
-                    Label label3 = new Label();
-                    mw.visitJumpInsn(IFNE, label3);
-                    mw.visitVarInsn(ALOAD, 0);
-                    mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
-                    mw.visitVarInsn(ALOAD, 1);
-                    mw.visitInsn(ACONST_NULL);
-                    mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "startCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
-                    mw.visitVarInsn(ALOAD, 0);
-                    mw.visitMethodInsn(INVOKESPECIAL, parent, methodName, methodDesc, false);
-                    if (valued) {
-                        mw.wrap(returnType);
-                        mw.visitVarInsn(Opcodes.ASTORE, 2);
+                        mw.visitVarInsn(ALOAD, 0);
+                        mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
+                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitInsn(ACONST_NULL);
+                        mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "endCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
+
+                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitVarInsn(ALOAD, 2);
+                        mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
+                        mw.visitInsn(POP);
+
+                        mw.visitLabel(label3);
+                        if (valued) {
+                            mw.visitVarInsn(ALOAD, 2);
+                            mw.unwrap(returnType);
+                            mw.visitInsn(returnType.getOpcode(IRETURN));
+                        } else {
+                            mw.visitInsn(RETURN);
+                        }
+                        mw.visitMaxs(0, 0);
+                        mw.visitEnd();
                     }
-
-                    mw.visitVarInsn(ALOAD, 0);
-                    mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
-                    mw.visitVarInsn(ALOAD, 1);
-                    mw.visitInsn(ACONST_NULL);
-                    mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "endCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
-
-                    mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                    mw.visitVarInsn(ALOAD, 1);
-                    mw.visitVarInsn(ALOAD, 2);
-                    mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
-                    mw.visitInsn(POP);
-
-                    mw.visitLabel(label3);
-                    if (valued) {
-                        mw.visitVarInsn(Opcodes.ALOAD, 2);
-                        mw.unwrap(returnType);
-                        mw.visitInsn(returnType.getOpcode(Opcodes.IRETURN));
-                    } else {
-                        mw.visitInsn(RETURN);
-                    }
-                    mw.visitMaxs(0, 0);
-                    mw.visitEnd();
                 }
-            }
-            writer.visitEnd();
-
-            lifestyle = I.prototype(writer.define());
+                writer.visitEnd();
+            }));
         }
 
         /**

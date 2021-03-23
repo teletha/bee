@@ -10,6 +10,7 @@
 package bee.util;
 
 import java.lang.invoke.MethodHandles;
+import java.util.function.Consumer;
 
 import org.objectweb.asm.ClassWriter;
 
@@ -17,12 +18,10 @@ import kiss.I;
 
 public class EnhancedClassWriter extends ClassWriter {
 
-    /** The package base class. */
-    private Class packageBaseClass;
-
     /** The simple class name. */
     public final String className;
 
+    /** The fqcn. */
     public final String fqcnName;
 
     /** The internal class name. */
@@ -32,12 +31,11 @@ public class EnhancedClassWriter extends ClassWriter {
      * @param packageBaseClass
      * @param className
      */
-    public EnhancedClassWriter(Class packageBaseClass, String className) {
+    private EnhancedClassWriter(String className, String fqcn) {
         super(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 
-        this.packageBaseClass = packageBaseClass;
         this.className = className;
-        this.fqcnName = packageBaseClass.getPackageName() + "." + className;
+        this.fqcnName = fqcn;
         this.classInternalName = fqcnName.replace('.', '/');
     }
 
@@ -60,13 +58,19 @@ public class EnhancedClassWriter extends ClassWriter {
      * 
      * @return The new defined class.
      */
-    public final Class define() {
-        try {
-            MethodHandles.privateLookupIn(packageBaseClass, MethodHandles.lookup()).defineClass(toByteArray());
+    public static synchronized Class define(Class packageBaseClass, String className, Consumer<EnhancedClassWriter> writer) {
+        String fqcnName = packageBaseClass.getPackageName() + "." + className;
 
-            return I.type(fqcnName);
-        } catch (Exception e) {
-            throw I.quiet(e);
+        try {
+            return ClassLoader.getSystemClassLoader().loadClass(fqcnName);
+        } catch (ClassNotFoundException e) {
+            try {
+                EnhancedClassWriter w = new EnhancedClassWriter(className, fqcnName);
+                writer.accept(w);
+                return MethodHandles.privateLookupIn(packageBaseClass, MethodHandles.lookup()).defineClass(w.toByteArray());
+            } catch (IllegalAccessException x) {
+                throw I.quiet(e);
+            }
         }
     }
 }
