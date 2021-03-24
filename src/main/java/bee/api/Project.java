@@ -404,6 +404,16 @@ public class Project {
     }
 
     /**
+     * Internal setter for property access.
+     * 
+     * @param version
+     */
+    @SuppressWarnings("unused")
+    private void setJavaSourceVersion(SourceVersion version) {
+        this.sourceFileVersion = version;
+    }
+
+    /**
      * Returns Java version requirement.
      * 
      * @return A Java version requirement.
@@ -413,12 +423,32 @@ public class Project {
     }
 
     /**
+     * Internal setter for property access.
+     * 
+     * @param version
+     */
+    @SuppressWarnings("unused")
+    private void setJavaClassVersion(SourceVersion version) {
+        this.classFileVersion = version;
+    }
+
+    /**
      * Returns Java version requirement.
      * 
      * @return A Java version requirement.
      */
     public SourceVersion getJavaTestClassVersion() {
         return testClassFileVersion == null ? SourceVersion.latest() : testClassFileVersion;
+    }
+
+    /**
+     * Internal setter for property access.
+     * 
+     * @param version
+     */
+    @SuppressWarnings("unused")
+    private void setJavaTestClassVersion(SourceVersion version) {
+        this.testClassFileVersion = version;
     }
 
     /**

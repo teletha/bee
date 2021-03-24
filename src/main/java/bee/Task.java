@@ -9,13 +9,25 @@
  */
 package bee;
 
-import static org.objectweb.asm.Opcodes.*;
+import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.objectweb.asm.Opcodes.ACONST_NULL;
+import static org.objectweb.asm.Opcodes.ALOAD;
+import static org.objectweb.asm.Opcodes.ASTORE;
+import static org.objectweb.asm.Opcodes.GETFIELD;
+import static org.objectweb.asm.Opcodes.GETSTATIC;
+import static org.objectweb.asm.Opcodes.IFNE;
+import static org.objectweb.asm.Opcodes.INVOKEINTERFACE;
+import static org.objectweb.asm.Opcodes.INVOKESPECIAL;
+import static org.objectweb.asm.Opcodes.INVOKESTATIC;
+import static org.objectweb.asm.Opcodes.INVOKEVIRTUAL;
+import static org.objectweb.asm.Opcodes.IRETURN;
+import static org.objectweb.asm.Opcodes.POP;
+import static org.objectweb.asm.Opcodes.RETURN;
+import static org.objectweb.asm.Opcodes.V16;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
@@ -33,7 +45,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -397,6 +409,16 @@ public abstract class Task implements Extensible {
     /**
      * Utility method to write file.
      * 
+     * @param path A file path to write.
+     * @param content A file content.
+     */
+    protected final File makeFile(String path, Supplier<String> param, String content) {
+        return makeFile(Locator.file(path), content);
+    }
+
+    /**
+     * Utility method to write file.
+     * 
      * @param file A file path to write.
      * @param content A file content.
      */
@@ -435,23 +457,6 @@ public abstract class Task implements Extensible {
      */
     protected final File makeFile(File file, WiseFunction<String, String> replacer) {
         return makeFile(file, file.lines().map(replacer).toList());
-    }
-
-    /**
-     * Read the text from the specified resource file.
-     * 
-     * @param relativePathFromCallerClass
-     * @return
-     */
-    protected final String readResource(String relativePathFromCallerClass) {
-        try (InputStream is = getClass().getSuperclass().getResourceAsStream(relativePathFromCallerClass)) {
-            if (is == null) return null;
-            try (InputStreamReader isr = new InputStreamReader(is); BufferedReader reader = new BufferedReader(isr)) {
-                return reader.lines().collect(Collectors.joining(System.lineSeparator()));
-            }
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
     }
 
     /**

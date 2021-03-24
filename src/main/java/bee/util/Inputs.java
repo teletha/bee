@@ -32,6 +32,10 @@ import psychopath.Locator;
 
 public class Inputs {
 
+    public static String format(Object p1, String text) {
+        return String.format(text, p1);
+    }
+
     /**
      * Normalize user input.
      * 
