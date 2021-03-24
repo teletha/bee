@@ -104,7 +104,7 @@ public class Project {
     private Directory output;
 
     /** The version control system. */
-    private Github vcs;
+    private VCS vcs;
 
     /**
      * 
@@ -722,7 +722,7 @@ public class Project {
      * 
      * @return A uri of version control system.
      */
-    public final Github exactVersionControlSystem() {
+    public final VCS exactVersionControlSystem() {
         return getVersionControlSystem().or(() -> {
             throw new Fail("Version control system is not found.")
                     .solve("Describe ", signature(this::versionControlSystem), " in your project file.");
@@ -734,7 +734,7 @@ public class Project {
      * 
      * @return A uri of version control system.
      */
-    public Variable<Github> getVersionControlSystem() {
+    public Variable<VCS> getVersionControlSystem() {
         return Variable.of(vcs);
     }
 
@@ -745,7 +745,7 @@ public class Project {
      */
     protected final void versionControlSystem(String uri) {
         try {
-            this.vcs = StandardVCS.of(new URI(uri));
+            this.vcs = VCS.of(new URI(uri));
         } catch (URISyntaxException e) {
             // ignore
         }
