@@ -9,16 +9,21 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
+import static bee.Platform.Encoding;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -35,12 +40,10 @@ import kiss.Singleton;
 public abstract class UserInterface {
 
     /** The for command line user interface. */
-    public static final UserInterface CLI = new CommandLineUserInterface(); // use constructor
+    public static final UserInterface CUI = new CommandLineUserInterface(); // use constructor
 
     /**
-     * <p>
      * Talk to user with decoration like title.
-     * </p>
      * 
      * @param title
      */
@@ -51,9 +54,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Talk to user.
-     * </p>
      * 
      * @param messages Your message.
      */
@@ -62,9 +63,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Warn to user.
-     * </p>
      * 
      * @param messages Your warning message.
      */
@@ -73,9 +72,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Declare a state of emergency.
-     * </p>
      * 
      * @param message Your emergency message.
      */
@@ -84,9 +81,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her answer.
-     * </p>
      * 
      * @param question Your question message.
      * @return An answer.
@@ -106,9 +101,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her answer.
-     * </p>
      * 
      * @param question Your question message.
      * @return An answer.
@@ -131,14 +124,11 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her answer.
-     * </p>
      * <p>
      * UserInterface can display a default answer and user can use it with simple action. If the
      * returned answer is incompatible with the default anwser type, default answer will be
      * returned.
-     * </p>
      * 
      * @param <T> Anwser type.
      * @param question Your question message.
@@ -150,14 +140,11 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her answer.
-     * </p>
      * <p>
      * UserInterface can display a default answer and user can use it with simple action. If the
      * returned answer is incompatible with the default anwser type, default answer will be
      * returned.
-     * </p>
      * 
      * @param <T> Anwser type.
      * @param question Your question message.
@@ -208,12 +195,9 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her selected item.
-     * </p>
      * <p>
      * UserInterface can display a list of items and user can select it with simple action.
-     * </p>
      * 
      * @param question Your question message.
      * @param items A list of selectable items.
@@ -240,12 +224,9 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her selected item.
-     * </p>
      * <p>
      * UserInterface can display a list of items and user can select it with simple action.
-     * </p>
      * 
      * @param question Your question message.
      * @param items A list of selectable items.
@@ -274,12 +255,9 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her specified location.
-     * </p>
      * <p>
      * UserInterface can display the file chooser and user can select it with simple action.
-     * </p>
      * 
      * @param question Your question message.
      * @return A specified location.
@@ -311,12 +289,9 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Ask user about your question and return his/her specified location.
-     * </p>
      * <p>
      * UserInterface can display the directory chooser and user can select it with simple action.
-     * </p>
      * 
      * @param question Your question message.
      * @return A specified location.
@@ -362,9 +337,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Select number.
-     * </p>
      * 
      * @param min A minimum number.
      * @param max A maximum number.
@@ -394,9 +367,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Helper method to build message.
-     * </p>
      * 
      * @param messages Your messages.
      * @return A combined message.
@@ -408,9 +379,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Helper method to build message.
-     * </p>
      * 
      * @param builder A message builder.
      * @param messages Your messages.
@@ -442,9 +411,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Helper method to build message from various array type.
-     * </p>
      * 
      * @param builder A message builder.
      * @param type A array type.
@@ -473,9 +440,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Build error message.
-     * </p>
      * 
      * @param builder A message builder.
      * @param throwable An error message.
@@ -489,9 +454,7 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Build listup message.
-     * </p>
      * 
      * @param builder A message builder.
      * @param list Items.
@@ -508,27 +471,21 @@ public abstract class UserInterface {
     }
 
     /**
-     * <p>
      * Get underlaying message listener.
-     * </p>
      * 
      * @return
      */
     public abstract Appendable getInterface();
 
     /**
-     * <p>
      * Write message to user.
-     * </p>
      * 
      * @param message
      */
     protected abstract void write(String message);
 
     /**
-     * <p>
      * Display message about command starts.
-     * </p>
      * 
      * @param name A command name.
      * @param command A coommand info.
@@ -536,12 +493,334 @@ public abstract class UserInterface {
     protected abstract void startCommand(String name, Command command);
 
     /**
-     * <p>
      * Display message about command ends.
-     * </p>
      * 
      * @param name A command name.
      * @param command A coommand info.
      */
     protected abstract void endCommand(String name, Command command);
+
+    /**
+     * Default implementation.
+     */
+    private static class CommandLineUserInterface extends UserInterface {
+
+        /** The original standard output. */
+        private final PrintStream standardOutput;
+
+        /** The original standard error. */
+        @SuppressWarnings("unused")
+        private final PrintStream standardError;
+
+        /** The task state. */
+        private boolean first = false;
+
+        /** The command queue. */
+        private Deque<String> commands = new ArrayDeque();
+
+        /** The view state. */
+        private boolean eraseNextLine = false;
+
+        /**
+         * 
+         */
+        private CommandLineUserInterface() {
+            standardOutput = System.out;
+            standardError = System.err;
+
+            System.setOut(new Delegator());
+            System.setErr(new Delegator());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void startCommand(String name, Command command) {
+            first = true;
+            commands.add(name);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected void endCommand(String name, Command command) {
+            if (first) {
+                showCommandName();
+            }
+            first = true;
+            standardOutput.print(Platform.EOL);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected synchronized void write(String message) {
+            write(message, true);
+        }
+
+        /**
+         * Write message actually.
+         * 
+         * @param message A message.
+         * @param enforceLine A line feed status.
+         */
+        private synchronized void write(String message, boolean enforceLine) {
+            if (first) {
+                showCommandName();
+                first = false;
+            }
+
+            if (eraseNextLine) {
+                message = "[2K" + message;
+            }
+            eraseNextLine = message.endsWith("\r");
+
+            if (eraseNextLine || !enforceLine) {
+                standardOutput.print(message);
+            } else {
+                standardOutput.println(message);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Appendable getInterface() {
+            if (first) {
+                showCommandName();
+                first = false;
+            }
+            return System.out; // use delegator
+        }
+
+        /**
+         * <p>
+         * Show command name.
+         * </p>
+         */
+        private void showCommandName() {
+            String command = commands.pollLast();
+
+            if (command != null) {
+                standardOutput.println("◆ " + command.replace(":", " : ") + " ◆");
+            }
+        }
+
+        /**
+         * Delgator for UI.
+         */
+        private class Delegator extends PrintStream {
+
+            /**
+             * 
+             */
+            public Delegator() {
+                super(new ByteArrayOutputStream(), false, Platform.Encoding);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void write(byte[] b) throws IOException {
+                write(String.valueOf(b), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void flush() {
+                standardOutput.flush();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void close() {
+                standardOutput.close();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public boolean checkError() {
+                return standardOutput.checkError();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void write(int b) {
+                write(String.valueOf(b), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void write(byte[] buf, int off, int len) {
+                write(new String(buf, off, len), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(boolean b) {
+                write(String.valueOf(b), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(char c) {
+                write(String.valueOf(c), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(int i) {
+                write(String.valueOf(i), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(long l) {
+                write(String.valueOf(l), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(float f) {
+                write(String.valueOf(f), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(double d) {
+                write(String.valueOf(d), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(char[] s) {
+                write(String.valueOf(s), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(String s) {
+                write(s, false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void print(Object obj) {
+                write(String.valueOf(obj), false);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println() {
+                write("", true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(boolean x) {
+                write(String.valueOf(x), true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(char x) {
+                write(String.valueOf(x), true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(int x) {
+                write(String.valueOf(x), true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(long x) {
+                write(String.valueOf(x), true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(float x) {
+                write(String.valueOf(x), true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(double x) {
+                write(String.valueOf(x), true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(char[] x) {
+                write(String.valueOf(x), true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(String x) {
+                write(x, true);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void println(Object x) {
+                write(String.valueOf(x), true);
+            }
+        }
+    }
 }

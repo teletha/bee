@@ -27,6 +27,7 @@ import bee.api.Scope;
 import bee.api.StandardLicense;
 import bee.task.IDESupport;
 import bee.task.Prototype;
+import bee.util.Inputs;
 import bee.util.JavaCompiler;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -43,7 +44,7 @@ import psychopath.Option;
  */
 public class Bee {
 
-    private static final String version = "0.7.0";
+    private static final CharSequence version = Inputs.ref("version.txt");
 
     /** The api project. */
     public static final Project API = new Project() {
@@ -65,7 +66,7 @@ public class Bee {
     public static final Project Lombok = new Project() {
 
         {
-            product("org.projectlombok", "lombok", "1.18.12");
+            product("org.projectlombok", "lombok", "1.18.18");
         }
     };
 
@@ -119,7 +120,7 @@ public class Bee {
      */
     public Bee(Directory directory, UserInterface ui) {
         if (ui == null) {
-            ui = UserInterface.CLI;
+            ui = UserInterface.CUI;
         }
 
         if (directory == null) {
@@ -143,7 +144,7 @@ public class Bee {
         this.project = project;
 
         // inject project
-        ProjectLifestyle.local.set(project);
+        LifestyleForProject.local.set(project);
     }
 
     /**
@@ -155,7 +156,7 @@ public class Bee {
         this.ui = ui;
 
         // inject user interface
-        UserInterfaceLisfestyle.local.set(ui);
+        LifestyleForUI.local.set(ui);
     }
 
     /**

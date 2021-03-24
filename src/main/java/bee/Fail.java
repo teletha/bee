@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +28,7 @@ public class Fail extends Error {
     public List<String> solution = new ArrayList<String>();
 
     /**
-     * <p>
      * Create failure with reason message.
-     * </p>
      * 
      * @param reason
      */
@@ -40,9 +38,7 @@ public class Fail extends Error {
     }
 
     /**
-     * <p>
      * Create failure with reason message.
-     * </p>
      * 
      * @param reason
      */
@@ -51,9 +47,7 @@ public class Fail extends Error {
     }
 
     /**
-     * <p>
      * Create failure with reason message.
-     * </p>
      * 
      * @param reason
      */
@@ -62,9 +56,7 @@ public class Fail extends Error {
     }
 
     /**
-     * <p>
      * Write solution for this failure.
-     * </p>
      * 
      * @param messages
      */

@@ -23,7 +23,7 @@ class CommandLineUserInterfaceTest {
     @RegisterExtension
     static final CommandLineUser user = new CommandLineUser();
 
-    private CommandLineUserInterface ui = new CommandLineUserInterface();
+    private UserInterface ui = UserInterface.CUI;
 
     @Test
     void input() {

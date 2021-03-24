@@ -9,25 +9,25 @@
  */
 package bee;
 
-import bee.api.Project;
 import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.Singleton;
 
-/**
- * @version 2012/03/27 16:16:00
- */
-@Managed(value = Singleton.class)
-class ProjectLifestyle implements Lifestyle<Project> {
+@Managed(Singleton.class)
+class LifestyleForUI implements Lifestyle<UserInterface> {
 
     /** The actual store. */
-    static final ThreadLocal<Project> local = new InheritableThreadLocal();
+    static final ThreadLocal<UserInterface> local = new InheritableThreadLocal();
+
+    static {
+        local.set(UserInterface.CUI);
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Project call() throws Exception {
+    public UserInterface call() throws Exception {
         return local.get();
     }
 }

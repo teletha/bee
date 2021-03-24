@@ -43,8 +43,8 @@ public class BlinkProject extends Project {
      */
     public BlinkProject() {
         product("blink", "Blink", "1.0");
-        ProjectLifestyle.local.set(this);
-        UserInterfaceLisfestyle.local.set(Null.UI);
+        LifestyleForProject.local.set(this);
+        LifestyleForUI.local.set(Null.UI);
     }
 
     /**
@@ -63,7 +63,7 @@ public class BlinkProject extends Project {
      * </p>
      */
     public final void showTrace() {
-        UserInterfaceLisfestyle.local.set(new CommandLineUserInterface());
+        LifestyleForUI.local.set(UserInterface.CUI);
     }
 
     /**
