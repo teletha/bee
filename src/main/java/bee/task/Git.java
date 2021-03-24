@@ -9,12 +9,12 @@
  */
 package bee.task;
 
-import static bee.Platform.EOL;
-import static bee.Platform.isLinux;
-import static bee.Platform.isWindows;
+import static bee.Platform.*;
 
 import java.util.List;
 import java.util.StringJoiner;
+
+import javax.lang.model.SourceVersion;
 
 import bee.Task;
 import bee.api.Command;
@@ -80,7 +80,8 @@ public class Git extends Task {
                           package-name: %s
                 """;
 
-        makeFile(".github/workflows/java-ci-with-maven.yml", mavenCI.formatted(Inputs.normalize(project.getJavaTestClassVersion())));
+        makeFile(".github/workflows/java-ci-with-maven.yml", mavenCI
+                .formatted(Inputs.normalize(project.getJavaTestClassVersion(), SourceVersion.RELEASE_15)));
         makeFile(".github/workflows/release-please.yml", releasePlease.formatted(project.getProduct()));
         makeFile("version.txt", project.getVersion());
         makeFile(project.getProjectDefinition(), line -> {
