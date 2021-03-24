@@ -16,13 +16,12 @@ import bee.api.Scope;
 import bee.util.JavaCompiler;
 import kiss.Signal;
 import psychopath.Directory;
+import psychopath.Locator;
 
 public class Compile extends Task {
 
     /**
-     * <p>
      * Compile main sources and copy other resources.
-     * </p>
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
@@ -30,9 +29,7 @@ public class Compile extends Task {
     }
 
     /**
-     * <p>
      * Compile test sources and copy other resources.
-     * </p>
      */
     @Command("Compile test sources and copy other resources.")
     public void test() {
@@ -40,9 +37,7 @@ public class Compile extends Task {
     }
 
     /**
-     * <p>
      * Compile project sources and copy other resources.
-     * </p>
      */
     @Command("Compile project sources and copy other resources.")
     public void project() {
@@ -50,9 +45,18 @@ public class Compile extends Task {
     }
 
     /**
-     * <p>
+     * Validate all sources which are compilable or not.
+     */
+    @Command(value = "Compile main sources and copy other resources.", defaults = true)
+    public void check() {
+        Directory dir = Locator.temporaryDirectory();
+        compile("main", project.getSourceSet(), dir);
+        compile("test", project.getTestSourceSet(), dir);
+        dir.deleteOnExit();
+    }
+
+    /**
      * Helper method to compile sources and other resources.
-     * </p>
      * 
      * @param type A source type.
      * @param input A source locations.
@@ -66,6 +70,7 @@ public class Compile extends Task {
 
         ui.talk("Compiling ", type, " sources to ", output);
         JavaCompiler compiler = new JavaCompiler(ui);
+        compiler.addClassPath(output);
         compiler.addClassPath(project.getClasses());
         compiler.addClassPath(project.getDependency(Scope.Test, Scope.Compile));
         compiler.addSourceDirectory(input);
