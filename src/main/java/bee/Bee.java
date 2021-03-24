@@ -26,7 +26,6 @@ import bee.api.Project;
 import bee.api.Scope;
 import bee.task.IDESupport;
 import bee.task.Prototype;
-import bee.util.Inputs;
 import bee.util.JavaCompiler;
 import kiss.I;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -43,7 +42,7 @@ import psychopath.Option;
  */
 public class Bee {
 
-    private static final CharSequence version = Inputs.ref("version.txt");
+    private static final String version = "0.7.0";
 
     /** The api project. */
     public static final Project API = new Project() {
@@ -315,7 +314,7 @@ public class Bee {
     public static void main(String... tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("git");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

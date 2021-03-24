@@ -15,28 +15,23 @@ import bee.Task;
 import bee.api.Command;
 import kiss.I;
 
-/**
- * @version 2016/11/30 12:22:21
- */
 public class Ide extends Task {
 
     /**
-     * <p>
      * Create idea's project file.
-     * </p>
      */
     @Override
     @Command("Generate configuration files.")
     public void execute() {
+        require(Pom::build);
+
         task(IDESupport::execute);
 
         ui.talk("Generate IDE configuration files.");
     }
 
     /**
-     * <p>
      * Find supported {@link IDESupport} and apply task.
-     * </p>
      */
     private void task(Consumer<IDESupport> task) {
         I.find(IDESupport.class).stream().filter(support -> support.exist(project)).forEach(task);
