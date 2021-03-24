@@ -288,38 +288,12 @@ public class HeaderTypeTest {
     /**
      * @version 2015/06/17 9:22:58
      */
-    private static abstract class Base implements bee.api.License {
+    private static abstract class Base extends bee.api.License {
 
         /**
-         * {@inheritDoc}
          */
-        @Override
-        public String name() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String uri() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String fullName() {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String identifier() {
-            return null;
+        public Base() {
+            super("", "", "", "");
         }
 
         /**
@@ -333,9 +307,7 @@ public class HeaderTypeTest {
         }
 
         /**
-         * <p>
          * Define license body.
-         * </p>
          * 
          * @param license
          */

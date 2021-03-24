@@ -133,7 +133,7 @@ public class Project {
 
         setInput((Directory) null);
         setOutput((Directory) null);
-        license((StandardLicense) null);
+        license((License) null);
     }
 
     /**
@@ -273,7 +273,7 @@ public class Project {
      */
     protected final void license(License license) {
         if (license == null) {
-            license = StandardLicense.MIT;
+            license = License.MIT;
         }
         this.license = license;
     }
@@ -816,8 +816,8 @@ public class Project {
         }
 
         XML license = pom.child("licenses").child("license");
-        license.child("name").text(this.license.fullName());
-        license.child("url").text(this.license.uri());
+        license.child("name").text(this.license.full);
+        license.child("url").text(this.license.uri);
 
         List<RemoteRepository> repos = new ArrayList();
         repos.addAll(this.repositories);

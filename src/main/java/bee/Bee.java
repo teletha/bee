@@ -24,7 +24,6 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.api.StandardLicense;
 import bee.task.IDESupport;
 import bee.task.Prototype;
 import bee.util.Inputs;
@@ -257,7 +256,7 @@ public class Bee {
             String name = ui.ask("Product name", project.getRoot().name());
             String group = ui.ask("Product group", name.toLowerCase().replaceAll("\\s+", "."));
             String version = ui.ask("Product version", "1.0");
-            StandardLicense license = ui.ask("Product license", StandardLicense.class);
+            License license = ui.ask("Product license", License.builtins());
 
             // build temporary project
             inject(new FavricProject(group, name, version, license));
