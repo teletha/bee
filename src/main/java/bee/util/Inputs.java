@@ -158,7 +158,7 @@ public class Inputs {
 
             private long modified = file.lastModifiedMilli();
 
-            private String text = file.text();
+            private String text = file.text().strip();
 
             /**
              * Update contents.
@@ -167,7 +167,7 @@ public class Inputs {
                 long time = file.lastModifiedMilli();
                 if (modified != time) {
                     modified = time;
-                    text = file.text();
+                    text = file.text().strip();
                 }
             }
 
