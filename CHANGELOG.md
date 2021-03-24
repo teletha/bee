@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.7.1](https://www.github.com/Teletha/bee/compare/v0.7.0...v0.7.1) (2021-03-24)
+
+
+### Bug Fixes
+
+* Integrate Inputs and DebugHelper. ([eabe63e](https://www.github.com/Teletha/bee/commit/eabe63ed53236a916d88d3859469166b9410ba5e))
+* Public bee related projects should refer the version.txt. ([2190d36](https://www.github.com/Teletha/bee/commit/2190d36ea4aa0978350002ecafb87fb9c559c9a0))
+* Update pom. ([b99df4e](https://www.github.com/Teletha/bee/commit/b99df4e0bcaace3c9a2e974179010d65c601e015))
+
 ## [0.7.0](https://www.github.com/Teletha/bee/compare/0.1.8...v0.7.0) (2021-03-23)
 
 
