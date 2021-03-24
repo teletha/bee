@@ -33,7 +33,7 @@ class NotationTest {
     @Test
     void paragraphMultiLines() {
         Notation notation = new Notation();
-        notation.p("first line\r\nsecond line");
+        notation.p("first line" + EOL + "second line");
         assert notation.toString().equals("first line" + EOL + "second line" + EOL + EOL);
     }
 
@@ -41,7 +41,7 @@ class NotationTest {
     void section() {
         Notation notation = new Notation();
         notation.section(() -> {
-            notation.p("nest\r\nline");
+            notation.p("nest" + EOL + "line");
         });
         assert notation.toString().equals(INDENT + "nest" + EOL + INDENT + "line" + EOL + EOL);
     }
