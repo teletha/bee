@@ -630,7 +630,7 @@ public abstract class Task implements Extensible {
         public TaskLifestyle(Class model) {
             lifestyle = I.prototype(EnhancedClassWriter.define(Task.class, "Memoized" + model.getSimpleName(), writer -> {
                 String parent = Type.getInternalName(model);
-                writer.visit(V15, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
+                writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
 
                 // constructor
                 EnhancedMethodWriter mw = writer.writeMethod(ACC_PUBLIC, "<init>", "()V", null, null);

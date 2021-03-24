@@ -892,32 +892,14 @@ public class Project {
         plugin.child("artifactId").text("maven-compiler-plugin");
         plugin.child("version").text("3.8.1");
         XML conf = plugin.child("configuration");
-        conf.child("compilerId").text("eclipse");
-        // ecj 3.25.0 doesn't supports java 16 yet
-        conf.child("source").text(Inputs.normalize(getJavaSourceVersion(), SourceVersion.RELEASE_15));
-        conf.child("target").text(Inputs.normalize(getJavaClassVersion(), SourceVersion.RELEASE_15));
-        conf.child("testSource").text(Inputs.normalize(getJavaSourceVersion(), SourceVersion.RELEASE_15));
-        conf.child("testTarget").text(Inputs.normalize(getJavaTestClassVersion(), SourceVersion.RELEASE_15));
         conf.child("encoding").text(getEncoding().displayName());
         XML args = conf.child("compilerArgs");
         args.child("arg").text("-proc:none");
-        args.child("arg").text("--enable-preview");
-        XML depends = plugin.child("dependencies");
-        XML dependCompilerAPI = depends.child("dependency");
-        dependCompilerAPI.child("groupId").text("org.codehaus.plexus");
-        dependCompilerAPI.child("artifactId").text("plexus-compiler-eclipse");
-        dependCompilerAPI.child("version").text("2.8.8");
-        XML dependECJ = depends.child("dependency");
-        dependECJ.child("groupId").text("org.eclipse.jdt");
-        dependECJ.child("artifactId").text("ecj");
-        dependECJ.child("version").text("3.25.0");
 
         // surefire-plugin
         plugin = plugins.child("plugin");
         plugin.child("artifactId").text("maven-surefire-plugin");
         plugin.child("version").text("3.0.0-M5");
-        conf = plugin.child("configuration");
-        conf.child("argLine").text("--enable-preview");
 
         // write as pom
         return pom.toString();
