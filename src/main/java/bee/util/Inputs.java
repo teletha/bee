@@ -9,10 +9,24 @@
  */
 package bee.util;
 
+import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.StringJoiner;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.lang.model.SourceVersion;
 
+import org.objectweb.asm.Type;
+
+import kiss.I;
+import kiss.WiseTriConsumer;
+import kiss.WiseTriFunction;
 import psychopath.File;
 import psychopath.Locator;
 
@@ -193,5 +207,150 @@ public class Inputs {
                 return text.toString();
             }
         };
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+    public static <P> String signature(DebugConsumer<P> lambda) {
+        return methodNameFromLambda(lambda);
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+    public static String signature(DebugRunnable lambda) {
+        return methodNameFromLambda(lambda);
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+    public static <P, R> String signature(DebugFunction<P, R> lambda) {
+        return methodNameFromLambda(lambda);
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+    public static <R> String signature(Supplier<R> lambda) {
+        return "CC";
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+    public static <P1, P2> String signature(DebugBiConsumer<P1, P2> lambda) {
+        return methodNameFromLambda(lambda);
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+    public static <P1, P2, R> String signature(DebugBiFunction<P1, P2, R> lambda) {
+        return methodNameFromLambda(lambda);
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+    public static <P1, P2, P3> String signature(DebugTriConsumer<P1, P2, P3> lambda) {
+        return methodNameFromLambda(lambda);
+    }
+
+    /**
+     * Reference the method signature.
+     * 
+     * @param lambda Method reference.
+     * @return A method signature.
+     */
+
+    public static <P1, P2, P3, R> String signature(DebugTriFunction<P1, P2, P3, R> lambda) {
+        return methodNameFromLambda(lambda);
+    }
+
+    /**
+     * @param lambda
+     * @return
+     */
+    static String methodNameFromLambda(Serializable lambda) {
+        try {
+            Method m = lambda.getClass().getDeclaredMethod("writeReplace");
+            m.setAccessible(true);
+            SerializedLambda serialized = (SerializedLambda) m.invoke(lambda);
+            String clazz = serialized.getImplClass().replace('/', '.');
+            String method = serialized.getImplMethodName();
+
+            StringJoiner params = new StringJoiner(", ", "(", ")");
+            for (Type param : Type.getArgumentTypes(serialized.getImplMethodSignature())) {
+                params.add(I.type(param.getClassName()).getSimpleName());
+            }
+            return clazz + "#" + method + params;
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 
+     */
+    public static interface DebugRunnable extends Runnable, Serializable {
+    }
+
+    /**
+     * 
+     */
+    public static interface DebugConsumer<P> extends Consumer<P>, Serializable {
+    }
+
+    /**
+     * 
+     */
+    public static interface DebugBiConsumer<P1, P2> extends BiConsumer<P1, P2>, Serializable {
+    }
+
+    /**
+     * 
+     */
+    public static interface DebugTriConsumer<P1, P2, P3> extends WiseTriConsumer<P1, P2, P3>, Serializable {
+    }
+
+    /**
+     * 
+     */
+    public static interface DebugFunction<P, R> extends Function<P, R>, Serializable {
+    }
+
+    /**
+     * 
+     */
+    public static interface DebugBiFunction<P1, P2, R> extends BiFunction<P1, P2, R>, Serializable {
+    }
+
+    /**
+     * 
+     */
+    public static interface DebugTriFunction<P1, P2, P3, R> extends WiseTriFunction<P1, P2, P3, R>, Serializable {
     }
 }

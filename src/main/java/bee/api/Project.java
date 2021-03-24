@@ -9,6 +9,8 @@
  */
 package bee.api;
 
+import static bee.util.Inputs.signature;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,7 +40,6 @@ import bee.Bee;
 import bee.Fail;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
-import bee.util.DebugHelper;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
@@ -724,7 +725,7 @@ public class Project {
     public final Github exactVersionControlSystem() {
         return getVersionControlSystem().or(() -> {
             throw new Fail("Version control system is not found.")
-                    .solve("Describe ", DebugHelper.$(this::versionControlSystem), " in your project file.");
+                    .solve("Describe ", signature(this::versionControlSystem), " in your project file.");
         });
     }
 
