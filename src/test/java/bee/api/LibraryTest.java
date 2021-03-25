@@ -10,6 +10,8 @@
 package bee.api;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import bee.BlinkProject;
 
@@ -30,6 +32,7 @@ class LibraryTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     void sourceWithClassfier() {
         BlinkProject project = new BlinkProject();
         project.require("org.openjfx", "javafx-base", "11");
@@ -56,6 +59,7 @@ class LibraryTest {
     }
 
     @Test
+    @EnabledOnOs(OS.WINDOWS)
     void javadocWithClassfier() {
         BlinkProject project = new BlinkProject();
         project.require("org.openjfx", "javafx-base", "11");
