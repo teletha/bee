@@ -66,22 +66,8 @@ public class Inputs {
      * @return A version number.
      */
     public static String normalize(SourceVersion version) {
-        return normalize(version, null);
-    }
-
-    /**
-     * Normalize {@link SourceVersion} to human-readable version number.
-     * 
-     * @param version A target version.
-     * @return A version number.
-     */
-    public static String normalize(SourceVersion version, SourceVersion max) {
         if (version == null) {
             version = SourceVersion.latest();
-        }
-
-        if (max != null && version.compareTo(max) > 0) {
-            version = max;
         }
 
         switch (version) {

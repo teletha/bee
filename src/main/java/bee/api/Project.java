@@ -893,6 +893,7 @@ public class Project {
         plugin.child("version").text("3.8.1");
         XML conf = plugin.child("configuration");
         conf.child("encoding").text(getEncoding().displayName());
+        conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
         XML args = conf.child("compilerArgs");
         args.child("arg").text("-proc:none");
 
