@@ -9,8 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.EOL;
-import static bee.Platform.Encoding;
+import static bee.Platform.*;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -627,7 +626,8 @@ public abstract class UserInterface {
              */
             @Override
             public void write(byte[] b) throws IOException {
-                write(String.valueOf(b), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(b), false);
             }
 
             /**
@@ -659,7 +659,8 @@ public abstract class UserInterface {
              */
             @Override
             public void write(int b) {
-                write(String.valueOf(b), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(b), false);
             }
 
             /**
@@ -667,7 +668,8 @@ public abstract class UserInterface {
              */
             @Override
             public void write(byte[] buf, int off, int len) {
-                write(new String(buf, off, len), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(new String(buf, off, len), false);
             }
 
             /**
@@ -675,7 +677,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(boolean b) {
-                write(String.valueOf(b), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(b), false);
             }
 
             /**
@@ -683,7 +686,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(char c) {
-                write(String.valueOf(c), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(c), false);
             }
 
             /**
@@ -691,7 +695,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(int i) {
-                write(String.valueOf(i), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(i), false);
             }
 
             /**
@@ -699,7 +704,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(long l) {
-                write(String.valueOf(l), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(l), false);
             }
 
             /**
@@ -707,7 +713,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(float f) {
-                write(String.valueOf(f), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(f), false);
             }
 
             /**
@@ -715,7 +722,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(double d) {
-                write(String.valueOf(d), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(d), false);
             }
 
             /**
@@ -723,7 +731,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(char[] s) {
-                write(String.valueOf(s), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(s), false);
             }
 
             /**
@@ -731,7 +740,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(String s) {
-                write(s, false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(s, false);
             }
 
             /**
@@ -739,7 +749,8 @@ public abstract class UserInterface {
              */
             @Override
             public void print(Object obj) {
-                write(String.valueOf(obj), false);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(obj), false);
             }
 
             /**
@@ -747,7 +758,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println() {
-                write("", true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write("", true);
             }
 
             /**
@@ -755,7 +767,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(boolean x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
 
             /**
@@ -763,7 +776,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(char x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
 
             /**
@@ -771,7 +785,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(int x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
 
             /**
@@ -779,7 +794,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(long x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
 
             /**
@@ -787,7 +803,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(float x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
 
             /**
@@ -795,7 +812,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(double x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
 
             /**
@@ -803,7 +821,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(char[] x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
 
             /**
@@ -811,7 +830,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(String x) {
-                write(x, true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(x, true);
             }
 
             /**
@@ -819,7 +839,8 @@ public abstract class UserInterface {
              */
             @Override
             public void println(Object x) {
-                write(String.valueOf(x), true);
+                // Javac requires a fully qualified method call, so I had no choice.
+                CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
         }
     }

@@ -72,7 +72,8 @@ public class Compile extends Task {
         JavaCompiler compiler = new JavaCompiler(ui);
         compiler.addClassPath(output);
         compiler.addClassPath(project.getClasses());
-        compiler.addClassPath(project.getDependency(Scope.Test, Scope.Compile));
+        compiler.addClassPath(project.getDependency(Scope.Compile));
+        compiler.addClassPath(project.getDependency(Scope.Test));
         compiler.addSourceDirectory(input);
         compiler.setOutput(output);
         compiler.setNoWarn();
