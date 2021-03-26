@@ -28,11 +28,14 @@ import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
+import bee.api.Grab;
 import bee.api.Scope;
 import bee.util.Java;
 import bee.util.Java.JVM;
 import kiss.I;
 
+@Grab(group = "org.junit.platform", module = "junit-platform-engine")
+@Grab(group = "org.junit.platform", module = "junit-platform-launcher")
 public class Test extends Task {
 
     /** The threshold time (ms) to show the prolonged test. */

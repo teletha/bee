@@ -38,7 +38,9 @@ import org.objectweb.asm.Type;
 
 import bee.Task.TaskLifestyle;
 import bee.api.Command;
+import bee.api.Grab;
 import bee.api.Project;
+import bee.api.Repository;
 import bee.util.EnhancedClassWriter;
 import bee.util.EnhancedMethodWriter;
 import bee.util.Inputs;
@@ -627,8 +629,18 @@ public abstract class Task implements Extensible {
         /**
          * @param model
          */
-        public TaskLifestyle(Class model) {
+        public TaskLifestyle(Class<?> model) {
             lifestyle = I.prototype(EnhancedClassWriter.define(Task.class, "Memoized" + model.getSimpleName(), writer -> {
+                // ======================================
+                // Load the dependencies
+                // ======================================
+                for (Grab grab : model.getAnnotationsByType(Grab.class)) {
+                    Repository.require(grab.group(), grab.module(), grab.version());
+                }
+
+                // ======================================
+                // Define and build the memoized task class
+                // ======================================
                 String parent = Type.getInternalName(model);
                 writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
 
