@@ -21,9 +21,6 @@ import kiss.I;
 import psychopath.Directory;
 import psychopath.Locator;
 
-/**
- * @version 2018/03/29 8:25:35
- */
 public class Process {
 
     /** The working directory. */
@@ -45,9 +42,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Create new {@link Process} builder.
-     * </p>
      * 
      * @return
      */
@@ -56,9 +51,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Shorthand to Process.with().run(commands).
-     * </p>
      * 
      * @param commands
      */
@@ -67,9 +60,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Shorthand to Process.with().read(commands).
-     * </p>
      * 
      * @param commands
      */
@@ -78,9 +69,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Set the working directory of the sub process.
-     * </p>
      * 
      * @param directory A working directory.
      * @return Fluent API.
@@ -93,9 +82,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Set {@link System#out} and {@link System#in} encoding. .
-     * </p>
      * 
      * @param encoding
      * @return
@@ -108,9 +95,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Make this process running asynchronously.
-     * </p>
      * 
      * @return Fluent API.
      */
@@ -123,9 +108,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Make this process ignore system output.
-     * </p>
      * 
      * @return Fluent API.
      */
@@ -137,9 +120,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Execute sub process.
-     * </p>
      * 
      * @param commands
      */
@@ -153,9 +134,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Execute sub process.
-     * </p>
      * 
      * @param command
      */
@@ -164,9 +143,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Execute sub process and accept its result.
-     * </p>
      * 
      * @param commands
      */
@@ -180,9 +157,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Execute sub process and accept its result.
-     * </p>
      * 
      * @param command
      */
@@ -191,9 +166,7 @@ public class Process {
     }
 
     /**
-     * <p>
      * Execute sub process.
-     * </p>
      * 
      * @param command
      * @param userOutput

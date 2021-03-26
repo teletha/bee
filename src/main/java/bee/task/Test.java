@@ -25,6 +25,7 @@ import org.junit.platform.launcher.core.LauncherFactory;
 
 import bee.Bee;
 import bee.Fail;
+import bee.Platform;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Scope;
@@ -71,7 +72,9 @@ public class Test extends Task {
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(DiscoverySelectors.selectClasspathRoots(classes))
                     .build();
-            LauncherFactory.create().execute(request, new Summury());
+
+            Summury summury = new Summury();
+            LauncherFactory.create().execute(request, summury);
         }
 
         /**
@@ -120,10 +123,14 @@ public class Test extends Task {
 
                 ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
                 if (fails.size() != 0 || errors.size() != 0) {
-                    Fail failure = new Fail("Test has failed.");
-                    buildFailure(failure, errors);
-                    buildFailure(failure, fails);
-                    throw failure;
+                    Fail fail = new Fail("Test has failed.");
+                    // The stack trace created here is useless and should be deleted. (Since it is
+                    // almost a fixed content executed in a remote JVM)
+                    fail.setStackTrace(new StackTraceElement[0]);
+
+                    buildFailure(fail, errors);
+                    buildFailure(fail, fails);
+                    ui.error(fail);
                 }
             }
 
@@ -201,9 +208,7 @@ public class Test extends Task {
             }
 
             /**
-             * <p>
              * Build result message.
-             * </p>
              */
             private String buildResult(int tests, int fails, int errors, int ignores, long time, String name) {
                 StringBuilder builder = new StringBuilder();
@@ -219,28 +224,22 @@ public class Test extends Task {
             }
 
             /**
-             * <p>
              * Build {@link Fail}.
-             * </p>
              * 
-             * @param failure A current resolver.
+             * @param fail A current resolver.
              * @param list A list of test results.
              */
-            private void buildFailure(Fail failure, List<Failure> list) {
-                for (Failure fail : list) {
-                    String className = fail.container.getLegacyReportingName();
-                    StackTraceElement element = fail.error.getStackTrace()[0];
-                    int line = element.getClassName().equals(className) ? element.getLineNumber() : 0;
+            private void buildFailure(Fail fail, List<Failure> list) {
+                for (Failure e : list) {
+                    String name = e.clazz.getLegacyReportingName();
+                    StackTraceElement element = e.error.getStackTrace()[0];
+                    int line = element.getClassName().equals(name) ? element.getLineNumber() : 0;
 
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("Fix ").append(fail.container.getDisplayName());
-                    if (line != 0) builder.append(":").append(line);
-                    builder.append("#")
-                            .append(fail.identifier.getDisplayName())
-                            .append("\r\n  >>>  ")
-                            .append(fail.message().trim().split("[\\r\\n]")[0]);
+                    StringBuilder message = new StringBuilder("FIX: ").append(e.name())
+                            .append(" @" + line + " \t")
+                            .append(e.message().trim().split("[" + Platform.EOL + "]")[0]);
 
-                    failure.solve(builder);
+                    fail.solve(message);
                 }
             }
 
@@ -276,28 +275,43 @@ public class Test extends Task {
             }
 
             /**
-             * @version 2018/03/31 20:07:31
+             * 
              */
             private class Failure {
 
                 /** The container identifier. */
-                private final TestIdentifier container;
+                private final TestIdentifier clazz;
 
                 /** The test identifier. */
-                private final TestIdentifier identifier;
+                private final TestIdentifier test;
 
                 /** The error reuslt. */
                 private final Throwable error;
 
                 /**
-                 * @param container
-                 * @param identifier
+                 * Data holder.
+                 * 
+                 * @param clazz
+                 * @param test
                  * @param error
                  */
-                private Failure(TestIdentifier container, TestIdentifier identifier, Throwable error) {
-                    this.container = container;
-                    this.identifier = identifier;
+                private Failure(TestIdentifier clazz, TestIdentifier test, Throwable error) {
+                    this.clazz = clazz;
+                    this.test = test;
                     this.error = error;
+                }
+
+                /**
+                 * Retrieve the human-readable test case's name.
+                 * 
+                 * @return
+                 */
+                private String name() {
+                    String methodName = test.getDisplayName();
+                    if (methodName.endsWith("()")) {
+                        methodName = methodName.substring(0, methodName.length() - 2);
+                    }
+                    return clazz.getDisplayName() + " #" + methodName;
                 }
 
                 /**

@@ -11,10 +11,9 @@ package bee.util;
 
 import static bee.Platform.EOL;
 
+import java.io.Serializable;
 import java.util.function.Function;
 
-import kiss.Decoder;
-import kiss.Encoder;
 import kiss.I;
 import kiss.Signal;
 import kiss.WiseRunnable;
@@ -22,7 +21,9 @@ import kiss.WiseRunnable;
 /**
  * Simple Markdown-like memo.
  */
-public class Notation {
+public class Notation implements Serializable {
+
+    private static final long serialVersionUID = 6425166532989248520L;
 
     /** Indent character. */
     static final String INDENT = "\t";
@@ -42,15 +43,19 @@ public class Notation {
      * @param title
      */
     public void title(String title) {
+        int size = Math.round(title.length() * 1.2f);
+
         switch (level) {
         case 0:
+            builder.append("=".repeat(size)).append(EOL);
             builder.append(title).append(EOL);
-            builder.append("=".repeat(title.length())).append(EOL);
+            builder.append("=".repeat(size)).append(EOL);
             break;
 
         case 1:
+            builder.append("-".repeat(size)).append(EOL);
             builder.append(title).append(EOL);
-            builder.append("-".repeat(title.length())).append(EOL);
+            builder.append("-".repeat(size)).append(EOL);
             break;
 
         default:
@@ -76,7 +81,7 @@ public class Notation {
      * @param paragraph
      */
     public void p(String paragraph) {
-        builder.append(INDENT.repeat(level)).append(paragraph.replaceAll(LINE, "$1" + INDENT.repeat(level))).append(EOL).append(EOL);
+        builder.append(INDENT.repeat(level)).append(paragraph.replaceAll(LINE, "$1" + INDENT.repeat(level))).append(EOL);
     }
 
     /**
@@ -107,9 +112,8 @@ public class Notation {
      */
     public <T> void list(Signal<T> items, Function<T, String> descriptor) {
         items.to(item -> {
-            builder.append(INDENT.repeat(level)).append("* ").append(descriptor.apply(item)).append(EOL);
+            builder.append(INDENT.repeat(level)).append("- ").append(descriptor.apply(item)).append(EOL);
         });
-        builder.append(EOL);
     }
 
     /**
@@ -118,30 +122,5 @@ public class Notation {
     @Override
     public String toString() {
         return builder.toString();
-    }
-
-    /**
-     * 
-     */
-    @SuppressWarnings("unused")
-    private static class Codec implements Encoder<Notation>, Decoder<Notation> {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Notation decode(String value) {
-            Notation markdown = new Notation();
-            markdown.builder.append(value);
-            return markdown;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String encode(Notation value) {
-            return value.toString();
-        }
     }
 }

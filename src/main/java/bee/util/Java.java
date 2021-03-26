@@ -9,8 +9,12 @@
  */
 package bee.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.net.Socket;
@@ -22,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.StringJoiner;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
@@ -38,20 +41,14 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import bee.Bee;
-import bee.Fail;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
-import kiss.Decoder;
-import kiss.Encoder;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.Location;
 import psychopath.Locator;
 
-/**
- * @version 2016/12/12 14:40:20
- */
 public class Java {
 
     /** The identifiable name. */
@@ -331,7 +328,7 @@ public class Java {
     }
 
     /**
-     * @version 2016/12/12 14:40:14
+     * 
      */
     public static abstract class JVM {
 
@@ -454,12 +451,17 @@ public class Java {
             @Override
             public void error(Object... messages) {
                 for (Object message : messages) {
-                    if (message instanceof Throwable) {
-                        StringBuilder builder = new StringBuilder();
-                        Cause cause = make((Throwable) message);
-                        I.write(cause, builder);
+                    if (message instanceof Throwable e) {
+                        try {
+                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                            ObjectOutputStream out = new ObjectOutputStream(bytes);
+                            out.writeObject(e);
+                            out.close();
 
-                        transporter.error(builder.toString());
+                            transporter.object(bytes.toByteArray());
+                        } catch (Exception ex) {
+                            throw I.quiet(ex);
+                        }
                     }
                 }
             }
@@ -503,80 +505,49 @@ public class Java {
                 // the wrapped error in here.
                 throw new Error();
             }
-
-            /**
-             * <p>
-             * Create cause.
-             * </p>
-             * 
-             * @param throwable
-             * @return
-             */
-            private Cause make(Throwable throwable) {
-                Cause cause = new Cause();
-                cause.message = throwable.getMessage();
-
-                if (throwable instanceof Fail) {
-                    Fail failure = (Fail) throwable;
-                    cause.reason = failure.reason;
-                    cause.solution.addAll(failure.solution);
-                }
-
-                for (StackTraceElement element : throwable.getStackTrace()) {
-                    cause.traces.add(element);
-                }
-
-                // API definition
-                return cause;
-            }
         }
     }
 
     /**
-     * <p>
      * Transporter between parent process and sub process.
-     * </p>
-     * 
-     * @version 2012/04/04 23:03:00
      */
     @MXBean
     public static interface Transporter {
 
         /**
-         * <p>
          * Talk to user.
-         * </p>
          * 
          * @param message
          */
         void talk(String message);
 
         /**
-         * <p>
          * Talk to user.
-         * </p>
          * 
          * @param message
          */
         void title(String message);
 
         /**
-         * <p>
          * Talk to user.
-         * </p>
          * 
          * @param message
          */
         void warn(String message);
 
         /**
-         * <p>
          * Error message
-         * </p>
          * 
          * @param error
          */
         void error(String error);
+
+        /**
+         * Send the serialized object.
+         * 
+         * @param bytes
+         */
+        void object(byte[] bytes);
     }
 
     /**
@@ -628,81 +599,24 @@ public class Java {
          */
         @Override
         public void error(String error) {
-            this.error = I.json(error).as(new Cause());
-        }
-    }
-
-    /**
-     * @version 2014/07/28 14:16:07
-     */
-    @SuppressWarnings("serial")
-    private static final class Cause extends Fail {
-
-        /** The error message. */
-        @SuppressWarnings("unused")
-        public String message;
-
-        /** The stack trace. */
-        public List<StackTraceElement> traces = new ArrayList();
-    }
-
-    /**
-     * @version 2018/03/30 0:19:47
-     */
-    @SuppressWarnings("unused")
-    private static final class StackTraceCodec implements Decoder<StackTraceElement>, Encoder<StackTraceElement> {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String encode(StackTraceElement value) {
-            return value.getClassName() + " " + value.getMethodName() + " " + value.getFileName() + " " + value.getLineNumber();
+            ui.error(error);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public StackTraceElement decode(String value) {
-            String[] values = value.split(" ");
-            return new StackTraceElement(values[0], values[1], values[2], Integer.parseInt(values[3]));
-        }
-    }
-
-    /**
-     * @version 2016/10/12 10:53:26
-     */
-    @SuppressWarnings("unused")
-    private static final class StackTracesCodec implements Decoder<StackTraceElement[]>, Encoder<StackTraceElement[]> {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String encode(StackTraceElement[] values) {
-            Encoder<StackTraceElement> encoder = I.find(Encoder.class, StackTraceElement.class);
-
-            StringJoiner joiner = new StringJoiner(",");
-            for (StackTraceElement value : values) {
-                joiner.add(encoder.encode(value));
+        public void object(byte[] bytes) {
+            try {
+                Object o = new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
+                if (o instanceof Throwable e) {
+                    error = e;
+                } else {
+                    ui.talk(o);
+                }
+            } catch (Exception e) {
+                throw I.quiet(e);
             }
-            return joiner.toString();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public StackTraceElement[] decode(String value) {
-            Decoder<StackTraceElement> decoder = I.find(Decoder.class, StackTraceElement.class);
-            String[] values = value.split(",");
-            StackTraceElement[] elements = new StackTraceElement[values.length];
-
-            for (int i = 0; i < elements.length; i++) {
-                elements[i] = decoder.decode(values[i]);
-            }
-            return elements;
         }
     }
 }

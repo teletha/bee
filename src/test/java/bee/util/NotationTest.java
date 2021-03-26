@@ -20,21 +20,21 @@ class NotationTest {
     void title() {
         Notation notation = new Notation();
         notation.title("title");
-        assert notation.toString().equals("title" + EOL + "=====" + EOL);
+        assert notation.toString().equals("======" + EOL + "title" + EOL + "======" + EOL);
     }
 
     @Test
     void paragraph() {
         Notation notation = new Notation();
         notation.p("paragraph");
-        assert notation.toString().equals("paragraph" + EOL + EOL);
+        assert notation.toString().equals("paragraph" + EOL);
     }
 
     @Test
     void paragraphMultiLines() {
         Notation notation = new Notation();
         notation.p("first line" + EOL + "second line");
-        assert notation.toString().equals("first line" + EOL + "second line" + EOL + EOL);
+        assert notation.toString().equals("first line" + EOL + "second line" + EOL);
     }
 
     @Test
@@ -43,6 +43,6 @@ class NotationTest {
         notation.section(() -> {
             notation.p("nest" + EOL + "line");
         });
-        assert notation.toString().equals(INDENT + "nest" + EOL + INDENT + "line" + EOL + EOL);
+        assert notation.toString().equals(INDENT + "nest" + EOL + INDENT + "line" + EOL);
     }
 }

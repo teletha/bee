@@ -146,9 +146,7 @@ public class Bee {
     }
 
     /**
-     * <p>
      * Inject {@link UserInterface}.
-     * </p>
      */
     private void inject(UserInterface ui) {
         this.ui = ui;
@@ -302,7 +300,7 @@ public class Bee {
         }
 
         // build environemnt
-        ui.talk("\r\nProject develop environment is not found.");
+        ui.talk(Platform.EOL + "Project develop environment is not found.");
         builds.add((Task) ui.ask("Bee supports the following IDEs.", supports));
     }
 
@@ -314,7 +312,7 @@ public class Bee {
     public static void main(String... tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
+            bee.execute("test");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

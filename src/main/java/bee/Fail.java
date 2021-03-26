@@ -18,8 +18,9 @@ import java.util.function.Function;
 import bee.util.Notation;
 import kiss.WiseConsumer;
 
-@SuppressWarnings("serial")
 public class Fail extends Error {
+
+    private static final long serialVersionUID = -8345874139547207248L;
 
     /** The reason, */
     public Notation reason = new Notation();
@@ -71,7 +72,7 @@ public class Fail extends Error {
      */
     @Override
     public String getMessage() {
-        StringBuilder builder = new StringBuilder(reason.toString()).append(EOL);
+        StringBuilder builder = new StringBuilder().append(reason).append(EOL);
 
         int size = solution.size();
 
@@ -79,18 +80,11 @@ public class Fail extends Error {
             builder.append("No solution.");
         } else {
             Notation notation = new Notation();
-            notation.title("Solution");
+            notation.title("Suggested Solutions");
             notation.list(solution, Function.identity());
+
             builder.append(notation);
         }
         return builder.toString();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public StackTraceElement[] getStackTrace() {
-        return super.getStackTrace();
     }
 }
