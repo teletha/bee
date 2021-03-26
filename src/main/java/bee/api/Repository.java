@@ -205,50 +205,50 @@ public class Repository {
         repositories.addAll(builtinRepositories);
         repositories.addAll(project.repositories);
 
-        // dependency dependencyCollector
-        CollectRequest request = new CollectRequest();
-        request.setRepositories(repositories);
+        for (Scope scope : scopes) {
+            // collect dependency
+            CollectRequest request = new CollectRequest();
+            request.setRepositories(repositories);
 
-        for (Library library : libraries) {
-            Dependency dependency = new Dependency(library.artifact, library.scope.toString());
+            for (Library library : libraries) {
+                Dependency dependency = new Dependency(library.artifact, library.scope.toString());
 
-            for (Scope scope : scopes) {
                 if (scope.accept(dependency)) {
                     request.addDependency(dependency);
                 }
             }
-        }
 
-        try {
-            DependencyResult result = system.resolveDependencies(session, new DependencyRequest(request, (node, parents) -> {
-                if (node == null || node.getArtifact() == null) {
-                    return true;
-                }
-                List<DependencyNode> list = new ArrayList();
+            try {
+                DependencyResult result = system.resolveDependencies(session, new DependencyRequest(request, (node, parents) -> {
+                    if (node == null || node.getArtifact() == null) {
+                        return true;
+                    }
+                    List<DependencyNode> list = new ArrayList();
 
-                for (int i = parents.size() - 1; 0 <= i; i--) {
-                    DependencyNode parent = parents.get(i);
+                    for (int i = parents.size() - 1; 0 <= i; i--) {
+                        DependencyNode parent = parents.get(i);
 
-                    if (parent != null && parent.getArtifact() != null) {
-                        list.add(parent);
+                        if (parent != null && parent.getArtifact() != null) {
+                            list.add(parent);
+                        }
+                    }
+                    list.add(node);
+
+                    Scope root = Scope.by(list.get(0).getDependency().getScope());
+                    return list.stream().allMatch(n -> root.accept(n.getDependency()));
+                }));
+
+                for (ArtifactResult dependency : result.getArtifactResults()) {
+                    Artifact artifact = dependency.getArtifact();
+                    if (validateDependency(artifact)) {
+                        set.add(new Library(artifact, Variable.of(dependency.getRepository()).map(ArtifactRepository::getId)));
                     }
                 }
-                list.add(node);
-
-                Scope root = Scope.by(list.get(0).getDependency().getScope());
-                return list.stream().allMatch(n -> root.accept(n.getDependency()));
-            }));
-
-            for (ArtifactResult dependency : result.getArtifactResults()) {
-                Artifact artifact = dependency.getArtifact();
-                if (validateDependency(artifact)) {
-                    set.add(new Library(artifact, Variable.of(dependency.getRepository()).map(ArtifactRepository::getId)));
-                }
+            } catch (Exception e) {
+                throw I.quiet(e);
             }
-            return set;
-        } catch (Exception e) {
-            throw I.quiet(e);
         }
+        return set;
     }
 
     /**
