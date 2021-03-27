@@ -13,6 +13,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.Logger;
 
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
@@ -69,6 +71,12 @@ public class Test extends Task {
          */
         @Override
         public void process() throws Exception {
+            // disable logging for Junit
+            Logger global = Logger.getLogger("");
+            for (Handler handler : global.getHandlers()) {
+                global.removeHandler(handler);
+            }
+
             Set<Path> classes = I.set(Path.of(args[0]));
             showProlongedTime = Long.parseLong(args[2]) * 1000000;
 
