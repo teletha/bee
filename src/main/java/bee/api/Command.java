@@ -15,27 +15,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * @version 2015/06/22 16:23:08
- */
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Command {
 
     /**
-     * <p>
      * Describe this command.
-     * </p>
      * 
      * @return
      */
     String value();
 
     /**
-     * <p>
      * Determine whether this command is default or not.
-     * </p>
      * 
      * @return
      */

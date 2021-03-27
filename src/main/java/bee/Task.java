@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -654,7 +655,7 @@ public abstract class Task implements Extensible {
 
                 // overwrite command methods
                 for (Method m : model.getDeclaredMethods()) {
-                    if (m.isAnnotationPresent(Command.class)) {
+                    if (MethodUtils.getAnnotation(m, Command.class, true, true) != null) {
                         String methodName = m.getName();
                         String methodDesc = Type.getMethodDescriptor(m);
                         Type returnType = Type.getReturnType(m);

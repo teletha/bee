@@ -25,6 +25,7 @@ import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.task.IDESupport;
+import bee.task.Pom;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import kiss.I;
@@ -218,6 +219,14 @@ public class Bee {
             for (Task current : builds) {
                 current.execute();
             }
+
+            // synchronize pom automatically
+            File pom = Locator.file("pom.xml");
+            long lastModified = project.getProjectDefinition().lastModifiedMilli();
+            if (pom.lastModifiedMilli() < lastModified) {
+                I.make(Pom.class).build();
+                pom.lastModifiedTime(lastModified);
+            }
         } catch (Throwable e) {
             if (e == AbortedByUser) {
                 result = "CANCEL";
@@ -264,9 +273,6 @@ public class Bee {
             // build project architecture
             builds.add(new Task() {
 
-                /**
-                 * {@inheritDoc}
-                 */
                 @Override
                 public void execute() {
                     require(Prototype::java);

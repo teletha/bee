@@ -597,9 +597,7 @@ public abstract class UserInterface {
         }
 
         /**
-         * <p>
          * Show command name.
-         * </p>
          */
         private void showCommandName() {
             String command = commands.pollLast();
