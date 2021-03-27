@@ -151,7 +151,7 @@
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-engine</artifactId>
 			<version>1.7.1</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.inject</groupId>
@@ -179,7 +179,7 @@
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
 			<version>1.7.1</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>javax.inject</groupId>

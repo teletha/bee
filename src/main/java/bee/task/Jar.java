@@ -35,9 +35,7 @@ import psychopath.Option;
 public class Jar extends Task {
 
     /**
-     * <p>
      * Package main classes and other resources.
-     * </p>
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
     public void source() {
@@ -49,9 +47,7 @@ public class Jar extends Task {
     }
 
     /**
-     * <p>
      * Package test classes and other resources.
-     * </p>
      */
     @Command("Package test classes and other resources.")
     public void test() {
@@ -65,9 +61,7 @@ public class Jar extends Task {
     }
 
     /**
-     * <p>
      * Package project classes and other resources.
-     * </p>
      */
     @Command("Package project classes and other resources.")
     public void project() {
@@ -81,9 +75,7 @@ public class Jar extends Task {
     }
 
     /**
-     * <p>
      * Package documentations and other resources.
-     * </p>
      */
     @Command("Package main documentations and other resources.")
     public void document() {
@@ -93,9 +85,7 @@ public class Jar extends Task {
     }
 
     /**
-     * <p>
      * Packing.
-     * </p>
      * 
      * @param type
      * @param input
@@ -129,9 +119,7 @@ public class Jar extends Task {
     }
 
     /**
-     * <p>
      * Package main classes and other resources.
-     * </p>
      */
     @Command("Package all main classes and resources with dependencies.")
     public void merge() {
@@ -165,7 +153,7 @@ public class Jar extends Task {
         private final int version;
 
         public Modify(SourceVersion ver, ClassVisitor classVisitor) {
-            super(Opcodes.ASM8, classVisitor);
+            super(Opcodes.ASM9, classVisitor);
             switch (ver) {
             case RELEASE_1:
                 version = Opcodes.V1_1;
@@ -209,8 +197,11 @@ public class Jar extends Task {
             case RELEASE_14:
                 version = Opcodes.V14;
                 break;
-            default:
+            case RELEASE_15:
                 version = Opcodes.V15;
+                break;
+            default:
+                version = Opcodes.V16;
                 break;
             }
         }
