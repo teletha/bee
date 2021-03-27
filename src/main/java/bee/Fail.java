@@ -20,6 +20,9 @@ import kiss.WiseConsumer;
 
 public class Fail extends Error {
 
+    /** The visibility of stack trace. */
+    public static boolean traceable = false;
+
     private static final long serialVersionUID = -8345874139547207248L;
 
     /** The reason, */
@@ -61,7 +64,7 @@ public class Fail extends Error {
      * 
      * @param messages
      */
-    public final Fail solve(Object... messages) {
+    public Fail solve(Object... messages) {
         solution.add(UserInterface.build(messages));
 
         return this;
@@ -86,5 +89,17 @@ public class Fail extends Error {
             builder.append(notation);
         }
         return builder.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public StackTraceElement[] getStackTrace() {
+        if (traceable) {
+            return super.getStackTrace();
+        } else {
+            return new StackTraceElement[0];
+        }
     }
 }
