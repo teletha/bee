@@ -26,18 +26,14 @@ public class BeeInstaller {
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
     /**
-     * <p>
      * Launch Bee.
-     * </p>
      */
     public static final void main(String... args) {
         install(Locator.locate(BeeInstaller.class).asFile());
     }
 
     /**
-     * <p>
      * Install Bee into your system.
-     * </p>
      * 
      * @param source
      */
@@ -70,8 +66,7 @@ public class BeeInstaller {
         if (Bee.name().endsWith(".bat")) {
             // windows use JDK full path to avoid using JRE
             bat.add("@echo off");
-            bat.add(JavaHome.file("bin/java") + " --enable-preview -Xms256m -Xmx2048m -cp \"" + dest.toString() + "\" " + Bee.class
-                    .getName() + " %*");
+            bat.add(JavaHome.file("bin/java") + " -cp \"" + dest.toString() + "\" " + Bee.class.getName() + " %*");
         } else {
             // linux
             // TODO
