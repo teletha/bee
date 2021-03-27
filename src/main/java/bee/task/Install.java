@@ -27,7 +27,7 @@ public class Install extends Task {
         repository.install(project);
     }
 
-    @Command("Install local jar file into the local repository.")
+    @Command("Install jar file only into the local repository.")
     public void jar() {
         File selected = ui.ask("Select a jar file to install.", project.getRoot().walkFile("*.jar").toList());
         String group = ui.ask("Input group name.", selected.name());

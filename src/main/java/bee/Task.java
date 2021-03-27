@@ -503,7 +503,7 @@ public abstract class Task implements Extensible {
         if (command == null) {
             Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
             for (Entry<String, String> entry : info.descriptions.entrySet()) {
-                failure.solve(taskName, ":", entry.getKey(), " - ", entry.getValue());
+                failure.solve(String.format("%s:%-8s \t%s", taskName, entry.getKey(), entry.getValue()));
             }
             throw failure;
         }
@@ -552,7 +552,7 @@ public abstract class Task implements Extensible {
             Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
             for (Entry<String, Info> entry : commons.entrySet()) {
                 info = entry.getValue();
-                failure.solve(entry.getKey(), " - ", info.descriptions.get(info.defaultCommnad));
+                failure.solve(String.format("%-8s \t%s", entry.getKey(), info.descriptions.get(info.defaultCommnad)));
             }
             throw failure;
         }
