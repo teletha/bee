@@ -9,7 +9,8 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
+import static bee.Platform.Encoding;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
