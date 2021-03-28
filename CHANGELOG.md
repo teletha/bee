@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.8.1](https://www.github.com/Teletha/bee/compare/v0.8.0...v0.8.1) (2021-03-28)
+
+
+### Bug Fixes
+
+* Update version. ([33a2f74](https://www.github.com/Teletha/bee/commit/33a2f7409442661a51b1e130905e6cea85974762))
+
 ## [0.8.0](https://www.github.com/Teletha/bee/compare/v0.7.0...v0.8.0) (2021-03-28)
 
 
