@@ -43,7 +43,7 @@ import psychopath.Option;
  */
 public class Bee {
 
-    private static final String version = "0.7.0";
+    private static final String version = "0.8.0";
 
     /** The api project. */
     public static final Project API = new Project() {
@@ -318,7 +318,7 @@ public class Bee {
     public static void main(String... tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("ci");
+            bee.execute("install");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
