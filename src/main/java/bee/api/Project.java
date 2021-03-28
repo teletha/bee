@@ -831,7 +831,7 @@ public class Project {
             dependency.child("version")
                     .text(library.version.equals("LATEST") ? "[" + I.make(Repository.class).resolveLatestVersion(library) + ",)"
                             : library.version);
-            dependency.child("scope").text(library.scope.toString());
+            dependency.child("scope").text(library.scope == Scope.Annotation ? "provided" : library.scope.toString());
 
             if (library.isJavaTools()) {
                 dependency.child("systemPath").text("${java.home}/../lib/tools.jar");
@@ -895,7 +895,7 @@ public class Project {
         conf.child("encoding").text(getEncoding().displayName());
         conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
         XML args = conf.child("compilerArgs");
-        args.child("arg").text("-proc:none");
+        if (getClasses().file("META-INF/services/javax.annotation.processing.Processor").isPresent()) args.child("arg").text("-proc:none");
 
         // surefire-plugin
         plugin = plugins.child("plugin");
