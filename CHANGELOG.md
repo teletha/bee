@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.8.0](https://www.github.com/Teletha/bee/compare/v0.7.0...v0.8.0) (2021-03-28)
+
+
+### Features
+
+* Add check command on compile task. ([dec2637](https://www.github.com/Teletha/bee/commit/dec2637e8fdda9188570ae747ec3146b99ae7935))
+* Add CI/CD task (for github). ([148d146](https://www.github.com/Teletha/bee/commit/148d146bfc82e856733cada9c6dadb5899101a99))
+* Enable CI on github. ([06354df](https://www.github.com/Teletha/bee/commit/06354df76b4d92e111bf583971e7933fc8899668))
+* IDE task builds pom file synchronously. ([7537381](https://www.github.com/Teletha/bee/commit/753738134e9184f8fdf8dd7069001f2dbc80d653))
+* Jar task supports Java16 on version modification. ([d1ce3ea](https://www.github.com/Teletha/bee/commit/d1ce3ea8ca2e4c91411c3bc320aaff0eff64b5ee))
+* Provide version control system model. ([adea252](https://www.github.com/Teletha/bee/commit/adea252a1454feaa78f7c3fcc756486c3801684f))
+* Terminates all tasks when a test fails. ([e4910a9](https://www.github.com/Teletha/bee/commit/e4910a9dbc1b9bd52e923c2333ac745b63b8d1b8))
+* The dependency Grab annotation like Groovy. ([6280a12](https://www.github.com/Teletha/bee/commit/6280a123eba3333dc8ae7d64b461f89d79ea8aa0))
+* Use release option on maven compiler plugin. ([7ef2a0d](https://www.github.com/Teletha/bee/commit/7ef2a0d24e9e689cbbea38b0086f48515c7003e5))
+* When executing any command, if the project definition has been ([d820b49](https://www.github.com/Teletha/bee/commit/d820b49a9660f50253ee29d0608bc62cdfefe196))
+
+
+### Bug Fixes
+
+* Build environment restricts the upper bound of java version. ([38cc547](https://www.github.com/Teletha/bee/commit/38cc547b966a961ca6c788f30471112d3b2fa979))
+* CI/CD task support JitPack. ([99ff1ce](https://www.github.com/Teletha/bee/commit/99ff1ce1ea02a43987e16a0551185061a5632998))
+* Compile at java 11. ([e0b6a8b](https://www.github.com/Teletha/bee/commit/e0b6a8b69a1915b71867a1459248c95b5c253cc1))
+* Dependency resolution fails when library is referred from compile ([520b6f7](https://www.github.com/Teletha/bee/commit/520b6f72935099bf3dc04cc48a24ac5f999488f4))
+* Disable logging of Junit. ([e148573](https://www.github.com/Teletha/bee/commit/e14857382089965cfdef35c7b2d196376945f024))
+* Drop preview support. ([b95f3b0](https://www.github.com/Teletha/bee/commit/b95f3b05565fa991ce017ecc04b8532478cac678))
+* Inputs#ref trim its contents. ([86e3415](https://www.github.com/Teletha/bee/commit/86e3415b481c6fbc9e205538c6562ed65a1ae1e9))
+* Integrate Inputs and DebugHelper. ([eabe63e](https://www.github.com/Teletha/bee/commit/eabe63ed53236a916d88d3859469166b9410ba5e))
+* Jar file is ignored. ([7aef28e](https://www.github.com/Teletha/bee/commit/7aef28e89006ee2315fd598907d056b7eb39f3fa))
+* Licesen is class now and remove StandardLicense. ([3d91a52](https://www.github.com/Teletha/bee/commit/3d91a524f89d6b7f1ceca2afba78fd8ebfe939ef))
+* Make code compilable by javac. ([5905a48](https://www.github.com/Teletha/bee/commit/5905a48e7ea21b5d9433ceab1b77bd2028e64fe2))
+* NotationTest fails on non-windows platform. ([fd20177](https://www.github.com/Teletha/bee/commit/fd2017740f682c0344ca620c421341d38d7d53ea))
+* Overridden commands in subclasses were not being recognized. ([d820b49](https://www.github.com/Teletha/bee/commit/d820b49a9660f50253ee29d0608bc62cdfefe196))
+* POM uses the ranged dependency version. ([92faf58](https://www.github.com/Teletha/bee/commit/92faf5804ba6c6d8aedd21032299ada717b3dec6))
+* Public bee related projects should refer the version.txt. ([2190d36](https://www.github.com/Teletha/bee/commit/2190d36ea4aa0978350002ecafb87fb9c559c9a0))
+* Remove PGP. ([11c50ff](https://www.github.com/Teletha/bee/commit/11c50ff9751720066d916f4bd409e4c3e6cbeb4e))
+* Remove Task#readResource, use text-block instead. ([06354df](https://www.github.com/Teletha/bee/commit/06354df76b4d92e111bf583971e7933fc8899668))
+* Remove unused class. ([148d146](https://www.github.com/Teletha/bee/commit/148d146bfc82e856733cada9c6dadb5899101a99))
+* Simplify a failure message. ([dc107c8](https://www.github.com/Teletha/bee/commit/dc107c86940367ae4a7528090714f107364493d4))
+* The bee related project' version is corrupted. ([7537381](https://www.github.com/Teletha/bee/commit/753738134e9184f8fdf8dd7069001f2dbc80d653))
+* Update pom. ([b99df4e](https://www.github.com/Teletha/bee/commit/b99df4e0bcaace3c9a2e974179010d65c601e015))
+* Use java15 on memoized task. ([8402e86](https://www.github.com/Teletha/bee/commit/8402e86fb8fe2f73d442094b6ac170b97921bff0))
+
 ## [0.7.0](https://www.github.com/Teletha/bee/compare/0.1.8...v0.7.0) (2021-03-23)
 
 
