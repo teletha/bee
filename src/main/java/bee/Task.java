@@ -397,16 +397,6 @@ public abstract class Task implements Extensible {
     /**
      * Utility method to write file.
      * 
-     * @param path A file path to write.
-     * @param content A file content.
-     */
-    protected final File makeFile(String path, Supplier<String> param, String content) {
-        return makeFile(Locator.file(path), content);
-    }
-
-    /**
-     * Utility method to write file.
-     * 
      * @param file A file path to write.
      * @param content A file content.
      */
