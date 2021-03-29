@@ -47,7 +47,6 @@ public class Doc extends Task {
 
         Class<? extends Doclet> doclet = null;
         List<String> options = new CopyOnWriteArrayList();
-        options.add("--enable-preview");
         options.add("--release");
         options.add(Inputs.normalize(SourceVersion.latest()));
         options.add("-Xdoclint:none");
