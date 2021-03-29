@@ -264,7 +264,6 @@ public class Java {
         for (String property : properties) {
             command.add(property);
         }
-        command.add("--enable-preview");
         command.add("-Dfile.encoding=UTF-8");
         command.add("-Xms" + initialMemory + "m");
         command.add("-Xmx" + maxMemory + "m");

@@ -47,15 +47,19 @@ public class Test extends Task {
     public void test() {
         require(Compile::source, Compile::test);
 
-        Java.with()
-                .classPath(project.getClasses())
-                .classPath(project.getTestClasses())
-                .classPath(project.getDependency(Scope.Test, Scope.Compile))
-                .classPath(Bee.class)
-                .enableAssertion()
-                .encoding(project.getEncoding())
-                .workingDirectory(project.getRoot())
-                .run(Junit.class, project.getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
+        if (project.getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
+            ui.talk("Test class not found.");
+        } else {
+            Java.with()
+                    .classPath(project.getClasses())
+                    .classPath(project.getTestClasses())
+                    .classPath(project.getDependency(Scope.Test, Scope.Compile))
+                    .classPath(Bee.class)
+                    .enableAssertion()
+                    .encoding(project.getEncoding())
+                    .workingDirectory(project.getRoot())
+                    .run(Junit.class, project.getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
+        }
     }
 
     /**

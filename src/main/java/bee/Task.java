@@ -30,7 +30,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.objectweb.asm.Label;
