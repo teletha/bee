@@ -14,20 +14,20 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-class GitTest extends TaskTestBase {
+class CiTest extends TaskTestBase {
 
     @Test
     public void update() {
-        Git git = new Git();
+        Ci ci = new Ci();
 
         List<String> original = lines("ok");
-        List<String> updated = git.update(original);
+        List<String> updated = ci.update(original);
         List<String> originalPart = updated.subList(0, original.size());
         List<String> additionalPart = updated.subList(original.size() + 1, updated.size());
         assert listItem(original, originalPart);
         assert additionalPart.isEmpty() == false;
 
-        List<String> latest = git.update(updated);
+        List<String> latest = ci.update(updated);
         assert listItem(originalPart, latest.subList(0, original.size()));
         assert listItem(additionalPart, latest.subList(original.size() + 1, latest.size()));
     }

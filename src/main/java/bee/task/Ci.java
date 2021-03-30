@@ -9,14 +9,23 @@
  */
 package bee.task;
 
+import static bee.Platform.*;
+
+import java.util.List;
+import java.util.StringJoiner;
+
 import bee.Task;
 import bee.api.Command;
 import bee.util.Inputs;
+import kiss.I;
+import psychopath.File;
 
 public class Ci extends Task {
 
     @Command(value = "Generate CI/CD configuration files for GitHub.", defaults = true)
     public void github() {
+        require(Ci::gitignore);
+
         String mavenCI = """
                 name: Java CI with Maven
 
@@ -81,5 +90,41 @@ public class Ci extends Task {
                 return line;
             }
         });
+    }
+
+    @Command(value = "Generate .gitignore file.")
+    public void gitignore() {
+        File ignore = project.getRoot().file(".gitignore");
+
+        makeFile(ignore, update(ignore.lines().toList()));
+    }
+
+    /**
+     * Update gitignore configuration.
+     * 
+     * @param lines Lines to update.
+     * @return An updated lines.
+     */
+    List<String> update(List<String> lines) {
+        StringJoiner uri = new StringJoiner(",", "https://www.gitignore.io/api/", "").add("Java").add("Maven");
+
+        // OS
+        if (isWindows()) uri.add("Windows");
+        if (isLinux()) uri.add("Linux");
+
+        // IDE
+        for (IDESupport ide : I.find(IDESupport.class)) {
+            if (ide.exist(project)) {
+                uri.add(ide.toString());
+            }
+        }
+
+        return I.http(uri.toString(), String.class)
+                .waitForTerminate()
+                .flatArray(rule -> rule.split(EOL))
+                .startWith(".*", "!/.gitignore", "!/.github")
+                .startWith(lines)
+                .distinct()
+                .toList();
     }
 }
