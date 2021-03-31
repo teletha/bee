@@ -171,7 +171,7 @@ public class Repository {
     /**
      * Collect all dependencies in the specified scope.
      * 
-     * @param libraries
+     * @param project
      * @param scopes
      * @return
      */
@@ -182,7 +182,7 @@ public class Repository {
     /**
      * Collect all dependencies in the specified scope.
      * 
-     * @param libraries
+     * @param library
      * @param scopes
      * @return
      */

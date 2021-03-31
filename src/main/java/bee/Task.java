@@ -68,11 +68,7 @@ public abstract class Task implements Extensible {
     protected UserInterface ui = I.make(UserInterface.class);
 
     /**
-     * <p>
      * Execute manual tasks.
-     * </p>
-     * 
-     * @param tasks
      */
     public void execute() {
         // do nothing

@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.EOL;
+import static bee.Platform.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +30,6 @@ public class Fail extends Error {
 
     /**
      * Create failure with reason message.
-     * 
-     * @param reason
      */
     public Fail() {
         this(e -> {

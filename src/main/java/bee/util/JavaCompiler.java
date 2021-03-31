@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -151,7 +151,7 @@ public class JavaCompiler {
      * variable. If threr is no classpath, the user class path consists of the current directory.
      * </p>
      * 
-     * @param path A classpath to add.
+     * @param library A classpath to add.
      */
     public void addClassPath(Library library) {
         if (library != null) {
@@ -165,7 +165,7 @@ public class JavaCompiler {
      * variable. If threr is no classpath, the user class path consists of the current directory.
      * </p>
      * 
-     * @param path A classpath to add.
+     * @param libraries A list of classpaths to add.
      */
     public void addClassPath(Set<Library> libraries) {
         if (libraries != null) {
@@ -204,11 +204,9 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Add the source code directory.
-     * </p>
      * 
-     * @param outputDirectory Your source code directory.
+     * @param directories Your source code directory.
      */
     public void addSourceDirectory(Signal<Directory> directories) {
         if (directories != null) {
@@ -217,13 +215,10 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Add the specified annotation processor to compile process. This method bybpasses the default
      * discovery process.
-     * </p>
      * <p>
      * Names of the annotation processors to run. This bypasses the default discovery process.
-     * </p>
      * 
      * @param processor
      */
@@ -267,13 +262,10 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Options to pass to annotation processors. These are not interpreted by javac directly, but
      * are made available for use by individual processors.
-     * </p>
      * 
-     * @param key A key name.
-     * @param value A passing value.
+     * @param option A key-value pair.
      */
     public void addProcessorOption(Entry<String, String> option) {
         if (option != null) {
@@ -282,10 +274,8 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Options to pass to annotation processors. These are not interpreted by javac directly, but
      * are made available for use by individual processors.
-     * </p>
      * 
      * @param options A key-value set.
      */
@@ -671,7 +661,7 @@ public class JavaCompiler {
         private final Map<String, byte[]> bytes = new HashMap();
 
         /**
-         * @param fileManager
+         * @param manager
          */
         public Manager(StandardJavaFileManager manager) {
             this.manager = manager;

@@ -52,7 +52,7 @@ public interface FileType extends Extensible {
     /**
      * Search {@link FileType} by extension.
      * 
-     * @param extension A extension.
+     * @param file A target file.
      * @return An associated {@link FileType}.
      */
     static FileType of(psychopath.File file) {

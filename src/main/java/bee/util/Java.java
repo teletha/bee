@@ -93,20 +93,16 @@ public class Java {
     }
 
     /**
-     * <p>
      * Create JVM instance.
-     * </p>
      */
     public static Java with() {
         return new Java();
     }
 
     /**
-     * <p>
      * Add classpath.
-     * </p>
      * 
-     * @param path
+     * @param paths
      */
     public Java classPath(Collection<Library> paths) {
         if (paths != null) {
@@ -120,9 +116,7 @@ public class Java {
     }
 
     /**
-     * <p>
      * Add classpath.
-     * </p>
      * 
      * @param path
      */
@@ -136,11 +130,9 @@ public class Java {
     }
 
     /**
-     * <p>
      * Add classpath.
-     * </p>
      * 
-     * @param path
+     * @param classes
      */
     public Java classPath(Class... classes) {
         if (classes != null) {

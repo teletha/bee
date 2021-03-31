@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static bee.Platform.EOL;
+import static bee.Platform.*;
 import static javax.tools.Diagnostic.Kind.*;
 
 import java.io.PrintWriter;
@@ -30,9 +30,6 @@ import bee.task.AnnotationProcessor.ProjectInfo;
 import kiss.Extensible;
 import kiss.I;
 
-/**
- * @version 2012/11/11 15:36:14
- */
 public abstract class AnnotationValidator<A extends Annotation> implements Extensible {
 
     /** The current processing element. */
@@ -54,9 +51,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     private ProjectInfo info;
 
     /**
-     * <p>
      * Setup validator.
-     * </p>
      * 
      * @param element
      * @param filer
@@ -87,18 +82,14 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     }
 
     /**
-     * <p>
      * Validate an annotation value.
-     * </p>
      * 
      * @param annotation An target annotation to validate.
      */
     protected abstract void validate(A annotation);
 
     /**
-     * <p>
      * Returns the fully qualified class name of the annotated element.
-     * </p>
      * 
      * @return
      */
@@ -107,9 +98,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     }
 
     /**
-     * <p>
      * Detecte the root element is sub class of the specified class or not.
-     * </p>
      * 
      * @param type
      * @return
@@ -119,9 +108,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     }
 
     /**
-     * <p>
      * Compute source file path.
-     * </p>
      * 
      * @return A path to source file.
      */
@@ -163,9 +150,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     }
 
     /**
-     * <p>
      * Talk to user.
-     * </p>
      * 
      * @param messages Your message.
      */
@@ -174,9 +159,7 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     }
 
     /**
-     * <p>
      * Warn to user.
-     * </p>
      * 
      * @param messages Your warning message.
      */
@@ -185,20 +168,16 @@ public abstract class AnnotationValidator<A extends Annotation> implements Exten
     }
 
     /**
-     * <p>
      * Declare a state of emergency.
-     * </p>
      * 
-     * @param message Your emergency message.
+     * @param messages Your emergency message.
      */
     protected final void error(Object... messages) {
         messager.printMessage(ERROR, build(messages), element);
     }
 
     /**
-     * <p>
      * Helper method to build message.
-     * </p>
      * 
      * @param messages Your messages.
      * @return A combined message.

@@ -28,18 +28,12 @@ import psychopath.Directory;
 import psychopath.File;
 
 /**
- * <p>
  * User configuration based on property file.
- * </p>
- * 
- * @version 2017/01/10 10:10:04
  */
 public class Config {
 
     /**
-     * <p>
      * Retrieve the configuration of the specified class for project.
-     * </p>
      *
      * @param type A configuration type.
      * @return A configuration.
@@ -49,9 +43,7 @@ public class Config {
     }
 
     /**
-     * <p>
      * Retrieve the configuration of the specified class for user.
-     * </p>
      *
      * @param type A configuration type.
      * @return A configuration.
@@ -61,11 +53,9 @@ public class Config {
     }
 
     /**
-     * <p>
      * Retrieve the configuration of the specified class for user.
-     * </p>
      *
-     * @param type A configuration type.
+     * @param config A configuration type.
      * @return A configuration.
      */
     public static <T> T users(Supplier<T> config) {
@@ -73,9 +63,7 @@ public class Config {
     }
 
     /**
-     * <p>
      * Retrieve the configuration of the specified class for system.
-     * </p>
      *
      * @param type A configuration type.
      * @return A configuration.
@@ -85,9 +73,7 @@ public class Config {
     }
 
     /**
-     * <p>
      * Read configuration.
-     * </p>
      * 
      * @param directory A target directory.
      * @param type A configuration type.

@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.signature;
+import static bee.util.Inputs.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -316,7 +316,7 @@ public class Project {
     /**
      * Resolve all dependencies for the specified scope.
      * 
-     * @param scope
+     * @param scopes
      * @return
      */
     public Set<Library> getDependency(Scope... scopes) {
@@ -463,7 +463,8 @@ public class Project {
     /**
      * Declare Java version requirement.
      * 
-     * @param version A Java version to require.
+     * @param sourceVersion A Java source version to require.
+     * @param targetVersion A Java target version to require.
      */
     protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion) {
         require(sourceVersion, targetVersion, targetVersion);
@@ -472,7 +473,9 @@ public class Project {
     /**
      * Declare Java version requirement.
      * 
-     * @param version A Java version to require.
+     * @param sourceVersion A Java source version to require.
+     * @param targetVersion A Java target version to require.
+     * @param testTargetVersion A Java target version to require.
      */
     protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion, SourceVersion testTargetVersion) {
         this.sourceFileVersion = sourceVersion;

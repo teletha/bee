@@ -9,8 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.EOL;
-import static bee.Platform.Encoding;
+import static bee.Platform.*;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -74,7 +73,7 @@ public abstract class UserInterface {
     /**
      * Declare a state of emergency.
      * 
-     * @param message Your emergency message.
+     * @param messages Your emergency message.
      */
     public void error(Object... messages) {
         talk("[ERROR] ", messages);
@@ -229,7 +228,7 @@ public abstract class UserInterface {
      * UserInterface can display a list of items and user can select it with simple action.
      * 
      * @param question Your question message.
-     * @param items A list of selectable items.
+     * @param enumeration A list of selectable items.
      * @return A selected item.
      */
     public <E extends Enum> E ask(String question, Class<E> enumeration) {

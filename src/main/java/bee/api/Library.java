@@ -42,9 +42,7 @@ public class Library implements Comparable<Library> {
     public final Variable<String> repositoryId;
 
     /**
-     * @param name
-     * @param group
-     * @param version
+     * @param qualified
      */
     Library(String qualified) {
         this(new DefaultArtifact(qualified), null);
@@ -54,7 +52,6 @@ public class Library implements Comparable<Library> {
      * @param group
      * @param artifact
      * @param version
-     * @param classifier
      */
     Library(String group, String artifact, String version) {
         this(group, artifact, "", version);
