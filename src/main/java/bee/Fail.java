@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +18,8 @@ import java.util.function.Function;
 import bee.util.Notation;
 import kiss.WiseConsumer;
 
+@SuppressWarnings("serial")
 public class Fail extends Error {
-
-    private static final long serialVersionUID = -8345874139547207248L;
 
     /** The reason, */
     public Notation reason = new Notation();
