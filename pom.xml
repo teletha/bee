@@ -206,7 +206,7 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-api</artifactId>
-			<version>1.6.2</version>
+			<version>1.7.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -234,7 +234,7 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-connector-basic</artifactId>
-			<version>1.6.2</version>
+			<version>1.7.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -262,7 +262,7 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-impl</artifactId>
-			<version>1.6.2</version>
+			<version>1.7.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -318,7 +318,7 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-spi</artifactId>
-			<version>1.6.2</version>
+			<version>1.7.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -346,7 +346,7 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-transport-http</artifactId>
-			<version>1.6.2</version>
+			<version>1.7.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -374,7 +374,7 @@
 		<dependency>
 			<groupId>org.apache.maven.resolver</groupId>
 			<artifactId>maven-resolver-util</artifactId>
-			<version>1.6.2</version>
+			<version>1.7.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
