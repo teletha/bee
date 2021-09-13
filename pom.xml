@@ -10,7 +10,7 @@
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>antibug</artifactId>
-			<version>[1.0.3,)</version>
+			<version>[1.1.0,)</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -150,7 +150,7 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-engine</artifactId>
-			<version>1.7.1</version>
+			<version>1.8.0-RC1</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -178,7 +178,7 @@
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.7.1</version>
+			<version>1.8.0-RC1</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
