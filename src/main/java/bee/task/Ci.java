@@ -50,6 +50,12 @@ public class Ci extends Task {
 
                     - name: Build with Maven
                       run: mvn -B package --file pom.xml
+
+                    - name: Publish Test Report
+                      uses: mikepenz/action-junit-report@v2
+                      if: always()
+                      with:
+                        report_paths: '**/build/test-results/test/TEST-*.xml'
                 """;
 
         String releasePlease = """
