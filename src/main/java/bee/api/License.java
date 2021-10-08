@@ -87,6 +87,14 @@ public class License {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return id;
+    }
+
+    /**
      * List up all builtin {@link License}s.
      * 
      * @return

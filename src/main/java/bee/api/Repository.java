@@ -19,12 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
-import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
-import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
-import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
@@ -39,48 +34,9 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
-import org.eclipse.aether.impl.ArtifactDescriptorReader;
-import org.eclipse.aether.impl.ArtifactResolver;
 import org.eclipse.aether.impl.DefaultServiceLocator;
-import org.eclipse.aether.impl.DependencyCollector;
-import org.eclipse.aether.impl.Deployer;
-import org.eclipse.aether.impl.Installer;
-import org.eclipse.aether.impl.LocalRepositoryProvider;
-import org.eclipse.aether.impl.MetadataGeneratorFactory;
-import org.eclipse.aether.impl.MetadataResolver;
-import org.eclipse.aether.impl.OfflineController;
-import org.eclipse.aether.impl.RemoteRepositoryManager;
-import org.eclipse.aether.impl.RepositoryConnectorProvider;
-import org.eclipse.aether.impl.RepositoryEventDispatcher;
-import org.eclipse.aether.impl.UpdateCheckManager;
-import org.eclipse.aether.impl.UpdatePolicyAnalyzer;
-import org.eclipse.aether.impl.VersionRangeResolver;
-import org.eclipse.aether.impl.VersionResolver;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
-import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
-import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
-import org.eclipse.aether.internal.impl.DefaultDeployer;
-import org.eclipse.aether.internal.impl.DefaultFileProcessor;
-import org.eclipse.aether.internal.impl.DefaultInstaller;
-import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
-import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
-import org.eclipse.aether.internal.impl.DefaultOfflineController;
-import org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager;
-import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
-import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
-import org.eclipse.aether.internal.impl.DefaultRepositoryLayoutProvider;
-import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
-import org.eclipse.aether.internal.impl.DefaultTrackingFileManager;
-import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
-import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
-import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
-import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
-import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
-import org.eclipse.aether.internal.impl.TrackingFileManager;
-import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
-import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
-import org.eclipse.aether.internal.impl.synccontext.NamedLockFactorySelector;
 import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -93,14 +49,7 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.checksum.ChecksumPolicyProvider;
-import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
-import org.eclipse.aether.spi.connector.layout.RepositoryLayoutProvider;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterProvider;
-import org.eclipse.aether.spi.io.FileProcessor;
-import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
-import org.eclipse.aether.spi.synccontext.SyncContextFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
@@ -187,42 +136,59 @@ public class Repository {
         dependencyFilters.add(new OptionalDependencySelector());
         dependencyFilters.add(new ScopeDependencySelector("test", "provided"));
 
-        I.associate(RepositorySystem.class, new Singleton<>(DefaultRepositorySystem.class));
-        I.associate(ArtifactResolver.class, new Singleton<>(DefaultArtifactResolver.class));
-        I.associate(DependencyCollector.class, new Singleton<>(DefaultDependencyCollector.class));
-        I.associate(Deployer.class, new Singleton<>(DefaultDeployer.class));
-        I.associate(Installer.class, new Singleton<>(DefaultInstaller.class));
-        I.associate(MetadataResolver.class, new Singleton<>(DefaultMetadataResolver.class));
-        I.associate(RepositoryLayoutProvider.class, new Singleton<>(DefaultRepositoryLayoutProvider.class));
-        I.associate(RepositoryLayoutFactory.class, new Singleton<>(Maven2RepositoryLayoutFactory.class));
-        I.associate(TransporterProvider.class, new Singleton<>(DefaultTransporterProvider.class));
-        I.associate(ChecksumPolicyProvider.class, new Singleton<>(DefaultChecksumPolicyProvider.class));
-        I.associate(RepositoryConnectorProvider.class, new Singleton<>(DefaultRepositoryConnectorProvider.class));
-        I.associate(RemoteRepositoryManager.class, new Singleton<>(DefaultRemoteRepositoryManager.class));
-        I.associate(UpdateCheckManager.class, new Singleton<>(DefaultUpdateCheckManager.class));
-        I.associate(UpdatePolicyAnalyzer.class, new Singleton<>(DefaultUpdatePolicyAnalyzer.class));
-        I.associate(FileProcessor.class, new Singleton<>(DefaultFileProcessor.class));
-        I.associate(SyncContextFactory.class, new Singleton<>(DefaultSyncContextFactory.class));
-        I.associate(RepositoryEventDispatcher.class, new Singleton<>(DefaultRepositoryEventDispatcher.class));
-        I.associate(OfflineController.class, new Singleton<>(DefaultOfflineController.class));
-        I.associate(LocalRepositoryProvider.class, new Singleton<>(DefaultLocalRepositoryProvider.class));
-        I.associate(LocalRepositoryManagerFactory.class, new Singleton<>(EnhancedLocalRepositoryManagerFactory.class));
-        I.associate(TrackingFileManager.class, new Singleton<>(DefaultTrackingFileManager.class));
-        I.associate(NamedLockFactorySelector.class, new Singleton<>(NamedLockFactorySelector.class));
-        I.associate(ArtifactDescriptorReader.class, new Singleton<>(DefaultArtifactDescriptorReader.class));
-        I.associate(VersionResolver.class, new Singleton<>(DefaultVersionResolver.class));
-        I.associate(VersionRangeResolver.class, new Singleton<>(DefaultVersionRangeResolver.class));
-        I.associate(MetadataGeneratorFactory.class, new Singleton<>(SnapshotMetadataGeneratorFactory.class));
-        I.associate(MetadataGeneratorFactory.class, new Singleton<>(VersionsMetadataGeneratorFactory.class));
-        I.associate(RepositoryConnectorFactory.class, new Singleton<>(BasicRepositoryConnectorFactory.class));
-        I.associate(TransporterFactory.class, new Singleton<>(HttpTransporterFactory.class));
+        // I.associate(RepositorySystem.class, new Singleton<>(DefaultRepositorySystem.class));
+        // I.associate(ArtifactResolver.class, new Singleton<>(DefaultArtifactResolver.class));
+        // I.associate(DependencyCollector.class, new
+        // Singleton<>(DefaultDependencyCollector.class));
+        // I.associate(Deployer.class, new Singleton<>(DefaultDeployer.class));
+        // I.associate(Installer.class, new Singleton<>(DefaultInstaller.class));
+        // I.associate(MetadataResolver.class, new Singleton<>(DefaultMetadataResolver.class));
+        // I.associate(RepositoryLayoutProvider.class, new
+        // Singleton<>(DefaultRepositoryLayoutProvider.class));
+        // I.associate(RepositoryLayoutFactory.class, new
+        // Singleton<>(Maven2RepositoryLayoutFactory.class));
+        // I.associate(TransporterProvider.class, new
+        // Singleton<>(DefaultTransporterProvider.class));
+        // I.associate(ChecksumPolicyProvider.class, new
+        // Singleton<>(DefaultChecksumPolicyProvider.class));
+        // I.associate(RepositoryConnectorProvider.class, new
+        // Singleton<>(DefaultRepositoryConnectorProvider.class));
+        // I.associate(RemoteRepositoryManager.class, new
+        // Singleton<>(DefaultRemoteRepositoryManager.class));
+        // I.associate(UpdateCheckManager.class, new Singleton<>(DefaultUpdateCheckManager.class));
+        // I.associate(UpdatePolicyAnalyzer.class, new
+        // Singleton<>(DefaultUpdatePolicyAnalyzer.class));
+        // I.associate(FileProcessor.class, new Singleton<>(DefaultFileProcessor.class));
+        // I.associate(SyncContextFactory.class, new Singleton<>(DefaultSyncContextFactory.class));
+        // I.associate(RepositoryEventDispatcher.class, new
+        // Singleton<>(DefaultRepositoryEventDispatcher.class));
+        // I.associate(OfflineController.class, new Singleton<>(DefaultOfflineController.class));
+        // I.associate(LocalRepositoryProvider.class, new
+        // Singleton<>(DefaultLocalRepositoryProvider.class));
+        // I.associate(LocalRepositoryManagerFactory.class, new
+        // Singleton<>(EnhancedLocalRepositoryManagerFactory.class));
+        // I.associate(TrackingFileManager.class, new
+        // Singleton<>(DefaultTrackingFileManager.class));
+        // I.associate(NamedLockFactorySelector.class, new
+        // Singleton<>(NamedLockFactorySelector.class));
+        // I.associate(ArtifactDescriptorReader.class, new
+        // Singleton<>(DefaultArtifactDescriptorReader.class));
+        // I.associate(VersionResolver.class, new Singleton<>(DefaultVersionResolver.class));
+        // I.associate(VersionRangeResolver.class, new
+        // Singleton<>(DefaultVersionRangeResolver.class));
+        // I.associate(MetadataGeneratorFactory.class, new
+        // Singleton<>(SnapshotMetadataGeneratorFactory.class));
+        // I.associate(MetadataGeneratorFactory.class, new
+        // Singleton<>(VersionsMetadataGeneratorFactory.class));
+        // I.associate(RepositoryConnectorFactory.class, new
+        // Singleton<>(BasicRepositoryConnectorFactory.class));
+        // I.associate(TransporterFactory.class, new Singleton<>(HttpTransporterFactory.class));
 
         // ============ RepositorySystem ============ //
         DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
         locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-        // system = locator.getService(RepositorySystem.class);
-        system = I.make(RepositorySystem.class);
+        system = locator.getService(RepositorySystem.class);
 
         // ==================================================
         // Initialize
