@@ -822,6 +822,8 @@ public class Repository {
             define(DefaultVersionRangeResolver.class);
             defineSelf(SnapshotMetadataGeneratorFactory.class);
             defineSelf(VersionsMetadataGeneratorFactory.class);
+            defineSelf(SimpleLocalRepositoryManagerFactory.class);
+            defineSelf(EnhancedLocalRepositoryManagerFactory.class);
             define(BasicRepositoryConnectorFactory.class);
             define(HttpTransporterFactory.class);
             define(NamedLockFactorySelector.class, NamedLockFactorySelector::new);
