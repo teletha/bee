@@ -14,10 +14,6 @@
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -41,10 +37,6 @@
 			<version>[9.2,)</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
@@ -70,10 +62,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -97,10 +85,6 @@
 			<version>[2.0.0-alpha5,)</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
@@ -126,10 +110,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -153,10 +133,6 @@
 			<version>[1.8.1,)</version>
 			<scope>provided</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
@@ -182,10 +158,6 @@
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -209,10 +181,6 @@
 			<version>1.7.2</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
@@ -238,10 +206,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -265,10 +229,6 @@
 			<version>1.7.2</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
@@ -294,10 +254,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -321,10 +277,6 @@
 			<version>1.7.2</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
@@ -350,10 +302,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -377,10 +325,6 @@
 			<version>1.7.2</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
@@ -406,10 +350,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -434,10 +374,6 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
@@ -461,10 +397,6 @@
 			<version>[2.0.0-alpha5,)</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>javax.inject</groupId>
-					<artifactId>javax.inject</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>commons-codec</groupId>
 					<artifactId>commons-codec</artifactId>

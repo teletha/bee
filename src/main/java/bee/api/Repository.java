@@ -14,12 +14,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
+import org.apache.maven.model.building.DefaultModelBuilderFactory;
+import org.apache.maven.model.building.ModelBuilder;
+import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
+import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
+import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
+import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
@@ -34,9 +44,31 @@ import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
-import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
+import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
+import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
+import org.eclipse.aether.internal.impl.DefaultDeployer;
+import org.eclipse.aether.internal.impl.DefaultFileProcessor;
+import org.eclipse.aether.internal.impl.DefaultInstaller;
+import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
+import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
+import org.eclipse.aether.internal.impl.DefaultOfflineController;
+import org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager;
+import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
+import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
+import org.eclipse.aether.internal.impl.DefaultRepositoryLayoutProvider;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
+import org.eclipse.aether.internal.impl.DefaultTrackingFileManager;
+import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
+import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
+import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
+import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
+import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
+import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
+import org.eclipse.aether.internal.impl.synccontext.NamedLockFactorySelector;
 import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -48,8 +80,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
+import org.eclipse.aether.spi.locator.Service;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
@@ -69,16 +100,19 @@ import bee.Bee;
 import bee.Platform;
 import bee.UserInterface;
 import bee.util.TransferInterface;
+import kiss.ExtensionFactory;
 import kiss.I;
+import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.Singleton;
 import kiss.Storable;
 import kiss.Variable;
+import kiss.model.Model;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
-@Managed(value = Singleton.class)
+@Managed(Singleton.class)
 public class Repository {
 
     /** The path to remote repository. */
@@ -94,9 +128,7 @@ public class Repository {
     }
 
     /**
-     * <p>
      * Add remote repository.
-     * </p>
      * 
      * @param name
      * @param url
@@ -136,59 +168,8 @@ public class Repository {
         dependencyFilters.add(new OptionalDependencySelector());
         dependencyFilters.add(new ScopeDependencySelector("test", "provided"));
 
-        // I.associate(RepositorySystem.class, new Singleton<>(DefaultRepositorySystem.class));
-        // I.associate(ArtifactResolver.class, new Singleton<>(DefaultArtifactResolver.class));
-        // I.associate(DependencyCollector.class, new
-        // Singleton<>(DefaultDependencyCollector.class));
-        // I.associate(Deployer.class, new Singleton<>(DefaultDeployer.class));
-        // I.associate(Installer.class, new Singleton<>(DefaultInstaller.class));
-        // I.associate(MetadataResolver.class, new Singleton<>(DefaultMetadataResolver.class));
-        // I.associate(RepositoryLayoutProvider.class, new
-        // Singleton<>(DefaultRepositoryLayoutProvider.class));
-        // I.associate(RepositoryLayoutFactory.class, new
-        // Singleton<>(Maven2RepositoryLayoutFactory.class));
-        // I.associate(TransporterProvider.class, new
-        // Singleton<>(DefaultTransporterProvider.class));
-        // I.associate(ChecksumPolicyProvider.class, new
-        // Singleton<>(DefaultChecksumPolicyProvider.class));
-        // I.associate(RepositoryConnectorProvider.class, new
-        // Singleton<>(DefaultRepositoryConnectorProvider.class));
-        // I.associate(RemoteRepositoryManager.class, new
-        // Singleton<>(DefaultRemoteRepositoryManager.class));
-        // I.associate(UpdateCheckManager.class, new Singleton<>(DefaultUpdateCheckManager.class));
-        // I.associate(UpdatePolicyAnalyzer.class, new
-        // Singleton<>(DefaultUpdatePolicyAnalyzer.class));
-        // I.associate(FileProcessor.class, new Singleton<>(DefaultFileProcessor.class));
-        // I.associate(SyncContextFactory.class, new Singleton<>(DefaultSyncContextFactory.class));
-        // I.associate(RepositoryEventDispatcher.class, new
-        // Singleton<>(DefaultRepositoryEventDispatcher.class));
-        // I.associate(OfflineController.class, new Singleton<>(DefaultOfflineController.class));
-        // I.associate(LocalRepositoryProvider.class, new
-        // Singleton<>(DefaultLocalRepositoryProvider.class));
-        // I.associate(LocalRepositoryManagerFactory.class, new
-        // Singleton<>(EnhancedLocalRepositoryManagerFactory.class));
-        // I.associate(TrackingFileManager.class, new
-        // Singleton<>(DefaultTrackingFileManager.class));
-        // I.associate(NamedLockFactorySelector.class, new
-        // Singleton<>(NamedLockFactorySelector.class));
-        // I.associate(ArtifactDescriptorReader.class, new
-        // Singleton<>(DefaultArtifactDescriptorReader.class));
-        // I.associate(VersionResolver.class, new Singleton<>(DefaultVersionResolver.class));
-        // I.associate(VersionRangeResolver.class, new
-        // Singleton<>(DefaultVersionRangeResolver.class));
-        // I.associate(MetadataGeneratorFactory.class, new
-        // Singleton<>(SnapshotMetadataGeneratorFactory.class));
-        // I.associate(MetadataGeneratorFactory.class, new
-        // Singleton<>(VersionsMetadataGeneratorFactory.class));
-        // I.associate(RepositoryConnectorFactory.class, new
-        // Singleton<>(BasicRepositoryConnectorFactory.class));
-        // I.associate(TransporterFactory.class, new Singleton<>(HttpTransporterFactory.class));
-
         // ============ RepositorySystem ============ //
-        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
-        locator.addService(TransporterFactory.class, HttpTransporterFactory.class);
-        system = locator.getService(RepositorySystem.class);
+        system = I.make(RepositorySystem.class);
 
         // ==================================================
         // Initialize
@@ -758,6 +739,118 @@ public class Repository {
          */
         private static LibraryInfo of(Library library) {
             return new LibraryInfo(library).restore();
+        }
+    }
+
+    /**
+     * Lazy intializable singleton.
+     */
+    protected static class LazySingleton<M> implements Lifestyle<M> {
+
+        protected final Class<? extends M> type;
+
+        protected M instance;
+
+        private Consumer<M> initializer;
+
+        protected LazySingleton(Class<? extends M> type) {
+            this.type = type;
+        }
+
+        protected LazySingleton(Class<? extends M> type, Consumer<M>... initializer) {
+            this.type = type;
+            this.initializer = initializer.length == 0 ? null : initializer[0];
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public synchronized M call() throws Exception {
+            if (instance == null) {
+                instance = I.prototype(type).get();
+
+                if (initializer != null) {
+                    initializer.accept(instance);
+                }
+            }
+            return instance;
+        }
+    }
+
+    /**
+     * Define various {@link Lifestyle}s.
+     */
+    @Managed(Singleton.class)
+    private static class Lifestyles implements ExtensionFactory<Lifestyle> {
+
+        private final Map<Class, Lifestyle> lifestyles = new ConcurrentHashMap();
+
+        private Lifestyles() {
+            define(DefaultRepositorySystem.class);
+            define(DefaultArtifactResolver.class);
+            define(DefaultDependencyCollector.class);
+            define(DefaultMetadataResolver.class);
+            define(DefaultDeployer.class, impl -> {
+                impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));
+                impl.addMetadataGeneratorFactory(I.make(VersionsMetadataGeneratorFactory.class));
+            });
+            define(DefaultInstaller.class, impl -> {
+                impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));
+                impl.addMetadataGeneratorFactory(I.make(VersionsMetadataGeneratorFactory.class));
+            });
+            define(DefaultRepositoryLayoutProvider.class);
+            define(Maven2RepositoryLayoutFactory.class);
+            define(DefaultTransporterProvider.class);
+            define(DefaultChecksumPolicyProvider.class);
+            define(DefaultRepositoryConnectorProvider.class);
+            define(DefaultRemoteRepositoryManager.class);
+            define(DefaultUpdateCheckManager.class);
+            define(DefaultUpdatePolicyAnalyzer.class);
+            define(DefaultFileProcessor.class);
+            define(org.eclipse.aether.internal.impl.synccontext.legacy.DefaultSyncContextFactory.class);
+            define(DefaultSyncContextFactory.class);
+            define(DefaultRepositoryEventDispatcher.class);
+            define(DefaultOfflineController.class);
+            define(DefaultLocalRepositoryProvider.class, impl -> {
+                impl.addLocalRepositoryManagerFactory(I.make(SimpleLocalRepositoryManagerFactory.class));
+                impl.addLocalRepositoryManagerFactory(I.make(EnhancedLocalRepositoryManagerFactory.class));
+            });
+            define(DefaultArtifactDescriptorReader.class);
+            define(DefaultTrackingFileManager.class);
+            define(DefaultVersionResolver.class);
+            define(DefaultVersionRangeResolver.class);
+            defineSelf(SnapshotMetadataGeneratorFactory.class);
+            defineSelf(VersionsMetadataGeneratorFactory.class);
+            define(BasicRepositoryConnectorFactory.class);
+            define(HttpTransporterFactory.class);
+            define(NamedLockFactorySelector.class, NamedLockFactorySelector::new);
+            define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
+        }
+
+        private <T> void define(Class<T> clazz, Consumer<T>... initializer) {
+            for (Class type : Model.collectTypes(clazz)) {
+                if (type.isInterface() && type != Service.class) {
+                    lifestyles.put(type, new LazySingleton(clazz, initializer));
+                    break;
+                }
+            }
+        }
+
+        private <T> void defineSelf(Class<T> clazz, Consumer<T>... initializer) {
+            lifestyles.put(clazz, new LazySingleton(clazz, initializer));
+        }
+
+        private <T> void define(Class<T> type, Lifestyle<T> lifestyle) {
+            lifestyles.put(type, lifestyle);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Lifestyle create(Class key) {
+            return lifestyles.get(key);
         }
     }
 }
