@@ -80,6 +80,8 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
+import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
+import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.locator.Service;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.SubArtifact;
@@ -799,11 +801,17 @@ public class Repository {
                 impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));
                 impl.addMetadataGeneratorFactory(I.make(VersionsMetadataGeneratorFactory.class));
             });
-            define(DefaultRepositoryLayoutProvider.class);
+            define(DefaultRepositoryLayoutProvider.class, impl -> {
+                impl.addRepositoryLayoutFactory(I.make(RepositoryLayoutFactory.class));
+            });
             define(Maven2RepositoryLayoutFactory.class);
-            define(DefaultTransporterProvider.class);
+            define(DefaultTransporterProvider.class, impl -> {
+                impl.addTransporterFactory(I.make(TransporterFactory.class));
+            });
             define(DefaultChecksumPolicyProvider.class);
-            define(DefaultRepositoryConnectorProvider.class);
+            define(DefaultRepositoryConnectorProvider.class, impl -> {
+                impl.addRepositoryConnectorFactory(I.make(BasicRepositoryConnectorFactory.class));
+            });
             define(DefaultRemoteRepositoryManager.class);
             define(DefaultUpdateCheckManager.class);
             define(DefaultUpdatePolicyAnalyzer.class);
