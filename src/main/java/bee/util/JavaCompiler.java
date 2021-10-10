@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
@@ -491,7 +492,7 @@ public class JavaCompiler {
             options.add("-processor");
             options.add(String.join(",", processorClasses));
             options.add("-processorpath");
-            options.add(I.join(",", processorClassPaths));
+            options.add(processorClassPaths.stream().map(Location::toString).collect(Collectors.joining(",")));
 
             for (Entry<String, String> entry : processorOptions.entrySet()) {
                 options.add("-A" + entry.getKey() + '=' + entry.getValue());
@@ -517,7 +518,7 @@ public class JavaCompiler {
         // =============================================
         if (classpaths.size() != 0) {
             options.add("-cp");
-            options.add(I.join(File.pathSeparator, classpaths));
+            options.add(classpaths.stream().map(Location::toString).collect(Collectors.joining(File.pathSeparator)));
         }
 
         // =============================================
@@ -538,7 +539,7 @@ public class JavaCompiler {
         });
 
         options.add("-sourcepath");
-        options.add(I.join(File.pathSeparator, this.sources.walkFile().toList()));
+        options.add(String.join(File.pathSeparator, this.sources.walkFile().map(Location::toString).toList()));
 
         // check compiling source size
         if (sources.isEmpty()) {

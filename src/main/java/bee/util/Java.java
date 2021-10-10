@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
@@ -246,7 +247,7 @@ public class Java {
 
         if (classpaths.size() != 0) {
             command.add("-cp");
-            command.add(I.join(File.pathSeparator, classpaths));
+            command.add(classpaths.stream().map(Path::toString).collect(Collectors.joining(File.pathSeparator)));
         }
 
         if (enableAssertion) {
