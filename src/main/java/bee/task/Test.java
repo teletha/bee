@@ -121,7 +121,7 @@ public class Test extends Task {
             private long times = 0;
 
             /** The test container manager. */
-            private final Map<TestIdentifier, TestSuite> containers = new ConcurrentHashMap();
+            private final Map<String, TestSuite> containers = new ConcurrentHashMap();
 
             /**
              * {@inheritDoc}
@@ -160,7 +160,7 @@ public class Test extends Task {
                     suites++;
                 } else {
                     skips++;
-                    containers.get(identifier).skips++;
+                    containers.get(identifier.getParentId().get()).skips++;
                 }
             }
 
@@ -174,11 +174,11 @@ public class Test extends Task {
                     identifier.getSource().ifPresent(source -> {
                         TestSuite container = new TestSuite(identifier);
                         container.startTime = System.nanoTime();
-                        containers.put(identifier, container);
+                        containers.put(identifier.getUniqueId(), container);
                     });
                 } else {
                     runs++;
-                    containers.get(identifier).runs++;
+                    containers.get(identifier.getParentId().get()).runs++;
                 }
 
             }
@@ -188,9 +188,9 @@ public class Test extends Task {
              */
             @Override
             public synchronized void executionFinished(TestIdentifier identifier, TestExecutionResult result) {
-                TestSuite container = containers.get(identifier);
-
                 if (identifier.isContainer()) {
+                    TestSuite container = containers.get(identifier.getUniqueId());
+
                     identifier.getSource().ifPresent(source -> {
                         long elapsed = System.nanoTime() - container.startTime;
                         times += elapsed;
@@ -204,7 +204,10 @@ public class Test extends Task {
                         ui.talk(buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, container.identifier
                                 .getLegacyReportingName()) + (show ? "" : "\r"));
                     });
+                    containers.remove(identifier.getUniqueId());
                 } else {
+                    TestSuite container = containers.get(identifier.getParentId().get());
+
                     switch (result.getStatus()) {
                     case SUCCESSFUL:
                         break;
@@ -225,8 +228,6 @@ public class Test extends Task {
                         break;
                     }
                 }
-
-                containers.remove(identifier);
             }
 
             /**
