@@ -209,7 +209,7 @@ public abstract class VCS {
          */
         @Override
         public boolean exist(String filePath) {
-            return I.http(uri("repos", owner, repo, "contents", filePath), JSON.class).take(1).toBinary().next();
+            return I.http(uri("repos", owner, repo, "contents", filePath), JSON.class).mapTo(true).take(1).to().next();
         }
 
         /**
