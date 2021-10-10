@@ -12,7 +12,9 @@ package bee.task;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
 
@@ -118,8 +120,8 @@ public class Test extends Task {
             /** The elapsed time. */
             private long times = 0;
 
-            /** The current test container. */
-            private TestSuite container;
+            /** The test container manager. */
+            private final Map<TestIdentifier, TestSuite> containers = new ConcurrentHashMap();
 
             /**
              * {@inheritDoc}
@@ -158,7 +160,7 @@ public class Test extends Task {
                     suites++;
                 } else {
                     skips++;
-                    container.skips++;
+                    containers.get(identifier).skips++;
                 }
             }
 
@@ -170,12 +172,13 @@ public class Test extends Task {
                 if (identifier.isContainer()) {
                     suites++;
                     identifier.getSource().ifPresent(source -> {
-                        container = new TestSuite(identifier);
+                        TestSuite container = new TestSuite(identifier);
                         container.startTime = System.nanoTime();
+                        containers.put(identifier, container);
                     });
                 } else {
                     runs++;
-                    container.runs++;
+                    containers.get(identifier).runs++;
                 }
 
             }
@@ -185,6 +188,8 @@ public class Test extends Task {
              */
             @Override
             public synchronized void executionFinished(TestIdentifier identifier, TestExecutionResult result) {
+                TestSuite container = containers.get(identifier);
+
                 if (identifier.isContainer()) {
                     identifier.getSource().ifPresent(source -> {
                         long elapsed = System.nanoTime() - container.startTime;
@@ -220,6 +225,8 @@ public class Test extends Task {
                         break;
                     }
                 }
+
+                containers.remove(identifier);
             }
 
             /**
