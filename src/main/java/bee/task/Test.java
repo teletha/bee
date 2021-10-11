@@ -128,7 +128,7 @@ public class Test extends Task {
              */
             @Override
             public synchronized void testPlanExecutionStarted(TestPlan testPlan) {
-                ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
+                ui.talk("Run\t\tFail\t\tError\t\tSkip\t\tTime(sec)");
             }
 
             /**
@@ -136,7 +136,7 @@ public class Test extends Task {
              */
             @Override
             public synchronized void testPlanExecutionFinished(TestPlan testPlan) {
-                if (shows) ui.talk("Run\t\tFail\t\tError \tSkip\t\tTime(sec)");
+                if (shows) ui.talk("Run\t\tFail\t\tError\t\tSkip\t\tTime(sec)");
 
                 ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
                 if (fails.size() != 0 || errors.size() != 0) {
