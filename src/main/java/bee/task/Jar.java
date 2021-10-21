@@ -92,8 +92,6 @@ public class Jar extends Task {
      * @param output
      */
     private void pack(String type, Signal<Directory> input, File output, boolean modifyVersion) {
-        ui.talk("Build ", type, " jar: ", output);
-
         if (modifyVersion) {
             String oldVersion = Inputs.normalize(project.getJavaSourceVersion());
             String newVersion = Inputs.normalize(project.getJavaClassVersion());
@@ -115,7 +113,13 @@ public class Jar extends Task {
             });
         }
 
-        Locator.folder().add(input, Option::strip).packTo(output);
+        Locator.folder().add(input, Option::strip).observePackingTo(output).to(file -> {
+            ui.talk("Compressing the file: ", file, "\r");
+        }, e -> {
+            ui.error(e);
+        }, () -> {
+            ui.talk("Build ", type, " jar: ", output);
+        });
     }
 
     /**
@@ -133,7 +137,6 @@ public class Jar extends Task {
         );
 
         File output = project.locateJar();
-        ui.talk("Build merged classes jar: ", output);
 
         Folder folder = Locator.folder();
         folder.add(project.getClasses(), o -> o.strip());
@@ -142,7 +145,14 @@ public class Jar extends Task {
         for (Library library : project.getDependency(Scope.Runtime)) {
             folder.add(library.getLocalJar().asArchive());
         }
-        folder.packTo(output);
+
+        folder.observePackingTo(output).to(file -> {
+            ui.talk("Compressing the file: ", file, "\r");
+        }, e -> {
+            ui.error(e);
+        }, () -> {
+            ui.talk("Build merged classes jar: ", output);
+        });
     }
 
     /**
@@ -200,8 +210,11 @@ public class Jar extends Task {
             case RELEASE_15:
                 version = Opcodes.V15;
                 break;
-            default:
+            case RELEASE_16:
                 version = Opcodes.V16;
+                break;
+            default:
+                version = Opcodes.V17;
                 break;
             }
         }
