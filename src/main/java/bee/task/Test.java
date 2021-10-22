@@ -128,7 +128,11 @@ public class Test extends Task {
              */
             @Override
             public synchronized void testPlanExecutionStarted(TestPlan testPlan) {
-                ui.talk("Run\t\tFail\t\tError\t\tSkip\t\tTime(sec)");
+                showHeader();
+            }
+
+            private void showHeader() {
+                ui.talk(String.format("%-4s\t%-4s\t%-4s\t%-4s\t%-4s", "Run", "Fail", "Error", "Skip", "Time(sec)"));
             }
 
             /**
@@ -136,7 +140,7 @@ public class Test extends Task {
              */
             @Override
             public synchronized void testPlanExecutionFinished(TestPlan testPlan) {
-                if (shows) ui.talk("Run\t\tFail\t\tError\t\tSkip\t\tTime(sec)");
+                if (shows) showHeader();
 
                 ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
                 if (fails.size() != 0 || errors.size() != 0) {
@@ -236,7 +240,7 @@ public class Test extends Task {
             private String buildResult(int tests, int fails, int errors, int ignores, long time, String name) {
                 StringBuilder builder = new StringBuilder();
                 builder.append(String
-                        .format("%-8d\t%-8d\t%-8d\t%-8d\t%.3f\t\t\t%s", tests, fails, errors, ignores, (float) time / 1000000000, name));
+                        .format("%-4d\t%-4d\t%-4d\t%-4d\t%.3f   \t%s", tests, fails, errors, ignores, (float) time / 1000000000, name));
 
                 if (errors != 0) {
                     builder.append("  <<<  ERROR!");
