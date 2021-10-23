@@ -130,8 +130,8 @@ public class Jar extends Task {
             });
         }
 
-        Locator.folder().add(input, Option::strip).observePackingTo(output).to(file -> {
-            ui.talk("Compressing the file: ", file, "\r");
+        Locator.folder().add(input, Option::strip).trackPackingTo(output).to(info -> {
+            ui.talk("Packaging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
         }, e -> {
             ui.error(e);
         }, () -> {
@@ -163,8 +163,8 @@ public class Jar extends Task {
             folder.add(library.getLocalJar().asArchive());
         }
 
-        folder.observePackingTo(output).to(file -> {
-            ui.talk("Compressing the file: ", file, "\r");
+        folder.trackPackingTo(output).to(info -> {
+            ui.talk("Merging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
         }, e -> {
             ui.error(e);
         }, () -> {
