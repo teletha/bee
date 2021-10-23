@@ -14,10 +14,14 @@ import java.util.jar.Attributes.Name;
 
 import javax.lang.model.SourceVersion;
 
+import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.TypePath;
 
 import bee.Task;
 import bee.api.Command;
@@ -35,14 +39,25 @@ import psychopath.Option;
 public class Jar extends Task {
 
     /**
+     * Determines whether or not the class file should contain the local variable name and parameter
+     * name.
+     */
+    public static boolean SkipDebugInfo = false;
+
+    /**
+     * Determines whether or not the class file should contain the source file name and line number.
+     */
+    public static boolean SkipTraceInfo = false;
+
+    /**
      * Package main classes and other resources.
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
     public void source() {
         require(Compile::source);
 
-        pack("main classes", I.signal(project.getClasses()), project
-                .locateJar(), project.getJavaSourceVersion().compareTo(project.getJavaClassVersion()) > 0);
+        pack("main classes", I.signal(project.getClasses()), project.locateJar(), project.getJavaSourceVersion()
+                .compareTo(project.getJavaClassVersion()) > 0 || SkipTraceInfo || SkipDebugInfo);
         pack("main sources", project.getSourceSet(), project.locateSourceJar(), false);
     }
 
@@ -95,7 +110,9 @@ public class Jar extends Task {
         if (modifyVersion) {
             String oldVersion = Inputs.normalize(project.getJavaSourceVersion());
             String newVersion = Inputs.normalize(project.getJavaClassVersion());
-            ui.talk("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+            if (!oldVersion.equals(newVersion)) {
+                ui.talk("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+            }
 
             input = input.map(dir -> {
                 Directory modified = Locator.temporaryDirectory();
@@ -105,7 +122,7 @@ public class Jar extends Task {
                     ClassReader classReader = new ClassReader(file.bytes());
                     ClassWriter writer = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES);
                     ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
-                    classReader.accept(modification, ClassReader.SKIP_FRAMES | ClassReader.SKIP_DEBUG);
+                    classReader.accept(modification, ClassReader.SKIP_FRAMES);
                     modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
                 });
 
@@ -225,6 +242,76 @@ public class Jar extends Task {
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
             super.visit(this.version, access, name, signature, superName, interfaces);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
+            return new Minify(super.visitMethod(access, name, descriptor, signature, exceptions));
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void visitSource(String source, String debug) {
+            if (!SkipTraceInfo) {
+                super.visitSource(source, debug);
+            }
+        }
+    }
+
+    private static class Minify extends MethodVisitor {
+
+        /**
+         * @param methodVisitor
+         */
+        public Minify(MethodVisitor methodVisitor) {
+            super(Opcodes.ASM9, methodVisitor);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void visitParameter(String name, int access) {
+            if (!SkipDebugInfo) {
+                super.visitParameter(name, access);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
+            if (!SkipDebugInfo) {
+                super.visitLocalVariable(name, descriptor, signature, start, end, index);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible) {
+            if (!SkipDebugInfo) {
+                return super.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible);
+            } else {
+                return null;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void visitLineNumber(int line, Label start) {
+            if (!SkipTraceInfo) {
+                super.visitLineNumber(line, start);
+            }
         }
     }
 }
