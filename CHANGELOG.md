@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.9.0](https://www.github.com/Teletha/bee/compare/v0.8.0...v0.9.0) (2021-10-25)
+
+
+### Features
+
+* Add test report on CI. ([81955ee](https://www.github.com/Teletha/bee/commit/81955ee5de5b6c1c33bd50a8045ded1f474c37b7))
+* Jar task support minify of class files. ([a79cb46](https://www.github.com/Teletha/bee/commit/a79cb46ed37c0433302b63ce6e1caf64c9fb14c7))
+* Support annotation processor on maven. ([7053921](https://www.github.com/Teletha/bee/commit/7053921fcfb2f632570d5d13c78be51893e1dab7))
+* Update junit. ([adb7924](https://www.github.com/Teletha/bee/commit/adb7924a335eca01b3539e1870ddfe2764294022))
+* Update maven resolver. ([06442bf](https://www.github.com/Teletha/bee/commit/06442bf2d777be49838c1aae40ca9b395e469465))
+* Update psychopath. ([25dac78](https://www.github.com/Teletha/bee/commit/25dac78c967e95508842a4a1e8a61bcc59ffc953))
+
+
+### Bug Fixes
+
+* Compacting log. ([7a895ac](https://www.github.com/Teletha/bee/commit/7a895ac9f6056fa7b5e860a4090bd2e505b3c8d7))
+* Format test result output on console. ([e39e628](https://www.github.com/Teletha/bee/commit/e39e628ee6fd622e5595a8f4ec13d22673a0a8fd))
+* Integrate CI and Git task. ([4e6b32c](https://www.github.com/Teletha/bee/commit/4e6b32c123188d41c165fd621ee9d018380a486b))
+* Jar task shows the detailed compress log. ([fa9f77f](https://www.github.com/Teletha/bee/commit/fa9f77f968c4cbcf313b2cb8358738341cb40d09))
+* Reconfigure various components. ([3fc6637](https://www.github.com/Teletha/bee/commit/3fc6637bb3281867ef4f3ac67bc01bd0ce78adc8))
+* Remove enable-preview option. ([98e9036](https://www.github.com/Teletha/bee/commit/98e9036435236d33f720e912007b3136c96e4f08))
+* Test ignores the failed test. ([ca5caa9](https://www.github.com/Teletha/bee/commit/ca5caa99b93c65c4e4fca41a7186d0446b1e29b4))
+* Test reporter is not thread-safe. ([c5ac0b6](https://www.github.com/Teletha/bee/commit/c5ac0b671c760398dd55c1eef151b04a5da371d3))
+* Test task can detect the existence of test class. ([454f24c](https://www.github.com/Teletha/bee/commit/454f24c4a2512921bf3e12ec2a6dad0d0d528731))
+* Update CI process. ([587f31c](https://www.github.com/Teletha/bee/commit/587f31c7c874e992f4c94238f0bc67cc719618c7))
+* Update maven resolver. ([fc2df5b](https://www.github.com/Teletha/bee/commit/fc2df5b6fec7f507d5c9fdd2eaee3fe406a7bca5))
+* Update maven-resolver. ([3b48c40](https://www.github.com/Teletha/bee/commit/3b48c405a2ff61acda9bb67972ff0dd9eb82b2f4))
+* Update version. ([33a2f74](https://www.github.com/Teletha/bee/commit/33a2f7409442661a51b1e130905e6cea85974762))
+
 ## [0.8.0](https://www.github.com/Teletha/bee/compare/v0.7.0...v0.8.0) (2021-03-28)
 
 
