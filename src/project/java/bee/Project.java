@@ -18,6 +18,7 @@ public class Project extends bee.api.Project {
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
+        // MAVEN REPOSITORY
         require("org.apache.maven", "maven-resolver-provider");
         require("org.apache.maven.resolver", "maven-resolver-api", resolver);
         require("org.apache.maven.resolver", "maven-resolver-spi", resolver);
@@ -26,16 +27,24 @@ public class Project extends bee.api.Project {
         require("org.apache.maven.resolver", "maven-resolver-connector-basic", resolver);
         require("org.apache.maven.resolver", "maven-resolver-transport-http", resolver);
 
-        require("net.bytebuddy", "byte-buddy-agent").atProvided();
-        require("org.ow2.asm", "asm");
-        require("org.junit.platform", "junit-platform-engine").atProvided();
-        require("org.junit.platform", "junit-platform-launcher").atProvided();
+        // LOGGER
         require("org.slf4j", "slf4j-nop");
         require("org.slf4j", "jcl-over-slf4j");
         require("org.slf4j", "jul-to-slf4j");
-        require("com.github.teletha", "antibug").atTest();
+
+        // REQUIRED
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
+        require("org.ow2.asm", "asm");
+
+        // DYNAMICALLY ON RUNTIME
+        require("org.junit.platform", "junit-platform-engine").atProvided();
+        require("org.junit.platform", "junit-platform-launcher").atProvided();
+        require("net.bytebuddy", "byte-buddy-agent").atProvided();
+
+        // TEST
+        require("com.github.teletha", "antibug").atTest();
+
         unrequire("commons-codec", "commons-codec");
         unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
