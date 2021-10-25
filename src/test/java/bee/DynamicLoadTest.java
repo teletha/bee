@@ -22,7 +22,7 @@ class DynamicLoadTest {
         String fqcn = "com.github.teletha.AB";
 
         Assertions.assertThrows(ClassNotFoundException.class, () -> I.type(fqcn));
-        Bee.load(Locator.file("src/test/resources/dynamic-load.jar.file"));
+        BeeLoader.load(Locator.file("src/test/resources/dynamic-load.jar.file"));
         assert I.type(fqcn) != null;
     }
 }

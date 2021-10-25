@@ -9,8 +9,6 @@
  */
 package bee;
 
-import java.io.IOException;
-import java.lang.instrument.Instrumentation;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -18,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.JarFile;
 
 import bee.api.Library;
 import bee.api.License;
@@ -29,12 +26,9 @@ import bee.task.Pom;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import kiss.I;
-import net.bytebuddy.agent.ByteBuddyAgent;
 import psychopath.Directory;
 import psychopath.File;
-import psychopath.Location;
 import psychopath.Locator;
-import psychopath.Option;
 
 /**
  * Task based project builder for Java.
@@ -72,16 +66,7 @@ public class Bee {
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 
-    private static Instrumentation inst;
-
     static {
-        // Bee requires JDK(tools.jar) surely.
-        try {
-            inst = ByteBuddyAgent.install();
-        } catch (Exception e) {
-            throw new Error("Bee reqires JDK(tools.jar), but we can't search Java home correctly.");
-        }
-
         I.load(Bee.class);
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
@@ -184,8 +169,8 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            load(project.getClasses());
-            load(project.getProjectClasses());
+            BeeLoader.load(project.getClasses());
+            BeeLoader.load(project.getProjectClasses());
 
             // create your project
             String projectFQCN = project.getProjectClasses()
@@ -206,7 +191,7 @@ public class Bee {
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                load(library.getLocalJar());
+                BeeLoader.load(library.getLocalJar());
             }
 
             // load new project
@@ -322,25 +307,6 @@ public class Bee {
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
-        }
-    }
-
-    /**
-     * Dynamic path or module loading.
-     * 
-     * @param path
-     */
-    public static void load(Location path) {
-        if (path.isPresent()) {
-            try {
-                if (path.isDirectory()) {
-                    path = path.packToTemporary(Option::strip);
-                }
-
-                inst.appendToSystemClassLoaderSearch(new JarFile(path.asJavaFile()));
-            } catch (IOException e) {
-                throw I.quiet(e);
-            }
         }
     }
 

@@ -98,7 +98,7 @@ import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 
-import bee.Bee;
+import bee.BeeLoader;
 import bee.Platform;
 import bee.UserInterface;
 import bee.util.TransferInterface;
@@ -516,7 +516,7 @@ public class Repository {
         Library require = new Library(group, product, version);
 
         for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
-            Bee.load(library.getLocalJar());
+            BeeLoader.load(library.getLocalJar());
         }
     }
 

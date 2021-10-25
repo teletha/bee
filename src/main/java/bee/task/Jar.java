@@ -150,7 +150,10 @@ public class Jar extends Task {
         File manifest = Locator.temporaryFile("MANIFEST.MF").text(
                 /* Manifest contents */
                 Name.MANIFEST_VERSION + ": 1.0", // version must be first
-                Name.MAIN_CLASS + ": " + require(FindMain::main) // detect main class
+                Name.MAIN_CLASS + ": " + require(FindMain::main), // detect main class
+                "Launcher-Agent-Class: " + require(FindMain::agentmain), // detect agent main class
+                "Agent-Class: " + require(FindMain::agentmain), // detect agent main class
+                "Premain-Class: " + require(FindMain::premain) // detect pre main class
         );
 
         File output = project.locateJar();
