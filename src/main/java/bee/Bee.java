@@ -65,7 +65,7 @@ public class Bee {
     public static final Project Lombok = new Project() {
 
         {
-            product("org.projectlombok", "lombok", "1.18.18");
+            product("org.projectlombok", "lombok", "1.18.22");
         }
     };
 
