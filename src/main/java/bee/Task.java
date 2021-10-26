@@ -639,7 +639,7 @@ public abstract class Task implements Extensible {
                 mw.visitEnd();
 
                 // overwrite command methods
-                for (Method m : model.getDeclaredMethods()) {
+                for (Method m : model.getMethods()) {
                     if (MethodUtils.getAnnotation(m, Command.class, true, true) != null) {
                         String methodName = m.getName();
                         String methodDesc = Type.getMethodDescriptor(m);
