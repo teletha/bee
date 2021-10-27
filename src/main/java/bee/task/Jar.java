@@ -131,7 +131,7 @@ public class Jar extends Task {
         }
 
         Locator.folder().add(input, Option::strip).trackPackingTo(output).to(info -> {
-            ui.info("Packaging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
+            ui.trace("Packaging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
         }, e -> {
             ui.error(e);
         }, () -> {

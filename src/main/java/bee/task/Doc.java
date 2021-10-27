@@ -117,7 +117,7 @@ public class Doc extends Task {
             }
 
             if (message.length() != 0) {
-                ui.info(message + "\r");
+                ui.trace(message);
             }
         }
 

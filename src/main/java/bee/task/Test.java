@@ -205,8 +205,14 @@ public class Test extends Task {
                             shows = show;
                         }
 
-                        ui.info(buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, container.identifier
-                                .getLegacyReportingName()) + (show ? "" : "\r"));
+                        String message = buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, container.identifier
+                                .getLegacyReportingName());
+
+                        if (show) {
+                            ui.info(message);
+                        } else {
+                            ui.trace(message);
+                        }
                     });
                     containers.remove(identifier.getUniqueId());
                 } else {
