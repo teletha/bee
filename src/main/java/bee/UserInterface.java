@@ -16,8 +16,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
@@ -64,7 +62,7 @@ public abstract class UserInterface {
      * 
      * @param title
      */
-    public void title(CharSequence title) {
+    public final void title(CharSequence title) {
         write(TITLE, String.valueOf(title));
     }
 
@@ -73,8 +71,26 @@ public abstract class UserInterface {
      * 
      * @param messages Your message.
      */
-    public void info(Object... messages) {
-        write(INFO, build(messages));
+    public final void trace(Object... messages) {
+        handleMessage(TRACE, messages);
+    }
+
+    /**
+     * Talk to user.
+     * 
+     * @param messages Your message.
+     */
+    public final void debug(Object... messages) {
+        handleMessage(DEBUG, messages);
+    }
+
+    /**
+     * Talk to user.
+     * 
+     * @param messages Your message.
+     */
+    public final void info(Object... messages) {
+        handleMessage(INFO, messages);
     }
 
     /**
@@ -82,8 +98,8 @@ public abstract class UserInterface {
      * 
      * @param messages Your warning message.
      */
-    public void warn(Object... messages) {
-        write(WARNING, build(messages));
+    public final void warn(Object... messages) {
+        handleMessage(WARNING, messages);
     }
 
     /**
@@ -91,8 +107,25 @@ public abstract class UserInterface {
      * 
      * @param messages Your emergency message.
      */
-    public void error(Object... messages) {
-        write(ERROR, build(messages));
+    public final void error(Object... messages) {
+        handleMessage(ERROR, messages);
+    }
+
+    private void handleMessage(int type, Object[] messages) {
+        int length = messages.length;
+        if (0 < length) {
+            if (messages[length - 1]instanceof Throwable e) {
+                write(type, build(length - 1, messages));
+
+                while (e.getCause() != null) {
+                    e = e.getCause();
+                }
+
+                write(e);
+            } else {
+                write(type, build(length, messages));
+            }
+        }
     }
 
     /**
@@ -388,8 +421,18 @@ public abstract class UserInterface {
      * @return A combined message.
      */
     protected static String build(Object... messages) {
+        return build(messages.length, messages);
+    }
+
+    /**
+     * Helper method to build message.
+     * 
+     * @param messages Your messages.
+     * @return A combined message.
+     */
+    private static String build(int length, Object... messages) {
         StringBuilder builder = new StringBuilder();
-        build(builder, messages);
+        build(builder, length, messages);
         return builder.toString();
     }
 
@@ -399,8 +442,9 @@ public abstract class UserInterface {
      * @param builder A message builder.
      * @param messages Your messages.
      */
-    private static void build(StringBuilder builder, Object... messages) {
-        for (Object message : messages) {
+    private static void build(StringBuilder builder, int length, Object... messages) {
+        for (int i = 0; i < length; i++) {
+            Object message = messages[i];
             if (message == null) {
                 builder.append("null");
             } else {
@@ -410,12 +454,6 @@ public abstract class UserInterface {
                     buildArray(builder, type.getComponentType(), message);
                 } else if (CharSequence.class.isAssignableFrom(type)) {
                     builder.append((CharSequence) message);
-                } else if (Throwable.class.isAssignableFrom(type)) {
-                    Throwable e = (Throwable) message;
-                    while (e.getCause() != null) {
-                        e = e.getCause();
-                    }
-                    buildError(builder, e);
                 } else if (List.class.isAssignableFrom(type)) {
                     buildList(builder, (List) message);
                 } else {
@@ -450,22 +488,9 @@ public abstract class UserInterface {
         } else if (type == short.class) {
             builder.append(Arrays.toString((short[]) array));
         } else {
-            build(builder, (Object[]) array);
+            Object[] o = (Object[]) array;
+            build(builder, o.length, o);
         }
-    }
-
-    /**
-     * Build error message.
-     * 
-     * @param builder A message builder.
-     * @param throwable An error message.
-     */
-    private static void buildError(StringBuilder builder, Throwable throwable) {
-        StringWriter writer = new StringWriter();
-
-        throwable.printStackTrace(new PrintWriter(writer));
-
-        builder.append(writer.toString());
     }
 
     /**
@@ -498,6 +523,13 @@ public abstract class UserInterface {
      * @param message
      */
     protected abstract void write(int type, String message);
+
+    /**
+     * Write error message to user.
+     * 
+     * @param error
+     */
+    protected abstract void write(Throwable error);
 
     /**
      * Display message about command starts.
@@ -597,6 +629,14 @@ public abstract class UserInterface {
                 write(message, true);
                 break;
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected synchronized void write(Throwable error) {
+            error.printStackTrace(standardError);
         }
 
         /**

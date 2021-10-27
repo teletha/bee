@@ -245,6 +245,22 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
+        protected void write(Throwable error) {
+            switch (mode) {
+            case 0:
+                messages.add(() -> ui.write(error));
+                break;
+
+            case 1:
+                ui.write(error);
+                break;
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         protected synchronized void startCommand(String name, Command command) {
             switch (mode) {
             case 0:

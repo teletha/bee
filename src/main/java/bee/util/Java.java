@@ -375,8 +375,6 @@ public class Java {
          * communication.
          * <p>
          * Must be non-static class to hide from class scanning.
-         * 
-         * @version 2012/04/09 16:58:06
          */
         private final class JVMUserInterface extends UserInterface {
 
@@ -417,51 +415,6 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            public void title(CharSequence title) {
-                transporter.title(title.toString());
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void info(Object... messages) {
-                transporter.info(UserInterface.build(messages));
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void warn(Object... messages) {
-                transporter.info(UserInterface.build(messages));
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public void error(Object... messages) {
-                for (Object message : messages) {
-                    if (message instanceof Throwable e) {
-                        try {
-                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                            ObjectOutputStream out = new ObjectOutputStream(bytes);
-                            out.writeObject(e);
-                            out.close();
-
-                            transporter.object(bytes.toByteArray());
-                        } catch (Exception ex) {
-                            throw I.quiet(ex);
-                        }
-                    }
-                }
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
             public Appendable getInterface() {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
@@ -492,10 +445,48 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            public void write(int type, String message) {
-                // If this exception will be thrown, it is bug of this program. So we must rethrow
-                // the wrapped error in here.
-                throw new Error();
+            protected void write(int type, String message) {
+                switch (type) {
+                case TRACE:
+                    transporter.trace(message);
+                    break;
+
+                case DEBUG:
+                    transporter.debug(message);
+                    break;
+
+                case INFO:
+                    transporter.info(message);
+                    break;
+
+                case WARNING:
+                    transporter.warn(message);
+                    break;
+
+                case ERROR:
+                    transporter.error(message);
+                    break;
+
+                default:
+                    break;
+                }
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected void write(Throwable error) {
+                try {
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    ObjectOutputStream out = new ObjectOutputStream(bytes);
+                    out.writeObject(error);
+                    out.close();
+
+                    transporter.object(bytes.toByteArray());
+                } catch (Exception ex) {
+                    throw I.quiet(ex);
+                }
             }
         }
     }
@@ -512,6 +503,20 @@ public class Java {
          * @param message
          */
         void title(String message);
+
+        /**
+         * Talk to user.
+         * 
+         * @param message
+         */
+        void trace(String message);
+
+        /**
+         * Talk to user.
+         * 
+         * @param message
+         */
+        void debug(String message);
 
         /**
          * Talk to user.
@@ -568,6 +573,22 @@ public class Java {
         @Override
         public void title(String message) {
             ui.title(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void trace(String message) {
+            ui.trace(message);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void debug(String message) {
+            ui.debug(message);
         }
 
         /**

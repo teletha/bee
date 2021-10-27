@@ -41,6 +41,13 @@ public class Null {
          * {@inheritDoc}
          */
         @Override
+        protected void write(Throwable error) {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public String ask(String question) {
             return null;
         }

@@ -167,7 +167,7 @@ public class Jar extends Task {
         }
 
         folder.trackPackingTo(output).to(info -> {
-            ui.info("Merging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
+            ui.trace("Merging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
         }, e -> {
             ui.error(e);
         }, () -> {
