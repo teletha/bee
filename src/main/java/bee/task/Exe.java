@@ -77,7 +77,7 @@ public class Exe extends Task {
                 folder.add(library.getLocalJar(), o -> o.allocateIn("lib"));
             }
 
-            ui.talk("Packing application and libraries.");
+            ui.info("Packing application and libraries.");
 
             return folder.packTo(project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip"));
         } catch (Exception e) {
@@ -118,7 +118,7 @@ public class Exe extends Task {
 
             // execute exe builder
             Process.with().workingDirectory(builder.parent()).ignoreOutput().run(command);
-            ui.talk("Write " + exe.name() + ".");
+            ui.info("Write " + exe.name() + ".");
         } catch (Exception e) {
             throw I.quiet(e);
         }

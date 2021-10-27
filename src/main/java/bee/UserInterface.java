@@ -47,9 +47,9 @@ public abstract class UserInterface {
      * @param title
      */
     public void title(CharSequence title) {
-        talk("------------------------------------------------------------");
-        talk(title);
-        talk("------------------------------------------------------------");
+        info("------------------------------------------------------------");
+        info(title);
+        info("------------------------------------------------------------");
     }
 
     /**
@@ -57,7 +57,7 @@ public abstract class UserInterface {
      * 
      * @param messages Your message.
      */
-    public void talk(Object... messages) {
+    public void info(Object... messages) {
         write(build(messages));
     }
 
@@ -67,7 +67,7 @@ public abstract class UserInterface {
      * @param messages Your warning message.
      */
     public void warn(Object... messages) {
-        talk("[WARN] ", messages);
+        info("[WARN] ", messages);
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class UserInterface {
      * @param messages Your emergency message.
      */
     public void error(Object... messages) {
-        talk("[ERROR] ", messages);
+        info("[ERROR] ", messages);
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class UserInterface {
         } else if (answer.equals("n") || answer.equals("no")) {
             return false;
         } else {
-            talk("Type 'y' or 'n'.");
+            info("Type 'y' or 'n'.");
 
             return confirm(question);
         }
@@ -170,12 +170,12 @@ public abstract class UserInterface {
             // Validate user input.
             if (defaultAnswer == null) {
                 if (answer.length() == 0) {
-                    talk("Your input is empty, plese retry.");
+                    info("Your input is empty, plese retry.");
 
                     // Retry!
                     return ask(question, (T) null, validator);
                 } else if (validator != null && !validator.test((T) answer)) {
-                    talk("Your input is invalid, plese retry.");
+                    info("Your input is invalid, plese retry.");
 
                     // Retry!
                     return ask(question, (T) null, validator);
@@ -215,8 +215,8 @@ public abstract class UserInterface {
             return items.get(0); // unconditionally
 
         default:
-            talk(question);
-            talk(items);
+            info(question);
+            info(items);
 
             return items.get(select(1, items.size()) - 1);
         }

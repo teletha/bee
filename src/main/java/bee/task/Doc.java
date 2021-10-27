@@ -81,9 +81,9 @@ public class Doc extends Task {
                             .toList()));
 
             if (task.call()) {
-                ui.talk("Build javadoc : " + output);
+                ui.info("Build javadoc : " + output);
             } else {
-                ui.talk("Fail building javadoc.");
+                ui.info("Fail building javadoc.");
             }
         } catch (IOException e) {
             throw I.quiet(e);
@@ -117,7 +117,7 @@ public class Doc extends Task {
             }
 
             if (message.length() != 0) {
-                ui.talk(message + "\r");
+                ui.info(message + "\r");
             }
         }
 

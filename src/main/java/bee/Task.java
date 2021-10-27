@@ -80,7 +80,7 @@ public abstract class Task implements Extensible {
 
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
             // display usage description for this command
-            ui.talk(entry.getKey(), " - ", entry.getValue());
+            ui.info(entry.getKey(), " - ", entry.getValue());
         }
     }
 
@@ -338,7 +338,7 @@ public abstract class Task implements Extensible {
         if (directory.isAbsent()) {
             directory.create();
 
-            ui.talk("Make directory [" + directory.absolutize() + "]");
+            ui.info("Make directory [" + directory.absolutize() + "]");
         }
         return directory;
     }
@@ -353,7 +353,7 @@ public abstract class Task implements Extensible {
         try (BufferedWriter writer = file.newBufferedWriter()) {
             xml.to(writer);
 
-            ui.talk("Make file [" + file.absolutize() + "]");
+            ui.info("Make file [" + file.absolutize() + "]");
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -372,7 +372,7 @@ public abstract class Task implements Extensible {
         try {
             properties.store(path.newOutputStream(), "");
 
-            ui.talk("Make file [" + path.absolutize() + "]");
+            ui.info("Make file [" + path.absolutize() + "]");
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -417,7 +417,7 @@ public abstract class Task implements Extensible {
      */
     protected final File makeFile(File file, Iterable<String> content) {
         file.text(content);
-        ui.talk("Make file [" + file.absolutize() + "]");
+        ui.info("Make file [" + file.absolutize() + "]");
 
         return file;
     }

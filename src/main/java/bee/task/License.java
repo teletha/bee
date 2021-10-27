@@ -48,14 +48,14 @@ public class License extends Task {
             FileType type = FileType.of(file);
 
             if (type.header() == StandardHeaderStyle.Unknown) {
-                ui.talk("Unknown Format ", project.getRoot().relativize(file));
+                ui.info("Unknown Format ", project.getRoot().relativize(file));
             } else {
                 List<String> source = file.lines(project.getEncoding()).toList();
                 List<String> converted = type.header().convert(source, project.getLicense());
 
                 if (converted != null) {
                     file.text(project.getEncoding(), converted);
-                    ui.talk("Update ", project.getRoot().relativize(file));
+                    ui.info("Update ", project.getRoot().relativize(file));
                 }
             }
         });

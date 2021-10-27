@@ -50,7 +50,7 @@ public class Test extends Task {
         require(Compile::source, Compile::test);
 
         if (project.getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
-            ui.talk("Test class not found.");
+            ui.info("Test class not found.");
         } else {
             Java.with()
                     .classPath(project.getClasses())
@@ -132,7 +132,7 @@ public class Test extends Task {
             }
 
             private void showHeader() {
-                ui.talk(String.format("%-4s\t%-4s\t%-4s\t%-4s\t%-4s", "Run", "Fail", "Error", "Skip", "Time(sec)"));
+                ui.info(String.format("%-4s\t%-4s\t%-4s\t%-4s\t%-4s", "Run", "Fail", "Error", "Skip", "Time(sec)"));
             }
 
             /**
@@ -142,7 +142,7 @@ public class Test extends Task {
             public synchronized void testPlanExecutionFinished(TestPlan testPlan) {
                 if (shows) showHeader();
 
-                ui.talk(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
+                ui.info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
                 if (fails.size() != 0 || errors.size() != 0) {
                     Fail fail = new Fail("Test has failed.");
                     // The stack trace created here is useless and should be deleted. (Since it is
@@ -205,7 +205,7 @@ public class Test extends Task {
                             shows = show;
                         }
 
-                        ui.talk(buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, container.identifier
+                        ui.info(buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, container.identifier
                                 .getLegacyReportingName()) + (show ? "" : "\r"));
                     });
                     containers.remove(identifier.getUniqueId());

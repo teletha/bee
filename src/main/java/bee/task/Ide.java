@@ -27,7 +27,7 @@ public class Ide extends Task {
 
         task(IDESupport::execute);
 
-        ui.talk("Generate IDE configuration files.");
+        ui.info("Generate IDE configuration files.");
     }
 
     /**

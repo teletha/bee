@@ -56,7 +56,7 @@ public class Eclipse extends Task implements IDESupport {
         createFactorypath(enableAnnotationProcessor, processors);
         createAPT(enableAnnotationProcessor, new ProjectInfo(project));
         createJDT(enableAnnotationProcessor);
-        ui.talk("Create Eclipse configuration files.");
+        ui.info("Create Eclipse configuration files.");
 
         // check lombok
         if (project.hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {

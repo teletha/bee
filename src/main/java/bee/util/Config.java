@@ -83,7 +83,7 @@ public class Config {
         String name = name(type);
         File file = directory.file(name + ".txt");
         file.create();
-        I.make(UserInterface.class).talk("Use configuration from [" + file + "].");
+        I.make(UserInterface.class).info("Use configuration from [" + file + "].");
 
         return I.make(type, (proxy, method, args) -> {
             Properties properties = new Properties();

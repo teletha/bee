@@ -397,10 +397,10 @@ public class Repository {
                 if (result.isResolved()) {
                     return Locator.file(result.getArtifact().getFile().toPath());
                 } else {
-                    ui.talk("Artifact [", sub, "] is not resolved.");
+                    ui.info("Artifact [", sub, "] is not resolved.");
                 }
             } catch (ArtifactResolutionException e) {
-                ui.talk("Artifact [", sub, "] is not found.");
+                ui.info("Artifact [", sub, "] is not found.");
                 info.lastAccessToSource = LocalDate.now();
                 info.store();
             }
@@ -540,7 +540,7 @@ public class Repository {
          */
         @Override
         public void artifactDeployed(RepositoryEvent event) {
-            ui.talk("Deployed " + event.getArtifact() + " to " + event.getRepository());
+            ui.info("Deployed " + event.getArtifact() + " to " + event.getRepository());
         }
 
         /**
@@ -548,7 +548,7 @@ public class Repository {
          */
         @Override
         public void artifactDeploying(RepositoryEvent event) {
-            ui.talk("Deploying " + event.getArtifact() + " to " + event.getRepository());
+            ui.info("Deploying " + event.getArtifact() + " to " + event.getRepository());
         }
 
         /**
@@ -556,7 +556,7 @@ public class Repository {
          */
         @Override
         public void artifactDescriptorInvalid(RepositoryEvent event) {
-            ui.talk("Invalid artifact descriptor for " + event.getArtifact() + ": " + event.getException().getMessage());
+            ui.info("Invalid artifact descriptor for " + event.getArtifact() + ": " + event.getException().getMessage());
         }
 
         /**
@@ -573,7 +573,7 @@ public class Repository {
          */
         @Override
         public void artifactInstalled(RepositoryEvent event) {
-            ui.talk("Install " + event.getArtifact() + " to " + event.getFile());
+            ui.info("Install " + event.getArtifact() + " to " + event.getFile());
         }
 
         /**
@@ -622,7 +622,7 @@ public class Repository {
          */
         @Override
         public void metadataDeployed(RepositoryEvent event) {
-            ui.talk("Deployed " + event.getMetadata() + " to " + event.getRepository());
+            ui.info("Deployed " + event.getMetadata() + " to " + event.getRepository());
         }
 
         /**
@@ -630,7 +630,7 @@ public class Repository {
          */
         @Override
         public void metadataDeploying(RepositoryEvent event) {
-            ui.talk("Deploying " + event.getMetadata() + " to " + event.getRepository());
+            ui.info("Deploying " + event.getMetadata() + " to " + event.getRepository());
         }
 
         /**
@@ -654,7 +654,7 @@ public class Repository {
          */
         @Override
         public void metadataInvalid(RepositoryEvent event) {
-            ui.talk("Invalid metadata " + event.getMetadata());
+            ui.info("Invalid metadata " + event.getMetadata());
         }
 
         /**

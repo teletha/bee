@@ -85,7 +85,7 @@ public class TransferInterface implements TransferListener {
             message.append('\r');
 
             // notify
-            ui.talk(message.toString());
+            ui.info(message.toString());
         }
     }
 
@@ -103,9 +103,9 @@ public class TransferInterface implements TransferListener {
             String len = contentLength >= 1024 ? toKB(contentLength) + " KB" : contentLength + " B";
 
             if (event.getRequestType() == TransferEvent.RequestType.GET) {
-                ui.talk("Downloaded : " + name(resource) + " (" + len + ") from [" + resource.getRepositoryUrl() + "]");
+                ui.info("Downloaded : " + name(resource) + " (" + len + ") from [" + resource.getRepositoryUrl() + "]");
             } else {
-                ui.talk("Uploaded : " + name(resource) + " (" + len + ") to [" + resource.getRepositoryUrl() + "]");
+                ui.info("Uploaded : " + name(resource) + " (" + len + ") to [" + resource.getRepositoryUrl() + "]");
             }
         }
     }

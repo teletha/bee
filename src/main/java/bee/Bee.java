@@ -163,7 +163,7 @@ public class Bee {
             // =====================================
             // build your project
             // =====================================
-            ui.talk("Finding your project...   (Bee" + version + "  Java" + Runtime.version() + ")");
+            ui.info("Finding your project...   (Bee" + version + "  Java" + Runtime.version() + ")");
 
             // build project definition
             buildProjectDefinition(project.getProjectDefinition());
@@ -217,7 +217,7 @@ public class Bee {
                 result = "CANCEL";
             } else {
                 result = "FAILURE";
-                ui.talk("");
+                ui.info("");
                 ui.error(e);
             }
         } finally {
@@ -235,10 +235,10 @@ public class Bee {
     private void buildProjectDefinition(File definition) throws Exception {
         // create project sources if needed
         if (definition.isAbsent()) {
-            ui.talk("Project definition is not found. [" + definition + "]");
+            ui.info("Project definition is not found. [" + definition + "]");
 
             if (!ui.confirm("Create new project?")) {
-                ui.talk("See you later!");
+                ui.info("See you later!");
                 throw AbortedByUser;
             }
 
@@ -253,7 +253,7 @@ public class Bee {
             inject(new FavricProject(group, name, version, license));
 
             definition.text(project.toDefinition());
-            ui.talk("Generate project definition.");
+            ui.info("Generate project definition.");
 
             // build project architecture
             builds.add(new Task() {
@@ -267,7 +267,7 @@ public class Bee {
 
         // compile project sources if needed
         if (definition.lastModifiedMilli() > project.getProjectDefintionClass().lastModifiedMilli()) {
-            ui.talk("Compile project sources.");
+            ui.info("Compile project sources.");
 
             JavaCompiler compiler = new JavaCompiler();
             compiler.addSourceDirectory(definition.parent());
@@ -291,7 +291,7 @@ public class Bee {
         }
 
         // build environemnt
-        ui.talk(Platform.EOL + "Project develop environment is not found.");
+        ui.info(Platform.EOL + "Project develop environment is not found.");
         builds.add((Task) ui.ask("Bee supports the following IDEs.", supports));
     }
 

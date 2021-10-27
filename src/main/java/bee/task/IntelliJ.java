@@ -40,7 +40,7 @@ public class IntelliJ extends Task implements IDESupport {
         createModule(project.getTestSources(), project.getTestClasses(), Scope.Test);
         createModule(project.getProjectSources(), project.getProjectClasses(), Scope.System);
 
-        ui.talk("Create IDEA configuration files.");
+        ui.info("Create IDEA configuration files.");
     }
 
     /**

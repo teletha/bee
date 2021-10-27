@@ -425,8 +425,8 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            public void talk(Object... messages) {
-                transporter.talk(UserInterface.build(messages));
+            public void info(Object... messages) {
+                transporter.info(UserInterface.build(messages));
             }
 
             /**
@@ -434,7 +434,7 @@ public class Java {
              */
             @Override
             public void warn(Object... messages) {
-                transporter.talk(UserInterface.build(messages));
+                transporter.info(UserInterface.build(messages));
             }
 
             /**
@@ -511,14 +511,14 @@ public class Java {
          * 
          * @param message
          */
-        void talk(String message);
+        void title(String message);
 
         /**
          * Talk to user.
          * 
          * @param message
          */
-        void title(String message);
+        void info(String message);
 
         /**
          * Talk to user.
@@ -566,16 +566,16 @@ public class Java {
          * {@inheritDoc}
          */
         @Override
-        public void talk(String message) {
-            ui.talk(message);
+        public void title(String message) {
+            ui.title(message);
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void title(String message) {
-            ui.title(message);
+        public void info(String message) {
+            ui.info(message);
         }
 
         /**
@@ -604,7 +604,7 @@ public class Java {
                 if (o instanceof Throwable e) {
                     error = e;
                 } else {
-                    ui.talk(o);
+                    ui.info(o);
                 }
             } catch (Exception e) {
                 throw I.quiet(e);

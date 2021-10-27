@@ -63,12 +63,12 @@ public class Compile extends Task {
      * @param output A output location.
      */
     private void compile(String type, Signal<Directory> input, Directory output) {
-        ui.talk("Copying ", type, " resources to ", output);
+        ui.info("Copying ", type, " resources to ", output);
         input.to(dir -> {
             dir.observeCopyingTo(output, o -> o.glob("**", "!**.java").strip()).skipError().to();
         });
 
-        ui.talk("Compiling ", type, " sources to ", output);
+        ui.info("Compiling ", type, " sources to ", output);
         JavaCompiler compiler = new JavaCompiler(ui);
         compiler.addClassPath(output);
         compiler.addClassPath(project.getClasses());

@@ -23,10 +23,10 @@ public class Help extends Task {
 
     @Command("Display Bee runtime environment.")
     public void version() {
-        ui.talk("Bee version: ", Bee.API.getVersion());
-        ui.talk("Java version: ", System.getProperty("java.version"), " by ", System.getProperty("java.vendor"));
-        ui.talk("Java home: ", Platform.JavaHome);
-        ui.talk("Locale: ", Locale.getDefault().getDisplayName());
-        ui.talk("Encoding: ", Platform.Encoding.name());
+        ui.info("Bee version: ", Bee.API.getVersion());
+        ui.info("Java version: ", System.getProperty("java.version"), " by ", System.getProperty("java.vendor"));
+        ui.info("Java home: ", Platform.JavaHome);
+        ui.info("Locale: ", Locale.getDefault().getDisplayName());
+        ui.info("Encoding: ", Platform.Encoding.name());
     }
 }

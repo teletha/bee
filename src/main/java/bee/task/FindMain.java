@@ -49,7 +49,7 @@ public class FindMain extends Task {
             main = ui.ask("Multiple main classes were detected. Which one do you use?", I.make(Search.class).mains);
         }
 
-        ui.talk("Using ", main, " as main class.");
+        ui.info("Using ", main, " as main class.");
 
         return main;
     }
@@ -67,7 +67,7 @@ public class FindMain extends Task {
             premain = ui.ask("Multiple premain classes were detected. Which one do you use?", I.make(Search.class).premains);
         }
 
-        ui.talk("Using ", premain, " as premain class.");
+        ui.info("Using ", premain, " as premain class.");
 
         return premain;
     }
@@ -85,7 +85,7 @@ public class FindMain extends Task {
             agentmain = ui.ask("Multiple agentmain classes were detected. Which one do you use?", I.make(Search.class).agentmains);
         }
 
-        ui.talk("Using ", agentmain, " as agentmain class.");
+        ui.info("Using ", agentmain, " as agentmain class.");
 
         return agentmain;
     }

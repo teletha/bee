@@ -543,7 +543,7 @@ public class JavaCompiler {
 
         // check compiling source size
         if (sources.isEmpty()) {
-            ui.talk("Nothing to compile - all classes are up to date");
+            ui.info("Nothing to compile - all classes are up to date");
 
             return Thread.currentThread().getContextClassLoader();
         }
@@ -568,7 +568,7 @@ public class JavaCompiler {
         boolean result = task.call();
 
         if (result) {
-            ui.talk("Compile " + sources.size() + " sources.");
+            ui.info("Compile " + sources.size() + " sources.");
         } else {
             throw new Error("Compile is fail.");
         }
@@ -597,7 +597,7 @@ public class JavaCompiler {
 
             case NOTE:
             case OTHER:
-                ui.talk(diagnostic.toString());
+                ui.info(diagnostic.toString());
                 break;
             }
         }

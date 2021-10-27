@@ -111,7 +111,7 @@ public class Jar extends Task {
             String oldVersion = Inputs.normalize(project.getJavaSourceVersion());
             String newVersion = Inputs.normalize(project.getJavaClassVersion());
             if (!oldVersion.equals(newVersion)) {
-                ui.talk("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+                ui.info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
             }
 
             input = input.map(dir -> {
@@ -131,11 +131,11 @@ public class Jar extends Task {
         }
 
         Locator.folder().add(input, Option::strip).trackPackingTo(output).to(info -> {
-            ui.talk("Packaging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
+            ui.info("Packaging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
         }, e -> {
             ui.error(e);
         }, () -> {
-            ui.talk("Build ", type, " jar: ", output);
+            ui.info("Build ", type, " jar: ", output);
         });
     }
 
@@ -167,11 +167,11 @@ public class Jar extends Task {
         }
 
         folder.trackPackingTo(output).to(info -> {
-            ui.talk("Merging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
+            ui.info("Merging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)", "\r");
         }, e -> {
             ui.error(e);
         }, () -> {
-            ui.talk("Build merged classes jar: ", output);
+            ui.info("Build merged classes jar: ", output);
         });
     }
 
