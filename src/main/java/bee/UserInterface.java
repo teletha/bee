@@ -41,15 +41,31 @@ public abstract class UserInterface {
     /** The for command line user interface. */
     public static final UserInterface CUI = new CommandLineUserInterface(); // use constructor
 
+    /** Message type magic number. */
+    protected static final int TRACE = 0;
+
+    /** Message type magic number. */
+    protected static final int DEBUG = 1;
+
+    /** Message type magic number. */
+    protected static final int INFO = 2;
+
+    /** Message type magic number. */
+    protected static final int WARNING = 3;
+
+    /** Message type magic number. */
+    protected static final int ERROR = 4;
+
+    /** Message type magic number. */
+    protected static final int TITLE = 5;
+
     /**
      * Talk to user with decoration like title.
      * 
      * @param title
      */
     public void title(CharSequence title) {
-        info("------------------------------------------------------------");
-        info(title);
-        info("------------------------------------------------------------");
+        write(TITLE, String.valueOf(title));
     }
 
     /**
@@ -58,7 +74,7 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public void info(Object... messages) {
-        write(build(messages));
+        write(INFO, build(messages));
     }
 
     /**
@@ -67,7 +83,7 @@ public abstract class UserInterface {
      * @param messages Your warning message.
      */
     public void warn(Object... messages) {
-        info("[WARN] ", messages);
+        write(WARNING, build(messages));
     }
 
     /**
@@ -76,7 +92,7 @@ public abstract class UserInterface {
      * @param messages Your emergency message.
      */
     public void error(Object... messages) {
-        info("[ERROR] ", messages);
+        write(ERROR, build(messages));
     }
 
     /**
@@ -158,7 +174,7 @@ public abstract class UserInterface {
         builder.append(" : ");
 
         // Question
-        write(builder.toString());
+        write(INFO, builder.toString());
 
         try {
             // Answer
@@ -481,7 +497,7 @@ public abstract class UserInterface {
      * 
      * @param message
      */
-    protected abstract void write(String message);
+    protected abstract void write(int type, String message);
 
     /**
      * Display message about command starts.
@@ -556,8 +572,31 @@ public abstract class UserInterface {
          * {@inheritDoc}
          */
         @Override
-        protected synchronized void write(String message) {
-            write(message, true);
+        protected synchronized void write(int type, String message) {
+            switch (type) {
+            case TITLE:
+                write("------------------------------------------------------------", true);
+                write(message, true);
+                write("------------------------------------------------------------", true);
+                break;
+
+            case TRACE:
+            case DEBUG:
+                write(message.concat("\r"), false);
+                break;
+
+            case WARNING:
+                write("[WARN] ".concat(message), true);
+                break;
+
+            case ERROR:
+                write("[ERROR] ".concat(message), true);
+                break;
+
+            default:
+                write(message, true);
+                break;
+            }
         }
 
         /**

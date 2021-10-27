@@ -229,14 +229,14 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        protected synchronized void write(String message) {
+        protected synchronized void write(int type, String message) {
             switch (mode) {
             case 0:
-                messages.add(() -> ui.write(message));
+                messages.add(() -> ui.write(type, message));
                 break;
 
             case 1:
-                ui.write(message);
+                ui.write(type, message);
                 break;
             }
         }
