@@ -86,7 +86,7 @@ public class Inputs {
      */
     public static String formatAsSize(long bytes, boolean unit) {
         double kb = bytes / 1024.0;
-        if (kb < 0.9) {
+        if (kb < 0.1) {
             return Long.toString(bytes).concat(unit ? "Bytes" : "");
         }
 
