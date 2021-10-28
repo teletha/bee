@@ -130,13 +130,10 @@ public class Jar extends Task {
             });
         }
 
-        Locator.folder().add(input, Option::strip).trackPackingTo(output).to(info -> {
-            ui.trace("Packaging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
-        }, e -> {
-            ui.error(e);
-        }, () -> {
-            ui.info("Build ", type, " jar: ", output);
-        });
+        Locator.folder()
+                .add(input, Option::strip)
+                .trackPackingTo(output)
+                .to(Inputs.observerFor(ui, output, "Packaging class files", "Build " + type + " jar"));
     }
 
     /**
@@ -166,13 +163,7 @@ public class Jar extends Task {
             folder.add(library.getLocalJar().asArchive());
         }
 
-        folder.trackPackingTo(output).to(info -> {
-            ui.trace("Merging class files: ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
-        }, e -> {
-            ui.error(e);
-        }, () -> {
-            ui.info("Build merged classes jar: ", output);
-        });
+        folder.trackPackingTo(output).to(Inputs.observerFor(ui, output, "Merging class files", "Build merged classes jar"));
     }
 
     /**

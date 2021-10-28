@@ -618,7 +618,7 @@ public abstract class UserInterface {
             switch (type) {
             case TITLE:
                 write("------------------------------------------------------------", true);
-                write(stain(message, "SUCCESS", "76", "FAILURE", "1"), true);
+                write(stain(message, "Build SUCCESS", "76", "Build FAILURE", "1"), true);
                 write("------------------------------------------------------------", true);
                 break;
 

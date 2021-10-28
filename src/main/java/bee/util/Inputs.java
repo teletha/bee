@@ -24,16 +24,77 @@ import javax.lang.model.SourceVersion;
 
 import org.objectweb.asm.Type;
 
+import bee.UserInterface;
 import kiss.I;
+import kiss.Observer;
 import kiss.WiseTriConsumer;
 import kiss.WiseTriFunction;
 import psychopath.File;
 import psychopath.Locator;
+import psychopath.Progress;
 
 public class Inputs {
 
+    public static Observer<Progress> observerFor(UserInterface ui, File output, String progressMessage, String completeMessage) {
+        return new Observer<>() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void accept(Progress info) {
+                ui.trace(progressMessage, ": ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void error(Throwable e) {
+                ui.error(e);
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void complete() {
+                ui.info(completeMessage, ": ", output, " (", formatAsSize(output.size()), ")");
+            }
+        };
+    }
+
     public static String format(Object p1, String text) {
         return String.format(text, p1);
+    }
+
+    /**
+     * Format as human-readable size.
+     * 
+     * @param size
+     * @return
+     */
+    public static String formatAsSize(long size) {
+        double kb = size / 1024;
+        if (kb < 0.9) {
+            return String.format("%.2f", size) + "Bytes";
+        }
+
+        double mb = kb / 1024;
+        if (mb < 0.9) {
+            return String.format("%.2f", kb) + "KB";
+        }
+
+        double gb = mb / 1024;
+        if (gb < 0.9) {
+            return String.format("%.2f", mb) + "MB";
+        }
+
+        double tb = mb / 1024;
+        if (tb < 0.9) {
+            return String.format("%.2f", gb) + "GB";
+        }
+        return String.format("%.2f", tb / 1024) + "TB";
     }
 
     /**
