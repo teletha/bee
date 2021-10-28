@@ -18,6 +18,16 @@ import org.junit.jupiter.api.Test;
 class InputsTest {
 
     @Test
+    void formatAsSize() {
+        assert Inputs.formatAsSize(100).equals("100Bytes");
+        assert Inputs.formatAsSize(5 * 1024).equals("5KB");
+        assert Inputs.formatAsSize(1536).equals("1.5KB");
+        assert Inputs.formatAsSize(1538).equals("1.5KB");
+        assert Inputs.formatAsSize(1545).equals("1.51KB");
+        assert Inputs.formatAsSize(1555).equals("1.52KB");
+    }
+
+    @Test
     void signature() {
         assert Inputs.signature(this::signature).equals(InputsTest.class.getName() + "#signature()");
         assert Inputs.signature(InputsTest::signature).equals(InputsTest.class.getName() + "#signature()");

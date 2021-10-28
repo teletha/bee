@@ -71,30 +71,46 @@ public class Inputs {
     /**
      * Format as human-readable size.
      * 
-     * @param size
+     * @param bytes
      * @return
      */
-    public static String formatAsSize(long size) {
-        double kb = size / 1024;
+    public static String formatAsSize(long bytes) {
+        double kb = bytes / 1024.0;
         if (kb < 0.9) {
-            return String.format("%.2f", size) + "Bytes";
+            return bytes + "Bytes";
         }
 
-        double mb = kb / 1024;
+        double mb = kb / 1024.0;
         if (mb < 0.9) {
-            return String.format("%.2f", kb) + "KB";
+            return formatAsSize(kb, "KB");
         }
 
-        double gb = mb / 1024;
+        double gb = mb / 1024.0;
         if (gb < 0.9) {
-            return String.format("%.2f", mb) + "MB";
+            return formatAsSize(mb, "MB");
         }
 
-        double tb = mb / 1024;
+        double tb = gb / 1024.0;
         if (tb < 0.9) {
-            return String.format("%.2f", gb) + "GB";
+            return formatAsSize(gb, "GB");
         }
-        return String.format("%.2f", tb / 1024) + "TB";
+        return formatAsSize(tb, "TB");
+    }
+
+    /**
+     * Remove tailing zero.
+     * 
+     * @param size
+     * @param unit
+     * @return
+     */
+    private static String formatAsSize(double size, String unit) {
+        long rouded = (long) size;
+        if (rouded == size) {
+            return rouded + unit;
+        } else {
+            return (Math.round(size * 100.0) / 100.0) + unit;
+        }
     }
 
     /**
