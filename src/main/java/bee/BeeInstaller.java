@@ -57,7 +57,7 @@ public class BeeInstaller {
             // We should copy it to JDK directory.
             // This process is mainly used by Bee users while install phase.
             source.copyTo(dest);
-            ui.info("Install bee library to ", dest);
+            ui.info("Write new bee library. [", dest, "]");
         }
 
         // create bat file
@@ -73,7 +73,7 @@ public class BeeInstaller {
         }
         Bee.text(bat);
 
-        ui.info("Install bat file to ", Bee);
+        ui.info("Write new bat file. [", Bee, "]");
 
         // create bee-api library and sources
         File api = Locator.folder()
