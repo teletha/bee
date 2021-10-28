@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.teletha</groupId>
 	<artifactId>bee</artifactId>
-	<version>0.9.0</version>
+	<version>0.10.0</version>
 	<packaging>jar</packaging>
 	<name>bee</name>
 	<description>Task based project builder for Java</description>
