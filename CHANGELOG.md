@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.10.0](https://www.github.com/Teletha/bee/compare/v0.9.0...v0.10.0) (2021-10-28)
+
+
+### Features
+
+* Add Inputs#formatAsSize and #observerFor. ([a89471c](https://www.github.com/Teletha/bee/commit/a89471c6546f7af6995877bc62366afa9fd428c8))
+* Add Inputs#formatAsSize(long, boolean). ([174a6af](https://www.github.com/Teletha/bee/commit/174a6af8f8b97e166c870f9f18d0d1b83b6663dc))
+* Add UserInterface#trace and #debug. ([482e780](https://www.github.com/Teletha/bee/commit/482e7800a609eb3bc357e713d59c408dc8c998f8))
+* Drop byte-buddy-agent, use BeeLoader instead. ([6550153](https://www.github.com/Teletha/bee/commit/6550153ec04f3292badef2ce4d6b8b0d41520432))
+* Update lambok. ([9881c33](https://www.github.com/Teletha/bee/commit/9881c33a7680e86d7f9f97666af16ef0845682b2))
+
+
+### Bug Fixes
+
+* Colorize the console output. ([09fd2a3](https://www.github.com/Teletha/bee/commit/09fd2a3863e10271c5cf31939260afda6868f480))
+* MemoizedTask is broken by user-customed task. ([45a40a7](https://www.github.com/Teletha/bee/commit/45a40a713de1ece266157dc63572b0d3ff48af9f))
+* Rename from UserInterface#talk to #info. ([43bb082](https://www.github.com/Teletha/bee/commit/43bb08249665e0919e1d7c1b0d26a7213a52c3f6))
+* UserInterface depends on CLI behavior. ([fc6b358](https://www.github.com/Teletha/bee/commit/fc6b3586b20fc384a4ffe5ac7b164f53a09040ea))
+
 ## [0.9.0](https://www.github.com/Teletha/bee/compare/v0.8.0...v0.9.0) (2021-10-25)
 
 
