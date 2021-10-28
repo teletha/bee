@@ -76,16 +76,20 @@ public class TransferInterface implements TransferListener {
 
             for (Map.Entry<TransferResource, TransferEvent> entry : downloading.entrySet()) {
                 TransferResource resource = entry.getKey();
+                long current = entry.getValue().getTransferredBytes();
+                long size = resource.getContentLength();
 
-                message.append(name(resource));
-                message.append(" (");
-                message.append(format(entry.getValue().getTransferredBytes(), resource.getContentLength()));
+                message.append(name(resource)).append(" (");
+                if (0 < size) {
+                    message.append(Inputs.formatAsSize(current, false)).append('/').append(Inputs.formatAsSize(size));
+                } else {
+                    message.append(Inputs.formatAsSize(current));
+                }
                 message.append(")   ");
             }
-            message.append('\r');
 
             // notify
-            ui.info(message.toString());
+            ui.trace(message);
         }
     }
 
@@ -100,12 +104,12 @@ public class TransferInterface implements TransferListener {
         TransferResource resource = event.getResource();
         long contentLength = event.getTransferredBytes();
         if (contentLength >= 0) {
-            String len = contentLength >= 1024 ? toKB(contentLength) + " KB" : contentLength + " B";
+            String length = Inputs.formatAsSize(contentLength);
 
             if (event.getRequestType() == TransferEvent.RequestType.GET) {
-                ui.info("Downloaded : " + name(resource) + " (" + len + ") from [" + resource.getRepositoryUrl() + "]");
+                ui.info("Downloaded : " + name(resource) + " (" + length + ") from [" + resource.getRepositoryUrl() + "]");
             } else {
-                ui.info("Uploaded : " + name(resource) + " (" + len + ") to [" + resource.getRepositoryUrl() + "]");
+                ui.info("Uploaded : " + name(resource) + " (" + length + ") to [" + resource.getRepositoryUrl() + "]");
             }
         }
     }
@@ -135,38 +139,5 @@ public class TransferInterface implements TransferListener {
      */
     private static String name(TransferResource resource) {
         return resource.getResourceName().substring(resource.getResourceName().lastIndexOf('/') + 1);
-    }
-
-    /**
-     * <p>
-     * Format size.
-     * </p>
-     * 
-     * @param current A current size.
-     * @param size A total size.
-     * @return
-     */
-    private static String format(long current, long size) {
-        if (size >= 1024) {
-            return toKB(current) + "/" + toKB(size) + " KB";
-        } else if (size >= 0) {
-            return current + "/" + size + " B";
-        } else if (current >= 1024) {
-            return toKB(current) + " KB";
-        } else {
-            return current + " B";
-        }
-    }
-
-    /**
-     * <p>
-     * Format.
-     * </p>
-     * 
-     * @param size
-     * @return
-     */
-    private static long toKB(long size) {
-        return (size + 1023) / 1024;
     }
 }

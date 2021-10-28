@@ -28,6 +28,16 @@ class InputsTest {
     }
 
     @Test
+    void formatAsSizeWithoutUnit() {
+        assert Inputs.formatAsSize(100, false).equals("100");
+        assert Inputs.formatAsSize(5 * 1024, false).equals("5");
+        assert Inputs.formatAsSize(1536, false).equals("1.5");
+        assert Inputs.formatAsSize(1538, false).equals("1.5");
+        assert Inputs.formatAsSize(1545, false).equals("1.51");
+        assert Inputs.formatAsSize(1555, false).equals("1.52");
+    }
+
+    @Test
     void signature() {
         assert Inputs.signature(this::signature).equals(InputsTest.class.getName() + "#signature()");
         assert Inputs.signature(InputsTest::signature).equals(InputsTest.class.getName() + "#signature()");

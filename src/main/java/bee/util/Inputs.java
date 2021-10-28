@@ -75,26 +75,36 @@ public class Inputs {
      * @return
      */
     public static String formatAsSize(long bytes) {
+        return formatAsSize(bytes, true);
+    }
+
+    /**
+     * Format as human-readable size.
+     * 
+     * @param bytes
+     * @return
+     */
+    public static String formatAsSize(long bytes, boolean unit) {
         double kb = bytes / 1024.0;
         if (kb < 0.9) {
-            return bytes + "Bytes";
+            return Long.toString(bytes).concat(unit ? "Bytes" : "");
         }
 
         double mb = kb / 1024.0;
         if (mb < 0.9) {
-            return formatAsSize(kb, "KB");
+            return formatAsSize(kb, unit ? "KB" : "");
         }
 
         double gb = mb / 1024.0;
         if (gb < 0.9) {
-            return formatAsSize(mb, "MB");
+            return formatAsSize(mb, unit ? "MB" : "");
         }
 
         double tb = gb / 1024.0;
         if (tb < 0.9) {
-            return formatAsSize(gb, "GB");
+            return formatAsSize(gb, unit ? "GB" : "");
         }
-        return formatAsSize(tb, "TB");
+        return formatAsSize(tb, unit ? "TB" : "");
     }
 
     /**
@@ -107,9 +117,9 @@ public class Inputs {
     private static String formatAsSize(double size, String unit) {
         long rouded = (long) size;
         if (rouded == size) {
-            return rouded + unit;
+            return Long.toString(rouded).concat(unit);
         } else {
-            return (Math.round(size * 100.0) / 100.0) + unit;
+            return Double.toString(Math.round(size * 100.0) / 100.0).concat(unit);
         }
     }
 
