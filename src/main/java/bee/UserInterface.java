@@ -72,7 +72,7 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public final void trace(Object... messages) {
-        handleMessage(TRACE, messages);
+        talk(TRACE, messages);
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public final void debug(Object... messages) {
-        handleMessage(DEBUG, messages);
+        talk(DEBUG, messages);
     }
 
     /**
@@ -90,7 +90,7 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public final void info(Object... messages) {
-        handleMessage(INFO, messages);
+        talk(INFO, messages);
     }
 
     /**
@@ -99,7 +99,7 @@ public abstract class UserInterface {
      * @param messages Your warning message.
      */
     public final void warn(Object... messages) {
-        handleMessage(WARNING, messages);
+        talk(WARNING, messages);
     }
 
     /**
@@ -108,12 +108,19 @@ public abstract class UserInterface {
      * @param messages Your emergency message.
      */
     public final void error(Object... messages) {
-        handleMessage(ERROR, messages);
+        talk(ERROR, messages);
     }
 
-    private void handleMessage(int type, Object[] messages) {
+    /**
+     * General talk to user.
+     * 
+     * @param type
+     * @param messages
+     */
+    private void talk(int type, Object[] messages) {
         int length = messages.length;
         if (0 < length) {
+            // extract the last throwable parameter
             if (messages[length - 1]instanceof Throwable e) {
                 write(type, build(length - 1, messages));
 
@@ -552,6 +559,9 @@ public abstract class UserInterface {
      */
     private static class CommandLineUserInterface extends UserInterface {
 
+        /** Ansi escape code must start with this PREFIX. */
+        public static final String PREFIX = "[";
+
         /** The original standard output. */
         private final PrintStream standardOutput;
 
@@ -608,7 +618,7 @@ public abstract class UserInterface {
             switch (type) {
             case TITLE:
                 write("------------------------------------------------------------", true);
-                write(message, true);
+                write(stain(message, "SUCCESS", "76", "FAILURE", "1"), true);
                 write("------------------------------------------------------------", true);
                 break;
 
@@ -618,11 +628,11 @@ public abstract class UserInterface {
                 break;
 
             case WARNING:
-                write("[WARN] ".concat(message), true);
+                write(stain("[WARN] ", "227").concat(message), true);
                 break;
 
             case ERROR:
-                write("[ERROR] ".concat(message), true);
+                write(stain("[ERROR] ", "1").concat(message), true);
                 break;
 
             default:
@@ -636,7 +646,11 @@ public abstract class UserInterface {
          */
         @Override
         protected synchronized void write(Throwable error) {
-            error.printStackTrace(standardError);
+            if (first) {
+                showCommandName();
+                first = false;
+            }
+            error.printStackTrace(standardOutput);
         }
 
         /**
@@ -652,7 +666,7 @@ public abstract class UserInterface {
             }
 
             if (eraseNextLine) {
-                message = "[2K" + message;
+                message = PREFIX + "2K" + message;
             }
             eraseNextLine = message.endsWith("\r");
 
@@ -682,8 +696,33 @@ public abstract class UserInterface {
             String command = commands.pollLast();
 
             if (command != null) {
-                standardOutput.println("◆ " + command.replace(":", " : ") + " ◆");
+                standardOutput.println(stain("◆ " + command.replace(":", " : ") + " ◆", "75"));
             }
+        }
+
+        /**
+         * Colorize the text.
+         * 
+         * @param text
+         * @param colorCode
+         * @return
+         */
+        private static String stain(String text, String colorCode) {
+            return PREFIX + "38;5;" + colorCode + "m" + text + PREFIX + "0m";
+        }
+
+        /**
+         * Colorize specified parts of text.
+         * 
+         * @param text
+         * @param partAndColorCode
+         * @return
+         */
+        private static String stain(String text, String... partAndColorCode) {
+            for (int i = 0; i < partAndColorCode.length; i++) {
+                text = text.replace(partAndColorCode[i], stain(partAndColorCode[i], partAndColorCode[++i]));
+            }
+            return text;
         }
 
         /**
