@@ -35,7 +35,6 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryListener;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
@@ -146,7 +145,7 @@ public class Repository {
     private final RepositorySystem system;
 
     /** The session. */
-    private final RepositorySystemSession session;
+    private final DefaultRepositorySystemSession session;
 
     /** The default dependency filter. */
     private final List<DependencySelector> dependencyFilters = new ArrayList();
@@ -503,6 +502,7 @@ public class Repository {
      */
     public final void setLocalRepository(Directory path) {
         this.localRepository = new LocalRepository(path.absolutize().toString());
+        this.session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
     }
 
     /**

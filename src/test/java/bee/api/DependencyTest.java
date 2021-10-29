@@ -12,6 +12,7 @@ package bee.api;
 import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
+import bee.RandomProject;
 
 class DependencyTest {
 
@@ -28,7 +29,30 @@ class DependencyTest {
         project.require("org.ow2.asm", "asm", "9.2");
 
         Repository repository = new Repository(project);
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
         assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void atCompile2() {
+        BlinkProject project = new BlinkProject();
+        project.require(new RandomProject() {
+            {
+                require(new RandomProject());
+            }
+        });
+
+        Repository repository = new Repository(project);
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
     }
 
     @Test
@@ -37,8 +61,12 @@ class DependencyTest {
         project.require("org.ow2.asm", "asm", "9.2").atTest();
 
         Repository repository = new Repository(project);
-        assert repository.collectDependency(project, Scope.Test).size() == 1;
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 0;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
         assert repository.collectDependency(project, Scope.Runtime).size() == 0;
+        assert repository.collectDependency(project, Scope.Test).size() == 1;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
     }
 
     @Test

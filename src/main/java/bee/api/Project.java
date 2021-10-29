@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.signature;
 
 import java.io.IOException;
 import java.net.URI;
@@ -352,6 +352,16 @@ public class Project {
      */
     protected final Library requireLombok() {
         return require(Bee.Lombok.productGroup, Bee.Lombok.productName, Bee.Lombok.productVersion).atProvided();
+    }
+
+    /**
+     * Declare dependency for project.
+     * 
+     * @param project Targetproject.
+     * @return A dependency.
+     */
+    protected final Library require(Project project) {
+        return require(project.productGroup, project.productName, project.productVersion);
     }
 
     /**
