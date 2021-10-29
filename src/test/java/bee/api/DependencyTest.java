@@ -9,8 +9,6 @@
  */
 package bee.api;
 
-import java.util.Set;
-
 import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
@@ -21,18 +19,16 @@ class DependencyTest {
     void empty() {
         BlinkProject project = new BlinkProject();
         Repository repository = new Repository(project);
-        Set<Library> dependencies = repository.collectDependency(project, Scope.Compile);
-        assert dependencies.size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 0;
     }
 
     @Test
-    void external() {
+    void atCompile() {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm", "5.0");
 
         Repository repository = new Repository(project);
-        Set<Library> dependencies = repository.collectDependency(project, Scope.Compile);
-        assert dependencies.size() == 1;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
     }
 
     @Test
@@ -41,10 +37,8 @@ class DependencyTest {
         project.require("org.ow2.asm", "asm", "5.0.4").atTest();
 
         Repository repository = new Repository(project);
-        Set<Library> dependencies = repository.collectDependency(project, Scope.Test);
-        assert dependencies.size() == 1;
-        dependencies = repository.collectDependency(project, Scope.Runtime);
-        assert dependencies.size() == 0;
+        assert repository.collectDependency(project, Scope.Test).size() == 1;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
     }
 
     @Test
@@ -53,10 +47,8 @@ class DependencyTest {
         project.require("org.ow2.asm", "asm-tree", "5.0.4").atTest();
 
         Repository repository = new Repository(project);
-        Set<Library> dependencies = repository.collectDependency(project, Scope.Test);
-        assert dependencies.size() == 2;
-        dependencies = repository.collectDependency(project, Scope.Runtime);
-        assert dependencies.size() == 0;
+        assert repository.collectDependency(project, Scope.Test).size() == 2;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
     }
 
     @Test
@@ -65,10 +57,19 @@ class DependencyTest {
         project.require("org.atteo.classindex", "classindex", "3.4").atAnnotation();
 
         Repository repository = new Repository(project);
-        Set<Library> dependencies = repository.collectDependency(project, Scope.Annotation);
-        assert dependencies.size() == 1;
-        dependencies = repository.collectDependency(project, Scope.Runtime);
-        assert dependencies.size() == 0;
+        assert repository.collectDependency(project, Scope.Annotation).size() == 1;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
+    }
+
+    @Test
+    void atProvided() {
+        BlinkProject project = new BlinkProject();
+        project.require("org.ow2.asm", "asm", "5.0.4").atProvided();
+
+        Repository repository = new Repository(project);
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 1;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
     }
 
     @Test
@@ -77,28 +78,22 @@ class DependencyTest {
         project.require("org.skyscreamer", "jsonassert", "1.2.3");
 
         Repository repository = new Repository(project);
-        Set<Library> dependencies = repository.collectDependency(project, Scope.Runtime);
-        assert dependencies.size() == 2;
-        dependencies = repository.collectDependency(project, Scope.Test, Scope.Compile);
-        assert dependencies.size() == 2;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 2;
+        assert repository.collectDependency(project, Scope.Test, Scope.Compile).size() == 2;
     }
 
     @Test
     void byLibrary() {
         Library library = new Library("org.skyscreamer", "jsonassert", "1.2.3");
         Repository repo = new Repository(new BlinkProject());
-        Set<Library> dep = repo.collectDependency(library, Scope.Runtime);
-        assert dep.size() == 2;
-
-        dep = repo.collectDependency(library, Scope.Test, Scope.Compile);
-        assert dep.size() == 2;
+        assert repo.collectDependency(library, Scope.Runtime).size() == 2;
+        assert repo.collectDependency(library, Scope.Test, Scope.Compile).size() == 2;
     }
 
     @Test
     void byLibraryWithClassifier() {
         Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
         Repository repo = new Repository(new BlinkProject());
-        Set<Library> dep = repo.collectDependency(library, Scope.Test, Scope.Compile);
-        assert dep.size() == 84;
+        assert repo.collectDependency(library, Scope.Test, Scope.Compile).size() == 84;
     }
 }
