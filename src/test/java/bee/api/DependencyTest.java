@@ -25,7 +25,7 @@ class DependencyTest {
     @Test
     void atCompile() {
         BlinkProject project = new BlinkProject();
-        project.require("org.ow2.asm", "asm", "5.0");
+        project.require("org.ow2.asm", "asm", "9.2");
 
         Repository repository = new Repository(project);
         assert repository.collectDependency(project, Scope.Compile).size() == 1;
@@ -34,7 +34,7 @@ class DependencyTest {
     @Test
     void atTest1() {
         BlinkProject project = new BlinkProject();
-        project.require("org.ow2.asm", "asm", "5.0.4").atTest();
+        project.require("org.ow2.asm", "asm", "9.2").atTest();
 
         Repository repository = new Repository(project);
         assert repository.collectDependency(project, Scope.Test).size() == 1;
@@ -62,14 +62,26 @@ class DependencyTest {
     }
 
     @Test
-    void atProvided() {
+    void atProvided1() {
         BlinkProject project = new BlinkProject();
-        project.require("org.ow2.asm", "asm", "5.0.4").atProvided();
+        project.require("org.ow2.asm", "asm", "9.2").atProvided();
 
         Repository repository = new Repository(project);
         assert repository.collectDependency(project, Scope.Compile).size() == 1;
         assert repository.collectDependency(project, Scope.Provided).size() == 1;
         assert repository.collectDependency(project, Scope.Runtime).size() == 0;
+    }
+
+    @Test
+    void atProvided2() {
+        BlinkProject project = new BlinkProject();
+        project.require("org.ow2.asm", "asm", "9.2");
+        project.require("org.ow2.asm", "asm-util", "9.2").atProvided();
+
+        Repository repository = new Repository(project);
+        assert repository.collectDependency(project, Scope.Compile).size() == 4;
+        assert repository.collectDependency(project, Scope.Provided).size() == 4;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
     }
 
     @Test
