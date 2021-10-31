@@ -253,6 +253,7 @@ public class Repository {
                     if (node == null || node.getArtifact() == null) {
                         return true;
                     }
+
                     List<DependencyNode> list = new ArrayList();
 
                     for (int i = parents.size() - 1; 0 <= i; i--) {
@@ -502,7 +503,10 @@ public class Repository {
      */
     public final void setLocalRepository(Directory path) {
         this.localRepository = new LocalRepository(path.absolutize().toString());
-        this.session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
+
+        if (session != null) {
+            session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
+        }
     }
 
     /**
