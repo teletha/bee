@@ -135,4 +135,22 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.Test).size() == 0;
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }
+
+    @Test
+    void compile_test() {
+        TemporaryProject project = new TemporaryProject();
+        project.require(new TemporaryProject("one") {
+            {
+                require(new TemporaryProject("nest")).atTest();
+            }
+        });
+
+        Repository repository = project.getRepository();
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
 }
