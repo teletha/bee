@@ -10,19 +10,10 @@
 package bee.api;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-import antibug.CleanRoom;
 import bee.BlinkProject;
-import psychopath.Directory;
-import psychopath.Locator;
 
 class DependencyTest {
-
-    @RegisterExtension
-    private CleanRoom room = new CleanRoom();
-
-    private Directory repo = Locator.directory(room.locateDirectory("temporary-repository"));
 
     @Test
     void empty() {
@@ -129,20 +120,18 @@ class DependencyTest {
 
     @Test
     void compile_compile() {
-        BlinkProject project = new BlinkProject();
-        project.require(new RandomProject("one", repo) {
+        TemporaryProject project = new TemporaryProject();
+        project.require(new TemporaryProject("one") {
             {
-                require(new RandomProject("nest", repo));
+                require(new TemporaryProject("nest"));
             }
         });
 
-        Repository repository = new Repository(project);
-        repository.setLocalRepository(repo);
-
+        Repository repository = project.getRepository();
         assert repository.collectDependency(project, Scope.Annotation).size() == 0;
         assert repository.collectDependency(project, Scope.Compile).size() == 2;
         assert repository.collectDependency(project, Scope.Provided).size() == 0;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 2;
         assert repository.collectDependency(project, Scope.Test).size() == 0;
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }

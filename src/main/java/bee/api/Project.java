@@ -355,16 +355,6 @@ public class Project {
     }
 
     /**
-     * Declare dependency for project.
-     * 
-     * @param project Targetproject.
-     * @return A dependency.
-     */
-    protected final Library require(Project project) {
-        return require(project.productGroup, project.productName, project.productVersion);
-    }
-
-    /**
      * Declare dependency for latest version.
      * 
      * @param projectName A project name.
