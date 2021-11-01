@@ -9,11 +9,29 @@
  */
 package bee.api;
 
-import org.junit.jupiter.api.Test;
+import java.util.function.Consumer;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
+
+import antibug.CleanRoom;
 import bee.BlinkProject;
+import psychopath.Locator;
 
 class DependencyTest {
+
+    @RegisterExtension
+    private static CleanRoom room = new CleanRoom();
+
+    private static Repository repository;
+
+    @BeforeAll
+    static void setup() {
+        repository = new Repository(new BlinkProject());
+        repository.setLocalRepository(Locator.directory(room.root));
+    }
 
     @Test
     void empty() {
@@ -121,13 +139,10 @@ class DependencyTest {
     @Test
     void compile_compile() {
         TemporaryProject project = new TemporaryProject();
-        project.require(new TemporaryProject("one") {
-            {
-                require(new TemporaryProject("nest"));
-            }
+        project.require("one", one -> {
+            one.require("nest");
         });
 
-        Repository repository = project.getRepository();
         assert repository.collectDependency(project, Scope.Annotation).size() == 0;
         assert repository.collectDependency(project, Scope.Compile).size() == 2;
         assert repository.collectDependency(project, Scope.Provided).size() == 0;
@@ -139,13 +154,10 @@ class DependencyTest {
     @Test
     void compile_test() {
         TemporaryProject project = new TemporaryProject();
-        project.require(new TemporaryProject("one") {
-            {
-                require(new TemporaryProject("nest")).atTest();
-            }
+        project.require("one", one -> {
+            one.require("nest").atTest();
         });
 
-        Repository repository = project.getRepository();
         assert repository.collectDependency(project, Scope.Annotation).size() == 0;
         assert repository.collectDependency(project, Scope.Compile).size() == 1;
         assert repository.collectDependency(project, Scope.Provided).size() == 0;
@@ -153,4 +165,42 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.Test).size() == 0;
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }
+
+    /**
+     * 
+     */
+    private static class TemporaryProject extends BlinkProject {
+
+        /**
+         * 
+         */
+        private TemporaryProject() {
+            this(RandomStringUtils.randomAlphabetic(7));
+        }
+
+        /**
+         * 
+         */
+        private TemporaryProject(String name) {
+            product("temporary.test.project", name, "1.0");
+
+            setOutput(Locator.temporaryDirectory());
+            locateJar().create();
+        }
+
+        private Library require(String productName) {
+            return require(productName, noop -> {
+            });
+        }
+
+        private Library require(String productName, Consumer<TemporaryProject> definition) {
+            TemporaryProject project = new TemporaryProject(getProduct() + "-" + productName);
+
+            definition.accept(project);
+            repository.install(project);
+
+            return require(project.getGroup(), project.getProduct(), project.getVersion());
+        }
+    }
+
 }
