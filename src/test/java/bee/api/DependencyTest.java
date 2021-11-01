@@ -166,6 +166,66 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }
 
+    @Test
+    void compile_annotation() {
+        TemporaryProject project = new TemporaryProject();
+        project.require("one", one -> {
+            one.require("nest").atAnnotation();
+        });
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void compile_provided() {
+        TemporaryProject project = new TemporaryProject();
+        project.require("one", one -> {
+            one.require("nest").atProvided();
+        });
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void compile_system() {
+        TemporaryProject project = new TemporaryProject();
+        project.require("one", one -> {
+            one.require("nest").atSystem();
+        });
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void compile_runtime() {
+        TemporaryProject project = new TemporaryProject();
+        project.require("one", one -> {
+            one.require("nest").atRuntime();
+        });
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 2;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
     /**
      * 
      */
@@ -175,7 +235,7 @@ class DependencyTest {
          * 
          */
         private TemporaryProject() {
-            this(RandomStringUtils.randomAlphabetic(7));
+            this(RandomStringUtils.randomAlphabetic(5));
         }
 
         /**

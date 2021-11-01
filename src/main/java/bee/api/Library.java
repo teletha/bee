@@ -80,57 +80,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
-     * This library is needed at compile phase.
-     * </p>
-     * 
-     * @return
-     */
-    public Library atCompile() {
-        scope = Scope.Compile;
-        return this;
-    }
-
-    /**
-     * <p>
-     * This library is needed at compile phase.
-     * </p>
-     * 
-     * @return
-     */
-    public Library atTest() {
-        scope = Scope.Test;
-        return this;
-    }
-
-    /**
-     * <p>
-     * This library is needed at compile phase.
-     * </p>
-     * 
-     * @return
-     */
-    public Library atProvided() {
-        scope = Scope.Provided;
-        return this;
-    }
-
-    /**
-     * <p>
-     * This library is needed at compile phase.
-     * </p>
-     * 
-     * @return
-     */
-    public Library atSystem() {
-        scope = Scope.System;
-        return this;
-    }
-
-    /**
-     * <p>
      * This library is needed at Pluggable Annotation Processing (JSR-269) phase.
-     * </p>
      * 
      * @return
      */
@@ -140,20 +90,57 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * This library is needed at compile phase.
-     * </p>
      * 
      * @return
      */
-    public Library atExtension() {
+    public Library atCompile() {
+        scope = Scope.Compile;
         return this;
     }
 
     /**
-     * <p>
+     * This library is needed at compile phase.
+     * 
+     * @return
+     */
+    public Library atProvided() {
+        scope = Scope.Provided;
+        return this;
+    }
+
+    /**
+     * This library is needed at runtime phase.
+     * 
+     * @return
+     */
+    public Library atRuntime() {
+        scope = Scope.Runtime;
+        return this;
+    }
+
+    /**
+     * This library is needed at compile phase.
+     * 
+     * @return
+     */
+    public Library atSystem() {
+        scope = Scope.System;
+        return this;
+    }
+
+    /**
+     * This library is needed at compile phase.
+     * 
+     * @return
+     */
+    public Library atTest() {
+        scope = Scope.Test;
+        return this;
+    }
+
+    /**
      * Get jar path.
-     * </p>
      * 
      * @return
      */
@@ -162,9 +149,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Get jar file.
-     * </p>
      * 
      * @return
      */
@@ -173,9 +158,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Get source jar path.
-     * </p>
      * 
      * @return
      */
@@ -184,9 +167,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Get source jar file.
-     * </p>
      * 
      * @return
      */
@@ -195,9 +176,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Get javadoc jar path.
-     * </p>
      * 
      * @return
      */
@@ -206,9 +185,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Get javadoc jar file.
-     * </p>
      * 
      * @return
      */
@@ -217,9 +194,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Get pom path.
-     * </p>
      * 
      * @return
      */
@@ -228,9 +203,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Get jar file.
-     * </p>
      * 
      * @return
      */
@@ -239,9 +212,7 @@ public class Library implements Comparable<Library> {
     }
 
     /**
-     * <p>
      * Compute local relative path.
-     * </p>
      * 
      * @param suffix
      * @return
