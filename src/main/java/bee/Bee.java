@@ -37,7 +37,7 @@ import psychopath.Locator;
  */
 public class Bee {
 
-    private static final String version = "0.9.0";
+    private static final String version = "0.10.1";
 
     /** The api project. */
     public static final Project API = new Project() {

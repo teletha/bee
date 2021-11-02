@@ -240,7 +240,10 @@ public class Repository {
 
                 for (ArtifactResult dependency : result.getArtifactResults()) {
                     Artifact artifact = dependency.getArtifact();
-                    if (validateDependency(artifact)) {
+
+                    // exclude itself
+                    if (!artifact.getGroupId().equalsIgnoreCase(project.getGroup()) || !artifact.getArtifactId()
+                            .equalsIgnoreCase(project.getProduct())) {
                         set.add(new Library(artifact, Variable.of(dependency.getRepository()).map(ArtifactRepository::getId)));
                     }
                 }
@@ -249,24 +252,6 @@ public class Repository {
             }
         }
         return set;
-    }
-
-    /**
-     * Validate artifact.
-     * 
-     * @param artifact
-     * @return
-     */
-    private boolean validateDependency(Artifact artifact) {
-        String group = artifact.getGroupId();
-        String product = artifact.getArtifactId();
-
-        // remove project itself
-        if (group.equalsIgnoreCase(project.getGroup()) && product.equalsIgnoreCase(project.getProduct())) {
-            return false;
-        }
-
-        return true;
     }
 
     /**
