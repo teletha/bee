@@ -381,11 +381,7 @@ public class Repository {
      * @return A matched repository.
      */
     private List<RemoteRepository> repository(Variable<String> id) {
-        List<RemoteRepository> repositories = new ArrayList<>();
-        repositories.addAll(builtinRepositories);
-        repositories.addAll(project.repositories);
-
-        for (RemoteRepository repo : repositories) {
+        for (RemoteRepository repo : repository()) {
             if (id.is(repo.getId())) {
                 return Collections.singletonList(repo);
             }
