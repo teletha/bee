@@ -12,7 +12,6 @@ package bee.api;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,13 +32,12 @@ import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
+import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositoryListener;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.collection.DependencyGraphTransformer;
-import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
@@ -90,8 +88,9 @@ import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.transformer.ChainedDependencyGraphTransformer;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
+import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeContext;
+import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeDeriver;
 import org.eclipse.aether.util.graph.transformer.JavaDependencyContextRefiner;
-import org.eclipse.aether.util.graph.transformer.JavaScopeDeriver;
 import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
 import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
@@ -147,12 +146,6 @@ public class Repository {
     /** The session. */
     private final DefaultRepositorySystemSession session;
 
-    /** The default dependency filter. */
-    private final List<DependencySelector> dependencyFilters = new ArrayList();
-
-    /** The default dependency builder. */
-    private final DependencyGraphTransformer dependencyBuilder = new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new JavaScopeDeriver()), new JavaDependencyContextRefiner());
-
     /** The path to local repository. */
     private LocalRepository localRepository;
 
@@ -165,10 +158,6 @@ public class Repository {
     Repository(Project project) {
         this.project = project;
 
-        // create filter
-        dependencyFilters.add(new OptionalDependencySelector());
-        dependencyFilters.add(new ScopeDependencySelector("test", "provided"));
-
         // ============ RepositorySystem ============ //
         system = I.make(RepositorySystem.class);
 
@@ -178,12 +167,9 @@ public class Repository {
         setLocalRepository(Platform.BeeLocalRepository);
 
         // ============ RepositorySystemSession ============ //
-        Set<DependencySelector> filters = new HashSet(dependencyFilters);
-        filters.add(new ExclusionDependencySelector(project.exclusions));
-
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        session.setDependencySelector(new AndDependencySelector(filters));
-        session.setDependencyGraphTransformer(dependencyBuilder);
+        session.setDependencySelector(new AndDependencySelector(new OptionalDependencySelector(), new ScopeDependencySelector(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id), new ExclusionDependencySelector(project.exclusions)));
+        session.setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver()), new JavaDependencyContextRefiner()));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
         session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
@@ -237,36 +223,19 @@ public class Repository {
 
         for (Scope scope : scopes) {
             // collect dependency
-            CollectRequest request = new CollectRequest();
-            request.setRepositories(repositories);
+            CollectRequest request = new CollectRequest(null, repositories);
 
             for (Library library : libraries) {
-                Dependency dependency = new Dependency(library.artifact, library.scope.toString());
-
-                if (scope.accept(dependency)) {
-                    request.addDependency(dependency);
+                if (scope.accept(library.scope.id)) {
+                    request.addDependency(new Dependency(library.artifact, library.scope.id));
                 }
             }
 
             try {
                 DependencyResult result = system.resolveDependencies(session, new DependencyRequest(request, (node, parents) -> {
-                    if (node == null || node.getArtifact() == null) {
-                        return true;
-                    }
+                    List<DependencyNode> list = I.signal(parents).startWith(node).skip(p -> p.getArtifact() == null).toList();
 
-                    List<DependencyNode> list = new ArrayList();
-
-                    for (int i = parents.size() - 1; 0 <= i; i--) {
-                        DependencyNode parent = parents.get(i);
-
-                        if (parent != null && parent.getArtifact() != null) {
-                            list.add(parent);
-                        }
-                    }
-                    list.add(node);
-
-                    Scope root = Scope.by(list.get(0).getDependency().getScope());
-                    return list.stream().allMatch(n -> root.accept(n.getDependency()));
+                    return list.isEmpty() || list.stream().allMatch(n -> scope.accept(n.getDependency().getScope()));
                 }));
 
                 for (ArtifactResult dependency : result.getArtifactResults()) {
@@ -521,6 +490,36 @@ public class Repository {
 
         for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
             BeeLoader.load(library.getLocalJar());
+        }
+    }
+
+    /**
+     * 
+     */
+    private static class BeeScopeDeriver extends ScopeDeriver {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void deriveScope(ScopeContext context) throws RepositoryException {
+            String derived;
+            String parent = context.getParentScope();
+            String child = context.getChildScope();
+
+            if (Scope.System.id.equals(child) || Scope.Test.id.equals(child)) {
+                derived = child;
+            } else if (parent == null || parent.isEmpty() || Scope.Compile.id.equals(parent)) {
+                derived = child;
+            } else if (Scope.Test.id.equals(parent) || Scope.Runtime.id.equals(parent) || Scope.Annotation.id.equals(parent)) {
+                derived = parent;
+            } else if (Scope.System.id.equals(parent) || Scope.Provided.id.equals(parent)) {
+                derived = Scope.Provided.id;
+            } else {
+                derived = Scope.Runtime.id;
+            }
+
+            context.setDerivedScope(derived);
         }
     }
 

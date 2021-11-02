@@ -12,9 +12,6 @@ package bee.api;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.aether.graph.Dependency;
-import org.eclipse.aether.graph.DependencyFilter;
-import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.util.artifact.JavaScopes;
 
 public enum Scope {
@@ -35,10 +32,10 @@ public enum Scope {
     System(JavaScopes.SYSTEM),
 
     /** Depend at Pluggable Annotation Processing phase only. */
-    Annotation("Pluggable Annotation Processing");
+    Annotation("annotation");
 
-    /** The internal flag. */
-    private final String type;
+    /** The identifier. */
+    public final String id;
 
     /** The acceptable scope. */
     private List<String> acceptable;
@@ -46,39 +43,22 @@ public enum Scope {
     /**
      * Scope definition.
      * 
-     * @param type A scope type.
+     * @param id A scope identifier.
      * @param acceptables A list of acceptable scope types.
      */
-    private Scope(String type, String... acceptables) {
-        this.type = type;
+    private Scope(String id, String... acceptables) {
+        this.id = id;
         this.acceptable = Arrays.asList(acceptables);
-    }
-
-    /**
-     * Returns dependency filter.
-     * 
-     * @return
-     */
-    public DependencyFilter getFilter() {
-        return (node, parents) -> {
-            return accept(node.getDependency()) && parents.stream().map(DependencyNode::getDependency).allMatch(this::accept);
-        };
     }
 
     /**
      * Test scope.
      * 
-     * @param dependency
+     * @param scope
      * @return
      */
-    public boolean accept(Dependency dependency) {
-        if (dependency == null) {
-            return true;
-        }
-
-        String scope = dependency.getScope();
-
-        return type.equals(scope) || acceptable.contains(scope);
+    public boolean accept(String scope) {
+        return scope == null || id.equals(scope) || acceptable.contains(scope);
     }
 
     /**
@@ -86,7 +66,7 @@ public enum Scope {
      */
     @Override
     public String toString() {
-        return type;
+        return id;
     }
 
     /**
