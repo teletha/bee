@@ -15,7 +15,6 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 
 import kiss.I;
-import kiss.Variable;
 import psychopath.File;
 
 public class Library implements Comparable<Library> {
@@ -38,14 +37,11 @@ public class Library implements Comparable<Library> {
     /** The actual artifact. */
     final Artifact artifact;
 
-    /** The actual repository. */
-    public final Variable<String> repositoryId;
-
     /**
      * @param qualified
      */
     Library(String qualified) {
-        this(new DefaultArtifact(qualified), null);
+        this(new DefaultArtifact(qualified));
     }
 
     /**
@@ -64,19 +60,18 @@ public class Library implements Comparable<Library> {
      * @param version
      */
     Library(String group, String artifact, String classifier, String version) {
-        this(new DefaultArtifact(group, artifact, classifier, "jar", version), null);
+        this(new DefaultArtifact(group, artifact, classifier, "jar", version));
     }
 
     /**
      * 
      */
-    Library(Artifact artifact, Variable<String> repositoryId) {
+    Library(Artifact artifact) {
         this.artifact = artifact;
         this.group = artifact.getGroupId();
         this.name = artifact.getArtifactId();
         this.classfier = artifact.getClassifier();
         this.version = artifact.isSnapshot() ? artifact.getBaseVersion() : artifact.getVersion();
-        this.repositoryId = repositoryId == null ? Variable.empty() : repositoryId;
     }
 
     /**

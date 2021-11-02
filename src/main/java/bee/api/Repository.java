@@ -66,7 +66,6 @@ import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.synccontext.NamedLockFactorySelector;
-import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -106,7 +105,6 @@ import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.Singleton;
 import kiss.Storable;
-import kiss.Variable;
 import kiss.model.Model;
 import psychopath.Directory;
 import psychopath.File;
@@ -216,14 +214,9 @@ public class Repository {
     private Set<Library> collectDependency(Project project, Scope[] scopes, Set<Library> libraries) {
         Set<Library> set = new TreeSet();
 
-        // collect remote repository
-        List<RemoteRepository> repositories = new ArrayList();
-        repositories.addAll(builtinRepositories);
-        repositories.addAll(project.repositories);
-
         for (Scope scope : scopes) {
             // collect dependency
-            CollectRequest request = new CollectRequest(null, repositories);
+            CollectRequest request = new CollectRequest(null, remoteRepositories());
 
             for (Library library : libraries) {
                 if (scope.accept(library.scope.id)) {
@@ -244,7 +237,7 @@ public class Repository {
                     // exclude itself
                     if (!artifact.getGroupId().equalsIgnoreCase(project.getGroup()) || !artifact.getArtifactId()
                             .equalsIgnoreCase(project.getProduct())) {
-                        set.add(new Library(artifact, Variable.of(dependency.getRepository()).map(ArtifactRepository::getId)));
+                        set.add(new Library(artifact));
                     }
                 }
             } catch (Exception e) {
@@ -262,7 +255,9 @@ public class Repository {
      */
     public String resolveLatestVersion(Library library) {
         try {
-            return system.resolveArtifact(session, new ArtifactRequest(library.artifact, repository(), null)).getArtifact().getVersion();
+            return system.resolveArtifact(session, new ArtifactRequest(library.artifact, remoteRepositories(), null))
+                    .getArtifact()
+                    .getVersion();
         } catch (Exception e) {
             return library.version;
         }
@@ -343,7 +338,7 @@ public class Repository {
 
         if (info.shouldAccessToSource()) {
             SubArtifact sub = new SubArtifact(library.artifact, "*-" + suffix, "jar");
-            ArtifactRequest request = new ArtifactRequest(sub, repository(library.repositoryId), null);
+            ArtifactRequest request = new ArtifactRequest(sub, remoteRepositories(), null);
 
             try {
                 ArtifactResult result = system.resolveArtifact(session, request);
@@ -367,26 +362,11 @@ public class Repository {
      * 
      * @return
      */
-    private List<RemoteRepository> repository() {
+    private List<RemoteRepository> remoteRepositories() {
         List<RemoteRepository> repositories = new ArrayList();
         repositories.addAll(builtinRepositories);
         repositories.addAll(project.repositories);
         return repositories;
-    }
-
-    /**
-     * Search repository by ID.
-     * 
-     * @param id A repository identifier.
-     * @return A matched repository.
-     */
-    private List<RemoteRepository> repository(Variable<String> id) {
-        for (RemoteRepository repo : repository()) {
-            if (id.is(repo.getId())) {
-                return Collections.singletonList(repo);
-            }
-        }
-        return Collections.EMPTY_LIST;
     }
 
     /**
