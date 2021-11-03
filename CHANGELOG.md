@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.10.1](https://www.github.com/Teletha/bee/compare/v0.10.0...v0.10.1) (2021-11-03)
+
+
+### Bug Fixes
+
+* Handles transitive dependencies more accurately. ([85483fe](https://www.github.com/Teletha/bee/commit/85483fe29092a2a5d0f7db796be7bb7370bf8cd5))
+* Update javadng. ([407cba0](https://www.github.com/Teletha/bee/commit/407cba050bc183b73530f9ef3ab139f19a2089ee))
+
 ## [0.10.0](https://www.github.com/Teletha/bee/compare/v0.9.0...v0.10.0) (2021-10-28)
 
 
