@@ -48,7 +48,7 @@ public class Doc extends Task {
                 .product(project.getProduct())
                 .project(project.getGroup())
                 .version(project.getVersion())
-                .classpath(I.signal(project.getDependency(Scope.Compile)).map(lib -> lib.getLocalJar()).toList().toArray(Location[]::new));
+                .classpath(I.signal(project.getDependency(Scope.Compile)).map(lib -> lib.getLocalJar()).toList());
     }
 
     /**
