@@ -27,6 +27,7 @@ import bee.Platform;
 import bee.Task;
 import bee.UserInterface;
 import bee.api.Command;
+import bee.api.Library;
 import bee.api.Repository;
 import bee.api.Scope;
 import bee.util.Inputs;
@@ -48,7 +49,7 @@ public class Doc extends Task {
                 .product(project.getProduct())
                 .project(project.getGroup())
                 .version(project.getVersion())
-                .classpath(I.signal(project.getDependency(Scope.Compile)).map(lib -> lib.getLocalJar()).toList());
+                .classpath(I.signal(project.getDependency(Scope.Compile)).map(Library::getLocalJar).toList());
     }
 
     /**
