@@ -27,8 +27,10 @@ import bee.Platform;
 import bee.Task;
 import bee.UserInterface;
 import bee.api.Command;
+import bee.api.Repository;
 import bee.api.Scope;
 import bee.util.Inputs;
+import javadng.parser.Javadoc;
 import jdk.javadoc.doclet.Doclet;
 import kiss.I;
 import psychopath.Directory;
@@ -37,10 +39,22 @@ import psychopath.Location;
 
 public class Doc extends Task {
 
+    @Command("Generate product site.")
+    public void site() {
+        Repository.require("com.github.teletha", "javadng");
+
+        Javadoc.with.sources(project.getSourceSet().toList())
+                .output(project.getOutput().directory("site"))
+                .product(project.getProduct())
+                .project(project.getGroup())
+                .version(project.getVersion())
+                .classpath(I.signal(project.getDependency(Scope.Compile)).map(lib -> lib.getLocalJar()).toList().toArray(Location[]::new));
+    }
+
     /**
      * Generate javadoc with the specified doclet.
      */
-    @Command("Generate product javadoc.")
+    @Command(value = "Generate product javadoc.", defaults = true)
     public Directory javadoc() {
         // specify output directory
         Directory output = project.getOutput().directory("api").create();
