@@ -61,7 +61,7 @@ public class Doc extends Task {
 
         // external links
         options.add("-link");
-        options.add("https://docs.oracle.com/en/java/javase/12/docs/api/");
+        options.add("https://docs.oracle.com/en/java/javase/17/docs/api/");
 
         try {
             DocumentationTool doc = ToolProvider.getSystemDocumentationTool();

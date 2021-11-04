@@ -440,6 +440,16 @@ public class Repository {
     }
 
     /**
+     * Load the latest library and import it dynamically.
+     * 
+     * @param group A group name.
+     * @param product A product name.
+     */
+    public static void require(String group, String product) {
+        require(group, product, "LATEST");
+    }
+
+    /**
      * Load library and import it dynamically.
      * 
      * @param group A group name.
