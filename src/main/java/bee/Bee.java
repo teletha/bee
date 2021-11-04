@@ -343,7 +343,9 @@ public class Bee {
          */
         @Override
         public void execute() {
-            require(tasks.toArray(new String[tasks.size()]));
+            for (String task : tasks) {
+                execute(task);
+            }
         }
     }
 

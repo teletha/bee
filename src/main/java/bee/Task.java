@@ -333,17 +333,6 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * Use other task from literal task expression.
-     * 
-     * @param tasks A list of tasks.
-     */
-    protected final void require(String... tasks) {
-        for (String task : tasks) {
-            execute(task);
-        }
-    }
-
-    /**
      * Utility method for task.
      * 
      * @param path
@@ -466,7 +455,7 @@ public abstract class Task implements Extensible {
      * 
      * @param input User task input.
      */
-    private static final void execute(String input) {
+    static final void execute(String input) {
         // parse command
         if (input == null) {
             return;
