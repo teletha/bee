@@ -49,7 +49,55 @@ public class Doc extends Task {
                 .product(project.getProduct())
                 .project(project.getGroup())
                 .version(project.getVersion())
-                .classpath(I.signal(project.getDependency(Scope.Compile)).map(Library::getLocalJar).toList());
+                .classpath(I.signal(project.getDependency(Scope.Compile)).map(Library::getLocalJar).toList())
+                .repository(new javadng.repository.Repository() {
+
+                    @Override
+                    public String locateIssues() {
+                        return "";
+                    }
+
+                    @Override
+                    public String locateEditor(String file, int[] lines) {
+                        return "";
+                    }
+
+                    @Override
+                    public String locateCommunity() {
+                        return "";
+                    }
+
+                    @Override
+                    public String locateChangeLog() {
+                        return "";
+                    }
+
+                    @Override
+                    public String locate() {
+                        return "";
+                    }
+                })
+                .listener(e -> {
+                    switch (e.getKind()) {
+                    case ERROR:
+                        ui.error(e.getMessage(Locale.getDefault()));
+                        break;
+
+                    case NOTE:
+                        ui.trace(e.getMessage(Locale.getDefault()));
+                        break;
+
+                    case WARNING:
+                    case MANDATORY_WARNING:
+                        ui.warn(e.getMessage(Locale.getDefault()));
+                        break;
+
+                    case OTHER:
+                        ui.debug(e.getMessage(Locale.getDefault()));
+                        break;
+                    }
+                })
+                .build();
     }
 
     /**
