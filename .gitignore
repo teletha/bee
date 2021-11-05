@@ -106,6 +106,12 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 # End of https://www.toptal.com/developers/gitignore/api/Java,Maven,Windows,Eclipse
+### Maven Patch ###
+# Eclipse m2e generated files
+# Eclipse Core
+.project
+# JDT-specific (Eclipse Java Development Tools)
+.classpath
 
 # Created by https://www.toptal.com/developers/gitignore/api/Java,Maven,Windows,Eclipse
 # Edit at https://www.toptal.com/developers/gitignore?templates=Java,Maven,Windows,Eclipse
