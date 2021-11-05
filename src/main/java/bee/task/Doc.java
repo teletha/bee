@@ -32,6 +32,7 @@ import bee.api.Repository;
 import bee.api.Scope;
 import bee.util.Inputs;
 import javadng.parser.Javadoc;
+import javadng.repository.Github;
 import jdk.javadoc.doclet.Doclet;
 import kiss.I;
 import psychopath.Directory;
@@ -44,56 +45,38 @@ public class Doc extends Task {
     public void site() {
         Repository.require("com.github.teletha", "javadng");
 
+        javadng.repository.Repository externalRepository = project.getVersionControlSystem().map(vcs -> {
+            if (vcs.name().equals("GitHub")) {
+                return new Github(vcs.owner, vcs.repo, "master");
+            } else {
+                return null;
+            }
+        }).get();
+
         Javadoc.with.sources(project.getSourceSet().toList())
                 .output(project.getOutput().directory("site"))
                 .product(project.getProduct())
                 .project(project.getGroup())
                 .version(project.getVersion())
                 .classpath(I.signal(project.getDependency(Scope.Compile)).map(Library::getLocalJar).toList())
-                .repository(new javadng.repository.Repository() {
-
-                    @Override
-                    public String locateIssues() {
-                        return "";
-                    }
-
-                    @Override
-                    public String locateEditor(String file, int[] lines) {
-                        return "";
-                    }
-
-                    @Override
-                    public String locateCommunity() {
-                        return "";
-                    }
-
-                    @Override
-                    public String locateChangeLog() {
-                        return "";
-                    }
-
-                    @Override
-                    public String locate() {
-                        return "";
-                    }
-                })
+                .repository(externalRepository)
                 .listener(e -> {
                     switch (e.getKind()) {
                     case ERROR:
-                        ui.error(e.getMessage(Locale.getDefault()));
+                        ui.error(e.getMessage(null));
                         break;
 
                     case NOTE:
-                        ui.trace(e.getMessage(Locale.getDefault()));
+                        ui.trace(e.getMessage(null));
                         break;
 
                     case WARNING:
                     case MANDATORY_WARNING:
-                        ui.warn(e.getMessage(Locale.getDefault()));
+                        ui.warn(e.getMessage(null));
                         break;
 
                     case OTHER:
-                        ui.debug(e.getMessage(Locale.getDefault()));
+                        ui.debug(e.getMessage(null));
                         break;
                     }
                 })
