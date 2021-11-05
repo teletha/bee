@@ -44,9 +44,10 @@ public class Ci extends Task {
                       uses: actions/checkout@v2
 
                     - name: Set up JDK
-                      uses: actions/setup-java@v1
+                      uses: actions/setup-java@v2
                       with:
                         java-version: %s
+                        cache: maven
 
                     - name: Build with Maven
                       run: mvn -B package --file pom.xml
