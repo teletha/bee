@@ -32,7 +32,7 @@ import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
-import bee.api.Repository;
+import bee.api.Require;
 import bee.api.Scope;
 import bee.util.Java;
 import bee.util.Java.JVM;
@@ -50,18 +50,20 @@ public class Test extends Task {
         if (project.getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
             ui.info("Test class not found.");
         } else {
-            Repository.require("org.junit.platform", "junit-platform-engine");
-            Repository.require("org.junit.platform", "junit-platform-launcher");
-
-            Java.with()
-                    .classPath(project.getClasses())
-                    .classPath(project.getTestClasses())
-                    .classPath(project.getDependency(Scope.Test, Scope.Compile))
-                    .classPath(Bee.class)
-                    .enableAssertion()
-                    .encoding(project.getEncoding())
-                    .workingDirectory(project.getRoot())
-                    .run(Junit.class, project.getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
+            new Require("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
+                {
+                    Java.with()
+                            .classPath(project.getClasses())
+                            .classPath(project.getTestClasses())
+                            .classPath(project.getDependency(Scope.Test, Scope.Compile))
+                            .classPath(Bee.class)
+                            .enableAssertion()
+                            .encoding(project.getEncoding())
+                            .workingDirectory(project.getRoot())
+                            .run(Junit.class, project
+                                    .getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
+                }
+            };
         }
     }
 
