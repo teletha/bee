@@ -90,6 +90,7 @@ public class Doc extends Task {
                                 break;
                             }
                         })
+                        .useExternalJDKDoc()
                         .build();
             }
         };
