@@ -69,7 +69,8 @@ public class BeeInstaller {
             bat.add(JavaHome.file("bin/java") + " -javaagent:\"" + dest + "\" -cp \"" + dest + "\" " + Bee.class.getName() + " %*");
         } else {
             // linux
-            // TODO
+            bat.add("#!/bin/bash");
+            bat.add(JavaHome.file("bin/java") + " -javaagent:\"" + dest + "\"-cp \"" + dest + "\" " + Bee.class.getName() + " \"$@\"");
         }
         Bee.text(bat);
 
