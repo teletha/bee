@@ -442,6 +442,27 @@ public class Repository {
     /**
      * Load the latest library and import it dynamically.
      * 
+     * @param groupProductVersion A colon separated values. (group:product:version)
+     */
+    public static void require(String groupProductVersion) {
+        String[] values = groupProductVersion.split(":");
+        switch (values.length) {
+        case 2:
+            require(values[0], values[1]);
+            break;
+
+        case 3:
+            require(values[0], values[1], values[2]);
+            break;
+
+        default:
+            throw new IllegalArgumentException(groupProductVersion + " is invalid format.");
+        }
+    }
+
+    /**
+     * Load the latest library and import it dynamically.
+     * 
      * @param group A group name.
      * @param product A product name.
      */

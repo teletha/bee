@@ -60,7 +60,7 @@ public class Library implements Comparable<Library> {
      * @param version
      */
     Library(String group, String artifact, String classifier, String version) {
-        this(new DefaultArtifact(group, artifact, classifier, "jar", version));
+        this(new DefaultArtifact(group.trim(), artifact.trim(), classifier, "jar", version.trim()));
     }
 
     /**

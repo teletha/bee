@@ -40,7 +40,6 @@ public class BeeLoader {
     public static synchronized void load(Location path) {
         try {
             if (path.isPresent()) {
-                System.out.println("Load  " + path);
                 // If you are not able to get instrumentation from JavaAgent, you can use
                 // bytebuddy-agent to get it dynamically. Since this method is only used during Bee
                 // development, the dependency of bytebuddy-agent is provided.

@@ -27,8 +27,8 @@ import bee.Platform;
 import bee.Task;
 import bee.UserInterface;
 import bee.api.Command;
-import bee.api.Grab;
 import bee.api.Library;
+import bee.api.Require;
 import bee.api.Scope;
 import bee.util.Inputs;
 import javadng.parser.Javadoc;
@@ -41,54 +41,48 @@ import psychopath.Location;
 
 public class Doc extends Task {
 
-    @Grab(group = "com.github.teletha", module = "javadng")
-    private class Javadng implements Runnable {
-
-        @Override
-        public void run() {
-            ui.info("OKOKOKO");
-            javadng.repository.Repository externalRepository = project.getVersionControlSystem().map(vcs -> {
-                if (vcs.name().equals("GitHub")) {
-                    return new Github(vcs.owner, vcs.repo, "master");
-                } else {
-                    return null;
-                }
-            }).get();
-
-            Javadoc.with.sources(project.getSourceSet().toList())
-                    .output(project.getOutput().directory("site"))
-                    .product(project.getProduct())
-                    .project(project.getGroup())
-                    .version(project.getVersion())
-                    .classpath(I.signal(project.getDependency(Scope.Compile)).map(Library::getLocalJar).toList())
-                    .repository(externalRepository)
-                    .listener(e -> {
-                        switch (e.getKind()) {
-                        case ERROR:
-                            ui.error(e.getMessage(null));
-                            break;
-
-                        case NOTE:
-                            ui.trace(e.getMessage(null));
-                            break;
-
-                        case WARNING:
-                        case MANDATORY_WARNING:
-                            ui.warn(e.getMessage(null));
-                            break;
-
-                        case OTHER:
-                            ui.debug(e.getMessage(null));
-                            break;
-                        }
-                    })
-                    .build();
-        }
-    }
-
     @Command("Generate product site.")
     public void site() {
-        execute(Javadng.class);
+        new Require("com.github.teletha : javadng") {
+            {
+                javadng.repository.Repository externalRepository = project.getVersionControlSystem().map(vcs -> {
+                    if (vcs.name().equals("GitHub")) {
+                        return new Github(vcs.owner, vcs.repo, "master");
+                    } else {
+                        return null;
+                    }
+                }).get();
+
+                Javadoc.with.sources(project.getSourceSet().toList())
+                        .output(project.getOutput().directory("site"))
+                        .product(project.getProduct())
+                        .project(project.getGroup())
+                        .version(project.getVersion())
+                        .classpath(I.signal(project.getDependency(Scope.Compile)).map(Library::getLocalJar).toList())
+                        .repository(externalRepository)
+                        .listener(e -> {
+                            switch (e.getKind()) {
+                            case ERROR:
+                                ui.error(e.getMessage(null));
+                                break;
+
+                            case NOTE:
+                                ui.trace(e.getMessage(null));
+                                break;
+
+                            case WARNING:
+                            case MANDATORY_WARNING:
+                                ui.warn(e.getMessage(null));
+                                break;
+
+                            case OTHER:
+                                ui.debug(e.getMessage(null));
+                                break;
+                            }
+                        })
+                        .build();
+            }
+        };
     }
 
     /**

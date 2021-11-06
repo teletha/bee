@@ -38,9 +38,7 @@ import org.objectweb.asm.Type;
 
 import bee.Task.TaskLifestyle;
 import bee.api.Command;
-import bee.api.Grab;
 import bee.api.Project;
-import bee.api.Repository;
 import bee.util.EnhancedClassWriter;
 import bee.util.EnhancedMethodWriter;
 import bee.util.Inputs;
@@ -450,21 +448,6 @@ public abstract class Task implements Extensible {
         return Inputs.hyphenize(taskClass.getSimpleName());
     }
 
-    protected final void execute(Class<? extends Runnable> process) {
-        if (process == null) {
-            return;
-        }
-
-        // ======================================
-        // Load the dependencies
-        // ======================================
-        for (Grab grab : process.getAnnotationsByType(Grab.class)) {
-            Repository.require(grab.group(), grab.module(), grab.version());
-        }
-
-        I.make(process).run();
-    }
-
     /**
      * Execute literal expression task.
      * 
@@ -637,13 +620,6 @@ public abstract class Task implements Extensible {
          */
         public TaskLifestyle(Class<?> model) {
             lifestyle = I.prototype(EnhancedClassWriter.define(Task.class, "Memoized" + model.getSimpleName(), writer -> {
-                // ======================================
-                // Load the dependencies
-                // ======================================
-                for (Grab grab : model.getAnnotationsByType(Grab.class)) {
-                    Repository.require(grab.group(), grab.module(), grab.version());
-                }
-
                 // ======================================
                 // Define and build the memoized task class
                 // ======================================
