@@ -60,6 +60,7 @@ public class Doc extends Task {
                         .project(project.getGroup())
                         .version(project.getVersion())
                         .encoding(project.getEncoding())
+                        .sample(project.getTestSources())
                         .classpath(I.signal(project.getDependency(Scope.Compile, Scope.Provided, Scope.Test))
                                 .map(Library::getLocalJar)
                                 .toList())
