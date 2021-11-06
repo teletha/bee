@@ -450,6 +450,21 @@ public abstract class Task implements Extensible {
         return Inputs.hyphenize(taskClass.getSimpleName());
     }
 
+    protected final void execute(Class<? extends Runnable> process) {
+        if (process == null) {
+            return;
+        }
+
+        // ======================================
+        // Load the dependencies
+        // ======================================
+        for (Grab grab : process.getAnnotationsByType(Grab.class)) {
+            Repository.require(grab.group(), grab.module(), grab.version());
+        }
+
+        I.make(process).run();
+    }
+
     /**
      * Execute literal expression task.
      * 
