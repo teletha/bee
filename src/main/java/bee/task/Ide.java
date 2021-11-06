@@ -9,6 +9,7 @@
  */
 package bee.task;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 import bee.Task;
@@ -34,6 +35,18 @@ public class Ide extends Task {
      * Find supported {@link IDESupport} and apply task.
      */
     private void task(Consumer<IDESupport> task) {
-        I.find(IDESupport.class).stream().filter(support -> support.exist(project)).forEach(task);
+        List<IDESupport> supports = I.find(IDESupport.class);
+
+        // search existing environment
+        for (IDESupport support : supports) {
+            if (support.exist(project)) {
+                task.accept(support);
+                return;
+            }
+        }
+
+        // initialize develop environemnt
+        ui.info("Project develop environment is not found.");
+        task.accept(ui.ask("Bee supports the following IDEs.", supports));
     }
 }

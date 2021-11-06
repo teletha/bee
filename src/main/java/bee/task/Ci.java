@@ -46,6 +46,7 @@ public class Ci extends Task {
                     - name: Set up JDK
                       uses: actions/setup-java@v2
                       with:
+                        distribution: zulu
                         java-version: %s
                         cache: maven
 

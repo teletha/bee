@@ -21,7 +21,6 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.task.IDESupport;
 import bee.task.Pom;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
@@ -181,11 +180,6 @@ public class Bee {
             Class projectClass = Class.forName(projectFQCN);
             inject((Project) projectClass.getDeclaredConstructors()[0].newInstance());
 
-            // =====================================
-            // build project develop environment
-            // =====================================
-            buildDevelopEnvironment();
-
             // start project build process
             ui.title("Building " + project.getProduct() + " " + project.getVersion());
 
@@ -275,24 +269,6 @@ public class Bee {
             compiler.setOutput(project.getProjectClasses());
             compiler.compile();
         }
-    }
-
-    /**
-     * Build develop environemnt.
-     */
-    private void buildDevelopEnvironment() {
-        List<IDESupport> supports = I.find(IDESupport.class);
-
-        // search existing environment
-        for (IDESupport support : supports) {
-            if (support.exist(project)) {
-                return;
-            }
-        }
-
-        // build environemnt
-        ui.info(Platform.EOL + "Project develop environment is not found.");
-        builds.add((Task) ui.ask("Bee supports the following IDEs.", supports));
     }
 
     /**
