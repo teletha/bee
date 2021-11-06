@@ -27,7 +27,7 @@ public class Ci extends Task {
         require(Ci::gitignore);
 
         String mavenCI = """
-                name: Java CI with Maven
+                name: Continuous Integration
 
                 on:
                   push:
@@ -49,14 +49,13 @@ public class Ci extends Task {
                         java-version: %s
                         cache: maven
 
-                    - name: Build with Maven
+                    - name: Build by Maven
                       run: mvn -B package --file pom.xml
 
-                    - name: Publish Test Report
-                      uses: mikepenz/action-junit-report@v2
-                      if: always()
-                      with:
-                        report_paths: '**/build/test-results/test/TEST-*.xml'
+                    - name: Build site
+                      run: |
+                        curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
+                        java -javaagent:bee.jar -cp bee.jar bee.Bee doc:site
                 """;
 
         String releasePlease = """
