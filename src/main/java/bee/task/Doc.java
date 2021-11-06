@@ -23,6 +23,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.UserInterface;
@@ -58,13 +59,15 @@ public class Doc extends Task {
                         .product(project.getProduct())
                         .project(project.getGroup())
                         .version(project.getVersion())
-                        .classpath(I.signal(project.getDependency(Scope.Compile)).map(Library::getLocalJar).toList())
+                        .encoding(project.getEncoding())
+                        .classpath(I.signal(project.getDependency(Scope.Compile, Scope.Provided, Scope.Test))
+                                .map(Library::getLocalJar)
+                                .toList())
                         .repository(externalRepository)
                         .listener(e -> {
                             switch (e.getKind()) {
                             case ERROR:
-                                ui.error(e.getMessage(null));
-                                break;
+                                throw new Fail(e.getMessage(null));
 
                             case NOTE:
                                 ui.trace(e.getMessage(null));
