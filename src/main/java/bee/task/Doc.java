@@ -60,7 +60,7 @@ public class Doc extends Task {
                         .project(project.getGroup())
                         .version(project.getVersion())
                         .encoding(project.getEncoding())
-                        .sample(project.getTestSources())
+                        .sample(project.getTestSources().directory("java"))
                         .classpath(I.signal(project.getDependency(Scope.Compile, Scope.Provided, Scope.Test))
                                 .map(Library::getLocalJar)
                                 .toList())
@@ -69,7 +69,12 @@ public class Doc extends Task {
                         .listener(e -> {
                             switch (e.getKind()) {
                             case ERROR:
-                                throw new Fail(e.getMessage(null));
+                                if (e.getCode().equals("build")) {
+                                    throw new Fail(e.getMessage(null));
+                                } else {
+                                    ui.error(e.getMessage(null));
+                                    break;
+                                }
 
                             case NOTE:
                                 ui.trace(e.getMessage(null));
