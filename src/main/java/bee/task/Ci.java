@@ -57,6 +57,12 @@ public class Ci extends Task {
                       run: |
                         curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
                         java -javaagent:bee.jar -cp bee.jar bee.Bee doc:site
+
+                    - name: Deploy site
+                      uses: peaceiris/actions-gh-pages@v3
+                      with:
+                        github_token: ${{ secrets.GITHUB_TOKEN }}
+                        publish_dir: target/site
                 """;
 
         String releasePlease = """

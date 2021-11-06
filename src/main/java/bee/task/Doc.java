@@ -64,6 +64,7 @@ public class Doc extends Task {
                                 .map(Library::getLocalJar)
                                 .toList())
                         .repository(externalRepository)
+                        .prefix("/" + project.getProduct() + "/")
                         .listener(e -> {
                             switch (e.getKind()) {
                             case ERROR:

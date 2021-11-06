@@ -21,6 +21,7 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
+import bee.task.Ide;
 import bee.task.Pom;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
@@ -255,6 +256,7 @@ public class Bee {
                 @Override
                 public void execute() {
                     require(Prototype::java);
+                    require(Ide::execute);
                 }
             });
         }
