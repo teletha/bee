@@ -48,6 +48,7 @@ public class Doc extends Task {
     public void site() {
         new Require("com.github.teletha : javadng") {
             {
+
                 Javadoc.with.sources(project.getSourceSet().toList())
                         .output(project.getOutput().directory("site"))
                         .product(project.getProduct())
