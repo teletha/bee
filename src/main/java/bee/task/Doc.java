@@ -32,8 +32,8 @@ import bee.api.Library;
 import bee.api.Require;
 import bee.api.Scope;
 import bee.util.Inputs;
+import javadng.CodeRepository;
 import javadng.parser.Javadoc;
-import javadng.repository.Github;
 import jdk.javadoc.doclet.Doclet;
 import kiss.I;
 import psychopath.Directory;
@@ -42,30 +42,23 @@ import psychopath.Location;
 
 public class Doc extends Task {
 
+    public static String SitePathnamePrefix = "/";
+
     @Command("Generate product site.")
     public void site() {
         new Require("com.github.teletha : javadng") {
             {
-                javadng.repository.Repository externalRepository = project.getVersionControlSystem().map(vcs -> {
-                    if (vcs.name().equals("GitHub")) {
-                        return new Github(vcs.owner, vcs.repo, "master");
-                    } else {
-                        return null;
-                    }
-                }).get();
-
                 Javadoc.with.sources(project.getSourceSet().toList())
                         .output(project.getOutput().directory("site"))
                         .product(project.getProduct())
                         .project(project.getGroup())
                         .version(project.getVersion())
                         .encoding(project.getEncoding())
-                        .sample(project.getTestSources().directory("java"))
+                        .sample(project.getTestSources())
                         .classpath(I.signal(project.getDependency(Scope.Compile, Scope.Provided, Scope.Test))
                                 .map(Library::getLocalJar)
                                 .toList())
-                        .repository(externalRepository)
-                        .prefix("/" + project.getProduct() + "/")
+                        .repository(CodeRepository.of(project.getVersionControlSystem().toString(), "main"))
                         .listener(e -> {
                             switch (e.getKind()) {
                             case ERROR:

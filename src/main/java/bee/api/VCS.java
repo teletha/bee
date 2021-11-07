@@ -101,6 +101,14 @@ public abstract class VCS {
     public abstract Content file(String filePath);
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final String toString() {
+        return uri();
+    }
+
+    /**
      * @param file
      * @return
      */
