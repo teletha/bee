@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/zenburn.min.css" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<script async="true" src="highlight.js"></script>
+		<script src="mimic.js" type="module"></script>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="U">
+		<header class="O">
+			<h1 class="K" date="2021-11-08" ver="0.10.0"><code>Bee</code></h1>
+			<nav class="M"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>Repository</a></nav>
+			<div class="X" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg>
+				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<main class="I">
+			<nav class="e">
+				<div></div>
+			</nav>
+			<article class="c" id="Article">
+				<section class="V"><code class="H">org.apache.maven.wagon.shared.http</code>
+					<h2 class="Class d"><code class="N">EncodingUtil</code></h2><span class="B">Encoding utility.</span></section>
+				<section class="V" id="EncodingUtil()">
+					<h2 class="Z"><i class="PUBLIC"></i><code class="N">EncodingUtil</code><code class="L">()</code></h2>
+				</section>
+				<section class="V" id="encodeURL(java.lang.String)">
+					<h2 class="Z"><i class="STATIC PUBLIC"></i><code class="N">encodeURL</code><code class="L">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">url</code>)</code><i class="j"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URI.html">URI</a></code></i></h2>
+					<table class="k">
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>url</code></td>
+							<td><span>Raw/decoded string form of a URL to parse/encode.</span></td>
+						</tr>
+						<tr class="W">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URI.html">URI</a></code></td>
+							<td><span>Parsed/encoded <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URI.html">URI</a></code> that represents the string form URL passed in.</span></td>
+						</tr>
+						<tr class="J">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/MalformedURLException.html">MalformedURLException</a></code></td>
+							<td></td>
+						</tr>
+						<tr class="J">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URISyntaxException.html">URISyntaxException</a></code></td>
+							<td></td>
+						</tr>
+					</table><span class="B">Parses and returns an encoded version of the given URL string.</span></section>
+				<section class="V" id="encodeURLToString(java.lang.String)">
+					<h2 class="Z"><i class="STATIC PUBLIC"></i><code class="N">encodeURLToString</code><code class="L">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">url</code>)</code><i class="j"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="k">
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>url</code></td>
+							<td><span>Raw/decoded string form of a URL to parse/encode.</span></td>
+						</tr>
+						<tr class="W">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td><span>Parsed/encoded URI (as string) that represents the</span></td>
+						</tr>
+					</table><span class="B">Parses and returns an encoded version of the given URL string. Wraps the
+ <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/MalformedURLException.html">MalformedURLException</a></code> and <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URISyntaxException.html">URISyntaxException</a></code> in case the passed URL is
+ invalid.</span></section>
+				<section class="V" id="encodeURLToString(java.lang.String,java.lang.String...)">
+					<h2 class="Z"><i class="STATIC PUBLIC"></i><code class="N">encodeURLToString</code><code class="L">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">baseUrl</code>, <code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">paths</code>)</code><i class="j"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="k">
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>baseUrl</code></td>
+							<td><span>Base URL to use when constructing the final URL, ie:
+            scheme://authority/initial.path.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>paths</code></td>
+							<td><span>Additional path(s) to append at the end of the base path.</span></td>
+						</tr>
+						<tr class="W">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td><span>Composed URL (base + paths) already encoded, separating the individual path
+         components by &#34;/&#34;.</span></td>
+						</tr>
+					</table><span class="B">Parses and returns an encoded version of the given URL string alongside the given paths.</span></section>
+			</article>
+			<aside class="h" id="SubNavi">
+				<div class="Y">
+					<h5 class="b">Constructors</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/org.apache.maven.wagon.shared.http.EncodingUtil.html#EncodingUtil()">EncodingUtil</a></code><code class="L">()</code></li>
+					</ul>
+					<h5 class="b">Static Methods</h5>
+					<ul>
+						<li><i class="STATIC PUBLIC"></i><code><a href="api/org.apache.maven.wagon.shared.http.EncodingUtil.html#encodeURL(java.lang.String)">encodeURL</a></code><code class="L">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">url</code>)</code><i class="T"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/net/URI.html">URI</a></code></i></li>
+						<li><i class="STATIC PUBLIC"></i><code><a href="api/org.apache.maven.wagon.shared.http.EncodingUtil.html#encodeURLToString(java.lang.String)">encodeURLToString</a></code><code class="L">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">url</code>)</code><i class="T"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="STATIC PUBLIC"></i><code><a href="api/org.apache.maven.wagon.shared.http.EncodingUtil.html#encodeURLToString(java.lang.String,java.lang.String...)">encodeURLToString</a></code><code class="L">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">baseUrl</code>, <code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">paths</code>)</code><i class="T"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					</ul>
+				</div>
+			</aside>
+		</main>
+		<script src="root.js"></script>
+		<script src="main.js" type="module"></script>
+	</body>
+</html>
