@@ -510,13 +510,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Repository.LazySingleton",
-			"packageName": "bee.api",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Require",
 			"packageName": "bee.api",
 			"type": "AbstractClass"
