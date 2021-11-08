@@ -98,6 +98,15 @@ public class Notation implements Serializable {
      * Write list.
      * 
      * @param items
+     */
+    public <T> void list(Iterable<String> items) {
+        list(I.signal(items), Function.identity());
+    }
+
+    /**
+     * Write list.
+     * 
+     * @param items
      * @param descriptor
      */
     public <T> void list(Iterable<T> items, Function<T, String> descriptor) {

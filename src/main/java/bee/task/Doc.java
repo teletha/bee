@@ -10,23 +10,24 @@
 package bee.task;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.lang.model.SourceVersion;
+import javax.tools.Diagnostic;
+import javax.tools.DiagnosticListener;
 import javax.tools.DocumentationTool;
 import javax.tools.DocumentationTool.DocumentationTask;
+import javax.tools.FileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
 import bee.Fail;
-import bee.Platform;
 import bee.Task;
-import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Require;
@@ -42,62 +43,12 @@ import psychopath.Location;
 
 public class Doc extends Task {
 
-    @Command("Generate product site.")
-    public void site() {
-        Directory output = project.getOutput().directory("site");
-
-        new Require("com.github.teletha : javadng") {
-            {
-
-                Javadoc.with.sources(project.getSourceSet().toList())
-                        .output(output)
-                        .product(project.getProduct())
-                        .project(project.getGroup())
-                        .version(project.getVersion())
-                        .encoding(project.getEncoding())
-                        .sample(project.getTestSourceSet().toList())
-                        .classpath(I.signal(project.getDependency(Scope.Compile, Scope.Provided, Scope.Test))
-                                .map(Library::getLocalJar)
-                                .toList())
-                        .repository(CodeRepository.of(project.getVersionControlSystem().toString(), "main"))
-                        .listener(e -> {
-                            switch (e.getKind()) {
-                            case ERROR:
-                                if (e.getCode().equals("build")) {
-                                    throw new Fail(e.getMessage(null));
-                                } else {
-                                    ui.error(e.getMessage(null));
-                                    break;
-                                }
-
-                            case NOTE:
-                                ui.trace(e.getMessage(null));
-                                break;
-
-                            case WARNING:
-                            case MANDATORY_WARNING:
-                                ui.warn(e.getMessage(null));
-                                break;
-
-                            case OTHER:
-                                ui.debug(e.getMessage(null));
-                                break;
-                            }
-                        })
-                        .useExternalJDKDoc()
-                        .build();
-            }
-        };
-
-        ui.info("Build site resources to ", output);
-    }
-
     /**
      * Generate javadoc with the specified doclet.
      */
-    @Command(value = "Generate product javadoc.", defaults = true)
+    @Command(defaults = true, value = "Generate product javadoc.")
     public Directory javadoc() {
-        // specify output directory
+        Listener listener = new Listener();
         Directory output = project.getOutput().directory("api").create();
 
         Class<? extends Doclet> doclet = null;
@@ -130,15 +81,18 @@ public class Doc extends Task {
                     .toList());
 
             DocumentationTask task = doc
-                    .getTask(new UIWriter(ui), manager, null, doclet, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
+                    .getTask(null, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
                             .flatMap(dir -> dir.walkFile("**.java"))
                             .map(File::asJavaPath)
                             .toList()));
 
-            if (task.call()) {
-                ui.info("Build javadoc : " + output);
+            if (task.call() && listener.errors.isEmpty()) {
+                ui.info("Build javadoc to " + output);
             } else {
-                ui.info("Fail building javadoc.");
+                throw new Fail(n -> {
+                    n.title("Fail building Javadoc.");
+                    n.list(listener.errors);
+                });
             }
         } catch (IOException e) {
             throw I.quiet(e);
@@ -146,48 +100,73 @@ public class Doc extends Task {
         return output;
     }
 
-    /**
-     * @version 2018/04/04 11:25:57
-     */
-    private static class UIWriter extends Writer {
+    @Command("Generate product site.")
+    public void site() {
+        Listener listener = new Listener();
+        Directory output = project.getOutput().directory("site");
 
-        private UserInterface ui;
+        new Require("com.github.teletha : javadng") {
+            {
+                Javadoc.with.sources(project.getSourceSet().toList())
+                        .output(output)
+                        .product(project.getProduct())
+                        .project(project.getGroup())
+                        .version(project.getVersion())
+                        .encoding(project.getEncoding())
+                        .sample(project.getTestSourceSet().toList())
+                        .classpath(I.signal(project.getDependency(Scope.Compile, Scope.Provided, Scope.Test))
+                                .map(Library::getLocalJar)
+                                .toList())
+                        .repository(CodeRepository.of(project.getVersionControlSystem().toString(), "main"))
+                        .listener(listener)
+                        .useExternalJDKDoc()
+                        .build();
+            }
+        };
 
-        /**
-         * @param ui
-         */
-        private UIWriter(UserInterface ui) {
-            this.ui = ui;
+        if (listener.errors.isEmpty()) {
+            ui.info("Build site resources to " + output);
+        } else {
+            throw new Fail(n -> {
+                n.title("Fail building document site.");
+                n.list(listener.errors);
+            });
         }
+    }
+
+    private class Listener implements DiagnosticListener<FileObject> {
+
+        private List<String> errors = new ArrayList();
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void write(char[] cbuf, int off, int len) throws IOException {
-            String message = String.valueOf(cbuf, off, len).trim();
-
-            if (message.endsWith(Platform.EOL)) {
-                message = message.substring(0, message.length() - Platform.EOL.length());
+        public void report(Diagnostic<? extends FileObject> e) {
+            String message = e.getMessage(null);
+            if (message.startsWith("javadoc: ")) {
+                message = message.substring(9);
             }
 
-            if (message.length() != 0) {
+            switch (e.getKind()) {
+            case ERROR:
+                errors.add(message);
+                ui.error(message);
+                break;
+
+            case NOTE:
                 ui.trace(message);
+                break;
+
+            case WARNING:
+            case MANDATORY_WARNING:
+                ui.warn(message);
+                break;
+
+            case OTHER:
+                ui.debug(message);
+                break;
             }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void flush() throws IOException {
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void close() throws IOException {
         }
     }
 }

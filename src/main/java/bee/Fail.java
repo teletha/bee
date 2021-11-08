@@ -86,4 +86,12 @@ public class Fail extends Error {
         }
         return builder.toString();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return getMessage();
+    }
 }
