@@ -42,15 +42,15 @@ import psychopath.Location;
 
 public class Doc extends Task {
 
-    public static String SitePathnamePrefix = "/";
-
     @Command("Generate product site.")
     public void site() {
+        Directory output = project.getOutput().directory("site");
+
         new Require("com.github.teletha : javadng") {
             {
 
                 Javadoc.with.sources(project.getSourceSet().toList())
-                        .output(project.getOutput().directory("site"))
+                        .output(output)
                         .product(project.getProduct())
                         .project(project.getGroup())
                         .version(project.getVersion())
@@ -88,6 +88,8 @@ public class Doc extends Task {
                         .build();
             }
         };
+
+        ui.info("Build site resources to ", output);
     }
 
     /**
