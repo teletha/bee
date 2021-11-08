@@ -10,11 +10,11 @@
 package bee.task;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.lang.model.SourceVersion;
 import javax.tools.Diagnostic;
@@ -69,16 +69,14 @@ public class Doc extends Task {
         options.add("-link");
         options.add("https://docs.oracle.com/en/java/javase/17/docs/api/");
 
-        try {
-            DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
-            StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), StandardCharsets.UTF_8);
+        DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
+        try (StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), project.getEncoding())) {
             manager.setLocationFromPaths(DocumentationTool.Location.DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
-            manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet()
-                    .map(Location::asJavaPath)
-                    .merge(I.signal(project.getDependency(Scope.Compile))
-                            .map(lib -> lib.getLocalSourceJar().asJavaPath())
-                            .take(path -> path.toString().contains("sinobu")))
-                    .toList());
+            manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet().map(Location::asJavaPath).toList());
+            manager.setLocationFromPaths(StandardLocation.CLASS_PATH, project.getDependency(Scope.Compile)
+                    .stream()
+                    .map(lib -> lib.getLocalJar().asJavaPath())
+                    .collect(Collectors.toList()));
 
             DocumentationTask task = doc
                     .getTask(null, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
