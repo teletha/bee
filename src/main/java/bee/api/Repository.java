@@ -740,42 +740,6 @@ public class Repository {
     }
 
     /**
-     * Lazy intializable singleton.
-     */
-    protected static class LazySingleton<M> implements Lifestyle<M> {
-
-        protected final Class<? extends M> type;
-
-        protected M instance;
-
-        private Consumer<M> initializer;
-
-        protected LazySingleton(Class<? extends M> type) {
-            this.type = type;
-        }
-
-        protected LazySingleton(Class<? extends M> type, Consumer<M>... initializer) {
-            this.type = type;
-            this.initializer = initializer.length == 0 ? null : initializer[0];
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public synchronized M call() throws Exception {
-            if (instance == null) {
-                instance = I.prototype(type).get();
-
-                if (initializer != null) {
-                    initializer.accept(instance);
-                }
-            }
-            return instance;
-        }
-    }
-
-    /**
      * Define various {@link Lifestyle}s.
      */
     @Managed(Singleton.class)
@@ -856,6 +820,38 @@ public class Repository {
         @Override
         public Lifestyle create(Class key) {
             return lifestyles.get(key);
+        }
+    }
+
+    /**
+     * Lazy intializable singleton.
+     */
+    private static class LazySingleton<M> implements Lifestyle<M> {
+
+        protected final Class<? extends M> type;
+
+        protected M instance;
+
+        private Consumer<M> initializer;
+
+        protected LazySingleton(Class<? extends M> type, Consumer<M>... initializer) {
+            this.type = type;
+            this.initializer = initializer.length == 0 ? null : initializer[0];
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public synchronized M call() throws Exception {
+            if (instance == null) {
+                instance = I.prototype(type).get();
+
+                if (initializer != null) {
+                    initializer.accept(instance);
+                }
+            }
+            return instance;
         }
     }
 }
