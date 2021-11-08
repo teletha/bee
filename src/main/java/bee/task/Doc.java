@@ -73,7 +73,7 @@ public class Doc extends Task {
         try (StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), project.getEncoding())) {
             manager.setLocationFromPaths(DocumentationTool.Location.DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
             manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet().map(Location::asJavaPath).toList());
-            manager.setLocationFromPaths(StandardLocation.CLASS_PATH, project.getDependency(Scope.Compile)
+            manager.setLocationFromPaths(StandardLocation.CLASS_PATH, project.getDependency(Scope.Compile, Scope.Provided, Scope.Annotation)
                     .stream()
                     .map(lib -> lib.getLocalJar().asJavaPath())
                     .collect(Collectors.toList()));
