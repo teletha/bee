@@ -43,21 +43,19 @@ public class BeeLoader {
      * @param path
      */
     public static synchronized void load(Location path) {
-        if (records.add(path)) {
-            try {
-                if (path.isPresent()) {
-                    // If you are not able to get instrumentation from JavaAgent, you can use
-                    // bytebuddy-agent to get it dynamically. Since this method is only used during
-                    // Bee development, the dependency of bytebuddy-agent is provided.
-                    if (instrumentation == null) instrumentation = ByteBuddyAgent.install();
+        try {
+            if (path.isPresent()) {
+                // If you are not able to get instrumentation from JavaAgent, you can use
+                // bytebuddy-agent to get it dynamically. Since this method is only used during
+                // Bee development, the dependency of bytebuddy-agent is provided.
+                if (instrumentation == null) instrumentation = ByteBuddyAgent.install();
 
-                    if (path.isDirectory()) path = path.packToTemporary(Option::strip);
+                if (path.isDirectory()) path = path.packToTemporary(Option::strip);
 
-                    instrumentation.appendToSystemClassLoaderSearch(new JarFile(path.asJavaFile()));
-                }
-            } catch (IOException e) {
-                throw I.quiet(e);
+                instrumentation.appendToSystemClassLoaderSearch(new JarFile(path.asJavaFile()));
             }
+        } catch (IOException e) {
+            throw I.quiet(e);
         }
     }
 }

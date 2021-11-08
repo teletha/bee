@@ -467,7 +467,7 @@ public class Repository {
      * @param product A product name.
      */
     public static void require(String group, String product) {
-        require(group, product, "LATEST");
+        require(group, product, I.make(Repository.class).resolveLatestVersion(new Library(group, product, "LATEST")));
     }
 
     /**
@@ -479,6 +479,7 @@ public class Repository {
      */
     public static void require(String group, String product, String version) {
         Library require = new Library(group, product, version);
+        BeeLoader.load(require.getLocalJar());
 
         for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
             BeeLoader.load(library.getLocalJar());
