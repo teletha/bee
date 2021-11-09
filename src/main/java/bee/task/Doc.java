@@ -113,7 +113,7 @@ public class Doc extends Task {
                         .encoding(project.getEncoding())
                         .sample(project.getTestSourceSet().toList())
                         .classpath(I.signal(project.getDependency(Scope.values())).map(Library::getLocalJar).toList())
-                        .repository(CodeRepository.of(project.getVersionControlSystem().toString(), "main"))
+                        .repository(CodeRepository.of(project.getVersionControlSystem().toString()))
                         .listener(listener)
                         .useExternalJDKDoc()
                         .build();
