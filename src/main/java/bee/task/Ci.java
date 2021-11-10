@@ -89,7 +89,7 @@ public class Ci extends Task {
                   - sdk use java %s-open
                 """;
 
-        String sourceVersion = Inputs.normalize(project.getJavaClassVersion());
+        String sourceVersion = Inputs.normalize(project.getJavaSourceVersion());
         String testVersion = Inputs.normalize(project.getJavaTestClassVersion());
 
         makeFile(".github/workflows/java-ci-with-maven.yml", String.format(mavenCI, testVersion));
