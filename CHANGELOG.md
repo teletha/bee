@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.11.0](https://www.github.com/Teletha/bee/compare/v0.10.0...v0.11.0) (2021-11-10)
+
+
+### Features
+
+* Remove @Grab, use Require with lazy dependency resolution. ([6eb2936](https://www.github.com/Teletha/bee/commit/6eb2936e844d8d1f830c5702b80469e8370b06c2))
+* Remove Task#require(String...) ([aae42b5](https://www.github.com/Teletha/bee/commit/aae42b51926cab1f2bfa3bf33100bd7f8a66b4d1))
+
+
+### Bug Fixes
+
+* Add all dependencies as Javadoc classpath. ([571cb34](https://www.github.com/Teletha/bee/commit/571cb34256e410a1acf4f1aa6feeb33097282641))
+* Check duplication when dynamic class loading. ([796a4cc](https://www.github.com/Teletha/bee/commit/796a4cc4daea047baf7072755a16d20c58dfdb7f))
+* CI can cache dependency. ([b67c01c](https://www.github.com/Teletha/bee/commit/b67c01c5fb2f84f1a8764264df6b9b78804dad29))
+* doc:site indicates invalid sample directory ([71397b8](https://www.github.com/Teletha/bee/commit/71397b8d0c04eb72ffa77c292399edd213f25744))
+* doc:site supports javadoc for JDK ([eb9d40d](https://www.github.com/Teletha/bee/commit/eb9d40de68aec811549b98ad43a71aeec6e581af))
+* doc:site task supports sample and document ([3d27c16](https://www.github.com/Teletha/bee/commit/3d27c16c40ef154cf184873ca6ae79509efc9699))
+* Don't execute IDE task when project initialization phase. ([5e307c8](https://www.github.com/Teletha/bee/commit/5e307c8960a286bcf964fd114069f24d28b59352))
+* Format fail message. ([c5edd98](https://www.github.com/Teletha/bee/commit/c5edd9824280c30b3cb26a417a010e6e9626997a))
+* Generate javadoc with project's dependency. ([88f9dc9](https://www.github.com/Teletha/bee/commit/88f9dc9d0017ca8e03b980d21d628cff7b10747d))
+* Handles transitive dependencies more accurately. ([85483fe](https://www.github.com/Teletha/bee/commit/85483fe29092a2a5d0f7db796be7bb7370bf8cd5))
+* Hide private class. ([181c632](https://www.github.com/Teletha/bee/commit/181c6321c294ff4e548327b0b6f8a72a63ddfb2f))
+* Installer supports shell script. ([c0f8fee](https://www.github.com/Teletha/bee/commit/c0f8fee8eb52e1898f5708cb7cb805ebe3dd8de2))
+* Jitpack requires the JVM for source version. ([a41e1d8](https://www.github.com/Teletha/bee/commit/a41e1d8ab7ef0d5318001a716b2345e73bdb08be))
+* Repository#require resolves the specified library. ([eaa7b45](https://www.github.com/Teletha/bee/commit/eaa7b45bca8aa1f5dd9d5e538dcab08d95d7d616))
+* update javadng ([4f8e10f](https://www.github.com/Teletha/bee/commit/4f8e10fa44f58cec3f20efd6f639aba75ab9a738))
+* Update javadng. ([aacdc3f](https://www.github.com/Teletha/bee/commit/aacdc3f98517a48a2b43d3f8646e411b99b76564))
+* Update javadng. ([77026e9](https://www.github.com/Teletha/bee/commit/77026e9c9a7c1140ced5440b0ed65b97f60ef097))
+* Update javadng. ([a13bd23](https://www.github.com/Teletha/bee/commit/a13bd239905b16e365960793175f4c267d414b90))
+* Update javadng. ([56c0e39](https://www.github.com/Teletha/bee/commit/56c0e393961bbc1e628c3ee28ca2a1e119d02f37))
+* Update javadng. ([407cba0](https://www.github.com/Teletha/bee/commit/407cba050bc183b73530f9ef3ab139f19a2089ee))
+* Update javadoc link. ([f86589a](https://www.github.com/Teletha/bee/commit/f86589aec1d265dde62a50f5f593c5148bebb418))
+
 ## [0.10.0](https://www.github.com/Teletha/bee/compare/v0.9.0...v0.10.0) (2021-10-28)
 
 
