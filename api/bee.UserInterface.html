@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/zenburn.min.css" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<script async="true" src="highlight.js"></script>
+		<script src="mimic.js" type="module"></script>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="U">
+		<header class="k">
+			<h1 class="b" date="2021-11-10" ver="0.11.0"><code>Bee</code></h1>
+			<nav class="Z"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>Repository</a></nav>
+			<div class="i" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg>
+				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<main class="c">
+			<nav class="g">
+				<div></div>
+			</nav>
+			<article class="a" id="Article">
+				<section class="H"><code class="e">bee</code>
+					<h2 class="AbstractClass J"><code class="L">UserInterface</code></h2><span class="B">Interactive user interface.</span></section>
+				<section class="H" id="CUI">
+					<h2 class="K"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="L">CUI</code><i class="N"><code class="return"><a href="api/bee.UserInterface.html">UserInterface</a></code></i></h2><span class="B">The for command line user interface.</span></section>
+				<section class="H" id="TRACE">
+					<h2 class="K"><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code class="L">TRACE</code><i class="N"><code class="return">int</code></i></h2><span class="B">Message type magic number.</span></section>
+				<section class="H" id="DEBUG">
+					<h2 class="K"><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code class="L">DEBUG</code><i class="N"><code class="return">int</code></i></h2><span class="B">Message type magic number.</span></section>
+				<section class="H" id="INFO">
+					<h2 class="K"><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code class="L">INFO</code><i class="N"><code class="return">int</code></i></h2><span class="B">Message type magic number.</span></section>
+				<section class="H" id="WARNING">
+					<h2 class="K"><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code class="L">WARNING</code><i class="N"><code class="return">int</code></i></h2><span class="B">Message type magic number.</span></section>
+				<section class="H" id="ERROR">
+					<h2 class="K"><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code class="L">ERROR</code><i class="N"><code class="return">int</code></i></h2><span class="B">Message type magic number.</span></section>
+				<section class="H" id="TITLE">
+					<h2 class="K"><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code class="L">TITLE</code><i class="N"><code class="return">int</code></i></h2><span class="B">Message type magic number.</span></section>
+				<section class="H" id="UserInterface()">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">UserInterface</code><code class="S">()</code></h2>
+				</section>
+				<section class="H" id="title(java.lang.CharSequence)">
+					<h2 class="K"><i class="FINAL"><i class="PUBLIC"></i></i><code class="L">title</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/CharSequence.html">CharSequence</a></code> <code class="parameterName">title</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/CharSequence.html">CharSequence</a></code> <code>title</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B">Talk to user with decoration like title.</span></section>
+				<section class="H" id="trace(java.lang.Object...)">
+					<h2 class="K"><i class="FINAL"><i class="PUBLIC"></i></i><code class="L">trace</code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
+							<td><span>Your message.</span></td>
+						</tr>
+					</table><span class="B">Talk to user.</span></section>
+				<section class="H" id="debug(java.lang.Object...)">
+					<h2 class="K"><i class="FINAL"><i class="PUBLIC"></i></i><code class="L">debug</code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
+							<td><span>Your message.</span></td>
+						</tr>
+					</table><span class="B">Talk to user.</span></section>
+				<section class="H" id="info(java.lang.Object...)">
+					<h2 class="K"><i class="FINAL"><i class="PUBLIC"></i></i><code class="L">info</code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
+							<td><span>Your message.</span></td>
+						</tr>
+					</table><span class="B">Talk to user.</span></section>
+				<section class="H" id="warn(java.lang.Object...)">
+					<h2 class="K"><i class="FINAL"><i class="PUBLIC"></i></i><code class="L">warn</code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
+							<td><span>Your warning message.</span></td>
+						</tr>
+					</table><span class="B">Warn to user.</span></section>
+				<section class="H" id="error(java.lang.Object...)">
+					<h2 class="K"><i class="FINAL"><i class="PUBLIC"></i></i><code class="L">error</code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
+							<td><span>Your emergency message.</span></td>
+						</tr>
+					</table><span class="B">Declare a state of emergency.</span></section>
+				<section class="H" id="confirm(java.lang.String)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">confirm</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="N"><code>boolean</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code>boolean</code></td>
+							<td><span>An answer.</span></td>
+						</tr>
+					</table><span class="B">Ask user about your question and return his/her answer.</span></section>
+				<section class="H" id="ask(java.lang.String)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">ask</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td><span>An answer.</span></td>
+						</tr>
+					</table><span class="B">Ask user about your question and return his/her answer.</span></section>
+				<section class="H" id="ask(java.lang.String,java.util.function.Predicate)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">ask</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html">Predicate</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">validator</code>)</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html">Predicate</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code>validator</code></td>
+							<td><span>Input validator.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td><span>An answer.</span></td>
+						</tr>
+					</table><span class="B"><p>
+ Ask user about your question and return his/her answer.
+ </p>
+					</span></section>
+				<section class="H" id="ask(java.lang.String,java.lang.Object)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">ask</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code>T</code> <code class="parameterName">defaultAnswer</code>)</code><i class="N"><code>T</code></i></h2>
+					<table class="j">
+						<tr class="T">
+							<td><code>T</code></td>
+							<td><span>Anwser type.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code>T</code> <code>defaultAnswer</code></td>
+							<td><span>A default anwser.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code>T</code></td>
+							<td><span>An answer.</span></td>
+						</tr>
+					</table><span class="B">Ask user about your question and return his/her answer.
+ <p>
+ UserInterface can display a default answer and user can use it with simple action. If the
+ returned answer is incompatible with the default anwser type, default answer will be
+ returned.</p>
+					</span></section>
+				<section class="H" id="ask(java.lang.String,java.util.List)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">ask</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">items</code>)</code><i class="N"><code>T</code></i></h2>
+					<table class="j">
+						<tr class="T">
+							<td><code>T</code></td>
+							<td></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code>T</code></code></code> <code>items</code></td>
+							<td><span>A list of selectable items.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code>T</code></td>
+							<td><span>A selected item.</span></td>
+						</tr>
+					</table><span class="B">Ask user about your question and return his/her selected item.
+ <p>
+ UserInterface can display a list of items and user can select it with simple action.</p>
+					</span></section>
+				<section class="H" id="ask(java.lang.String,java.lang.Class)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">ask</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>E</code></code></code> <code class="parameterName">enumeration</code>)</code><i class="N"><code>E</code></i></h2>
+					<table class="j">
+						<tr class="T">
+							<td><code>E</code><code class="extends"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Enum.html">Enum</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>E</code></code></code> <code>enumeration</code></td>
+							<td><span>A list of selectable items.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code>E</code></td>
+							<td><span>A selected item.</span></td>
+						</tr>
+					</table><span class="B">Ask user about your question and return his/her selected item.
+ <p>
+ UserInterface can display a list of items and user can select it with simple action.</p>
+					</span></section>
+				<section class="H" id="file(java.lang.String)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">file</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></td>
+							<td><span>A specified location.</span></td>
+						</tr>
+					</table><span class="B"><p>
+ Ask user about your question and return his/her specified location.
+ </p>
+ <p>
+ UserInterface can display the file chooser and user can select it with simple action.
+ </p>
+					</span></section>
+				<section class="H" id="file(java.lang.String,java.nio.file.Path)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">file</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code> <code class="parameterName">defaultFile</code>)</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code> <code>defaultFile</code></td>
+							<td></td>
+						</tr>
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></td>
+							<td><span>A specified location.</span></td>
+						</tr>
+					</table><span class="B">Ask user about your question and return his/her specified location.
+ <p>
+ UserInterface can display the file chooser and user can select it with simple action.</p>
+					</span></section>
+				<section class="H" id="directory(java.lang.String)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">directory</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></td>
+							<td><span>A specified location.</span></td>
+						</tr>
+					</table><span class="B">Ask user about your question and return his/her specified location.
+ <p>
+ UserInterface can display the directory chooser and user can select it with simple action.</p>
+					</span></section>
+				<section class="H" id="directory(java.lang.String,java.nio.file.Path)">
+					<h2 class="K"><i class="PUBLIC"></i><code class="L">directory</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code> <code class="parameterName">defaultDirectory</code>)</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>question</code></td>
+							<td><span>Your question message.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code> <code>defaultDirectory</code></td>
+							<td></td>
+						</tr>
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></td>
+							<td><span>A specified location.</span></td>
+						</tr>
+					</table><span class="B"><p>
+ Ask user about your question and return his/her specified location.
+ </p>
+ <p>
+ UserInterface can display the directory chooser and user can select it with simple action.
+ </p>
+					</span></section>
+				<section class="H" id="build(java.lang.Object...)">
+					<h2 class="K"><i class="STATIC PROTECTED"></i><code class="L">build</code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
+							<td><span>Your messages.</span></td>
+						</tr>
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td><span>A combined message.</span></td>
+						</tr>
+					</table><span class="B">Helper method to build message.</span></section>
+				<section class="H" id="getInterface()">
+					<h2 class="K"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="L">getInterface</code><code class="S">()</code><i class="N"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html">Appendable</a></code></i></h2>
+					<table class="j">
+						<tr class="f">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html">Appendable</a></code></td>
+							<td></td>
+						</tr>
+					</table><span class="B">Get underlaying message listener.</span></section>
+				<section class="H" id="write(int,java.lang.String)">
+					<h2 class="K"><i class="ABSTRACT"><i class="PROTECTED"></i></i><code class="L">write</code><code class="S">(<code>int</code> <code class="parameterName">type</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">message</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code>int</code> <code>type</code></td>
+							<td></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>message</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B">Write message to user.</span></section>
+				<section class="H" id="write(java.lang.Throwable)">
+					<h2 class="K"><i class="ABSTRACT"><i class="PROTECTED"></i></i><code class="L">write</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code> <code class="parameterName">error</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code> <code>error</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B">Write error message to user.</span></section>
+				<section class="H" id="startCommand(java.lang.String,bee.api.Command)">
+					<h2 class="K"><i class="ABSTRACT"><i class="PROTECTED"></i></i><code class="L">startCommand</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">name</code>, <code><a href="api/bee.api.Command.html">Command</a></code> <code class="parameterName">command</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>name</code></td>
+							<td><span>A command name.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="api/bee.api.Command.html">Command</a></code> <code>command</code></td>
+							<td><span>A coommand info.</span></td>
+						</tr>
+					</table><span class="B">Display message about command starts.</span></section>
+				<section class="H" id="endCommand(java.lang.String,bee.api.Command)">
+					<h2 class="K"><i class="ABSTRACT"><i class="PROTECTED"></i></i><code class="L">endCommand</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">name</code>, <code><a href="api/bee.api.Command.html">Command</a></code> <code class="parameterName">command</code>)</code><i class="N"><code>void</code></i></h2>
+					<table class="j">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>name</code></td>
+							<td><span>A command name.</span></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="api/bee.api.Command.html">Command</a></code> <code>command</code></td>
+							<td><span>A coommand info.</span></td>
+						</tr>
+					</table><span class="B">Display message about command ends.</span></section>
+			</article>
+			<aside class="O" id="SubNavi">
+				<div class="V">
+					<h5 class="Y">Constructors</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#UserInterface()">UserInterface</a></code><code class="S">()</code></li>
+					</ul>
+					<h5 class="Y">Static Fields</h5>
+					<ul>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#CUI">CUI</a></code><i class="d"><code class="return"><a href="api/bee.UserInterface.html">UserInterface</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#TRACE">TRACE</a></code><i class="d"><code class="return">int</code></i></li>
+						<li><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#DEBUG">DEBUG</a></code><i class="d"><code class="return">int</code></i></li>
+						<li><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#INFO">INFO</a></code><i class="d"><code class="return">int</code></i></li>
+						<li><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#WARNING">WARNING</a></code><i class="d"><code class="return">int</code></i></li>
+						<li><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#ERROR">ERROR</a></code><i class="d"><code class="return">int</code></i></li>
+						<li><i class="FINAL"><i class="STATIC PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#TITLE">TITLE</a></code><i class="d"><code class="return">int</code></i></li>
+					</ul>
+					<h5 class="Y">Static Methods</h5>
+					<ul>
+						<li><i class="STATIC PROTECTED"></i><code><a href="api/bee.UserInterface.html#build(java.lang.Object...)">build</a></code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					</ul>
+					<h5 class="Y">Methods</h5>
+					<ul>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#title(java.lang.CharSequence)">title</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/CharSequence.html">CharSequence</a></code> <code class="parameterName">title</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#trace(java.lang.Object...)">trace</a></code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#debug(java.lang.Object...)">debug</a></code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#info(java.lang.Object...)">info</a></code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#warn(java.lang.Object...)">warn</a></code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#error(java.lang.Object...)">error</a></code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#confirm(java.lang.String)">confirm</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="d"><code>boolean</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#ask(java.lang.String)">ask</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#ask(java.lang.String,java.util.function.Predicate)">ask</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Predicate.html">Predicate</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">validator</code>)</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#ask(java.lang.String,java.lang.Object)">ask</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code>T</code> <code class="parameterName">defaultAnswer</code>)</code><i class="d"><code>T</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#ask(java.lang.String,java.util.List)">ask</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">items</code>)</code><i class="d"><code>T</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#ask(java.lang.String,java.lang.Class)">ask</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>E</code></code></code> <code class="parameterName">enumeration</code>)</code><i class="d"><code>E</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#file(java.lang.String)">file</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#file(java.lang.String,java.nio.file.Path)">file</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code> <code class="parameterName">defaultFile</code>)</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#directory(java.lang.String)">directory</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>)</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.UserInterface.html#directory(java.lang.String,java.nio.file.Path)">directory</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">question</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code> <code class="parameterName">defaultDirectory</code>)</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></li>
+						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.UserInterface.html#getInterface()">getInterface</a></code><code class="S">()</code><i class="d"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Appendable.html">Appendable</a></code></i></li>
+						<li><i class="ABSTRACT"><i class="PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#write(int,java.lang.String)">write</a></code><code class="S">(<code>int</code> <code class="parameterName">type</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">message</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="ABSTRACT"><i class="PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#write(java.lang.Throwable)">write</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code> <code class="parameterName">error</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="ABSTRACT"><i class="PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#startCommand(java.lang.String,bee.api.Command)">startCommand</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">name</code>, <code><a href="api/bee.api.Command.html">Command</a></code> <code class="parameterName">command</code>)</code><i class="d"><code>void</code></i></li>
+						<li><i class="ABSTRACT"><i class="PROTECTED"></i></i><code><a href="api/bee.UserInterface.html#endCommand(java.lang.String,bee.api.Command)">endCommand</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">name</code>, <code><a href="api/bee.api.Command.html">Command</a></code> <code class="parameterName">command</code>)</code><i class="d"><code>void</code></i></li>
+					</ul>
+				</div>
+			</aside>
+		</main>
+		<script src="root.js"></script>
+		<script src="main.js" type="module"></script>
+	</body>
+</html>

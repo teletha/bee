@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/zenburn.min.css" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<script async="true" src="highlight.js"></script>
+		<script src="mimic.js" type="module"></script>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="U">
+		<header class="k">
+			<h1 class="b" date="2021-11-10" ver="0.11.0"><code>Bee</code></h1>
+			<nav class="Z"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>Repository</a></nav>
+			<div class="i" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg>
+				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<main class="c">
+			<nav class="g">
+				<div></div>
+			</nav>
+			<article class="a" id="Article">
+				<section class="H B">
+					<h1>Changelog</h1>
+					<h2><a href="https://www.github.com/Teletha/bee/compare/v0.10.0...v0.11.0">0.11.0</a> (2021-11-10)</h2>
+					<h3>Features</h3>
+					<ul>
+
+						<li>Remove @Grab, use Require with lazy dependency resolution. (<a href="https://www.github.com/Teletha/bee/commit/6eb2936e844d8d1f830c5702b80469e8370b06c2">6eb2936</a>)</li>
+
+						<li>Remove Task#require(String...) (<a href="https://www.github.com/Teletha/bee/commit/aae42b51926cab1f2bfa3bf33100bd7f8a66b4d1">aae42b5</a>)</li>
+</ul>
+					<h3>Bug Fixes</h3>
+					<ul>
+
+						<li>Add all dependencies as Javadoc classpath. (<a href="https://www.github.com/Teletha/bee/commit/571cb34256e410a1acf4f1aa6feeb33097282641">571cb34</a>)</li>
+
+						<li>Check duplication when dynamic class loading. (<a href="https://www.github.com/Teletha/bee/commit/796a4cc4daea047baf7072755a16d20c58dfdb7f">796a4cc</a>)</li>
+
+						<li>CI can cache dependency. (<a href="https://www.github.com/Teletha/bee/commit/b67c01c5fb2f84f1a8764264df6b9b78804dad29">b67c01c</a>)</li>
+
+						<li>doc:site indicates invalid sample directory (<a href="https://www.github.com/Teletha/bee/commit/71397b8d0c04eb72ffa77c292399edd213f25744">71397b8</a>)</li>
+
+						<li>doc:site supports javadoc for JDK (<a href="https://www.github.com/Teletha/bee/commit/eb9d40de68aec811549b98ad43a71aeec6e581af">eb9d40d</a>)</li>
+
+						<li>doc:site task supports sample and document (<a href="https://www.github.com/Teletha/bee/commit/3d27c16c40ef154cf184873ca6ae79509efc9699">3d27c16</a>)</li>
+
+						<li>Don&#39;t execute IDE task when project initialization phase. (<a href="https://www.github.com/Teletha/bee/commit/5e307c8960a286bcf964fd114069f24d28b59352">5e307c8</a>)</li>
+
+						<li>Format fail message. (<a href="https://www.github.com/Teletha/bee/commit/c5edd9824280c30b3cb26a417a010e6e9626997a">c5edd98</a>)</li>
+
+						<li>Generate javadoc with project&#39;s dependency. (<a href="https://www.github.com/Teletha/bee/commit/88f9dc9d0017ca8e03b980d21d628cff7b10747d">88f9dc9</a>)</li>
+
+						<li>Handles transitive dependencies more accurately. (<a href="https://www.github.com/Teletha/bee/commit/85483fe29092a2a5d0f7db796be7bb7370bf8cd5">85483fe</a>)</li>
+
+						<li>Hide private class. (<a href="https://www.github.com/Teletha/bee/commit/181c6321c294ff4e548327b0b6f8a72a63ddfb2f">181c632</a>)</li>
+
+						<li>Installer supports shell script. (<a href="https://www.github.com/Teletha/bee/commit/c0f8fee8eb52e1898f5708cb7cb805ebe3dd8de2">c0f8fee</a>)</li>
+
+						<li>Jitpack requires the JVM for source version. (<a href="https://www.github.com/Teletha/bee/commit/a41e1d8ab7ef0d5318001a716b2345e73bdb08be">a41e1d8</a>)</li>
+
+						<li>Repository#require resolves the specified library. (<a href="https://www.github.com/Teletha/bee/commit/eaa7b45bca8aa1f5dd9d5e538dcab08d95d7d616">eaa7b45</a>)</li>
+
+						<li>update javadng (<a href="https://www.github.com/Teletha/bee/commit/4f8e10fa44f58cec3f20efd6f639aba75ab9a738">4f8e10f</a>)</li>
+
+						<li>Update javadng. (<a href="https://www.github.com/Teletha/bee/commit/aacdc3f98517a48a2b43d3f8646e411b99b76564">aacdc3f</a>)</li>
+
+						<li>Update javadng. (<a href="https://www.github.com/Teletha/bee/commit/77026e9c9a7c1140ced5440b0ed65b97f60ef097">77026e9</a>)</li>
+
+						<li>Update javadng. (<a href="https://www.github.com/Teletha/bee/commit/a13bd239905b16e365960793175f4c267d414b90">a13bd23</a>)</li>
+
+						<li>Update javadng. (<a href="https://www.github.com/Teletha/bee/commit/56c0e393961bbc1e628c3ee28ca2a1e119d02f37">56c0e39</a>)</li>
+
+						<li>Update javadng. (<a href="https://www.github.com/Teletha/bee/commit/407cba050bc183b73530f9ef3ab139f19a2089ee">407cba0</a>)</li>
+
+						<li>Update javadoc link. (<a href="https://www.github.com/Teletha/bee/commit/f86589aec1d265dde62a50f5f593c5148bebb418">f86589a</a>)</li>
+</ul>
+					<h2><a href="https://www.github.com/Teletha/bee/compare/v0.9.0...v0.10.0">0.10.0</a> (2021-10-28)</h2>
+					<h3>Features</h3>
+					<ul>
+
+						<li>Add Inputs#formatAsSize and #observerFor. (<a href="https://www.github.com/Teletha/bee/commit/a89471c6546f7af6995877bc62366afa9fd428c8">a89471c</a>)</li>
+
+						<li>Add Inputs#formatAsSize(long, boolean). (<a href="https://www.github.com/Teletha/bee/commit/174a6af8f8b97e166c870f9f18d0d1b83b6663dc">174a6af</a>)</li>
+
+						<li>Add UserInterface#trace and #debug. (<a href="https://www.github.com/Teletha/bee/commit/482e7800a609eb3bc357e713d59c408dc8c998f8">482e780</a>)</li>
+
+						<li>Drop byte-buddy-agent, use BeeLoader instead. (<a href="https://www.github.com/Teletha/bee/commit/6550153ec04f3292badef2ce4d6b8b0d41520432">6550153</a>)</li>
+
+						<li>Update lambok. (<a href="https://www.github.com/Teletha/bee/commit/9881c33a7680e86d7f9f97666af16ef0845682b2">9881c33</a>)</li>
+</ul>
+					<h3>Bug Fixes</h3>
+					<ul>
+
+						<li>Colorize the console output. (<a href="https://www.github.com/Teletha/bee/commit/09fd2a3863e10271c5cf31939260afda6868f480">09fd2a3</a>)</li>
+
+						<li>MemoizedTask is broken by user-customed task. (<a href="https://www.github.com/Teletha/bee/commit/45a40a713de1ece266157dc63572b0d3ff48af9f">45a40a7</a>)</li>
+
+						<li>Rename from UserInterface#talk to #info. (<a href="https://www.github.com/Teletha/bee/commit/43bb08249665e0919e1d7c1b0d26a7213a52c3f6">43bb082</a>)</li>
+
+						<li>UserInterface depends on CLI behavior. (<a href="https://www.github.com/Teletha/bee/commit/fc6b3586b20fc384a4ffe5ac7b164f53a09040ea">fc6b358</a>)</li>
+</ul>
+					<h2><a href="https://www.github.com/Teletha/bee/compare/v0.8.0...v0.9.0">0.9.0</a> (2021-10-25)</h2>
+					<h3>Features</h3>
+					<ul>
+
+						<li>Add test report on CI. (<a href="https://www.github.com/Teletha/bee/commit/81955ee5de5b6c1c33bd50a8045ded1f474c37b7">81955ee</a>)</li>
+
+						<li>Jar task support minify of class files. (<a href="https://www.github.com/Teletha/bee/commit/a79cb46ed37c0433302b63ce6e1caf64c9fb14c7">a79cb46</a>)</li>
+
+						<li>Support annotation processor on maven. (<a href="https://www.github.com/Teletha/bee/commit/7053921fcfb2f632570d5d13c78be51893e1dab7">7053921</a>)</li>
+
+						<li>Update junit. (<a href="https://www.github.com/Teletha/bee/commit/adb7924a335eca01b3539e1870ddfe2764294022">adb7924</a>)</li>
+
+						<li>Update maven resolver. (<a href="https://www.github.com/Teletha/bee/commit/06442bf2d777be49838c1aae40ca9b395e469465">06442bf</a>)</li>
+
+						<li>Update psychopath. (<a href="https://www.github.com/Teletha/bee/commit/25dac78c967e95508842a4a1e8a61bcc59ffc953">25dac78</a>)</li>
+</ul>
+					<h3>Bug Fixes</h3>
+					<ul>
+
+						<li>Compacting log. (<a href="https://www.github.com/Teletha/bee/commit/7a895ac9f6056fa7b5e860a4090bd2e505b3c8d7">7a895ac</a>)</li>
+
+						<li>Format test result output on console. (<a href="https://www.github.com/Teletha/bee/commit/e39e628ee6fd622e5595a8f4ec13d22673a0a8fd">e39e628</a>)</li>
+
+						<li>Integrate CI and Git task. (<a href="https://www.github.com/Teletha/bee/commit/4e6b32c123188d41c165fd621ee9d018380a486b">4e6b32c</a>)</li>
+
+						<li>Jar task shows the detailed compress log. (<a href="https://www.github.com/Teletha/bee/commit/fa9f77f968c4cbcf313b2cb8358738341cb40d09">fa9f77f</a>)</li>
+
+						<li>Reconfigure various components. (<a href="https://www.github.com/Teletha/bee/commit/3fc6637bb3281867ef4f3ac67bc01bd0ce78adc8">3fc6637</a>)</li>
+
+						<li>Remove enable-preview option. (<a href="https://www.github.com/Teletha/bee/commit/98e9036435236d33f720e912007b3136c96e4f08">98e9036</a>)</li>
+
+						<li>Test ignores the failed test. (<a href="https://www.github.com/Teletha/bee/commit/ca5caa99b93c65c4e4fca41a7186d0446b1e29b4">ca5caa9</a>)</li>
+
+						<li>Test reporter is not thread-safe. (<a href="https://www.github.com/Teletha/bee/commit/c5ac0b671c760398dd55c1eef151b04a5da371d3">c5ac0b6</a>)</li>
+
+						<li>Test task can detect the existence of test class. (<a href="https://www.github.com/Teletha/bee/commit/454f24c4a2512921bf3e12ec2a6dad0d0d528731">454f24c</a>)</li>
+
+						<li>Update CI process. (<a href="https://www.github.com/Teletha/bee/commit/587f31c7c874e992f4c94238f0bc67cc719618c7">587f31c</a>)</li>
+
+						<li>Update maven resolver. (<a href="https://www.github.com/Teletha/bee/commit/fc2df5b6fec7f507d5c9fdd2eaee3fe406a7bca5">fc2df5b</a>)</li>
+
+						<li>Update maven-resolver. (<a href="https://www.github.com/Teletha/bee/commit/3b48c405a2ff61acda9bb67972ff0dd9eb82b2f4">3b48c40</a>)</li>
+
+						<li>Update version. (<a href="https://www.github.com/Teletha/bee/commit/33a2f7409442661a51b1e130905e6cea85974762">33a2f74</a>)</li>
+</ul>
+					<h2><a href="https://www.github.com/Teletha/bee/compare/v0.7.0...v0.8.0">0.8.0</a> (2021-03-28)</h2>
+					<h3>Features</h3>
+					<ul>
+
+						<li>Add check command on compile task. (<a href="https://www.github.com/Teletha/bee/commit/dec2637e8fdda9188570ae747ec3146b99ae7935">dec2637</a>)</li>
+
+						<li>Add CI/CD task (for github). (<a href="https://www.github.com/Teletha/bee/commit/148d146bfc82e856733cada9c6dadb5899101a99">148d146</a>)</li>
+
+						<li>Enable CI on github. (<a href="https://www.github.com/Teletha/bee/commit/06354df76b4d92e111bf583971e7933fc8899668">06354df</a>)</li>
+
+						<li>IDE task builds pom file synchronously. (<a href="https://www.github.com/Teletha/bee/commit/753738134e9184f8fdf8dd7069001f2dbc80d653">7537381</a>)</li>
+
+						<li>Jar task supports Java16 on version modification. (<a href="https://www.github.com/Teletha/bee/commit/d1ce3ea8ca2e4c91411c3bc320aaff0eff64b5ee">d1ce3ea</a>)</li>
+
+						<li>Provide version control system model. (<a href="https://www.github.com/Teletha/bee/commit/adea252a1454feaa78f7c3fcc756486c3801684f">adea252</a>)</li>
+
+						<li>Terminates all tasks when a test fails. (<a href="https://www.github.com/Teletha/bee/commit/e4910a9dbc1b9bd52e923c2333ac745b63b8d1b8">e4910a9</a>)</li>
+
+						<li>The dependency Grab annotation like Groovy. (<a href="https://www.github.com/Teletha/bee/commit/6280a123eba3333dc8ae7d64b461f89d79ea8aa0">6280a12</a>)</li>
+
+						<li>Use release option on maven compiler plugin. (<a href="https://www.github.com/Teletha/bee/commit/7ef2a0d24e9e689cbbea38b0086f48515c7003e5">7ef2a0d</a>)</li>
+
+						<li>When executing any command, if the project definition has been (<a href="https://www.github.com/Teletha/bee/commit/d820b49a9660f50253ee29d0608bc62cdfefe196">d820b49</a>)</li>
+</ul>
+					<h3>Bug Fixes</h3>
+					<ul>
+
+						<li>Build environment restricts the upper bound of java version. (<a href="https://www.github.com/Teletha/bee/commit/38cc547b966a961ca6c788f30471112d3b2fa979">38cc547</a>)</li>
+
+						<li>CI/CD task support JitPack. (<a href="https://www.github.com/Teletha/bee/commit/99ff1ce1ea02a43987e16a0551185061a5632998">99ff1ce</a>)</li>
+
+						<li>Compile at java 11. (<a href="https://www.github.com/Teletha/bee/commit/e0b6a8b69a1915b71867a1459248c95b5c253cc1">e0b6a8b</a>)</li>
+
+						<li>Dependency resolution fails when library is referred from compile (<a href="https://www.github.com/Teletha/bee/commit/520b6f72935099bf3dc04cc48a24ac5f999488f4">520b6f7</a>)</li>
+
+						<li>Disable logging of Junit. (<a href="https://www.github.com/Teletha/bee/commit/e14857382089965cfdef35c7b2d196376945f024">e148573</a>)</li>
+
+						<li>Drop preview support. (<a href="https://www.github.com/Teletha/bee/commit/b95f3b05565fa991ce017ecc04b8532478cac678">b95f3b0</a>)</li>
+
+						<li>Inputs#ref trim its contents. (<a href="https://www.github.com/Teletha/bee/commit/86e3415b481c6fbc9e205538c6562ed65a1ae1e9">86e3415</a>)</li>
+
+						<li>Integrate Inputs and DebugHelper. (<a href="https://www.github.com/Teletha/bee/commit/eabe63ed53236a916d88d3859469166b9410ba5e">eabe63e</a>)</li>
+
+						<li>Jar file is ignored. (<a href="https://www.github.com/Teletha/bee/commit/7aef28e89006ee2315fd598907d056b7eb39f3fa">7aef28e</a>)</li>
+
+						<li>Licesen is class now and remove StandardLicense. (<a href="https://www.github.com/Teletha/bee/commit/3d91a524f89d6b7f1ceca2afba78fd8ebfe939ef">3d91a52</a>)</li>
+
+						<li>Make code compilable by javac. (<a href="https://www.github.com/Teletha/bee/commit/5905a48e7ea21b5d9433ceab1b77bd2028e64fe2">5905a48</a>)</li>
+
+						<li>NotationTest fails on non-windows platform. (<a href="https://www.github.com/Teletha/bee/commit/fd2017740f682c0344ca620c421341d38d7d53ea">fd20177</a>)</li>
+
+						<li>Overridden commands in subclasses were not being recognized. (<a href="https://www.github.com/Teletha/bee/commit/d820b49a9660f50253ee29d0608bc62cdfefe196">d820b49</a>)</li>
+
+						<li>POM uses the ranged dependency version. (<a href="https://www.github.com/Teletha/bee/commit/92faf5804ba6c6d8aedd21032299ada717b3dec6">92faf58</a>)</li>
+
+						<li>Public bee related projects should refer the version.txt. (<a href="https://www.github.com/Teletha/bee/commit/2190d36ea4aa0978350002ecafb87fb9c559c9a0">2190d36</a>)</li>
+
+						<li>Remove PGP. (<a href="https://www.github.com/Teletha/bee/commit/11c50ff9751720066d916f4bd409e4c3e6cbeb4e">11c50ff</a>)</li>
+
+						<li>Remove Task#readResource, use text-block instead. (<a href="https://www.github.com/Teletha/bee/commit/06354df76b4d92e111bf583971e7933fc8899668">06354df</a>)</li>
+
+						<li>Remove unused class. (<a href="https://www.github.com/Teletha/bee/commit/148d146bfc82e856733cada9c6dadb5899101a99">148d146</a>)</li>
+
+						<li>Simplify a failure message. (<a href="https://www.github.com/Teletha/bee/commit/dc107c86940367ae4a7528090714f107364493d4">dc107c8</a>)</li>
+
+						<li>The bee related project&#39; version is corrupted. (<a href="https://www.github.com/Teletha/bee/commit/753738134e9184f8fdf8dd7069001f2dbc80d653">7537381</a>)</li>
+
+						<li>Update pom. (<a href="https://www.github.com/Teletha/bee/commit/b99df4e0bcaace3c9a2e974179010d65c601e015">b99df4e</a>)</li>
+
+						<li>Use java15 on memoized task. (<a href="https://www.github.com/Teletha/bee/commit/8402e86fb8fe2f73d442094b6ac170b97921bff0">8402e86</a>)</li>
+</ul>
+					<h2><a href="https://www.github.com/Teletha/bee/compare/0.1.8...v0.7.0">0.7.0</a> (2021-03-23)</h2>
+					<h3>Features</h3>
+					<ul>
+
+						<li>Compiler target version of test classes is configurable. (<a href="https://www.github.com/Teletha/bee/commit/1735bc3fdda996934f4d8225a6f981cf21b61d8d">1735bc3</a>)</li>
+
+						<li>Enable release-please-action when you use github. (<a href="https://www.github.com/Teletha/bee/commit/e392965177691dc2d939f2c5dcb98b055c85698a">e392965</a>)</li>
+
+						<li>Enable release-please-action when you use github. (<a href="https://www.github.com/Teletha/bee/commit/a75ff91b0cd98243d6ab3ef2de0e469975819b96">a75ff91</a>)</li>
+
+						<li>Inputs#ref retrieve the file&#39;s live contents. (<a href="https://www.github.com/Teletha/bee/commit/9f23e93a1f631d2285e1ab892f5ed6305c13aadd">9f23e93</a>)</li>
+
+						<li>Project#product accepts CharSequence. (<a href="https://www.github.com/Teletha/bee/commit/4a61c3ac5664c38c2cb385a4dca052fbdc9c27bb">4a61c3a</a>)</li>
+</ul>
+					<h3>Bug Fixes</h3>
+					<ul>
+
+						<li>Enabel in offline mode. (<a href="https://www.github.com/Teletha/bee/commit/979f13b8e861fbbb4e0a25679955de5c03658f3a">979f13b</a>)</li>
+
+						<li>Exe task is broken. (<a href="https://www.github.com/Teletha/bee/commit/f1d7c60da29bb3c2764368e86354a0309d7d9119">f1d7c60</a>)</li>
+
+						<li>FindMain throws StackOverFlowError. (<a href="https://www.github.com/Teletha/bee/commit/fbf65bb1d88ee31bea8497487d80c442fd1d56c8">fbf65bb</a>)</li>
+
+						<li>Library can recognize classifier. (<a href="https://www.github.com/Teletha/bee/commit/525d318babfa09e737b55d15c1be790d91f116e8">525d318</a>)</li>
+
+						<li>Load same package twice. (<a href="https://www.github.com/Teletha/bee/commit/7dd09ce8a0c5c7cab06d06fcf312a3c1eb5c6f53">7dd09ce</a>)</li>
+
+						<li>Memoized task is defined duplicately at parallel task execution. (<a href="https://www.github.com/Teletha/bee/commit/bd1a83a90401e6d81982e0264dbb88bc16a246be">bd1a83a</a>)</li>
+
+						<li>Process is broken. (<a href="https://www.github.com/Teletha/bee/commit/24fd0675beacc1490c4e7ac3a55134568b62395b">24fd067</a>)</li>
+
+						<li>Release-please-action should execution on main brunch. (<a href="https://www.github.com/Teletha/bee/commit/bd1a83a90401e6d81982e0264dbb88bc16a246be">bd1a83a</a>)</li>
+
+						<li>Task#readResource can&#39;t read resource in jar. (<a href="https://www.github.com/Teletha/bee/commit/d99ed7cc642be00eed54ed61a1602d12f77f700a">d99ed7c</a>)</li>
+
+						<li>Task#readResource fails by relative path. (<a href="https://www.github.com/Teletha/bee/commit/bd1a83a90401e6d81982e0264dbb88bc16a246be">bd1a83a</a>)</li>
+
+						<li>Test scope accepts compile scope. (<a href="https://www.github.com/Teletha/bee/commit/77978bfd35ada2eff627f722d4f4f1550f13b9d5">77978bf</a>)</li>
+
+						<li>Use ASM directly instead of byte-buddy. (<a href="https://www.github.com/Teletha/bee/commit/2a88f0b2dbebf94781aaab1caaaf5d79de5048c4">2a88f0b</a>)</li>
+</ul>
+				</section>
+			</article>
+			<aside class="O" id="SubNavi">
+				<div class="V"></div>
+			</aside>
+		</main>
+		<script src="root.js"></script>
+		<script src="main.js" type="module"></script>
+	</body>
+</html>
