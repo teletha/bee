@@ -83,10 +83,17 @@ public class Ci extends Task {
                 """;
 
         String jitPack = """
+                jdk:
+                  - openjdk16
+
                 before_install:
-                  - source "$HOME/.sdkman/bin/sdkman-init.sh"
-                  - sdk install java %s-open
-                  - sdk use java %s-open
+                  - source ~/.sdkman/bin/sdkman-init.sh
+                  - sdk install java 16-open
+                  - source ~/.sdkman/bin/sdkman-init.sh
+
+                #install:
+                #  - curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
+                #  - java -javaagent:bee.jar -cp bee.jar bee.Bee install
                 """;
 
         String sourceVersion = Inputs.normalize(project.getJavaSourceVersion());
