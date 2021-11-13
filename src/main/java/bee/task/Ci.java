@@ -112,6 +112,24 @@ public class Ci extends Task {
         });
     }
 
+    private void createBuildProcessForJitpack() {
+        String sourceVersion = Inputs.normalize(project.getJavaSourceVersion());
+
+        makeFile("jitpack.yml", String.format("""
+                jdk:
+                  - openjdk16
+
+                before_install:
+                  - source ~/.sdkman/bin/sdkman-init.sh
+                  - sdk install java 16-open
+                  - source ~/.sdkman/bin/sdkman-init.sh
+
+                #install:
+                #  - curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
+                #  - java -javaagent:bee.jar -cp bee.jar bee.Bee install
+                """, sourceVersion, sourceVersion));
+    }
+
     @Command(value = "Generate .gitignore file.")
     public void gitignore() {
         File ignore = project.getRoot().file(".gitignore");

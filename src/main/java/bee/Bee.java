@@ -281,7 +281,7 @@ public class Bee {
     public static void main(String... tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("install");
+            bee.execute("version");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);
