@@ -604,6 +604,13 @@ const root = {
 			"name": "VCS.Releases",
 			"packageName": "bee.api",
 			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Version",
+			"packageName": "bee.task",
+			"type": "Class"
 		}
 	]
 }
