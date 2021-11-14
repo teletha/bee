@@ -106,11 +106,15 @@ public final class Platform {
      * @return
      */
     private static Directory searchLocalRepository() {
+        // Special Case : JitPack.io platform
+        if (System.getenv("JITPACK") != null) {
+            return Locator.directory(System.getenv("HOME")).directory(".m2/repository");
+        }
+
         for (Entry<String, String> entry : System.getenv().entrySet()) {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 for (String path : entry.getValue().split(java.io.File.pathSeparator)) {
                     File mvn = Locator.directory(path).file("mvn");
-
                     if (mvn.isPresent()) {
                         // maven is here
                         Directory home = mvn.parent().parent();

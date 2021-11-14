@@ -450,7 +450,7 @@ public abstract class Task implements Extensible {
      * @param file A file path to delete.
      */
     protected final void deleteFile(File file) {
-        if (file == null || file.isPresent()) {
+        if (file != null && file.isPresent()) {
             file.delete();
             ui.info("Delete file [" + file.absolutize() + "]");
         }
