@@ -24,7 +24,7 @@ public class Ci extends Task {
 
     @Command(value = "Generate CI/CD configuration files for GitHub.", defaults = true)
     public void github() {
-        require(Ci::gitignore);
+        require(Ci::gitignore, Ci::jitpack);
 
         String mavenCI = """
                 name: Continuous Integration
@@ -82,26 +82,10 @@ public class Ci extends Task {
                           package-name: %s
                 """;
 
-        String jitPack = """
-                jdk:
-                  - openjdk16
-
-                before_install:
-                  - source ~/.sdkman/bin/sdkman-init.sh
-                  - sdk install java 16-open
-                  - source ~/.sdkman/bin/sdkman-init.sh
-
-                #install:
-                #  - curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
-                #  - java -javaagent:bee.jar -cp bee.jar bee.Bee install
-                """;
-
-        String sourceVersion = Inputs.normalize(project.getJavaSourceVersion());
         String testVersion = Inputs.normalize(project.getJavaTestClassVersion());
 
         makeFile(".github/workflows/java-ci-with-maven.yml", String.format(mavenCI, testVersion));
         makeFile(".github/workflows/release-please.yml", String.format(releasePlease, project.getProduct()));
-        makeFile("jitpack.yml", String.format(jitPack, sourceVersion, sourceVersion));
         makeFile("version.txt", project.getVersion());
         makeFile(project.getProjectDefinition(), line -> {
             if (line.trim().startsWith("product(")) {
@@ -112,7 +96,8 @@ public class Ci extends Task {
         });
     }
 
-    private void createBuildProcessForJitpack() {
+    @Command("Generate CI/CD configuration files for JitPack.")
+    public void jitpack() {
         String sourceVersion = Inputs.normalize(project.getJavaSourceVersion());
 
         makeFile("jitpack.yml", String.format("""
@@ -124,9 +109,9 @@ public class Ci extends Task {
                   - sdk install java 16-open
                   - source ~/.sdkman/bin/sdkman-init.sh
 
-                #install:
-                #  - curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
-                #  - java -javaagent:bee.jar -cp bee.jar bee.Bee install
+                install:
+                  - curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
+                  - java -javaagent:bee.jar -cp bee.jar bee.Bee install
                 """, sourceVersion, sourceVersion));
     }
 

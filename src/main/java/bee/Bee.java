@@ -146,8 +146,8 @@ public class Bee {
      * 
      * @param tasks A command literal.
      */
-    public void execute(final String... tasks) {
-        execute(new CommandLineTask(tasks));
+    public int execute(final String... tasks) {
+        return execute(new CommandLineTask(tasks));
     }
 
     /**
@@ -155,7 +155,8 @@ public class Bee {
      * 
      * @param build
      */
-    public void execute(Task build) {
+    public int execute(Task build) {
+        int code = 0;
         String result = "SUCCESS";
         LocalTime start = LocalTime.now();
 
@@ -208,6 +209,7 @@ public class Bee {
                 pom.lastModifiedTime(lastModified);
             }
         } catch (Throwable e) {
+            code = 1;
             if (e == AbortedByUser) {
                 result = "CANCEL";
             } else {
@@ -222,6 +224,7 @@ public class Bee {
             String duration = Duration.between(start, end).truncatedTo(ChronoUnit.MILLIS).toString().substring(2).toLowerCase();
             ui.title(String.format("Build %s \t %s \t %s", result, dateTime, duration));
         }
+        return code;
     }
 
     /**
@@ -279,13 +282,7 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
-        if (tasks == null || tasks.length == 0) {
-            Bee bee = new Bee();
-            bee.execute("env:clear");
-        } else {
-            Bee bee = new Bee();
-            bee.execute(tasks);
-        }
+        System.exit(new Bee().execute(tasks.length == 0 ? new String[] {"install"} : tasks));
     }
 
     /**
