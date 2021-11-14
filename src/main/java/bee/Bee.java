@@ -149,7 +149,7 @@ public class Bee {
      * 
      * @param tasks A command literal.
      */
-    public int execute(final String... tasks) {
+    public int execute(List<String> tasks) {
         return execute(new CommandLineTask(tasks));
     }
 
@@ -285,7 +285,34 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
-        System.exit(new Bee().execute(tasks.length == 0 ? new String[] {"install"} : tasks));
+        List<String> washed = new ArrayList();
+        for (String task : tasks) {
+            if (!task.startsWith("-")) {
+                washed.add(task);
+            } else {
+                task = task.substring(1);
+
+                String key;
+                String value;
+                int index = task.indexOf("=");
+
+                if (index != -1) {
+                    key = task.substring(0, index);
+                    value = task.substring(index + 1);
+                } else {
+                    key = task;
+                    value = "true";
+                }
+
+                System.setProperty(key, value);
+
+                if (key.equalsIgnoreCase("disableANSI")) {
+                    DisableANSI = I.transform(value, boolean.class);
+                }
+            }
+        }
+
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install") : washed));
     }
 
     /**
@@ -294,37 +321,13 @@ public class Bee {
     private static class CommandLineTask extends Task {
 
         /** The task list. */
-        private final List<String> tasks = new ArrayList();
+        private final List<String> tasks;
 
         /**
          * @param tasks
          */
-        private CommandLineTask(String[] tasks) {
-            for (String task : tasks) {
-                if (task.startsWith("-D")) {
-                    task = task.substring(2);
-
-                    String key;
-                    String value;
-                    int index = task.indexOf("=");
-
-                    if (index != -1) {
-                        key = task.substring(0, index);
-                        value = task.substring(index + 1);
-                    } else {
-                        key = task;
-                        value = "true";
-                    }
-
-                    System.setProperty(key, value);
-
-                    if (key.equalsIgnoreCase("disableANSI")) {
-                        DisableANSI = I.transform(value, boolean.class);
-                    }
-                } else {
-                    this.tasks.add(task);
-                }
-            }
+        private CommandLineTask(List<String> tasks) {
+            this.tasks = tasks;
         }
 
         /**
