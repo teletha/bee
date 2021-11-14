@@ -60,8 +60,8 @@ public class Env extends Task {
         build(version);
     }
 
-    @Command("Clear current bee environment.")
-    public void clear() {
+    @Command("Clean current bee environment.")
+    public void clean() {
         deleteFile("bee.bat");
         deleteFile("bee.sh");
 
