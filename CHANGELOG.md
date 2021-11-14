@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.12.0](https://www.github.com/teletha/bee/compare/v0.11.0...v0.12.0) (2021-11-14)
+
+
+### Features
+
+* Add env task to generate the local bee environment. ([47ce617](https://www.github.com/teletha/bee/commit/47ce6177212f6027a0bdaef6410180169421a558))
+* Bee#execute returns status code. ([e518e66](https://www.github.com/teletha/bee/commit/e518e66beee89be7ebd2651d80441ed49a7efdfd))
+* Ci task provides jitpack command. ([e518e66](https://www.github.com/teletha/bee/commit/e518e66beee89be7ebd2651d80441ed49a7efdfd))
+
 ## [0.11.0](https://www.github.com/Teletha/bee/compare/v0.10.0...v0.11.0) (2021-11-10)
 
 
