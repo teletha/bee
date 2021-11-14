@@ -46,7 +46,10 @@ public class BeeInstaller {
         // delete old files
         BeeHome.walkFile("bee-*.jar").to(jar -> {
             try {
-                jar.delete();
+                // delete only bee-yyyyMMddhhmmss.jar
+                if (jar.base().length() == 18) {
+                    jar.delete();
+                }
             } catch (Exception e) {
                 // we can't delete current processing jar file.
             }
