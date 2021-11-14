@@ -37,7 +37,7 @@ import psychopath.Locator;
  */
 public class Bee {
 
-    private static final String version = "0.10.0";
+    private static final String version = "0.11.0";
 
     /** The api project. */
     public static final Project API = new Project() {
@@ -281,7 +281,7 @@ public class Bee {
     public static void main(String... tasks) {
         if (tasks == null || tasks.length == 0) {
             Bee bee = new Bee();
-            bee.execute("env:list");
+            bee.execute("env:clear");
         } else {
             Bee bee = new Bee();
             bee.execute(tasks);

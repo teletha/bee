@@ -11,10 +11,12 @@ package bee.task;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import bee.Bee;
+import bee.Platform;
 import bee.Task;
 import bee.api.Command;
 import kiss.I;
@@ -43,9 +45,9 @@ public class Env extends Task {
     public void list() {
         List<DefaultArtifactVersion> list = I
                 .signal(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct()).find("*", "*"))
-                .flatIterable(json -> json.entries(String.class))
-                .take(e -> e.ⅱ.equals("ok"))
-                .map(Ⅱ::ⅰ)
+                .flatIterable(json -> json.asMap(String.class).entrySet())
+                .take(e -> e.getValue().equals("ok"))
+                .map(Entry::getKey)
                 .map(DefaultArtifactVersion::new)
                 .sort(Comparator.naturalOrder())
                 .toList();
@@ -58,11 +60,47 @@ public class Env extends Task {
         build(version);
     }
 
-    private void build(String version) {
-        System.out.println(version);
+    @Command("Clear current bee environment.")
+    public void clear() {
+        deleteFile("bee.bat");
+        deleteFile("bee.sh");
 
-        String text = String.format("""
-                curl -sL -o bee.jar https://jitpack.io/com/github/teletha/bee/0.10.0/bee-%s.jar
-                """, version);
+        ui.info("Remove user specified local bee environment.");
+        ui.info("From now on, you will use Bee installed at [", Platform.Bee, "].");
+    }
+
+    /**
+     * Create shell script adn bat file to execute the user specified runtime.
+     * 
+     * @param version
+     */
+    private void build(String version) {
+        Ⅱ<String, String> context = I.pair(version, "https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true");
+
+        String bat = I.express("""
+                @echo off
+                SET bee = "%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
+                if not exist %bee% (
+                  echo %bee% is not found, try to download it from network.
+                  curl -#L -o %bee% {ⅱ}
+                )
+                java -javaagent:%bee% -cp %bee% bee.Bee %*
+                """, context);
+
+        String sh = I.express("""
+                #!bin/bash
+                bee = $JAVA_HOME/lib/bee-{ⅰ}.jar
+                if [ ! -d $bee ]; then
+                  echo $bee is not found, try to download it from network.
+                  curl -#L -o $bee {ⅱ}
+                fi
+                java -javaagent:$bee -cp $bee bee.Bee "$@"
+                """, context);
+
+        makeFile("bee.bat", bat);
+        makeFile("bee.sh", sh);
+
+        ui.info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
+        ui.info("To clear this setting, execute the command [bee env:clear].");
     }
 }

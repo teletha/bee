@@ -436,6 +436,27 @@ public abstract class Task implements Extensible {
     }
 
     /**
+     * Utility method to delete file.
+     * 
+     * @param path A file path to delete.
+     */
+    protected final void deleteFile(String path) {
+        deleteFile(Locator.file(path));
+    }
+
+    /**
+     * Utility method to delete file.
+     * 
+     * @param file A file path to delete.
+     */
+    protected final void deleteFile(File file) {
+        if (file == null || file.isPresent()) {
+            file.delete();
+            ui.info("Delete file [" + file.absolutize() + "]");
+        }
+    }
+
+    /**
      * Compute human-readable task name.
      * 
      * @param taskClass A target task.
