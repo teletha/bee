@@ -111,7 +111,7 @@ public class Ci extends Task {
 
                 install:
                   - curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
-                  - java -javaagent:bee.jar -cp bee.jar bee.Bee install
+                  - java -javaagent:bee.jar -cp bee.jar bee.Bee install -DdisableANSI
                 """, sourceVersion, sourceVersion));
     }
 
