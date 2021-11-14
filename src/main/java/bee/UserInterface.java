@@ -624,7 +624,9 @@ public abstract class UserInterface {
 
             case TRACE:
             case DEBUG:
-                write(message.concat("\r"), false);
+                if (!bee.Bee.DisableANSI) {
+                    write(message.concat("\r"), false);
+                }
                 break;
 
             case WARNING:
@@ -665,7 +667,7 @@ public abstract class UserInterface {
                 first = false;
             }
 
-            if (eraseNextLine) {
+            if (eraseNextLine && !bee.Bee.DisableANSI) {
                 message = PREFIX + "2K" + message;
             }
             eraseNextLine = message.endsWith("\r");
@@ -708,7 +710,7 @@ public abstract class UserInterface {
          * @return
          */
         private static String stain(String text, String colorCode) {
-            return PREFIX + "38;5;" + colorCode + "m" + text + PREFIX + "0m";
+            return bee.Bee.DisableANSI ? text : PREFIX + "38;5;" + colorCode + "m" + text + PREFIX + "0m";
         }
 
         /**

@@ -66,6 +66,9 @@ public class Bee {
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 
+    /** Global Configuration : Availability for ANSI escape code on command-line user interface. */
+    public static boolean DisableANSI = false;
+
     static {
         I.load(Bee.class);
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
@@ -300,12 +303,23 @@ public class Bee {
             for (String task : tasks) {
                 if (task.startsWith("-D")) {
                     task = task.substring(2);
+
+                    String key;
+                    String value;
                     int index = task.indexOf("=");
 
                     if (index != -1) {
-                        String key = task.substring(0, index);
-                        String value = task.substring(index + 1);
-                        System.setProperty(key, value);
+                        key = task.substring(0, index);
+                        value = task.substring(index + 1);
+                    } else {
+                        key = task;
+                        value = "true";
+                    }
+
+                    System.setProperty(key, value);
+
+                    if (key.equalsIgnoreCase("disableANSI")) {
+                        DisableANSI = I.transform(value, boolean.class);
                     }
                 } else {
                     this.tasks.add(task);
