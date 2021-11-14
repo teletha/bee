@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.13.1](https://www.github.com/teletha/bee/compare/v0.13.0...v0.13.1) (2021-11-14)
+
+
+### Bug Fixes
+
+* BeeInstaller doesn't delete release versions. ([2d57954](https://www.github.com/teletha/bee/commit/2d579546b8db0dc3952499376fa2131a6cf8ff53))
+* Rename from Env#clear to #clean. ([7b901a6](https://www.github.com/teletha/bee/commit/7b901a6ea5c3c0bddf26f788e743dab80a3a4f3b))
+
 ## [0.13.0](https://www.github.com/teletha/bee/compare/v0.12.0...v0.13.0) (2021-11-14)
 
 
