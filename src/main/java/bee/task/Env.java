@@ -26,22 +26,22 @@ public class Env extends Task {
 
     public static String version = Bee.Tool.getVersion();
 
-    @Command("Build bee environment using the current version.")
+    @Command("Build local bee environment using the current version.")
     public void current() {
         build(Bee.Tool.getVersion());
     }
 
-    @Command(defaults = true, value = "Build bee environment using the stable version.")
+    @Command(defaults = true, value = "Build local bee environment using the stable version.")
     public void stable() {
         build(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct() + "/latestOk").text("version"));
     }
 
-    @Command("Build bee environment using the latest version.")
+    @Command("Build local bee environment using the latest version.")
     public void latest() {
         build(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct() + "/latestOk").text("version"));
     }
 
-    @Command("Build bee environment using the selected version.")
+    @Command("Build local bee environment using the selected version.")
     public void list() {
         List<DefaultArtifactVersion> list = I
                 .signal(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct()).find("*", "*"))
@@ -55,12 +55,12 @@ public class Env extends Task {
         build(ui.ask("Which version of Bee do you want to use?", list).toString());
     }
 
-    @Command("Build bee environment using the specified version.")
+    @Command("Build local bee environment using the specified version.")
     public void use() {
         build(version);
     }
 
-    @Command("Clean current bee environment.")
+    @Command("Clean local bee environment.")
     public void clean() {
         deleteFile("bee.bat");
         deleteFile("bee.sh");
