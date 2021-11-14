@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.13.0](https://www.github.com/teletha/bee/compare/v0.12.0...v0.13.0) (2021-11-14)
+
+
+### Features
+
+* Add Bee.DisableANSI option. ([40be54b](https://www.github.com/teletha/bee/commit/40be54b3fe17525f5ceeb8217022ebf899390bdc))
+
+
+### Bug Fixes
+
+* Disable ANSI escape code when JitPack building. ([46b95e7](https://www.github.com/teletha/bee/commit/46b95e794582b982c125cc3e9ed94e20acb25a67))
+* Support maven repository detection on JitPack. ([22d71ef](https://www.github.com/teletha/bee/commit/22d71ef55181486d5fdd4738d6412166cda12d8f))
+
 ## [0.12.0](https://www.github.com/teletha/bee/compare/v0.11.0...v0.12.0) (2021-11-14)
 
 
