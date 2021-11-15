@@ -102,11 +102,11 @@ public class Ci extends Task {
 
         makeFile("jitpack.yml", String.format("""
                 jdk:
-                  - openjdk16
+                  - openjdk%s
 
                 before_install:
                   - source ~/.sdkman/bin/sdkman-init.sh
-                  - sdk install java 16-open
+                  - sdk install java %s-open
                   - source ~/.sdkman/bin/sdkman-init.sh
 
                 install:

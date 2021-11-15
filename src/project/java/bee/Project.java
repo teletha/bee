@@ -9,6 +9,8 @@
  */
 package bee;
 
+import javax.lang.model.SourceVersion;
+
 public class Project extends bee.api.Project {
 
     String resolver = "1.7.2";
@@ -17,6 +19,8 @@ public class Project extends bee.api.Project {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
+
+        require(SourceVersion.RELEASE_16, SourceVersion.RELEASE_11);
 
         // MAVEN REPOSITORY
         require("org.apache.maven", "maven-resolver-provider");
