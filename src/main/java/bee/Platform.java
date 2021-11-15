@@ -49,6 +49,12 @@ public final class Platform {
     /** The platform type. */
     private static boolean isLinux;
 
+    /** The platform type. */
+    private static boolean isGithub = System.getenv("GITHUB_ACTIONS") != null;
+
+    /** The platform type. */
+    private static boolean isJitPack = System.getenv("JITPACK") != null;
+
     // initialization
     static {
         Directory bin = null;
@@ -106,8 +112,7 @@ public final class Platform {
      * @return
      */
     private static Directory searchLocalRepository() {
-        // Special Case : JitPack.io platform
-        if (System.getenv("JITPACK") != null) {
+        if (isJitPack) {
             return Locator.directory(System.getenv("HOME")).directory(".m2/repository");
         }
 
@@ -140,20 +145,38 @@ public final class Platform {
     }
 
     /**
-     * Check platform.
+     * Check whether the current platform is Windows OS or not.
      * 
-     * @return
+     * @return Result
      */
     public static boolean isWindows() {
         return isWindows;
     }
 
     /**
-     * Check platform.
+     * Check whether the current platform is Linux like OS or not.
      * 
-     * @return
+     * @return Result
      */
     public static boolean isLinux() {
         return isLinux;
+    }
+
+    /**
+     * Check whether the current platform is Github Action or not.
+     * 
+     * @return Result
+     */
+    public static boolean isGithub() {
+        return isGithub;
+    }
+
+    /**
+     * Check whether the current platform is JitPack or not.
+     * 
+     * @return Result
+     */
+    public static boolean isJitPack() {
+        return isJitPack;
     }
 }

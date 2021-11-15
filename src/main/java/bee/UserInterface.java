@@ -562,6 +562,8 @@ public abstract class UserInterface {
         /** Ansi escape code must start with this PREFIX. */
         public static final String PREFIX = "[";
 
+        private static final boolean disableANSI = Platform.isJitPack();
+
         /** The original standard output. */
         private final PrintStream standardOutput;
 
@@ -624,7 +626,7 @@ public abstract class UserInterface {
 
             case TRACE:
             case DEBUG:
-                if (!bee.Bee.DisableANSI) {
+                if (!disableANSI) {
                     write(message.concat("\r"), false);
                 }
                 break;
@@ -667,7 +669,7 @@ public abstract class UserInterface {
                 first = false;
             }
 
-            if (eraseNextLine && !bee.Bee.DisableANSI) {
+            if (eraseNextLine && !disableANSI) {
                 message = PREFIX + "2K" + message;
             }
             eraseNextLine = message.endsWith("\r");
@@ -710,7 +712,7 @@ public abstract class UserInterface {
          * @return
          */
         private static String stain(String text, String colorCode) {
-            return bee.Bee.DisableANSI ? text : PREFIX + "38;5;" + colorCode + "m" + text + PREFIX + "0m";
+            return disableANSI ? text : PREFIX + "38;5;" + colorCode + "m" + text + PREFIX + "0m";
         }
 
         /**

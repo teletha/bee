@@ -66,9 +66,6 @@ public class Bee {
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
 
-    /** Global Configuration : Availability for ANSI escape code on command-line user interface. */
-    public static boolean DisableANSI = false;
-
     static {
         I.load(Bee.class);
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
@@ -305,10 +302,6 @@ public class Bee {
                 }
 
                 System.setProperty(key, value);
-
-                if (key.equalsIgnoreCase("disableANSI")) {
-                    DisableANSI = I.transform(value, boolean.class);
-                }
             }
         }
 
