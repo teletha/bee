@@ -29,6 +29,7 @@ public class BeeInstaller {
      * Launch Bee.
      */
     public static final void main(String... args) {
+        I.load(Bee.class);
         install(Locator.locate(BeeInstaller.class).asFile());
     }
 
