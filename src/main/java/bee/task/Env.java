@@ -26,14 +26,9 @@ public class Env extends Task {
 
     public static String version = Bee.Tool.getVersion();
 
-    @Command("Build local bee environment using the current version.")
-    public void current() {
-        build(Bee.Tool.getVersion());
-    }
-
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
     public void stable() {
-        build(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct() + "/latestOk").text("version"));
+        build("0.13.0");
     }
 
     @Command("Build local bee environment using the latest version.")
@@ -55,7 +50,7 @@ public class Env extends Task {
         build(ui.ask("Which version of Bee do you want to use?", list).toString());
     }
 
-    @Command("Build local bee environment using the specified version.")
+    @Command("Build local bee environment using the user specified version.")
     public void use() {
         build(version);
     }
@@ -75,7 +70,7 @@ public class Env extends Task {
      * @param version
      */
     private void build(String version) {
-        Ⅱ<String, String> context = I.pair(version, "https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true");
+        Ⅱ<String, String> context = I.pair(version, "https://jitpack.io/com/github/teletha/bee/" + version + "/bee-" + version + ".jar");
 
         String bat = I.express("""
                 @echo off
@@ -89,8 +84,8 @@ public class Env extends Task {
 
         String sh = I.express("""
                 #!bin/bash
-                bee = $JAVA_HOME/lib/bee-{ⅰ}.jar
-                if [ ! -d $bee ]; then
+                bee=$JAVA_HOME/lib/bee-{ⅰ}.jar
+                if [ ! -e $bee ]; then
                   echo $bee is not found, try to download it from network.
                   curl -#L -o $bee {ⅱ}
                 fi
