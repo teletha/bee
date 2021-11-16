@@ -33,8 +33,6 @@ public class Compile extends Task {
      */
     @Command("Compile test sources and copy other resources.")
     public void test() {
-        require(Compile::source);
-
         compile("test", project.getTestSourceSet(), project.getTestClasses());
     }
 
