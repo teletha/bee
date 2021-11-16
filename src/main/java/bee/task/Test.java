@@ -45,7 +45,8 @@ public class Test extends Task {
 
     @Command("Test product codes.")
     public void test() {
-        require(Compile::source, Compile::test);
+        require(Compile::source);
+        require(Compile::test);
 
         if (project.getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
             ui.info("Test class not found.");
