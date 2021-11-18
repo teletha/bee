@@ -48,7 +48,7 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "javadng").atProvided();
 
         // TEST
-        require("com.github.teletha", "antibug").atTest();
+        require("com.github.teletha", "antibug", "1.2.0").atTest();
 
         unrequire("commons-codec", "commons-codec");
         unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");

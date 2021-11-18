@@ -7,5 +7,5 @@ before_install:
   - source ~/.sdkman/bin/sdkman-init.sh
 
 install:
-  - curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
-  - java -javaagent:bee.jar -cp bee.jar bee.Bee install -disableANSI
+  - curl -sL -o bee.jar https://jitpack.io/com/github/teletha/bee/0.13.0/bee-0.13.0.jar
+  - java -javaagent:bee.jar -cp bee.jar bee.Bee install

@@ -55,7 +55,8 @@ public class Ci extends Task {
 
                     - name: Build site
                       run: |
-                        curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
+                        version=$(curl -SsL https://git.io/stable-bee)
+                        curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
                         java -javaagent:bee.jar -cp bee.jar bee.Bee doc:site
 
                     - name: Deploy site
@@ -110,7 +111,8 @@ public class Ci extends Task {
                   - source ~/.sdkman/bin/sdkman-init.sh
 
                 install:
-                  - curl -sL -o bee.jar https://jitpack.io/com/github/teletha/bee/0.13.0/bee-0.13.0.jar
+                  - version=$(curl -SsL https://git.io/latest-bee)
+                  - curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
                   - java -javaagent:bee.jar -cp bee.jar bee.Bee install
                 """, sourceVersion, sourceVersion));
     }
