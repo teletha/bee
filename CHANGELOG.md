@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.14.0](https://www.github.com/teletha/bee/compare/v0.13.0...v0.14.0) (2021-11-18)
+
+
+### Features
+
+* Drop Bee.DisableANSI option. ([afbae6b](https://www.github.com/teletha/bee/commit/afbae6b1357ea5ec5ed7559f2ece9beefd02f003))
+
+
+### Bug Fixes
+
+* BeeInstaller doesn't delete release versions. ([2d57954](https://www.github.com/teletha/bee/commit/2d579546b8db0dc3952499376fa2131a6cf8ff53))
+* Compiling order in test task. ([4ae82bb](https://www.github.com/teletha/bee/commit/4ae82bb5f82e96d763babf86ecd88e36ac1eca27))
+* Compiling order in test task. ([e11616d](https://www.github.com/teletha/bee/commit/e11616d449053d7005ed988d2e32c93498e5fcb0))
+* Compiling order. ([163ddac](https://www.github.com/teletha/bee/commit/163ddacb9529a66f786d885aba73e9b131b20825))
+* Detect the build environment automatically. ([afbae6b](https://www.github.com/teletha/bee/commit/afbae6b1357ea5ec5ed7559f2ece9beefd02f003))
+* JitPack build process uses the specified Java version. ([1a9bee5](https://www.github.com/teletha/bee/commit/1a9bee547505aacba10fb9383b45aaf178f21acb))
+* Platforma scans the normalized path. ([be8909a](https://www.github.com/teletha/bee/commit/be8909a27c0e126b2a18283bad3790d2a7f24d1a))
+* Rename from Env#clear to #clean. ([7b901a6](https://www.github.com/teletha/bee/commit/7b901a6ea5c3c0bddf26f788e743dab80a3a4f3b))
+
 ## [0.13.0](https://www.github.com/teletha/bee/compare/v0.12.0...v0.13.0) (2021-11-14)
 
 
