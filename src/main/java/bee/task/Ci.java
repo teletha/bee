@@ -105,15 +105,15 @@ public class Ci extends Task {
                 jdk:
                   - openjdk%s
 
-                before_install:
-                  - source ~/.sdkman/bin/sdkman-init.sh
-                  - sdk install java %s-open
-                  - source ~/.sdkman/bin/sdkman-init.sh
+                before_install: |
+                  source ~/.sdkman/bin/sdkman-init.sh
+                  sdk install java %s-open
+                  source ~/.sdkman/bin/sdkman-init.sh
 
-                install:
-                  - version=$(curl -SsL https://git.io/latest-bee)
-                  - curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                  - java -javaagent:bee.jar -cp bee.jar bee.Bee install
+                install: |
+                  version=$(curl -SsL https://git.io/latest-bee)
+                  curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                  java -javaagent:bee.jar -cp bee.jar bee.Bee install
                 """, sourceVersion, sourceVersion));
     }
 
