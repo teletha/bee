@@ -68,10 +68,8 @@ public final class Platform {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
                 for (String value : entry.getValue().split(java.io.File.pathSeparator)) {
-                    // normalize
-                    value = value.toLowerCase();
-
-                    if (value.contains("eclipse") && value.contains("plugins")) {
+                    String normalized = value.toLowerCase();
+                    if (normalized.contains("eclipse") && normalized.contains("plugins")) {
                         continue;
                     }
 
