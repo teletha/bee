@@ -20,7 +20,7 @@ public class Project extends bee.api.Project {
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
 
-        require(SourceVersion.RELEASE_16, SourceVersion.RELEASE_11);
+        require(SourceVersion.RELEASE_16, SourceVersion.RELEASE_11, SourceVersion.RELEASE_16);
 
         // MAVEN REPOSITORY
         require("org.apache.maven", "maven-resolver-provider");
