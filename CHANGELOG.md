@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.15.1](https://www.github.com/teletha/bee/compare/v0.15.0...v0.15.1) (2021-11-19)
+
+
+### Bug Fixes
+
+* Enahance CI/CD process. ([aed8c77](https://www.github.com/teletha/bee/commit/aed8c770fcb4dbb011e1642b8750a48ba1567840))
+
 ## [0.15.0](https://www.github.com/teletha/bee/compare/v0.14.0...v0.15.0) (2021-11-19)
 
 
