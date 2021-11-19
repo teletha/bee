@@ -564,7 +564,7 @@ public abstract class UserInterface {
 
         private static final boolean disableANSI = Platform.isJitPack();
 
-        private static final boolean disableTrace = Platform.isGithub();
+        private static final boolean disableTrace = Platform.isJitPack() || Platform.isGithub();
 
         /** The original standard output. */
         private final PrintStream standardOutput;
@@ -628,7 +628,7 @@ public abstract class UserInterface {
 
             case TRACE:
             case DEBUG:
-                if (!disableANSI && !disableTrace) {
+                if (!disableTrace) {
                     write(message.concat("\r"), false);
                 }
                 break;
