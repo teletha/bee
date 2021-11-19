@@ -9,8 +9,6 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,13 +35,11 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
 
 import bee.Bee;
-import bee.Fail;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
-import kiss.Variable;
 import kiss.XML;
 import psychopath.Directory;
 import psychopath.File;
@@ -755,20 +751,8 @@ public class Project {
      * 
      * @return A uri of version control system.
      */
-    public final VCS exactVersionControlSystem() {
-        return getVersionControlSystem().or(() -> {
-            throw new Fail("Version control system is not found.")
-                    .solve("Describe ", signature(this::versionControlSystem), " in your project file.");
-        });
-    }
-
-    /**
-     * Get the VCS.
-     * 
-     * @return A uri of version control system.
-     */
-    public Variable<VCS> getVersionControlSystem() {
-        return Variable.of(vcs);
+    public VCS getVersionControlSystem() {
+        return vcs;
     }
 
     /**
@@ -865,7 +849,7 @@ public class Project {
             repository.child("url").text(repo.getUrl());
         }
 
-        getVersionControlSystem().to(vcs -> {
+        if (vcs != null) {
             pom.child("url").text(vcs.uri());
 
             XML scm = pom.child("scm");
@@ -885,7 +869,7 @@ public class Project {
                 xml.child("email").text(contributor.getEmail());
                 xml.child("url").text(contributor.getUrl());
             }
-        });
+        }
 
         // maven properties
         XML plugins = pom.child("build").child("plugins");

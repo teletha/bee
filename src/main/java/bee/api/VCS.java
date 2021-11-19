@@ -56,7 +56,7 @@ public abstract class VCS {
      * @return
      */
     public String name() {
-        return getClass().getSimpleName();
+        return getClass().getSimpleName().toLowerCase();
     }
 
     /**

@@ -19,21 +19,28 @@ import bee.api.Command;
 import bee.api.VCS;
 import bee.util.Inputs;
 import kiss.I;
-import kiss.Variable;
 import psychopath.File;
 
 public class Ci extends Task {
 
-    @Command("Setup CI/CD")
+    @Command(defaults = true, value = "Setup CI/CD")
     public void setup() {
-        Variable<VCS> vcs = project.getVersionControlSystem();
+        VCS vcs = project.getVersionControlSystem();
+
+        if (vcs == null) {
+            ui.info("No version control system.");
+        } else {
+            if (vcs.name().equals("github")) {
+                require(Ci::github);
+            }
+        }
     }
 
-    @Command(value = "Generate CI/CD configuration files for GitHub.", defaults = true)
+    @Command("Generate CI/CD configuration files for GitHub.")
     public void github() {
         require(Ci::gitignore, Ci::jitpack);
 
-        String mavenCI = """
+        String CICD = """
                 name: Build and Deploy
 
                 on:
@@ -93,7 +100,7 @@ public class Ci extends Task {
 
         String testVersion = Inputs.normalize(project.getJavaTestClassVersion());
 
-        makeFile(".github/workflows/java-ci-with-maven.yml", String.format(mavenCI, testVersion));
+        makeFile(".github/workflows/java-ci-with-maven.yml", String.format(CICD, testVersion));
         makeFile(".github/workflows/release-please.yml", String.format(releasePlease, project.getProduct()));
         makeFile("version.txt", project.getVersion());
         makeFile(project.getProjectDefinition(), line -> {
