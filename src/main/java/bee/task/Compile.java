@@ -71,6 +71,7 @@ public class Compile extends Task {
         });
 
         ui.info("Compiling ", type, " sources to ", output);
+
         JavaCompiler compiler = new JavaCompiler(ui);
         compiler.addClassPath(output);
         compiler.addClassPath(project.getClasses());

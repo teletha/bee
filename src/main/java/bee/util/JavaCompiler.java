@@ -111,6 +111,9 @@ public class JavaCompiler {
     /** The nowarn flag. */
     private boolean nowarn = false;
 
+    /** The debug info flag. */
+    private boolean debug = true;
+
     /** The error listener. */
     private DiagnosticListener<JavaFileObject> error;
 
@@ -360,22 +363,18 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Generate all debugging information, including local variables. By default, only line number
      * and source file information is generated.
-     * </p>
      * 
-     * @param generate
+     * @param debug
      */
-    public void setGenerateDebugInfo(boolean generate) {
-
+    public void setGenerateDebugInfo(boolean debug) {
+        this.debug = debug;
     }
 
     /**
-     * <p>
      * Verbose output. This includes information about each class loaded and each source file
      * compiled.
-     * </p>
      * 
      * @param verbose
      */
@@ -470,6 +469,13 @@ public class JavaCompiler {
 
         if (nowarn) {
             options.add("-Xlint:none");
+        }
+
+        // =============================================
+        // Debug
+        // =============================================
+        if (debug) {
+            options.add("-g");
         }
 
         // =============================================
