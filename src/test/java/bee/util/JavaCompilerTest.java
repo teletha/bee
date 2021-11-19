@@ -32,10 +32,10 @@ public class JavaCompilerTest {
         project.getClasses().create();
         assert project.getClasses().isPresent();
 
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getSourceSet());
-        compiler.setOutput(project.getClasses());
-        compiler.compile();
+        JavaCompiler.with() //
+                .addSourceDirectory(project.getSourceSet())
+                .setOutput(project.getClasses())
+                .compile();
 
         assert source.isPresent();
         assert bytecode.isPresent();
@@ -56,10 +56,10 @@ public class JavaCompilerTest {
         project.getClasses().delete();
         assert project.getClasses().isAbsent();
 
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getSourceSet());
-        compiler.setOutput(project.getClasses());
-        compiler.compile();
+        JavaCompiler.with() //
+                .addSourceDirectory(project.getSourceSet())
+                .setOutput(project.getClasses())
+                .compile();
 
         assert source.isPresent();
         assert bytecode.isPresent();

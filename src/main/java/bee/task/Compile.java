@@ -72,14 +72,14 @@ public class Compile extends Task {
 
         ui.info("Compiling ", type, " sources to ", output);
 
-        JavaCompiler compiler = new JavaCompiler(ui);
-        compiler.addClassPath(output);
-        compiler.addClassPath(project.getClasses());
-        compiler.addClassPath(project.getDependency(Scope.Compile, Scope.Test, Scope.Annotation));
-        compiler.addSourceDirectory(input);
-        compiler.setOutput(output);
-        compiler.setNoWarn();
-        compiler.compile();
+        JavaCompiler.with(ui)
+                .addClassPath(output)
+                .addClassPath(project.getClasses())
+                .addClassPath(project.getDependency(Scope.Compile, Scope.Test, Scope.Annotation))
+                .addSourceDirectory(input)
+                .setOutput(output)
+                .setNoWarn()
+                .compile();
 
         // load project related classes
         BeeLoader.load(project.getClasses());

@@ -268,11 +268,11 @@ public class Bee {
         if (definition.lastModifiedMilli() > project.getProjectDefintionClass().lastModifiedMilli()) {
             ui.info("Compile project sources.");
 
-            JavaCompiler compiler = new JavaCompiler();
-            compiler.addSourceDirectory(definition.parent());
-            compiler.addClassPath(Locator.locate(Bee.class));
-            compiler.setOutput(project.getProjectClasses());
-            compiler.compile();
+            JavaCompiler.with()
+                    .addSourceDirectory(definition.parent())
+                    .addClassPath(Locator.locate(Bee.class))
+                    .setOutput(project.getProjectClasses())
+                    .compile();
         }
     }
 

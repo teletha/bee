@@ -118,74 +118,73 @@ public class JavaCompiler {
     private DiagnosticListener<JavaFileObject> listener;
 
     /**
-     * <p>
-     * Exposable constructor.
-     * </p>
+     * Create new Java compiler.
+     * 
+     * @param ui
+     * @return
      */
-    public JavaCompiler() {
-        this(I.make(UserInterface.class));
+    public static final JavaCompiler with(UserInterface... ui) {
+        return new JavaCompiler(ui == null || ui.length != 1 ? null : ui[0]);
     }
 
     /**
-     * <p>
-     * Exposable constructor.
-     * </p>
+     * Hide constructor.
+     * 
+     * @param ui A mesage listener.
      */
-    public JavaCompiler(UserInterface ui) {
-        this.ui = Objects.requireNonNull(ui);
+    private JavaCompiler(UserInterface ui) {
+        this.ui = ui != null ? ui : I.make(UserInterface.class);
     }
 
     /**
-     * <p>
      * Set the user class path, overriding the user class path in the CLASSPATH environment
      * variable. If threr is no classpath, the user class path consists of the current directory.
-     * </p>
      * 
      * @param path A classpath to add.
      */
-    public void addClassPath(Location path) {
+    public JavaCompiler addClassPath(Location path) {
         if (path != null) {
             classpaths.add(path);
         }
+        return this;
     }
 
     /**
-     * <p>
      * Set the user class path, overriding the user class path in the CLASSPATH environment
      * variable. If threr is no classpath, the user class path consists of the current directory.
-     * </p>
      * 
      * @param library A classpath to add.
      */
-    public void addClassPath(Library library) {
+    public JavaCompiler addClassPath(Library library) {
         if (library != null) {
             classpaths.add(library.getLocalJar());
         }
+        return this;
     }
 
     /**
-     * <p>
      * Set the user class path, overriding the user class path in the CLASSPATH environment
      * variable. If threr is no classpath, the user class path consists of the current directory.
-     * </p>
      * 
      * @param libraries A list of classpaths to add.
      */
-    public void addClassPath(Set<Library> libraries) {
+    public JavaCompiler addClassPath(Set<Library> libraries) {
         if (libraries != null) {
             for (Library library : libraries) {
                 addClassPath(library);
             }
         }
+        return this;
     }
 
     /**
      * Use all current classpath.
      */
-    public void addCurrentClassPath() {
+    public JavaCompiler addCurrentClassPath() {
         for (String path : System.getProperty("java.class.path").split(File.pathSeparator)) {
             addClassPath(Locator.locate(path));
         }
+        return this;
     }
 
     /**
@@ -194,8 +193,10 @@ public class JavaCompiler {
      * @param name A class name.
      * @param code A source code to compile.
      */
-    public void addSource(String name, String code) {
+    public JavaCompiler addSource(String name, String code) {
         codes.add(new Source(name, code));
+
+        return this;
     }
 
     /**
@@ -203,8 +204,10 @@ public class JavaCompiler {
      * 
      * @param directory Your source code directory.
      */
-    public void addSourceDirectory(Directory directory) {
+    public JavaCompiler addSourceDirectory(Directory directory) {
         sources.add(directory, "**.java");
+
+        return this;
     }
 
     /**
@@ -212,10 +215,11 @@ public class JavaCompiler {
      * 
      * @param directories Your source code directory.
      */
-    public void addSourceDirectory(Signal<Directory> directories) {
+    public JavaCompiler addSourceDirectory(Signal<Directory> directories) {
         if (directories != null) {
             sources.add(directories);
         }
+        return this;
     }
 
     /**
@@ -226,11 +230,12 @@ public class JavaCompiler {
      * 
      * @param processor
      */
-    public void addProcessor(Class<? extends Processor> processor) {
+    public JavaCompiler addProcessor(Class<? extends Processor> processor) {
         if (processor != null && !processorClasses.contains(processor.getName())) {
             processorClasses.add(processor.getName());
             processorClassPaths.add(Locator.locate(processor).absolutize());
         }
+        return this;
     }
 
     /**
@@ -244,10 +249,11 @@ public class JavaCompiler {
      * 
      * @param processor
      */
-    public void addProcessor(Processor processor) {
+    public JavaCompiler addProcessor(Processor processor) {
         if (processor != null && !processors.contains(processor)) {
             processors.add(processor);
         }
+        return this;
     }
 
     /**
@@ -259,10 +265,11 @@ public class JavaCompiler {
      * @param key A key name.
      * @param value A passing value.
      */
-    public void addProcessorOption(String key, String value) {
+    public JavaCompiler addProcessorOption(String key, String value) {
         if (key != null && value != null && key.length() != 0 && value.length() != 0) {
             processorOptions.put(key, value);
         }
+        return this;
     }
 
     /**
@@ -271,10 +278,11 @@ public class JavaCompiler {
      * 
      * @param option A key-value pair.
      */
-    public void addProcessorOption(Entry<String, String> option) {
+    public JavaCompiler addProcessorOption(Entry<String, String> option) {
         if (option != null) {
             addProcessorOption(option.getKey(), option.getValue());
         }
+        return this;
     }
 
     /**
@@ -283,12 +291,13 @@ public class JavaCompiler {
      * 
      * @param options A key-value set.
      */
-    public void addProcessorOption(Map<String, String> options) {
+    public JavaCompiler addProcessorOption(Map<String, String> options) {
         if (options != null) {
             for (Entry<String, String> entry : options.entrySet()) {
                 addProcessorOption(entry.getKey(), entry.getValue());
             }
         }
+        return this;
     }
 
     /**
@@ -308,8 +317,10 @@ public class JavaCompiler {
      * 
      * @param directory Your output directory. <code>null</code> value will reset to default.
      */
-    public void setOutput(Path directory) {
+    public JavaCompiler setOutput(Path directory) {
         this.output = Locator.directory(directory);
+
+        return this;
     }
 
     /**
@@ -329,8 +340,10 @@ public class JavaCompiler {
      * 
      * @param directory Your output directory. <code>null</code> value will reset to default.
      */
-    public void setOutput(Directory directory) {
+    public JavaCompiler setOutput(Directory directory) {
         this.output = directory;
+
+        return this;
     }
 
     /**
@@ -342,8 +355,10 @@ public class JavaCompiler {
      * 
      * @param show
      */
-    public void setDeprecation(boolean show) {
+    public JavaCompiler setDeprecation(boolean show) {
         this.deprication = show;
+
+        return this;
     }
 
     /**
@@ -354,12 +369,13 @@ public class JavaCompiler {
      * 
      * @param encoding A charset to set.
      */
-    public void setEncoding(Charset encoding) {
+    public JavaCompiler setEncoding(Charset encoding) {
         if (encoding == null) {
             this.encoding = Platform.Encoding;
         } else {
             this.encoding = encoding;
         }
+        return this;
     }
 
     /**
@@ -368,8 +384,10 @@ public class JavaCompiler {
      * 
      * @param debug
      */
-    public void setGenerateDebugInfo(boolean debug) {
+    public JavaCompiler setGenerateDebugInfo(boolean debug) {
         this.debug = debug;
+
+        return this;
     }
 
     /**
@@ -378,8 +396,10 @@ public class JavaCompiler {
      * 
      * @param verbose
      */
-    public void setVerbose(boolean verbose) {
+    public JavaCompiler setVerbose(boolean verbose) {
         this.verbose = verbose;
+
+        return this;
     }
 
     /**
@@ -389,8 +409,8 @@ public class JavaCompiler {
      * 
      * @param directory
      */
-    public void setExtensionDirectory(Path directory) {
-
+    public JavaCompiler setExtensionDirectory(Path directory) {
+        return this;
     }
 
     /**
@@ -398,8 +418,10 @@ public class JavaCompiler {
      * Disable warning messages. This has the same meaning as -Xlint:none.
      * </p>
      */
-    public void setNoWarn() {
+    public JavaCompiler setNoWarn() {
         this.nowarn = true;
+
+        return this;
     }
 
     /**
@@ -410,7 +432,7 @@ public class JavaCompiler {
      * @param sourceVersion
      * @param targetVersion
      */
-    public void setVersion(SourceVersion sourceVersion, SourceVersion targetVersion) {
+    public JavaCompiler setVersion(SourceVersion sourceVersion, SourceVersion targetVersion) {
         if (sourceVersion != null) {
             this.sourceVersion = sourceVersion;
         }
@@ -418,6 +440,7 @@ public class JavaCompiler {
         if (targetVersion != null) {
             this.targetVersion = targetVersion;
         }
+        return this;
     }
 
     /**
@@ -425,8 +448,10 @@ public class JavaCompiler {
      * 
      * @param listener
      */
-    public void setListener(DiagnosticListener<JavaFileObject> listener) {
+    public JavaCompiler setListener(DiagnosticListener<JavaFileObject> listener) {
         this.listener = listener;
+
+        return this;
     }
 
     /**
@@ -440,8 +465,8 @@ public class JavaCompiler {
      * 
      * @param directory
      */
-    private void setGeneratedSourceDirectory(File directory) {
-
+    private JavaCompiler setGeneratedSourceDirectory(File directory) {
+        return this;
     }
 
     /**

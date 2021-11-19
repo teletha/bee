@@ -31,9 +31,6 @@ import kiss.I;
 import kiss.model.Model;
 import psychopath.File;
 
-/**
- * @version 2018/03/31 21:58:40
- */
 public class AnnotationValidatorTest {
 
     @Test
@@ -165,9 +162,7 @@ public class AnnotationValidatorTest {
     }
 
     /**
-     * <p>
      * Compile project sources.
-     * </p>
      * 
      * @param project
      */
@@ -175,12 +170,12 @@ public class AnnotationValidatorTest {
         Project project = I.make(Project.class);
         TestableProcessor processor = new TestableProcessor(validator);
 
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getSourceSet());
-        compiler.setOutput(project.getClasses());
-        compiler.addProcessor(processor);
-        compiler.addProcessorOption(new ProjectInfo(project));
-        compiler.compile();
+        JavaCompiler.with()
+                .addSourceDirectory(project.getSourceSet())
+                .setOutput(project.getClasses())
+                .addProcessor(processor)
+                .addProcessorOption(new ProjectInfo(project))
+                .compile();
 
         assert processor.isCalled;
     }

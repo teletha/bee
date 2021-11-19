@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Set;
 
@@ -39,11 +39,11 @@ public class AnnotationProcessorTest {
 
         ResourceAwareProcessor.initialized = false;
 
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getRoot());
-        compiler.setOutput(project.getOutput());
-        compiler.addProcessor(ResourceAwareProcessor.class);
-        compiler.compile();
+        JavaCompiler.with()
+                .addSourceDirectory(project.getRoot())
+                .setOutput(project.getOutput())
+                .addProcessor(ResourceAwareProcessor.class)
+                .compile();
 
         assertTrue(ResourceAwareProcessor.initialized);
     }
@@ -58,11 +58,11 @@ public class AnnotationProcessorTest {
         ResourceAwareProcessor processor = new ResourceAwareProcessor();
         processor.instance = false;
 
-        JavaCompiler compiler = new JavaCompiler();
-        compiler.addSourceDirectory(project.getRoot());
-        compiler.setOutput(project.getOutput());
-        compiler.addProcessor(processor);
-        compiler.compile();
+        JavaCompiler.with() //
+                .addSourceDirectory(project.getRoot())
+                .setOutput(project.getOutput())
+                .addProcessor(processor)
+                .compile();
 
         assertTrue(ResourceAwareProcessor.initialized);
         assertTrue(processor.instance);
