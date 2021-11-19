@@ -1,4 +1,4 @@
-name: Continuous Integration
+name: Build and Deploy
 
 on:
   push:
@@ -21,13 +21,15 @@ jobs:
         java-version: 16
         cache: maven
 
-    - name: Build by Maven
-      run: mvn -B package --file pom.xml
-
-    - name: Build site
+    - name: Build artifact and site
       run: |
-        curl -sL -o bee.jar https://github.com/Teletha/bee/blob/master/bee-0.10.0.jar?raw=true
-        java -javaagent:bee.jar -cp bee.jar bee.Bee doc:site
+        if [ -e bee]; then
+          source bee install doc:site
+        else
+          version=$(curl -SsL https://git.io/stable-bee)
+          curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+          java -javaagent:bee.jar -cp bee.jar bee.Bee install doc:site
+        fi
 
     - name: Deploy site
       uses: peaceiris/actions-gh-pages@v3

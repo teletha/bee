@@ -21,8 +21,8 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
+import bee.task.Ci;
 import bee.task.Ide;
-import bee.task.Pom;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import kiss.I;
@@ -201,13 +201,7 @@ public class Bee {
                 current.execute();
             }
 
-            // synchronize pom automatically
-            File pom = Locator.file("pom.xml");
-            long lastModified = project.getProjectDefinition().lastModifiedMilli();
-            if (pom.lastModifiedMilli() < lastModified) {
-                I.make(Pom.class).build();
-                pom.lastModifiedTime(lastModified);
-            }
+            I.make(Ci.class).setup();
         } catch (Throwable e) {
             code = 1;
             if (e == AbortedByUser) {
@@ -305,7 +299,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("ci") : washed));
     }
 
     /**

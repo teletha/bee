@@ -16,18 +16,25 @@ import java.util.StringJoiner;
 
 import bee.Task;
 import bee.api.Command;
+import bee.api.VCS;
 import bee.util.Inputs;
 import kiss.I;
+import kiss.Variable;
 import psychopath.File;
 
 public class Ci extends Task {
+
+    @Command("Setup CI/CD")
+    public void setup() {
+        Variable<VCS> vcs = project.getVersionControlSystem();
+    }
 
     @Command(value = "Generate CI/CD configuration files for GitHub.", defaults = true)
     public void github() {
         require(Ci::gitignore, Ci::jitpack);
 
         String mavenCI = """
-                name: Continuous Integration
+                name: Build and Deploy
 
                 on:
                   push:
@@ -50,14 +57,15 @@ public class Ci extends Task {
                         java-version: %s
                         cache: maven
 
-                    - name: Build by Maven
-                      run: mvn -B package --file pom.xml
-
-                    - name: Build site
+                    - name: Build artifact and site
                       run: |
-                        version=$(curl -SsL https://git.io/stable-bee)
-                        curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                        java -javaagent:bee.jar -cp bee.jar bee.Bee doc:site
+                        if [ -e bee]; then
+                          source bee install doc:site
+                        else
+                          version=$(curl -SsL https://git.io/stable-bee)
+                          curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                          java -javaagent:bee.jar -cp bee.jar bee.Bee install doc:site
+                        fi
 
                     - name: Deploy site
                       uses: peaceiris/actions-gh-pages@v3
@@ -111,9 +119,13 @@ public class Ci extends Task {
                   source ~/.sdkman/bin/sdkman-init.sh
 
                 install: |
-                  version=$(curl -SsL https://git.io/latest-bee)
-                  curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                  java -javaagent:bee.jar -cp bee.jar bee.Bee install
+                  if [ -e bee]; then
+                    source bee install pom
+                  else
+                    version=$(curl -SsL https://git.io/stable-bee)
+                    curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                    java -javaagent:bee.jar -cp bee.jar bee.Bee install pom
+                  fi
                 """, sourceVersion, sourceVersion));
     }
 

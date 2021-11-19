@@ -9,7 +9,7 @@
  */
 package bee.api;
 
-import static bee.util.Inputs.signature;
+import static bee.util.Inputs.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -467,7 +467,7 @@ public class Project {
      * @param targetVersion A Java target version to require.
      */
     protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion) {
-        require(sourceVersion, targetVersion, targetVersion);
+        require(sourceVersion, targetVersion, sourceVersion);
     }
 
     /**
