@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.15.0](https://www.github.com/teletha/bee/compare/v0.14.0...v0.15.0) (2021-11-19)
+
+
+### Features
+
+* Add clean task. ([a8633cb](https://www.github.com/teletha/bee/commit/a8633cb25fc6c5dcd8b00085f198a051057cff65))
+* JavaCompiler generates the debug info by default. ([02d66a5](https://www.github.com/teletha/bee/commit/02d66a522ed3b84c06afbb337839e10268accd9a))
+
+
+### Bug Fixes
+
+* JavaCompiler API is chainable. ([5fdf0a9](https://www.github.com/teletha/bee/commit/5fdf0a9cef384bb008d9cb08d675054fc5f53e73))
+* Optimize message on javac. ([2e02639](https://www.github.com/teletha/bee/commit/2e026394a314819a72c37db0eeefe07ce3abacec))
+
 ## [0.14.0](https://www.github.com/teletha/bee/compare/v0.13.0...v0.14.0) (2021-11-18)
 
 
