@@ -115,7 +115,7 @@ public class JavaCompiler {
     private boolean debug = true;
 
     /** The error listener. */
-    private DiagnosticListener<JavaFileObject> error;
+    private DiagnosticListener<JavaFileObject> listener;
 
     /**
      * <p>
@@ -421,12 +421,12 @@ public class JavaCompiler {
     }
 
     /**
-     * Set compiling error listener.
+     * Set compiler listener.
      * 
      * @param listener
      */
-    public void setErrorListener(DiagnosticListener<JavaFileObject> listener) {
-        this.error = listener;
+    public void setListener(DiagnosticListener<JavaFileObject> listener) {
+        this.listener = listener;
     }
 
     /**
@@ -555,14 +555,14 @@ public class JavaCompiler {
         }
 
         // Error handling
-        if (error == null) {
-            error = new ErrorListener();
+        if (listener == null) {
+            listener = new Listener();
         }
 
         // Invocation
-        Manager manager = new Manager(compiler.getStandardFileManager(error, Locale.getDefault(), StandardCharsets.UTF_8));
+        Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
 
-        CompilationTask task = compiler.getTask(null, manager, error, options, null, sources);
+        CompilationTask task = compiler.getTask(null, manager, listener, options, null, sources);
 
         // =============================================
         // Annotation Processing Tools
@@ -585,25 +585,30 @@ public class JavaCompiler {
     /**
      * 
      */
-    private class ErrorListener implements DiagnosticListener<JavaFileObject> {
+    private class Listener implements DiagnosticListener<JavaFileObject> {
         /**
          * {@inheritDoc}
          */
         @Override
         public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+            String message = diagnostic.getMessage(null);
+
             switch (diagnostic.getKind()) {
             case ERROR:
-                ui.error(diagnostic.toString());
+                ui.error(message);
                 break;
 
             case MANDATORY_WARNING:
             case WARNING:
-                ui.warn(diagnostic.toString());
+                ui.warn(message);
                 break;
 
             case NOTE:
+                ui.info(message);
+                break;
+
             case OTHER:
-                ui.info(diagnostic.toString());
+                ui.trace(message);
                 break;
             }
         }
