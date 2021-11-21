@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -21,6 +20,7 @@ import java.util.StringJoiner;
 
 import org.apache.maven.model.Contributor;
 
+import bee.util.Inputs;
 import kiss.I;
 import kiss.JSON;
 
@@ -69,20 +69,37 @@ public abstract class VCS {
     }
 
     /** The uri for read access. */
-    public abstract String uriForRead();
+    public String uriForRead() {
+        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::uriForRead) + ".");
+    }
 
     /** The uri for write access. */
-    public abstract String uriForWrite();
+    public String uriForWrite() {
+        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::uriForWrite) + ".");
+    }
 
     /** The issue tracker uri. */
-    public abstract String issue();
+    public String issue() {
+        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::issue) + ".");
+    }
+
+    /**
+     * List of commits.
+     * 
+     * @return
+     */
+    public List<Commit> commits() {
+        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::commits) + ".");
+    }
 
     /**
      * List of contributors.
      * 
      * @return
      */
-    public abstract List<Contributor> contributors();
+    public List<Contributor> contributors() {
+        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::contributors) + ".");
+    }
 
     /**
      * Test whether the specified file is exist or not.
@@ -169,14 +186,15 @@ public abstract class VCS {
     /**
      * Repository related model.
      */
-    @SuppressWarnings("serial")
-    public static class Releases extends ArrayList<Release> {
+    public static class Commit {
+
+        public String message;
     }
 
     /**
      * Repository related model.
      */
-    public class Release {
+    public static class Release {
 
         public int id;
 
@@ -256,18 +274,36 @@ public abstract class VCS {
          * {@inheritDoc}
          */
         @Override
+        public List<Commit> commits() {
+            return I.http("https://api.github.com/repos/" + owner + "/" + repo + "/commits", JSON.class)
+                    .flatIterable(o -> o.find("*"))
+                    .map(o -> {
+                        Commit commit = new Commit();
+                        commit.message = o.get("commit").text("message");
+                        return commit;
+                    })
+                    .skipError()
+                    .waitForTerminate()
+                    .toList();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         public List<Contributor> contributors() {
-            return I.http("https://api.github.com/repos/teletha/bee/contributors", GithubContributors.class)
-                    .flatIterable(c -> c)
-                    .flatMap(c -> I.http(c.url, GitHubUser.class))
+            return I.http("https://api.github.com/repos/" + owner + "/" + repo + "/contributors", JSON.class)
+                    .flatIterable(c -> c.find("*"))
+                    .flatMap(c -> I.http(c.text("url"), JSON.class))
                     .map(u -> {
                         Contributor contributor = new Contributor();
-                        contributor.setEmail(u.email);
-                        contributor.setName(u.name);
-                        contributor.setUrl(u.html_url);
+                        contributor.setEmail(u.text("email"));
+                        contributor.setName(u.text("name"));
+                        contributor.setUrl(u.text("html_url"));
                         return contributor;
                     })
                     .skipError()
+                    .waitForTerminate()
                     .toList();
         }
 
@@ -284,33 +320,6 @@ public abstract class VCS {
                 builder.add(String.valueOf(path));
             }
             return builder.toString();
-        }
-
-        /**
-         * Repository related model.
-         */
-        @SuppressWarnings("serial")
-        private static class GithubContributors extends ArrayList<GitHubContributor> {
-        }
-
-        /**
-         * Repository related model.
-         */
-        private static class GitHubContributor {
-
-            public String url;
-        }
-
-        /**
-         * Repository related model.
-         */
-        private static class GitHubUser {
-
-            public String name;
-
-            public String email;
-
-            public String html_url;
         }
     }
 }
