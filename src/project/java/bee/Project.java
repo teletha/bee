@@ -13,8 +13,6 @@ import javax.lang.model.SourceVersion;
 
 public class Project extends bee.api.Project {
 
-    String resolver = "1.7.2";
-
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
         producer("Nameless Production Committee");
@@ -24,12 +22,12 @@ public class Project extends bee.api.Project {
 
         // MAVEN REPOSITORY
         require("org.apache.maven", "maven-resolver-provider");
-        require("org.apache.maven.resolver", "maven-resolver-api", resolver);
-        require("org.apache.maven.resolver", "maven-resolver-spi", resolver);
-        require("org.apache.maven.resolver", "maven-resolver-util", resolver);
-        require("org.apache.maven.resolver", "maven-resolver-impl", resolver);
-        require("org.apache.maven.resolver", "maven-resolver-connector-basic", resolver);
-        require("org.apache.maven.resolver", "maven-resolver-transport-http", resolver);
+        require("org.apache.maven.resolver", "maven-resolver-api");
+        require("org.apache.maven.resolver", "maven-resolver-spi");
+        require("org.apache.maven.resolver", "maven-resolver-util");
+        require("org.apache.maven.resolver", "maven-resolver-impl");
+        require("org.apache.maven.resolver", "maven-resolver-connector-basic");
+        require("org.apache.maven.resolver", "maven-resolver-transport-http");
 
         // LOGGER
         require("org.slf4j", "slf4j-nop");
