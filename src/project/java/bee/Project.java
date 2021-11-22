@@ -44,6 +44,7 @@ public class Project extends bee.api.Project {
         require("org.junit.platform", "junit-platform-launcher").atProvided();
         require("net.bytebuddy", "byte-buddy-agent").atProvided();
         require("com.github.teletha", "javadng").atProvided();
+        require("org.eclipse.jgit", "org.eclipse.jgit").atProvided();
 
         // TEST
         require("com.github.teletha", "antibug", "1.2.0").atTest();

@@ -275,7 +275,7 @@ public abstract class VCS {
          */
         @Override
         public List<Commit> commits() {
-            return I.http("https://api.github.com/repos/" + owner + "/" + repo + "/commits", JSON.class)
+            return I.http("https://api.github.com/repos/" + owner + "/" + repo + "/commits?per_page=100", JSON.class)
                     .flatIterable(o -> o.find("*"))
                     .map(o -> {
                         Commit commit = new Commit();
