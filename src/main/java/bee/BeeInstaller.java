@@ -22,6 +22,9 @@ import psychopath.Locator;
 
 public class BeeInstaller {
 
+    /** The date formatter. */
+    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+
     /**
      * Launch Bee.
      */
@@ -38,15 +41,14 @@ public class BeeInstaller {
     public static final void install(File source) {
         UserInterface ui = I.make(UserInterface.class);
 
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        String fileName = "bee-" + bee.Bee.API.getVersion() + "-" + format.format(source.lastModifiedDateTime()) + ".jar";
+        String fileName = "bee-" + format.format(source.lastModifiedDateTime()) + ".jar";
         psychopath.File dest = BeeHome.file(fileName);
 
         // delete old files
         BeeHome.walkFile("bee-*.jar").to(jar -> {
             try {
                 // delete only bee-yyyyMMddhhmmss.jar
-                if (jar.base().length() > 20) {
+                if (jar.base().length() == 18) {
                     jar.delete();
                 }
             } catch (Exception e) {
