@@ -9,8 +9,6 @@
  */
 package bee.task;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
@@ -19,7 +17,7 @@ import psychopath.File;
 class JarTest {
 
     @Test
-    void jarMainSource() throws IOException {
+    void jarMainSource() {
         BlinkProject project = new BlinkProject();
         project.source("A");
         project.source("test.B");
