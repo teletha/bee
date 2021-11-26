@@ -28,6 +28,7 @@ import bee.util.JavaCompiler;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
+import psychopath.Location;
 import psychopath.Locator;
 
 /**
@@ -37,7 +38,25 @@ import psychopath.Locator;
  */
 public class Bee {
 
-    private static final String version = "0.15.1";
+    private static final String version;
+
+    static {
+        // detect version
+        Location location = Locator.locate(Bee.class);
+        System.out.println(location);
+        if (location.isDirectory()) {
+            version = Locator.file("version.txt").text();
+        } else {
+            String name = location.base();
+            int start = name.indexOf("-") + 1;
+            int end = name.indexOf('-', start);
+            if (end == -1) {
+                version = name.substring(start);
+            } else {
+                version = name.substring(start, end);
+            }
+        }
+    }
 
     /** The api project. */
     public static final Project API = new Project() {

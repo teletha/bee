@@ -11,6 +11,7 @@ package bee.task;
 
 import java.io.ByteArrayInputStream;
 import java.util.jar.Attributes.Name;
+import java.util.jar.Manifest;
 
 import javax.lang.model.SourceVersion;
 
@@ -50,6 +51,11 @@ public class Jar extends Task {
     public static boolean SkipTraceInfo = false;
 
     /**
+     * Customized manifest file.
+     */
+    public static Manifest manifest;
+
+    /**
      * Package main classes and other resources.
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
@@ -57,8 +63,8 @@ public class Jar extends Task {
         require(Compile::source);
 
         pack("main classes", I.signal(project.getClasses()), project.locateJar(), project.getJavaSourceVersion()
-                .compareTo(project.getJavaClassVersion()) > 0 || SkipTraceInfo || SkipDebugInfo);
-        pack("main sources", project.getSourceSet(), project.locateSourceJar(), false);
+                .compareTo(project.getJavaClassVersion()) > 0 || SkipTraceInfo || SkipDebugInfo, manifest);
+        pack("main sources", project.getSourceSet(), project.locateSourceJar(), false, null);
     }
 
     /**
@@ -71,8 +77,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test classes", I.signal(project.getTestClasses()), classes, false);
-        pack("test sources", project.getTestSourceSet(), sources, false);
+        pack("test classes", I.signal(project.getTestClasses()), classes, false, null);
+        pack("test sources", project.getTestSourceSet(), sources, false, null);
     }
 
     /**
@@ -85,8 +91,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project classes", I.signal(project.getProjectClasses()), classes, false);
-        pack("project sources", project.getProjectSourceSet(), sources, false);
+        pack("project classes", I.signal(project.getProjectClasses()), classes, false, null);
+        pack("project sources", project.getProjectSourceSet(), sources, false, null);
     }
 
     /**
@@ -96,7 +102,7 @@ public class Jar extends Task {
     public void document() {
         Directory output = require(Doc::javadoc);
 
-        pack("javadoc", I.signal(output), project.locateJavadocJar(), false);
+        pack("javadoc", I.signal(output), project.locateJavadocJar(), false, null);
     }
 
     /**
@@ -106,7 +112,7 @@ public class Jar extends Task {
      * @param input
      * @param output
      */
-    private void pack(String type, Signal<Directory> input, File output, boolean modifyVersion) {
+    private void pack(String type, Signal<Directory> input, File output, boolean modifyVersion, Manifest manifest) {
         if (modifyVersion) {
             String oldVersion = Inputs.normalize(project.getJavaSourceVersion());
             String newVersion = Inputs.normalize(project.getJavaClassVersion());
