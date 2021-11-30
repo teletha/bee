@@ -41,14 +41,14 @@ public class BeeInstaller {
     public static final void install(File source) {
         UserInterface ui = I.make(UserInterface.class);
 
-        String fileName = "bee-" + format.format(source.lastModifiedDateTime()) + ".jar";
+        String fileName = "bee-" + bee.Bee.Tool.getVersion() + "-" + format.format(source.lastModifiedDateTime()) + ".jar";
         psychopath.File dest = BeeHome.file(fileName);
 
         // delete old files
         BeeHome.walkFile("bee-*.jar").to(jar -> {
             try {
                 // delete only bee-yyyyMMddhhmmss.jar
-                if (jar.base().length() == 18) {
+                if (jar.base().length() > 18) {
                     jar.delete();
                 }
             } catch (Exception e) {
