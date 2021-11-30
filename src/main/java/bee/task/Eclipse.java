@@ -163,12 +163,17 @@ public class Eclipse extends Task implements IDESupport {
         for (Library library : libraries) {
             File jar = library.getLocalJar();
             File source = library.getLocalSourceJar();
+            Boolean moduled = jar.asArchive().walkFile("module-info.class").isEmitted().to().exact();
 
             if (jar.isPresent()) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
 
                 if (source.isPresent()) {
                     child.attr("sourcepath", source);
+                }
+
+                if (moduled) {
+                    child.child("attributes").child("attribute").attr("name", "module").attr("value", true);
                 }
             }
         }

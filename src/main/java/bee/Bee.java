@@ -21,14 +21,12 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.task.Ci;
 import bee.task.Ide;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
-import psychopath.Location;
 import psychopath.Locator;
 
 /**
@@ -38,16 +36,15 @@ import psychopath.Locator;
  */
 public class Bee {
 
-    private static final String version;
-
     static {
+        I.load(Bee.class);
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    
         // detect version
-        Location location = Locator.locate(Bee.class);
-        System.out.println(location);
-        if (location.isDirectory()) {
+        if (Locator.locate("src/main/java/bee/Bee.java").isPresent()) {
             version = Locator.file("version.txt").text();
         } else {
-            String name = location.base();
+            String name = Locator.locate(Bee.class).base();
             int start = name.indexOf("-") + 1;
             int end = name.indexOf('-', start);
             if (end == -1) {
@@ -57,6 +54,8 @@ public class Bee {
             }
         }
     }
+
+    private static final String version;
 
     /** The api project. */
     public static final Project API = new Project() {
@@ -84,11 +83,6 @@ public class Bee {
 
     /** The project build process is aborted by user. */
     public static final RuntimeException AbortedByUser = new RuntimeException();
-
-    static {
-        I.load(Bee.class);
-        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
-    }
 
     /** The user interface. */
     private UserInterface ui;
@@ -219,8 +213,6 @@ public class Bee {
             for (Task current : builds) {
                 current.execute();
             }
-
-            I.make(Ci.class).setup();
         } catch (Throwable e) {
             code = 1;
             if (e == AbortedByUser) {
@@ -318,7 +310,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("release") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install") : washed));
     }
 
     /**

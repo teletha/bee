@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -893,6 +893,14 @@ public class JavaCompiler {
         @Override
         public void close() throws IOException {
             manager.close();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean contains(Location location, FileObject fo) throws IOException {
+            return true;
         }
 
         /**
