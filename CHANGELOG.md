@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.16.0](https://www.github.com/teletha/bee/compare/v0.15.1...v0.16.0) (2021-11-30)
+
+
+### Features
+
+* Support module on eclipse task. ([6c15942](https://www.github.com/teletha/bee/commit/6c159420190d13de302e01101280a06e44c19757))
+
+
+### Bug Fixes
+
+* Change installed jar's name. ([8cd022b](https://www.github.com/teletha/bee/commit/8cd022b8d7c4fb85bbb3ad76e00e1be54535f769))
+* Update maven model. ([0eefb76](https://www.github.com/teletha/bee/commit/0eefb76e4bc11e1903ea64696cb8f4ba5042b643))
+
 ### [0.15.1](https://www.github.com/teletha/bee/compare/v0.15.0...v0.15.1) (2021-11-19)
 
 
