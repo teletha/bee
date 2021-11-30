@@ -302,7 +302,6 @@ public abstract class VCS {
                         contributor.setUrl(u.text("html_url"));
                         return contributor;
                     })
-                    .skipError()
                     .waitForTerminate()
                     .toList();
         }
