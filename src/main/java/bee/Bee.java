@@ -39,10 +39,10 @@ public class Bee {
     static {
         I.load(Bee.class);
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
-    
+
         // detect version
         if (Locator.locate("src/main/java/bee/Bee.java").isPresent()) {
-            version = Locator.file("version.txt").text();
+            version = Locator.file("version.txt").text().trim();
         } else {
             String name = Locator.locate(Bee.class).base();
             int start = name.indexOf("-") + 1;
