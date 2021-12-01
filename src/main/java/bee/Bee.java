@@ -21,6 +21,7 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
+import bee.task.Ci;
 import bee.task.Ide;
 import bee.task.Pom;
 import bee.task.Prototype;
@@ -311,13 +312,13 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("help") : washed));
     }
 
     /**
      * 
      */
-    private static class CommandLineTask extends Task {
+    private class CommandLineTask extends Task {
 
         /** The task list. */
         private final List<String> tasks;
@@ -338,9 +339,14 @@ public class Bee {
                 execute(task);
             }
 
-            // synchronize pom automatically
-            if (Locator.file("pom.xml").lastModifiedMilli() < project.getProjectDefinition().lastModifiedMilli()) {
+            // synchronize maven's pom file automatically
+            if (Locator.file("pom.xml").lastModifiedMilli() < Bee.this.project.getProjectDefinition().lastModifiedMilli()) {
                 require(Pom::build);
+
+                // synchronize configuration files for CI/CD automatically
+                if (Bee.this.project.getVersionControlSystem() != null) {
+                    require(Ci::setup);
+                }
             }
         }
     }

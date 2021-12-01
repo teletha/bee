@@ -20,6 +20,7 @@ import java.util.StringJoiner;
 
 import org.apache.maven.model.Contributor;
 
+import bee.TaskCancel;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.JSON;
@@ -70,17 +71,17 @@ public abstract class VCS {
 
     /** The uri for read access. */
     public String uriForRead() {
-        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::uriForRead) + ".");
+        throw unsupport(Inputs.signature(VCS::uriForRead));
     }
 
     /** The uri for write access. */
     public String uriForWrite() {
-        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::uriForWrite) + ".");
+        throw unsupport(Inputs.signature(VCS::uriForWrite));
     }
 
     /** The issue tracker uri. */
     public String issue() {
-        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::issue) + ".");
+        throw unsupport(Inputs.signature(VCS::issue));
     }
 
     /**
@@ -89,7 +90,7 @@ public abstract class VCS {
      * @return
      */
     public List<Commit> commits() {
-        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::commits) + ".");
+        throw unsupport(Inputs.signature(VCS::commits));
     }
 
     /**
@@ -98,7 +99,7 @@ public abstract class VCS {
      * @return
      */
     public List<Contributor> contributors() {
-        throw new UnsupportedOperationException(getClass() + " don't implement " + Inputs.signature(VCS::contributors) + ".");
+        throw unsupport(Inputs.signature(VCS::contributors));
     }
 
     /**
@@ -107,7 +108,9 @@ public abstract class VCS {
      * @param filePath
      * @return
      */
-    public abstract boolean exist(String filePath);
+    public boolean exist(String filePath) {
+        throw unsupport(Inputs.signature(VCS::exist));
+    }
 
     /**
      * Test whether the specified file is exist or not.
@@ -115,7 +118,9 @@ public abstract class VCS {
      * @param filePath
      * @return
      */
-    public abstract Content file(String filePath);
+    public Content file(String filePath) {
+        throw unsupport(Inputs.signature(VCS::file));
+    }
 
     /**
      * {@inheritDoc}
@@ -123,6 +128,16 @@ public abstract class VCS {
     @Override
     public final String toString() {
         return uri();
+    }
+
+    /**
+     * Throw implementation error.
+     * 
+     * @param signature
+     * @return
+     */
+    RuntimeException unsupport(String signature) {
+        return new UnsupportedOperationException("Class [" + getClass().getName() + "] don't implement " + signature + ".");
     }
 
     /**
@@ -153,7 +168,7 @@ public abstract class VCS {
             return new GitHub(uri);
 
         default:
-            return null;
+            return new Unknown(uri);
         }
     }
 
@@ -319,6 +334,32 @@ public abstract class VCS {
                 builder.add(String.valueOf(path));
             }
             return builder.toString();
+        }
+    }
+
+    private static class Unknown extends VCS {
+
+        /**
+         * @param uri
+         */
+        public Unknown(URI uri) {
+            super(uri);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String name() {
+            return uri.getHost();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        RuntimeException unsupport(String signature) {
+            return new TaskCancel("The code repository [" + name() + "] is not supported.");
         }
     }
 }

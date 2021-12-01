@@ -457,24 +457,11 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * Compute human-readable task name.
-     * 
-     * @param taskClass A target task.
-     * @return A task name.
-     */
-    private static final String computeTaskName(Class taskClass) {
-        if (taskClass.isSynthetic()) {
-            return computeTaskName(taskClass.getSuperclass());
-        }
-        return Inputs.hyphenize(taskClass.getSimpleName());
-    }
-
-    /**
      * Execute literal expression task.
      * 
      * @param input User task input.
      */
-    static final void execute(String input) {
+    final void execute(String input) {
         // parse command
         if (input == null) {
             return;
@@ -523,12 +510,27 @@ public abstract class Task implements Extensible {
         // execute task
         try {
             command.invoke(task);
+        } catch (TaskCancel e) {
+            ui.warn("The task [", taskName, ":", commandName, "] was canceled beacuase ", e.getMessage());
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
             }
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * Compute human-readable task name.
+     * 
+     * @param taskClass A target task.
+     * @return A task name.
+     */
+    private static final String computeTaskName(Class taskClass) {
+        if (taskClass.isSynthetic()) {
+            return computeTaskName(taskClass.getSuperclass());
+        }
+        return Inputs.hyphenize(taskClass.getSimpleName());
     }
 
     /**

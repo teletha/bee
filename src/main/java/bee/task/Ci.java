@@ -30,6 +30,8 @@ public class Ci extends Task {
         if (vcs == null) {
             ui.info("No version control system.");
         } else {
+            ui.info("Detect version constol system.");
+
             if (vcs.name().equals("github")) {
                 require(Ci::github);
             }
@@ -102,6 +104,7 @@ public class Ci extends Task {
 
         makeFile(".github/workflows/java-ci-with-maven.yml", String.format(CICD, testVersion));
         makeFile(".github/workflows/release-please.yml", String.format(releasePlease, project.getProduct()));
+
         makeFile("version.txt", project.getVersion());
         makeFile(project.getProjectDefinition(), line -> {
             if (line.trim().startsWith("product(")) {

@@ -492,18 +492,7 @@
 		<system>github</system>
 		<url>https://github.com/teletha/bee/issues</url>
 	</issueManagement>
-	<developers>
-		<developer>
-			<name>teletha</name>
-			<email/>
-			<url>https://github.com/teletha</url>
-		</developer>
-		<developer>
-			<name/>
-			<email/>
-			<url>https://github.com/apps/github-actions</url>
-		</developer>
-	</developers>
+	<developers/>
 	<build>
 		<plugins>
 			<plugin>
