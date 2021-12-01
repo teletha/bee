@@ -55,6 +55,9 @@ public final class Platform {
     /** The platform type. */
     private static boolean isJitPack = System.getenv("JITPACK") != null;
 
+    /** The platform type. */
+    private static boolean isEclipse;
+
     // initialization
     static {
         Directory bin = null;
@@ -68,8 +71,8 @@ public final class Platform {
             if (entry.getKey().equalsIgnoreCase("path")) {
                 // Search classpath for Bee.
                 for (String value : entry.getValue().split(java.io.File.pathSeparator)) {
-                    String normalized = value.toLowerCase();
-                    if (normalized.contains("eclipse") && normalized.contains("plugins")) {
+                    if (value.toLowerCase().contains("plugins/org.eclipse.justj.openjdk")) {
+                        isEclipse = true;
                         continue;
                     }
 
@@ -179,5 +182,14 @@ public final class Platform {
      */
     public static boolean isJitPack() {
         return isJitPack;
+    }
+
+    /**
+     * Check whether the current platform is Eclipse or not.
+     * 
+     * @return Result
+     */
+    public static boolean isEclipse() {
+        return isEclipse;
     }
 }

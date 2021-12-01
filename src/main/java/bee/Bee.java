@@ -22,6 +22,7 @@ import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.task.Ide;
+import bee.task.Pom;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import kiss.I;
@@ -82,7 +83,7 @@ public class Bee {
     };
 
     /** The project build process is aborted by user. */
-    public static final RuntimeException AbortedByUser = new RuntimeException();
+    public static final RuntimeException Abort = new RuntimeException();
 
     /** The user interface. */
     private UserInterface ui;
@@ -215,7 +216,7 @@ public class Bee {
             }
         } catch (Throwable e) {
             code = 1;
-            if (e == AbortedByUser) {
+            if (e == Abort) {
                 result = "CANCEL";
             } else {
                 result = "FAILURE";
@@ -242,7 +243,7 @@ public class Bee {
 
             if (!ui.confirm("Create new project?")) {
                 ui.info("See you later!");
-                throw AbortedByUser;
+                throw Abort;
             }
 
             ui.title("Create New Project");
@@ -335,6 +336,11 @@ public class Bee {
         public void execute() {
             for (String task : tasks) {
                 execute(task);
+            }
+
+            // synchronize pom automatically
+            if (Locator.file("pom.xml").lastModifiedMilli() < project.getProjectDefinition().lastModifiedMilli()) {
+                require(Pom::build);
             }
         }
     }

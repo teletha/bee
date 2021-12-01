@@ -330,7 +330,7 @@ public abstract class UserInterface {
                     Files.createDirectories(answer.getParent());
                     Files.createFile(answer);
                 } else {
-                    throw bee.Bee.AbortedByUser;
+                    throw bee.Bee.Abort;
                 }
             } else if (!Files.isRegularFile(answer)) {
                 error("Path [", answer, "] is not file.");
@@ -378,7 +378,7 @@ public abstract class UserInterface {
                 if (confirm("Directory [" + answer + "] doesn't exist. Create it?")) {
                     Files.createDirectories(answer);
                 } else {
-                    throw bee.Bee.AbortedByUser;
+                    throw bee.Bee.Abort;
                 }
             } else if (!Files.isDirectory(answer)) {
                 error("Path [", answer, "] is not directory.");
@@ -564,7 +564,7 @@ public abstract class UserInterface {
 
         private static final boolean disableANSI = Platform.isJitPack();
 
-        private static final boolean disableTrace = Platform.isJitPack() || Platform.isGithub();
+        private static final boolean disableTrace = Platform.isJitPack() || Platform.isGithub() || Platform.isEclipse();
 
         /** The original standard output. */
         private final PrintStream standardOutput;
