@@ -81,29 +81,17 @@ public class Ci extends Task {
                       with:
                         github_token: ${{ secrets.GITHUB_TOKEN }}
                         publish_dir: target/site
-                """;
 
-        String releasePlease = """
-                name: Release Please
-
-                on:
-                  push:
-                    branches: [master, main]
-
-                jobs:
-                  release-please:
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: GoogleCloudPlatform/release-please-action@v2
-                        with:
-                          release-type: simple
-                          package-name: %s
+                    - name: Request Releasing
+                      uses: GoogleCloudPlatform/release-please-action@v2
+                      with:
+                        release-type: simple
+                        package-name: %s
                 """;
 
         String testVersion = Inputs.normalize(project.getJavaTestClassVersion());
 
-        makeFile(".github/workflows/java-ci-with-maven.yml", String.format(CICD, testVersion));
-        makeFile(".github/workflows/release-please.yml", String.format(releasePlease, project.getProduct()));
+        makeFile(".github/workflows/cicd.yml", String.format(CICD, testVersion, project.getProduct()));
 
         makeFile("version.txt", project.getVersion());
         makeFile(project.getProjectDefinition(), line -> {
