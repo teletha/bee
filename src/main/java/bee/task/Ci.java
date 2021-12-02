@@ -30,7 +30,7 @@ public class Ci extends Task {
         if (vcs == null) {
             ui.info("No version control system.");
         } else {
-            ui.info("Detect version constol system.");
+            ui.info("Detect version control system.");
 
             if (vcs.name().equals("github")) {
                 require(Ci::github);
@@ -42,7 +42,7 @@ public class Ci extends Task {
     public void github() {
         require(Ci::gitignore, Ci::jitpack);
 
-        String CICD = """
+        String build = """
                 name: Build and Deploy
 
                 on:
@@ -91,16 +91,12 @@ public class Ci extends Task {
 
         String testVersion = Inputs.normalize(project.getJavaTestClassVersion());
 
-        makeFile(".github/workflows/cicd.yml", String.format(CICD, testVersion, project.getProduct()));
-
+        makeFile(".github/workflows/build.yml", String.format(build, testVersion, project.getProduct()));
         makeFile("version.txt", project.getVersion());
-        makeFile(project.getProjectDefinition(), line -> {
-            if (line.trim().startsWith("product(")) {
-                return line.replaceAll(",[^,]+\\);", ", ref(\"version.txt\"));");
-            } else {
-                return line;
-            }
-        });
+
+        // delete old settings
+        deleteFile(".github/workflows/java-ci-with-maven.yml");
+        deleteFile(".github/workflows/release-please.yml");
     }
 
     @Command("Generate CI/CD configuration files for JitPack.")

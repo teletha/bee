@@ -576,6 +576,9 @@ public abstract class UserInterface {
         /** The task state. */
         private boolean first = false;
 
+        /** The task state. */
+        private boolean firstCommand = true;
+
         /** The command queue. */
         private Deque<String> commands = new ArrayDeque();
 
@@ -611,7 +614,6 @@ public abstract class UserInterface {
                 showCommandName();
             }
             first = true;
-            standardOutput.print(Platform.EOL);
         }
 
         /**
@@ -702,6 +704,9 @@ public abstract class UserInterface {
             String command = commands.pollLast();
 
             if (command != null) {
+                if (!firstCommand) {
+                    standardOutput.print(Platform.EOL);
+                }
                 standardOutput.println(stain("◆ " + command.replace(":", " : ") + " ◆", "75"));
             }
         }

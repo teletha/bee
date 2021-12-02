@@ -36,3 +36,9 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: target/site
+
+    - name: Request Releasing
+      uses: GoogleCloudPlatform/release-please-action@v2
+      with:
+        release-type: simple
+        package-name: bee
