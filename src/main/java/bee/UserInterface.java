@@ -577,7 +577,7 @@ public abstract class UserInterface {
         private boolean first = false;
 
         /** The task state. */
-        private boolean firstCommand = true;
+        private boolean blank = true;
 
         /** The command queue. */
         private Deque<String> commands = new ArrayDeque();
@@ -623,10 +623,11 @@ public abstract class UserInterface {
         protected synchronized void write(int type, String message) {
             switch (type) {
             case TITLE:
+                blank = false;
                 write("------------------------------------------------------------", true);
                 write(stain(message, "Build SUCCESS", "76", "Build FAILURE", "1"), true);
                 write("------------------------------------------------------------", true);
-                break;
+                return;
 
             case TRACE:
             case DEBUG:
@@ -647,6 +648,8 @@ public abstract class UserInterface {
                 write(message, true);
                 break;
             }
+
+            blank = true;
         }
 
         /**
@@ -704,7 +707,7 @@ public abstract class UserInterface {
             String command = commands.pollLast();
 
             if (command != null) {
-                if (!firstCommand) {
+                if (blank) {
                     standardOutput.print(Platform.EOL);
                 }
                 standardOutput.println(stain("◆ " + command.replace(":", " : ") + " ◆", "75"));
