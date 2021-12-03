@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.17.0](https://www.github.com/teletha/bee/compare/v0.16.0...v0.17.0) (2021-12-03)
+
+
+### Features
+
+* Disabe trace message in eclipse platform. ([dfe8474](https://www.github.com/teletha/bee/commit/dfe84742485c76a6c78061480562466edb6ed7af))
+* Merge CI/CD action. ([bce1ab7](https://www.github.com/teletha/bee/commit/bce1ab779cbf1dac33cd79277ab69d4b08a36c67))
+* Throwing TaskCancel will skip the processing task. ([d0fd7bb](https://www.github.com/teletha/bee/commit/d0fd7bb5e8b471d5c0b1d2e9a48bbac081ce4ac2))
+
+
+### Bug Fixes
+
+* Format CUI message. ([e099830](https://www.github.com/teletha/bee/commit/e099830b3dc948394b6592aba5328243777be5a6))
+
 ## [0.16.0](https://www.github.com/teletha/bee/compare/v0.15.1...v0.16.0) (2021-11-30)
 
 
