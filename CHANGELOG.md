@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.17.1](https://www.github.com/teletha/bee/compare/v0.17.0...v0.17.1) (2021-12-03)
+
+
+### Bug Fixes
+
+* Add version sufix to donwloaded jar. ([90d17d0](https://www.github.com/teletha/bee/commit/90d17d081a86f21255845c70181dc8ffe3ef3f37))
+* change build order ([c1ba4bc](https://www.github.com/teletha/bee/commit/c1ba4bca76f4423cf89089176e7b1c15c8823169))
+
 ## [0.17.0](https://www.github.com/teletha/bee/compare/v0.16.0...v0.17.0) (2021-12-03)
 
 
