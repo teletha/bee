@@ -21,7 +21,7 @@ public class Install extends Task {
     @Command(defaults = true, value = "Install project into the local repository.")
     public void project() {
         require(Test::test);
-        require(Jar::source, Jar::document);
+        require(Jar::document, Jar::source);
 
         Repository repository = I.make(Repository.class);
         repository.install(project);
