@@ -93,7 +93,7 @@ public class Env extends Task {
                 """, context);
 
         makeFile("bee.bat", bat);
-        makeFile("bee.sh", sh);
+        makeFile("bee", sh);
 
         ui.info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
         ui.info("To clear this setting, execute the command [bee env:clear].");

@@ -68,7 +68,7 @@ public class Ci extends Task {
 
                     - name: Build artifact and site
                       run: |
-                        if [ -e bee]; then
+                        if [ -e bee ]; then
                           source bee install doc:site
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
@@ -113,7 +113,7 @@ public class Ci extends Task {
                   source ~/.sdkman/bin/sdkman-init.sh
 
                 install: |
-                  if [ -e bee]; then
+                  if [ -e bee ]; then
                     source bee install pom
                   else
                     version=$(curl -SsL https://git.io/stable-bee)
