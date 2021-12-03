@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.17.2](https://www.github.com/teletha/bee/compare/v0.17.1...v0.17.2) (2021-12-03)
+
+
+### Bug Fixes
+
+* Invalid shell script. ([75765a6](https://www.github.com/teletha/bee/commit/75765a62cf3355853b82e20e44ed09f5f670e695))
+
 ### [0.17.1](https://www.github.com/teletha/bee/compare/v0.17.0...v0.17.1) (2021-12-03)
 
 
