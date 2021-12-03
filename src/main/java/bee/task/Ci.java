@@ -72,8 +72,8 @@ public class Ci extends Task {
                           source bee install doc:site
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
-                          curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                          java -javaagent:bee.jar -cp bee.jar bee.Bee install doc:site
+                          curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                          java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install doc:site
                         fi
 
                     - name: Deploy site
@@ -117,8 +117,8 @@ public class Ci extends Task {
                     source bee install pom
                   else
                     version=$(curl -SsL https://git.io/stable-bee)
-                    curl -SsL -o bee.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                    java -javaagent:bee.jar -cp bee.jar bee.Bee install pom
+                    curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                    java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install pom
                   fi
                 """, sourceVersion, sourceVersion));
     }

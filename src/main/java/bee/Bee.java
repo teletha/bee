@@ -42,6 +42,8 @@ public class Bee {
         I.load(Bee.class);
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
 
+        Locator.temporaryDirectory().create();
+
         // detect version
         if (Locator.locate("src/main/java/bee/Bee.java").isPresent()) {
             version = Locator.file("version.txt").text().trim();
