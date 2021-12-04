@@ -7,7 +7,7 @@ before_install: |
   source ~/.sdkman/bin/sdkman-init.sh
 
 install: |
-  if [ -e bee ]; then
+  if [ -e "bee" ]; then
     source bee install pom
   else
     version=$(curl -SsL https://git.io/stable-bee)
