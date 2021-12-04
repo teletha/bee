@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.17.3](https://www.github.com/teletha/bee/compare/v0.17.2...v0.17.3) (2021-12-04)
+
+
+### Bug Fixes
+
+* build.yml ([4d04313](https://www.github.com/teletha/bee/commit/4d04313c24b8a15b28bcfa1100c805b511e78c1e))
+* update psychopath ([c3ade7f](https://www.github.com/teletha/bee/commit/c3ade7fe279a6fa12d0b073755e26e7a60d17b13))
+
 ### [0.17.2](https://www.github.com/teletha/bee/compare/v0.17.1...v0.17.2) (2021-12-03)
 
 
