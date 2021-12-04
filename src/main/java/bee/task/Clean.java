@@ -11,13 +11,14 @@ package bee.task;
 
 import bee.Task;
 import bee.api.Command;
+import bee.util.Inputs;
 
 public class Clean extends Task {
 
     @Command("Clean output directory.")
     public void all() {
-        project.getOutput().delete("!*.jar");
-
-        ui.info("Deleted ", project.getOutput());
+        project.getOutput()
+                .trackDeleting("!*.jar")
+                .to(Inputs.observerFor(ui, project.getOutput(), "Deleting output directory", "Deleted output directory"));
     }
 }

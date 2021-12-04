@@ -30,12 +30,13 @@ import kiss.Observer;
 import kiss.WiseTriConsumer;
 import kiss.WiseTriFunction;
 import psychopath.File;
+import psychopath.Location;
 import psychopath.Locator;
 import psychopath.Progress;
 
 public class Inputs {
 
-    public static Observer<Progress> observerFor(UserInterface ui, File output, String progressMessage, String completeMessage) {
+    public static Observer<Progress> observerFor(UserInterface ui, Location target, String progressMessage, String completeMessage) {
         return new Observer<>() {
 
             /**
@@ -59,7 +60,13 @@ public class Inputs {
              */
             @Override
             public void complete() {
-                ui.info(completeMessage, ": ", output, " (", formatAsSize(output.size()), ")");
+                if (target == null) {
+                    ui.info(completeMessage);
+                } else if (target.isDirectory()) {
+                    ui.info(completeMessage, ": ", target);
+                } else {
+                    ui.info(completeMessage, ": ", target, " (", formatAsSize(target.size()), ")");
+                }
             }
         };
     }
