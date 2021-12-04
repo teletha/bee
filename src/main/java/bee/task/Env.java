@@ -28,12 +28,12 @@ public class Env extends Task {
 
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
     public void stable() {
-        build("0.13.0");
+        build(I.http("https://git.io/stable-bee", String.class).waitForTerminate().to().v);
     }
 
     @Command("Build local bee environment using the latest version.")
     public void latest() {
-        build(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct() + "/latestOk").text("version"));
+        build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
     }
 
     @Command("Build local bee environment using the selected version.")
@@ -58,7 +58,7 @@ public class Env extends Task {
     @Command("Clean local bee environment.")
     public void clean() {
         deleteFile("bee.bat");
-        deleteFile("bee.sh");
+        deleteFile("bee");
 
         ui.info("Remove user specified local bee environment.");
         ui.info("From now on, you will use Bee installed at [", Platform.Bee, "].");
