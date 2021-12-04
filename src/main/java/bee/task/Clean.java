@@ -16,7 +16,7 @@ public class Clean extends Task {
 
     @Command("Clean output directory.")
     public void all() {
-        project.getOutput().delete();
+        project.getOutput().delete("!*.jar");
 
         ui.info("Deleted ", project.getOutput());
     }
