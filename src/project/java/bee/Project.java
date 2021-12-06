@@ -17,6 +17,7 @@ public class Project extends bee.api.Project {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
         producer("Nameless Production Committee");
         describe("Task based project builder for Java");
+        // license(MIT);
 
         require(SourceVersion.RELEASE_16, SourceVersion.RELEASE_11, SourceVersion.RELEASE_16);
 

@@ -9,13 +9,16 @@
  */
 package bee.task;
 
-import static bee.Platform.*;
+import static bee.Platform.EOL;
 
 import java.util.List;
 import java.util.StringJoiner;
 
+import bee.Fail;
 import bee.Task;
 import bee.api.Command;
+import bee.api.License;
+import bee.api.Project;
 import bee.api.VCS;
 import bee.util.Inputs;
 import kiss.I;
@@ -40,7 +43,7 @@ public class Ci extends Task {
 
     @Command("Generate CI/CD configuration files for GitHub.")
     public void github() {
-        require(Ci::gitignore, Ci::jitpack);
+        require(Ci::license, Ci::gitignore, Ci::jitpack);
 
         String build = """
                 name: Build and Deploy
@@ -123,7 +126,24 @@ public class Ci extends Task {
                 """, sourceVersion, sourceVersion));
     }
 
-    @Command(value = "Generate .gitignore file.")
+    @Command("Generate license file.")
+    public void license() {
+        License license = project.getLicense();
+
+        if (license == null) {
+            throw new Fail("There is no license specified for this project.")
+                    .solve("Declare " + Inputs.signature(Project::getLicense) + " in the project definition file.");
+        }
+
+        if (checkFile("LICENSE.txt") || checkFile("LICENSE.md") || checkFile("LICENSE.rst")) {
+            ui.info("The license file already exists.");
+            return;
+        }
+
+        makeFile("LICENSE.txt", license.text());
+    }
+
+    @Command("Generate .gitignore file.")
     public void gitignore() {
         File ignore = project.getRoot().file(".gitignore");
 
@@ -137,17 +157,11 @@ public class Ci extends Task {
      * @return An updated lines.
      */
     List<String> update(List<String> lines) {
-        StringJoiner uri = new StringJoiner(",", "https://www.gitignore.io/api/", "").add("Java").add("Maven");
-
-        // OS
-        if (isWindows()) uri.add("Windows");
-        if (isLinux()) uri.add("Linux");
+        StringJoiner uri = new StringJoiner(",", "https://www.gitignore.io/api/", "").add("Java").add("Maven").add("Windows").add("Linux");
 
         // IDE
         for (IDESupport ide : I.find(IDESupport.class)) {
-            if (ide.exist(project)) {
-                uri.add(ide.toString());
-            }
+            uri.add(ide.toString());
         }
 
         return I.http(uri.toString(), String.class)

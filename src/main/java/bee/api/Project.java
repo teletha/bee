@@ -268,9 +268,6 @@ public class Project {
      * @param license
      */
     protected final void license(License license) {
-        if (license == null) {
-            license = License.MIT;
-        }
         this.license = license;
     }
 
