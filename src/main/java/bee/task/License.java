@@ -9,7 +9,6 @@
  */
 package bee.task;
 
-import java.io.IOException;
 import java.util.List;
 
 import bee.Task;
@@ -22,28 +21,21 @@ import psychopath.Directory;
 public class License extends Task {
 
     /**
-     * <p>
      * Update license text.
-     * </p>
-     * 
-     * @throws IOException
      */
     @Command("Write license header comment.")
-    public void update() throws IOException {
+    public void update() {
         update(project.getSourceSet());
         update(project.getTestSourceSet());
         update(project.getProjectSourceSet());
     }
 
     /**
-     * <p>
      * Update license text.
-     * </p>
      * 
      * @param set
-     * @throws IOException
      */
-    private void update(Signal<Directory> set) throws IOException {
+    private void update(Signal<Directory> set) {
         set.flatMap(dir -> dir.walkFile()).to(file -> {
             FileType type = FileType.of(file);
 
