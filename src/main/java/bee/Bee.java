@@ -312,7 +312,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("ci") : washed));
     }
 
     /**
@@ -336,7 +336,7 @@ public class Bee {
         @Override
         public void execute() {
             for (String task : tasks) {
-                execute(task);
+                execute(task, ui);
             }
 
             // synchronize maven's pom file automatically

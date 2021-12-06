@@ -51,7 +51,6 @@ import kiss.XML;
 import kiss.model.Model;
 import psychopath.Directory;
 import psychopath.File;
-import psychopath.Locator;
 
 @Managed(value = TaskLifestyle.class)
 public abstract class Task implements Extensible {
@@ -96,18 +95,7 @@ public abstract class Task implements Extensible {
      * @param task A task to execute.
      */
     protected final <T extends Task, R> R require(ValuedTaskRef<T, R> task) {
-        return I.signal(task).joinAll(t -> {
-            ParallelInterface p = new ParallelInterface(null);
-            p.start();
-
-            T instance = (T) I.make(info(computeTaskName(clazz(t))).task);
-            instance.ui = p;
-
-            R result = task.apply(instance);
-            p.finish();
-
-            return result;
-        }).to().v;
+        return (R) requireParallel(new TaskRef[] {task});
     }
 
     /**
@@ -115,8 +103,8 @@ public abstract class Task implements Extensible {
      * 
      * @param task A task to execute.
      */
-    protected final <T extends Task> T require(TaskRef<T> task) {
-        return (T) requireParallel(new TaskRef[] {task});
+    protected final <T extends Task> void require(TaskRef<T> task) {
+        requireParallel(new TaskRef[] {task});
     }
 
     /**
@@ -170,7 +158,7 @@ public abstract class Task implements Extensible {
      * 
      * @param tasks
      */
-    private Task requireParallel(TaskRef<Task>[] tasks) {
+    private Object requireParallel(TaskRef<Task>[] tasks) {
         ConcurrentLinkedDeque<ParallelInterface> parallels = new ConcurrentLinkedDeque();
         ParallelInterface parallel = null;
 
@@ -180,14 +168,13 @@ public abstract class Task implements Extensible {
         parallels.peekFirst().start();
 
         return I.signal(tasks).joinAll(task -> {
-            ParallelInterface p = parallels.pollFirst();
+            Method m = task.getClass().getDeclaredMethod("writeReplace");
+            m.setAccessible(true);
 
-            Task instance = I.make(info(computeTaskName(clazz(task))).task);
-            instance.ui = p;
-            task.accept(instance);
-            p.finish();
+            SerializedLambda s = (SerializedLambda) m.invoke(task);
+            Method method = I.type(s.getImplClass().replaceAll("/", ".")).getMethod(s.getImplMethodName());
 
-            return instance;
+            return execute(computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase(), parallels.pollFirst());
         }).to().v;
     }
 
@@ -389,7 +376,7 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(String path, String content) {
-        return makeFile(Locator.file(path), content);
+        return makeFile(project.getRoot().file(path), content);
     }
 
     /**
@@ -409,7 +396,7 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(String path, Iterable<String> content) {
-        return makeFile(Locator.file(path), content);
+        return makeFile(project.getRoot().file(path), content);
     }
 
     /**
@@ -441,13 +428,13 @@ public abstract class Task implements Extensible {
      * @param path A file path to delete.
      */
     protected final void deleteFile(String path) {
-        deleteFile(Locator.file(path));
+        deleteFile(project.getRoot().file(path));
     }
 
     /**
      * Utility method to delete file.
      * 
-     * @param file A file path to delete.
+     * @param file A file to delete.
      */
     protected final void deleteFile(File file) {
         if (file != null && file.isPresent()) {
@@ -457,21 +444,40 @@ public abstract class Task implements Extensible {
     }
 
     /**
+     * Utility method to check file.
+     * 
+     * @param path A file path to check.
+     */
+    protected final boolean checkFile(String path) {
+        return checkFile(project.getRoot().file(path));
+    }
+
+    /**
+     * Utility method to check file.
+     * 
+     * @param file A file to check.
+     */
+    protected final boolean checkFile(File file) {
+        return file != null && file.isPresent();
+    }
+
+    /**
      * Execute literal expression task.
      * 
-     * @param input User task input.
+     * @param input User task for input.
+     * @param ui User interface for output.
      */
-    final void execute(String input) {
+    static final Object execute(String input, UserInterface ui) {
         // parse command
         if (input == null) {
-            return;
+            return null;
         }
 
         // remove head and tail white space
         input = input.trim();
 
         if (input.length() == 0) {
-            return;
+            return null;
         }
 
         // analyze task name
@@ -506,17 +512,23 @@ public abstract class Task implements Extensible {
 
         // create task and initialize
         Task task = I.make(info.task);
+        task.ui = ui;
 
         // execute task
         try {
-            command.invoke(task);
+            return command.invoke(task);
         } catch (TaskCancel e) {
             ui.warn("The task [", taskName, ":", commandName, "] was canceled beacuase ", e.getMessage());
+            return null;
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
             }
             throw I.quiet(e);
+        } finally {
+            if (ui instanceof ParallelInterface) {
+                ((ParallelInterface) ui).finish();
+            }
         }
     }
 
@@ -736,23 +748,11 @@ public abstract class Task implements Extensible {
     /**
      * 
      */
-    public interface ValuedTaskRef<T, R> extends Function<T, R>, Serializable {
-    }
+    public interface ValuedTaskRef<T, R> extends Function<T, R>, Serializable, TaskRef<T> {
 
-    /**
-     * Get the declared class of the specified lambda.
-     * 
-     * @param lambda
-     * @return
-     */
-    private static Class clazz(Serializable lambda) {
-        try {
-            Method m = lambda.getClass().getDeclaredMethod("writeReplace");
-            m.setAccessible(true);
-            SerializedLambda s = (SerializedLambda) m.invoke(lambda);
-            return I.type(s.getImplClass().replaceAll("/", "."));
-        } catch (Exception e) {
-            throw I.quiet(e);
+        @Override
+        default void accept(T task) {
+            apply(task);
         }
     }
 }
