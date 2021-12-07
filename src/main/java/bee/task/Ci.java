@@ -14,11 +14,9 @@ import static bee.Platform.EOL;
 import java.util.List;
 import java.util.StringJoiner;
 
-import bee.Fail;
 import bee.Task;
 import bee.api.Command;
 import bee.api.License;
-import bee.api.Project;
 import bee.api.VCS;
 import bee.util.Inputs;
 import kiss.I;
@@ -43,7 +41,7 @@ public class Ci extends Task {
 
     @Command("Generate CI/CD configuration files for GitHub.")
     public void github() {
-        require(Ci::license, Ci::gitignore, Ci::jitpack);
+        require(Ci::gitignore, Ci::jitpack);
 
         String build = """
                 name: Build and Deploy
@@ -96,10 +94,38 @@ public class Ci extends Task {
 
         makeFile(".github/workflows/build.yml", String.format(build, testVersion, project.getProduct()));
         makeFile("version.txt", project.getVersion());
+        makeLicenseFile();
+        makeReadMeFile();
 
         // delete old settings
         deleteFile(".github/workflows/java-ci-with-maven.yml");
         deleteFile(".github/workflows/release-please.yml");
+    }
+
+    /**
+     * Create license file if needed
+     */
+    private void makeLicenseFile() {
+        License license = project.getLicense();
+
+        if (license == null) {
+            return; // not specified
+        }
+
+        if (checkFile("LICENSE.txt") || checkFile("LICENSE.md") || checkFile("LICENSE.rst")) {
+            return; // already exists
+        }
+
+        makeFile("LICENSE.txt", license.text());
+    }
+
+    /**
+     * Create README file if needed
+     */
+    private void makeReadMeFile() {
+        if (checkFile("README.md")) {
+            return; // already exists
+        }
     }
 
     @Command("Generate CI/CD configuration files for JitPack.")
@@ -124,23 +150,6 @@ public class Ci extends Task {
                     java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install pom
                   fi
                 """, sourceVersion, sourceVersion));
-    }
-
-    @Command("Generate license file.")
-    public void license() {
-        License license = project.getLicense();
-
-        if (license == null) {
-            throw new Fail("There is no license specified for this project.")
-                    .solve("Declare " + Inputs.signature(Project::getLicense) + " in the project definition file.");
-        }
-
-        if (checkFile("LICENSE.txt") || checkFile("LICENSE.md") || checkFile("LICENSE.rst")) {
-            ui.info("The license file already exists.");
-            return;
-        }
-
-        makeFile("LICENSE.txt", license.text());
     }
 
     @Command("Generate .gitignore file.")
