@@ -830,9 +830,11 @@ public class Project {
             }
         }
 
-        XML license = pom.child("licenses").child("license");
-        license.child("name").text(this.license.full);
-        license.child("url").text(this.license.uri);
+        if (this.license != null) {
+            XML license = pom.child("licenses").child("license");
+            license.child("name").text(this.license.full);
+            license.child("url").text(this.license.uri);
+        }
 
         List<RemoteRepository> repos = new ArrayList();
         repos.addAll(this.repositories);
