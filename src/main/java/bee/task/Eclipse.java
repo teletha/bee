@@ -160,10 +160,11 @@ public class Eclipse extends Task implements IDESupport {
             }
         }
 
+        boolean isModuledProject = project.getSources().existFile("*/module-info.java");
+
         for (Library library : libraries) {
             File jar = library.getLocalJar();
             File source = library.getLocalSourceJar();
-            Boolean moduled = jar.asArchive().walkFile("module-info.class").isEmitted().to().exact();
 
             if (jar.isPresent()) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
@@ -172,7 +173,7 @@ public class Eclipse extends Task implements IDESupport {
                     child.attr("sourcepath", source);
                 }
 
-                if (moduled) {
+                if (isModuledProject && jar.asArchive().existFile("module-info.class")) {
                     child.child("attributes").child("attribute").attr("name", "module").attr("value", true);
                 }
             }
