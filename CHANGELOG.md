@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.18.0](https://www.github.com/teletha/bee/compare/v0.17.3...v0.18.0) (2021-12-08)
+
+
+### Features
+
+* Add task [env:stable] and [env:latest]. ([909586c](https://www.github.com/teletha/bee/commit/909586c576cbf6b3d8b9da378367622291738a20))
+* Add Task#checkFile. ([621ab82](https://www.github.com/teletha/bee/commit/621ab82a80a021a2c83216654ee27f64da587ed8))
+* Github supports the creating license.txt ([d510a6f](https://www.github.com/teletha/bee/commit/d510a6fe71b10d91663efb0ca4640ba031c8219e))
+
+
+### Bug Fixes
+
+* Eclipse make the moduled classpath when the project is moduled. ([61c5367](https://www.github.com/teletha/bee/commit/61c536759a69e08b46970c35fe8dc1c8f012fa73))
+* NPE when no license definition. ([47e46b1](https://www.github.com/teletha/bee/commit/47e46b1840dea12af72db6c673b2c64194634c2d))
+* The [clean:all] task excludes built jar set. ([b528716](https://www.github.com/teletha/bee/commit/b528716fff6d7f56c16c2fc98c4269cff1f3eea8))
+* Track deleting directory. ([09fa03f](https://www.github.com/teletha/bee/commit/09fa03f645994c3da73554f994266d896ae9f906))
+
 ### [0.17.3](https://www.github.com/teletha/bee/compare/v0.17.2...v0.17.3) (2021-12-04)
 
 
