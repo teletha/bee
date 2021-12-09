@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.18.1](https://www.github.com/teletha/bee/compare/v0.18.0...v0.18.1) (2021-12-09)
+
+
+### Bug Fixes
+
+* Repository#collectDependency includes the processing project. ([0ebc7fc](https://www.github.com/teletha/bee/commit/0ebc7fc87d3734126f43e8f0d7b0d4ad40f44ea2))
+
 ## [0.18.0](https://www.github.com/teletha/bee/compare/v0.17.3...v0.18.0) (2021-12-08)
 
 
