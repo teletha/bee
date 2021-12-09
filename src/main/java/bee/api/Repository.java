@@ -232,13 +232,7 @@ public class Repository {
                 }));
 
                 for (ArtifactResult dependency : result.getArtifactResults()) {
-                    Artifact artifact = dependency.getArtifact();
-
-                    // exclude itself
-                    if (!artifact.getGroupId().equalsIgnoreCase(project.getGroup()) || !artifact.getArtifactId()
-                            .equalsIgnoreCase(project.getProduct())) {
-                        set.add(new Library(artifact));
-                    }
+                    set.add(new Library(dependency.getArtifact()));
                 }
             } catch (Exception e) {
                 throw I.quiet(e);

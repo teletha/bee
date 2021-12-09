@@ -766,6 +766,15 @@ public class Project {
     }
 
     /**
+     * Convert this project to {@link Library}.
+     * 
+     * @return
+     */
+    public final Library asLibrary() {
+        return new Library(getGroup(), getProduct(), getVersion());
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

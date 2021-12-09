@@ -139,13 +139,13 @@ public class Eclipse extends Task implements IDESupport {
         });
 
         // library
-        List<Library> libraries = I.signal(project.getDependency(Scope.Compile))
-                .concat(I.signal(project.getDependency(Scope.Annotation)))
-                .toList();
+        List<Library> libraries = I.signal(project.getDependency(Scope.Compile, Scope.Annotation)).toList();
+        libraries.remove(project.asLibrary());
 
         // test library
         Set<Library> tests = project.getDependency(Scope.Test);
         tests.removeAll(libraries);
+        tests.remove(project.asLibrary());
 
         for (Library library : tests) {
             File jar = library.getLocalJar();
