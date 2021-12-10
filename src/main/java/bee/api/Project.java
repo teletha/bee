@@ -17,11 +17,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -75,11 +77,17 @@ public class Project {
     /** The product description. */
     private String description = "";
 
-    /** The producer. */
-    private String producer = "";
-
     /** The license. */
-    private License license;
+    License license;
+
+    /** The license related info. */
+    final List<Integer> licensedFrom = new ArrayList();
+
+    /** The license related info. */
+    final List<Integer> licensedTo = new ArrayList();
+
+    /** The license related info. */
+    final List<String> licensedBy = new ArrayList();
 
     /** The encoding. */
     private Charset encoding = StandardCharsets.UTF_8;
@@ -129,7 +137,6 @@ public class Project {
 
         setInput((Directory) null);
         setOutput((Directory) null);
-        license((License) null);
     }
 
     /**
@@ -233,27 +240,6 @@ public class Project {
     }
 
     /**
-     * Return product producer.
-     * 
-     * @return The product producer.
-     */
-    public String getProducer() {
-        return producer.isEmpty() ? getProduct() + " Development Team" : producer;
-    }
-
-    /**
-     * Declare product producer.
-     * 
-     * @param producer A product producer.
-     */
-    protected final void producer(String producer) {
-        if (producer == null) {
-            producer = "";
-        }
-        this.producer = producer.trim();
-    }
-
-    /**
      * Returns project license.
      * 
      * @return
@@ -268,7 +254,28 @@ public class Project {
      * @param license
      */
     protected final void license(License license) {
-        this.license = license;
+        license(license, 0, 0, null);
+    }
+
+    /**
+     * Set product license.
+     * 
+     * @param kind
+     */
+    protected final void license(License kind, int licensedFrom, String licensedBy) {
+        license(kind, licensedFrom, 0, licensedBy);
+    }
+
+    /**
+     * Set product license.
+     * 
+     * @param kind
+     */
+    protected final void license(License kind, int licensedFrom, int licensedTo, String licensedBy) {
+        this.license = Objects.requireNonNullElse(kind, License.MIT);
+        this.licensedFrom.add(licensedFrom <= 0 ? Year.now().getValue() : licensedFrom);
+        this.licensedTo.add(licensedTo <= 0 ? Year.now().getValue() : licensedTo);
+        this.licensedBy.add(Objects.requireNonNullElse(licensedBy, ""));
     }
 
     /**

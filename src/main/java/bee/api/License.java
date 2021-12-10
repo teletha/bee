@@ -9,9 +9,8 @@
  */
 package bee.api;
 
-import java.text.SimpleDateFormat;
+import java.time.Year;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import kiss.I;
@@ -19,10 +18,13 @@ import kiss.I;
 public class License {
 
     /** Builtin */
+    public static final License AGPL = new License("AGPL", "3.0", "GNU Affero General Public License version 3", "https://opensource.org/licenses/AGPL-3.0");
+
+    /** Builtin */
     public static final License Apache = new License("Apache", "2.0", "Apache License, Version $", "https://opensource.org/licenses/Apache-2.0");
 
     /** Builtin */
-    public static final License BSD = new License("BSD", "3-Clause ", "The $ BSD License", "https://opensource.org/licenses/BSD-2-Clause");
+    public static final License BSD = new License("BSD", "3-Clause ", "The $ BSD License", "https://opensource.org/licenses/BSD-3-Clause");
 
     /** Builtin */
     public static final License EPL = new License("EPL", "1.0", "Eclipse Public License $", "https://opensource.org/licenses/EPL-1.0");
@@ -71,19 +73,36 @@ public class License {
      * @return
      */
     public List<String> text() {
-        String year = new SimpleDateFormat("yyyy").format(new Date());
-        String producer = I.make(Project.class).getProducer();
+        List<String> text = new ArrayList();
+        Project project = I.make(Project.class);
 
-        List<String> license = new ArrayList();
-        license.add("Copyright (C) " + year + " " + producer);
-        license.add("");
-        license.add("Licensed under the " + name + " License (the \"License\");");
-        license.add("you may not use this file except in compliance with the License.");
-        license.add("You may obtain a copy of the License at");
-        license.add("");
-        license.add("         " + uri);
+        if (project.getLicense() == null) {
+            text.add("Copyright (C) " + Year.now().getValue() + " The " + project.getProduct().toUpperCase() + " Development Team");
+        } else {
+            for (int i = 0; i < project.licensedFrom.size(); i++) {
+                int from = project.licensedFrom.get(i);
+                int to = project.licensedTo.get(i);
+                String by = project.licensedBy.get(i);
+                if (by.isEmpty()) {
+                    by = "The " + project.getProduct().toUpperCase() + " Development Team";
+                }
 
-        return license;
+                if (from == to) {
+                    text.add("Copyright (C) " + from + " " + by);
+                } else {
+                    text.add("Copyright (C) " + from + "-" + to + " " + by);
+                }
+            }
+        }
+
+        text.add("");
+        text.add("Licensed under the " + name + " License (the \"License\");");
+        text.add("you may not use this file except in compliance with the License.");
+        text.add("You may obtain a copy of the License at");
+        text.add("");
+        text.add("         " + uri);
+
+        return text;
     }
 
     /**
@@ -100,6 +119,6 @@ public class License {
      * @return
      */
     public static List<License> builtins() {
-        return List.of(Apache, BSD, EPL, GPL, LGPL, MIT, MPL);
+        return List.of(AGPL, Apache, BSD, EPL, GPL, LGPL, MIT, MPL);
     }
 }
