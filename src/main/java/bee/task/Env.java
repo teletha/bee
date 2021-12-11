@@ -66,7 +66,7 @@ public class Env extends Task {
     public void clean() {
         deleteFile("bee.bat");
         deleteFile("bee");
-        deleteFile("bee-latest.jar");
+        deleteFile("bee.bin");
 
         ui.info("Remove user specified local bee environment.");
         ui.info("From now on, you will use Bee installed at [", Platform.Bee, "].");
