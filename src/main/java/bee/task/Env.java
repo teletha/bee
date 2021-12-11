@@ -83,9 +83,9 @@ public class Env extends Task {
         String bat = I.express("""
                 @echo off
                 setlocal enabledelayedexpansion
-                set "bee=%JAVA_HOME%/lib/bee/bee-latest.jar"
+                set "bee=%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
                 if not exist %bee% (
-                    set "bee=bee-latest.jar"
+                    set "bee=bee-{ⅰ}.jar"
                     if not exist !bee! (
                         echo !bee! is not found localy, try to download it from network.
                         curl -#L -o $bee {ⅱ}

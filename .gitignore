@@ -1,6 +1,7 @@
 .*
 !/.gitignore
 !/.github
+!/bee-latest.jar
 
 # Created by https://www.toptal.com/developers/gitignore/api/Java,Maven,Windows,Eclipse
 # Edit at https://www.toptal.com/developers/gitignore?templates=Java,Maven,Windows,Eclipse
