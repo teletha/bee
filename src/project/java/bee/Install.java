@@ -12,7 +12,6 @@ package bee;
 import bee.api.Repository;
 import bee.task.Jar;
 import kiss.I;
-import psychopath.File;
 
 public class Install extends bee.task.Install {
 
@@ -26,10 +25,5 @@ public class Install extends bee.task.Install {
         I.make(Repository.class).install(project);
 
         BeeInstaller.install(project.locateJar());
-
-        File snapshot = project.getRoot().file("bee-snapshot.jar");
-        if (snapshot.isPresent()) {
-            project.locateJar().copyTo(snapshot);
-        }
     }
 }

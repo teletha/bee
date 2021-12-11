@@ -34,9 +34,10 @@ public class Env extends Task {
     @Command("Build local bee environment using the latest version.")
     public void latest() {
         if (project.equals(Bee.Tool)) {
-            build("snapshot");
-            makeFile("bee-snapshot.jar", "");
             require(Install::project);
+
+            build("latest");
+            copyFile(project.locateJar(), project.getRoot().file("bee-latest.jar"));
         } else {
             build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
         }
@@ -65,7 +66,7 @@ public class Env extends Task {
     public void clean() {
         deleteFile("bee.bat");
         deleteFile("bee");
-        deleteFile("bee-snapshot.jar");
+        deleteFile("bee-latest.jar");
 
         ui.info("Remove user specified local bee environment.");
         ui.info("From now on, you will use Bee installed at [", Platform.Bee, "].");
@@ -81,12 +82,13 @@ public class Env extends Task {
 
         String bat = I.express("""
                 @echo off
-                SET bee="%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
+                setlocal enabledelayedexpansion
+                set "bee=%JAVA_HOME%/lib/bee/bee-latest.jar"
                 if not exist %bee% (
-                    SET bee="bee-{ⅰ}.jar"
-                    if not exist %bee% (
-                        echo %bee% is not found localy, try to download it from network.
-                        curl -#L -o %bee% {ⅱ}
+                    set "bee=bee-latest.jar"
+                    if not exist !bee! (
+                        echo !bee! is not found localy, try to download it from network.
+                        curl -#L -o $bee {ⅱ}
                     )
                 )
                 java -javaagent:%bee% -cp %bee% bee.Bee %*

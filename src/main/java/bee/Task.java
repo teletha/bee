@@ -328,7 +328,7 @@ public abstract class Task implements Extensible {
         if (directory.isAbsent()) {
             directory.create();
 
-            ui.info("Make directory [" + directory.absolutize() + "]");
+            ui.info("Make directory [", directory.absolutize(), "]");
         }
         return directory;
     }
@@ -343,7 +343,7 @@ public abstract class Task implements Extensible {
         try (BufferedWriter writer = file.newBufferedWriter()) {
             xml.to(writer);
 
-            ui.info("Make file [" + file.absolutize() + "]");
+            ui.info("Make file [", file.absolutize(), "]");
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -362,7 +362,7 @@ public abstract class Task implements Extensible {
         try {
             properties.store(path.newOutputStream(), "");
 
-            ui.info("Make file [" + path.absolutize() + "]");
+            ui.info("Make file [", path.absolutize(), "]");
         } catch (IOException e) {
             throw I.quiet(e);
         }
@@ -407,7 +407,7 @@ public abstract class Task implements Extensible {
      */
     protected final File makeFile(File file, Iterable<String> content) {
         file.text(content);
-        ui.info("Make file [" + file.absolutize() + "]");
+        ui.info("Make file [", file.absolutize(), "]");
 
         return file;
     }
@@ -439,7 +439,20 @@ public abstract class Task implements Extensible {
     protected final void deleteFile(File file) {
         if (file != null && file.isPresent()) {
             file.delete();
-            ui.info("Delete file [" + file.absolutize() + "]");
+            ui.info("Delete file [", file.absolutize(), "]");
+        }
+    }
+
+    /**
+     * Utility method to delete file.
+     * 
+     * @param from A file to copy.
+     * @param to A destination.
+     */
+    protected final void copyFile(File from, File to) {
+        if (from != null && from.isPresent()) {
+            from.copyTo(to);
+            ui.info("Copy file from [", from.absolutize(), "] to [", to.absolutize() + "]");
         }
     }
 
