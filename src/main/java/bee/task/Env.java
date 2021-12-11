@@ -33,7 +33,13 @@ public class Env extends Task {
 
     @Command("Build local bee environment using the latest version.")
     public void latest() {
-        build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
+        if (project.equals(Bee.Tool)) {
+            build("snapshot");
+            makeFile("bee-snapshot.jar", "");
+            require(Install::project);
+        } else {
+            build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
+        }
     }
 
     @Command("Build local bee environment using the selected version.")
@@ -59,6 +65,7 @@ public class Env extends Task {
     public void clean() {
         deleteFile("bee.bat");
         deleteFile("bee");
+        deleteFile("bee-snapshot.jar");
 
         ui.info("Remove user specified local bee environment.");
         ui.info("From now on, you will use Bee installed at [", Platform.Bee, "].");
@@ -76,8 +83,11 @@ public class Env extends Task {
                 @echo off
                 SET bee="%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
                 if not exist %bee% (
-                  echo %bee% is not found, try to download it from network.
-                  curl -#L -o %bee% {ⅱ}
+                    SET bee="bee-{ⅰ}.jar"
+                    if not exist %bee% (
+                        echo %bee% is not found localy, try to download it from network.
+                        curl -#L -o %bee% {ⅱ}
+                    )
                 )
                 java -javaagent:%bee% -cp %bee% bee.Bee %*
                 """, context);
@@ -86,8 +96,11 @@ public class Env extends Task {
                 #!bin/bash
                 bee=$JAVA_HOME/lib/bee-{ⅰ}.jar
                 if [ ! -e $bee ]; then
-                  echo $bee is not found, try to download it from network.
-                  curl -#L -o $bee {ⅱ}
+                    bee=bee-{ⅰ}.jar
+                    if [ ! -e $bee ]; then
+                        echo $bee is not found localy, try to download it from network.
+                        curl -#L -o $bee {ⅱ}
+                    fi
                 fi
                 java -javaagent:$bee -cp $bee bee.Bee "$@"
                 """, context);
