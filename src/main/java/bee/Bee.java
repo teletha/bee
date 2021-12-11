@@ -312,7 +312,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:latest") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("ci") : washed));
     }
 
     /**

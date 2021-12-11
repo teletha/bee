@@ -1,9 +1,9 @@
 #!bin/bash
-bee=$JAVA_HOME/lib/bee-latest.jar
+bee=bee.bin
 if [ ! -e $bee ]; then
-    bee=bee-latest.jar
+    bee=$JAVA_HOME/lib/bee-latest.jar
     if [ ! -e $bee ]; then
-        echo $bee is not found localy, try to download it from network.
+        echo $bee is not found locally, try to download it from network.
         curl -#L -o $bee https://jitpack.io/com/github/teletha/bee/latest/bee-latest.jar
     fi
 fi

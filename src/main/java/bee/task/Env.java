@@ -37,7 +37,7 @@ public class Env extends Task {
             require(Install::project);
 
             build("latest");
-            copyFile(project.locateJar(), project.getRoot().file("bee-latest.jar"));
+            copyFile(project.locateJar(), project.getRoot().file("bee.bin"));
         } else {
             build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
         }
@@ -83,11 +83,11 @@ public class Env extends Task {
         String bat = I.express("""
                 @echo off
                 setlocal enabledelayedexpansion
-                set "bee=%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
+                set "bee=bee.bin"
                 if not exist %bee% (
-                    set "bee=bee-{ⅰ}.jar"
+                   set "bee=%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
                     if not exist !bee! (
-                        echo !bee! is not found localy, try to download it from network.
+                        echo bee is not found locally, try to download it from network.
                         curl -#L -o $bee {ⅱ}
                     )
                 )
@@ -96,11 +96,11 @@ public class Env extends Task {
 
         String sh = I.express("""
                 #!bin/bash
-                bee=$JAVA_HOME/lib/bee-{ⅰ}.jar
+                bee=bee.bin
                 if [ ! -e $bee ]; then
-                    bee=bee-{ⅰ}.jar
+                    bee=$JAVA_HOME/lib/bee-{ⅰ}.jar
                     if [ ! -e $bee ]; then
-                        echo $bee is not found localy, try to download it from network.
+                        echo $bee is not found locally, try to download it from network.
                         curl -#L -o $bee {ⅱ}
                     fi
                 fi

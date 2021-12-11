@@ -12,6 +12,7 @@ package bee;
 import static org.objectweb.asm.Opcodes.*;
 
 import java.io.BufferedWriter;
+import java.io.IOError;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
@@ -20,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -386,7 +388,7 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(File file, String content) {
-        return makeFile(file, Arrays.asList(content.split(Platform.EOL)));
+        return makeFile(file, Arrays.asList(content.split("\\R")));
     }
 
     /**
@@ -406,7 +408,22 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(File file, Iterable<String> content) {
-        file.text(content);
+        try {
+            try (BufferedWriter writer = file.newBufferedWriter()) {
+                Iterator<String> iterator = content.iterator();
+                boolean hasNext = iterator.hasNext();
+                while (hasNext) {
+                    writer.append(iterator.next());
+
+                    hasNext = iterator.hasNext();
+                    if (hasNext) {
+                        writer.newLine();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
         ui.info("Make file [", file.absolutize(), "]");
 
         return file;
