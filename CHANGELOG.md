@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.19.0](https://www.github.com/teletha/bee/compare/v0.18.1...v0.19.0) (2021-12-12)
+
+
+### Features
+
+* Add env:local forces to use the local installed bee. ([9db13f7](https://www.github.com/teletha/bee/commit/9db13f709548e07c3ad313e672abe72d797a685b))
+* Support multiple copyright. ([32953fd](https://www.github.com/teletha/bee/commit/32953fd851f0fe61b25a904b8e51e91ab9d627dd))
+
+
+### Bug Fixes
+
+* Bee project can use the latest version on its build process. ([c77d627](https://www.github.com/teletha/bee/commit/c77d6279bf02975aac4cb8ac42dae292f244b8dc))
+* Enhance help:version info. ([ce56ac8](https://www.github.com/teletha/bee/commit/ce56ac8a92018e2ee701acd004d8f049b5ab530d))
+* env:clean must delete the snapshot jar. ([8b48b72](https://www.github.com/teletha/bee/commit/8b48b729300fe139b98ce232e69b46379b0e0557))
+* File related task throws NPE by null input. ([3f56313](https://www.github.com/teletha/bee/commit/3f56313663d8c65b28b9fee2b6f9a6655cd70b21))
+* Illegal line separator. ([1ebba05](https://www.github.com/teletha/bee/commit/1ebba0572cf5f0289507463107090f1a481b55cb))
+* Task#copyFile ensures that the input file exists. ([5c1db60](https://www.github.com/teletha/bee/commit/5c1db608b6bcedfaa4a2bbfa8cbf86c2e457ff13))
+* Task#makeFile throws NPE by null input. ([5d48a96](https://www.github.com/teletha/bee/commit/5d48a96a003939c6978054bbcaa78185c3250c50))
+
 ### [0.18.1](https://www.github.com/teletha/bee/compare/v0.18.0...v0.18.1) (2021-12-09)
 
 
