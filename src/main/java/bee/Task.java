@@ -376,6 +376,9 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(String path, String content) {
+        if (path == null) {
+            throw new Fail("Input file is null.");
+        }
         return makeFile(project.getRoot().file(path), content);
     }
 
@@ -396,6 +399,9 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(String path, Iterable<String> content) {
+        if (path == null) {
+            throw new Fail("Input file is null.");
+        }
         return makeFile(project.getRoot().file(path), content);
     }
 
@@ -406,6 +412,10 @@ public abstract class Task implements Extensible {
      * @param content A file content.
      */
     protected final File makeFile(File file, Iterable<String> content) {
+        if (file == null) {
+            throw new Fail("Input file is null.");
+        }
+
         file.text(content);
         ui.info("Make file [", file.absolutize(), "]");
 

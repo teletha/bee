@@ -9,6 +9,8 @@
  */
 package bee;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,6 +42,54 @@ class TaskOperationTest extends TaskTestBase {
 
         assert file.isPresent();
         assert file.text().equals("A" + Platform.EOL + "B");
+    }
+
+    @Test
+    void makeStringFileMultiLined() {
+        File file = locateFile("file");
+        assert file.isAbsent();
+
+        noop.makeFile("file", """
+                A
+                B
+                """);
+
+        assert file.isPresent();
+        assert file.text().equals("A" + Platform.EOL + "B");
+    }
+
+    @Test
+    void makeFileMultiLinedIterable() {
+        File file = locateFile("file");
+        assert file.isAbsent();
+
+        noop.makeFile(file, List.of("A", "B"));
+
+        assert file.isPresent();
+        assert file.text().equals("A" + Platform.EOL + "B");
+    }
+
+    @Test
+    void makeStringFileMultiLinedIterable() {
+        File file = locateFile("file");
+        assert file.isAbsent();
+
+        noop.makeFile("file", List.of("A", "B"));
+
+        assert file.isPresent();
+        assert file.text().equals("A" + Platform.EOL + "B");
+    }
+
+    @Test
+    void makeNullFile() {
+        Assertions.assertThrows(Fail.class, () -> noop.makeFile((File) null, "text"));
+        Assertions.assertThrows(Fail.class, () -> noop.makeFile((String) null, "text"));
+    }
+
+    @Test
+    void makeNullFileMultiLinedIterable() {
+        Assertions.assertThrows(Fail.class, () -> noop.makeFile((File) null, List.of("A", "B")));
+        Assertions.assertThrows(Fail.class, () -> noop.makeFile((String) null, List.of("A", "B")));
     }
 
     @Test
