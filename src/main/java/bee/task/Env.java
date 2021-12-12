@@ -19,8 +19,11 @@ import bee.Bee;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
+import bee.util.Process;
 import kiss.I;
 import kiss.Ⅱ;
+import psychopath.File;
+import psychopath.Locator;
 
 public class Env extends Task {
 
@@ -33,14 +36,31 @@ public class Env extends Task {
 
     @Command("Build local bee environment using the latest version.")
     public void latest() {
+        build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
+    }
+
+    @Command("Build local bee environment using the local installed version.")
+    public void local() {
+        File from;
+        File to = project.getRoot().file("bee-" + Bee.Tool.getVersion() + ".far");
+
         if (project.equals(Bee.Tool)) {
             require(Install::project);
-
-            build("latest");
-            copyFile(project.locateJar(), project.getRoot().file("bee.bin"));
+            from = project.locateJar();
         } else {
-            build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
+            from = Locator.locate(Bee.class).asFile();
         }
+
+        build(Bee.Tool.getVersion());
+
+        // If you are running Bee from a command wrapper, and you try to overwrite Bee's jar
+        // file, you will not be able to write it because the JVM has the file handle.
+        // So we are forcing the external process to copy it.
+        runAfter("""
+                copy /b /y "%s" "%s"
+                """, """
+                cp -f "%s" "%s"
+                """, from, to);
     }
 
     @Command("Build local bee environment using the selected version.")
@@ -64,12 +84,38 @@ public class Env extends Task {
 
     @Command("Clean local bee environment.")
     public void clean() {
-        deleteFile("bee.bat");
         deleteFile("bee");
-        deleteFile("bee.bin");
+        deleteFile("bee.bat");
+        project.getRoot().walkFile("bee-*.far").to(file -> {
+            // If you are running Bee from a command wrapper, and you try to delete Bee's jar
+            // file, you will not be able to delete it because the JVM has the file handle.
+            // So we are forcing the external process to delete it.
+            runAfter("""
+                    del /q "%s"
+                    """, """
+                    rm "%s"
+                    """, file);
+        });
 
         ui.info("Remove user specified local bee environment.");
         ui.info("From now on, you will use Bee installed at [", Platform.Bee, "].");
+    }
+
+    /**
+     * Invoke native command after the current build process.
+     * 
+     * @param bat
+     * @param shell
+     * @param params
+     */
+    private void runAfter(String bat, String shell, Object... params) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Process.with()
+                    .inParallel()
+                    .run(Platform.isWindows() //
+                            ? List.of("cmd", "/c", "ping localhost -n 2 && " + bat.strip().formatted(params))
+                            : List.of("sleep 2 && " + shell.strip().formatted(params)));
+        }));
     }
 
     /**
@@ -83,7 +129,7 @@ public class Env extends Task {
         String bat = I.express("""
                 @echo off
                 setlocal enabledelayedexpansion
-                set "bee=bee.bin"
+                set "bee=bee-{ⅰ}.far"
                 if not exist %bee% (
                    set "bee=%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
                     if not exist !bee! (
@@ -96,7 +142,7 @@ public class Env extends Task {
 
         String sh = I.express("""
                 #!bin/bash
-                bee=bee.bin
+                bee=bee-{ⅰ}.far
                 if [ ! -e $bee ]; then
                     bee=$JAVA_HOME/lib/bee-{ⅰ}.jar
                     if [ ! -e $bee ]; then

@@ -26,6 +26,6 @@ public class Help extends Task {
                 .getProperty("java.class.version"), " [", Platform.Java, "]");
         ui.info("OS     \t", System.getProperty("os.name"), " ", System.getProperty("os.arch"), " ", System.getProperty("os.version"));
         ui.info("Locale \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
-        ui.info("Encoding \t", Platform.Encoding.displayName(Locale.ENGLISH));
+        ui.info("Charset\t", Platform.Encoding.displayName(Locale.ENGLISH));
     }
 }
