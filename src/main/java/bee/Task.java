@@ -450,10 +450,16 @@ public abstract class Task implements Extensible {
      * @param to A destination.
      */
     protected final void copyFile(File from, File to) {
-        if (from != null && from.isPresent()) {
-            from.copyTo(to);
-            ui.info("Copy file from [", from.absolutize(), "] to [", to.absolutize() + "]");
+        if (from == null) {
+            throw new Fail("The specified file is null.");
         }
+
+        if (from.isAbsent()) {
+            throw new Fail("File [" + from + "] is not found.");
+        }
+
+        from.copyTo(to);
+        ui.info("Copy file from [", from.absolutize(), "] to [", to.absolutize() + "]");
     }
 
     /**
