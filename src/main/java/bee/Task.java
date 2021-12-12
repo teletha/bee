@@ -428,7 +428,9 @@ public abstract class Task implements Extensible {
      * @param path A file path to delete.
      */
     protected final void deleteFile(String path) {
-        deleteFile(project.getRoot().file(path));
+        if (path != null) {
+            deleteFile(project.getRoot().file(path));
+        }
     }
 
     /**
@@ -468,6 +470,9 @@ public abstract class Task implements Extensible {
      * @param path A file path to check.
      */
     protected final boolean checkFile(String path) {
+        if (path == null) {
+            return false;
+        }
         return checkFile(project.getRoot().file(path));
     }
 
