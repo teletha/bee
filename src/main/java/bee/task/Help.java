@@ -15,18 +15,17 @@ import bee.Bee;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
+import psychopath.Locator;
 
-/**
- * @version 2015/06/22 16:48:35
- */
 public class Help extends Task {
 
     @Command("Display Bee runtime environment.")
     public void version() {
-        ui.info("Bee version: ", Bee.API.getVersion());
-        ui.info("Java version: ", System.getProperty("java.version"), " by ", System.getProperty("java.vendor"));
-        ui.info("Java home: ", Platform.JavaHome);
-        ui.info("Locale: ", Locale.getDefault().getDisplayName());
-        ui.info("Encoding: ", Platform.Encoding.name());
+        ui.info("Bee   \t", Bee.API.getVersion(), " [", Locator.locate(Bee.class), "]");
+        ui.info("Java  \t", System.getProperty("java.vendor"), " ", Runtime.version(), "@", System
+                .getProperty("java.class.version"), " [", Platform.Java, "]");
+        ui.info("OS     \t", System.getProperty("os.name"), " ", System.getProperty("os.arch"), " ", System.getProperty("os.version"));
+        ui.info("Locale \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
+        ui.info("Encoding \t", Platform.Encoding.displayName(Locale.ENGLISH));
     }
 }
