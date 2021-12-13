@@ -9,8 +9,7 @@
  */
 package bee.task;
 
-import static bee.Platform.*;
-
+import java.util.HashSet;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -91,8 +90,10 @@ public class Ci extends Task {
 
         String testVersion = Inputs.normalize(project.getJavaTestClassVersion());
 
+        // The output result from the Release-Please action contains a newline,
+        // so we will adjust it.
+        makeFile("version.txt", List.of(project.getVersion(), ""));
         makeFile(".github/workflows/build.yml", String.format(build, testVersion, project.getProduct()));
-        makeFile("version.txt", project.getVersion());
         makeLicenseFile();
         makeReadMeFile();
 
@@ -174,10 +175,10 @@ public class Ci extends Task {
 
         return I.http(uri.toString(), String.class)
                 .waitForTerminate()
-                .flatArray(rule -> rule.split(EOL))
+                .flatArray(rule -> rule.split("\\R"))
                 .startWith(".*", "!/.gitignore", "!/.github")
                 .startWith(lines)
-                .distinct()
+                .take(HashSet::new, (set, v) -> v.isBlank() || set.add(v))
                 .toList();
     }
 }
