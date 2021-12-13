@@ -31,16 +31,20 @@ public class Env extends Task {
 
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
     public void stable() {
+        require(Env::clean);
         build(I.http("https://git.io/stable-bee", String.class).waitForTerminate().to().v);
     }
 
     @Command("Build local bee environment using the latest version.")
     public void latest() {
+        require(Env::clean);
         build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
     }
 
     @Command("Build local bee environment using the local installed version.")
     public void local() {
+        require(Env::clean);
+
         File from;
         File to = project.getRoot().file("bee-" + Bee.Tool.getVersion() + ".far");
 
@@ -65,6 +69,8 @@ public class Env extends Task {
 
     @Command("Build local bee environment using the selected version.")
     public void list() {
+        require(Env::clean);
+
         List<DefaultArtifactVersion> list = I
                 .signal(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct()).find("*", "*"))
                 .flatIterable(json -> json.asMap(String.class).entrySet())
@@ -79,6 +85,8 @@ public class Env extends Task {
 
     @Command("Build local bee environment using the user specified version.")
     public void use() {
+        require(Env::clean);
+
         build(version);
     }
 
