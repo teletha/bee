@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -173,12 +174,17 @@ public class Ci extends Task {
             uri.add(ide.toString());
         }
 
-        return I.http(uri.toString(), String.class)
+        LinkedList<String> updated = I.http(uri.toString(), String.class)
                 .waitForTerminate()
                 .flatArray(rule -> rule.split("\\R"))
                 .startWith(".*", "!/.gitignore", "!/.github")
                 .startWith(lines)
                 .take(HashSet::new, (set, v) -> v.isBlank() || set.add(v))
-                .toList();
+                .toCollection(new LinkedList());
+
+        while (updated.peekLast().isBlank()) {
+            updated.pollLast();
+        }
+        return updated;
     }
 }
