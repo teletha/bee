@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static bee.Platform.EOL;
+import static bee.Platform.*;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -65,7 +65,6 @@ public class Ci extends Task {
                       with:
                         distribution: zulu
                         java-version: %s
-                        cache: maven
 
                     - name: Build artifact and site
                       run: |
