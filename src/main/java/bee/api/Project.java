@@ -327,15 +327,6 @@ public class Project {
     }
 
     /**
-     * Get the library of this project.
-     * 
-     * @return
-     */
-    public Library getLibrary() {
-        return new Library(getGroup(), getProduct(), getVersion());
-    }
-
-    /**
      * Find {@link Library} by name.
      * 
      * @param projectName

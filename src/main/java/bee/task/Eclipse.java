@@ -183,8 +183,8 @@ public class Eclipse extends Task implements IDESupport {
         if (!project.equals(Bee.Tool)) {
             doc.child("classpathentry")
                     .attr("kind", "lib")
-                    .attr("path", Bee.API.getLibrary().getLocalJar())
-                    .attr("sourcepath", Bee.Tool.getLibrary().getLocalSourceJar())
+                    .attr("path", Bee.API.asLibrary().getLocalJar())
+                    .attr("sourcepath", Bee.Tool.asLibrary().getLocalSourceJar())
                     .effect(this::assignVisibleForTest);
         }
 
