@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.20.0](https://www.github.com/teletha/bee/compare/v0.19.0...v0.20.0) (2021-12-13)
+
+
+### Features
+
+* Drop automatic pom synchronization. ([558a3af](https://www.github.com/teletha/bee/commit/558a3af9a32716aa77195316c8e97f135534c881))
+* Drop Project#getLibrary, use #asLibraray instead. ([4980760](https://www.github.com/teletha/bee/commit/4980760a3a2c6cb99aaafe98854618760892b599))
+
+
+### Bug Fixes
+
+* CI/CD action on github uses maven cache no longer. ([ab74135](https://www.github.com/teletha/bee/commit/ab74135930dcb824dec31574dbaa5cc4d4b9e7db))
+* Remove pom. ([77af54d](https://www.github.com/teletha/bee/commit/77af54df0b5429cf491dfef5dff13907185b4daf))
+
 ## [0.19.0](https://www.github.com/teletha/bee/compare/v0.18.1...v0.19.0) (2021-12-12)
 
 
