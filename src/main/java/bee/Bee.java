@@ -21,9 +21,7 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.task.Ci;
 import bee.task.Ide;
-import bee.task.Pom;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import kiss.I;
@@ -337,16 +335,6 @@ public class Bee {
         public void execute() {
             for (String task : tasks) {
                 execute(task, ui);
-            }
-
-            // synchronize maven's pom file automatically
-            if (Locator.file("pom.xml").lastModifiedMilli() < Bee.this.project.getProjectDefinition().lastModifiedMilli()) {
-                require(Pom::build);
-
-                // synchronize configuration files for CI/CD automatically
-                if (Bee.this.project.getVersionControlSystem() != null) {
-                    require(Ci::setup);
-                }
             }
         }
     }

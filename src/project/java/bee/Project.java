@@ -57,5 +57,13 @@ public class Project extends bee.api.Project {
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
         versionControlSystem("https://github.com/teletha/bee");
+
+    }
+
+    public class API extends bee.api.Project {
+        {
+            product(Bee.API.getGroup(), Bee.API.getProduct(), ref("version.txt"));
+            describe("Task based project builder for Java");
+        }
     }
 }
