@@ -31,46 +31,16 @@ public class Env extends Task {
 
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
     public void stable() {
-        require(Env::clean);
         build(I.http("https://git.io/stable-bee", String.class).waitForTerminate().to().v);
     }
 
     @Command("Build local bee environment using the latest version.")
     public void latest() {
-        require(Env::clean);
         build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
-    }
-
-    @Command("Build local bee environment using the local installed version.")
-    public void local() {
-        require(Env::clean);
-
-        File from;
-        File to = project.getRoot().file("bee-" + Bee.Tool.getVersion() + ".far");
-
-        if (project.equals(Bee.Tool)) {
-            require(Install::project);
-            from = project.locateJar();
-        } else {
-            from = Locator.locate(Bee.class).asFile();
-        }
-
-        build(Bee.Tool.getVersion());
-
-        // If you are running Bee from a command wrapper, and you try to overwrite Bee's jar
-        // file, you will not be able to write it because the JVM has the file handle.
-        // So we are forcing the external process to copy it.
-        runAfter("""
-                copy /b /y "%s" "%s"
-                """, """
-                cp -f "%s" "%s"
-                """, from, to);
     }
 
     @Command("Build local bee environment using the selected version.")
     public void list() {
-        require(Env::clean);
-
         List<DefaultArtifactVersion> list = I
                 .signal(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct()).find("*", "*"))
                 .flatIterable(json -> json.asMap(String.class).entrySet())
@@ -83,10 +53,32 @@ public class Env extends Task {
         build(ui.ask("Which version of Bee do you want to use?", list).toString());
     }
 
+    @Command("Build local bee environment using the local installed version.")
+    public void local() {
+        File from;
+        File to = project.getRoot().file("bee-" + Bee.Tool.getVersion() + ".far");
+
+        if (project.equals(Bee.Tool)) {
+            require(Install::project);
+            from = project.locateJar();
+        } else {
+            from = Locator.locate(Bee.class).asFile();
+        }
+
+        build(Bee.Tool.getVersion());
+
+        // If you are executing Bee from wrapper, and you try to overwrite Bee's fat-jar
+        // file, you will not be able to write it because the JVM has the file handle already.
+        // So we are forcing the external process to copy it.
+        runAfter("""
+                copy /b /y "%s" "%s"
+                """, """
+                cp -f "%s" "%s"
+                """, from, to);
+    }
+
     @Command("Build local bee environment using the user specified version.")
     public void use() {
-        require(Env::clean);
-
         build(version);
     }
 
@@ -94,36 +86,9 @@ public class Env extends Task {
     public void clean() {
         deleteFile("bee");
         deleteFile("bee.bat");
-        project.getRoot().walkFile("bee-*.far").to(file -> {
-            // If you are running Bee from a command wrapper, and you try to delete Bee's jar
-            // file, you will not be able to delete it because the JVM has the file handle.
-            // So we are forcing the external process to delete it.
-            runAfter("""
-                    del /q "%s"
-                    """, """
-                    rm "%s"
-                    """, file);
-        });
+        deleteLocalFars();
 
-        ui.info("Remove user specified local bee environment.");
-        ui.info("From now on, you will use Bee installed at [", Platform.Bee, "].");
-    }
-
-    /**
-     * Invoke native command after the current build process.
-     * 
-     * @param bat
-     * @param shell
-     * @param params
-     */
-    private void runAfter(String bat, String shell, Object... params) {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            Process.with()
-                    .inParallel()
-                    .run(Platform.isWindows() //
-                            ? List.of("cmd", "/c", "ping localhost -n 2 && " + bat.strip().formatted(params))
-                            : List.of("sleep 2 && " + shell.strip().formatted(params)));
-        }));
+        ui.info("Remove the local bee environment. From now on, you will use Bee installed at [", Platform.Bee, "].");
     }
 
     /**
@@ -165,6 +130,46 @@ public class Env extends Task {
         makeFile("bee", sh);
 
         ui.info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
-        ui.info("To clear this setting, execute the command [bee env:clear].");
+        ui.info("To clear this setting, execute the command [bee env:clean].");
+
+        deleteLocalFars();
+    }
+
+    /**
+     * Delete all local fat-jars.
+     */
+    private void deleteLocalFars() {
+        project.getRoot().walkFile("bee-*.far").to(file -> {
+            // If you are executing Bee from wrapper, and you try to detele Bee's fat-jar
+            // files, you will not be able to delete it because the JVM has the file handle already.
+            // So we are forcing the external process to delete it.
+            runAfter("""
+                    del /q "%s"
+                    """, """
+                    rm "%s"
+                    """, file);
+        });
+    }
+
+    private static final StringBuilder commands = new StringBuilder();
+
+    /**
+     * Invoke native command after the current build process.
+     * 
+     * @param bat
+     * @param shell
+     * @param params
+     */
+    private void runAfter(String bat, String shell, Object... params) {
+        if (commands.isEmpty()) {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                Process.with()
+                        .inParallel()
+                        .run(Platform.isWindows() //
+                                ? List.of("cmd", "/c", "ping localhost -n 2" + commands)
+                                : List.of("sleep 2" + commands));
+            }));
+        }
+        commands.append(" && ").append((Platform.isWindows() ? bat : shell).strip().formatted(params));
     }
 }
