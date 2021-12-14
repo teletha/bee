@@ -11,6 +11,7 @@ package bee;
 
 import bee.api.Repository;
 import bee.task.Jar;
+import bee.task.Test;
 import kiss.I;
 
 public class Install extends bee.task.Install {
@@ -21,6 +22,7 @@ public class Install extends bee.task.Install {
     @Override
     public void project() {
         require(Jar::document, Jar::merge);
+        require(Test::test);
 
         I.make(Repository.class).install(project);
 
