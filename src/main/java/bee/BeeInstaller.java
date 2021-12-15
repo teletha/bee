@@ -80,7 +80,15 @@ public class BeeInstaller {
 
         ui.info("Write new bat file. [", Bee, "]");
 
-        // create bee-api library and sources
+        installAPI(source);
+    }
+
+    /**
+     * Install bee-api library and sources.
+     * 
+     * @param source
+     */
+    public static void installAPI(File source) {
         File api = Locator.folder()
                 .add(source.asArchive(), "bee/**", "!**.java")
                 .add(source.asArchive(), "META-INF/services/**")

@@ -10,6 +10,7 @@
 package bee.task;
 
 import bee.Bee;
+import bee.BeeInstaller;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Project;
@@ -42,21 +43,7 @@ public class Install extends Task {
 
     @Command("Install bee-api.jar into the local repository.")
     public void beeAPI() {
-        File source;
-
-        if (project.equals(Bee.Tool)) {
-            require(Install::project);
-            source = project.locateJar();
-        } else {
-            source = Locator.locate(Bee.class).asFile();
-        }
-
-        File api = Locator.folder()
-                .add(source.asArchive(), "bee/**", "!**.java")
-                .add(source.asArchive(), "META-INF/services/**")
-                .packToTemporary();
-
-        I.make(Repository.class).install(bee.Bee.API, api);
+        BeeInstaller.installAPI(project.equals(Bee.Tool) ? project.locateJar() : Locator.locate(Bee.class).asFile());
     }
 
     /**
