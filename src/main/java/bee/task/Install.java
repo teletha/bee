@@ -9,7 +9,6 @@
  */
 package bee.task;
 
-import bee.Bee;
 import bee.BeeInstaller;
 import bee.Task;
 import bee.api.Command;
@@ -17,7 +16,6 @@ import bee.api.Project;
 import bee.api.Repository;
 import kiss.I;
 import psychopath.File;
-import psychopath.Locator;
 
 public class Install extends Task {
 
@@ -43,7 +41,7 @@ public class Install extends Task {
 
     @Command("Install bee-api.jar into the local repository.")
     public void beeAPI() {
-        BeeInstaller.installAPI(project.equals(Bee.Tool) ? project.locateJar() : Locator.locate(Bee.class).asFile());
+        BeeInstaller.install(false, false, true);
     }
 
     /**

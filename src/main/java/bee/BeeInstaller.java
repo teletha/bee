@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import bee.api.Project;
 import bee.api.Repository;
 import kiss.I;
 import psychopath.File;
@@ -30,70 +31,65 @@ public class BeeInstaller {
      */
     public static final void main(String... args) {
         I.load(Bee.class);
-        install(Locator.locate(BeeInstaller.class).asFile());
+        install(true, false, true);
     }
 
     /**
      * Install Bee into your system.
-     * 
-     * @param source
      */
-    public static final void install(File source) {
+    public static final void install(boolean installCommand, boolean installFar, boolean installAPI) {
         UserInterface ui = I.make(UserInterface.class);
+        Project project = I.make(Project.class);
+        File source = bee.Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(bee.Bee.class).asFile();
 
-        String fileName = "bee-" + bee.Bee.Tool.getVersion() + "-" + format.format(source.lastModifiedDateTime()) + ".jar";
-        psychopath.File dest = BeeHome.file(fileName);
+        if (installCommand) {
+            String fileName = "bee-" + bee.Bee.Tool.getVersion() + "-" + format.format(source.lastModifiedDateTime()) + ".jar";
+            File dest = BeeHome.file(fileName);
 
-        // delete old files
-        BeeHome.walkFile("bee-*.jar").to(jar -> {
-            try {
-                // delete only bee-yyyyMMddhhmmss.jar
-                if (jar.base().length() > 18) {
-                    jar.delete();
+            // delete old files
+            BeeHome.walkFile("bee-*.jar").to(jar -> {
+                try {
+                    // delete only bee-yyyyMMddhhmmss.jar
+                    if (jar.base().length() > 18) {
+                        jar.delete();
+                    }
+                } catch (Exception e) {
+                    // we can't delete current processing jar file.
                 }
-            } catch (Exception e) {
-                // we can't delete current processing jar file.
+            });
+
+            if (source.lastModifiedMilli() != dest.lastModifiedMilli()) {
+                // The current bee.jar is newer.
+                // We should copy it to JDK directory.
+                // This process is mainly used by Bee users while install phase.
+                source.copyTo(dest);
+                ui.info("Write new bee library. [", dest, "]");
             }
-        });
 
-        if (source.lastModifiedMilli() != dest.lastModifiedMilli()) {
-            // The current bee.jar is newer.
-            // We should copy it to JDK directory.
-            // This process is mainly used by Bee users while install phase.
-            source.copyTo(dest);
-            ui.info("Write new bee library. [", dest, "]");
+            // create bat file
+            List<String> bat = new ArrayList();
+
+            if (Bee.name().endsWith(".bat")) {
+                // windows use JDK full path to avoid using JRE
+                bat.add("@echo off");
+                bat.add(JavaHome.file("bin/java") + " -javaagent:\"" + dest + "\" -cp \"" + dest + "\" " + Bee.class.getName() + " %*");
+            } else {
+                // linux
+                bat.add("#!/bin/bash");
+                bat.add(JavaHome.file("bin/java") + " -javaagent:\"" + dest + "\"-cp \"" + dest + "\" " + Bee.class.getName() + " \"$@\"");
+            }
+            Bee.text(bat);
+
+            ui.info("Write new bat file. [", Bee, "]");
         }
 
-        // create bat file
-        List<String> bat = new ArrayList();
+        if (installAPI) {
+            File api = Locator.folder()
+                    .add(source.asArchive(), "bee/**", "!**.java")
+                    .add(source.asArchive(), "META-INF/services/**")
+                    .packToTemporary();
 
-        if (Bee.name().endsWith(".bat")) {
-            // windows use JDK full path to avoid using JRE
-            bat.add("@echo off");
-            bat.add(JavaHome.file("bin/java") + " -javaagent:\"" + dest + "\" -cp \"" + dest + "\" " + Bee.class.getName() + " %*");
-        } else {
-            // linux
-            bat.add("#!/bin/bash");
-            bat.add(JavaHome.file("bin/java") + " -javaagent:\"" + dest + "\"-cp \"" + dest + "\" " + Bee.class.getName() + " \"$@\"");
+            I.make(Repository.class).install(bee.Bee.API, api);
         }
-        Bee.text(bat);
-
-        ui.info("Write new bat file. [", Bee, "]");
-
-        installAPI(source);
-    }
-
-    /**
-     * Install bee-api library and sources.
-     * 
-     * @param source
-     */
-    public static void installAPI(File source) {
-        File api = Locator.folder()
-                .add(source.asArchive(), "bee/**", "!**.java")
-                .add(source.asArchive(), "META-INF/services/**")
-                .packToTemporary();
-
-        I.make(Repository.class).install(bee.Bee.API, api);
     }
 }

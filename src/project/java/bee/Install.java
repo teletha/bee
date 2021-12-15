@@ -26,6 +26,6 @@ public class Install extends bee.task.Install {
 
         I.make(Repository.class).install(project);
 
-        BeeInstaller.install(project.locateJar());
+        BeeInstaller.install(true, true, true);
     }
 }
