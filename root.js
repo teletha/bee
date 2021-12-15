@@ -48,7 +48,7 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Ci",
+			"name": "CI",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -335,16 +335,16 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "IDESupport",
+			"name": "IDE",
 			"packageName": "bee.task",
-			"type": "Interface"
+			"type": "Class"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Ide",
+			"name": "IDESupport",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
@@ -482,15 +482,15 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Platform",
-			"packageName": "bee",
+			"name": "POM",
+			"packageName": "bee.task",
 			"type": "Class"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Pom",
-			"packageName": "bee.task",
+			"name": "Platform",
+			"packageName": "bee",
 			"type": "Class"
 		},
 		{
