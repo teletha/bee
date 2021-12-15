@@ -649,7 +649,7 @@ public abstract class Task implements Extensible {
 
                         // compute command name
                         Command command = (Command) annotation;
-                        String commnadName = method.getName().toLowerCase();
+                        String commnadName = Inputs.hyphenize(method.getName());
 
                         // register
                         commands.put(commnadName, method);
@@ -712,7 +712,7 @@ public abstract class Task implements Extensible {
                         boolean valued = m.getReturnType() != void.class;
 
                         mw = writer.writeMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
-                        mw.visitLdcInsn(model.getSimpleName() + ":" + methodName);
+                        mw.visitLdcInsn(model.getSimpleName() + ":" + Inputs.hyphenize(methodName));
                         mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
                         mw.visitVarInsn(ASTORE, 1);
                         mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");

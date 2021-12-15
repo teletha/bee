@@ -22,7 +22,7 @@ import bee.util.Inputs;
 import kiss.I;
 import psychopath.File;
 
-public class Ci extends Task {
+public class CI extends Task {
 
     @Command(defaults = true, value = "Setup CI/CD")
     public void setup() {
@@ -34,14 +34,14 @@ public class Ci extends Task {
             ui.info("Detect version control system.");
 
             if (vcs.name().equals("github")) {
-                require(Ci::github);
+                require(CI::github);
             }
         }
     }
 
     @Command("Generate CI/CD configuration files for GitHub.")
     public void github() {
-        require(Ci::gitignore, Ci::jitpack);
+        require(CI::gitignore, CI::jitpack);
 
         String build = """
                 name: Build and Deploy

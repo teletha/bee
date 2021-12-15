@@ -48,4 +48,13 @@ class InputsTest {
         assert Inputs.signature(Consumer<?>::accept).equals("java.util.function.Consumer#accept(Object)");
         assert Inputs.signature(BiConsumer<?, ?>::accept).equals("java.util.function.BiConsumer#accept(Object, Object)");
     }
+
+    @Test
+    void hyphenize() {
+        assert Inputs.hyphenize("ok").equals("ok");
+        assert Inputs.hyphenize("OK").equals("ok");
+        assert Inputs.hyphenize("DoSomething").equals("do-something");
+        assert Inputs.hyphenize("testXML").equals("test-xml");
+        assert Inputs.hyphenize("CI").equals("ci");
+    }
 }

@@ -16,7 +16,7 @@ import bee.Task;
 import bee.api.Command;
 import kiss.I;
 
-public class Ide extends Task {
+public class IDE extends Task {
 
     /**
      * Create idea's project file.
@@ -24,7 +24,7 @@ public class Ide extends Task {
     @Override
     @Command("Generate configuration files.")
     public void execute() {
-        require(Pom::build);
+        require(POM::build);
 
         task(IDESupport::execute);
 

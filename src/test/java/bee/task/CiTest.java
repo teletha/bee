@@ -18,7 +18,7 @@ class CiTest extends TaskTestBase {
 
     @Test
     public void update() {
-        Ci ci = new Ci();
+        CI ci = new CI();
 
         List<String> original = lines("ok");
         List<String> updated = ci.update(original);

@@ -9,12 +9,14 @@
  */
 package bee.task;
 
+import bee.Bee;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Project;
 import bee.api.Repository;
 import kiss.I;
 import psychopath.File;
+import psychopath.Locator;
 
 public class Install extends Task {
 
@@ -36,6 +38,25 @@ public class Install extends Task {
 
         Repository repository = I.make(Repository.class);
         repository.install(new TemporaryProject(group, product, version), selected);
+    }
+
+    @Command("Install bee-api.jar into the local repository.")
+    public void beeAPI() {
+        File source;
+
+        if (project.equals(Bee.Tool)) {
+            require(Install::project);
+            source = project.locateJar();
+        } else {
+            source = Locator.locate(Bee.class).asFile();
+        }
+
+        File api = Locator.folder()
+                .add(source.asArchive(), "bee/**", "!**.java")
+                .add(source.asArchive(), "META-INF/services/**")
+                .packToTemporary();
+
+        I.make(Repository.class).install(bee.Bee.API, api);
     }
 
     /**

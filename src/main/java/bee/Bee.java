@@ -21,7 +21,7 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.task.Ide;
+import bee.task.IDE;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import kiss.I;
@@ -264,7 +264,7 @@ public class Bee {
                 @Override
                 public void execute() {
                     require(Prototype::java);
-                    require(Ide::execute);
+                    require(IDE::execute);
                 }
             });
         }
@@ -310,7 +310,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install:bee-api") : washed));
     }
 
     /**

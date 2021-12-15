@@ -12,7 +12,7 @@ package bee.task;
 import bee.Task;
 import bee.api.Command;
 
-public class Pom extends Task {
+public class POM extends Task {
 
     @Command("Generate pom file.")
     public void build() {
