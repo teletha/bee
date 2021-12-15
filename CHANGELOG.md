@@ -1,5 +1,17 @@
 # Changelog
 
+### [0.20.1](https://www.github.com/teletha/bee/compare/v0.20.0...v0.20.1) (2021-12-15)
+
+
+### Bug Fixes
+
+* Env task always clean up old envronment. ([d698388](https://www.github.com/teletha/bee/commit/d698388e43bdfbb53768634d883a978784d0da93))
+* Failed to rebuild the wrapper when launched from the wrapper. ([b5acf74](https://www.github.com/teletha/bee/commit/b5acf74e14361282d39aaac5bbff17e92fd61f7c))
+* Format .gitignore correctly. ([63d5e35](https://www.github.com/teletha/bee/commit/63d5e3504a8cb3d8255d39ac79ad0f1f67e2925a))
+* Inputs#hyphenize accepts abbriviation. ([b3c73ed](https://www.github.com/teletha/bee/commit/b3c73edba2acfc5e5699031ab298175ff358bcf8))
+* Install task should execute test. ([f425876](https://www.github.com/teletha/bee/commit/f4258760fb14bd8e4811d6f7f1029c2b658c2fe3))
+* Normalize output of .gitignore and version.txt ([7de5aeb](https://www.github.com/teletha/bee/commit/7de5aeb8e64b1d2a7e332f5d73acfbee7dc09ef7))
+
 ## [0.20.0](https://www.github.com/teletha/bee/compare/v0.19.0...v0.20.0) (2021-12-13)
 
 
