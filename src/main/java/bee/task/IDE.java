@@ -24,8 +24,6 @@ public class IDE extends Task {
     @Override
     @Command("Generate configuration files.")
     public void execute() {
-        require(POM::build);
-
         task(IDESupport::execute);
 
         ui.info("Generate IDE configuration files.");
