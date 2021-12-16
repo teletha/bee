@@ -9,7 +9,6 @@
  */
 package bee.task;
 
-import bee.BeeInstaller;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Project;
@@ -24,8 +23,7 @@ public class Install extends Task {
         require(Test::test);
         require(Jar::document, Jar::source);
 
-        Repository repository = I.make(Repository.class);
-        repository.install(project);
+        I.make(Repository.class).install(project);
     }
 
     @Command("Install jar file only into the local repository.")
@@ -37,11 +35,6 @@ public class Install extends Task {
 
         Repository repository = I.make(Repository.class);
         repository.install(new TemporaryProject(group, product, version), selected);
-    }
-
-    @Command("Install bee-api.jar into the local repository.")
-    public void beeAPI() {
-        BeeInstaller.install(false, false, true);
     }
 
     /**

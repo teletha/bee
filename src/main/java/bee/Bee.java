@@ -310,7 +310,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install:bee-api") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:local") : washed));
     }
 
     /**

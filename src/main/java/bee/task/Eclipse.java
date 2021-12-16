@@ -17,6 +17,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import bee.Bee;
+import bee.BeeInstaller;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
@@ -181,7 +182,7 @@ public class Eclipse extends Task implements IDESupport {
 
         // Bee API
         if (!project.equals(Bee.Tool)) {
-            require(Install::beeAPI);
+            BeeInstaller.install(false, true);
             doc.child("classpathentry")
                     .attr("kind", "lib")
                     .attr("path", Bee.API.asLibrary().getLocalJar())
