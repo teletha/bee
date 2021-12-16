@@ -117,16 +117,44 @@ public class CI extends Task {
             return; // already exists
         }
 
-        makeFile("LICENSE.txt", license.text());
+        makeFile("LICENSE.txt", license.text(false));
     }
 
     /**
      * Create README file if needed
      */
     private void makeReadMeFile() {
-        if (checkFile("README.md")) {
-            return; // already exists
-        }
+        // if (checkFile("README.md")) {
+        // return; // already exists
+        // }
+
+        makeFile("README.md", I
+                .express("""
+                        <h1 align="center">{product}</h1>
+                        <h4 align="center">{description}</h4>
+                        <p align="center">
+                            <a href="https://jitpack.io/#{versionControlSystem.owner}/{versionControlSystem.repo}">
+                                <img src="https://img.shields.io/jitpack/v/{versionControlSystem.name}/{versionControlSystem.owner}/{versionControlSystem.repo}?label=JitPack">
+                            </a>
+                            <a href="https://github.com/{versionControlSystem.owner}/{versionControlSystem.repo}/actions/workflows/build.yml">
+                                <img src="https://img.shields.io/github/workflow/status/{versionControlSystem.owner}/{versionControlSystem.repo}/Build%20and%20Deploy">
+                            </a>
+                            <a href="https://{versionControlSystem.owner}.github.io/{versionControlSystem.repo}">
+                                <img src="https://img.shields.io/website-up-down-green-red/https/{versionControlSystem.owner}.github.io%2F{versionControlSystem.repo}.svg">
+                            </a>
+                        </p>
+                        """, new Object[] {
+                        project}, (m, o, e) -> {
+                            try {
+                                return m.type.getMethod(e).invoke(o);
+                            } catch (Exception x) {
+                                try {
+                                    return m.type.getField(e).get(o);
+                                } catch (Exception y) {
+                                    return null;
+                                }
+                            }
+                        }));
     }
 
     @Command("Generate CI/CD configuration files for JitPack.")

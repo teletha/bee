@@ -36,7 +36,7 @@ public class License {
     public static final License LGPL = new License("LGPL", "3.0", "GNU Lesser General Public License version $", "https://opensource.org/licenses/LGPL-3.0");
 
     /** Builtin */
-    public static final License MIT = new License("MIT", "", "The MIT License", "https://opensource.org/licenses/MIT");
+    public static final License MIT = new License("MIT", "", "MIT License", "https://opensource.org/licenses/MIT");
 
     /** Builtin */
     public static final License MPL = new License("MPL", "2.0", "Mozilla Public License $", "https://opensource.org/licenses/MPL-2.0");
@@ -72,7 +72,7 @@ public class License {
      * 
      * @return
      */
-    public List<String> text() {
+    public List<String> text(boolean simple) {
         List<String> text = new ArrayList();
         Project project = I.make(Project.class);
 
@@ -95,12 +95,19 @@ public class License {
             }
         }
 
-        text.add("");
-        text.add("Licensed under the " + name + " License (the \"License\");");
-        text.add("you may not use this file except in compliance with the License.");
-        text.add("You may obtain a copy of the License at");
-        text.add("");
-        text.add("         " + uri);
+        if (simple) {
+            text.add("");
+            text.add("Licensed under the " + name + " License (the \"License\");");
+            text.add("you may not use this file except in compliance with the License.");
+            text.add("You may obtain a copy of the License at");
+            text.add("");
+            text.add("         " + uri);
+        } else {
+            String[] body = I.json("https://api.github.com/licenses/" + name).text("body").split("\\R");
+            text.add("");
+            text.add(full);
+            text.addAll(I.list(body).subList(3, body.length));
+        }
 
         return text;
     }

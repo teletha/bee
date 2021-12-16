@@ -300,7 +300,7 @@ public class HeaderTypeTest {
          * {@inheritDoc}
          */
         @Override
-        public List<String> text() {
+        public List<String> text(boolean simple) {
             List<String> body = new ArrayList();
             define(body);
             return body;

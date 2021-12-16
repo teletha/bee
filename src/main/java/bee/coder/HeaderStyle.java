@@ -103,7 +103,7 @@ public interface HeaderStyle extends Extensible {
             }
         }
 
-        List<String> decorated = decorate(license.text());
+        List<String> decorated = decorate(license.text(true));
 
         // remove existing header
         if (end != -1) {
@@ -118,7 +118,7 @@ public interface HeaderStyle extends Extensible {
         }
 
         // add specified header
-        source.addAll(first, decorate(license.text()));
+        source.addAll(first, decorate(license.text(true)));
 
         // API definition
         return source;
