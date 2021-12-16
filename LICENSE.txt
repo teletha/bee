@@ -1,5 +1,3 @@
-MIT License
-
 Copyright (C) 2021 Nameless Production Committee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
