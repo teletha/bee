@@ -114,7 +114,7 @@ public class Env extends Task {
                 """, context);
 
         String sh = I.express("""
-                #!bin/bash
+                #!/bin/bash
                 bee=bee-{ⅰ}.far
                 if [ ! -e $bee ]; then
                     bee=$JAVA_HOME/lib/bee-{ⅰ}.jar

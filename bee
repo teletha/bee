@@ -1,4 +1,4 @@
-#!bin/bash
+#!/bin/bash
 bee=bee-0.20.0.far
 if [ ! -e $bee ]; then
     bee=$JAVA_HOME/lib/bee-0.20.0.jar

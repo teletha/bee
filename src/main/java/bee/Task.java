@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -417,6 +418,12 @@ public abstract class Task implements Extensible {
         }
 
         file.text(content);
+
+        Iterator<String> iterator = content.iterator();
+        if (iterator.hasNext() && iterator.next().startsWith("#!")) {
+            file.text(x -> x.replaceAll("\\R", "\n"));
+        }
+
         ui.info("Make file [", file.absolutize(), "]");
 
         return file;
