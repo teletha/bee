@@ -228,6 +228,16 @@ public class Project {
     }
 
     /**
+     * Internal setter for property access.
+     * 
+     * @param description
+     */
+    @SuppressWarnings("unused")
+    private void setDescription(String description) {
+        this.description = description;
+    }
+
+    /**
      * Declare product description.
      * 
      * @param description A product description.
@@ -748,6 +758,15 @@ public class Project {
      */
     public VCS getVersionControlSystem() {
         return vcs;
+    }
+
+    /**
+     * Internal setter for property access.
+     * 
+     * @param groupName
+     */
+    private void setVersionControlSystem(VCS vcs) {
+        this.vcs = vcs;
     }
 
     /**
