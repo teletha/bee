@@ -97,7 +97,7 @@ public class CI extends Task {
 
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
-        makeFile("version.txt", List.of(project.getVersion(), ""));
+        makeFile("version.txt", List.of(project.getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
         makeFile(".github/workflows/build.yml", String.format(build, testVersion, project.getProduct()));
         makeLicenseFile();
         makeReadMeFile();
@@ -238,10 +238,16 @@ public class CI extends Task {
                         {#dependencies}
                         * [{.}](https://mvnrepository.com/artifact/{group}/{name}/{version})
                         {/dependencies}
+                        {^dependencies}
+                        * No Dependency
+                        {/dependencies}
 
                         {ProductName} depends on the following products on test.
                         {#testDependencies}
                         * [{.}](https://mvnrepository.com/artifact/{group}/{name}/{version})
+                        {/testDependencies}
+                        {^testDependencies}
+                        * No Dependency
                         {/testDependencies}
                         <p align="right"><a href="#top">back to top</a></p>
 
