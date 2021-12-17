@@ -157,11 +157,6 @@ public class CI extends Task {
 
                         ## Using in your build
                         For any code snippet below, please substitute the version given with the version of {ProductName} you wish to use.
-                        #### [Bee](https://teletha.github.io/bee)
-                        Add it into your project definition class like so:
-                        ```java
-                        require("{group}", "{product}", "{version}");
-                        ```
                         #### [Maven](https://maven.apache.org/)
                         Add JitPack repository at the end of repositories element in your build.xml:
                         ```xml
@@ -209,6 +204,11 @@ public class CI extends Task {
                         ```clj
                         :dependencies [[{group}/{product} "{version}"]]
                         ```
+                        #### [Bee](https://teletha.github.io/bee)
+                        Add it into your project definition class like so:
+                        ```java
+                        require("{group}", "{product}", "{version}");
+                        ```
                         <p align="right"><a href="#top">back to top</a></p>
 
 
@@ -233,7 +233,7 @@ public class CI extends Task {
                         <p align="right"><a href="#top">back to top</a></p>
 
 
-                        ## Built With
+                        ## Built with
                         {ProductName} depends on the following products on runtime.
                         {#dependencies}
                         * [{.}](https://mvnrepository.com/artifact/{group}/{name}/{version})
