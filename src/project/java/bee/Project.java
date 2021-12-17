@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.api.License.*;
+import static bee.api.License.MIT;
 
 import javax.lang.model.SourceVersion;
 
@@ -17,7 +17,19 @@ public class Project extends bee.api.Project {
 
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
-        describe("Task based project builder for Java");
+        describe("""
+                Bee is an open source build automation tool that focuses on conventions, type safety and performance.
+                Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
+
+                #### Minimize settings
+                Use default values to minimize the number of items that need to be set as much as possible. Also, all settings are type-safe and complementary, so you don't have to search for minor settings in the documentation.
+
+                #### Fast execution
+                All tasks are executed in parallel, and all output is cached and reused.
+
+                #### Repository oriented
+                It recognizes source code and package repositories and automates the entire lifecycle from development to release.
+                """);
         license(MIT);
 
         require(SourceVersion.RELEASE_16, SourceVersion.RELEASE_11, SourceVersion.RELEASE_16);

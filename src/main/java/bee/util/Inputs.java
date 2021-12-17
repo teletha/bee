@@ -192,6 +192,18 @@ public class Inputs {
     }
 
     /**
+     * Capitalize user input.
+     * 
+     * @param input A user input.
+     * @return A capitalized input.
+     */
+    public static String capitalize(String input) {
+        char[] chars = input.toCharArray();
+        chars[0] = Character.toUpperCase(chars[0]);
+        return new String(chars);
+    }
+
+    /**
      * Hyphenize user input.
      * 
      * @param input A user input.

@@ -225,6 +225,66 @@ public class Library implements Comparable<Library> {
     }
 
     /**
+     * Get the group property of this {@link Library}.
+     * 
+     * @return The group property.
+     */
+    public String getGroup() {
+        return group;
+    }
+
+    /**
+     * Set the group property of this {@link Library}.
+     * 
+     * @param group The group property.
+     */
+    void setGroup(String group) {
+        // If this exception will be thrown, it is bug of this program. So we must rethrow the
+        // wrapped error in here.
+        throw new Error();
+    }
+
+    /**
+     * Get the name property of this {@link Library}.
+     * 
+     * @return The name property.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set the name property of this {@link Library}.
+     * 
+     * @param name The name property.
+     */
+    void setName(String name) {
+        // If this exception will be thrown, it is bug of this program. So we must rethrow the
+        // wrapped error in here.
+        throw new Error();
+    }
+
+    /**
+     * Get the version property of this {@link Library}.
+     * 
+     * @return The version property.
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * Set the version property of this {@link Library}.
+     * 
+     * @param version The version property.
+     */
+    void setVersion(String version) {
+        // If this exception will be thrown, it is bug of this program. So we must rethrow the
+        // wrapped error in here.
+        throw new Error();
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
