@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.22.0](https://www.github.com/teletha/bee/compare/v0.21.0...v0.22.0) (2021-12-17)
+
+
+### Features
+
+* Generate README.md on CI task. ([7686e47](https://www.github.com/teletha/bee/commit/7686e47af9296d722dc164d979a9ff0c31ccd36b))
+* License can generate the full license text without link. ([c420d02](https://www.github.com/teletha/bee/commit/c420d029bd7cd7cbd02015b7c25d2635631fce11))
+
+
+### Bug Fixes
+
+* Add license. ([f4f7b29](https://www.github.com/teletha/bee/commit/f4f7b2929e777c95cd4c0ff4805abc8f9b2a7994))
+
 ## [0.21.0](https://www.github.com/teletha/bee/compare/v0.20.0...v0.21.0) (2021-12-16)
 
 
