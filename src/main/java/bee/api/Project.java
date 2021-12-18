@@ -9,6 +9,8 @@
  */
 package bee.api;
 
+import static bee.util.Code.*;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,6 +41,7 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
+import bee.util.Code;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
@@ -924,15 +927,16 @@ public class Project {
      * @return
      */
     public List<String> toDefinition() {
-        List<String> code = new ArrayList();
-        code.add("public class Project extends " + Project.class.getName() + " {");
-        code.add("");
-        code.add("  {");
-        code.add("      product(\"" + productGroup + "\", \"" + productName + "\", \"" + productVersion + "\");");
-        code.add("  }");
-        code.add("}");
+        Code code = Code.java()
+                .write("public class Project extends ", Project.class.getName(), " {")
+                .write()
+                .write("  {")
+                .write("    ", call(this::product, productGroup, productName, productVersion), ";")
+                .write("    ", call(this::license, license))
+                .write("  }")
+                .write("}");
 
-        return StandardHeaderStyle.SlashStar.convert(code, license);
+        return StandardHeaderStyle.SlashStar.convert(code.lines, license);
     }
 
     /**
