@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.22.1](https://www.github.com/teletha/bee/compare/v0.22.0...v0.22.1) (2021-12-18)
+
+
+### Bug Fixes
+
+* If dependency doesn't exist, README outputs the appropriate text. ([77148e7](https://www.github.com/teletha/bee/commit/77148e7d9280911e10e8f2cd86274326988226c8))
+
 ## [0.22.0](https://www.github.com/teletha/bee/compare/v0.21.0...v0.22.0) (2021-12-17)
 
 
