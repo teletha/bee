@@ -65,7 +65,8 @@ import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
-import org.eclipse.aether.internal.impl.synccontext.NamedLockFactorySelector;
+import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactorySelector;
+import org.eclipse.aether.internal.impl.synccontext.named.SimpleNamedLockFactorySelector;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -788,7 +789,7 @@ public class Repository {
             defineSelf(EnhancedLocalRepositoryManagerFactory.class);
             define(BasicRepositoryConnectorFactory.class);
             define(HttpTransporterFactory.class);
-            define(NamedLockFactorySelector.class, NamedLockFactorySelector::new);
+            define(NamedLockFactorySelector.class, SimpleNamedLockFactorySelector::new);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
         }
 
