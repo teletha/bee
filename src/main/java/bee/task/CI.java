@@ -111,7 +111,7 @@ public class CI extends Task {
      * Create license file if needed
      */
     private void makeLicenseFile() {
-        License license = project.getLicense();
+        License license = project.license();
 
         if (license == null) {
             return; // not specified
@@ -280,7 +280,7 @@ public class CI extends Task {
                                 return new ArrayList(project.getDependency(Scope.Test));
 
                             case "license":
-                                return project.getLicense().text(false).stream().collect(Collectors.joining(Platform.EOL));
+                                return project.license().text(false).stream().collect(Collectors.joining(Platform.EOL));
 
                             default:
                                 return null;

@@ -9,8 +9,6 @@
  */
 package bee.api;
 
-import static bee.util.Code.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -41,7 +39,6 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
-import bee.util.Code;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
@@ -81,7 +78,7 @@ public class Project {
     private String description = "";
 
     /** The license. */
-    License license;
+    private License license = License.MIT;
 
     /** The license related info. */
     final List<Integer> licensedFrom = new ArrayList();
@@ -257,7 +254,7 @@ public class Project {
      * 
      * @return
      */
-    public License getLicense() {
+    public License license() {
         return license;
     }
 
@@ -927,16 +924,19 @@ public class Project {
      * @return
      */
     public List<String> toDefinition() {
-        Code code = Code.java()
-                .write("public class Project extends ", Project.class.getName(), " {")
-                .write()
-                .write("  {")
-                .write("    ", call(this::product, productGroup, productName, productVersion), ";")
-                .write("    ", call(this::license, license))
-                .write("  }")
-                .write("}");
+        List<String> code = Inputs.templates("""
+                {=$ $=}
+                import static bee.api.License.$license.name$;
 
-        return StandardHeaderStyle.SlashStar.convert(code.lines, license);
+                public class Project extends bee.api.Project {
+                    {
+                        product("$group$", "$product$", "$version$");
+                        license(License.$license.name$);
+                    }
+                }
+                """, this);
+
+        return StandardHeaderStyle.SlashStar.convert(code, license);
     }
 
     /**

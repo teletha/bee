@@ -43,7 +43,7 @@ public class License extends Task {
                 ui.info("Unknown Format ", project.getRoot().relativize(file));
             } else {
                 List<String> source = file.lines(project.getEncoding()).toList();
-                List<String> converted = type.header().convert(source, project.getLicense());
+                List<String> converted = type.header().convert(source, project.license());
 
                 if (converted != null) {
                     file.text(project.getEncoding(), converted);

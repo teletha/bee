@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -128,6 +129,38 @@ public class Inputs {
         } else {
             return Double.toString(Math.round(size * 100.0) / 100.0).concat(unit);
         }
+    }
+
+    /**
+     * Bee template helper.
+     * 
+     * @param template
+     * @param context
+     * @return
+     */
+    public static String template(String template, Object... context) {
+        return I.express(template, context, (m, o, p) -> {
+            try {
+                return o.getClass().getField(p).get(o);
+            } catch (Exception e) {
+                try {
+                    return o.getClass().getMethod(p).invoke(o);
+                } catch (Exception x) {
+                    return null;
+                }
+            }
+        });
+    }
+
+    /**
+     * Bee template helper.
+     * 
+     * @param template
+     * @param context
+     * @return
+     */
+    public static List<String> templates(String template, Object... context) {
+        return I.list(template(template, context).split("\\R"));
     }
 
     /**
