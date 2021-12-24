@@ -40,7 +40,8 @@ class LicenseTest {
     @Test
     void durationFrom() {
         BlinkProject project = new BlinkProject();
-        project.license(License.MPL, 2020, "The Team");
+        project.license(License.MPL);
+        project.licenser(2020, "The Team");
 
         List<String> text = project.license().text(true);
         assert text.get(0).equals("Copyright (C) 2020-" + Year.now().getValue() + " The Team");
@@ -50,7 +51,8 @@ class LicenseTest {
     @Test
     void durationFromTo() {
         BlinkProject project = new BlinkProject();
-        project.license(License.MPL, 2018, 2020, "The Team");
+        project.license(License.MPL);
+        project.licenser(2018, 2020, "The Team");
 
         List<String> text = project.license().text(true);
         assert text.get(0).equals("Copyright (C) 2018-2020" + " The Team");
@@ -60,8 +62,9 @@ class LicenseTest {
     @Test
     void durationMultiple() {
         BlinkProject project = new BlinkProject();
-        project.license(License.EPL, 2018, 2020, "The Team");
-        project.license(License.EPL, 2021, 2021, "The New Team");
+        project.license(License.EPL);
+        project.licenser(2018, 2020, "The Team");
+        project.licenser(2021, 2021, "The New Team");
 
         List<String> text = project.license().text(true);
         assert text.get(0).equals("Copyright (C) 2018-2020" + " The Team");

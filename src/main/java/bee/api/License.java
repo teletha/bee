@@ -76,7 +76,7 @@ public class License {
         List<String> text = new ArrayList();
         Project project = I.make(Project.class);
 
-        if (project.license() == null) {
+        if (project.licensedBy.isEmpty()) {
             text.add("Copyright (C) " + Year.now().getValue() + " The " + project.getProduct().toUpperCase() + " Development Team");
         } else {
             for (int i = 0; i < project.licensedFrom.size(); i++) {

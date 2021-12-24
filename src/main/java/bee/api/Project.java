@@ -264,25 +264,20 @@ public class Project {
      * @param license
      */
     protected final void license(License license) {
-        license(license, 0, 0, null);
+        this.license = Objects.requireNonNullElse(license, License.MIT);
     }
 
     /**
-     * Set product license.
-     * 
-     * @param kind
+     * Add product licenser.
      */
-    protected final void license(License kind, int licensedFrom, String licensedBy) {
-        license(kind, licensedFrom, 0, licensedBy);
+    protected final void licenser(int licensedFrom, String licensedBy) {
+        licenser(licensedFrom, 0, licensedBy);
     }
 
     /**
-     * Set product license.
-     * 
-     * @param kind
+     * Add product licenser.
      */
-    protected final void license(License kind, int licensedFrom, int licensedTo, String licensedBy) {
-        this.license = Objects.requireNonNullElse(kind, License.MIT);
+    protected final void licenser(int licensedFrom, int licensedTo, String licensedBy) {
         this.licensedFrom.add(licensedFrom <= 0 ? Year.now().getValue() : licensedFrom);
         this.licensedTo.add(licensedTo <= 0 ? Year.now().getValue() : licensedTo);
         this.licensedBy.add(Objects.requireNonNullElse(licensedBy, ""));
