@@ -23,9 +23,6 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
-/**
- * @version 2012/11/12 13:20:32
- */
 public class BlinkProject extends Project {
 
     static {

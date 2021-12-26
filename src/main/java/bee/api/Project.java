@@ -39,6 +39,7 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 import bee.Bee;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
+import bee.util.Ensure;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
@@ -120,18 +121,22 @@ public class Project {
             // fabric project
             this.root = Locator.directory("").absolutize();
         } else {
-            Location archive = Locator.locate(projectClass);
+            try {
+                Location archive = Locator.locate(projectClass);
 
-            if (archive.isDirectory()) {
-                // directory
-                this.root = archive.parent().parent();
-            } else {
-                // some archive
-                if (archive.toString().contains("temporary")) {
-                    this.root = Locator.directory("").absolutize();
+                if (archive.isDirectory()) {
+                    // directory
+                    this.root = archive.parent().parent();
                 } else {
-                    this.root = archive.asDirectory();
+                    // some archive
+                    if (archive.toString().contains("temporary")) {
+                        this.root = Locator.directory("").absolutize();
+                    } else {
+                        this.root = archive.asDirectory();
+                    }
                 }
+            } catch (Throwable e) {
+                this.root = Locator.directory("").absolutize();
             }
         }
 
@@ -213,6 +218,7 @@ public class Project {
      * @param productVersion A product version.
      */
     protected final void product(CharSequence productPackage, CharSequence productName, CharSequence productVersion) {
+        CharSequence ensure = Ensure.Alphanumeric.separator(".+-=_").ensure(productPackage);
         this.productGroup = Inputs.normalize(productPackage, "YourPackage");
         this.productName = Inputs.normalize(productName, "YourProduct");
         this.productVersion = Inputs.normalize(productVersion, "1.0");
@@ -918,15 +924,15 @@ public class Project {
      * 
      * @return
      */
-    public List<String> toDefinition() {
+    public List<String> toBeeDefinition() {
         List<String> code = Inputs.templates("""
-                {=$ $=}
-                import static bee.api.License.$license.name$;
+                {=${ }=}
+                import static bee.api.License.*;
 
                 public class Project extends bee.api.Project {
                     {
-                        product("$group$", "$product$", "$version$");
-                        license(License.$license.name$);
+                        product("${group}", "${product}", "${version}");
+                        license(${license.name});
                     }
                 }
                 """, this);

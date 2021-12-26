@@ -19,6 +19,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.lang.model.SourceVersion;
@@ -173,6 +174,29 @@ public class Inputs {
     public static String normalize(CharSequence input, String defaultValue) {
         if (input == null) {
             input = defaultValue;
+        }
+
+        // trim whitespcae
+        input = input.toString().trim();
+
+        if (input.length() == 0) {
+            input = defaultValue;
+        }
+
+        // API definition
+        return input.toString();
+    }
+
+    /**
+     * Normalize user input.
+     * 
+     * @param input A user input.
+     * @param validations A list of value validations.
+     * @return A normalized input.
+     */
+    public static String normalize(CharSequence input, Predicate<CharSequence>... validations) {
+        if (input == null) {
+            throw new IllegalArgumentException();
         }
 
         // trim whitespcae

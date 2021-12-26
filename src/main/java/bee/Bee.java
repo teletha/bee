@@ -255,7 +255,7 @@ public class Bee {
             // build temporary project
             inject(new FavricProject(group, name, version, license));
 
-            definition.text(project.toDefinition());
+            definition.text(project.toBeeDefinition());
             ui.info("Generate project definition.");
 
             // build project architecture
