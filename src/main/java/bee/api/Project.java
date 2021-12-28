@@ -218,7 +218,7 @@ public class Project {
      * @param productVersion A product version.
      */
     protected final void product(CharSequence productPackage, CharSequence productName, CharSequence productVersion) {
-        CharSequence ensure = Ensure.Alphanumeric.separator(".+-=_").ensure(productPackage);
+        CharSequence ensure = Ensure.Alphanumeric.separator(".+-=_").validate(productPackage);
         this.productGroup = Inputs.normalize(productPackage, "YourPackage");
         this.productName = Inputs.normalize(productName, "YourProduct");
         this.productVersion = Inputs.normalize(productVersion, "1.0");

@@ -188,29 +188,6 @@ public class Inputs {
     }
 
     /**
-     * Normalize user input.
-     * 
-     * @param input A user input.
-     * @param validations A list of value validations.
-     * @return A normalized input.
-     */
-    public static String normalize(CharSequence input, Predicate<CharSequence>... validations) {
-        if (input == null) {
-            throw new IllegalArgumentException();
-        }
-
-        // trim whitespcae
-        input = input.toString().trim();
-
-        if (input.length() == 0) {
-            input = defaultValue;
-        }
-
-        // API definition
-        return input.toString();
-    }
-
-    /**
      * Normalize {@link SourceVersion} to human-readable version number.
      * 
      * @param version A target version.
