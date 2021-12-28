@@ -213,15 +213,14 @@ public class Project {
     /**
      * Declare product package, name and version.
      * 
-     * @param productPackage A product package name.
-     * @param productName A product name.
-     * @param productVersion A product version.
+     * @param group A product group.
+     * @param product A product name.
+     * @param version A product version.
      */
-    protected final void product(CharSequence productPackage, CharSequence productName, CharSequence productVersion) {
-        CharSequence ensure = Ensure.Alphanumeric.separator(".+-=_").validate(productPackage);
-        this.productGroup = Inputs.normalize(productPackage, "YourPackage");
-        this.productName = Inputs.normalize(productName, "YourProduct");
-        this.productVersion = Inputs.normalize(productVersion, "1.0");
+    protected final void product(CharSequence group, CharSequence product, CharSequence version) {
+        this.productGroup = Ensure.Alphanumeric.separator("._-+").validate(group).toString();
+        this.productName = Ensure.Alphanumeric.separator("_-+").validate(product).toString();
+        this.productVersion = Ensure.Alphanumeric.separator("._-+").validate(version).toString();
     }
 
     /**

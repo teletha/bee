@@ -71,15 +71,6 @@ class ProjectToBeeDefinitionTest {
     }
 
     @Test
-    void groupNull() {
-        BlinkProject project = new BlinkProject();
-        project.product(null, "PRODUCT", "1.5");
-
-        Project compiled = compileProject(project);
-        assert compiled.getGroup().equals("GROUP");
-    }
-
-    @Test
     void license() {
         BlinkProject project = new BlinkProject();
         project.license(License.BSD);

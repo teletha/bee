@@ -25,6 +25,7 @@ class EnsureTest {
         assert req.test("Ⅳ");
         assert req.test("+") == false;
         assert req.test("_") == false;
+        assert req.test("*") == false;
         assert req.test("0") == false;
         assert req.test("あ") == false;
         assert req.test(" ") == false;

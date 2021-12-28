@@ -64,11 +64,13 @@ public class Ensure<T> {
      * @param base
      */
     private Ensure(Class<T> type, Ensure<T> base) {
-        this.type = type;
-
-        if (base != null) {
+        if (base == null) {
+            this.type = type;
+        } else {
+            this.type = base.type;
             canonicalizers.addAll(base.canonicalizers);
             limitters.addAll(base.limitters);
+            availables = base.availables;
             availableNames.addAll(base.availableNames);
         }
     }
@@ -80,11 +82,11 @@ public class Ensure<T> {
      * @return
      */
     public <X> Ensure<T> canonicalize(Class<X> type, Function<X, X> canonicalizer) {
-        if (canonicalizer == null || !this.type.isAssignableFrom(type)) {
+        if (canonicalizer == null || !type.isAssignableFrom(this.type)) {
             return this;
         }
 
-        Ensure<X> update = new Ensure(type, this);
+        Ensure<X> update = new Ensure(null, this);
         update.canonicalizers.add(canonicalizer);
         return (Ensure<T>) update;
     }
@@ -96,11 +98,11 @@ public class Ensure<T> {
      * @return
      */
     public <X> Ensure<T> limit(Class<X> type, BiConsumer<X, List<String>> limiter) {
-        if (limiter == null || !this.type.isAssignableFrom(type)) {
+        if (limiter == null || !type.isAssignableFrom(this.type)) {
             return this;
         }
 
-        Ensure<X> update = new Ensure(type, this);
+        Ensure<X> update = new Ensure(null, this);
         update.limitters.add(limiter);
         return (Ensure<T>) update;
     }
@@ -111,7 +113,7 @@ public class Ensure<T> {
      * @param value
      * @return
      */
-    public final T validate(T value) {
+    public final <X extends T> X validate(X value) {
         return validate(value, null);
     }
 
@@ -121,9 +123,9 @@ public class Ensure<T> {
      * @param value
      * @return
      */
-    public final T validate(T value, WiseConsumer<List<String>> invalid) {
-        for (Function<T, T> normalizer : canonicalizers) {
-            value = normalizer.apply(value);
+    public final <X extends T> X validate(X value, WiseConsumer<List<String>> invalid) {
+        for (Function normalizer : canonicalizers) {
+            value = (X) normalizer.apply(value);
         }
 
         List<String> messages = new ArrayList();
@@ -208,7 +210,7 @@ public class Ensure<T> {
         return limit(CharSequence.class, (v, messages) -> {
             int length = v.toString().codePointCount(0, v.length());
             if (length < min) {
-                messages.add("[%s] is %s letters, but it must be at least %s letters.".formatted(v, v.length(), min));
+                messages.add("The inputed value [%s] is %s letters, but it must be at least %s letters.".formatted(v, v.length(), min));
             }
         });
     }
@@ -223,7 +225,7 @@ public class Ensure<T> {
         return limit(CharSequence.class, (v, messages) -> {
             int length = v.toString().codePointCount(0, v.length());
             if (max < length) {
-                messages.add("[%s] is %s letters, but it must be no more than %s letters.".formatted(v, v.length(), max));
+                messages.add("The inputed value [%s] is %s letters, but it must be no more than %s letters.".formatted(v, v.length(), max));
             }
         });
     }
@@ -270,7 +272,7 @@ public class Ensure<T> {
             return this;
         }
 
-        Ensure<T> update = new Ensure(type, this);
+        Ensure<T> update = new Ensure(null, this);
         update.availables = availables == null ? set : availables.or(set);
         update.availableNames.add(name);
         return update;
@@ -308,8 +310,18 @@ public class Ensure<T> {
             }
             return false;
         }, separators).limit(CharSequence.class, (v, messages) -> {
-            if (separators.indexOf(v.charAt(0)) != -1) {
-                messages.add("Don't use the separator charcter at head.");
+            if (v.length() != 0) {
+                if (separators.indexOf(v.charAt(0)) != -1) {
+                    messages.add("The letter [" + separators + "] are unavailable for the first letter.");
+                }
+
+                if (separators.indexOf(v.charAt(v.length() - 1)) != -1) {
+                    messages.add("The letter [" + separators + "] are unavailable for the last letter.");
+                }
+            }
+
+            if (Pattern.compile("[" + Pattern.quote(separators) + "]{2}").matcher(v).find()) {
+                messages.add("The letter [" + separators + "] cannot be used consecutively.");
             }
         });
     }
