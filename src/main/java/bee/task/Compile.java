@@ -20,6 +20,9 @@ import psychopath.Locator;
 
 public class Compile extends Task {
 
+    /** The kind of compiler. */
+    public static boolean useECJ = false;
+
     /**
      * Compile main sources and copy other resources.
      */
@@ -79,6 +82,8 @@ public class Compile extends Task {
                 .addSourceDirectory(input)
                 .setOutput(output)
                 .setNoWarn()
+                .setEncoding(project.getEncoding())
+                .setEclipseCompiler(useECJ)
                 .compile();
 
         // load project related classes

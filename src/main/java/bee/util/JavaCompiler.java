@@ -9,28 +9,21 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.SecureClassLoader;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -39,20 +32,17 @@ import java.util.stream.Collectors;
 
 import javax.annotation.processing.Processor;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Modifier;
-import javax.lang.model.element.NestingKind;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
-import javax.tools.FileObject;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
-import javax.tools.JavaFileObject.Kind;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 
+import bee.Fail;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Library;
@@ -104,10 +94,10 @@ public class JavaCompiler {
     private SourceVersion targetVersion = SourceVersion.latest();
 
     /** The source encoding. */
-    private Charset encoding = StandardCharsets.UTF_8;
+    private Charset encoding = Platform.Encoding;
 
     /** The deprication flag. */
-    private boolean deprication = false;
+    private boolean deprecation = false;
 
     /** The verbose flag. */
     private boolean verbose = false;
@@ -354,16 +344,14 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Show a description of each use or override of a deprecated member or class. Without
      * deprecation, java compiler shows a summary of the source files that use or override
      * deprecated members or classes.
-     * </p>
      * 
      * @param show
      */
     public JavaCompiler setDeprecation(boolean show) {
-        this.deprication = show;
+        this.deprecation = show;
 
         return this;
     }
@@ -371,18 +359,17 @@ public class JavaCompiler {
     /**
      * Set whether you want to use the Eclipse compiler (ECJ) instead of the JDK compiler (Javac).
      * 
+     * @param useECJ True to use ECJ, False to use Javac.
      * @return
      */
-    public JavaCompiler setEclipseCompiler() {
-        useECJ = true;
+    public JavaCompiler setEclipseCompiler(boolean useECJ) {
+        this.useECJ = useECJ;
         return this;
     }
 
     /**
-     * <p>
      * Set the source file encoding name, such as EUC-JP and UTF-8. If encoding is not specified or
      * <code>null</code> is specified, the platform default converter is used.
-     * </p>
      * 
      * @param encoding A charset to set.
      */
@@ -420,9 +407,7 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Override the location of installed extensions.
-     * </p>
      * 
      * @param directory
      */
@@ -431,9 +416,7 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Disable warning messages. This has the same meaning as -Xlint:none.
-     * </p>
      */
     public JavaCompiler setNoWarn() {
         this.nowarn = true;
@@ -442,9 +425,7 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Set source version and target version for compiling.
-     * </p>
      * 
      * @param sourceVersion
      * @param targetVersion
@@ -472,13 +453,11 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Specify the directory where to place generated source files. The directory must already
      * exist; javac will not create it. If a class is part of a package, the compiler puts the
      * source file in a subdirectory reflecting the package name, creating directories as needed.
      * For example, if you specify -s C:\mysrc and the class is called com.mypackage.MyClass, then
      * the source file will be placed in C:\mysrc\com\mypackage\MyClass.java.
-     * </p>
      * 
      * @param directory
      */
@@ -498,21 +477,23 @@ public class JavaCompiler {
         // =============================================
         if (verbose) {
             options.add("-verbose");
+            options.add("-XprintProcessorInfo");
+            options.add("-XprintRounds");
         }
 
         // =============================================
         // Lint
         // =============================================
-        if (deprication) {
-            options.add("-Xlint:deprecation");
+        if (deprecation) {
+            options.add("-deprecation");
         }
 
         if (nowarn) {
-            options.add("-Xlint:none");
+            options.add("-nowarn");
         }
 
         // =============================================
-        // Debug
+        // Debug info in class file
         // =============================================
         if (debug) {
             options.add("-g");
@@ -521,13 +502,14 @@ public class JavaCompiler {
         // =============================================
         // Output Directory
         // =============================================
-        if (output != null) {
-            // Create direcotry if needed.
-            output.create();
-
-            options.add("-d");
-            options.add(output.toString());
+        // Create direcotry if needed.
+        if (output == null) {
+            output = Locator.temporaryDirectory();
         }
+        output.create();
+
+        options.add("-d");
+        options.add(output.toString());
 
         // =============================================
         // Annotation Processing Tools
@@ -587,21 +569,19 @@ public class JavaCompiler {
         options.add("-sourcepath");
         options.add(String.join(File.pathSeparator, this.sources.walkFile().map(Location::toString).toList()));
 
-        // check compiling source size
+        // =============================================
+        // Start Compiling
+        // =============================================
+        // check target source size
         if (sources.isEmpty()) {
             ui.info("Nothing to compile - all classes are up to date");
-
             return Thread.currentThread().getContextClassLoader();
         }
 
-        // Error handling
-        if (listener == null) {
-            listener = new Listener();
-        }
-
-        // Invocation
+        // =============================================
+        // Select Compiler
+        // =============================================
         Variable<javax.tools.JavaCompiler> compiler = Variable.of(Javac);
-
         if (useECJ) {
             new Require("org.eclipse.jdt : ecj") {
                 {
@@ -610,26 +590,34 @@ public class JavaCompiler {
             };
         }
 
-        Manager manager = new Manager(compiler.v.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
-
-        CompilationTask task = compiler.v.getTask(null, manager.manager, listener, options, null, sources);
-
         // =============================================
-        // Annotation Processing Tools
+        // Setup Compiler and Annotation Processing Tool
         // =============================================
+        if (listener == null) {
+            listener = new Listener();
+        }
+
+        StandardJavaFileManager manager = compiler.v.getStandardFileManager(listener, null, encoding);
+        CompilationTask task = compiler.v.getTask(null, manager, listener, options, null, sources);
+
         if (processors.size() != 0) {
             task.setProcessors(processors);
         }
 
-        boolean result = task.call();
-
-        if (result) {
+        // =============================================
+        // Run Compiler
+        // =============================================
+        if (task.call()) {
             ui.info("Compile " + sources.size() + " sources.");
         } else {
-            throw new Error("Compile is fail.");
+            throw new Fail("Fail compiling code.");
         }
 
-        return manager;
+        try {
+            return new URLClassLoader(new URL[] {output.absolutize().asJavaPath().toUri().toURL()});
+        } catch (MalformedURLException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
@@ -665,11 +653,11 @@ public class JavaCompiler {
     }
 
     /**
-     * @version 2018/10/03 10:39:40
+     * File or In-memory source code.
      */
     private static class Source extends SimpleJavaFileObject {
 
-        /** The code. */
+        /** The in-memory code. */
         private String code;
 
         /** The source file. */
@@ -707,382 +695,6 @@ public class JavaCompiler {
                 return code;
             } else {
                 return Files.readString(file);
-            }
-        }
-    }
-
-    /**
-     * 
-     */
-    private class Manager extends SecureClassLoader implements StandardJavaFileManager {
-
-        /** The actual file manager. */
-        private final StandardJavaFileManager manager;
-
-        /** The mapping for defined classes. */
-        private final Map<String, byte[]> bytes = new HashMap();
-
-        /**
-         * @param manager
-         */
-        public Manager(StandardJavaFileManager manager) {
-            this.manager = manager;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Path asPath(FileObject file) {
-            return manager.asPath(file);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Iterable<? extends JavaFileObject> getJavaFileObjectsFromFiles(Iterable<? extends File> files) {
-            return manager.getJavaFileObjectsFromFiles(files);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Iterable<? extends JavaFileObject> getJavaFileObjects(File... files) {
-            return manager.getJavaFileObjects(files);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Iterable<? extends JavaFileObject> getJavaFileObjectsFromStrings(Iterable<String> names) {
-            return manager.getJavaFileObjectsFromStrings(names);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Iterable<? extends JavaFileObject> getJavaFileObjects(String... names) {
-            return manager.getJavaFileObjects(names);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setLocation(Location location, Iterable<? extends File> path) throws IOException {
-            manager.setLocation(location, path);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void setLocationForModule(javax.tools.JavaFileManager.Location location, String moduleName, Collection<? extends Path> paths)
-                throws IOException {
-            manager.setLocationForModule(location, moduleName, paths);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Iterable<? extends File> getLocation(Location location) {
-            return manager.getLocation(location);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int isSupportedOption(String option) {
-            return manager.isSupportedOption(option);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Iterable<JavaFileObject> list(Location location, String packageName, Set<Kind> kinds, boolean recurse) throws IOException {
-            return manager.list(location, packageName, kinds, recurse);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Iterable<Set<javax.tools.JavaFileManager.Location>> listLocationsForModules(javax.tools.JavaFileManager.Location location)
-                throws IOException {
-            return manager.listLocationsForModules(location);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String inferBinaryName(Location location, JavaFileObject file) {
-            return manager.inferBinaryName(location, file);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String inferModuleName(javax.tools.JavaFileManager.Location location) throws IOException {
-            return manager.inferModuleName(location);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean isSameFile(FileObject a, FileObject b) {
-            return manager.isSameFile(a, b);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean handleOption(String current, Iterator<String> remaining) {
-            return manager.handleOption(current, remaining);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean hasLocation(Location location) {
-            return manager.hasLocation(location);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public ClassLoader getClassLoader(Location location) {
-            return this;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public JavaFileObject getJavaFileForInput(Location location, String className, Kind kind) throws IOException {
-            return manager.getJavaFileForInput(location, className, kind);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public JavaFileObject getJavaFileForOutput(Location location, String className, Kind kind, FileObject sibling) throws IOException {
-            if (output == null) {
-                return new Bytecode(className);
-            } else {
-                return manager.getJavaFileForOutput(location, className, kind, sibling);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileObject getFileForInput(Location location, String packageName, String relativeName) throws IOException {
-            return manager.getFileForInput(location, packageName, relativeName);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public FileObject getFileForOutput(Location location, String packageName, String relativeName, FileObject sibling)
-                throws IOException {
-            return manager.getFileForOutput(location, packageName, relativeName, sibling);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void flush() throws IOException {
-            manager.flush();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void close() throws IOException {
-            manager.close();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public boolean contains(Location location, FileObject fo) throws IOException {
-            return manager.contains(location, fo);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-            Class<?> clazz = findLoadedClass(name);
-
-            if (clazz == null) {
-                try {
-                    byte[] b = bytes.get(name);
-
-                    if (b != null) {
-                        clazz = defineClass(name, b, 0, b.length);
-                    } else {
-                        clazz = findClass(name);
-                    }
-                } catch (ClassNotFoundException e) {
-                    clazz = super.loadClass(name, resolve);
-                }
-            }
-
-            if (resolve) resolveClass(clazz);
-
-            return clazz;
-        }
-
-        /**
-         * @version 2010/12/18 22:45:13
-         */
-        private class Bytecode extends ByteArrayOutputStream implements JavaFileObject {
-
-            /** The class name. */
-            private final String name;
-
-            /**
-             * @param name
-             */
-            public Bytecode(String name) {
-                this.name = name;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public URI toUri() {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public String getName() {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public InputStream openInputStream() throws IOException {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Reader openReader(boolean ignoreEncodingErrors) throws IOException {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public CharSequence getCharContent(boolean ignoreEncodingErrors) throws IOException {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Writer openWriter() throws IOException {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public long getLastModified() {
-                return 0;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public boolean delete() {
-                return false;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Kind getKind() {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public boolean isNameCompatible(String simpleName, Kind kind) {
-                return false;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public NestingKind getNestingKind() {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public Modifier getAccessLevel() {
-                return null;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public OutputStream openOutputStream() throws IOException {
-                return this;
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public synchronized void close() throws IOException {
-                // close stream
-                super.close();
-
-                // store byte code
-                bytes.put(name, toByteArray());
             }
         }
     }

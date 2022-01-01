@@ -77,7 +77,7 @@ class JavaCompilerTest {
         JavaCompiler.with() //
                 .addSourceDirectory(project.getSourceSet())
                 .setOutput(project.getClasses())
-                .setEclipseCompiler()
+                .setEclipseCompiler(true)
                 .compile();
 
         assert source.isPresent();
