@@ -461,7 +461,7 @@ public class JavaCompiler {
      * 
      * @param directory
      */
-    private JavaCompiler setGeneratedSourceDirectory(File directory) {
+    public JavaCompiler setGeneratedSourceOutput(Directory directory) {
         return this;
     }
 
@@ -586,6 +586,10 @@ public class JavaCompiler {
             new Require("org.eclipse.jdt : ecj") {
                 {
                     compiler.set(new EclipseCompiler());
+
+                    // All local variable names (including unused ones) are kept in the class file
+                    // for compatibility with Eclipse default setting.
+                    options.add("-preserveAllLocals");
                 }
             };
         }
@@ -614,7 +618,7 @@ public class JavaCompiler {
         }
 
         try {
-            return new URLClassLoader(new URL[] {output.absolutize().asJavaPath().toUri().toURL()});
+            return new InvertedClassLoader(output.absolutize().asJavaPath().toUri().toURL());
         } catch (MalformedURLException e) {
             throw I.quiet(e);
         }
@@ -696,6 +700,53 @@ public class JavaCompiler {
             } else {
                 return Files.readString(file);
             }
+        }
+    }
+
+    /**
+     * {@link ClassLoader} with high priority.
+     */
+    private static class InvertedClassLoader extends URLClassLoader {
+
+        /**
+         * @param isolation
+         */
+        public InvertedClassLoader(URL isolation) {
+            super(new URL[] {isolation});
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+            Class<?> clazz = findLoadedClass(name);
+
+            if (clazz == null) {
+                try {
+                    clazz = findClass(name);
+                } catch (ClassNotFoundException e) {
+                    clazz = super.loadClass(name, resolve);
+                }
+            }
+
+            if (resolve) {
+                resolveClass(clazz);
+            }
+
+            return clazz;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public URL getResource(String name) {
+            URL url = findResource(name);
+            if (url == null) {
+                url = super.getResource(name);
+            }
+            return url;
         }
     }
 }
