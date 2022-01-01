@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.23.1](https://www.github.com/teletha/bee/compare/v0.23.0...v0.23.1) (2022-01-01)
+
+
+### Bug Fixes
+
+* Eclipse compiler always use -preserveAllLocals. ([b14e971](https://www.github.com/teletha/bee/commit/b14e9710e5f42b50b0460f57e243d9123144c028))
+
 ## [0.23.0](https://www.github.com/teletha/bee/compare/v0.22.0...v0.23.0) (2022-01-01)
 
 
