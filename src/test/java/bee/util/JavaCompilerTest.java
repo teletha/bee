@@ -15,13 +15,10 @@ import bee.BlinkProject;
 import bee.sample.Interface;
 import psychopath.File;
 
-/**
- * @version 2018/03/31 16:54:28
- */
-public class JavaCompilerTest {
+class JavaCompilerTest {
 
     @Test
-    public void outputPresent() throws Exception {
+    void outputPresent() {
         BlinkProject project = new BlinkProject();
         File source = project.importBy(Interface.class);
         File bytecode = project.locateByteCode(Interface.class);
@@ -42,7 +39,7 @@ public class JavaCompilerTest {
     }
 
     @Test
-    public void outputAbsent() throws Exception {
+    void outputAbsent() {
         BlinkProject project = new BlinkProject();
         File source = project.importBy(Interface.class);
         File bytecode = project.locateByteCode(Interface.class);
@@ -59,6 +56,28 @@ public class JavaCompilerTest {
         JavaCompiler.with() //
                 .addSourceDirectory(project.getSourceSet())
                 .setOutput(project.getClasses())
+                .compile();
+
+        assert source.isPresent();
+        assert bytecode.isPresent();
+    }
+
+    @Test
+    void ecj() {
+        BlinkProject project = new BlinkProject();
+        File source = project.importBy(Interface.class);
+        File bytecode = project.locateByteCode(Interface.class);
+
+        assert source.isPresent();
+        assert bytecode.isAbsent();
+
+        project.getClasses().create();
+        assert project.getClasses().isPresent();
+
+        JavaCompiler.with() //
+                .addSourceDirectory(project.getSourceSet())
+                .setOutput(project.getClasses())
+                .setEclipseCompiler()
                 .compile();
 
         assert source.isPresent();

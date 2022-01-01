@@ -51,11 +51,15 @@ import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
+
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Library;
+import bee.api.Require;
 import kiss.I;
 import kiss.Signal;
+import kiss.Variable;
 import psychopath.Directory;
 import psychopath.Folder;
 import psychopath.Location;
@@ -63,8 +67,8 @@ import psychopath.Locator;
 
 public class JavaCompiler {
 
-    /** The actual java compiler. */
-    private static javax.tools.JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    /** The default java compiler. */
+    private static javax.tools.JavaCompiler Javac = ToolProvider.getSystemJavaCompiler();
 
     /** The user interface. */
     private final UserInterface ui;
@@ -100,7 +104,7 @@ public class JavaCompiler {
     private SourceVersion targetVersion = SourceVersion.latest();
 
     /** The source encoding. */
-    private Charset encoding = Platform.Encoding;
+    private Charset encoding = StandardCharsets.UTF_8;
 
     /** The deprication flag. */
     private boolean deprication = false;
@@ -113,6 +117,9 @@ public class JavaCompiler {
 
     /** The debug info flag. */
     private boolean debug = true;
+
+    /** The compiler flag. */
+    private boolean useECJ = false;
 
     /** The error listener. */
     private DiagnosticListener<JavaFileObject> listener;
@@ -362,6 +369,16 @@ public class JavaCompiler {
     }
 
     /**
+     * Set whether you want to use the Eclipse compiler (ECJ) instead of the JDK compiler (Javac).
+     * 
+     * @return
+     */
+    public JavaCompiler setEclipseCompiler() {
+        useECJ = true;
+        return this;
+    }
+
+    /**
      * <p>
      * Set the source file encoding name, such as EUC-JP and UTF-8. If encoding is not specified or
      * <code>null</code> is specified, the platform default converter is used.
@@ -470,9 +487,7 @@ public class JavaCompiler {
     }
 
     /**
-     * <p>
      * Invoke compiler with specified options.
-     * </p>
      */
     public ClassLoader compile() {
         // Build options
@@ -511,7 +526,7 @@ public class JavaCompiler {
             output.create();
 
             options.add("-d");
-            options.add(output.absolutize().toString());
+            options.add(output.toString());
         }
 
         // =============================================
@@ -585,9 +600,19 @@ public class JavaCompiler {
         }
 
         // Invocation
-        Manager manager = new Manager(compiler.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
+        Variable<javax.tools.JavaCompiler> compiler = Variable.of(Javac);
 
-        CompilationTask task = compiler.getTask(null, manager, listener, options, null, sources);
+        if (useECJ) {
+            new Require("org.eclipse.jdt : ecj") {
+                {
+                    compiler.set(new EclipseCompiler());
+                }
+            };
+        }
+
+        Manager manager = new Manager(compiler.v.getStandardFileManager(listener, Locale.getDefault(), StandardCharsets.UTF_8));
+
+        CompilationTask task = compiler.v.getTask(null, manager.manager, listener, options, null, sources);
 
         // =============================================
         // Annotation Processing Tools
@@ -900,7 +925,7 @@ public class JavaCompiler {
          */
         @Override
         public boolean contains(Location location, FileObject fo) throws IOException {
-            return true;
+            return manager.contains(location, fo);
         }
 
         /**
