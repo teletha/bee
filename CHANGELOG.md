@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.23.0](https://www.github.com/teletha/bee/compare/v0.22.0...v0.23.0) (2022-01-01)
+
+
+### Features
+
+* Add Ensure utility. ([81c4553](https://www.github.com/teletha/bee/commit/81c45535979bf76184940846b62703a99d693c14))
+* Add Project#licenser. ([c56edc4](https://www.github.com/teletha/bee/commit/c56edc4e987fac2662b07cf9eb3837632950bef2))
+* Compile task supports eclipse compiler for java. ([8ca0c8d](https://www.github.com/teletha/bee/commit/8ca0c8d12db9cdda9365debdefec894c368d8974))
+* Support eclipse compiler for java. ([7102e42](https://www.github.com/teletha/bee/commit/7102e42516d96906c343d7d8107df303bddc6569))
+
+
+### Bug Fixes
+
+* If dependency doesn't exist, README outputs the appropriate text. ([77148e7](https://www.github.com/teletha/bee/commit/77148e7d9280911e10e8f2cd86274326988226c8))
+* Project#toDefinition outputs license declaration. ([3a022a4](https://www.github.com/teletha/bee/commit/3a022a4faf77a32221bd0d51f98fd6a1c16b8cb7))
+* Update maven-resolver. ([f4c67fd](https://www.github.com/teletha/bee/commit/f4c67fd284b6ec76258c731c9cd26f1b197cd988))
+
 ## [0.22.0](https://www.github.com/teletha/bee/compare/v0.21.0...v0.22.0) (2021-12-17)
 
 
