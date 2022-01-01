@@ -104,6 +104,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "EclipseJavaCompiler",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "EncodingUtil",
 			"packageName": "org.apache.maven.wagon.shared.http",
 			"type": "Class"
