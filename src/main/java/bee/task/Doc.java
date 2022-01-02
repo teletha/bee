@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -78,19 +79,23 @@ public class Doc extends Task {
                     .map(lib -> lib.getLocalJar().asJavaPath())
                     .collect(Collectors.toList()));
 
-            DocumentationTask task = doc
-                    .getTask(null, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(project.getSourceSet()
-                            .flatMap(dir -> dir.walkFile("**.java"))
-                            .map(File::asJavaPath)
-                            .toList()));
+            List<Path> sourceFiles = project.getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
 
-            if (task.call() && listener.errors.isEmpty()) {
-                ui.info("Build javadoc to " + output);
+            if (sourceFiles.isEmpty()) {
+                ui.info("No documentation will be generated because the source files don't exist in the following directories.");
+                ui.info(project.getSourceSet().toList());
             } else {
-                throw new Fail(n -> {
-                    n.title("Fail building Javadoc.");
-                    n.list(listener.errors);
-                });
+                DocumentationTask task = doc
+                        .getTask(null, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(sourceFiles));
+
+                if (task.call() && listener.errors.isEmpty()) {
+                    ui.info("Build javadoc to " + output);
+                } else {
+                    throw new Fail(n -> {
+                        n.title("Fail building Javadoc.");
+                        n.list(listener.errors);
+                    });
+                }
             }
         } catch (IOException e) {
             throw I.quiet(e);

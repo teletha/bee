@@ -48,7 +48,10 @@ public class Test extends Task {
         require(Compile::test);
 
         if (project.getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
-            ui.info("Test class not found.");
+            ui.info("No test will be performed because the test files don't exist in the following directories.");
+            ui.info(List.of(project.getTestClasses()));
+            ui.info("In order to perform the test, you need to create a test class whose name ends with 'Test' in one of the following directories.");
+            ui.info(project.getTestSourceSet().toList());
         } else {
             new Require("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
                 {
@@ -60,11 +63,16 @@ public class Test extends Task {
                             .enableAssertion()
                             .encoding(project.getEncoding())
                             .workingDirectory(project.getRoot())
+                            .inHeadless(needHeadless())
                             .run(Junit.class, project
                                     .getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
                 }
             };
         }
+    }
+
+    private boolean needHeadless() {
+        return true;
     }
 
     /**

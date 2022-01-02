@@ -42,6 +42,7 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import bee.Bee;
+import bee.Platform;
 import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Library;
@@ -77,6 +78,9 @@ public class Java {
 
     /** The execution type. */
     private boolean sync = true;
+
+    /** The execution type. */
+    private boolean headless = true;
 
     /** Xms option. */
     private int initialMemory = 256;
@@ -162,9 +166,7 @@ public class Java {
     }
 
     /**
-     * <p>
      * Enable assertion functionality.
-     * </p>
      */
     public Java enableAssertion() {
         enableAssertion = true;
@@ -174,23 +176,31 @@ public class Java {
     }
 
     /**
-     * <p>
      * Make this process running asynchronously.
-     * </p>
      * 
      * @return Fluent API.
      */
-    public Java inParallel() {
-        this.sync = false;
+    public Java inParallel(boolean enable) {
+        this.sync = !enable;
 
         // API definition
         return this;
     }
 
     /**
-     * <p>
+     * Make this process running in headless environment.
+     * 
+     * @return Fluent API.
+     */
+    public Java inHeadless(boolean enable) {
+        this.headless = enable;
+
+        // API definition
+        return this;
+    }
+
+    /**
      * Set working directory.
-     * </p>
      * 
      * @param directory A location of working directory.
      */
@@ -202,9 +212,7 @@ public class Java {
     }
 
     /**
-     * <p>
      * Set {@link System#out} and {@link System#in} encoding.
-     * </p>
      * 
      * @param encoding A {@link Charset} to set.
      * @return
@@ -243,6 +251,11 @@ public class Java {
         String address = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/hello";
 
         List<String> command = new ArrayList();
+        if (headless && Platform.isLinux()) {
+            command.add("xvfb-run");
+            command.add("--auto-servernum");
+        }
+
         command.add("java");
 
         if (classpaths.size() != 0) {
