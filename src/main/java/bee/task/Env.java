@@ -107,7 +107,7 @@ public class Env extends Task {
                    set "bee=%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
                     if not exist !bee! (
                         echo bee is not found locally, try to download it from network.
-                        curl -#L -o $bee {ⅱ}
+                        curl -#L -o !bee! {ⅱ}
                     )
                 )
                 java -javaagent:%bee% -cp %bee% bee.Bee %*
