@@ -9,10 +9,10 @@
 		<script src="mimic.js" type="module"></script>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="M">
-		<header class="b">
-			<h1 class="W" date="2022-01-02" ver="0.23.1"><code>Bee</code></h1>
-			<nav class="f"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="f">
+		<header class="M">
+			<h1 class="b" date="2022-01-02" ver="0.23.1"><code>Bee</code></h1>
+			<nav class="V"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
@@ -21,7 +21,7 @@
 					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>Repository</a></nav>
-			<div class="N" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+			<div class="g" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg>
 				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
@@ -29,93 +29,93 @@
 					</svg>
 				</a></div>
 		</header>
-		<main class="Y">
-			<nav class="j">
+		<main class="i">
+			<nav class="Y">
 				<div></div>
 			</nav>
-			<article class="c" id="Article">
-				<section class="U"><code class="X">bee.util</code>
-					<h2 class="Class I"><code class="d">Config</code></h2><span class="B">User configuration based on property file.</span></section>
+			<article class="j" id="Article">
+				<section class="U"><code class="Z">bee.util</code>
+					<h2 class="Class X"><code class="O">Config</code></h2><span class="B">User configuration based on property file.</span></section>
 				<section class="U" id="Config()">
-					<h2 class="P"><i class="PUBLIC"></i><code class="d">Config</code><code class="a">()</code></h2>
+					<h2 class="I"><i class="PUBLIC"></i><code class="O">Config</code><code class="T">()</code></h2>
 				</section>
 				<section class="U" id="project(java.lang.Class)">
-					<h2 class="P"><i class="PUBLIC STATIC"></i><code class="d">project</code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="h"><code>T</code></i></h2>
-					<table class="S">
-						<tr class="L">
+					<h2 class="I"><i class="PUBLIC STATIC"></i><code class="O">project</code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="d"><code>T</code></i></h2>
+					<table class="h">
+						<tr class="J">
 							<td><code>T</code></td>
 							<td></td>
 						</tr>
-						<tr class="Z">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code>type</code></td>
 							<td><span>A configuration type.</span></td>
 						</tr>
-						<tr class="O">
+						<tr class="a">
 							<td><code>T</code></td>
 							<td><span>A configuration.</span></td>
 						</tr>
 					</table><span class="B">Retrieve the configuration of the specified class for project.</span></section>
 				<section class="U" id="user(java.lang.Class)">
-					<h2 class="P"><i class="PUBLIC STATIC"></i><code class="d">user</code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="h"><code>T</code></i></h2>
-					<table class="S">
-						<tr class="L">
+					<h2 class="I"><i class="PUBLIC STATIC"></i><code class="O">user</code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="d"><code>T</code></i></h2>
+					<table class="h">
+						<tr class="J">
 							<td><code>T</code></td>
 							<td></td>
 						</tr>
-						<tr class="Z">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code>type</code></td>
 							<td><span>A configuration type.</span></td>
 						</tr>
-						<tr class="O">
+						<tr class="a">
 							<td><code>T</code></td>
 							<td><span>A configuration.</span></td>
 						</tr>
 					</table><span class="B">Retrieve the configuration of the specified class for user.</span></section>
 				<section class="U" id="users(java.util.function.Supplier)">
-					<h2 class="P"><i class="PUBLIC STATIC"></i><code class="d">users</code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html">Supplier</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">config</code>)</code><i class="h"><code>T</code></i></h2>
-					<table class="S">
-						<tr class="L">
+					<h2 class="I"><i class="PUBLIC STATIC"></i><code class="O">users</code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html">Supplier</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">config</code>)</code><i class="d"><code>T</code></i></h2>
+					<table class="h">
+						<tr class="J">
 							<td><code>T</code></td>
 							<td></td>
 						</tr>
-						<tr class="Z">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html">Supplier</a><code class="parameters"><code>T</code></code></code> <code>config</code></td>
 							<td><span>A configuration type.</span></td>
 						</tr>
-						<tr class="O">
+						<tr class="a">
 							<td><code>T</code></td>
 							<td><span>A configuration.</span></td>
 						</tr>
 					</table><span class="B">Retrieve the configuration of the specified class for user.</span></section>
 				<section class="U" id="system(java.lang.Class)">
-					<h2 class="P"><i class="PUBLIC STATIC"></i><code class="d">system</code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="h"><code>T</code></i></h2>
-					<table class="S">
-						<tr class="L">
+					<h2 class="I"><i class="PUBLIC STATIC"></i><code class="O">system</code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="d"><code>T</code></i></h2>
+					<table class="h">
+						<tr class="J">
 							<td><code>T</code></td>
 							<td></td>
 						</tr>
-						<tr class="Z">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code>type</code></td>
 							<td><span>A configuration type.</span></td>
 						</tr>
-						<tr class="O">
+						<tr class="a">
 							<td><code>T</code></td>
 							<td><span>A configuration.</span></td>
 						</tr>
 					</table><span class="B">Retrieve the configuration of the specified class for system.</span></section>
 			</article>
-			<aside class="k" id="SubNavi">
-				<div class="J">
-					<h5 class="T">Constructors</h5>
+			<aside class="c" id="SubNavi">
+				<div class="k">
+					<h5 class="e">Constructors</h5>
 					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Config.html#Config()">Config</a></code><code class="a">()</code></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Config.html#Config()">Config</a></code><code class="T">()</code></li>
 					</ul>
-					<h5 class="T">Static Methods</h5>
+					<h5 class="e">Static Methods</h5>
 					<ul>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#project(java.lang.Class)">project</a></code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="i"><code>T</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#user(java.lang.Class)">user</a></code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="i"><code>T</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#users(java.util.function.Supplier)">users</a></code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html">Supplier</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">config</code>)</code><i class="i"><code>T</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#system(java.lang.Class)">system</a></code><code class="a">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="i"><code>T</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#project(java.lang.Class)">project</a></code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="S"><code>T</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#user(java.lang.Class)">user</a></code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="S"><code>T</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#users(java.util.function.Supplier)">users</a></code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/function/Supplier.html">Supplier</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">config</code>)</code><i class="S"><code>T</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Config.html#system(java.lang.Class)">system</a></code><code class="T">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">type</code>)</code><i class="S"><code>T</code></i></li>
 					</ul>
 				</div>
 			</aside>
