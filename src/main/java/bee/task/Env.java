@@ -40,17 +40,19 @@ public class Env extends Task {
     }
 
     @Command("Build local bee environment using the selected version.")
-    public void list() {
-        List<DefaultArtifactVersion> list = I
+    public void select() {
+        List<String> list = I
                 .signal(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct()).find("*", "*"))
                 .flatIterable(json -> json.asMap(String.class).entrySet())
                 .take(e -> e.getValue().equals("ok"))
                 .map(Entry::getKey)
                 .map(DefaultArtifactVersion::new)
-                .sort(Comparator.naturalOrder())
+                .sort(Comparator.reverseOrder())
+                .take(15)
+                .map(DefaultArtifactVersion::toString)
                 .toList();
 
-        build(ui.ask("Which version of Bee do you want to use?", list).toString());
+        build(ui.ask("Which version of Bee do you want to use?", list));
     }
 
     @Command("Build local bee environment using the local installed version.")
