@@ -22,12 +22,13 @@ jobs:
 
     - name: Build artifact and site
       run: |
+      	which xvfb-run
         if [ -e "bee" ]; then
-          source bee install doc:site
+          source xvfb --auto-servernum bee install doc:site
         else
           version=$(curl -SsL https://git.io/stable-bee)
           curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-          java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install doc:site
+          xvfb-run --auto-servernum java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install doc:site
         fi
 
     - name: Deploy site

@@ -20,7 +20,6 @@ import java.lang.management.ManagementFactory;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.rmi.registry.LocateRegistry;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -283,6 +282,8 @@ public class Java {
             command.add(argument.toString());
         }
 
+        System.out.println(command);
+
         if (!sync) {
             // build sub-process for java
             Process.with().workingDirectory(directory).encoding(encoding).inParallel().run(command);
@@ -302,9 +303,8 @@ public class Java {
 
                 connector.stop();
             } catch (Throwable e) {
-                Path path = Paths.get("E:\\error.txt");
                 try {
-                    e.printStackTrace(new PrintWriter(path.toFile()));
+                    e.printStackTrace(new PrintWriter(Locator.file("external-java-process-error.log").asJavaFile()));
                 } catch (FileNotFoundException e1) {
                     throw I.quiet(e);
                 }
