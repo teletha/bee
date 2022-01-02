@@ -1,5 +1,15 @@
 # Changelog
 
+### [0.23.2](https://www.github.com/teletha/bee/compare/v0.23.1...v0.23.2) (2022-01-02)
+
+
+### Bug Fixes
+
+* Doc:site task will not fail when there is no source code. ([1fd7d4d](https://www.github.com/teletha/bee/commit/1fd7d4d88226cec4eecbb5d7f12096516a93e224))
+* Document will not fail when there is no soruce code. ([6d2919a](https://www.github.com/teletha/bee/commit/6d2919a0809056031d185fcb93852877a956d2fc))
+* Enhance env:select. ([a40c255](https://www.github.com/teletha/bee/commit/a40c25566ff7f80a6476c43f23feb076e2b9b6b9))
+* Env is broken in windows. ([4d8f996](https://www.github.com/teletha/bee/commit/4d8f99620f7345bcb6ede47a2da4903b6a13bf4b))
+
 ### [0.23.1](https://www.github.com/teletha/bee/compare/v0.23.0...v0.23.1) (2022-01-01)
 
 
