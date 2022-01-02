@@ -84,18 +84,19 @@ public class Doc extends Task {
             if (sourceFiles.isEmpty()) {
                 ui.info("No documentation will be generated because the source files don't exist in the following directories.");
                 ui.info(project.getSourceSet().toList());
-            } else {
-                DocumentationTask task = doc
-                        .getTask(null, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(sourceFiles));
+                return output;
+            }
 
-                if (task.call() && listener.errors.isEmpty()) {
-                    ui.info("Build javadoc to " + output);
-                } else {
-                    throw new Fail(n -> {
-                        n.title("Fail building Javadoc.");
-                        n.list(listener.errors);
-                    });
-                }
+            DocumentationTask task = doc
+                    .getTask(null, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(sourceFiles));
+
+            if (task.call() && listener.errors.isEmpty()) {
+                ui.info("Build javadoc to " + output);
+            } else {
+                throw new Fail(n -> {
+                    n.title("Fail building Javadoc.");
+                    n.list(listener.errors);
+                });
             }
         } catch (IOException e) {
             throw I.quiet(e);
@@ -105,6 +106,14 @@ public class Doc extends Task {
 
     @Command("Generate product site.")
     public void site() {
+        List<Path> sourceFiles = project.getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
+
+        if (sourceFiles.isEmpty()) {
+            ui.info("No documentation site will be generated because any document or source files don't exist in the following directories.");
+            ui.info(project.getSourceSet().toList());
+            return;
+        }
+
         Listener listener = new Listener();
         Directory output = project.getOutput().directory("site");
 
