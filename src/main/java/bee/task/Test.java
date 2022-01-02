@@ -63,16 +63,11 @@ public class Test extends Task {
                             .enableAssertion()
                             .encoding(project.getEncoding())
                             .workingDirectory(project.getRoot())
-                            .inHeadless(needHeadless())
                             .run(Junit.class, project
                                     .getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
                 }
             };
         }
-    }
-
-    private boolean needHeadless() {
-        return true;
     }
 
     /**
