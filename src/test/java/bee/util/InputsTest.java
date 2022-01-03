@@ -10,6 +10,7 @@
 package bee.util;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -56,5 +57,11 @@ class InputsTest {
         assert Inputs.hyphenize("DoSomething").equals("do-something");
         assert Inputs.hyphenize("testXML").equals("test-xml");
         assert Inputs.hyphenize("CI").equals("ci");
+    }
+
+    @Test
+    void recommend() {
+        assert Inputs.recommend("clear", Set.of("clean", "unclear", "crest", "cool", "clover")).equals("clean");
+        assert Inputs.recommend("en", Set.of("environment", "env", "enter", "cent", "tend")).equals("env");
     }
 }

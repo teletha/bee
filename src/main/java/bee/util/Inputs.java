@@ -13,13 +13,13 @@ import java.io.Serializable;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.lang.model.SourceVersion;
@@ -255,6 +255,62 @@ public class Inputs {
             builder.append(Character.toLowerCase(c));
         }
         return builder.toString();
+    }
+
+    /**
+     * Selects the string that most closely resembles the specified string from a list of
+     * candidates.
+     * 
+     * @param input
+     * @param candidates
+     * @return
+     */
+    public static String recommend(String input, Collection<String> candidates) {
+        float min = 100;
+        String text = null;
+        for (String candidate : candidates) {
+            float distance = calculateDistance(input, candidate);
+            if (distance <= 0.1) {
+                return candidate;
+            } else if (distance < min) {
+                min = distance;
+                text = candidate;
+            }
+        }
+
+        return 0.4 <= min ? null : text;
+    }
+
+    /**
+     * Calculate the Levenshtein distance between two strings.
+     *
+     * @param one the first string to be compared, not null
+     * @param other the second string to be compared, not null
+     * @return the distance between two strings
+     */
+    private static float calculateDistance(CharSequence one, CharSequence other) {
+        int oneLength = one.length();
+        int otherLength = other.length();
+        float[][] distance = new float[otherLength + 1][oneLength + 1];
+
+        // calculate
+        for (int i = 1; i <= oneLength; ++i) {
+            distance[0][i] = i;
+        }
+        for (int i = 1; i <= otherLength; ++i) {
+            distance[i][0] = i;
+        }
+        for (int i = 1; i <= otherLength; ++i) {
+            for (int j = 1; j <= oneLength; ++j) {
+                if (one.charAt(j - 1) == other.charAt(i - 1)) {
+                    distance[i][j] = distance[i - 1][j - 1];
+                } else {
+                    distance[i][j] = Math.min(distance[i - 1][j - 1] + 1, Math.min(distance[i - 1][j] + 1, distance[i][j - 1] + 1));
+                }
+            }
+        }
+
+        return distance[otherLength][oneLength] / Math.max(oneLength, otherLength);
     }
 
     /**

@@ -508,7 +508,7 @@ public abstract class Task implements Extensible {
      * @param input User task for input.
      * @param ui User interface for output.
      */
-    static final Object execute(String input, UserInterface ui) {
+    final Object execute(String input, UserInterface ui) {
         // parse command
         if (input == null) {
             return null;
@@ -592,7 +592,7 @@ public abstract class Task implements Extensible {
      * @param name A task name.
      * @return A specified task.
      */
-    private static final Info info(String name) {
+    private final Info info(String name) {
         if (name == null) {
             throw new Error("You must specify task name.");
         }
@@ -613,6 +613,13 @@ public abstract class Task implements Extensible {
         Info info = commons.get(name);
 
         if (info == null) {
+            // Search for tasks with similar names for possible misspellings.
+            String recommend = Inputs.recommend(name, commons.keySet());
+            if (recommend != null) {
+                ui.info("You may have typed [" + recommend + "] incorrectly, so run as [" + recommend + "] task.");
+                return commons.get(recommend);
+            }
+
             Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
             for (Entry<String, Info> entry : commons.entrySet()) {
                 info = entry.getValue();
