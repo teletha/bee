@@ -539,16 +539,23 @@ public abstract class Task implements Extensible {
         if (commandName.isEmpty()) {
             commandName = info.defaultCommnad;
         }
+        commandName = commandName.toLowerCase();
 
         // search command
-        Method command = info.commands.get(commandName.toLowerCase());
+        Method command = info.commands.get(commandName);
 
         if (command == null) {
-            Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
-            for (Entry<String, String> entry : info.descriptions.entrySet()) {
-                failure.solve(String.format("%s:%-8s \t%s", taskName, entry.getKey(), entry.getValue()));
+            // Search for command with similar names for possible misspellings.
+            String recommend = Inputs.recommend(commandName, info.commands.keySet());
+            if (recommend != null && ui.confirm("Isn't it a misspelling of command [" + recommend + "] ?")) {
+                command = info.commands.get(recommend);
+            } else {
+                Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
+                for (Entry<String, String> entry : info.descriptions.entrySet()) {
+                    failure.solve(String.format("%s:%-8s \t%s", taskName, entry.getKey(), entry.getValue()));
+                }
+                throw failure;
             }
-            throw failure;
         }
 
         // create task and initialize
@@ -579,7 +586,7 @@ public abstract class Task implements Extensible {
      * @param taskClass A target task.
      * @return A task name.
      */
-    private static final String computeTaskName(Class taskClass) {
+    private final String computeTaskName(Class taskClass) {
         if (taskClass.isSynthetic()) {
             return computeTaskName(taskClass.getSuperclass());
         }
@@ -615,8 +622,7 @@ public abstract class Task implements Extensible {
         if (info == null) {
             // Search for tasks with similar names for possible misspellings.
             String recommend = Inputs.recommend(name, commons.keySet());
-            if (recommend != null) {
-                ui.info("You may have typed [" + recommend + "] incorrectly, so run as [" + recommend + "] task.");
+            if (recommend != null && ui.confirm("Isn't it a misspelling of task [" + recommend + "] ?")) {
                 return commons.get(recommend);
             }
 
