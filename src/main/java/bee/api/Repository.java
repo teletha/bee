@@ -118,12 +118,8 @@ public class Repository {
     static final List<RemoteRepository> builtinRepositories = new CopyOnWriteArrayList();
 
     static {
-        try {
-            addRemoteRepository("Maven", "https://repo1.maven.org/maven2/");
-            addRemoteRepository("JitPack", "https://jitpack.io/");
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
+        addRemoteRepository("Maven", "https://repo1.maven.org/maven2/");
+        addRemoteRepository("JitPack", "https://jitpack.io/");
     }
 
     /**
