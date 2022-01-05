@@ -9,10 +9,10 @@
 		<script src="mimic.js" type="module"></script>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="P">
-		<header class="i">
-			<h1 class="I" date="2022-01-05" ver="0.23.1"><code>Bee</code></h1>
-			<nav class="M"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="Z">
+		<header class="R">
+			<h1 class="M" date="2022-01-05" ver="0.23.1"><code>Bee</code></h1>
+			<nav class="H"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
@@ -21,7 +21,7 @@
 					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>Repository</a></nav>
-			<div class="K" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+			<div class="g" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg>
 				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
@@ -29,13 +29,13 @@
 					</svg>
 				</a></div>
 		</header>
-		<main class="N">
-			<nav class="R">
+		<main class="i">
+			<nav class="e">
 				<div></div>
 			</nav>
-			<article class="Y" id="Article">
-				<section class="J"><code class="O">bee.coder</code>
-					<h2 class="Interface d"><code class="T">HeaderStyle</code></h2>
+			<article class="P" id="Article">
+				<section class="d"><code class="Q">bee.coder</code>
+					<h2 class="Interface h"><code class="W">HeaderStyle</code></h2>
 					<ul class="C F">
 						<li><code>kiss.Extensible</code></li>
 					</ul>
@@ -43,69 +43,69 @@
 						<li><code><a href="api/bee.coder.StandardHeaderStyle.html">StandardHeaderStyle</a></code></li>
 					</ul>
 				</section>
-				<section class="J" id="isSkipLine(java.lang.String)">
-					<h2 class="U"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="T">isSkipLine</code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="c"><code>boolean</code></i></h2>
-					<table class="a">
-						<tr class="b">
+				<section class="d" id="isSkipLine(java.lang.String)">
+					<h2 class="j"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="W">isSkipLine</code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="L"><code>boolean</code></i></h2>
+					<table class="K">
+						<tr class="f">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>line</code></td>
 							<td><span>The line to test.</span></td>
 						</tr>
-						<tr class="j">
+						<tr class="a">
 							<td><code>boolean</code></td>
 							<td><span>true if this line must be skipped or false.</span></td>
 						</tr>
 					</table><span class="B">Tells if the given content line must be skipped according to this header definition. The
  header is outputted after any skipped line if any pattern defined on this point or on the
  first line if not pattern defined.</span></section>
-				<section class="J" id="isFirstHeaderLine(java.lang.String)">
-					<h2 class="U"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="T">isFirstHeaderLine</code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="c"><code>boolean</code></i></h2>
-					<table class="a">
-						<tr class="b">
+				<section class="d" id="isFirstHeaderLine(java.lang.String)">
+					<h2 class="j"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="W">isFirstHeaderLine</code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="L"><code>boolean</code></i></h2>
+					<table class="K">
+						<tr class="f">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>line</code></td>
 							<td><span>The line to test.</span></td>
 						</tr>
-						<tr class="j">
+						<tr class="a">
 							<td><code>boolean</code></td>
 							<td><span>true if the first line of a header have been recognized or false.</span></td>
 						</tr>
 					</table><span class="B">Tells if the given content line is the first line of a possible header of this definition
  kind.</span></section>
-				<section class="J" id="isEndHeaderLine(java.lang.String)">
-					<h2 class="U"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="T">isEndHeaderLine</code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="c"><code>boolean</code></i></h2>
-					<table class="a">
-						<tr class="b">
+				<section class="d" id="isEndHeaderLine(java.lang.String)">
+					<h2 class="j"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="W">isEndHeaderLine</code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="L"><code>boolean</code></i></h2>
+					<table class="K">
+						<tr class="f">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>line</code></td>
 							<td><span>The end to test.</span></td>
 						</tr>
-						<tr class="j">
+						<tr class="a">
 							<td><code>boolean</code></td>
 							<td><span>true if the end line of a header have been recognized or false.</span></td>
 						</tr>
 					</table><span class="B">Tells if the given content line is the end line of a possible header of this definition kind.</span></section>
-				<section class="J" id="decorate(java.util.List)">
-					<h2 class="U"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="T">decorate</code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">header</code>)</code><i class="c"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-					<table class="a">
-						<tr class="b">
+				<section class="d" id="decorate(java.util.List)">
+					<h2 class="j"><i class="ABSTRACT"><i class="PUBLIC"></i></i><code class="W">decorate</code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">header</code>)</code><i class="L"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+					<table class="K">
+						<tr class="f">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code>header</code></td>
 							<td></td>
 						</tr>
-						<tr class="j">
+						<tr class="a">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B">Build decorated header text by using the specified law header text.</span></section>
-				<section class="J" id="convert(java.util.List,bee.api.License)">
-					<h2 class="U"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="T">convert</code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">source</code>, <code><a href="api/bee.api.License.html">License</a></code> <code class="parameterName">license</code>)</code><i class="c"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-					<table class="a">
-						<tr class="b">
+				<section class="d" id="convert(java.util.List,bee.api.License)">
+					<h2 class="j"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="W">convert</code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">source</code>, <code><a href="api/bee.api.License.html">License</a></code> <code class="parameterName">license</code>)</code><i class="L"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+					<table class="K">
+						<tr class="f">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code>source</code></td>
 							<td><span>A source to update.</span></td>
 						</tr>
-						<tr class="b">
+						<tr class="f">
 							<td><code><a href="api/bee.api.License.html">License</a></code> <code>license</code></td>
 							<td><span>A license definition.</span></td>
 						</tr>
-						<tr class="j">
+						<tr class="a">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
 							<td><span>An updated source.</span></td>
 						</tr>
@@ -114,15 +114,15 @@
  </p>
 					</span></section>
 			</article>
-			<aside class="k" id="SubNavi">
-				<div class="f">
-					<h5 class="L">Methods</h5>
+			<aside class="S" id="SubNavi">
+				<div class="b">
+					<h5 class="U">Methods</h5>
 					<ul>
-						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#isSkipLine(java.lang.String)">isSkipLine</a></code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="H"><code>boolean</code></i></li>
-						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#isFirstHeaderLine(java.lang.String)">isFirstHeaderLine</a></code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="H"><code>boolean</code></i></li>
-						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#isEndHeaderLine(java.lang.String)">isEndHeaderLine</a></code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="H"><code>boolean</code></i></li>
-						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#decorate(java.util.List)">decorate</a></code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">header</code>)</code><i class="H"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
-						<li><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#convert(java.util.List,bee.api.License)">convert</a></code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">source</code>, <code><a href="api/bee.api.License.html">License</a></code> <code class="parameterName">license</code>)</code><i class="H"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#isSkipLine(java.lang.String)">isSkipLine</a></code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="k"><code>boolean</code></i></li>
+						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#isFirstHeaderLine(java.lang.String)">isFirstHeaderLine</a></code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="k"><code>boolean</code></i></li>
+						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#isEndHeaderLine(java.lang.String)">isEndHeaderLine</a></code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">line</code>)</code><i class="k"><code>boolean</code></i></li>
+						<li><i class="ABSTRACT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#decorate(java.util.List)">decorate</a></code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">header</code>)</code><i class="k"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+						<li><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.coder.HeaderStyle.html#convert(java.util.List,bee.api.License)">convert</a></code><code class="Y">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">source</code>, <code><a href="api/bee.api.License.html">License</a></code> <code class="parameterName">license</code>)</code><i class="k"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
 					</ul>
 				</div>
 			</aside>
