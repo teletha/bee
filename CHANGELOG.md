@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.24.0](https://www.github.com/teletha/bee/compare/v0.23.1...v0.24.0) (2022-01-05)
+
+
+### Features
+
+* Detect version control system automatically when generate project. ([5e8700a](https://www.github.com/teletha/bee/commit/5e8700afbc6cbaffd705b671827cfc783403dc19))
+* Disambiguate the command name. ([b9687f7](https://www.github.com/teletha/bee/commit/b9687f796e914eaa8e2b2e0091bd84258a3caa2c))
+* Disambiguate the task name. ([c9fc3d3](https://www.github.com/teletha/bee/commit/c9fc3d35c7af962a5b11c376fce3c8a31e5646fc))
+* Fetch dependencies in parallel. ([184eeee](https://www.github.com/teletha/bee/commit/184eeee50dadbfdece422e49130de9a5c7e3b4b5))
+
+
+### Bug Fixes
+
+* Doc:site task will not fail when there is no source code. ([1fd7d4d](https://www.github.com/teletha/bee/commit/1fd7d4d88226cec4eecbb5d7f12096516a93e224))
+* Document will not fail when there is no soruce code. ([6d2919a](https://www.github.com/teletha/bee/commit/6d2919a0809056031d185fcb93852877a956d2fc))
+* Enhance env:select. ([a40c255](https://www.github.com/teletha/bee/commit/a40c25566ff7f80a6476c43f23feb076e2b9b6b9))
+* Env is broken in windows. ([4d8f996](https://www.github.com/teletha/bee/commit/4d8f99620f7345bcb6ede47a2da4903b6a13bf4b))
+* Make fetching dependency more faster. ([70afc6a](https://www.github.com/teletha/bee/commit/70afc6a681d6cb4f4c959fe2e60bb6511040a6e8))
+
 ### [0.23.1](https://www.github.com/teletha/bee/compare/v0.23.0...v0.23.1) (2022-01-01)
 
 
