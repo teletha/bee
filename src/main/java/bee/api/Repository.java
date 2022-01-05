@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
@@ -251,7 +252,7 @@ public class Repository {
             request.addDependency(new Dependency(library.artifact, library.scope.id));
 
             return system.collectDependencies(session, request);
-        }).to();
+        }, Executors.newFixedThreadPool(Math.round(libraries.size() / 2))).to();
     }
 
     /**

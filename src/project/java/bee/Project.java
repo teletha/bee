@@ -62,7 +62,7 @@ public class Project extends bee.api.Project {
         require("org.eclipse.jdt", "ecj").atProvided();
 
         // TEST
-        require("com.github.teletha", "antibug", "1.2.0").atTest();
+        require("com.github.teletha", "antibug").atTest();
 
         unrequire("commons-codec", "commons-codec");
         unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");
@@ -70,6 +70,5 @@ public class Project extends bee.api.Project {
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
         versionControlSystem("https://github.com/teletha/bee");
-
     }
 }
