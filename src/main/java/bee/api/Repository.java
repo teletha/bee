@@ -167,7 +167,7 @@ public class Repository {
         session.setDependencySelector(new AndDependencySelector(new OptionalDependencySelector(), new ScopeDependencySelector(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id), new ExclusionDependencySelector(project.exclusions)));
         session.setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver()), new JavaDependencyContextRefiner()));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
-        session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_ALWAYS);
+        session.setUpdatePolicy(RepositoryPolicy.UPDATE_POLICY_DAILY);
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
         session.setIgnoreArtifactDescriptorRepositories(true);
         session.setCache(new DefaultRepositoryCache());
@@ -247,12 +247,14 @@ public class Repository {
      * @param scopes
      */
     private void fetchDependency(Project project, Set<Scope> scopes, Set<Library> libraries) {
-        I.signal(libraries).take(library -> scopes.stream().anyMatch(scope -> scope.accept(library.scope.id))).joinAll(library -> {
-            CollectRequest request = new CollectRequest(null, remoteRepositories());
-            request.addDependency(new Dependency(library.artifact, library.scope.id));
+        if (1 < libraries.size()) {
+            I.signal(libraries).take(library -> scopes.stream().anyMatch(scope -> scope.accept(library.scope.id))).joinAll(library -> {
+                CollectRequest request = new CollectRequest(null, remoteRepositories());
+                request.addDependency(new Dependency(library.artifact, library.scope.id));
 
-            return system.collectDependencies(session, request);
-        }, Executors.newFixedThreadPool(Math.round(libraries.size() / 2))).to();
+                return system.collectDependencies(session, request);
+            }, Executors.newFixedThreadPool(libraries.size() / 2)).to();
+        }
     }
 
     /**

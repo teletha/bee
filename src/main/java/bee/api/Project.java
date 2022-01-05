@@ -775,11 +775,7 @@ public class Project {
      * @param uri A uri of version control system.
      */
     protected final void versionControlSystem(String uri) {
-        try {
-            this.vcs = VCS.of(new URI(uri));
-        } catch (URISyntaxException e) {
-            // ignore
-        }
+        this.vcs = VCS.of(uri);
     }
 
     /**
@@ -932,6 +928,9 @@ public class Project {
                     {
                         product("${group}", "${product}", "${version}");
                         license(${license.name});
+                        ${#versionControlSystem}
+                        versionControlSystem("${versionControlSystem}");
+                        ${/versionControlSystem}
                     }
                 }
                 """, this);

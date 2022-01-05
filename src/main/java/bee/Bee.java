@@ -21,6 +21,7 @@ import bee.api.Library;
 import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
+import bee.api.VCS;
 import bee.task.IDE;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
@@ -253,7 +254,7 @@ public class Bee {
             License license = ui.ask("Product license", License.builtins());
 
             // build temporary project
-            inject(new FavricProject(group, name, version, license));
+            inject(new FavricProject(group, name, version, license, VCS.detect()));
 
             definition.text(project.toBeeDefinition());
             ui.info("Generate project definition.");
@@ -340,7 +341,7 @@ public class Bee {
     }
 
     /**
-     * @version 2012/10/21 14:49:32
+     * 
      */
     private static class FavricProject extends Project {
 
@@ -353,9 +354,10 @@ public class Bee {
         /**
          * @param projectName
          */
-        private FavricProject(String group, String name, String version, License license) {
+        private FavricProject(String group, String name, String version, License license, VCS vcs) {
             product(group, name, version);
             license(license);
+            if (vcs != null) versionControlSystem(vcs.uri());
         }
     }
 }

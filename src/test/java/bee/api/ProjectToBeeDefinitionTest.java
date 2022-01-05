@@ -87,6 +87,24 @@ class ProjectToBeeDefinitionTest {
         assert compiled.license() == License.MIT;
     }
 
+    @Test
+    void versionControlSystem() {
+        BlinkProject project = new BlinkProject();
+        project.versionControlSystem("http://github.com/owner/repo");
+
+        Project compiled = compileProject(project);
+        assert compiled.getVersionControlSystem().uri().equals("http://github.com/owner/repo");
+    }
+
+    @Test
+    void versionControlSystemEmpty() {
+        BlinkProject project = new BlinkProject();
+        project.versionControlSystem("");
+
+        Project compiled = compileProject(project);
+        assert compiled.getVersionControlSystem() == null;
+    }
+
     /**
      * Compile project definition in memory.
      * 

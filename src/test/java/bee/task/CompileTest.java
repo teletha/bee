@@ -18,9 +18,6 @@ import org.junit.jupiter.api.Test;
 import bee.BlinkProject;
 import psychopath.File;
 
-/**
- * @version 2018/03/31 21:58:45
- */
 public class CompileTest {
 
     @Test

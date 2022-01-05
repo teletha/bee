@@ -9,8 +9,12 @@
  */
 package bee.api;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -24,6 +28,7 @@ import bee.TaskCancel;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.JSON;
+import psychopath.Locator;
 
 public abstract class VCS {
 
@@ -46,7 +51,7 @@ public abstract class VCS {
     protected VCS(URI uri) {
         this.uri = uri;
 
-        String path = uri.getPath();
+        String path = uri.getPath().replaceAll("\\.git$", "");
         this.owner = path.substring(1, path.lastIndexOf("/"));
         this.repo = path.substring(path.lastIndexOf("/") + 1);
     }
@@ -162,14 +167,47 @@ public abstract class VCS {
      * @param uri
      * @return
      */
-    public static VCS of(URI uri) {
-        switch (uri.getHost()) {
-        case "github.com":
-            return new GitHub(uri);
-
-        default:
-            return new Unknown(uri);
+    public static VCS of(String uri) {
+        if (uri == null || uri.isBlank()) {
+            return null;
         }
+
+        try {
+            URI u = new URI(uri);
+
+            switch (u.getHost()) {
+            case "github.com":
+                return new GitHub(u);
+
+            default:
+                return new Unknown(u);
+            }
+        } catch (URISyntaxException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Detect the user specified version control system automatically from local repository or
+     * clipboard data.
+     * 
+     * @return
+     */
+    public static VCS detect() {
+        return VCS.of(Locator.file(".git/config")
+                .lines()
+                .map(v -> v.replaceAll("\\s", ""))
+                .take(v -> v.startsWith("url="))
+                .map(v -> v.substring(4))
+                .to()
+                .or(() -> {
+                    try {
+                        Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        return ((String) clip.getData(DataFlavor.stringFlavor)).strip();
+                    } catch (Exception e) {
+                        return "";
+                    }
+                }));
     }
 
     /**
