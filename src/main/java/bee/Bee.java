@@ -310,7 +310,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("test:tests") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("ide") : washed));
     }
 
     /**
