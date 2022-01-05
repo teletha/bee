@@ -9,12 +9,9 @@
  */
 package bee.api;
 
-import static java.util.Objects.*;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -38,13 +35,10 @@ import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositoryListener;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
-import org.eclipse.aether.collection.DependencyGraphTransformationContext;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
-import org.eclipse.aether.graph.DefaultDependencyNode;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.installation.InstallRequest;
@@ -81,7 +75,6 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
-import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
@@ -194,7 +187,7 @@ public class Repository {
      * @return
      */
     public Set<Library> collectDependency(Project project, Scope... scopes) {
-        return collectDependency2(project, Set.of(scopes), project.libraries);
+        return collectDependency(project, Set.of(scopes), project.libraries);
     }
 
     /**
@@ -205,7 +198,7 @@ public class Repository {
      * @return
      */
     public Set<Library> collectDependency(Library library, Scope... scopes) {
-        return collectDependency2(project, Set.of(scopes), Collections.singleton(library));
+        return collectDependency(project, Set.of(scopes), Collections.singleton(library));
     }
 
     /**
@@ -215,11 +208,8 @@ public class Repository {
      * @param scopes
      * @return
      */
-    private Set<Library> collectDependency2(Project project, Set<Scope> scopes, Set<Library> libraries) {
-        Set<Library> collectDependency2 = collectDependency(project, scopes, libraries);
-        for (Library library : collectDependency2) {
-            System.out.println(library);
-        }
+    private Set<Library> collectDependency(Project project, Set<Scope> scopes, Set<Library> libraries) {
+        fetchDependency(project, scopes, libraries);
 
         Set<Library> set = new TreeSet();
 
@@ -250,48 +240,18 @@ public class Repository {
     }
 
     /**
-     * Collect all dependencies in the specified scope.
+     * Fetch all dependencies in the specified scope in parallel.
      * 
      * @param libraries
      * @param scopes
-     * @return
      */
-    private Set<Library> collectDependency(Project project, Set<Scope> scopes, Set<Library> libraries) {
+    private void fetchDependency(Project project, Set<Scope> scopes, Set<Library> libraries) {
+        I.signal(libraries).take(library -> scopes.stream().anyMatch(scope -> scope.accept(library.scope.id))).joinAll(library -> {
+            CollectRequest request = new CollectRequest(null, remoteRepositories());
+            request.addDependency(new Dependency(library.artifact, library.scope.id));
 
-        return I.signal(libraries)
-                .take(library -> scopes.stream().anyMatch(scope -> scope.accept(library.scope.id)))
-                .joinAll(this::collectDependencyAndArtifact)
-                .buffer()
-                .flatIterable(all -> {
-                    DefaultDependencyNode root = new DefaultDependencyNode((Dependency) null);
-
-                    for (DependencyResult result : all) {
-                        root.getChildren().add(result.getRoot());
-                    }
-                    DependencyNode transformed = session.getDependencyGraphTransformer()
-                            .transformGraph(root, new DefaultDependencyGraphTransformationContext(session));
-                    return transformed.getRelocations();
-                })
-                .map(Library::new)
-                .toCollection(new TreeSet());
-    }
-
-    /**
-     * Collect all dependencies and artifacts actually.
-     * 
-     * @param library
-     * @return
-     * @throws DependencyResolutionException
-     */
-    private DependencyResult collectDependencyAndArtifact(Library library) throws DependencyResolutionException {
-        CollectRequest request = new CollectRequest(null, remoteRepositories());
-        request.addDependency(new Dependency(library.artifact, library.scope.id));
-
-        return system.resolveDependencies(session, new DependencyRequest(request, (node, parents) -> {
-            List<DependencyNode> list = I.signal(parents).startWith(node).skip(p -> p.getArtifact() == null).toList();
-
-            return list.isEmpty() || list.stream().allMatch(n -> library.scope.accept(n.getDependency().getScope()));
-        }));
+            return system.collectDependencies(session, request);
+        }).to();
     }
 
     /**
@@ -901,43 +861,5 @@ public class Repository {
             }
             return instance;
         }
-    }
-
-    class DefaultDependencyGraphTransformationContext implements DependencyGraphTransformationContext {
-
-        private final RepositorySystemSession session;
-
-        private final Map<Object, Object> map;
-
-        DefaultDependencyGraphTransformationContext(RepositorySystemSession session) {
-            this.session = session;
-            this.map = new HashMap<>();
-        }
-
-        @Override
-        public RepositorySystemSession getSession() {
-            return session;
-        }
-
-        @Override
-        public Object get(Object key) {
-            return map.get(requireNonNull(key, "key cannot be null"));
-        }
-
-        @Override
-        public Object put(Object key, Object value) {
-            requireNonNull(key, "key cannot be null");
-            if (value != null) {
-                return map.put(key, value);
-            } else {
-                return map.remove(key);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(map);
-        }
-
     }
 }
