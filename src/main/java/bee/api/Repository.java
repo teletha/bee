@@ -30,11 +30,11 @@ import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
+import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryException;
-import org.eclipse.aether.RepositoryListener;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -71,7 +71,6 @@ import org.eclipse.aether.internal.impl.synccontext.named.SimpleNamedLockFactory
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
-import org.eclipse.aether.resolution.ArtifactDescriptorRequest;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -527,9 +526,9 @@ public class Repository {
     }
 
     /**
-     * @version 2015/06/23 12:26:57
+     * 
      */
-    private static final class RepositoryView implements RepositoryListener {
+    private static final class RepositoryView extends AbstractRepositoryListener {
 
         /** The user notifier. */
         private final UserInterface ui;
@@ -545,163 +544,13 @@ public class Repository {
          * {@inheritDoc}
          */
         @Override
-        public void artifactDeployed(RepositoryEvent event) {
-            ui.info("Deployed " + event.getArtifact() + " to " + event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactDeploying(RepositoryEvent event) {
-            ui.info("Deploying " + event.getArtifact() + " to " + event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactDescriptorInvalid(RepositoryEvent event) {
-            ui.info("Invalid artifact descriptor for " + event.getArtifact() + ": " + event.getException().getMessage());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactDescriptorMissing(RepositoryEvent event) {
-            ArtifactDescriptorRequest request = (ArtifactDescriptorRequest) event.getTrace().getData();
-            ui.error(request.getArtifact(), " is not found at the following remote repositories.", request.getRepositories());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
         public void artifactInstalled(RepositoryEvent event) {
             ui.info("Install " + event.getArtifact() + " to " + event.getFile());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactInstalling(RepositoryEvent event) {
-            // ui.talk("Installing " + event.getArtifact() + " to " + event.getFile());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactResolved(RepositoryEvent event) {
-            // ui.talk("Resolved artifact " + event.getArtifact() + " from " +
-            // event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactDownloading(RepositoryEvent event) {
-            // ui.talk("Downloading artifact " + event.getArtifact() + " from " +
-            // event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactDownloaded(RepositoryEvent event) {
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactResolving(RepositoryEvent event) {
-            // ui.talk("Resolving artifact " + event.getArtifact());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataDeployed(RepositoryEvent event) {
-            ui.info("Deployed " + event.getMetadata() + " to " + event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataDeploying(RepositoryEvent event) {
-            ui.info("Deploying " + event.getMetadata() + " to " + event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataInstalled(RepositoryEvent event) {
-            // ui.talk("Installed " + event.getMetadata() + " to " + event.getFile());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataInstalling(RepositoryEvent event) {
-            // ui.talk("Installing " + event.getMetadata() + " to " + event.getFile());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataInvalid(RepositoryEvent event) {
-            ui.info("Invalid metadata " + event.getMetadata());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataResolved(RepositoryEvent event) {
-            // ui.talk("Resolved metadata " + event.getMetadata() + " from " +
-            // event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataResolving(RepositoryEvent event) {
-            // ui.talk("Resolving metadata " + event.getMetadata() + " from " +
-            // event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataDownloading(RepositoryEvent event) {
-            // ui.talk("Downloading metadata " + event.getMetadata() + " from " +
-            // event.getRepository());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void metadataDownloaded(RepositoryEvent event) {
-            // ui.talk("Downloaded metadata " + event.getMetadata() + " from " +
-            // event.getRepository());
         }
     }
 
     /**
-     * @version 2017/03/09 14:17:27
+     * 
      */
     private static final class LibraryInfo implements Storable<LibraryInfo> {
 
@@ -718,9 +567,7 @@ public class Repository {
         }
 
         /**
-         * <p>
          * Confirm whether we should check the source resource or not.
-         * </p>
          * 
          * @return
          */
@@ -738,9 +585,7 @@ public class Repository {
         }
 
         /**
-         * <p>
          * Build {@link Library} infomation.
-         * </p>
          * 
          * @param library
          * @return
