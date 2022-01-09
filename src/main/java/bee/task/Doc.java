@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,6 @@ public class Doc extends Task {
      */
     @Command(defaults = true, value = "Generate product javadoc.")
     public Directory javadoc() {
-        Listener listener = new Listener();
         Directory output = project.getOutput().directory("api").create();
 
         Class<? extends Doclet> doclet = null;
@@ -71,7 +71,8 @@ public class Doc extends Task {
         options.add("https://docs.oracle.com/en/java/javase/17/docs/api/");
 
         DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
-        try (StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), project.getEncoding())) {
+        try (Listener listener = new Listener();
+                StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), project.getEncoding())) {
             manager.setLocationFromPaths(DocumentationTool.Location.DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
             manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet().map(Location::asJavaPath).toList());
             manager.setLocationFromPaths(StandardLocation.CLASS_PATH, project.getDependency(Scope.values())
@@ -88,7 +89,7 @@ public class Doc extends Task {
             }
 
             DocumentationTask task = doc
-                    .getTask(null, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(sourceFiles));
+                    .getTask(listener, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(sourceFiles));
 
             if (task.call() && listener.errors.isEmpty()) {
                 ui.info("Build javadoc to " + output);
@@ -144,7 +145,10 @@ public class Doc extends Task {
         }
     }
 
-    private class Listener implements DiagnosticListener<FileObject> {
+    /**
+     * 
+     */
+    private class Listener extends Writer implements DiagnosticListener<FileObject> {
 
         private List<String> errors = new ArrayList();
 
@@ -177,6 +181,31 @@ public class Doc extends Task {
                 ui.debug(message);
                 break;
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            String message = new String(cbuf, off, len).trim();
+            if (message.length() != 0) {
+                ui.trace(message);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void flush() throws IOException {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() throws IOException {
         }
     }
 }
