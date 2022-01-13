@@ -80,8 +80,7 @@ public class BeeInstaller {
             File lib = bee.Bee.API.asLibrary().getLocalJar();
             if (lib.lastModifiedMilli() < source.lastModifiedMilli()) {
                 File api = Locator.folder()
-                        .add(source.asArchive(), "bee/**", "!**.java")
-                        .add(source.asArchive(), "META-INF/services/**")
+                        .add(source.asArchive(), "bee/**", "!**.java", "META-INF/services/javax.annotation.processing.Processor")
                         .packToTemporary();
 
                 I.make(Repository.class).install(bee.Bee.API, api);
