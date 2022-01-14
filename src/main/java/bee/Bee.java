@@ -254,7 +254,7 @@ public class Bee {
             License license = ui.ask("Product license", License.builtins());
 
             // build temporary project
-            inject(new FavricProject(group, name, version, license, VCS.detect()));
+            inject(new FavricProject(group, name, version, license, VCS.detect(project.getRoot())));
 
             definition.text(project.toBeeDefinition());
             ui.info("Generate project definition.");

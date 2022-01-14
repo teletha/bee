@@ -28,7 +28,7 @@ import bee.TaskCancel;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.JSON;
-import psychopath.Locator;
+import psychopath.Directory;
 
 public abstract class VCS {
 
@@ -193,8 +193,8 @@ public abstract class VCS {
      * 
      * @return
      */
-    public static VCS detect() {
-        return VCS.of(Locator.file(".git/config")
+    public static VCS detect(Directory root) {
+        return VCS.of(root.file(".git/config")
                 .lines()
                 .map(v -> v.replaceAll("\\s", ""))
                 .take(v -> v.startsWith("url="))

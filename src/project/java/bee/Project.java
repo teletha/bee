@@ -17,6 +17,7 @@ public class Project extends bee.api.Project {
 
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
+        license(MIT);
         describe("""
                 Bee is an open source build automation tool that focuses on conventions, type safety and performance.
                 Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
@@ -30,7 +31,6 @@ public class Project extends bee.api.Project {
                 #### Repository oriented
                 It recognizes source code and package repositories and automates the entire lifecycle from development to release.
                 """);
-        license(MIT);
 
         require(SourceVersion.RELEASE_17, SourceVersion.RELEASE_11, SourceVersion.RELEASE_17);
 
