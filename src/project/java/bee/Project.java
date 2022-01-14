@@ -68,7 +68,5 @@ public class Project extends bee.api.Project {
         unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
-
-        versionControlSystem("https://github.com/teletha/bee");
     }
 }

@@ -757,7 +757,7 @@ public class Project {
      * @return A uri of version control system.
      */
     public VCS getVersionControlSystem() {
-        return vcs;
+        return vcs != null ? vcs : VCS.detect();
     }
 
     /**
