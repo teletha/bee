@@ -32,7 +32,7 @@ public class Project extends bee.api.Project {
                 """);
         license(MIT);
 
-        require(SourceVersion.RELEASE_16, SourceVersion.RELEASE_11, SourceVersion.RELEASE_16);
+        require(SourceVersion.RELEASE_17, SourceVersion.RELEASE_11, SourceVersion.RELEASE_17);
 
         // MAVEN REPOSITORY
         require("org.apache.maven", "maven-resolver-provider");
