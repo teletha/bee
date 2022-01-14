@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.25.0](https://www.github.com/teletha/bee/compare/v0.24.0...v0.25.0) (2022-01-14)
+
+
+### Features
+
+* Detect version control system automatically. ([0fcc463](https://www.github.com/teletha/bee/commit/0fcc4639c4d951d6572ec9f7ea7cee5573736b6d))
+
+
+### Bug Fixes
+
+* Update to Java17. ([39bc968](https://www.github.com/teletha/bee/commit/39bc968ca2e3e79c7f5e47c1a9eadabf85af3c98))
+
 ## [0.24.0](https://www.github.com/teletha/bee/compare/v0.23.1...v0.24.0) (2022-01-05)
 
 
