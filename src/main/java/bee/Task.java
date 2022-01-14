@@ -713,7 +713,7 @@ public abstract class Task implements Extensible {
                 // Define and build the memoized task class
                 // ======================================
                 String parent = Type.getInternalName(model);
-                writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
+                writer.visit(V11, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
 
                 // constructor
                 EnhancedMethodWriter mw = writer.writeMethod(ACC_PUBLIC, "<init>", "()V", null, null);

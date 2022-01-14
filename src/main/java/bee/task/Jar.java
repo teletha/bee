@@ -175,59 +175,9 @@ public class Jar extends Task {
 
         public Modify(SourceVersion ver, ClassVisitor classVisitor) {
             super(Opcodes.ASM9, classVisitor);
-            switch (ver) {
-            case RELEASE_1:
-                version = Opcodes.V1_1;
-                break;
-            case RELEASE_2:
-                version = Opcodes.V1_2;
-                break;
-            case RELEASE_3:
-                version = Opcodes.V1_3;
-                break;
-            case RELEASE_4:
-                version = Opcodes.V1_4;
-                break;
-            case RELEASE_5:
-                version = Opcodes.V1_5;
-                break;
-            case RELEASE_6:
-                version = Opcodes.V1_6;
-                break;
-            case RELEASE_7:
-                version = Opcodes.V1_7;
-                break;
-            case RELEASE_8:
-                version = Opcodes.V1_8;
-                break;
-            case RELEASE_9:
-                version = Opcodes.V9;
-                break;
-            case RELEASE_10:
-                version = Opcodes.V10;
-                break;
-            case RELEASE_11:
-                version = Opcodes.V11;
-                break;
-            case RELEASE_12:
-                version = Opcodes.V12;
-                break;
-            case RELEASE_13:
-                version = Opcodes.V13;
-                break;
-            case RELEASE_14:
-                version = Opcodes.V14;
-                break;
-            case RELEASE_15:
-                version = Opcodes.V15;
-                break;
-            case RELEASE_16:
-                version = Opcodes.V16;
-                break;
-            default:
-                version = Opcodes.V17;
-                break;
-            }
+
+            // ignore RELEASE_1
+            version = 44 + Integer.parseInt(ver.name().substring(ver.name().indexOf('_') + 1));
         }
 
         /**
