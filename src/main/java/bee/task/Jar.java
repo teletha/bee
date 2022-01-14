@@ -153,10 +153,9 @@ public class Jar extends Task {
                 "Premain-Class: " + require(FindMain::premain) // detect pre main class
         );
 
-        File output = project.locateJar();
-
+        File output = Locator.temporaryFile();
         Folder folder = Locator.folder();
-        folder.add(project.getClasses(), o -> o.strip());
+        folder.add(project.locateJar().asArchive());
         folder.add(manifest, o -> o.allocateIn("META-INF"));
 
         for (Library library : project.getDependency(Scope.Runtime)) {
@@ -164,6 +163,8 @@ public class Jar extends Task {
         }
 
         folder.trackPackingTo(output).to(Inputs.observerFor(ui, output, "Merging class files", "Build merged classes jar"));
+
+        output.moveTo(project.locateJar());
     }
 
     /**

@@ -32,7 +32,7 @@ public class Project extends bee.api.Project {
                 It recognizes source code and package repositories and automates the entire lifecycle from development to release.
                 """);
 
-        require(SourceVersion.RELEASE_17, SourceVersion.RELEASE_11, SourceVersion.RELEASE_17);
+        require(SourceVersion.RELEASE_16, SourceVersion.RELEASE_11, SourceVersion.RELEASE_16);
 
         // MAVEN REPOSITORY
         require("org.apache.maven", "maven-resolver-provider");
