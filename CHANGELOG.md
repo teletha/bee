@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.25.1](https://www.github.com/teletha/bee/compare/v0.25.0...v0.25.1) (2022-01-14)
+
+
+### Bug Fixes
+
+* Merged jar must use modified version classes. ([16e8e64](https://www.github.com/teletha/bee/commit/16e8e648284d9f56223756caf69137822bf5fc5b))
+
 ## [0.25.0](https://www.github.com/teletha/bee/compare/v0.24.0...v0.25.0) (2022-01-14)
 
 
