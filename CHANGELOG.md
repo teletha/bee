@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.25.2](https://www.github.com/teletha/bee/compare/v0.25.1...v0.25.2) (2022-01-14)
+
+
+### Bug Fixes
+
+* Parse clipboard data as URL. ([fc1a8b6](https://www.github.com/teletha/bee/commit/fc1a8b6d0eb3e4b394f7f179498132e806bea15f))
+
 ### [0.25.1](https://www.github.com/teletha/bee/compare/v0.25.0...v0.25.1) (2022-01-14)
 
 
