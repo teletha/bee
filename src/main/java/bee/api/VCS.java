@@ -13,8 +13,9 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.io.IOException;
-import java.net.URI;
+import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -33,7 +34,7 @@ import psychopath.Directory;
 public abstract class VCS {
 
     /** The uri. */
-    protected final URI uri;
+    protected final URL uri;
 
     /** The owner name. */
     public final String owner;
@@ -48,7 +49,7 @@ public abstract class VCS {
      * 
      * @param uri
      */
-    protected VCS(URI uri) {
+    protected VCS(URL uri) {
         this.uri = uri;
 
         String path = uri.getPath().replaceAll("\\.git$", "");
@@ -71,7 +72,11 @@ public abstract class VCS {
      * @return
      */
     public String uri() {
-        return uri.toASCIIString();
+        try {
+            return uri.toURI().toASCIIString();
+        } catch (URISyntaxException e) {
+            throw I.quiet(e);
+        }
     }
 
     /** The uri for read access. */
@@ -173,7 +178,7 @@ public abstract class VCS {
         }
 
         try {
-            URI u = new URI(uri);
+            URL u = new URL(uri);
 
             switch (u.getHost()) {
             case "github.com":
@@ -182,7 +187,7 @@ public abstract class VCS {
             default:
                 return new Unknown(u);
             }
-        } catch (URISyntaxException e) {
+        } catch (MalformedURLException e) {
             return null;
         }
     }
@@ -279,7 +284,7 @@ public abstract class VCS {
         /**
          * @param uri
          */
-        GitHub(URI uri) {
+        GitHub(URL uri) {
             super(uri);
         }
 
@@ -380,7 +385,7 @@ public abstract class VCS {
         /**
          * @param uri
          */
-        public Unknown(URI uri) {
+        public Unknown(URL uri) {
             super(uri);
         }
 
