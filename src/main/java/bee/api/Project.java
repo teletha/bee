@@ -99,9 +99,6 @@ public class Project {
     /** The requirement of class file version. */
     private SourceVersion classFileVersion;
 
-    /** The requirement of class file version. */
-    private SourceVersion testClassFileVersion;
-
     /** The input base directory. */
     private Directory input;
 
@@ -434,25 +431,6 @@ public class Project {
     }
 
     /**
-     * Returns Java version requirement.
-     * 
-     * @return A Java version requirement.
-     */
-    public SourceVersion getJavaTestClassVersion() {
-        return testClassFileVersion == null ? SourceVersion.latest() : testClassFileVersion;
-    }
-
-    /**
-     * Internal setter for property access.
-     * 
-     * @param version
-     */
-    @SuppressWarnings("unused")
-    private void setJavaTestClassVersion(SourceVersion version) {
-        this.testClassFileVersion = version;
-    }
-
-    /**
      * Declare Java version requirement.
      * 
      * @param version A Java version to require.
@@ -468,20 +446,8 @@ public class Project {
      * @param targetVersion A Java target version to require.
      */
     protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion) {
-        require(sourceVersion, targetVersion, sourceVersion);
-    }
-
-    /**
-     * Declare Java version requirement.
-     * 
-     * @param sourceVersion A Java source version to require.
-     * @param targetVersion A Java target version to require.
-     * @param testTargetVersion A Java target version to require.
-     */
-    protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion, SourceVersion testTargetVersion) {
         this.sourceFileVersion = sourceVersion;
         this.classFileVersion = targetVersion;
-        this.testClassFileVersion = testTargetVersion;
     }
 
     /**

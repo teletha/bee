@@ -93,12 +93,12 @@ public class CI extends Task {
                         package-name: %s
                 """;
 
-        String testVersion = Inputs.normalize(project.getJavaTestClassVersion());
+        String version = Inputs.normalize(project.getJavaSourceVersion());
 
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
         makeFile("version.txt", List.of(project.getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
-        makeFile(".github/workflows/build.yml", String.format(build, testVersion, project.getProduct()));
+        makeFile(".github/workflows/build.yml", String.format(build, version, project.getProduct()));
         makeLicenseFile();
         makeReadMeFile();
 
