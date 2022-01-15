@@ -87,11 +87,8 @@ public class JavaCompiler {
     /** The output directory. */
     private Directory output;
 
-    /** The source version. */
-    private SourceVersion sourceVersion = SourceVersion.latest();
-
-    /** The target version. */
-    private SourceVersion targetVersion = SourceVersion.latest();
+    /** The release version. */
+    private SourceVersion releaseVersion = SourceVersion.latest();
 
     /** The source encoding. */
     private Charset encoding = Platform.Encoding;
@@ -425,18 +422,13 @@ public class JavaCompiler {
     }
 
     /**
-     * Set source version and target version for compiling.
+     * Set release version.
      * 
-     * @param sourceVersion
-     * @param targetVersion
+     * @param releaseVersion
      */
-    public JavaCompiler setVersion(SourceVersion sourceVersion, SourceVersion targetVersion) {
-        if (sourceVersion != null) {
-            this.sourceVersion = sourceVersion;
-        }
-
-        if (targetVersion != null) {
-            this.targetVersion = targetVersion;
+    public JavaCompiler setVersion(SourceVersion releaseVersion) {
+        if (releaseVersion != null) {
+            this.releaseVersion = releaseVersion;
         }
         return this;
     }
@@ -534,12 +526,10 @@ public class JavaCompiler {
         options.add(encoding.displayName());
 
         // =============================================
-        // Source and Target Version
+        // Release Version
         // =============================================
-        options.add("-source");
-        options.add(normalize(sourceVersion));
-        options.add("-target");
-        options.add(normalize(targetVersion));
+        options.add("--release");
+        options.add(normalize(releaseVersion));
 
         // =============================================
         // Java Class Paths
@@ -633,7 +623,7 @@ public class JavaCompiler {
          */
         @Override
         public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-            String message = diagnostic.getMessage(null);
+            String message = diagnostic.toString();
 
             switch (diagnostic.getKind()) {
             case ERROR:
