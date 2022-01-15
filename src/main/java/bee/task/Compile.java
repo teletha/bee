@@ -80,6 +80,8 @@ public class Compile extends Task {
                 .addClassPath(project.getClasses())
                 .addClassPath(project.getDependency(Scope.Compile, Scope.Test, Scope.Annotation))
                 .addSourceDirectory(input)
+                .setVersion(project.getJavaSourceVersion(), type.equals("main") ? project.getJavaClassVersion()
+                        : project.getJavaSourceVersion())
                 .setOutput(output)
                 .setNoWarn()
                 .setEncoding(project.getEncoding())
