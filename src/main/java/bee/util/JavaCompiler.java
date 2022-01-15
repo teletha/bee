@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.*;
+import static bee.util.Inputs.normalize;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,6 +107,9 @@ public class JavaCompiler {
 
     /** The compiler flag. */
     private boolean useECJ = false;
+
+    /** The compiler flag. */
+    private boolean compileAll = false;
 
     /** The error listener. */
     private DiagnosticListener<JavaFileObject> listener;
@@ -422,6 +425,15 @@ public class JavaCompiler {
     }
 
     /**
+     * Compile all source files.
+     */
+    public JavaCompiler setCompileAll() {
+        this.compileAll = true;
+
+        return this;
+    }
+
+    /**
      * Set release version.
      * 
      * @param releaseVersion
@@ -550,7 +562,7 @@ public class JavaCompiler {
             } else {
                 psychopath.File classFile = output.directory(e.ⅰ.relativize(e.ⅱ.parent())).file(e.ⅱ.base() + ".class");
 
-                if (classFile.lastModifiedMilli() < e.ⅱ.lastModifiedMilli()) {
+                if (compileAll || classFile.lastModifiedMilli() < e.ⅱ.lastModifiedMilli()) {
                     sources.add(new Source(e.ⅱ));
                 }
             }

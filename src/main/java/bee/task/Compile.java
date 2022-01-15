@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import java.util.function.Consumer;
+
 import bee.BeeLoader;
 import bee.Task;
 import bee.api.Command;
@@ -22,6 +24,10 @@ public class Compile extends Task {
 
     /** The kind of compiler. */
     public static boolean useECJ = false;
+
+    public static void configure(Consumer<JavaCompiler> setting) {
+
+    }
 
     /**
      * Compile main sources and copy other resources.
