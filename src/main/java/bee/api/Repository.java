@@ -19,7 +19,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
@@ -44,6 +43,7 @@ import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
+import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
 import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
 import org.eclipse.aether.internal.impl.DefaultDeployer;
 import org.eclipse.aether.internal.impl.DefaultFileProcessor;
@@ -61,10 +61,9 @@ import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
 import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
 import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
 import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
-import org.eclipse.aether.internal.impl.FastArtifactResolver;
 import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
-import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
+import org.eclipse.aether.internal.impl.collect.FastDependencyCollector;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactorySelector;
 import org.eclipse.aether.internal.impl.synccontext.named.SimpleNamedLockFactorySelector;
@@ -175,7 +174,7 @@ public class Repository {
         session.setIgnoreArtifactDescriptorRepositories(true);
         session.setCache(new DefaultRepositoryCache());
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
-        session.setConfigProperty("maven.artifact.threads", 30);
+        session.setConfigProperty("maven.artifact.threads", 32);
 
         // event listener
         View view = I.make(View.class);
@@ -215,8 +214,6 @@ public class Repository {
      * @return
      */
     private Set<Library> collectDependency(Project project, Set<Scope> scopes, Set<Library> libraries) {
-        fetchDependency(project, scopes, libraries);
-
         Set<Library> set = new TreeSet();
 
         for (Scope scope : scopes) {
@@ -243,23 +240,6 @@ public class Repository {
             }
         }
         return set;
-    }
-
-    /**
-     * Fetch all dependencies in the specified scope in parallel.
-     * 
-     * @param libraries
-     * @param scopes
-     */
-    private void fetchDependency(Project project, Set<Scope> scopes, Set<Library> libraries) {
-        if (1 < libraries.size()) {
-            I.signal(libraries).take(library -> scopes.stream().anyMatch(scope -> scope.accept(library.scope.id))).joinAll(library -> {
-                CollectRequest request = new CollectRequest(null, remoteRepositories());
-                request.addDependency(new Dependency(library.artifact, library.scope.id));
-
-                return system.collectDependencies(session, request);
-            }, Executors.newFixedThreadPool(libraries.size() / 2)).to();
-        }
     }
 
     /**
@@ -569,7 +549,6 @@ public class Repository {
         @Override
         public void transferInitiated(TransferEvent event) {
             downloading.put(event.getResource(), event);
-            System.out.println("Start " + downloading.size() + "    " + downloading.keySet());
         }
 
         /**
@@ -618,7 +597,6 @@ public class Repository {
         public void transferSucceeded(TransferEvent event) {
             // unregister item
             downloading.remove(event.getResource());
-            System.out.println("End " + downloading.size() + "   " + downloading.keySet());
 
             TransferResource resource = event.getResource();
             long contentLength = event.getTransferredBytes();
@@ -626,8 +604,7 @@ public class Repository {
                 String length = Inputs.formatAsSize(contentLength);
 
                 if (event.getRequestType() == TransferEvent.RequestType.GET) {
-                    // ui.info("Downloaded : " + name(resource) + " (" + length + ") from [" +
-                    // resource.getRepositoryUrl() + "]");
+                    ui.info("Downloaded : " + name(resource) + " (" + length + ") from [" + resource.getRepositoryUrl() + "]");
                 } else {
                     ui.info("Uploaded : " + name(resource) + " (" + length + ") to [" + resource.getRepositoryUrl() + "]");
                 }
@@ -718,8 +695,8 @@ public class Repository {
 
         private Lifestyles() {
             define(DefaultRepositorySystem.class);
-            define(FastArtifactResolver.class);
-            define(DefaultDependencyCollector.class);
+            define(DefaultArtifactResolver.class);
+            define(FastDependencyCollector.class);
             define(DefaultMetadataResolver.class);
             define(DefaultDeployer.class, impl -> {
                 impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));
@@ -823,5 +800,4 @@ public class Repository {
             return instance;
         }
     }
-
 }
