@@ -18,7 +18,7 @@
  */
 package org.eclipse.aether.internal.impl.collect;
 
-import static java.util.Objects.*;
+import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -216,7 +216,8 @@ public class FastDependencyCollector implements DependencyCollector {
 
             DefaultVersionFilterContext versionContext = new DefaultVersionFilterContext(session);
 
-            Args args = new Args(session, trace, pool, nodes, context, versionContext, request);
+            Args args = new Args(session, trace, pool, nodes, context, versionContext, request, new ForkJoinPool(ConfigUtils
+                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads")));
             Results results = new Results(result, session);
 
             process(args, results, dependencies, repositories, depSelector != null ? depSelector.deriveChildSelector(context)
@@ -293,7 +294,7 @@ public class FastDependencyCollector implements DependencyCollector {
     private void process(final Args args, Results results, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector depSelector, DependencyManager depManager, DependencyTraverser depTraverser, VersionFilter verFilter) {
         for (Dependency dependency : dependencies) {
             args.fork.submit(() -> {
-                processDependency(args, results, repositories, depSelector, depManager, depTraverser, verFilter, dependency);
+                processDependency(args.fork(), results, repositories, depSelector, depManager, depTraverser, verFilter, dependency);
             });
         }
     }
@@ -407,7 +408,6 @@ public class FastDependencyCollector implements DependencyCollector {
 
             process(args, results, descriptorResult
                     .getDependencies(), childRepos, childSelector, childManager, childTraverser, childFilter);
-            args.nodes.pop();
         } else {
             child.setChildren(children);
         }
@@ -550,7 +550,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
         final ForkJoinPool fork;
 
-        Args(RepositorySystemSession session, RequestTrace trace, DataPool pool, NodeStack nodes, DefaultDependencyCollectionContext collectionContext, DefaultVersionFilterContext versionContext, CollectRequest request) {
+        Args(RepositorySystemSession session, RequestTrace trace, DataPool pool, NodeStack nodes, DefaultDependencyCollectionContext collectionContext, DefaultVersionFilterContext versionContext, CollectRequest request, ForkJoinPool fork) {
             this.session = session;
             this.request = request;
             this.ignoreRepos = session.isIgnoreArtifactDescriptorRepositories();
@@ -560,10 +560,16 @@ public class FastDependencyCollector implements DependencyCollector {
             this.nodes = nodes;
             this.collectionContext = collectionContext;
             this.versionContext = versionContext;
-            this.fork = new ForkJoinPool(ConfigUtils
-                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads"));
+            this.fork = fork;
         }
 
+        Args fork() {
+            NodeStack newNodes = new NodeStack();
+            for (int i = 0; i < nodes.size(); i++) {
+                newNodes.push(nodes.get(i));
+            }
+            return new Args(session, trace, pool, newNodes, collectionContext, versionContext, request, fork);
+        }
     }
 
     static class Results {

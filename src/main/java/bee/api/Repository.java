@@ -229,7 +229,9 @@ public class Repository {
                 DependencyResult result = system.resolveDependencies(session, new DependencyRequest(request, (node, parents) -> {
                     List<DependencyNode> list = I.signal(parents).startWith(node).skip(p -> p.getArtifact() == null).toList();
 
-                    return list.isEmpty() || list.stream().allMatch(n -> scope.accept(n.getDependency().getScope()));
+                    return list.isEmpty() || list.stream().allMatch(n -> {
+                        return scope.accept(n.getDependency().getScope());
+                    });
                 }));
 
                 for (ArtifactResult dependency : result.getArtifactResults()) {
