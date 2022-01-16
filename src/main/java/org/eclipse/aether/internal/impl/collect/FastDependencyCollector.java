@@ -37,7 +37,6 @@ import org.eclipse.aether.artifact.ArtifactProperties;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.CollectResult;
 import org.eclipse.aether.collection.DependencyCollectionException;
-import org.eclipse.aether.collection.DependencyManager;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.collection.DependencyTraverser;
 import org.eclipse.aether.graph.DefaultDependencyNode;
@@ -109,9 +108,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
             Args args = new Args(session, trace, context, request, pool, deps);
 
-            process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), session
-                    .getDependencyManager()
-                    .deriveChildManager(context), session.getDependencyTraverser().deriveChildTraverser(context), node);
+            process(args, dependencies, repositories, session.getDependencySelector(), node);
 
             args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
         }
@@ -130,21 +127,20 @@ public class FastDependencyCollector implements DependencyCollector {
         return result;
     }
 
-    private void process(Args args, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector selector, DependencyManager manager, DependencyTraverser traverser, DependencyNode node) {
+    private void process(Args args, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
         args.fork.submit(() -> {
             for (Dependency dependency : dependencies) {
-                if (!selector.selectDependency(dependency) || !args.deps.add(dependency)) {
+                if (!args.deps.add(dependency) || !selector.selectDependency(dependency)) {
                     continue;
                 }
 
-                process(args.fork(), repositories, selector, manager, traverser, dependency, node);
+                process(args, dependency, repositories, selector, node);
             }
         });
     }
 
-    private void process(Args args, List<RemoteRepository> repositories, DependencySelector selector, DependencyManager manager, DependencyTraverser traverser, Dependency dependency, DependencyNode node) {
+    private void process(Args args, Dependency dependency, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
         boolean noDescriptor = isLackingDescriptor(dependency.getArtifact());
-        boolean traverse = !noDescriptor && traverser.traverseDependency(dependency);
 
         try {
             VersionRangeRequest rangeRequest = createVersionRangeRequest(args, repositories, dependency);
@@ -174,18 +170,15 @@ public class FastDependencyCollector implements DependencyCollector {
 
                 node.getChildren().add(child);
 
-                if (traverse && !descriptorResult.getDependencies().isEmpty()) {
+                if (!descriptorResult.getDependencies().isEmpty()) {
                     DefaultDependencyCollectionContext context = args.collectionContext;
                     context.set(dep, descriptorResult.getManagedDependencies());
 
-                    DependencySelector childSelector = selector.deriveChildSelector(context);
-                    DependencyManager childManager = manager.deriveChildManager(context);
-                    DependencyTraverser childTraverser = traverser.deriveChildTraverser(context);
                     List<RemoteRepository> childRepos = args.session.isIgnoreArtifactDescriptorRepositories() ? repositories
                             : remoteRepositoryManager
                                     .aggregateRepositories(args.session, repositories, descriptorResult.getRepositories(), true);
 
-                    process(args, descriptorResult.getDependencies(), childRepos, childSelector, childManager, childTraverser, child);
+                    process(args, descriptorResult.getDependencies(), childRepos, selector.deriveChildSelector(context), child);
                 }
             }
         } catch (VersionRangeResolutionException | ArtifactDescriptorException e) {
@@ -240,10 +233,6 @@ public class FastDependencyCollector implements DependencyCollector {
             this.collectionContext = collectionContext;
             this.fork = fork;
             this.deps = deps;
-        }
-
-        Args fork() {
-            return new Args(session, trace, collectionContext, request, fork, deps);
         }
     }
 
