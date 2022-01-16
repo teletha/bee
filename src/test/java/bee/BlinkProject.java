@@ -45,6 +45,15 @@ public class BlinkProject extends Project {
     }
 
     /**
+     * 
+     */
+    public BlinkProject(UserInterface ui) {
+        product("blink", "Blink", "1.0");
+        LifestyleForProject.local.set(this);
+        LifestyleForUI.local.set(ui);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

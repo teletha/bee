@@ -44,7 +44,6 @@ import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
-import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
 import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
 import org.eclipse.aether.internal.impl.DefaultDeployer;
 import org.eclipse.aether.internal.impl.DefaultFileProcessor;
@@ -62,6 +61,7 @@ import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
 import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
 import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
 import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.FastArtifactResolver;
 import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
@@ -80,6 +80,10 @@ import org.eclipse.aether.resolution.ResolutionErrorPolicy;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.locator.Service;
+import org.eclipse.aether.transfer.TransferCancelledException;
+import org.eclipse.aether.transfer.TransferEvent;
+import org.eclipse.aether.transfer.TransferListener;
+import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
@@ -99,7 +103,7 @@ import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import bee.BeeLoader;
 import bee.Platform;
 import bee.UserInterface;
-import bee.util.TransferInterface;
+import bee.util.Inputs;
 import kiss.ExtensionFactory;
 import kiss.I;
 import kiss.Lifestyle;
@@ -171,10 +175,12 @@ public class Repository {
         session.setIgnoreArtifactDescriptorRepositories(true);
         session.setCache(new DefaultRepositoryCache());
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
+        session.setConfigProperty("maven.artifact.threads", 30);
 
         // event listener
-        session.setTransferListener(I.make(TransferInterface.class));
-        session.setRepositoryListener(I.make(RepositoryView.class));
+        View view = I.make(View.class);
+        session.setTransferListener(view);
+        session.setRepositoryListener(view);
 
         this.session = session;
     }
@@ -528,7 +534,7 @@ public class Repository {
     /**
      * 
      */
-    private static final class RepositoryView extends AbstractRepositoryListener {
+    private static class View extends AbstractRepositoryListener implements TransferListener {
 
         /** The user notifier. */
         private final UserInterface ui;
@@ -536,7 +542,7 @@ public class Repository {
         /**
          * @param ui
          */
-        private RepositoryView(UserInterface ui) {
+        private View(UserInterface ui) {
             this.ui = ui;
         }
 
@@ -547,12 +553,119 @@ public class Repository {
         public void artifactInstalled(RepositoryEvent event) {
             ui.info("Install " + event.getArtifact() + " to " + event.getFile());
         }
+
+        /** The progress event interval. (ms) */
+        private static final long interval = 500 * 1000 * 1000;
+
+        /** The last progress event time. */
+        private long last = 0;
+
+        /** The downloading items. */
+        private Map<TransferResource, TransferEvent> downloading = new ConcurrentHashMap();
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void transferInitiated(TransferEvent event) {
+            downloading.put(event.getResource(), event);
+            System.out.println("Start " + downloading.size() + "    " + downloading.keySet());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void transferStarted(TransferEvent event) throws TransferCancelledException {
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void transferProgressed(TransferEvent event) {
+            long now = System.nanoTime();
+
+            if (interval < now - last) {
+                last = now; // update last event time
+
+                // build message
+                StringBuilder message = new StringBuilder();
+
+                for (Map.Entry<TransferResource, TransferEvent> entry : downloading.entrySet()) {
+                    TransferResource resource = entry.getKey();
+                    long current = entry.getValue().getTransferredBytes();
+                    long size = resource.getContentLength();
+
+                    message.append(name(resource)).append(" (");
+                    if (0 < size) {
+                        message.append(Inputs.formatAsSize(current, false)).append('/').append(Inputs.formatAsSize(size));
+                    } else {
+                        message.append(Inputs.formatAsSize(current));
+                    }
+                    message.append(")   ");
+                }
+
+                // notify
+                ui.trace(message);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void transferSucceeded(TransferEvent event) {
+            // unregister item
+            downloading.remove(event.getResource());
+            System.out.println("End " + downloading.size() + "   " + downloading.keySet());
+
+            TransferResource resource = event.getResource();
+            long contentLength = event.getTransferredBytes();
+            if (contentLength >= 0) {
+                String length = Inputs.formatAsSize(contentLength);
+
+                if (event.getRequestType() == TransferEvent.RequestType.GET) {
+                    // ui.info("Downloaded : " + name(resource) + " (" + length + ") from [" +
+                    // resource.getRepositoryUrl() + "]");
+                } else {
+                    ui.info("Uploaded : " + name(resource) + " (" + length + ") to [" + resource.getRepositoryUrl() + "]");
+                }
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void transferFailed(TransferEvent event) {
+            // unregister item
+            downloading.remove(event.getResource());
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void transferCorrupted(TransferEvent event) {
+            ui.error(event.getException());
+        }
+
+        /**
+         * Compute readable resource name.
+         * 
+         * @param resource
+         * @return
+         */
+        private static String name(TransferResource resource) {
+            return resource.getResourceName().substring(resource.getResourceName().lastIndexOf('/') + 1);
+        }
     }
 
     /**
      * 
      */
-    private static final class LibraryInfo implements Storable<LibraryInfo> {
+    private static class LibraryInfo implements Storable<LibraryInfo> {
 
         /** The last access time to remote source. */
         public LocalDate lastAccessToSource = LocalDate.MIN;
@@ -605,7 +718,7 @@ public class Repository {
 
         private Lifestyles() {
             define(DefaultRepositorySystem.class);
-            define(DefaultArtifactResolver.class);
+            define(FastArtifactResolver.class);
             define(DefaultDependencyCollector.class);
             define(DefaultMetadataResolver.class);
             define(DefaultDeployer.class, impl -> {
@@ -710,4 +823,5 @@ public class Repository {
             return instance;
         }
     }
+
 }
