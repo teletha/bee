@@ -7,7 +7,8 @@ const root = {
 		"bee.coder",
 		"bee.task",
 		"bee.util",
-		"org.apache.maven.wagon.shared.http"
+		"org.apache.maven.wagon.shared.http",
+		"org.eclipse.aether.internal.impl"
 	],
 	"types": [
 		{
@@ -149,6 +150,13 @@ const root = {
 			"name": "Fail",
 			"packageName": "bee",
 			"type": "Exception"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "FastArtifactResolver",
+			"packageName": "org.eclipse.aether.internal.impl",
+			"type": "Class"
 		},
 		{
 			"modifiers": {
@@ -582,13 +590,6 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Test",
 			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "TransferInterface",
-			"packageName": "bee.util",
 			"type": "Class"
 		},
 		{
