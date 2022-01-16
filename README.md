@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://docs.oracle.com/en/java/javase/11/"><img src="https://img.shields.io/badge/Java-Release%2011-green"/></a>
+    <a href="https://docs.oracle.com/en/java/javase/16/"><img src="https://img.shields.io/badge/Java-Release%2016-green"/></a>
     <span>&nbsp;</span>
     <a href="https://jitpack.io/#teletha/bee"><img src="https://img.shields.io/jitpack/v/github/teletha/bee?label=Repository&color=green"></a>
     <span>&nbsp;</span>
@@ -23,7 +23,7 @@ It recognizes source code and package repositories and automates the entire life
 
 
 ## Prerequisites
-Bee runs on all major operating systems and requires only [Java version 11](https://docs.oracle.com/en/java/javase/11/) or later to run.
+Bee runs on all major operating systems and requires only [Java version 16](https://docs.oracle.com/en/java/javase/16/) or later to run.
 To check, please run `java -version` from the command line interface. You should see something like this:
 ```
 > java -version
@@ -48,7 +48,7 @@ Add it into in the dependencies element like so:
 <dependency>
     <groupId>com.github.teletha</groupId>
     <artifactId>bee</artifactId>
-    <version>0.24.0</version>
+    <version>0.25.1</version>
 </dependency>
 ```
 #### [Gradle](https://gradle.org/)
@@ -61,7 +61,7 @@ repositories {
 Add it into the dependencies section like so:
 ```gradle
 dependencies {
-    implementation 'com.github.teletha:bee:0.24.0'
+    implementation 'com.github.teletha:bee:0.25.1'
 }
 ```
 #### [SBT](https://www.scala-sbt.org/)
@@ -71,7 +71,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 ```
 Add it into the libraryDependencies section like so:
 ```scala
-libraryDependencies += "com.github.teletha" % "bee" % "0.24.0"
+libraryDependencies += "com.github.teletha" % "bee" % "0.25.1"
 ```
 #### [Leiningen](https://leiningen.org/)
 Add JitPack repository at the end of repositories in your project.clj:
@@ -80,12 +80,12 @@ Add JitPack repository at the end of repositories in your project.clj:
 ```
 Add it into the dependencies section like so:
 ```clj
-:dependencies [[com.github.teletha/bee "0.24.0"]]
+:dependencies [[com.github.teletha/bee "0.25.1"]]
 ```
 #### [Bee](https://teletha.github.io/bee)
 Add it into your project definition class like so:
 ```java
-require("com.github.teletha", "bee", "0.24.0");
+require("com.github.teletha", "bee", "0.25.1");
 ```
 <p align="right"><a href="#top">back to top</a></p>
 
@@ -144,8 +144,8 @@ Bee depends on the following products on runtime.
 Bee depends on the following products on test.
 * [antibug-1.2.7](https://mvnrepository.com/artifact/com.github.teletha/antibug/1.2.7)
 * [apiguardian-api-1.1.2](https://mvnrepository.com/artifact/org.apiguardian/apiguardian-api/1.1.2)
-* [byte-buddy-1.12.6](https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy/1.12.6)
-* [byte-buddy-agent-1.12.6](https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-agent/1.12.6)
+* [byte-buddy-1.12.7](https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy/1.12.7)
+* [byte-buddy-agent-1.12.7](https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-agent/1.12.7)
 * [junit-jupiter-api-5.8.2](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api/5.8.2)
 * [junit-jupiter-engine-5.8.2](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine/5.8.2)
 * [junit-jupiter-params-5.8.2](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params/5.8.2)
