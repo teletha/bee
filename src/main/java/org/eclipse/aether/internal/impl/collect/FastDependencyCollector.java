@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
@@ -70,8 +72,6 @@ import org.eclipse.aether.util.ConfigUtils;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
 import org.eclipse.aether.util.graph.transformer.TransformationContextKeys;
 import org.eclipse.aether.version.Version;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  */
@@ -87,40 +87,22 @@ public class FastDependencyCollector implements DependencyCollector {
 
     private static final int CONFIG_PROP_MAX_CYCLES_DEFAULT = 10;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FastDependencyCollector.class);
-
     private RemoteRepositoryManager remoteRepositoryManager;
 
     private ArtifactDescriptorReader descriptorReader;
 
     private VersionRangeResolver versionRangeResolver;
 
-    public FastDependencyCollector() {
-        // enables default constructor
-    }
-
     @Inject
     FastDependencyCollector(RemoteRepositoryManager remoteRepositoryManager, ArtifactDescriptorReader artifactDescriptorReader, VersionRangeResolver versionRangeResolver) {
-        setRemoteRepositoryManager(remoteRepositoryManager);
-        setArtifactDescriptorReader(artifactDescriptorReader);
-        setVersionRangeResolver(versionRangeResolver);
+        this.remoteRepositoryManager = remoteRepositoryManager;
+        this.descriptorReader = artifactDescriptorReader;
+        this.versionRangeResolver = versionRangeResolver;
     }
 
-    public FastDependencyCollector setRemoteRepositoryManager(RemoteRepositoryManager remoteRepositoryManager) {
-        this.remoteRepositoryManager = requireNonNull(remoteRepositoryManager, "remote repository provider cannot be null");
-        return this;
-    }
-
-    public FastDependencyCollector setArtifactDescriptorReader(ArtifactDescriptorReader artifactDescriptorReader) {
-        descriptorReader = requireNonNull(artifactDescriptorReader, "artifact descriptor reader cannot be null");
-        return this;
-    }
-
-    public FastDependencyCollector setVersionRangeResolver(VersionRangeResolver versionRangeResolver) {
-        this.versionRangeResolver = requireNonNull(versionRangeResolver, "version range resolver cannot be null");
-        return this;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CollectResult collectDependencies(RepositorySystemSession session, CollectRequest request) throws DependencyCollectionException {
         requireNonNull(session, "session cannot be null");
@@ -142,7 +124,6 @@ public class FastDependencyCollector implements DependencyCollector {
         List<Dependency> managedDependencies = request.getManagedDependencies();
 
         Map<String, Object> stats = new LinkedHashMap<>();
-        long time1 = System.nanoTime();
 
         DefaultDependencyNode node;
         if (root != null) {
@@ -217,7 +198,8 @@ public class FastDependencyCollector implements DependencyCollector {
             DefaultVersionFilterContext versionContext = new DefaultVersionFilterContext(session);
 
             Args args = new Args(session, trace, pool, nodes, context, versionContext, request, new ForkJoinPool(ConfigUtils
-                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads")));
+                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads")), ConcurrentHashMap
+                            .newKeySet());
             Results results = new Results(result, session);
 
             process(args, results, dependencies, repositories, depSelector != null ? depSelector.deriveChildSelector(context)
@@ -227,10 +209,8 @@ public class FastDependencyCollector implements DependencyCollector {
 
             errorPath = results.errorPath;
 
-            args.fork.awaitQuiescence(3, TimeUnit.MINUTES);
+            args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
         }
-
-        long time2 = System.nanoTime();
 
         DependencyGraphTransformer transformer = session.getDependencyGraphTransformer();
         if (transformer != null) {
@@ -242,11 +222,6 @@ public class FastDependencyCollector implements DependencyCollector {
                 result.addException(e);
             }
         }
-
-        long time3 = System.nanoTime();
-        stats.put("FastDependencyCollector.collectTime", time2 - time1);
-        stats.put("FastDependencyCollector.transformTime", time3 - time2);
-        LOGGER.debug("Dependency collection stats {}", stats);
 
         if (errorPath != null) {
             throw new DependencyCollectionException(result, "Failed to collect dependencies at " + errorPath);
@@ -292,23 +267,18 @@ public class FastDependencyCollector implements DependencyCollector {
     }
 
     private void process(final Args args, Results results, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector depSelector, DependencyManager depManager, DependencyTraverser depTraverser, VersionFilter verFilter) {
-        for (Dependency dependency : dependencies) {
-            args.fork.submit(() -> {
-                processDependency(args.fork(), results, repositories, depSelector, depManager, depTraverser, verFilter, dependency);
-            });
-        }
+        args.fork.submit(() -> {
+            for (Dependency dependency : dependencies) {
+                if (!depSelector.selectDependency(dependency) || !args.set.add(dependency)) {
+                    continue;
+                }
+
+                process(args.fork(), results, repositories, depSelector, depManager, depTraverser, verFilter, dependency, List.of(), false);
+            }
+        });
     }
 
-    private void processDependency(Args args, Results results, List<RemoteRepository> repositories, DependencySelector depSelector, DependencyManager depManager, DependencyTraverser depTraverser, VersionFilter verFilter, Dependency dependency) {
-        List<Artifact> relocations = Collections.emptyList();
-        processDependency(args, results, repositories, depSelector, depManager, depTraverser, verFilter, dependency, relocations, false);
-    }
-
-    private void processDependency(Args args, Results results, List<RemoteRepository> repositories, DependencySelector depSelector, DependencyManager depManager, DependencyTraverser depTraverser, VersionFilter verFilter, Dependency dependency, List<Artifact> relocations, boolean disableVersionManagement) {
-        if (depSelector != null && !depSelector.selectDependency(dependency)) {
-            return;
-        }
-
+    private void process(Args args, Results results, List<RemoteRepository> repositories, DependencySelector depSelector, DependencyManager depManager, DependencyTraverser depTraverser, VersionFilter verFilter, Dependency dependency, List<Artifact> relocations, boolean disableVersionManagement) {
         PremanagedDependency preManaged = PremanagedDependency
                 .create(depManager, dependency, disableVersionManagement, args.premanagedState);
         dependency = preManaged.managedDependency;
@@ -335,8 +305,7 @@ public class FastDependencyCollector implements DependencyCollector {
             Dependency d = dependency.setArtifact(originalArtifact);
 
             ArtifactDescriptorRequest descriptorRequest = createArtifactDescriptorRequest(args, repositories, d);
-
-            final ArtifactDescriptorResult descriptorResult = getArtifactDescriptorResult(args, results, noDescriptor, d, descriptorRequest);
+            ArtifactDescriptorResult descriptorResult = getArtifactDescriptorResult(args, results, noDescriptor, d, descriptorRequest);
             if (descriptorResult != null) {
                 d = d.setArtifact(descriptorResult.getArtifact());
 
@@ -358,9 +327,8 @@ public class FastDependencyCollector implements DependencyCollector {
                             .equals(d.getArtifact().getGroupId()) && originalArtifact.getArtifactId()
                                     .equals(d.getArtifact().getArtifactId());
 
-                    processDependency(args, results, repositories, depSelector, depManager, depTraverser, verFilter, d, descriptorResult
+                    process(args, results, repositories, depSelector, depManager, depTraverser, verFilter, d, descriptorResult
                             .getRelocations(), disableVersionManagementSubsequently);
-                    return;
                 } else {
                     d = args.pool.intern(d.setArtifact(args.pool.intern(d.getArtifact())));
 
@@ -371,8 +339,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
                     node.getChildren().add(child);
 
-                    boolean recurse = traverse && !descriptorResult.getDependencies().isEmpty();
-                    if (recurse) {
+                    if (traverse && !descriptorResult.getDependencies().isEmpty()) {
                         doRecurse(args, results, repositories, depSelector, depManager, depTraverser, verFilter, d, descriptorResult, child);
                     }
                 }
@@ -528,7 +495,12 @@ public class FastDependencyCollector implements DependencyCollector {
         return versions;
     }
 
-    static class Args {
+    /**
+     * 
+     */
+    private static class Args {
+
+        final Set<Dependency> set;
 
         final RepositorySystemSession session;
 
@@ -550,7 +522,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
         final ForkJoinPool fork;
 
-        Args(RepositorySystemSession session, RequestTrace trace, DataPool pool, NodeStack nodes, DefaultDependencyCollectionContext collectionContext, DefaultVersionFilterContext versionContext, CollectRequest request, ForkJoinPool fork) {
+        Args(RepositorySystemSession session, RequestTrace trace, DataPool pool, NodeStack nodes, DefaultDependencyCollectionContext collectionContext, DefaultVersionFilterContext versionContext, CollectRequest request, ForkJoinPool fork, Set<Dependency> set) {
             this.session = session;
             this.request = request;
             this.ignoreRepos = session.isIgnoreArtifactDescriptorRepositories();
@@ -561,6 +533,7 @@ public class FastDependencyCollector implements DependencyCollector {
             this.collectionContext = collectionContext;
             this.versionContext = versionContext;
             this.fork = fork;
+            this.set = set;
         }
 
         Args fork() {
@@ -568,11 +541,14 @@ public class FastDependencyCollector implements DependencyCollector {
             for (int i = 0; i < nodes.size(); i++) {
                 newNodes.push(nodes.get(i));
             }
-            return new Args(session, trace, pool, newNodes, collectionContext, versionContext, request, fork);
+            return new Args(session, trace, pool, newNodes, collectionContext, versionContext, request, fork, set);
         }
     }
 
-    static class Results {
+    /**
+     * 
+     */
+    private static class Results {
 
         private final CollectResult result;
 
@@ -621,7 +597,10 @@ public class FastDependencyCollector implements DependencyCollector {
 
     }
 
-    static class PremanagedDependency {
+    /**
+     * 
+     */
+    private static class PremanagedDependency {
 
         final String premanagedVersion;
 
@@ -645,7 +624,6 @@ public class FastDependencyCollector implements DependencyCollector {
 
         final boolean premanagedState;
 
-        @SuppressWarnings("checkstyle:parameternumber")
         PremanagedDependency(String premanagedVersion, String premanagedScope, Boolean premanagedOptional, Collection<Exclusion> premanagedExclusions, Map<String, String> premanagedProperties, int managedBits, Dependency managedDependency, boolean premanagedState) {
             this.premanagedVersion = premanagedVersion;
             this.premanagedScope = premanagedScope;

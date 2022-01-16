@@ -174,7 +174,7 @@ public class Repository {
         session.setIgnoreArtifactDescriptorRepositories(true);
         session.setCache(new DefaultRepositoryCache());
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
-        session.setConfigProperty("maven.artifact.threads", 32);
+        session.setConfigProperty("maven.artifact.threads", 24);
 
         // event listener
         View view = I.make(View.class);
@@ -551,6 +551,7 @@ public class Repository {
         @Override
         public void transferInitiated(TransferEvent event) {
             downloading.put(event.getResource(), event);
+            System.out.println("Start " + downloading.size() + "  " + downloading.keySet());
         }
 
         /**

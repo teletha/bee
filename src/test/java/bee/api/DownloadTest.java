@@ -27,7 +27,7 @@ class DownloadTest {
         BlinkProject project = new BlinkProject(UserInterface.CUI);
         // project.require("org.openjfx", "javafx-graphics", "18-ea+9");
         // project.require("org.openjfx", "javafx-web", "18-ea+9");
-        // project.require("org.apache.maven", "maven-core", "3.8.4");
+        project.require("org.apache.maven", "maven-core", "3.8.4");
         // project.require("org.springframework", "spring-orm", "5.3.15");
         // project.require("org.apache.camel", "camel-core", "3.14.0");
 

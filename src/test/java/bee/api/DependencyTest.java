@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
@@ -132,7 +133,7 @@ class DependencyTest {
         assert repo.collectDependency(library, Scope.Test, Scope.Compile).size() == 2;
     }
 
-    @Test
+    @RepeatedTest(5)
     void byLibraryWithClassifier() {
         Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
         Repository repo = new Repository(new BlinkProject());
