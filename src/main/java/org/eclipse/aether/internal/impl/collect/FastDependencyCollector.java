@@ -24,9 +24,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
@@ -65,7 +66,6 @@ import org.eclipse.aether.resolution.VersionRangeResolutionException;
 import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.ConfigUtils;
 import org.eclipse.aether.util.graph.manager.DependencyManagerUtils;
-import org.eclipse.aether.util.graph.transformer.TransformationContextKeys;
 import org.eclipse.aether.version.Version;
 
 @Singleton
@@ -106,8 +106,6 @@ public class FastDependencyCollector implements DependencyCollector {
         List<Dependency> dependencies = request.getDependencies();
         List<Dependency> managedDependencies = request.getManagedDependencies();
 
-        Map<String, Object> stats = new LinkedHashMap<>();
-
         DefaultDependencyNode node = new DefaultDependencyNode(request.getRootArtifact());
         node.setRequestContext(request.getRequestContext());
         node.setRepositories(request.getRepositories());
@@ -116,31 +114,29 @@ public class FastDependencyCollector implements DependencyCollector {
 
         boolean traversable = root == null || traverser == null || traverser.traverseDependency(root);
         if (traversable && !dependencies.isEmpty()) {
-            DataPool pool = new DataPool(session);
-
             Deque<DependencyNode> nodes = new ArrayDeque();
-            nodes.push(node);
+            nodes.addLast(node);
 
             DefaultDependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request
                     .getRootArtifact(), root, managedDependencies);
 
             DefaultVersionFilterContext versionContext = new DefaultVersionFilterContext(session);
 
-            Args args = new Args(session, trace, pool, nodes, context, versionContext, request, new ForkJoinPool(ConfigUtils
-                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads")));
+            Args args = new Args(session, trace, nodes, context, versionContext, request, new ForkJoinPool(ConfigUtils
+                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads")), ConcurrentHashMap
+                            .newKeySet());
             Results results = new Results(result, session);
 
             process(args, results, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), session
                     .getDependencyManager()
-                    .deriveChildManager(context), traverser != null ? traverser.deriveChildTraverser(context)
-                            : null, verFilter != null ? verFilter.deriveChildFilter(context) : null);
+                    .deriveChildManager(context), session.getDependencyTraverser()
+                            .deriveChildTraverser(context), verFilter != null ? verFilter.deriveChildFilter(context) : null);
 
             args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
         }
 
         try {
             DefaultDependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
-            context.put(TransformationContextKeys.STATS, stats);
             result.setRoot(session.getDependencyGraphTransformer().transformGraph(node, context));
         } catch (RepositoryException e) {
             result.addException(e);
@@ -156,7 +152,7 @@ public class FastDependencyCollector implements DependencyCollector {
     private void process(final Args args, Results results, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector depSelector, DependencyManager depManager, DependencyTraverser depTraverser, VersionFilter verFilter) {
         args.fork.submit(() -> {
             for (Dependency dependency : dependencies) {
-                if (!depSelector.selectDependency(dependency)) {
+                if (!depSelector.selectDependency(dependency) || !args.deps.add(dependency)) {
                     continue;
                 }
 
@@ -171,51 +167,47 @@ public class FastDependencyCollector implements DependencyCollector {
         dependency = preManaged.managedDependency;
 
         boolean noDescriptor = isLackingDescriptor(dependency.getArtifact());
-
         boolean traverse = !noDescriptor && (depTraverser == null || depTraverser.traverseDependency(dependency));
 
-        List<? extends Version> versions;
-        VersionRangeResult rangeResult;
         try {
             VersionRangeRequest rangeRequest = createVersionRangeRequest(args, repositories, dependency);
+            VersionRangeResult rangeResult = versionRangeResolver.resolveVersionRange(args.session, rangeRequest);
 
-            rangeResult = cachedResolveRangeResult(rangeRequest, args.pool, args.session);
+            for (Version version : rangeResult.getVersions()) {
+                Artifact originalArtifact = dependency.getArtifact().setVersion(version.toString());
+                Dependency dep = dependency.setArtifact(originalArtifact);
 
-            versions = filterVersions(dependency, rangeResult, verFilter, args.versionContext);
-        } catch (VersionRangeResolutionException e) {
+                ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
+                descriptorRequest.setArtifact(dep.getArtifact());
+                descriptorRequest.setRepositories(repositories);
+                descriptorRequest.setRequestContext(args.request.getRequestContext());
+                descriptorRequest.setTrace(args.trace);
+
+                ArtifactDescriptorResult descriptorResult = noDescriptor ? new ArtifactDescriptorResult(descriptorRequest)
+                        : descriptorReader.readArtifactDescriptor(args.session, descriptorRequest);
+
+                dep = dep.setArtifact(descriptorResult.getArtifact());
+
+                DependencyNode node = args.nodes.peekLast();
+
+                DefaultDependencyNode child = new DefaultDependencyNode(dep);
+                preManaged.applyTo(child);
+                child.setRelocations(relocations);
+                child.setVersionConstraint(rangeResult.getVersionConstraint());
+                child.setVersion(version);
+                child.setAliases(descriptorResult.getAliases());
+                child.setRepositories(getRemoteRepositories(rangeResult.getRepository(version), repositories));
+                child.setRequestContext(args.request.getRequestContext());
+
+                node.getChildren().add(child);
+
+                if (traverse && !descriptorResult.getDependencies().isEmpty()) {
+                    doRecurse(args, results, repositories, depSelector, depManager, depTraverser, verFilter, dep, descriptorResult, child);
+                }
+            }
+        } catch (VersionRangeResolutionException | ArtifactDescriptorException e) {
             results.addException(dependency, e, args.nodes);
             return;
-        }
-
-        for (Version version : versions) {
-            Artifact originalArtifact = dependency.getArtifact().setVersion(version.toString());
-            Dependency dep = dependency.setArtifact(originalArtifact);
-
-            ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
-            descriptorRequest.setArtifact(dep.getArtifact());
-            descriptorRequest.setRepositories(repositories);
-            descriptorRequest.setRequestContext(args.request.getRequestContext());
-            descriptorRequest.setTrace(args.trace);
-
-            ArtifactDescriptorResult descriptorResult = noDescriptor ? new ArtifactDescriptorResult(descriptorRequest)
-                    : resolveCachedArtifactDescriptor(args.pool, descriptorRequest, args.session, dep, results, args);
-
-            dep = dep.setArtifact(descriptorResult.getArtifact());
-
-            DependencyNode node = args.nodes.peekFirst();
-
-            dep = args.pool.intern(dep.setArtifact(args.pool.intern(dep.getArtifact())));
-
-            List<RemoteRepository> repos = getRemoteRepositories(rangeResult.getRepository(version), repositories);
-
-            DefaultDependencyNode child = createDependencyNode(relocations, preManaged, rangeResult, version, dep, descriptorResult
-                    .getAliases(), repos, args.request.getRequestContext());
-
-            node.getChildren().add(child);
-
-            if (traverse && !descriptorResult.getDependencies().isEmpty()) {
-                doRecurse(args, results, repositories, depSelector, depManager, depTraverser, verFilter, dep, descriptorResult, child);
-            }
         }
     }
 
@@ -228,54 +220,12 @@ public class FastDependencyCollector implements DependencyCollector {
         DependencyTraverser childTraverser = depTraverser != null ? depTraverser.deriveChildTraverser(context) : null;
         VersionFilter childFilter = verFilter != null ? verFilter.deriveChildFilter(context) : null;
 
-        final List<RemoteRepository> childRepos = args.session.isIgnoreArtifactDescriptorRepositories() ? repositories
+        List<RemoteRepository> childRepos = args.session.isIgnoreArtifactDescriptorRepositories() ? repositories
                 : remoteRepositoryManager.aggregateRepositories(args.session, repositories, descriptorResult.getRepositories(), true);
 
-        Object key = args.pool.toKey(d.getArtifact(), childRepos, childSelector, childManager, childTraverser, childFilter);
+        args.nodes.addLast(child);
 
-        List<DependencyNode> children = args.pool.getChildren(key);
-        if (children == null) {
-            args.pool.putChildren(key, child.getChildren());
-
-            args.nodes.push(child);
-
-            process(args, results, descriptorResult
-                    .getDependencies(), childRepos, childSelector, childManager, childTraverser, childFilter);
-        } else {
-            child.setChildren(children);
-        }
-    }
-
-    private ArtifactDescriptorResult resolveCachedArtifactDescriptor(DataPool pool, ArtifactDescriptorRequest descriptorRequest, RepositorySystemSession session, Dependency d, Results results, Args args) {
-        Object key = pool.toKey(descriptorRequest);
-        ArtifactDescriptorResult descriptorResult = pool.getDescriptor(key, descriptorRequest);
-        if (descriptorResult == null) {
-            try {
-                descriptorResult = descriptorReader.readArtifactDescriptor(session, descriptorRequest);
-                pool.putDescriptor(key, descriptorResult);
-            } catch (ArtifactDescriptorException e) {
-                results.addException(d, e, args.nodes);
-                pool.putDescriptor(key, e);
-                return null;
-            }
-
-        } else if (descriptorResult == DataPool.NO_DESCRIPTOR) {
-            return null;
-        }
-
-        return descriptorResult;
-    }
-
-    private static DefaultDependencyNode createDependencyNode(List<Artifact> relocations, PremanagedDependency preManaged, VersionRangeResult rangeResult, Version version, Dependency d, Collection<Artifact> aliases, List<RemoteRepository> repos, String requestContext) {
-        DefaultDependencyNode child = new DefaultDependencyNode(d);
-        preManaged.applyTo(child);
-        child.setRelocations(relocations);
-        child.setVersionConstraint(rangeResult.getVersionConstraint());
-        child.setVersion(version);
-        child.setAliases(aliases);
-        child.setRepositories(repos);
-        child.setRequestContext(requestContext);
-        return child;
+        process(args, results, descriptorResult.getDependencies(), childRepos, childSelector, childManager, childTraverser, childFilter);
     }
 
     private static VersionRangeRequest createVersionRangeRequest(Args args, List<RemoteRepository> repositories, Dependency dependency) {
@@ -285,17 +235,6 @@ public class FastDependencyCollector implements DependencyCollector {
         rangeRequest.setRequestContext(args.request.getRequestContext());
         rangeRequest.setTrace(args.trace);
         return rangeRequest;
-    }
-
-    private VersionRangeResult cachedResolveRangeResult(VersionRangeRequest rangeRequest, DataPool pool, RepositorySystemSession session)
-            throws VersionRangeResolutionException {
-        Object key = pool.toKey(rangeRequest);
-        VersionRangeResult rangeResult = pool.getConstraint(key, rangeRequest);
-        if (rangeResult == null) {
-            rangeResult = versionRangeResolver.resolveVersionRange(session, rangeRequest);
-            pool.putConstraint(key, rangeResult);
-        }
-        return rangeResult;
     }
 
     private static boolean isLackingDescriptor(Artifact artifact) {
@@ -312,33 +251,6 @@ public class FastDependencyCollector implements DependencyCollector {
         return repositories;
     }
 
-    private static List<? extends Version> filterVersions(Dependency dependency, VersionRangeResult rangeResult, VersionFilter verFilter, DefaultVersionFilterContext verContext)
-            throws VersionRangeResolutionException {
-        if (rangeResult.getVersions().isEmpty()) {
-            throw new VersionRangeResolutionException(rangeResult, "No versions available for " + dependency
-                    .getArtifact() + " within specified range");
-        }
-
-        List<? extends Version> versions;
-        if (verFilter != null && rangeResult.getVersionConstraint().getRange() != null) {
-            verContext.set(dependency, rangeResult);
-            try {
-                verFilter.filterVersions(verContext);
-            } catch (RepositoryException e) {
-                throw new VersionRangeResolutionException(rangeResult, "Failed to filter versions for " + dependency
-                        .getArtifact() + ": " + e.getMessage(), e);
-            }
-            versions = verContext.get();
-            if (versions.isEmpty()) {
-                throw new VersionRangeResolutionException(rangeResult, "No acceptable versions for " + dependency
-                        .getArtifact() + ": " + rangeResult.getVersions());
-            }
-        } else {
-            versions = rangeResult.getVersions();
-        }
-        return versions;
-    }
-
     /**
      * 
      */
@@ -347,8 +259,6 @@ public class FastDependencyCollector implements DependencyCollector {
         final RepositorySystemSession session;
 
         final RequestTrace trace;
-
-        final DataPool pool;
 
         final Deque<DependencyNode> nodes;
 
@@ -360,19 +270,21 @@ public class FastDependencyCollector implements DependencyCollector {
 
         final ForkJoinPool fork;
 
-        Args(RepositorySystemSession session, RequestTrace trace, DataPool pool, Deque<DependencyNode> nodes, DefaultDependencyCollectionContext collectionContext, DefaultVersionFilterContext versionContext, CollectRequest request, ForkJoinPool fork) {
+        final Set<Dependency> deps;
+
+        Args(RepositorySystemSession session, RequestTrace trace, Deque<DependencyNode> nodes, DefaultDependencyCollectionContext collectionContext, DefaultVersionFilterContext versionContext, CollectRequest request, ForkJoinPool fork, Set<Dependency> deps) {
             this.session = session;
             this.request = request;
             this.trace = trace;
-            this.pool = pool;
             this.nodes = nodes;
             this.collectionContext = collectionContext;
             this.versionContext = versionContext;
             this.fork = fork;
+            this.deps = deps;
         }
 
         Args fork() {
-            return new Args(session, trace, pool, new ArrayDeque(nodes), collectionContext, versionContext, request, fork);
+            return new Args(session, trace, new ArrayDeque(nodes), collectionContext, versionContext, request, fork, deps);
         }
     }
 
