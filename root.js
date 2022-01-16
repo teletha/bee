@@ -8,7 +8,7 @@ const root = {
 		"bee.task",
 		"bee.util",
 		"org.apache.maven.wagon.shared.http",
-		"org.eclipse.aether.internal.impl"
+		"org.eclipse.aether.internal.impl.collect"
 	],
 	"types": [
 		{
@@ -154,8 +154,8 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "FastArtifactResolver",
-			"packageName": "org.eclipse.aether.internal.impl",
+			"name": "FastDependencyCollector",
+			"packageName": "org.eclipse.aether.internal.impl.collect",
 			"type": "Class"
 		},
 		{
