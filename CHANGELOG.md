@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.26.0](https://www.github.com/teletha/bee/compare/v0.25.1...v0.26.0) (2022-01-17)
+
+
+### Features
+
+* Add JavaCompiler#setCompileAll. ([776fcdd](https://www.github.com/teletha/bee/commit/776fcdd90ede69eb5edc9f19f1329ae164667ad1))
+* Add profiler. ([b4678ac](https://www.github.com/teletha/bee/commit/b4678ac92d7aeb5f62bacb66cc0d33ca79ecd017))
+* Add profiling option (-p or -profiling). ([717c16d](https://www.github.com/teletha/bee/commit/717c16d7862eb054d67db26b3d0b8ee7663a0400))
+* Drop configuration for test class version. ([bd0fa88](https://www.github.com/teletha/bee/commit/bd0fa88734c45f96e1cfa9cc5eb564c58e158cb4))
+* Parallel and fast artifact downloading. ([c937977](https://www.github.com/teletha/bee/commit/c937977a5b65432c6217531bdb2eb0224075970b))
+* Provide fast DependencyCollector. ([f6152f8](https://www.github.com/teletha/bee/commit/f6152f86febd97f65061c19506192e8f4fb4a064))
+
+
+### Bug Fixes
+
+* Compile task is aware of java version setting. ([56e5ba2](https://www.github.com/teletha/bee/commit/56e5ba222fc4e363ca1169a600c9e49ba12d0f2f))
+* Parallel dependency resolver. ([6d1a774](https://www.github.com/teletha/bee/commit/6d1a774d13a0ed857668cbc26118da9688362466))
+* Parallel metadata downloading. ([5e604f2](https://www.github.com/teletha/bee/commit/5e604f28e702b63e2d76de7e915ee2384b6eb20e))
+* Parse clipboard data as URL. ([fc1a8b6](https://www.github.com/teletha/bee/commit/fc1a8b6d0eb3e4b394f7f179498132e806bea15f))
+
 ### [0.25.1](https://www.github.com/teletha/bee/compare/v0.25.0...v0.25.1) (2022-01-14)
 
 
