@@ -9,39 +9,86 @@
  */
 package bee.util;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import bee.UserInterface;
+import kiss.I;
 
 /**
  * Builtin simple profiler.
  */
-public class Profile {
+public class Profile implements AutoCloseable {
 
     /** All records. */
     private static final Queue<Profile> records = new ConcurrentLinkedQueue();
 
+    /** The current record. */
+    private static Profile current = new Profile("", null);
+
     /** The name. */
     private final String name;
 
+    private Profile previous;
+
     /** The starting time. */
-    private final long start;
+    private long start;
 
     /** The ending time. */
     private long end;
 
+    /** The latest recorded time. */
+    private long latest;
+
+    /** The elapsed time of the specified phase. */
+    private long elapsed;
+
     /**
      * 
      */
-    private Profile(String name, long start, long end) {
+    private Profile(String name, Profile previous) {
         this.name = name;
-        this.start = start;
-        this.end = end;
+        this.previous = previous;
+    }
+
+    /**
+     * 
+     */
+    private void start() {
+        long now = System.nanoTime();
+
+        if (start == 0) {
+            start = now;
+        }
+        latest = now;
+    }
+
+    /**
+     * 
+     */
+    private void stop() {
+        end = System.nanoTime();
+        elapsed += end - latest;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void close() {
+        stop();
+        current = current.previous;
+        if (current != null) current.start();
     }
 
     /**
@@ -50,33 +97,29 @@ public class Profile {
      * @param name
      * @return
      */
-    public static MeasurementDevice of(String name) {
-        long start = System.nanoTime();
-        return () -> {
-            records.add(new Profile(name, start, System.nanoTime()));
-        };
+    public static Profile of(String name) {
+        records.add(current = new Profile(name, current));
+        current.start();
+        return current;
     }
 
     public static void show(UserInterface ui) {
         Map<String, List<Profile>> grouped = records.stream().collect(Collectors.groupingBy(v -> v.name));
+        TreeMap<Duration, String> output = new TreeMap(Comparator.reverseOrder());
+
         for (Entry<String, List<Profile>> entry : grouped.entrySet()) {
             String name = entry.getKey();
             List<Profile> values = entry.getValue();
-            long total = values.stream().mapToLong(v -> v.end - v.start).sum();
-
-            ui.info(name, " \tcall: ", values.size(), " \ttotal: ", total, "ns");
+            long total = values.stream().mapToLong(v -> v.elapsed).sum();
+            Duration duration = Duration.ofNanos(total).truncatedTo(ChronoUnit.MILLIS);
+            if (100 <= duration.toMillis()) {
+                String time = duration.toString().substring(2).toLowerCase();
+                output.put(duration, StringUtils.rightPad(time, 7) + "\t" + name);
+            }
         }
-    }
 
-    /**
-     * 
-     */
-    public interface MeasurementDevice extends AutoCloseable {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        void close();
+        I.signal(output.values()).take(10).to(v -> {
+            ui.info(v);
+        });
     }
 }

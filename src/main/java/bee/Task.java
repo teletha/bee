@@ -564,7 +564,7 @@ public abstract class Task implements Extensible {
         task.ui = ui;
 
         // execute task
-        try (var x = Profile.of("Task " + taskName + ":" + commandName)) {
+        try (var x = Profile.of("Task [" + taskName + ":" + commandName + "]")) {
             return command.invoke(task);
         } catch (TaskCancel e) {
             ui.warn("The task [", taskName, ":", commandName, "] was canceled beacuase ", e.getMessage());

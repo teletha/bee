@@ -175,7 +175,7 @@ public class Bee {
         String result = "SUCCESS";
         LocalTime start = LocalTime.now();
 
-        try (var p = Profile.of("Bee")) {
+        try (var x = Profile.of("Bee")) {
             // =====================================
             // build your project
             // =====================================
@@ -230,7 +230,7 @@ public class Bee {
             String dateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
             String duration = Duration.between(start, end).truncatedTo(ChronoUnit.MILLIS).toString().substring(2).toLowerCase();
             ui.title(String.format("Build %s \t %s \t %s", result, dateTime, duration));
-            Profile.show(ui);
+            if (Boolean.getBoolean("profiling")) Profile.show(ui);
         }
         return code;
     }
@@ -309,7 +309,7 @@ public class Bee {
                     value = "true";
                 }
 
-                System.setProperty(key, value);
+                System.setProperty(key.toLowerCase().replace("p", "profiling"), value);
             }
         }
 
