@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.26.1](https://www.github.com/teletha/bee/compare/v0.26.0...v0.26.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* Don't compute frame when version modification. ([5be54a9](https://www.github.com/teletha/bee/commit/5be54a9f5fca6025e115ed91202aa1553d9b31e2))
+* Drop unknown vcs. ([db2c7ac](https://www.github.com/teletha/bee/commit/db2c7accadc180f727aed82dfb7d3b6aac13cf7c))
+
 ## [0.26.0](https://www.github.com/teletha/bee/compare/v0.25.1...v0.26.0) (2022-01-17)
 
 
