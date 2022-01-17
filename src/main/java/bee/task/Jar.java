@@ -56,8 +56,8 @@ public class Jar extends Task {
     public void source() {
         require(Compile::source);
 
-        pack("main classes", I.signal(project.getClasses()), project.locateJar(), project.getJavaSourceVersion()
-                .compareTo(project.getJavaClassVersion()) > 0 || SkipTraceInfo || SkipDebugInfo);
+        pack("main classes", I.signal(project.getClasses()), project
+                .locateJar(), SourceVersion.latest().compareTo(project.getJavaClassVersion()) > 0 || SkipTraceInfo || SkipDebugInfo);
         pack("main sources", project.getSourceSet(), project.locateSourceJar(), false);
     }
 
@@ -108,7 +108,7 @@ public class Jar extends Task {
      */
     private void pack(String type, Signal<Directory> input, File output, boolean modifyVersion) {
         if (modifyVersion) {
-            String oldVersion = Inputs.normalize(project.getJavaSourceVersion());
+            String oldVersion = Inputs.normalize(SourceVersion.latest());
             String newVersion = Inputs.normalize(project.getJavaClassVersion());
             if (!oldVersion.equals(newVersion)) {
                 ui.info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");

@@ -49,6 +49,7 @@ public class Project extends bee.api.Project {
         require("org.slf4j", "jul-to-slf4j");
 
         // REQUIRED
+        require("javax.inject", "javax.inject", "1");
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
         require("org.ow2.asm", "asm");

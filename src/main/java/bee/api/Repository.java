@@ -551,7 +551,6 @@ public class Repository {
         @Override
         public void transferInitiated(TransferEvent event) {
             downloading.put(event.getResource(), event);
-            System.out.println("Start " + downloading.size() + "  " + downloading.keySet());
         }
 
         /**
@@ -700,6 +699,7 @@ public class Repository {
             define(DefaultRepositorySystem.class);
             define(DefaultArtifactResolver.class);
             define(FastDependencyCollector.class);
+            // define(DefaultDependencyCollector.class);
             define(DefaultMetadataResolver.class);
             define(DefaultDeployer.class, impl -> {
                 impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));

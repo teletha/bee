@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.RequestTrace;
+import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.ArtifactProperties;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.CollectResult;
@@ -54,11 +55,11 @@ import kiss.I;
 @Singleton
 public class FastDependencyCollector implements DependencyCollector {
 
-    private final RemoteRepositoryManager manager;
+    private RemoteRepositoryManager manager;
 
-    private final ArtifactDescriptorReader descriptorReader;
+    private ArtifactDescriptorReader descriptorReader;
 
-    private final VersionRangeResolver versionRangeResolver;
+    private VersionRangeResolver versionRangeResolver;
 
     @Inject
     FastDependencyCollector(RemoteRepositoryManager remoteRepositoryManager, ArtifactDescriptorReader artifactDescriptorReader, VersionRangeResolver versionRangeResolver) {
@@ -72,32 +73,37 @@ public class FastDependencyCollector implements DependencyCollector {
      */
     @Override
     public CollectResult collectDependencies(RepositorySystemSession session, CollectRequest request) throws DependencyCollectionException {
-        Dependency root = request.getRoot();
-        List<RemoteRepository> repositories = request.getRepositories();
-        List<Dependency> dependencies = request.getDependencies();
-
-        DefaultDependencyNode node = new DefaultDependencyNode(request.getRootArtifact());
-        node.setRequestContext(request.getRequestContext());
-        node.setRepositories(request.getRepositories());
-
-        boolean traversable = root == null || session.getDependencyTraverser().traverseDependency(root);
-        if (traversable && !dependencies.isEmpty()) {
-            Args args = new Args(session, request);
-            DependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request.getRootArtifact(), root, request
-                    .getManagedDependencies());
-
-            process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
-
-            args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
-        }
-
         try {
-            CollectResult result = new CollectResult(request).setRoot(node);
-            DependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
-            result.setRoot(session.getDependencyGraphTransformer().transformGraph(node, context));
+            Dependency root = request.getRoot();
+            List<RemoteRepository> repositories = request.getRepositories();
+            List<Dependency> dependencies = request.getDependencies();
 
-            return result;
-        } catch (RepositoryException e) {
+            DefaultDependencyNode node = new DefaultDependencyNode(request.getRootArtifact());
+            node.setRequestContext(request.getRequestContext());
+            node.setRepositories(request.getRepositories());
+
+            boolean traversable = root == null || session.getDependencyTraverser().traverseDependency(root);
+            if (traversable && !dependencies.isEmpty()) {
+                Args args = new Args(session, request);
+                DependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request
+                        .getRootArtifact(), root, request.getManagedDependencies());
+
+                process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
+
+                args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
+            }
+
+            try {
+                CollectResult result = new CollectResult(request).setRoot(node);
+                DependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
+                result.setRoot(session.getDependencyGraphTransformer().transformGraph(node, context));
+
+                return result;
+            } catch (RepositoryException e) {
+                throw I.quiet(e);
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
             throw I.quiet(e);
         }
     }
@@ -105,7 +111,10 @@ public class FastDependencyCollector implements DependencyCollector {
     private void process(Args args, List<Dependency> dependencies, List<RemoteRepository> remotes, DependencySelector selector, DependencyNode node) {
         for (Dependency dep : dependencies) {
             // must check duplications at first
-            if (!args.deps.add(dep)) {
+            Artifact artifact = dep.getArtifact();
+            String id = artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getClassifier();
+
+            if (!args.deps.add(id)) {
                 continue;
             }
 
@@ -185,7 +194,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
         private final RequestTrace trace;
 
-        private final Set<Dependency> deps;
+        private final Set<String> deps;
 
         private final ForkJoinPool pool;
 
