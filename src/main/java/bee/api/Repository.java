@@ -699,7 +699,6 @@ public class Repository {
             define(DefaultRepositorySystem.class);
             define(DefaultArtifactResolver.class);
             define(FastDependencyCollector.class);
-            // define(DefaultDependencyCollector.class);
             define(DefaultMetadataResolver.class);
             define(DefaultDeployer.class, impl -> {
                 impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));

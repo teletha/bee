@@ -73,37 +73,32 @@ public class FastDependencyCollector implements DependencyCollector {
      */
     @Override
     public CollectResult collectDependencies(RepositorySystemSession session, CollectRequest request) throws DependencyCollectionException {
+        Dependency root = request.getRoot();
+        List<RemoteRepository> repositories = request.getRepositories();
+        List<Dependency> dependencies = request.getDependencies();
+
+        DefaultDependencyNode node = new DefaultDependencyNode(request.getRootArtifact());
+        node.setRequestContext(request.getRequestContext());
+        node.setRepositories(request.getRepositories());
+
+        boolean traversable = root == null || session.getDependencyTraverser().traverseDependency(root);
+        if (traversable && !dependencies.isEmpty()) {
+            Args args = new Args(session, request);
+            DependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request.getRootArtifact(), root, request
+                    .getManagedDependencies());
+
+            process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
+
+            args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
+        }
+
         try {
-            Dependency root = request.getRoot();
-            List<RemoteRepository> repositories = request.getRepositories();
-            List<Dependency> dependencies = request.getDependencies();
+            CollectResult result = new CollectResult(request).setRoot(node);
+            DependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
+            result.setRoot(session.getDependencyGraphTransformer().transformGraph(node, context));
 
-            DefaultDependencyNode node = new DefaultDependencyNode(request.getRootArtifact());
-            node.setRequestContext(request.getRequestContext());
-            node.setRepositories(request.getRepositories());
-
-            boolean traversable = root == null || session.getDependencyTraverser().traverseDependency(root);
-            if (traversable && !dependencies.isEmpty()) {
-                Args args = new Args(session, request);
-                DependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request
-                        .getRootArtifact(), root, request.getManagedDependencies());
-
-                process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
-
-                args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
-            }
-
-            try {
-                CollectResult result = new CollectResult(request).setRoot(node);
-                DependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
-                result.setRoot(session.getDependencyGraphTransformer().transformGraph(node, context));
-
-                return result;
-            } catch (RepositoryException e) {
-                throw I.quiet(e);
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
+            return result;
+        } catch (RepositoryException e) {
             throw I.quiet(e);
         }
     }
