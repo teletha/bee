@@ -311,7 +311,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("install") : washed));
+        System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:local") : washed));
     }
 
     /**

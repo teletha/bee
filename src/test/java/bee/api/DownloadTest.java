@@ -9,6 +9,7 @@
  */
 package bee.api;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -17,6 +18,7 @@ import bee.BlinkProject;
 import bee.UserInterface;
 import psychopath.Locator;
 
+@Disabled
 class DownloadTest {
 
     @RegisterExtension

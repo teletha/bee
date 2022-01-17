@@ -1,20 +1,11 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+ * Copyright (C) 2022 Nameless Production Committee
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under the MIT License (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ *          http://opensource.org/licenses/mit-license.php
  */
 package org.eclipse.aether.internal.impl.collect;
 
@@ -27,16 +18,17 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.RequestTrace;
-import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.ArtifactProperties;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.CollectResult;
 import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.collection.DependencyCollectionException;
+import org.eclipse.aether.collection.DependencyGraphTransformationContext;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.DefaultDependencyNode;
 import org.eclipse.aether.graph.Dependency;
@@ -59,9 +51,10 @@ import org.eclipse.aether.version.Version;
 import kiss.I;
 
 @Named
+@Singleton
 public class FastDependencyCollector implements DependencyCollector {
 
-    private final RemoteRepositoryManager remoteRepositoryManager;
+    private final RemoteRepositoryManager manager;
 
     private final ArtifactDescriptorReader descriptorReader;
 
@@ -69,7 +62,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
     @Inject
     FastDependencyCollector(RemoteRepositoryManager remoteRepositoryManager, ArtifactDescriptorReader artifactDescriptorReader, VersionRangeResolver versionRangeResolver) {
-        this.remoteRepositoryManager = remoteRepositoryManager;
+        this.manager = remoteRepositoryManager;
         this.descriptorReader = artifactDescriptorReader;
         this.versionRangeResolver = versionRangeResolver;
     }
@@ -98,92 +91,77 @@ public class FastDependencyCollector implements DependencyCollector {
             args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
         }
 
-        CollectResult result = new CollectResult(request).setRoot(node);
-
         try {
-            DefaultDependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
+            CollectResult result = new CollectResult(request).setRoot(node);
+            DependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
             result.setRoot(session.getDependencyGraphTransformer().transformGraph(node, context));
+
+            return result;
         } catch (RepositoryException e) {
-            result.addException(e);
-        }
-
-        if (!result.getExceptions().isEmpty()) {
-            throw new DependencyCollectionException(result);
-        }
-
-        return result;
-    }
-
-    private void process(Args args, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
-        for (Dependency dependency : dependencies) {
-            // must check at first
-            if (!args.deps.add(dependency)) {
-                continue;
-            }
-
-            // second check
-            if (!selector.selectDependency(dependency)) {
-                continue;
-            }
-            args.pool.submit(() -> {
-                process(args, dependency, repositories, selector, node);
-            });
-        }
-    }
-
-    private void process(Args args, Dependency dependency, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
-        boolean noDescriptor = isLackingDescriptor(dependency.getArtifact());
-
-        try {
-            VersionRangeRequest rangeRequest = new VersionRangeRequest();
-            rangeRequest.setArtifact(dependency.getArtifact());
-            rangeRequest.setRepositories(repositories);
-            rangeRequest.setRequestContext(args.request.getRequestContext());
-            rangeRequest.setTrace(args.trace);
-
-            VersionRangeResult rangeResult = versionRangeResolver.resolveVersionRange(args.session, rangeRequest);
-
-            for (Version version : rangeResult.getVersions()) {
-                Artifact originalArtifact = dependency.getArtifact().setVersion(version.toString());
-                Dependency dep = dependency.setArtifact(originalArtifact);
-
-                ArtifactDescriptorRequest request = new ArtifactDescriptorRequest();
-                request.setArtifact(dep.getArtifact());
-                request.setRepositories(repositories);
-                request.setRequestContext(args.request.getRequestContext());
-                request.setTrace(args.trace);
-
-                ArtifactDescriptorResult descriptorResult = noDescriptor ? new ArtifactDescriptorResult(request)
-                        : descriptorReader.readArtifactDescriptor(args.session, request);
-
-                dep = dep.setArtifact(descriptorResult.getArtifact());
-
-                DefaultDependencyNode child = new DefaultDependencyNode(dep);
-                child.setVersionConstraint(rangeResult.getVersionConstraint());
-                child.setVersion(version);
-                child.setAliases(descriptorResult.getAliases());
-                child.setRepositories(getRemoteRepositories(rangeResult.getRepository(version), repositories));
-                child.setRequestContext(args.request.getRequestContext());
-
-                synchronized (node) {
-                    node.getChildren().add(child);
-                }
-
-                DependencyCollectionContext context = new DefaultDependencyCollectionContext(args.session, dep
-                        .getArtifact(), dep, descriptorResult.getManagedDependencies());
-                List<RemoteRepository> childRepos = args.session.isIgnoreArtifactDescriptorRepositories() ? repositories
-                        : remoteRepositoryManager
-                                .aggregateRepositories(args.session, repositories, descriptorResult.getRepositories(), true);
-
-                process(args, descriptorResult.getDependencies(), childRepos, selector.deriveChildSelector(context), child);
-            }
-        } catch (VersionRangeResolutionException | ArtifactDescriptorException e) {
             throw I.quiet(e);
         }
     }
 
-    private static boolean isLackingDescriptor(Artifact artifact) {
-        return artifact.getProperty(ArtifactProperties.LOCAL_PATH, null) != null;
+    private void process(Args args, List<Dependency> dependencies, List<RemoteRepository> remotes, DependencySelector selector, DependencyNode node) {
+        for (Dependency dep : dependencies) {
+            // must check duplications at first
+            if (!args.deps.add(dep)) {
+                continue;
+            }
+
+            // second check
+            if (!selector.selectDependency(dep)) {
+                continue;
+            }
+
+            args.pool.submit(() -> {
+                try {
+                    VersionRangeRequest rangeRequest = new VersionRangeRequest();
+                    rangeRequest.setArtifact(dep.getArtifact());
+                    rangeRequest.setRepositories(remotes);
+                    rangeRequest.setRequestContext(args.request.getRequestContext());
+                    rangeRequest.setTrace(args.trace);
+
+                    VersionRangeResult rangeResult = versionRangeResolver.resolveVersionRange(args.session, rangeRequest);
+
+                    for (Version version : rangeResult.getVersions()) {
+                        Dependency versioned = dep.setArtifact(dep.getArtifact().setVersion(version.toString()));
+
+                        ArtifactDescriptorRequest request = new ArtifactDescriptorRequest();
+                        request.setArtifact(versioned.getArtifact());
+                        request.setRepositories(remotes);
+                        request.setRequestContext(args.request.getRequestContext());
+                        request.setTrace(args.trace);
+
+                        boolean noDescriptor = dep.getArtifact().getProperty(ArtifactProperties.LOCAL_PATH, null) != null;
+                        ArtifactDescriptorResult result = noDescriptor ? new ArtifactDescriptorResult(request)
+                                : descriptorReader.readArtifactDescriptor(args.session, request);
+
+                        versioned = versioned.setArtifact(result.getArtifact());
+
+                        DefaultDependencyNode sub = new DefaultDependencyNode(versioned);
+                        sub.setVersionConstraint(rangeResult.getVersionConstraint());
+                        sub.setVersion(version);
+                        sub.setAliases(result.getAliases());
+                        sub.setRepositories(getRemoteRepositories(rangeResult.getRepository(version), remotes));
+                        sub.setRequestContext(args.request.getRequestContext());
+
+                        synchronized (node) {
+                            node.getChildren().add(sub);
+                        }
+
+                        DependencyCollectionContext subContext = new DefaultDependencyCollectionContext(args.session, versioned
+                                .getArtifact(), versioned, result.getManagedDependencies());
+                        List<RemoteRepository> subRemotes = args.session.isIgnoreArtifactDescriptorRepositories() ? remotes
+                                : manager.aggregateRepositories(args.session, remotes, result.getRepositories(), true);
+
+                        process(args, result.getDependencies(), subRemotes, selector.deriveChildSelector(subContext), sub);
+                    }
+                } catch (VersionRangeResolutionException | ArtifactDescriptorException e) {
+                    throw I.quiet(e);
+                }
+            });
+        }
     }
 
     private static List<RemoteRepository> getRemoteRepositories(ArtifactRepository repository, List<RemoteRepository> repositories) {
@@ -211,7 +189,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
         private final ForkJoinPool pool;
 
-        Args(RepositorySystemSession session, CollectRequest request) {
+        private Args(RepositorySystemSession session, CollectRequest request) {
             this.session = session;
             this.request = request;
             this.trace = RequestTrace.newChild(request.getTrace(), request);
