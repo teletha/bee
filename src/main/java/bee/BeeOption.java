@@ -15,6 +15,9 @@ import kiss.I;
 
 public class BeeOption<T> {
 
+    /** Instructs the system to output all debug log at build time. */
+    public static final BeeOption<Boolean> Debug = new BeeOption("debug", "d", "Instructs the system to output all debug log at build time.", false, null);
+
     /**
      * Instructs the system to display information related to the current execution environment.
      * Synonymous with the task [help:task].
@@ -30,6 +33,9 @@ public class BeeOption<T> {
     /** Perform profiling at build time and display the analysis results. */
     public static final BeeOption<Boolean> Profiling = new BeeOption("profiling", "p", "Perform profiling at build time and display the analysis results.", false, null);
 
+    /** Instructs the system not to output error log only at build time. */
+    public static final BeeOption<Boolean> Quiet = new BeeOption("quiet", "q", "Instructs the system not to output error log only at build time.", false, null);
+
     /**
      * Instructs the system to display information related to the current execution environment.
      * Synonymous with the task [help:version].
@@ -37,7 +43,7 @@ public class BeeOption<T> {
     public static final BeeOption<Boolean> Version = new BeeOption("version", "v", "Instructs the system to display information related to the current execution environment. Synonymous with the task [help:version].", false, "help:version");
 
     /** The list of builtin options. */
-    private static final List<BeeOption> options = List.of(Help, NoCache, Offline, Profiling, Version);
+    private static final List<BeeOption> options = List.of(Debug, Help, NoCache, Offline, Profiling, Quiet, Version);
 
     /** The name. */
     public final String name;
