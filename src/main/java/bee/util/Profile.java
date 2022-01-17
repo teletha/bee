@@ -26,28 +26,22 @@ public class Profile {
     /** All records. */
     private static final Queue<Profile> records = new ConcurrentLinkedQueue();
 
-    /** The actual measurement device. */
-    public final MeasurementDevice start;
-
     /** The name. */
     private final String name;
 
     /** The starting time. */
-    private final long from;
+    private final long start;
 
     /** The ending time. */
-    private long to;
+    private long end;
 
     /**
      * 
      */
-    private Profile(String name) {
+    private Profile(String name, long start, long end) {
         this.name = name;
-        this.start = () -> {
-            to = System.nanoTime();
-            records.add(this);
-        };
-        this.from = System.nanoTime();
+        this.start = start;
+        this.end = end;
     }
 
     /**
@@ -56,8 +50,11 @@ public class Profile {
      * @param name
      * @return
      */
-    public static Profile of(String name) {
-        return new Profile(name);
+    public static MeasurementDevice of(String name) {
+        long start = System.nanoTime();
+        return () -> {
+            records.add(new Profile(name, start, System.nanoTime()));
+        };
     }
 
     public static void show(UserInterface ui) {
@@ -65,7 +62,7 @@ public class Profile {
         for (Entry<String, List<Profile>> entry : grouped.entrySet()) {
             String name = entry.getKey();
             List<Profile> values = entry.getValue();
-            long total = values.stream().mapToLong(v -> v.to - v.from).sum();
+            long total = values.stream().mapToLong(v -> v.end - v.start).sum();
 
             ui.info(name, " \tcall: ", values.size(), " \ttotal: ", total, "ns");
         }

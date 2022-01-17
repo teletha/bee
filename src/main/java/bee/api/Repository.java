@@ -565,8 +565,9 @@ public class Repository {
          */
         @Override
         public void transferProgressed(TransferEvent event) {
-            long now = System.nanoTime();
+            downloading.put(event.getResource(), event);
 
+            long now = System.nanoTime();
             if (interval < now - last) {
                 last = now; // update last event time
 
@@ -597,10 +598,11 @@ public class Repository {
          */
         @Override
         public void transferSucceeded(TransferEvent event) {
-            // unregister item
-            downloading.remove(event.getResource());
-
             TransferResource resource = event.getResource();
+
+            // unregister item
+            downloading.remove(resource);
+
             long contentLength = event.getTransferredBytes();
             if (contentLength >= 0) {
                 String length = Inputs.formatAsSize(contentLength);

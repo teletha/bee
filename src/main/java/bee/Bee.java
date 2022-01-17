@@ -175,7 +175,7 @@ public class Bee {
         String result = "SUCCESS";
         LocalTime start = LocalTime.now();
 
-        try (Profile.of("Bee").start) {
+        try (var p = Profile.of("Bee")) {
             // =====================================
             // build your project
             // =====================================
