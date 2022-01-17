@@ -19,10 +19,8 @@
 package org.eclipse.aether.internal.impl.collect;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -82,7 +80,6 @@ public class FastDependencyCollector implements DependencyCollector {
      */
     @Override
     public CollectResult collectDependencies(RepositorySystemSession session, CollectRequest request) throws DependencyCollectionException {
-        long start = System.nanoTime();
         Dependency root = request.getRoot();
         List<RemoteRepository> repositories = request.getRepositories();
         List<Dependency> dependencies = request.getDependencies();
@@ -106,13 +103,6 @@ public class FastDependencyCollector implements DependencyCollector {
 
             args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
         }
-
-        long end = System.nanoTime();
-        Set<DependencyNode> list = I.signal(node.getChildren())
-                .recurseMap(x -> x.flatIterable(v -> v.getChildren()))
-                .skipNull()
-                .toCollection(new TreeSet<DependencyNode>(Comparator.comparing(x -> x.toString())));
-        System.out.println((end - start) + "ns   " + list.size() + "   " + list);
 
         CollectResult result = new CollectResult(request).setRoot(node);
 
