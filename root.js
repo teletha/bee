@@ -525,13 +525,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Profile.MeasurementDevice",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Project",
 			"packageName": "bee.api",
 			"type": "Class"
