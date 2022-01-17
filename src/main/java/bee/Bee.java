@@ -310,7 +310,10 @@ public class Bee {
                     value = "true";
                 }
 
-                BeeOption.register(key, value);
+                String command = BeeOption.register(key, value);
+                if (command != null) {
+                    washed.add(command);
+                }
             }
         }
 
