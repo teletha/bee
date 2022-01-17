@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.27.0](https://www.github.com/teletha/bee/compare/v0.26.1...v0.27.0) (2022-01-17)
+
+
+### Features
+
+* Add --nocache (-n) option. ([26f82ab](https://www.github.com/teletha/bee/commit/26f82ab81a625b7c30cf0264d889312fcbf523d5))
+* Add --offline (-o) option. ([46e98e5](https://www.github.com/teletha/bee/commit/46e98e5c2510cbccefec50e80c70ec6fc0cc313a))
+* Add --version (-v) option. ([e740649](https://www.github.com/teletha/bee/commit/e7406494ea3695bdfc3b90a536b5e9d6e11fc423))
+
 ### [0.26.1](https://www.github.com/teletha/bee/compare/v0.26.0...v0.26.1) (2022-01-17)
 
 
