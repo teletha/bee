@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/zenburn.min.css" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<script async="true" src="highlight.js"></script>
+		<script src="mimic.js" type="module"></script>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="K">
+		<header class="f">
+			<h1 class="c" date="2022-01-17" ver="0.26.1"><code>Bee</code></h1>
+			<nav class="I"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>Repository</a></nav>
+			<div class="Y" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg>
+				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<main class="k">
+			<nav class="d">
+				<div></div>
+			</nav>
+			<article class="U" id="Article">
+				<section class="e"><code class="i">bee</code>
+					<h2 class="Class Q"><code class="b">BeeOption</code><code class="h">&#60;<code>T</code>&#62;</code></h2>
+					<ul class="C D">
+						<li><code>T</code></li>
+					</ul>
+				</section>
+				<section class="e" id="NoCache">
+					<h2 class="V"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="b">NoCache</code><i class="X"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B">Instructs the system not to use any cache at build time.</span></section>
+				<section class="e" id="Offline">
+					<h2 class="V"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="b">Offline</code><i class="X"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B">Instructs the system not to connect to an external network at build time.</span></section>
+				<section class="e" id="Profiling">
+					<h2 class="V"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="b">Profiling</code><i class="X"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B">Perform profiling at build time and display the analysis results.</span></section>
+				<section class="e" id="name">
+					<h2 class="V"><i class="FINAL"><i class="PUBLIC"></i></i><code class="b">name</code><i class="X"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B">The name.</span></section>
+				<section class="e" id="shortName">
+					<h2 class="V"><i class="FINAL"><i class="PUBLIC"></i></i><code class="b">shortName</code><i class="X"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B">The alias names.</span></section>
+				<section class="e" id="description">
+					<h2 class="V"><i class="FINAL"><i class="PUBLIC"></i></i><code class="b">description</code><i class="X"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B">The description for user.</span></section>
+				<section class="e" id="defaultValue">
+					<h2 class="V"><i class="FINAL"><i class="PUBLIC"></i></i><code class="b">defaultValue</code><i class="X"><code class="return">T</code></i></h2><span class="B">The default value.</span></section>
+				<section class="e" id="value()">
+					<h2 class="V"><i class="PUBLIC"></i><code class="b">value</code><code class="h">()</code><i class="X"><code>T</code></i></h2>
+					<table class="S">
+						<tr class="P">
+							<td><code>T</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B">Get the value of this option.</span></section>
+				<section class="e" id="register(java.lang.String,java.lang.String)">
+					<h2 class="V"><i class="PUBLIC STATIC"></i><code class="b">register</code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">key</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">value</code>)</code><i class="X"><code>void</code></i></h2>
+					<table class="S">
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>key</code></td>
+							<td></td>
+						</tr>
+						<tr class="R">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code>value</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B">Register the property.</span></section>
+			</article>
+			<aside class="M" id="SubNavi">
+				<div class="j">
+					<h5 class="a">Static Fields</h5>
+					<ul>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#NoCache">NoCache</a></code><i class="W"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Offline">Offline</a></code><i class="W"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Profiling">Profiling</a></code><i class="W"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+					</ul>
+					<h5 class="a">Fields</h5>
+					<ul>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#name">name</a></code><i class="W"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#shortName">shortName</a></code><i class="W"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#description">description</a></code><i class="W"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#defaultValue">defaultValue</a></code><i class="W"><code class="return">T</code></i></li>
+					</ul>
+					<h5 class="a">Static Methods</h5>
+					<ul>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.BeeOption.html#register(java.lang.String,java.lang.String)">register</a></code><code class="h">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">key</code>, <code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">value</code>)</code><i class="W"><code>void</code></i></li>
+					</ul>
+					<h5 class="a">Methods</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.BeeOption.html#value()">value</a></code><code class="h">()</code><i class="W"><code>T</code></i></li>
+					</ul>
+				</div>
+			</aside>
+		</main>
+		<script src="root.js"></script>
+		<script src="main.js" type="module"></script>
+	</body>
+</html>
