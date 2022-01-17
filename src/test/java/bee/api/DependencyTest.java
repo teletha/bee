@@ -133,7 +133,7 @@ class DependencyTest {
         assert repo.collectDependency(library, Scope.Test, Scope.Compile).size() == 2;
     }
 
-    @RepeatedTest(5)
+    @RepeatedTest(15)
     void byLibraryWithClassifier() {
         Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
         Repository repo = new Repository(new BlinkProject());

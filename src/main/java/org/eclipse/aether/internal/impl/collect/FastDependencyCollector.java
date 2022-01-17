@@ -91,7 +91,6 @@ public class FastDependencyCollector implements DependencyCollector {
         node.setRequestContext(request.getRequestContext());
         node.setRepositories(request.getRepositories());
 
-        count = 0;
         boolean traversable = root == null || session.getDependencyTraverser().traverseDependency(root);
         if (traversable && !dependencies.isEmpty()) {
             ForkJoinPool pool = new ForkJoinPool(ConfigUtils
@@ -100,10 +99,12 @@ public class FastDependencyCollector implements DependencyCollector {
 
             Args args = new Args(session, request, pool, deps);
 
-            process(args, dependencies, repositories, session.getDependencySelector(), node);
+            DefaultDependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request
+                    .getRootArtifact(), root, request.getManagedDependencies());
+
+            process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
 
             args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
-            System.out.println(count);
         }
 
         long end = System.nanoTime();
@@ -129,27 +130,35 @@ public class FastDependencyCollector implements DependencyCollector {
         return result;
     }
 
-    int count;
-
     private void process(Args args, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
-
+        // args.fork.submit(() -> {
         for (Dependency dependency : dependencies) {
-            if (!args.deps.add(dependency) || !selector.selectDependency(dependency)) {
+            // must check at first
+            if (!args.deps.add(dependency)) {
                 continue;
             }
-            count++;
+
+            // second check
+            if (!selector.selectDependency(dependency)) {
+                continue;
+            }
             args.fork.submit(() -> {
                 process(args, dependency, repositories, selector, node);
-                count--;
             });
         }
+        // });
     }
 
     private void process(Args args, Dependency dependency, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
         boolean noDescriptor = isLackingDescriptor(dependency.getArtifact());
 
         try {
-            VersionRangeRequest rangeRequest = createVersionRangeRequest(args, repositories, dependency);
+            VersionRangeRequest rangeRequest = new VersionRangeRequest();
+            rangeRequest.setArtifact(dependency.getArtifact());
+            rangeRequest.setRepositories(repositories);
+            rangeRequest.setRequestContext(args.request.getRequestContext());
+            rangeRequest.setTrace(args.trace);
+
             VersionRangeResult rangeResult = versionRangeResolver.resolveVersionRange(args.session, rangeRequest);
 
             for (Version version : rangeResult.getVersions()) {
@@ -174,9 +183,12 @@ public class FastDependencyCollector implements DependencyCollector {
                 child.setRepositories(getRemoteRepositories(rangeResult.getRepository(version), repositories));
                 child.setRequestContext(args.request.getRequestContext());
 
-                node.getChildren().add(child);
+                synchronized (node) {
+                    node.getChildren().add(child);
+                }
 
-                DependencyContext context = new DependencyContext(args.session, dep, descriptorResult.getManagedDependencies());
+                DefaultDependencyCollectionContext context = new DefaultDependencyCollectionContext(args.session, dep
+                        .getArtifact(), dep, descriptorResult.getManagedDependencies());
                 List<RemoteRepository> childRepos = args.session.isIgnoreArtifactDescriptorRepositories() ? repositories
                         : remoteRepositoryManager
                                 .aggregateRepositories(args.session, repositories, descriptorResult.getRepositories(), true);
@@ -186,15 +198,6 @@ public class FastDependencyCollector implements DependencyCollector {
         } catch (VersionRangeResolutionException | ArtifactDescriptorException e) {
             throw I.quiet(e);
         }
-    }
-
-    private static VersionRangeRequest createVersionRangeRequest(Args args, List<RemoteRepository> repositories, Dependency dependency) {
-        VersionRangeRequest rangeRequest = new VersionRangeRequest();
-        rangeRequest.setArtifact(dependency.getArtifact());
-        rangeRequest.setRepositories(repositories);
-        rangeRequest.setRequestContext(args.request.getRequestContext());
-        rangeRequest.setTrace(args.trace);
-        return rangeRequest;
     }
 
     private static boolean isLackingDescriptor(Artifact artifact) {
@@ -234,5 +237,4 @@ public class FastDependencyCollector implements DependencyCollector {
             this.deps = deps;
         }
     }
-
 }
