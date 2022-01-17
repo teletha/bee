@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.27.1](https://www.github.com/teletha/bee/compare/v0.27.0...v0.27.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* Dependency resolving is aware of no-cache option. ([01a0415](https://www.github.com/teletha/bee/commit/01a041525f73f8fb4bff74cf40088c9c41c93c7b))
+
 ## [0.27.0](https://www.github.com/teletha/bee/compare/v0.26.1...v0.27.0) (2022-01-17)
 
 
