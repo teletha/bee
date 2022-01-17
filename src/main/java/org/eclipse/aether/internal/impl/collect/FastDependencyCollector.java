@@ -49,6 +49,7 @@ import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.ConfigUtils;
 import org.eclipse.aether.version.Version;
 
+import bee.util.Profile;
 import kiss.I;
 
 @Named
@@ -87,12 +88,14 @@ public class FastDependencyCollector implements DependencyCollector {
             DependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request.getRootArtifact(), root, request
                     .getManagedDependencies());
 
-            process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
+            try (Profile.of("Dependency Resolving").start) {
+                process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
 
-            args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
+                args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
+            }
         }
 
-        try {
+        try (Profile.of("Dependency Transform").start) {
             CollectResult result = new CollectResult(request).setRoot(node);
             DependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
             result.setRoot(session.getDependencyGraphTransformer().transformGraph(node, context));

@@ -25,6 +25,7 @@ import bee.api.VCS;
 import bee.task.IDE;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
+import bee.util.Profile;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
@@ -174,7 +175,7 @@ public class Bee {
         String result = "SUCCESS";
         LocalTime start = LocalTime.now();
 
-        try {
+        try (Profile.of("Bee").start) {
             // =====================================
             // build your project
             // =====================================
@@ -229,6 +230,7 @@ public class Bee {
             String dateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
             String duration = Duration.between(start, end).truncatedTo(ChronoUnit.MILLIS).toString().substring(2).toLowerCase();
             ui.title(String.format("Build %s \t %s \t %s", result, dateTime, duration));
+            Profile.show(ui);
         }
         return code;
     }
