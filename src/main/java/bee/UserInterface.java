@@ -57,6 +57,9 @@ public abstract class UserInterface {
     /** Message type magic number. */
     protected static final int TITLE = 5;
 
+    /** The debug mode. */
+    private final boolean debug = BeeOption.Debug.value();
+
     /**
      * Talk to user with decoration like title.
      * 
@@ -118,10 +121,14 @@ public abstract class UserInterface {
      * @param messages
      */
     private void talk(int type, Object[] messages) {
+        if (BeeOption.Quiet.value() && type != ERROR) {
+            return;
+        }
+
         int length = messages.length;
         if (0 < length) {
             // extract the last throwable parameter
-            if (messages[length - 1]instanceof Throwable e) {
+            if (messages[length - 1] instanceof Throwable e) {
                 write(type, build(length - 1, messages));
 
                 while (e.getCause() != null) {

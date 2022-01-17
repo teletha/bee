@@ -316,6 +316,7 @@ public class Bee {
                 }
             }
         }
+        BeeOption.register("q", "true");
 
         System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:local") : washed));
     }
