@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
 
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystemSession;
@@ -36,6 +35,7 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.ArtifactProperties;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.collection.CollectResult;
+import org.eclipse.aether.collection.DependencyCollectionContext;
 import org.eclipse.aether.collection.DependencyCollectionException;
 import org.eclipse.aether.collection.DependencySelector;
 import org.eclipse.aether.graph.DefaultDependencyNode;
@@ -58,15 +58,14 @@ import org.eclipse.aether.version.Version;
 
 import kiss.I;
 
-@Singleton
 @Named
 public class FastDependencyCollector implements DependencyCollector {
 
-    private RemoteRepositoryManager remoteRepositoryManager;
+    private final RemoteRepositoryManager remoteRepositoryManager;
 
-    private ArtifactDescriptorReader descriptorReader;
+    private final ArtifactDescriptorReader descriptorReader;
 
-    private VersionRangeResolver versionRangeResolver;
+    private final VersionRangeResolver versionRangeResolver;
 
     @Inject
     FastDependencyCollector(RemoteRepositoryManager remoteRepositoryManager, ArtifactDescriptorReader artifactDescriptorReader, VersionRangeResolver versionRangeResolver) {
@@ -90,18 +89,13 @@ public class FastDependencyCollector implements DependencyCollector {
 
         boolean traversable = root == null || session.getDependencyTraverser().traverseDependency(root);
         if (traversable && !dependencies.isEmpty()) {
-            ForkJoinPool pool = new ForkJoinPool(ConfigUtils
-                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads"));
-            Set<Dependency> deps = ConcurrentHashMap.newKeySet();
-
-            Args args = new Args(session, request, pool, deps);
-
-            DefaultDependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request
-                    .getRootArtifact(), root, request.getManagedDependencies());
+            Args args = new Args(session, request);
+            DependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request.getRootArtifact(), root, request
+                    .getManagedDependencies());
 
             process(args, dependencies, repositories, session.getDependencySelector().deriveChildSelector(context), node);
 
-            args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
+            args.pool.awaitQuiescence(60, TimeUnit.SECONDS);
         }
 
         CollectResult result = new CollectResult(request).setRoot(node);
@@ -121,7 +115,6 @@ public class FastDependencyCollector implements DependencyCollector {
     }
 
     private void process(Args args, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
-        // args.fork.submit(() -> {
         for (Dependency dependency : dependencies) {
             // must check at first
             if (!args.deps.add(dependency)) {
@@ -132,11 +125,10 @@ public class FastDependencyCollector implements DependencyCollector {
             if (!selector.selectDependency(dependency)) {
                 continue;
             }
-            args.fork.submit(() -> {
+            args.pool.submit(() -> {
                 process(args, dependency, repositories, selector, node);
             });
         }
-        // });
     }
 
     private void process(Args args, Dependency dependency, List<RemoteRepository> repositories, DependencySelector selector, DependencyNode node) {
@@ -155,14 +147,14 @@ public class FastDependencyCollector implements DependencyCollector {
                 Artifact originalArtifact = dependency.getArtifact().setVersion(version.toString());
                 Dependency dep = dependency.setArtifact(originalArtifact);
 
-                ArtifactDescriptorRequest descriptorRequest = new ArtifactDescriptorRequest();
-                descriptorRequest.setArtifact(dep.getArtifact());
-                descriptorRequest.setRepositories(repositories);
-                descriptorRequest.setRequestContext(args.request.getRequestContext());
-                descriptorRequest.setTrace(args.trace);
+                ArtifactDescriptorRequest request = new ArtifactDescriptorRequest();
+                request.setArtifact(dep.getArtifact());
+                request.setRepositories(repositories);
+                request.setRequestContext(args.request.getRequestContext());
+                request.setTrace(args.trace);
 
-                ArtifactDescriptorResult descriptorResult = noDescriptor ? new ArtifactDescriptorResult(descriptorRequest)
-                        : descriptorReader.readArtifactDescriptor(args.session, descriptorRequest);
+                ArtifactDescriptorResult descriptorResult = noDescriptor ? new ArtifactDescriptorResult(request)
+                        : descriptorReader.readArtifactDescriptor(args.session, request);
 
                 dep = dep.setArtifact(descriptorResult.getArtifact());
 
@@ -177,7 +169,7 @@ public class FastDependencyCollector implements DependencyCollector {
                     node.getChildren().add(child);
                 }
 
-                DefaultDependencyCollectionContext context = new DefaultDependencyCollectionContext(args.session, dep
+                DependencyCollectionContext context = new DefaultDependencyCollectionContext(args.session, dep
                         .getArtifact(), dep, descriptorResult.getManagedDependencies());
                 List<RemoteRepository> childRepos = args.session.isIgnoreArtifactDescriptorRepositories() ? repositories
                         : remoteRepositoryManager
@@ -209,22 +201,23 @@ public class FastDependencyCollector implements DependencyCollector {
      */
     private static class Args {
 
-        final RepositorySystemSession session;
+        private final RepositorySystemSession session;
 
-        final RequestTrace trace;
+        private final CollectRequest request;
 
-        final CollectRequest request;
+        private final RequestTrace trace;
 
-        final ForkJoinPool fork;
+        private final Set<Dependency> deps;
 
-        final Set<Dependency> deps;
+        private final ForkJoinPool pool;
 
-        Args(RepositorySystemSession session, CollectRequest request, ForkJoinPool fork, Set<Dependency> deps) {
+        Args(RepositorySystemSession session, CollectRequest request) {
             this.session = session;
             this.request = request;
             this.trace = RequestTrace.newChild(request.getTrace(), request);
-            this.fork = fork;
-            this.deps = deps;
+            this.deps = ConcurrentHashMap.newKeySet();
+            this.pool = new ForkJoinPool(ConfigUtils
+                    .getInteger(session, Runtime.getRuntime().availableProcessors() * 2, "maven.artifact.threads"));
         }
     }
 }
