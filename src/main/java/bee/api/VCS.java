@@ -185,7 +185,7 @@ public abstract class VCS {
                 return new GitHub(u);
 
             default:
-                return new Unknown(u);
+                return null;
             }
         } catch (MalformedURLException e) {
             return null;
@@ -377,32 +377,6 @@ public abstract class VCS {
                 builder.add(String.valueOf(path));
             }
             return builder.toString();
-        }
-    }
-
-    private static class Unknown extends VCS {
-
-        /**
-         * @param uri
-         */
-        public Unknown(URL uri) {
-            super(uri);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String name() {
-            return uri.getHost();
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        RuntimeException unsupport(String signature) {
-            return new TaskCancel("The code repository [" + name() + "] is not supported.");
         }
     }
 }
