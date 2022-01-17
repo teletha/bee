@@ -100,6 +100,7 @@ import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 
 import bee.BeeLoader;
+import bee.BeeOption;
 import bee.Platform;
 import bee.UserInterface;
 import bee.util.Inputs;
@@ -175,6 +176,7 @@ public class Repository {
         session.setCache(new DefaultRepositoryCache());
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
         session.setConfigProperty("maven.artifact.threads", 24);
+        session.setOffline(BeeOption.Offline.value());
 
         // event listener
         View view = I.make(View.class);
