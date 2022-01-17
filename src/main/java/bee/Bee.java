@@ -230,7 +230,7 @@ public class Bee {
             String dateTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
             String duration = Duration.between(start, end).truncatedTo(ChronoUnit.MILLIS).toString().substring(2).toLowerCase();
             ui.title(String.format("Build %s \t %s \t %s", result, dateTime, duration));
-            if (Boolean.getBoolean("profiling")) Profile.show(ui);
+            if (BeeOption.Profiling.value()) Profile.show(ui);
         }
         return code;
     }
@@ -296,6 +296,7 @@ public class Bee {
                 washed.add(task);
             } else {
                 task = task.substring(1);
+                if (task.charAt(0) == '-') task = task.substring(1);
 
                 String key;
                 String value;
@@ -309,7 +310,7 @@ public class Bee {
                     value = "true";
                 }
 
-                System.setProperty(key.toLowerCase().replace("p", "profiling"), value);
+                BeeOption.register(key, value);
             }
         }
 

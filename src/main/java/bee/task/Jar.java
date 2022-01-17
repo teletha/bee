@@ -122,7 +122,7 @@ public class Jar extends Task {
                     ClassReader classReader = new ClassReader(file.bytes());
                     ClassWriter writer = new ClassWriter(classReader, 0);
                     ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
-                    classReader.accept(modification, ClassReader.SKIP_FRAMES);
+                    classReader.accept(modification, 0);
                     modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
                 });
 

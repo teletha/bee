@@ -42,6 +42,7 @@ import javax.tools.ToolProvider;
 
 import org.eclipse.jdt.internal.compiler.tool.EclipseCompiler;
 
+import bee.BeeOption;
 import bee.Fail;
 import bee.Platform;
 import bee.UserInterface;
@@ -109,7 +110,7 @@ public class JavaCompiler {
     private boolean useECJ = false;
 
     /** The compiler flag. */
-    private boolean compileAll = false;
+    private boolean compileAll = BeeOption.NoCache.value();
 
     /** The error listener. */
     private DiagnosticListener<JavaFileObject> listener;
