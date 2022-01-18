@@ -15,6 +15,21 @@
 
 * Dependency resolving is aware of no-cache option. ([01a0415](https://www.github.com/teletha/bee/commit/01a041525f73f8fb4bff74cf40088c9c41c93c7b))
 
+## [0.28.0](https://www.github.com/teletha/bee/compare/v0.27.0...v0.28.0) (2022-01-18)
+
+
+### Features
+
+* Add --help (-h) option. ([9aecd59](https://www.github.com/teletha/bee/commit/9aecd5943c20e11636df6136028d80f5440da944))
+* Add --quiet (-q) and --debug (-d) options. ([6b6a5ed](https://www.github.com/teletha/bee/commit/6b6a5ed4da0a3769bba5a4c2d4fc9c8879c4bd76))
+* Add new tasks [help:task] and [help:option]. ([d91d38c](https://www.github.com/teletha/bee/commit/d91d38c463bbfde2886bd0ec60ed23d339fbc820))
+* Drop Notation. ([2979c75](https://www.github.com/teletha/bee/commit/2979c75dd43cf907377a80fd35778a4710f847ff))
+
+
+### Bug Fixes
+
+* Dependency resolving is aware of no-cache option. ([01a0415](https://www.github.com/teletha/bee/commit/01a041525f73f8fb4bff74cf40088c9c41c93c7b))
+
 ## [0.27.0](https://www.github.com/teletha/bee/compare/v0.26.1...v0.27.0) (2022-01-17)
 
 
