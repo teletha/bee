@@ -56,9 +56,9 @@ public class Jar extends Task {
     public void source() {
         require(Compile::source);
 
-        pack("main classes", I.signal(project.getClasses()), project
+        pack("main classe", I.signal(project.getClasses()), project
                 .locateJar(), SourceVersion.latest().compareTo(project.getJavaClassVersion()) > 0 || SkipTraceInfo || SkipDebugInfo);
-        pack("main sources", project.getSourceSet(), project.locateSourceJar(), false);
+        pack("main source", project.getSourceSet(), project.locateSourceJar(), false);
     }
 
     /**
@@ -71,8 +71,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test classes", I.signal(project.getTestClasses()), classes, false);
-        pack("test sources", project.getTestSourceSet(), sources, false);
+        pack("test class", I.signal(project.getTestClasses()), classes, false);
+        pack("test source", project.getTestSourceSet(), sources, false);
     }
 
     /**
@@ -85,8 +85,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project classes", I.signal(project.getProjectClasses()), classes, false);
-        pack("project sources", project.getProjectSourceSet(), sources, false);
+        pack("project class", I.signal(project.getProjectClasses()), classes, false);
+        pack("project source", project.getProjectSourceSet(), sources, false);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Jar extends Task {
         Locator.folder()
                 .add(input, Option::strip)
                 .trackPackingTo(output)
-                .to(Inputs.observerFor(ui, output, "Packaging class files", "Build " + type + " jar"));
+                .to(Inputs.observerFor(ui, output, "Packaging " + type + " files", "Build " + type + " jar"));
     }
 
     /**

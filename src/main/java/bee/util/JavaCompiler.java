@@ -110,7 +110,7 @@ public class JavaCompiler {
     private boolean useECJ = false;
 
     /** The compiler flag. */
-    private boolean compileAll = BeeOption.NoCache.value();
+    private boolean compileAll = BeeOption.Cacheless.value();
 
     /** The error listener. */
     private DiagnosticListener<JavaFileObject> listener;

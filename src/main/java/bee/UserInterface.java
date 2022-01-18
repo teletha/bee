@@ -58,7 +58,10 @@ public abstract class UserInterface {
     protected static final int TITLE = 5;
 
     /** The debug mode. */
-    private final boolean debug = BeeOption.Debug.value();
+    private static final boolean debug = BeeOption.Debug.value();
+
+    /** The debug mode. */
+    private static final boolean quiet = BeeOption.Quiet.value();
 
     /**
      * Talk to user with decoration like title.
@@ -121,7 +124,7 @@ public abstract class UserInterface {
      * @param messages
      */
     private void talk(int type, Object[] messages) {
-        if (BeeOption.Quiet.value() && type != ERROR) {
+        if (quiet && type != ERROR) {
             return;
         }
 
@@ -638,7 +641,9 @@ public abstract class UserInterface {
 
             case TRACE:
             case DEBUG:
-                if (!disableTrace) {
+                if (debug) {
+                    write(message, true);
+                } else if (!disableTrace) {
                     write(message.concat("\r"), false);
                 }
                 break;

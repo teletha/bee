@@ -39,7 +39,6 @@ import psychopath.Locator;
 public class Bee {
 
     static {
-        I.load(Bee.class);
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
 
         // detect version
@@ -118,6 +117,9 @@ public class Bee {
      * @param ui A user interface.
      */
     public Bee(Directory directory, UserInterface ui) {
+        // lazy loading
+        I.load(Bee.class);
+
         if (ui == null) {
             ui = UserInterface.CUI;
         }
@@ -316,7 +318,6 @@ public class Bee {
                 }
             }
         }
-        BeeOption.register("q", "true");
 
         System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:local") : washed));
     }

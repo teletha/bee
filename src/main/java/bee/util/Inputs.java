@@ -41,12 +41,19 @@ public class Inputs {
     public static Observer<Progress> observerFor(UserInterface ui, Location target, String progressMessage, String completeMessage) {
         return new Observer<>() {
 
+            /** reduce log flow */
+            private long latest;
+
             /**
              * {@inheritDoc}
              */
             @Override
             public void accept(Progress info) {
-                ui.trace(progressMessage, ": ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
+                long now = System.nanoTime();
+                if (66000000 <= now - latest) {
+                    latest = now;
+                    ui.trace(progressMessage, ": ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
+                }
             }
 
             /**
