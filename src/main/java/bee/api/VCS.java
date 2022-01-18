@@ -25,7 +25,6 @@ import java.util.StringJoiner;
 
 import org.apache.maven.model.Contributor;
 
-import bee.TaskCancel;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.JSON;
@@ -52,7 +51,7 @@ public abstract class VCS {
     protected VCS(URL uri) {
         this.uri = uri;
 
-        String path = uri.getPath().replaceAll("\\.git$", "");
+        String path = uri.getPath();
         this.owner = path.substring(1, path.lastIndexOf("/"));
         this.repo = path.substring(path.lastIndexOf("/") + 1);
     }
@@ -178,7 +177,7 @@ public abstract class VCS {
         }
 
         try {
-            URL u = new URL(uri);
+            URL u = new URL(uri.replaceAll("\\.git$", ""));
 
             switch (u.getHost()) {
             case "github.com":

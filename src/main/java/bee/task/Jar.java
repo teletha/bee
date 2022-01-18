@@ -120,9 +120,9 @@ public class Jar extends Task {
                 dir.walkFile("**.class").to(file -> {
                     File modifiedFile = modified.file(dir.relativize(file));
                     ClassReader classReader = new ClassReader(file.bytes());
-                    ClassWriter writer = new ClassWriter(classReader, 0);
+                    ClassWriter writer = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                     ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
-                    classReader.accept(modification, 0);
+                    classReader.accept(modification, ClassReader.SKIP_FRAMES);
                     modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
                 });
 
