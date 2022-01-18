@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.28.1](https://www.github.com/teletha/bee/compare/v0.28.0...v0.28.1) (2022-01-18)
+
+
+### Bug Fixes
+
+* Auto detected repository uri is invalid. ([ea4400a](https://www.github.com/teletha/bee/commit/ea4400a2bc11bc5503fa83e2b23c0f4787951190))
+
 ## [0.28.0](https://www.github.com/teletha/bee/compare/v0.27.0...v0.28.0) (2022-01-18)
 
 
