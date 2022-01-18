@@ -58,7 +58,7 @@ import psychopath.File;
 public abstract class Task implements Extensible {
 
     /** The common task repository. */
-     static Map<String, Info> commons;
+    private static Map<String, Info> commons;
 
     /** The current processing project. */
     protected final Project project = I.make(Project.class);
@@ -628,9 +628,8 @@ public abstract class Task implements Extensible {
             }
 
             Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
-            for (Entry<String, Info> entry : commons.entrySet()) {
-                info = entry.getValue();
-                failure.solve(String.format("%-8s \t%s", entry.getKey(), info.descriptions.get(info.defaultCommnad)));
+            for (Info i : commons.values()) {
+                failure.solve(i);
             }
             throw failure;
         }
@@ -640,9 +639,12 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * @version 2012/05/17 14:55:28
+     * 
      */
     private static final class Info {
+
+        /** The task name. */
+        private final String name;
 
         /** The task definition. */
         private final Class<Task> task;
@@ -661,6 +663,7 @@ public abstract class Task implements Extensible {
          * @param task
          */
         private Info(String name, Class<Task> task) {
+            this.name = name;
             this.task = task;
 
             for (Entry<Method, List<Annotation>> info : Model.collectAnnotatedMethods(task).entrySet()) {
@@ -692,6 +695,14 @@ public abstract class Task implements Extensible {
             } else if (descriptions.containsKey(name)) {
                 defaultCommnad = name;
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String toString() {
+            return String.format("%-8s \t%s", name, descriptions.get(defaultCommnad));
         }
     }
 

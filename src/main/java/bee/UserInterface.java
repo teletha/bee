@@ -87,7 +87,9 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public final void debug(Object... messages) {
-        talk(DEBUG, messages);
+        if (debug) {
+            talk(DEBUG, messages);
+        }
     }
 
     /**
