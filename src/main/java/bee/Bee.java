@@ -22,6 +22,7 @@ import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.api.VCS;
+import bee.task.Help;
 import bee.task.IDE;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
@@ -183,6 +184,17 @@ public class Bee {
             // =====================================
             ui.info("Finding your project...   (Bee" + version + "  Java" + Runtime.version() + ")");
 
+            // If you are running in help or version mode, there is no need to search for projects.
+            // It will also ignore all user-specified tasks.
+            if (BeeOption.Help.value()) {
+                build.require(Help::option);
+                build.require(Help::task);
+                return 0;
+            } else if (BeeOption.Version.value()) {
+                build.require(Help::version);
+                return 0;
+            }
+
             // build project definition
             buildProjectDefinition(project.getProjectDefinition());
 
@@ -318,6 +330,8 @@ public class Bee {
                 }
             }
         }
+
+        BeeOption.register("h", "true");
 
         System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:local") : washed));
     }

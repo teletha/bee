@@ -58,7 +58,7 @@ import psychopath.File;
 public abstract class Task implements Extensible {
 
     /** The common task repository. */
-    private static Map<String, Info> commons;
+    static Map<String, Info> commons;
 
     /** The current processing project. */
     protected final Project project = I.make(Project.class);

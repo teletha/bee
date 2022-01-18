@@ -16,31 +16,31 @@ import kiss.I;
 public class BeeOption<T> {
 
     /** Instructs the system not to use any cache at build time. */
-    public static final BeeOption<Boolean> Cacheless = new BeeOption("cacheless", "c", "Don't use any cache.", false, null);
+    public static final BeeOption<Boolean> Cacheless = new BeeOption("cacheless", "c", "Don't use any cache.", false);
 
     /** Instructs the system to output all debug log at build time. */
-    public static final BeeOption<Boolean> Debug = new BeeOption("debug", "d", "Output all debug log.", false, null);
+    public static final BeeOption<Boolean> Debug = new BeeOption("debug", "d", "Output all debug log.", false);
 
     /**
      * Instructs the system to display information related to the current execution environment.
-     * Synonymous with the task [help:task].
+     * Synonymous with the task [help:task help:option].
      */
-    public static final BeeOption<Boolean> Help = new BeeOption("help", "h", "Show task information. Synonymous with the task [help:all].", false, "help:all");
+    public static final BeeOption<Boolean> Help = new BeeOption("help", "h", "Show task information. Synonymous with the task [help:task help:option].", false);
 
     /** Instructs the system not to connect to an external network at build time. */
-    public static final BeeOption<Boolean> Offline = new BeeOption("offline", "o", "Don't connect to external network.", false, null);
+    public static final BeeOption<Boolean> Offline = new BeeOption("offline", "o", "Don't connect to external network.", false);
 
     /** Perform profiling at build time and display the analysis results. */
-    public static final BeeOption<Boolean> Profiling = new BeeOption("profiling", "p", "Perform profiling and display the analysis results.", false, null);
+    public static final BeeOption<Boolean> Profiling = new BeeOption("profiling", "p", "Perform profiling and display the analysis results.", false);
 
     /** Instructs the system not to output error log only at build time. */
-    public static final BeeOption<Boolean> Quiet = new BeeOption("quiet", "q", "Output error log only.", false, null);
+    public static final BeeOption<Boolean> Quiet = new BeeOption("quiet", "q", "Output error log only.", false);
 
     /**
      * Instructs the system to display information related to the current execution environment.
      * Synonymous with the task [help:version].
      */
-    public static final BeeOption<Boolean> Version = new BeeOption("version", "v", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false, "help:version");
+    public static final BeeOption<Boolean> Version = new BeeOption("version", "v", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false);
 
     /** The list of builtin options. */
     private static final List<BeeOption> options = List.of(Cacheless, Debug, Help, Offline, Profiling, Quiet, Version);
@@ -57,18 +57,14 @@ public class BeeOption<T> {
     /** The default value. */
     public final T defaultValue;
 
-    /** The alternative command. */
-    private final String command;
-
     /**
      * Hide constructor.
      */
-    private BeeOption(String name, String shortName, String description, T defaultValue, String command) {
+    private BeeOption(String name, String shortName, String description, T defaultValue) {
         this.name = name;
         this.shortName = shortName;
         this.description = description;
         this.defaultValue = defaultValue;
-        this.command = command;
     }
 
     /**
@@ -99,12 +95,7 @@ public class BeeOption<T> {
 
         for (BeeOption option : options) {
             if (option.name.equals(key) || option.shortName.equals(key)) {
-                if (option.command == null) {
-                    I.env(option.name, value);
-                    return null;
-                } else {
-                    return option.command;
-                }
+                I.env(option.name, value);
             }
         }
         return null;

@@ -24,29 +24,7 @@ import psychopath.Locator;
 
 public class Help extends Task {
 
-    @Command(value = "Display all help.", defaults = true)
-    public void all() {
-        ui.info("See official site [https://teletha.github.io/bee/].");
-
-        require(Help::option);
-        require(Help::task);
-    }
-
-    @Command("Display all options.")
-    public void option() {
-        ui.info("The available options are listed below.");
-
-        try {
-            Field field = BeeOption.class.getDeclaredField("options");
-            field.setAccessible(true);
-            List options = (List) field.get(null);
-            ui.info(options);
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
-    }
-
-    @Command("Display all tasks.")
+    @Command(defaults = true, value = "Display all tasks.")
     public void task() {
         ui.info("The available tasks are listed below. If you want to know more about each task, please run [YourTaskName:help].");
 
@@ -55,6 +33,20 @@ public class Help extends Task {
             field.setAccessible(true);
             Map tasks = (Map) field.get(null);
             ui.info(List.copyOf(tasks.values()));
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
+    }
+
+    @Command("Display all options.")
+    public void option() {
+        ui.info("The available options are listed below.");
+    
+        try {
+            Field field = BeeOption.class.getDeclaredField("options");
+            field.setAccessible(true);
+            List options = (List) field.get(null);
+            ui.info(options);
         } catch (Exception e) {
             throw I.quiet(e);
         }
