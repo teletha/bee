@@ -199,7 +199,7 @@ public class Bee {
             buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
-            BeeLoader.load(project.getClasses());
+            // BeeLoader.load(project.getClasses());
             BeeLoader.load(project.getProjectClasses());
 
             // create your project
