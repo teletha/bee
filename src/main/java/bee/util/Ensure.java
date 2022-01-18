@@ -141,8 +141,9 @@ public class Ensure<T> {
 
         if (messages.size() != 0) {
             if (invalid == null) {
+                X v = value;
                 invalid = x -> {
-                    throw new Fail(x.stream().collect(Collectors.joining("\n", "- ", "")));
+                    throw new Fail("Input value [" + v + "] is invalid.", x);
                 };
             }
             invalid.accept(messages);

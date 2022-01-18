@@ -16,7 +16,7 @@ import kiss.I;
 public class BeeOption<T> {
 
     /** Instructs the system not to use any cache at build time. */
-    public static final BeeOption<Boolean> Cacheless = new BeeOption("cacheless", "c", "Don't use any cache.", false);
+    public static final BeeOption<Boolean> Cacheless = new BeeOption("cacheless", "c", "Don't use any cache.", false, "nocache");
 
     /** Instructs the system to output all debug log at build time. */
     public static final BeeOption<Boolean> Debug = new BeeOption("debug", "d", "Output all debug log.", false);
@@ -31,13 +31,13 @@ public class BeeOption<T> {
     public static final BeeOption<Boolean> Offline = new BeeOption("offline", "o", "Don't connect to external network.", false);
 
     /** Perform profiling at build time and display the analysis results. */
-    public static final BeeOption<Boolean> Profiling = new BeeOption("profiling", "p", "Perform profiling and display the analysis results.", false);
+    public static final BeeOption<Boolean> Profiling = new BeeOption("profiling", "p", "Perform profiling and display the analysis results.", false, "profile", "profiler");
 
     /** Instructs the system not to output error log only at build time. */
     public static final BeeOption<Boolean> Quiet = new BeeOption("quiet", "q", "Output error log only.", false);
 
     /** Instructs the system not to output error log only at build time. */
-    public static final BeeOption<Boolean> Testless = new BeeOption("testless", "t", "Skip all test executions.", false, "skiptest", "skiptests", "maven.test.skip", "maven.tests.skip", "maven.skip.test", "maven.skip.tests");
+    public static final BeeOption<Boolean> Testless = new BeeOption("testless", "t", "Skip all test executions.", false, "skiptest", "skiptests", "maven.test.skip", "maven.tests.skip", "maven.skip.test", "maven.skip.tests", "notest", "notests");
 
     /**
      * Instructs the system to display information related to the current execution environment.

@@ -94,10 +94,7 @@ public class Doc extends Task {
             if (task.call() && listener.errors.isEmpty()) {
                 ui.info("Build javadoc to " + output);
             } else {
-                throw new Fail(n -> {
-                    n.title("Fail building Javadoc.");
-                    n.list(listener.errors);
-                });
+                throw new Fail("Fail building Javadoc.", listener.errors);
             }
         } catch (IOException e) {
             throw I.quiet(e);
@@ -138,10 +135,7 @@ public class Doc extends Task {
         if (listener.errors.isEmpty()) {
             ui.info("Build site resources to " + output);
         } else {
-            throw new Fail(n -> {
-                n.title("Fail building document site.");
-                n.list(listener.errors);
-            });
+            throw new Fail("Fail building document site.", listener.errors);
         }
     }
 

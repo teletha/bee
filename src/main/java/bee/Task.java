@@ -43,7 +43,7 @@ import bee.api.Project;
 import bee.util.EnhancedClassWriter;
 import bee.util.EnhancedMethodWriter;
 import bee.util.Inputs;
-import bee.util.Profile;
+import bee.util.Profiling;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Lifestyle;
@@ -564,7 +564,7 @@ public abstract class Task implements Extensible {
         task.ui = ui;
 
         // execute task
-        try (var x = Profile.of("Task [" + taskName + ":" + commandName + "]")) {
+        try (var x = Profiling.of("Task [" + taskName + ":" + commandName + "]")) {
             return command.invoke(task);
         } catch (TaskCancel e) {
             ui.warn("The task [", taskName, ":", commandName, "] was canceled beacuase ", e.getMessage());

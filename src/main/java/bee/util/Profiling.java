@@ -28,18 +28,18 @@ import kiss.I;
 /**
  * Builtin simple profiler.
  */
-public class Profile implements AutoCloseable {
+public class Profiling implements AutoCloseable {
 
     /** All records. */
-    private static final Queue<Profile> records = new ConcurrentLinkedQueue();
+    private static final Queue<Profiling> records = new ConcurrentLinkedQueue();
 
     /** The current record. */
-    private static Profile current = new Profile("", null);
+    private static Profiling current = new Profiling("", null);
 
     /** The name. */
     private final String name;
 
-    private Profile previous;
+    private Profiling previous;
 
     /** The starting time. */
     private long start;
@@ -56,7 +56,7 @@ public class Profile implements AutoCloseable {
     /**
      * 
      */
-    private Profile(String name, Profile previous) {
+    private Profiling(String name, Profiling previous) {
         this.name = name;
         this.previous = previous;
     }
@@ -97,19 +97,19 @@ public class Profile implements AutoCloseable {
      * @param name
      * @return
      */
-    public static Profile of(String name) {
-        records.add(current = new Profile(name, current));
+    public static Profiling of(String name) {
+        records.add(current = new Profiling(name, current));
         current.start();
         return current;
     }
 
     public static void show(UserInterface ui) {
-        Map<String, List<Profile>> grouped = records.stream().collect(Collectors.groupingBy(v -> v.name));
+        Map<String, List<Profiling>> grouped = records.stream().collect(Collectors.groupingBy(v -> v.name));
         TreeMap<Duration, String> output = new TreeMap(Comparator.reverseOrder());
 
-        for (Entry<String, List<Profile>> entry : grouped.entrySet()) {
+        for (Entry<String, List<Profiling>> entry : grouped.entrySet()) {
             String name = entry.getKey();
-            List<Profile> values = entry.getValue();
+            List<Profiling> values = entry.getValue();
             long total = values.stream().mapToLong(v -> v.elapsed).sum();
             Duration duration = Duration.ofNanos(total).truncatedTo(ChronoUnit.MILLIS);
             if (100 <= duration.toMillis()) {

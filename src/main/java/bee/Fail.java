@@ -13,46 +13,32 @@ import static bee.Platform.EOL;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-
-import bee.util.Notation;
-import kiss.WiseConsumer;
+import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class Fail extends Error {
 
     /** The reason, */
-    public Notation reason = new Notation();
+    public String reason;
 
     /** The solution messages. */
-    public List<String> solution = new ArrayList<String>();
+    public List<String> solutions;
 
     /**
      * Create failure with reason message.
-     */
-    public Fail() {
-        this(e -> {
-        });
-    }
-
-    /**
-     * Create failure with reason message.
-     * 
-     * @param reason
      */
     public Fail(String reason) {
-        this($ -> $.p(reason));
-
-        setStackTrace(new StackTraceElement[0]);
+        this(reason, null);
     }
 
     /**
      * Create failure with reason message.
-     * 
-     * @param reason
      */
-    public Fail(WiseConsumer<Notation> reason) {
-        reason.accept(this.reason);
+    public Fail(String reason, List<String> solutions) {
+        this.reason = Objects.requireNonNull(reason);
+        this.solutions = new ArrayList(solutions == null ? List.of() : solutions);
+
+        setStackTrace(new StackTraceElement[0]);
     }
 
     /**
@@ -61,7 +47,7 @@ public class Fail extends Error {
      * @param messages
      */
     public Fail solve(Object... messages) {
-        solution.add(UserInterface.build(messages));
+        solutions.add(UserInterface.build(messages));
 
         return this;
     }
@@ -73,16 +59,16 @@ public class Fail extends Error {
     public String getMessage() {
         StringBuilder builder = new StringBuilder().append(reason).append(EOL);
 
-        int size = solution.size();
+        int size = solutions.size();
 
         if (size == 0) {
             builder.append("No solution.");
         } else {
-            Notation notation = new Notation();
-            notation.title("Suggested Solutions");
-            notation.list(solution, Function.identity());
-
-            builder.append(notation);
+            builder.append(Platform.EOL);
+            for (String solution : solutions) {
+                builder.append(Platform.EOL).append("  -").append(solution);
+            }
+            builder.append(Platform.EOL);
         }
         return builder.toString();
     }

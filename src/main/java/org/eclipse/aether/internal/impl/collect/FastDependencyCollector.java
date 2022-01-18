@@ -52,7 +52,7 @@ import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.ConfigUtils;
 import org.eclipse.aether.version.Version;
 
-import bee.util.Profile;
+import bee.util.Profiling;
 
 @Singleton
 @Named
@@ -138,7 +138,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
         boolean traverse = root == null || depTraverser == null || depTraverser.traverseDependency(root);
         if (traverse && !dependencies.isEmpty()) {
-            try (var x = Profile.of("Dependency Collect")) {
+            try (var x = Profiling.of("Dependency Collect")) {
                 DataPool pool = new DataPool(session);
                 DefaultDependencyCollectionContext context = new DefaultDependencyCollectionContext(session, request
                         .getRootArtifact(), root, managedDependencies);
@@ -157,7 +157,7 @@ public class FastDependencyCollector implements DependencyCollector {
 
         DependencyGraphTransformer transformer = session.getDependencyGraphTransformer();
         if (transformer != null) {
-            try (var x = Profile.of("Dependency Transform")) {
+            try (var x = Profiling.of("Dependency Transform")) {
                 DefaultDependencyGraphTransformationContext context = new DefaultDependencyGraphTransformationContext(session);
                 result.setRoot(transformer.transformGraph(node, context));
             } catch (RepositoryException e) {

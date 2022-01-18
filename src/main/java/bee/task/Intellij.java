@@ -26,7 +26,7 @@ import psychopath.File;
 /**
  * @version 2016/11/30 11:50:50
  */
-public class IntelliJ extends Task implements IDESupport {
+public class Intellij extends Task implements IDESupport {
 
     /**
      * <p>
