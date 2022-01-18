@@ -323,15 +323,9 @@ public class Bee {
                     key = task;
                     value = "true";
                 }
-
-                String command = BeeOption.register(key, value);
-                if (command != null) {
-                    washed.add(command);
-                }
+                BeeOption.register(key, value);
             }
         }
-
-        BeeOption.register("h", "true");
 
         System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:local") : washed));
     }
