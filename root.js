@@ -434,7 +434,7 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "IntelliJ",
+			"name": "Intellij",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -497,13 +497,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Notation",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "POM",
 			"packageName": "bee.task",
 			"type": "Class"
@@ -525,7 +518,7 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Profile",
+			"name": "Profiling",
 			"packageName": "bee.util",
 			"type": "Class"
 		},
