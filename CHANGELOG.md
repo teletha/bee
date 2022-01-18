@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.28.2](https://www.github.com/teletha/bee/compare/v0.28.1...v0.28.2) (2022-01-18)
+
+
+### Bug Fixes
+
+* Don't load target classes. ([dd323ce](https://www.github.com/teletha/bee/commit/dd323cee12340763ca4a1dbdcf1d6c9bf59001df))
+
 ### [0.28.1](https://www.github.com/teletha/bee/compare/v0.28.0...v0.28.1) (2022-01-18)
 
 
