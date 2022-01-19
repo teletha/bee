@@ -28,7 +28,6 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
 import bee.Bee;
-import bee.BeeOption;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
@@ -47,11 +46,6 @@ public class Test extends Task {
     @Command("Test product codes.")
     public void test() {
         require(Compile::test);
-
-        if (BeeOption.Testless.value()) {
-            ui.info("Skip test executions.");
-            return;
-        }
 
         if (project.getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
             ui.info("No test will be performed because the test files don't exist in the following directories.");

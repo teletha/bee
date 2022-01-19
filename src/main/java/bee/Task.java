@@ -559,15 +559,22 @@ public abstract class Task implements Extensible {
             }
         }
 
+        String fullname = taskName + ":" + commandName;
+
+        // skip option
+        if (BeeOption.Skip.value.contains(taskName) || BeeOption.Skip.value.contains(fullname)) {
+            return null;
+        }
+
         // create task and initialize
         Task task = I.make(info.task);
         task.ui = ui;
 
         // execute task
-        try (var x = Profiling.of("Task [" + taskName + ":" + commandName + "]")) {
+        try (var x = Profiling.of("Task [" + fullname + "]")) {
             return command.invoke(task);
         } catch (TaskCancel e) {
-            ui.warn("The task [", taskName, ":", commandName, "] was canceled beacuase ", e.getMessage());
+            ui.warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
             return null;
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {

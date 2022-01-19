@@ -9,72 +9,76 @@
  */
 package bee;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import kiss.I;
 
 public class BeeOption<T> {
 
     /** Instructs the system not to use any cache at build time. */
-    public static final BeeOption<Boolean> Cacheless = new BeeOption("cacheless", "c", "Don't use any cache.", false, "nocache");
+    public static final BeeOption<Boolean> Cacheless = new BeeOption("cacheless", "Don't use any cache.", false, 0, "nocache");
 
     /** Instructs the system to output all debug log at build time. */
-    public static final BeeOption<Boolean> Debug = new BeeOption("debug", "d", "Output all debug log.", false);
+    public static final BeeOption<Boolean> Debug = new BeeOption("debug", "Output all debug log.", false, 0);
 
     /**
      * Instructs the system to display information related to the current execution environment.
      * Synonymous with the task [help:task help:option].
      */
-    public static final BeeOption<Boolean> Help = new BeeOption("help", "h", "Show task information. Synonymous with the task [help:task help:option].", false, "?");
+    public static final BeeOption<Boolean> Help = new BeeOption("help", "Show task information. Synonymous with the task [help:task help:option].", false, 0, "?");
 
     /** Instructs the system not to connect to an external network at build time. */
-    public static final BeeOption<Boolean> Offline = new BeeOption("offline", "o", "Don't connect to external network.", false);
+    public static final BeeOption<Boolean> Offline = new BeeOption("offline", "Don't connect to external network.", false, 0);
 
     /** Perform profiling at build time and display the analysis results. */
-    public static final BeeOption<Boolean> Profiling = new BeeOption("profiling", "p", "Perform profiling and display the analysis results.", false, "profile", "profiler");
+    public static final BeeOption<Boolean> Profiling = new BeeOption("profiling", "Perform profiling and display the analysis results.", false, 0, "profile", "profiler");
 
     /** Instructs the system not to output error log only at build time. */
-    public static final BeeOption<Boolean> Quiet = new BeeOption("quiet", "q", "Output error log only.", false);
+    public static final BeeOption<Boolean> Quiet = new BeeOption("quiet", "Output error log only.", false, 0);
 
     /** Instructs the system not to output error log only at build time. */
-    public static final BeeOption<Boolean> Testless = new BeeOption("testless", "t", "Skip all test executions.", false, "skiptest", "skiptests", "maven.test.skip", "maven.tests.skip", "maven.skip.test", "maven.skip.tests", "notest", "notests");
+    public static final BeeOption<List<String>> Skip = new BeeOption("skip", "Skip the specified task.", List.of(), 24, "x");
 
     /**
      * Instructs the system to display information related to the current execution environment.
      * Synonymous with the task [help:version].
      */
-    public static final BeeOption<Boolean> Version = new BeeOption("version", "v", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false);
-
-    /** Instructs the system not to output error log only at build time. */
-    public static final BeeOption<List<String>> eXclude = new BeeOption("exclude", "x", "Skip the specified task.", List.of());
+    public static final BeeOption<Boolean> Version = new BeeOption("version", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false, 0);
 
     /** The list of builtin options. */
-    private static final List<BeeOption> options = List.of(Cacheless, Debug, Help, Offline, Profiling, Quiet, Testless, Version);
+    static final List<BeeOption> options = List.of(Cacheless, Debug, Skip, Help, Offline, Profiling, Quiet, Version);
 
     /** The name. */
-    public final String name;
+    private final String name;
 
     /** The alias names. */
-    public final String shortName;
-
-    /** The description for user. */
-    public final String description;
-
-    /** The default value. */
-    public final T defaultValue;
+    private final String shortName;
 
     /** The alise list. */
     private final List<String> aliases;
 
+    /** The description for user. */
+    private final String description;
+
+    /** The parameter size. */
+    private final int paramSize;
+
+    /** The default value. */
+    final T defaultValue;
+
+    /** The current value. */
+    T value;
+
     /**
      * Hide constructor.
      */
-    private BeeOption(String name, String shortName, String description, T defaultValue, String... aliases) {
+    private BeeOption(String name, String description, T defaultValue, int parameterSize, String... aliases) {
         this.name = name;
-        this.shortName = shortName;
+        this.shortName = name.substring(0, 1);
         this.description = description;
         this.defaultValue = defaultValue;
+        this.value = defaultValue;
         this.aliases = List.of(aliases);
+        this.paramSize = parameterSize;
     }
 
     /**
@@ -83,7 +87,7 @@ public class BeeOption<T> {
      * @return
      */
     public T value() {
-        return I.env(name, defaultValue);
+        return value;
     }
 
     /**
@@ -95,25 +99,79 @@ public class BeeOption<T> {
     }
 
     /**
-     * Register the property.
+     * Parse options.
      * 
-     * @param key
-     * @param value
+     * @param args
+     * @return
      */
-    static void register(String key, String value) {
-        boolean D = key.charAt(0) == 'D';
-        if (D) {
-            key = key.substring(1);
-            System.setProperty(key, value);
-        }
+    static List<String> parse(String... args) {
+        List<String> washed = new ArrayList();
 
-        key = key.toLowerCase();
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
 
-        for (BeeOption option : options) {
-            if (option.name.equals(key) || option.shortName.equals(key) || option.aliases.contains(key)) {
-                I.env(option.name, value);
-                return;
+            if (arg.charAt(0) == '-') {
+                arg = arg.substring(1);
+
+                if (arg.charAt(0) == '-') {
+                    // long name option
+                    arg = arg.substring(1);
+                    int equal = arg.indexOf('=');
+                    if (equal == -1) {
+                        i += register(arg, args, i);
+                    } else {
+                        String param = arg.substring(equal + 1);
+                        arg = arg.substring(0, equal);
+                        i += register(arg, new String[] {arg, param}, 0);
+                    }
+
+                } else {
+                    // short name option
+                    for (int j = 0; j < arg.length(); j++) {
+                        i += register(String.valueOf(arg.charAt(j)), args, i);
+                    }
+                }
+            } else {
+                washed.add(arg);
             }
         }
+
+        return washed;
+    }
+
+    /**
+     * Find the matched option.
+     * 
+     * @param name
+     * @param args
+     * @param index
+     * @return
+     */
+    private static int register(String name, String[] args, int index) {
+        int skip = 0;
+
+        for (BeeOption o : options) {
+            if (o.name.equals(name) || o.shortName.equals(name) || o.aliases.contains(name)) {
+                if (o.paramSize == 0) {
+                    o.value = true;
+                } else {
+                    skip = o.paramSize;
+
+                    List<String> params = new ArrayList(o.paramSize);
+                    for (int i = 0, max = Math.min(o.paramSize, args.length - index - 1); i < max; i++) {
+                        String param = args[index + i + 1];
+                        if (param.charAt(0) == '-') {
+                            skip = i;
+                            break;
+                        } else {
+                            params.add(param);
+                        }
+                    }
+                    o.value = params;
+                }
+                break;
+            }
+        }
+        return skip;
     }
 }

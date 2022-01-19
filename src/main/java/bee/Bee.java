@@ -306,30 +306,7 @@ public class Bee {
     public static void main(String... tasks) {
         if (tasks.length == 0) tasks = new String[] {"env:local"};
 
-        List<String> washed = new ArrayList();
-        for (String task : tasks) {
-            if (!task.startsWith("-")) {
-                washed.add(task);
-            } else {
-                task = task.substring(1);
-                if (task.charAt(0) == '-') task = task.substring(1);
-
-                String key;
-                String value;
-                int index = task.indexOf("=");
-
-                if (index != -1) {
-                    key = task.substring(0, index);
-                    value = task.substring(index + 1);
-                } else {
-                    key = task;
-                    value = "true";
-                }
-                BeeOption.register(key, value);
-            }
-        }
-
-        System.exit(new Bee().execute(washed));
+        System.exit(new Bee().execute(BeeOption.parse(tasks)));
     }
 
     /**
