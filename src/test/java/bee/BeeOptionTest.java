@@ -201,4 +201,12 @@ class BeeOptionTest {
         assert BeeOption.Debug.value() == true;
         assert BeeOption.Help.value() == true;
     }
+
+    @Test
+    void systemProperty() {
+        List<String> washed = BeeOption.parse("task", "-Dsetting.to.system.property=anyValue");
+        assert washed.size() == 1;
+        assert washed.get(0) == "task";
+        assert System.getProperty("setting.to.system.property").equals("anyValue");
+    }
 }

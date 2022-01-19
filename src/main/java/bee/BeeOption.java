@@ -113,7 +113,16 @@ public class BeeOption<T> {
             if (arg.charAt(0) == '-') {
                 arg = arg.substring(1);
 
-                if (arg.charAt(0) == '-') {
+                if (arg.charAt(0) == 'D') {
+                    // define system property like maven
+                    arg = arg.substring(1);
+                    int equal = arg.indexOf('=');
+                    if (equal == -1) {
+                        System.setProperty(arg, "true");
+                    } else {
+                        System.setProperty(arg.substring(0, equal), arg.substring(equal + 1));
+                    }
+                } else if (arg.charAt(0) == '-') {
                     // long name option
                     arg = arg.substring(1);
                     int equal = arg.indexOf('=');
@@ -124,7 +133,6 @@ public class BeeOption<T> {
                         arg = arg.substring(0, equal);
                         i += register(arg, new String[] {arg, param}, 0);
                     }
-
                 } else {
                     // short name option
                     for (int j = 0; j < arg.length(); j++) {
