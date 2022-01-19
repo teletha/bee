@@ -22,8 +22,8 @@ class InputsTest {
     void formatAsSize() {
         assert Inputs.formatAsSize(100).equals("100Bytes");
         assert Inputs.formatAsSize(5 * 1024).equals("5KB");
-        assert Inputs.formatAsSize(1536).equals("1.5KB");
-        assert Inputs.formatAsSize(1538).equals("1.5KB");
+        assert Inputs.formatAsSize(1536).equals("1.50KB");
+        assert Inputs.formatAsSize(1538).equals("1.50KB");
         assert Inputs.formatAsSize(1545).equals("1.51KB");
         assert Inputs.formatAsSize(1555).equals("1.52KB");
     }
@@ -32,8 +32,8 @@ class InputsTest {
     void formatAsSizeWithoutUnit() {
         assert Inputs.formatAsSize(100, false).equals("100");
         assert Inputs.formatAsSize(5 * 1024, false).equals("5");
-        assert Inputs.formatAsSize(1536, false).equals("1.5");
-        assert Inputs.formatAsSize(1538, false).equals("1.5");
+        assert Inputs.formatAsSize(1536, false).equals("1.50");
+        assert Inputs.formatAsSize(1538, false).equals("1.50");
         assert Inputs.formatAsSize(1545, false).equals("1.51");
         assert Inputs.formatAsSize(1555, false).equals("1.52");
     }

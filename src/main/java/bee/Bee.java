@@ -304,6 +304,8 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
+        if (tasks.length == 0) tasks = new String[] {"env:local"};
+
         List<String> washed = new ArrayList();
         for (String task : tasks) {
             if (!task.startsWith("-")) {
@@ -327,7 +329,7 @@ public class Bee {
             }
         }
 
-        System.exit(new Bee().execute(washed.isEmpty() ? List.of("env:local") : washed));
+        System.exit(new Bee().execute(washed));
     }
 
     /**

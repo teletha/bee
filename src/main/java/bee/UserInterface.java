@@ -595,7 +595,7 @@ public abstract class UserInterface {
         private Deque<String> commands = new ArrayDeque();
 
         /** The view state. */
-        private boolean eraseNextLine = false;
+        private int erasableLine;
 
         /**
          * 
@@ -642,12 +642,14 @@ public abstract class UserInterface {
                 return;
 
             case TRACE:
-            case DEBUG:
-                if (debug) {
+                if (!disableTrace) {
                     write(message, true);
-                } else if (!disableTrace) {
-                    write(message.concat("\r"), false);
+                    erasableLine = message.split(Platform.EOL).length;
                 }
+                break;
+
+            case DEBUG:
+                write(message, true);
                 break;
 
             case WARNING:
@@ -690,12 +692,12 @@ public abstract class UserInterface {
                 first = false;
             }
 
-            if (eraseNextLine && !disableANSI) {
-                message = PREFIX + "2K" + message;
+            if (0 < erasableLine && !disableANSI) {
+                message = PREFIX + erasableLine + "F" + PREFIX + "J" + message;
+                erasableLine = 0;
             }
-            eraseNextLine = message.endsWith("\r");
 
-            if (eraseNextLine || !enforceLine) {
+            if (!enforceLine) {
                 standardOutput.print(message);
             } else {
                 standardOutput.println(message);

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -81,6 +82,7 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.locator.Service;
 import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
+import org.eclipse.aether.transfer.TransferEvent.RequestType;
 import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
@@ -539,7 +541,7 @@ public class Repository {
         }
 
         /** The progress event interval. (ms) */
-        private static final long interval = 500 * 1000 * 1000;
+        private static final long interval = 200 * 1000 * 1000;
 
         /** The last progress event time. */
         private long last = 0;
@@ -547,12 +549,17 @@ public class Repository {
         /** The downloading items. */
         private Map<TransferResource, TransferEvent> downloading = new ConcurrentHashMap();
 
+        /** The uploading items. */
+        private Map<TransferResource, TransferEvent> uploading = new ConcurrentHashMap();
+
         /**
          * {@inheritDoc}
          */
         @Override
         public void transferInitiated(TransferEvent event) {
-            downloading.put(event.getResource(), event);
+            boolean download = event.getRequestType() != RequestType.PUT;
+            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
+            resources.put(event.getResource(), event);
         }
 
         /**
@@ -567,30 +574,19 @@ public class Repository {
          */
         @Override
         public void transferProgressed(TransferEvent event) {
-            downloading.put(event.getResource(), event);
+            boolean download = event.getRequestType() != RequestType.PUT;
+            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
+            resources.put(event.getResource(), event);
 
             long now = System.nanoTime();
             if (interval < now - last) {
                 last = now; // update last event time
 
-                // build message
                 StringBuilder message = new StringBuilder();
-
-                for (Map.Entry<TransferResource, TransferEvent> entry : downloading.entrySet()) {
-                    TransferResource resource = entry.getKey();
-                    long current = entry.getValue().getTransferredBytes();
-                    long size = resource.getContentLength();
-
-                    message.append(name(resource)).append(" (");
-                    if (0 < size) {
-                        message.append(Inputs.formatAsSize(current, false)).append('/').append(Inputs.formatAsSize(size));
-                    } else {
-                        message.append(Inputs.formatAsSize(current));
-                    }
-                    message.append(")   ");
+                for (Entry<TransferResource, TransferEvent> entry : resources.entrySet().stream().limit(5).toList()) {
+                    if (!message.isEmpty()) message.append(Platform.EOL);
+                    message.append(buildMessage(download ? "Downloading" : "Uploading", entry.getValue(), true));
                 }
-
-                // notify
                 ui.trace(message);
             }
         }
@@ -600,21 +596,11 @@ public class Repository {
          */
         @Override
         public void transferSucceeded(TransferEvent event) {
-            TransferResource resource = event.getResource();
+            boolean download = event.getRequestType() != RequestType.PUT;
+            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
+            resources.remove(event.getResource());
 
-            // unregister item
-            downloading.remove(resource);
-
-            long contentLength = event.getTransferredBytes();
-            if (contentLength >= 0) {
-                String length = Inputs.formatAsSize(contentLength);
-
-                if (event.getRequestType() == TransferEvent.RequestType.GET) {
-                    ui.info("Downloaded : " + name(resource) + " (" + length + ") from [" + resource.getRepositoryUrl() + "]");
-                } else {
-                    ui.info("Uploaded : " + name(resource) + " (" + length + ") to [" + resource.getRepositoryUrl() + "]");
-                }
-            }
+            ui.info(buildMessage(download ? "Downloaded" : "Uploaded", event, false));
         }
 
         /**
@@ -622,8 +608,9 @@ public class Repository {
          */
         @Override
         public void transferFailed(TransferEvent event) {
-            // unregister item
-            downloading.remove(event.getResource());
+            boolean download = event.getRequestType() != RequestType.PUT;
+            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
+            resources.remove(event.getResource());
         }
 
         /**
@@ -635,13 +622,44 @@ public class Repository {
         }
 
         /**
+         * Build item transfering message.
+         * 
+         * @param type
+         * @param event
+         * @return
+         */
+        private static String buildMessage(String type, TransferEvent event, boolean progress) {
+            TransferResource resource = event.getResource();
+            long current = event.getTransferredBytes();
+            long size = resource.getContentLength();
+
+            StringBuilder message = new StringBuilder(type).append(" : ").append(name(resource)).append(" (");
+            if (progress && 0 < size) {
+                message.append(Inputs.formatAsSize(current, false)).append('/').append(Inputs.formatAsSize(size));
+            } else {
+                message.append(Inputs.formatAsSize(current));
+            }
+            message.append(" @ ").append(resource.getRepositoryId()).append(") ");
+
+            return message.toString();
+        }
+
+        /**
          * Compute readable resource name.
          * 
          * @param resource
          * @return
          */
         private static String name(TransferResource resource) {
-            return resource.getResourceName().substring(resource.getResourceName().lastIndexOf('/') + 1);
+            String full = resource.getResourceName();
+            int last = full.lastIndexOf('/');
+            String name = full.substring(last + 1);
+
+            if (name.equals("maven-metadata.xml")) {
+                return name + " for " + full.substring(full.lastIndexOf('/', last - 1) + 1, last);
+            } else {
+                return name;
+            }
         }
     }
 

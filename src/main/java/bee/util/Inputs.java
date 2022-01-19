@@ -135,7 +135,7 @@ public class Inputs {
         if (rouded == size) {
             return Long.toString(rouded).concat(unit);
         } else {
-            return Double.toString(Math.round(size * 100.0) / 100.0).concat(unit);
+            return String.format("%.2f", size).concat(unit);
         }
     }
 
