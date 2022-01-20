@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,8 +19,7 @@ import java.util.List;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
-import javax.lang.model.SourceVersion;
-
+import bee.Platform;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
@@ -39,6 +39,11 @@ public class Exe extends Task {
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
+        if (!Platform.isWindows()) {
+            ui.warn("Skip the task [exe] because it is available in windows platform only.");
+            return null;
+        }
+
         // search main classes
         String main = require(FindMain::main);
 
@@ -65,65 +70,56 @@ public class Exe extends Task {
 
         require(Jar::source);
 
-        try {
-            // pack with dependency libraries
-            Folder folder = Locator.folder();
+        // pack with dependency libraries
+        Folder folder = Locator.folder();
 
-            build(folder, "");
-            build(folder, "64");
+        // download and unzip exewrap
+        ui.info("Download and extract exewrap binary.");
 
-            folder.add(project.locateJar(), o -> o.allocateIn("lib"));
-            for (Library library : project.getDependency(Scope.Runtime)) {
-                folder.add(library.getLocalJar(), o -> o.allocateIn("lib"));
-            }
+        I.http("http://osdn.net/frs/redir.php?m=nchc&f=exewrap%2F73589%2Fexewrap1.6.4.zip", InputStream.class)
+                .map(Locator.temporaryFile("exewrap.zip")::writeFrom)
+                .map(File::unpackToTemporary)
+                .waitForTerminate()
+                .to(dir -> {
+                    Directory temporary = Locator.temporaryDirectory();
+                    File exewrap = dir.file("exewrap1.6.4/x86/exewrap.exe");
 
-            ui.info("Packing application and libraries.");
+                    for (String suffix : List.of("86", "64")) {
+                        File exe = temporary.file(project.getProduct() + suffix + ".exe");
 
-            return folder.packTo(project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip"));
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
-    }
+                        // build command line
+                        List<String> command = new ArrayList();
+                        command.add(exewrap.toString());
+                        command.add("-g");
+                        command.add("-A");
+                        command.add("x" + suffix);
+                        command.add("-t");
+                        command.add(Inputs.normalize(project.getJavaClassVersion()));
+                        command.add("-j");
+                        command.add(project.locateJar().toString());
+                        command.add("-o");
+                        command.add(exe.absolutize().toString());
+                        if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
+                            command.add("-i");
+                            command.add(icon.toString());
+                        }
 
-    /**
-     * Helper method to build windows native application launcher.
-     * 
-     * @param folder
-     * @param suffix
-     */
-    private void build(Folder folder, String suffix) {
-        Directory temporary = Locator.temporaryDirectory();
-        File builder = temporary.file("exewrap" + suffix + ".exe");
-        File exe = temporary.file(project.getProduct() + suffix + ".exe");
+                        // execute exewrap
+                        Process.with().workingDirectory(exewrap.parent()).ignoreOutput().run(command);
+                        ui.info("Write " + exe.name() + ".");
 
-        try {
+                        // pack
+                        folder.add(exe);
+                    }
+                });
 
-            // unzip exe builder
-            I.copy(Exe.class.getResourceAsStream("exewrap" + suffix + ".exe"), builder.newOutputStream(), true);
-
-            // build command line
-            List<String> command = new ArrayList();
-            command.add(builder.toString());
-            command.add("-g");
-            command.add("-t");
-            command.add(Inputs.normalize(SourceVersion.latest()));
-            command.add("-j");
-            command.add(project.locateJar().toString());
-            command.add("-o");
-            command.add(exe.absolutize().toString());
-            if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
-                command.add("-i");
-                command.add(icon.toString());
-            }
-
-            // execute exe builder
-            Process.with().workingDirectory(builder.parent()).ignoreOutput().run(command);
-            ui.info("Write " + exe.name() + ".");
-        } catch (Exception e) {
-            throw I.quiet(e);
+        folder.add(project.locateJar(), o -> o.allocateIn("lib"));
+        for (Library library : project.getDependency(Scope.Runtime)) {
+            folder.add(library.getLocalJar(), o -> o.allocateIn("lib"));
         }
 
-        // pack
-        folder.add(exe);
+        ui.info("Packing application and libraries.");
+
+        return folder.packTo(project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip"));
     }
 }
