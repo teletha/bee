@@ -12,6 +12,8 @@ package bee;
 import java.util.ArrayList;
 import java.util.List;
 
+import kiss.I;
+
 public class BeeOption<T> {
 
     /** Instructs the system not to use any cache at build time. */
@@ -76,7 +78,7 @@ public class BeeOption<T> {
         this.shortName = name.substring(0, 1);
         this.description = description;
         this.defaultValue = defaultValue;
-        this.value = defaultValue;
+        this.value = I.env(name, defaultValue);
         this.aliases = List.of(aliases);
         this.paramSize = parameterSize;
     }
