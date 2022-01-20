@@ -731,6 +731,7 @@ public class Project {
      * 
      * @param groupName
      */
+    @SuppressWarnings("unused")
     private void setVersionControlSystem(VCS vcs) {
         this.vcs = vcs;
     }

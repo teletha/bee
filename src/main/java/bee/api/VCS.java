@@ -12,14 +12,9 @@ package bee.api;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -147,22 +142,6 @@ public abstract class VCS {
      */
     RuntimeException unsupport(String signature) {
         return new UnsupportedOperationException("Class [" + getClass().getName() + "] don't implement " + signature + ".");
-    }
-
-    /**
-     * @param file
-     * @return
-     */
-    private boolean checkSame(Path file) {
-        try {
-            Project project = I.make(Project.class);
-            byte[] local = Files.readAllBytes(file);
-            byte[] remote = Base64.getDecoder().decode(file(project.getRoot().asJavaPath().relativize(file).toString()).content);
-
-            return Arrays.equals(local, remote);
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
     }
 
     /**
