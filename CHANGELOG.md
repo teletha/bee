@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.29.0](https://www.github.com/teletha/bee/compare/v0.28.2...v0.29.0) (2022-01-20)
+
+
+### Features
+
+* Add --skip (-x) option to skip any task execution. ([5a88114](https://www.github.com/teletha/bee/commit/5a88114f86a13b03179b498371f73e4ae6ab35f7))
+* Commandline option can define system property like maven. ([1ca135c](https://www.github.com/teletha/bee/commit/1ca135cd960d1b54d9ed06a026f809d87a98407d))
+* Enable multilined commandline interface. ([ec30c24](https://www.github.com/teletha/bee/commit/ec30c246f70bc0de9786e05a1705274175e8a03f))
+
+
+### Bug Fixes
+
+* Avoid NPE. ([a273b79](https://www.github.com/teletha/bee/commit/a273b795c67ebc97076819d4c74c3926b65d836f))
+* Bee option is aware of environment variable. ([151fe78](https://www.github.com/teletha/bee/commit/151fe78ab42f40b961c76f8dcc6d0651cd6ade58))
+* Update exewrap version. ([a571c99](https://www.github.com/teletha/bee/commit/a571c9984a837f4b5c770effc514b76efb2cf96b))
+
 ### [0.28.2](https://www.github.com/teletha/bee/compare/v0.28.1...v0.28.2) (2022-01-18)
 
 
