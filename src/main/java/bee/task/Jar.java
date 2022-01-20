@@ -107,6 +107,8 @@ public class Jar extends Task {
      * @param output
      */
     private void pack(String type, Signal<Directory> input, File output, boolean modifyVersion) {
+        input = input.skipNull();
+
         if (modifyVersion) {
             String oldVersion = Inputs.normalize(SourceVersion.latest());
             String newVersion = Inputs.normalize(project.getJavaClassVersion());
