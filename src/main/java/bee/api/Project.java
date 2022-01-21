@@ -9,13 +9,10 @@
  */
 package bee.api;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Year;
 import java.util.ArrayList;
@@ -667,17 +664,8 @@ public class Project {
         // search javax.annotation.processing.Processor file in libraries
         Set<Location> libraries = new HashSet();
 
-        try {
-            for (Library library : getDependency(Scope.Annotation)) {
-                Path file = FileSystems.newFileSystem(library.getLocalJar().asJavaPath(), ClassLoader.getSystemClassLoader())
-                        .getPath("/")
-                        .resolve("META-INF/services/javax.annotation.processing.Processor");
-                if (Files.exists(file)) {
-                    libraries.add(library.getLocalJar());
-                }
-            }
-        } catch (IOException e) {
-            throw I.quiet(e);
+        for (Library library : getDependency(Scope.Annotation)) {
+            libraries.add(library.getLocalJar());
         }
 
         // search AnnotationValidator in classpath
