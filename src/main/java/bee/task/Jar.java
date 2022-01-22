@@ -42,12 +42,12 @@ public class Jar extends Task {
      * Determines whether or not the class file should contain the local variable name and parameter
      * name.
      */
-    public boolean removeDebugInfo = false;
+    protected boolean removeDebugInfo = false;
 
     /**
      * Determines whether or not the class file should contain the source file name and line number.
      */
-    public boolean removeTraceInfo = false;
+    protected boolean removeTraceInfo = false;
 
     /**
      * Package main classes and other resources.
@@ -76,6 +76,12 @@ public class Jar extends Task {
         String newVersion = Inputs.normalize(project.getJavaClassVersion());
         if (!oldVersion.equals(newVersion)) {
             ui.info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+        }
+        if (removeDebugInfo) {
+            ui.info("Remove all debugger-related information (local variables and parameters) from the class file.");
+        }
+        if (removeTraceInfo) {
+            ui.info("Remove all debugging-related information (source file name and line number) from the class file.");
         }
 
         Directory modified = Locator.temporaryDirectory();

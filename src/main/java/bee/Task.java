@@ -655,7 +655,7 @@ public abstract class Task implements Extensible {
     /**
      * 
      */
-    private static final class Info {
+    private static class Info {
 
         /** The task name. */
         private final String name;

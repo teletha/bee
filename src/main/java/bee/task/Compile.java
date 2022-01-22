@@ -9,8 +9,6 @@
  */
 package bee.task;
 
-import java.util.function.Consumer;
-
 import bee.Task;
 import bee.api.Command;
 import bee.api.Scope;
@@ -22,11 +20,7 @@ import psychopath.Locator;
 public class Compile extends Task {
 
     /** The kind of compiler. */
-    public static boolean useECJ = false;
-
-    public static void configure(Consumer<JavaCompiler> setting) {
-
-    }
+    protected boolean useECJ = false;
 
     /**
      * Compile main sources and copy other resources.

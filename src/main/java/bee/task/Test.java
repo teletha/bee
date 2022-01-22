@@ -41,7 +41,7 @@ import kiss.I;
 public class Test extends Task {
 
     /** The threshold time (ms) to show the prolonged test. */
-    public static int showProlongedTest = 1000;
+    protected int showProlongedTest = 1000;
 
     @Command("Test product codes.")
     public void test() {
@@ -60,6 +60,7 @@ public class Test extends Task {
                             .classPath(project.getTestClasses())
                             .classPath(project.getDependency(Scope.Test, Scope.Compile))
                             .classPath(Bee.class)
+                            .systemProperty("prolonged", showProlongedTest)
                             .enableAssertion()
                             .encoding(project.getEncoding())
                             .workingDirectory(project.getRoot())
@@ -76,7 +77,7 @@ public class Test extends Task {
     private static final class Junit extends JVM implements TestExecutionListener {
 
         /** The threshold time (ns) to show the prolonged test. */
-        private long showProlongedTime = Test.showProlongedTest * 1000000;
+        private long showProlongedTime = Integer.getInteger("prolonged") * 1000 * 1000;
 
         /**
          * {@inheritDoc}
