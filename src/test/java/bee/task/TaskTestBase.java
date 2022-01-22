@@ -7,20 +7,16 @@
  *
  *          https://opensource.org/licenses/MIT
  */
-package bee;
+package bee.task;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
-import bee.Task.Cache;
+import bee.BlinkProject;
+import bee.Task;
 import kiss.I;
 import psychopath.File;
 
 public abstract class TaskTestBase {
-
-    static {
-        I.load(Bee.class);
-    }
 
     /** The base project. */
     protected BlinkProject project;
@@ -32,15 +28,6 @@ public abstract class TaskTestBase {
     public void before() {
         project = I.make(BlinkProject.class);
         noop = I.make(NoOPTask.class);
-
-        LifestyleForProject.local.get().set(project);
-        System.out.println("Set project " + System.identityHashCode(project));
-    }
-
-    @AfterEach
-    public void after() {
-        project.associate(Cache.class).clear();
-        // LifestyleForProject.local.get().set(null);
     }
 
     /**

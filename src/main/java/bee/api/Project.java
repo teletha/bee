@@ -58,7 +58,7 @@ public class Project {
     final ArrayList<RemoteRepository> repositories = new ArrayList();
 
     /** The project association. */
-    public final Map<Class, Object> associates = new ConcurrentHashMap();
+    final Map<Class, Object> associates = new ConcurrentHashMap();
 
     /** The project root directory. */
     private Directory root;
@@ -740,17 +740,6 @@ public class Project {
      */
     public final Library asLibrary() {
         return new Library(getGroup(), getProduct(), getVersion());
-    }
-
-    /**
-     * Retrive the project related info.
-     * 
-     * @param <A>
-     * @param type
-     * @return
-     */
-    public final <A> A associate(Class<A> type) {
-        return (A) associates.computeIfAbsent(type, I::make);
     }
 
     /**

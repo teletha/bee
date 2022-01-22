@@ -42,57 +42,23 @@ public class Jar extends Task {
      * Determines whether or not the class file should contain the local variable name and parameter
      * name.
      */
-    protected boolean removeDebugInfo = false;
+    public static boolean SkipDebugInfo = false;
 
     /**
      * Determines whether or not the class file should contain the source file name and line number.
      */
-    protected boolean removeTraceInfo = false;
+    public static boolean SkipTraceInfo = false;
 
     /**
      * Package main classes and other resources.
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
     public void source() {
-        System.out.println("Jar:source " + System.identityHashCode(project));
         require(Compile::source);
 
-        Directory dir = project.getClasses();
-
-        if (SourceVersion.latest().compareTo(project.getJavaClassVersion()) > 0 || removeTraceInfo || removeDebugInfo) {
-            dir = modify(dir);
-        }
-
-        pack("main classe", I.signal(dir), project.locateJar());
-        pack("main source", project.getSourceSet(), project.locateSourceJar());
-    }
-
-    /**
-     * Modify java classes.
-     * 
-     * @param dir
-     * @return
-     */
-    private Directory modify(Directory dir) {
-        String oldVersion = Inputs.normalize(SourceVersion.latest());
-        String newVersion = Inputs.normalize(project.getJavaClassVersion());
-        if (!oldVersion.equals(newVersion)) {
-            ui.info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
-        }
-
-        Directory modified = Locator.temporaryDirectory();
-
-        dir.copyTo(modified, o -> o.glob("!**.class").strip());
-        dir.walkFile("**.class").to(file -> {
-            File modifiedFile = modified.file(dir.relativize(file));
-            ClassReader classReader = new ClassReader(file.bytes());
-            ClassWriter writer = new ClassWriter(classReader, 0);
-            ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
-            classReader.accept(modification, 0);
-            modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
-        });
-
-        return modified;
+        pack("main classe", I.signal(project.getClasses()), project
+                .locateJar(), SourceVersion.latest().compareTo(project.getJavaClassVersion()) > 0 || SkipTraceInfo || SkipDebugInfo);
+        pack("main source", project.getSourceSet(), project.locateSourceJar(), false);
     }
 
     /**
@@ -105,8 +71,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test class", I.signal(project.getTestClasses()), classes);
-        pack("test source", project.getTestSourceSet(), sources);
+        pack("test class", I.signal(project.getTestClasses()), classes, false);
+        pack("test source", project.getTestSourceSet(), sources, false);
     }
 
     /**
@@ -119,8 +85,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project class", I.signal(project.getProjectClasses()), classes);
-        pack("project source", project.getProjectSourceSet(), sources);
+        pack("project class", I.signal(project.getProjectClasses()), classes, false);
+        pack("project source", project.getProjectSourceSet(), sources, false);
     }
 
     /**
@@ -130,7 +96,7 @@ public class Jar extends Task {
     public void document() {
         Directory output = require(Doc::javadoc);
 
-        pack("javadoc", I.signal(output), project.locateJavadocJar());
+        pack("javadoc", I.signal(output), project.locateJavadocJar(), false);
     }
 
     /**
@@ -140,8 +106,31 @@ public class Jar extends Task {
      * @param input
      * @param output
      */
-    private void pack(String type, Signal<Directory> input, File output) {
+    private void pack(String type, Signal<Directory> input, File output, boolean modifyVersion) {
         input = input.skipNull();
+
+        if (modifyVersion) {
+            String oldVersion = Inputs.normalize(SourceVersion.latest());
+            String newVersion = Inputs.normalize(project.getJavaClassVersion());
+            if (!oldVersion.equals(newVersion)) {
+                ui.info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+            }
+
+            input = input.map(dir -> {
+                Directory modified = Locator.temporaryDirectory();
+
+                dir.walkFile("**.class").to(file -> {
+                    File modifiedFile = modified.file(dir.relativize(file));
+                    ClassReader classReader = new ClassReader(file.bytes());
+                    ClassWriter writer = new ClassWriter(classReader, 0);
+                    ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
+                    classReader.accept(modification, 0);
+                    modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
+                });
+
+                return modified;
+            });
+        }
 
         Locator.folder()
                 .add(input, Option::strip)
@@ -183,7 +172,7 @@ public class Jar extends Task {
     /**
      * 
      */
-    private class Modify extends ClassVisitor {
+    private static class Modify extends ClassVisitor {
 
         private final int version;
 
@@ -215,16 +204,13 @@ public class Jar extends Task {
          */
         @Override
         public void visitSource(String source, String debug) {
-            if (!removeTraceInfo) {
+            if (!SkipTraceInfo) {
                 super.visitSource(source, debug);
             }
         }
     }
 
-    /**
-     * 
-     */
-    private class Minify extends MethodVisitor {
+    private static class Minify extends MethodVisitor {
 
         /**
          * @param methodVisitor
@@ -238,7 +224,7 @@ public class Jar extends Task {
          */
         @Override
         public void visitParameter(String name, int access) {
-            if (!removeDebugInfo) {
+            if (!SkipDebugInfo) {
                 super.visitParameter(name, access);
             }
         }
@@ -248,7 +234,7 @@ public class Jar extends Task {
          */
         @Override
         public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
-            if (!removeDebugInfo) {
+            if (!SkipDebugInfo) {
                 super.visitLocalVariable(name, descriptor, signature, start, end, index);
             }
         }
@@ -258,7 +244,7 @@ public class Jar extends Task {
          */
         @Override
         public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible) {
-            if (!removeDebugInfo) {
+            if (!SkipDebugInfo) {
                 return super.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible);
             } else {
                 return null;
@@ -270,7 +256,7 @@ public class Jar extends Task {
          */
         @Override
         public void visitLineNumber(int line, Label start) {
-            if (!removeTraceInfo) {
+            if (!SkipTraceInfo) {
                 super.visitLineNumber(line, start);
             }
         }

@@ -14,8 +14,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import bee.TaskTestBase;
-
 class CiTest extends TaskTestBase {
 
     @Test

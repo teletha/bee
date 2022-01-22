@@ -146,7 +146,7 @@ public class Bee {
         this.project = project;
 
         // inject project
-        LifestyleForProject.local.get().set(project);
+        LifestyleForProject.local.set(project);
     }
 
     /**
@@ -304,7 +304,7 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
-        if (tasks.length == 0) tasks = new String[] {"install"};
+        if (tasks.length == 0) tasks = new String[] {"env:local"};
 
         System.exit(new Bee().execute(BeeOption.parse(tasks)));
     }
