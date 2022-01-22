@@ -9,7 +9,7 @@
  */
 package bee.task;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
@@ -23,18 +23,14 @@ import javax.lang.model.element.TypeElement;
 
 import org.junit.jupiter.api.Test;
 
-import bee.BlinkProject;
+import bee.TaskTestBase;
 import bee.sample.Interface;
 import bee.util.JavaCompiler;
 
-/**
- * @version 2018/03/31 21:58:34
- */
-public class AnnotationProcessorTest {
+class AnnotationProcessorTest extends TaskTestBase {
 
     @Test
-    public void byClass() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void byClass() throws Exception {
         project.importBy(Interface.class);
 
         ResourceAwareProcessor.initialized = false;
@@ -49,8 +45,7 @@ public class AnnotationProcessorTest {
     }
 
     @Test
-    public void byInstance() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void byInstance() throws Exception {
         project.importBy(Interface.class);
 
         ResourceAwareProcessor.initialized = false;

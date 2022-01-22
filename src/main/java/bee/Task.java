@@ -618,14 +618,16 @@ public abstract class Task implements Extensible {
             throw new Error("You must specify task name.");
         }
 
-        if (commons == null) {
-            commons = new TreeMap();
+        synchronized (Task.class) {
+            if (commons == null) {
+                commons = new TreeMap();
 
-            for (Class<Task> task : I.findAs(Task.class)) {
-                String taskName = computeTaskName(task);
-                Info info = new Info(taskName, task);
-                if (!info.descriptions.isEmpty()) {
-                    commons.put(taskName, info);
+                for (Class<Task> task : I.findAs(Task.class)) {
+                    String taskName = computeTaskName(task);
+                    Info info = new Info(taskName, task);
+                    if (!info.descriptions.isEmpty()) {
+                        commons.put(taskName, info);
+                    }
                 }
             }
         }

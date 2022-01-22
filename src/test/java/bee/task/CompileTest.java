@@ -15,14 +15,13 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import bee.BlinkProject;
+import bee.TaskTestBase;
 import psychopath.File;
 
-public class CompileTest {
+public class CompileTest extends TaskTestBase {
 
     @Test
     public void compileMainSource() throws Exception {
-        BlinkProject project = new BlinkProject();
         project.source("A");
         project.source("test.B");
         project.resource("C");
@@ -45,7 +44,6 @@ public class CompileTest {
 
     @Test
     public void compileTestSource() throws Exception {
-        BlinkProject project = new BlinkProject();
         project.sourceTest("A");
         project.sourceTest("test.B");
         project.resourceTest("C");
@@ -68,7 +66,6 @@ public class CompileTest {
 
     @Test
     public void compileProjectSource() throws Exception {
-        BlinkProject project = new BlinkProject();
         project.sourceProject("A");
         project.sourceProject("test.B");
         project.resourceProject("C");
@@ -92,7 +89,6 @@ public class CompileTest {
     @Test
     public void compileInvalidSource() throws Exception {
         Assertions.assertThrows(Throwable.class, () -> {
-            BlinkProject project = new BlinkProject();
             project.source("A", "invalid");
 
             Compile compile = new Compile();

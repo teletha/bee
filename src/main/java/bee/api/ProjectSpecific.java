@@ -9,6 +9,8 @@
  */
 package bee.api;
 
+import java.util.function.Function;
+
 import kiss.I;
 import kiss.Lifestyle;
 
@@ -28,6 +30,16 @@ public class ProjectSpecific<M> implements Lifestyle<M> {
     public ProjectSpecific(Class<M> type) {
         this.type = type;
         this.lifestyle = I.prototype(type);
+    }
+
+    /**
+     * Create Singleton instance.
+     * 
+     * @param type A target class.
+     */
+    protected ProjectSpecific(Class<M> type, Function<Class<M>, Lifestyle<M>> builder) {
+        this.type = type;
+        this.lifestyle = builder.apply(type);
     }
 
     /**

@@ -18,8 +18,7 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
 
-import bee.BlinkProject;
-import bee.api.Project;
+import bee.TaskTestBase;
 import bee.sample.Bean;
 import bee.sample.Enum;
 import bee.sample.ExtendBean;
@@ -31,11 +30,10 @@ import kiss.I;
 import kiss.model.Model;
 import psychopath.File;
 
-public class AnnotationValidatorTest {
+class AnnotationValidatorTest extends TaskTestBase {
 
     @Test
-    public void classNameForClass() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void classNameForClass() throws Exception {
         project.importBy(Bean.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
@@ -51,8 +49,7 @@ public class AnnotationValidatorTest {
     }
 
     @Test
-    public void classNameForEnum() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void classNameForEnum() throws Exception {
         project.importBy(Enum.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
@@ -68,8 +65,7 @@ public class AnnotationValidatorTest {
     }
 
     @Test
-    public void classNameForInterface() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void classNameForInterface() throws Exception {
         project.importBy(Interface.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
@@ -85,8 +81,7 @@ public class AnnotationValidatorTest {
     }
 
     @Test
-    public void classNameForAnnotation() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void classNameForAnnotation() throws Exception {
         project.importBy(bee.sample.Annotation.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
@@ -102,8 +97,7 @@ public class AnnotationValidatorTest {
     }
 
     @Test
-    public void sourceFile() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void sourceFile() throws Exception {
         File source = project.importBy(Bean.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
@@ -123,8 +117,7 @@ public class AnnotationValidatorTest {
     }
 
     @Test
-    public void document() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void document() throws Exception {
         project.importBy(Bean.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
@@ -140,8 +133,7 @@ public class AnnotationValidatorTest {
     }
 
     @Test
-    public void isSubClassOf() throws Exception {
-        BlinkProject project = new BlinkProject();
+    void isSubClassOf() throws Exception {
         project.importBy(ExtendBean.class);
 
         compileWith(new AnnotationValidator<SourceAnnotation>() {
@@ -167,7 +159,6 @@ public class AnnotationValidatorTest {
      * @param project
      */
     private void compileWith(AnnotationValidator validator) {
-        Project project = I.make(Project.class);
         TestableProcessor processor = new TestableProcessor(validator);
 
         JavaCompiler.with()
