@@ -60,7 +60,6 @@ public class Test extends Task {
                             .classPath(project.getTestClasses())
                             .classPath(project.getDependency(Scope.Test, Scope.Compile))
                             .classPath(Bee.class)
-                            .systemProperty("prolonged", showProlongedTest)
                             .enableAssertion()
                             .encoding(project.getEncoding())
                             .workingDirectory(project.getRoot())
@@ -77,7 +76,7 @@ public class Test extends Task {
     private static final class Junit extends JVM implements TestExecutionListener {
 
         /** The threshold time (ns) to show the prolonged test. */
-        private long showProlongedTime = Integer.getInteger("prolonged") * 1000 * 1000;
+        private long showProlongedTime;
 
         /**
          * {@inheritDoc}
@@ -91,7 +90,7 @@ public class Test extends Task {
             }
 
             Set<Path> classes = I.set(Path.of(args[0]));
-            showProlongedTime = Long.parseLong(args[2]) * 1000000;
+            showProlongedTime = Long.parseLong(args[2]) * 1000 * 1000;
 
             LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
                     .selectors(DiscoverySelectors.selectClasspathRoots(classes))
