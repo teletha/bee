@@ -17,11 +17,7 @@ import kiss.Singleton;
 class LifestyleForUI implements Lifestyle<UserInterface> {
 
     /** The actual store. */
-    static final ThreadLocal<UserInterface> local = new InheritableThreadLocal();
-
-    static {
-        local.set(UserInterface.CUI);
-    }
+    static final ThreadLocal<UserInterface> local = InheritableThreadLocal.withInitial(() -> UserInterface.CUI);
 
     /**
      * {@inheritDoc}

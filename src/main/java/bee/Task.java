@@ -165,11 +165,13 @@ public abstract class Task implements Extensible {
         ParallelInterface parallel = null;
 
         for (int i = 0; i < tasks.length; i++) {
-            parallels.offerFirst(parallel = new ParallelInterface(parallel));
+            parallels.offerFirst(parallel = new ParallelInterface(ui, parallel));
         }
         parallels.peekFirst().start();
 
         return I.signal(tasks).joinAll(task -> {
+            LifestyleForProject.local.set(project);
+
             Method m = task.getClass().getDeclaredMethod("writeReplace");
             m.setAccessible(true);
 
@@ -183,7 +185,7 @@ public abstract class Task implements Extensible {
     /**
      * 
      */
-    private class ParallelInterface extends UserInterface {
+    private static class ParallelInterface extends UserInterface {
 
         /** The message mode. */
         // buffering(0) → buffered(2)
@@ -194,13 +196,17 @@ public abstract class Task implements Extensible {
         /** The message buffer. */
         private Queue<Runnable> messages = new LinkedList();
 
+        /** The original ui. */
+        private final UserInterface ui;
+
         /** The next task's interface. */
         private final ParallelInterface next;
 
         /**
          * @param next
          */
-        private ParallelInterface(ParallelInterface next) {
+        private ParallelInterface(UserInterface ui, ParallelInterface next) {
+            this.ui = ui;
             this.next = next;
         }
 
