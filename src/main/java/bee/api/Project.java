@@ -743,6 +743,17 @@ public class Project {
     }
 
     /**
+     * Retrieve the project related object of the specified type.
+     * 
+     * @param <A>
+     * @param type
+     * @return
+     */
+    public <A> A associate(Class<A> type) {
+        return (A) associates.computeIfAbsent(type, key -> I.make(type));
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

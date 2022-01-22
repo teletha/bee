@@ -23,4 +23,24 @@ class ProjectTest {
 
         Assertions.assertThrows(Fail.class, () -> project.product(null, "PRODUCT", "1.5"));
     }
+
+    @Test
+    void associate() {
+        BlinkProject project = new BlinkProject();
+
+        Key key = project.associate(Key.class);
+        assert key != null;
+
+        Key same = project.associate(Key.class);
+        assert key == same;
+    }
+
+    private static class Key {
+    }
+
+    @Test
+    void associateNull() {
+        BlinkProject project = new BlinkProject();
+        Assertions.assertThrows(NullPointerException.class, () -> project.associate(null));
+    }
 }
