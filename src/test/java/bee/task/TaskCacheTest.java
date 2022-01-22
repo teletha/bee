@@ -12,6 +12,7 @@ package bee.task;
 import org.junit.jupiter.api.Test;
 
 import bee.Task;
+import bee.TaskTestBase;
 import bee.api.Command;
 import kiss.I;
 

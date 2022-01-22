@@ -61,7 +61,7 @@ public abstract class Task implements Extensible {
     static Map<String, Info> commons;
 
     /** The current processing project. */
-    protected final Project project = I.make(Project.class);
+    protected Project project = I.make(Project.class);
 
     /** The user interface. */
     protected UserInterface ui = I.make(UserInterface.class);
@@ -568,6 +568,7 @@ public abstract class Task implements Extensible {
 
         // create task and initialize
         Task task = I.make(info.task);
+        task.project = project;
         task.ui = ui;
 
         // execute task

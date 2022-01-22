@@ -11,26 +11,54 @@ package bee.task;
 
 import org.junit.jupiter.api.Test;
 
-import bee.BlinkProject;
+import bee.TaskTestBase;
+import psychopath.Directory;
 import psychopath.File;
 
-class JarTest {
+class JarTest extends TaskTestBase {
 
     @Test
     void jarMainSource() {
-        BlinkProject project = new BlinkProject();
         project.source("A");
         project.source("test.B");
         project.resource("C");
 
-        File A = project.locateJar();
+        File createdJar = project.locateJar();
 
-        assert A.isAbsent();
+        assert createdJar.isAbsent();
 
-        Jar jar = new Jar();
-        jar.source();
+        Jar task = new Jar();
+        task.source();
 
-        assert A.isPresent();
-        assert A.size() != 0;
+        assert createdJar.isPresent();
+        assert createdJar.size() != 0;
+
+        Directory unpacked = createdJar.unpackToTemporary();
+        assert unpacked.file("A.class").isPresent();
+        assert unpacked.file("test/B.class").isPresent();
+        assert unpacked.file("C").isPresent();
+    }
+
+    @Test
+    void modifyClass() {
+        project.source("A");
+        project.source("test.B");
+        project.resource("C");
+
+        File createdJar = project.locateJar();
+
+        assert createdJar.isAbsent();
+
+        Jar task = new Jar();
+        task.removeTraceInfo = true;
+        task.source();
+
+        assert createdJar.isPresent();
+        assert createdJar.size() != 0;
+
+        Directory unpacked = createdJar.unpackToTemporary();
+        assert unpacked.file("A.class").isPresent();
+        assert unpacked.file("test/B.class").isPresent();
+        assert unpacked.file("C").isPresent();
     }
 }
