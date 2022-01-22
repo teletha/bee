@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.29.1](https://www.github.com/teletha/bee/compare/v0.29.0...v0.29.1) (2022-01-22)
+
+
+### Bug Fixes
+
+* Jar task can't include resources when modified jar. ([0a15269](https://www.github.com/teletha/bee/commit/0a15269db8c0eff89c1c4d42d0eae4dbcfeaa384))
+* Jar task can't pack non-class resources when modified jar. ([536bcca](https://www.github.com/teletha/bee/commit/536bcca817e9e5bd72075133b97733d7f9d51da9))
+* Project#getAnnotationProcessor must return all dependencies. ([4476081](https://www.github.com/teletha/bee/commit/4476081c755d7a347c75c8e16af38d2e50a41c82))
+
 ## [0.29.0](https://www.github.com/teletha/bee/compare/v0.28.2...v0.29.0) (2022-01-20)
 
 
