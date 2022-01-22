@@ -16,6 +16,10 @@ import psychopath.File;
 
 public abstract class TaskTestBase {
 
+    static {
+        I.load(Bee.class);
+    }
+
     /** The base project. */
     protected BlinkProject project;
 
@@ -26,6 +30,8 @@ public abstract class TaskTestBase {
     public void before() {
         project = I.make(BlinkProject.class);
         noop = I.make(NoOPTask.class);
+
+        LifestyleForProject.local.set(project);
         Task.results.clear();
     }
 

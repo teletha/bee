@@ -58,10 +58,20 @@ import psychopath.File;
 public abstract class Task implements Extensible {
 
     /** The common task repository. */
-    static Map<String, Info> commons;
+    private static final Map<String, Info> commons = new TreeMap();
+
+    static {
+        for (Class<Task> task : I.findAs(Task.class)) {
+            String taskName = computeTaskName(task);
+            Info info = new Info(taskName, task);
+            if (!info.descriptions.isEmpty()) {
+                commons.put(taskName, info);
+            }
+        }
+    }
 
     /** The current processing project. */
-    protected Project project = I.make(Project.class);
+    protected final Project project = I.make(Project.class);
 
     /** The user interface. */
     protected UserInterface ui = I.make(UserInterface.class);
@@ -568,7 +578,6 @@ public abstract class Task implements Extensible {
 
         // create task and initialize
         Task task = I.make(info.task);
-        task.project = project;
         task.ui = ui;
 
         // execute task
@@ -595,7 +604,7 @@ public abstract class Task implements Extensible {
      * @param taskClass A target task.
      * @return A task name.
      */
-    private final String computeTaskName(Class taskClass) {
+    private static final String computeTaskName(Class taskClass) {
         if (taskClass.isSynthetic()) {
             return computeTaskName(taskClass.getSuperclass());
         }
@@ -611,18 +620,6 @@ public abstract class Task implements Extensible {
     private final Info info(String name) {
         if (name == null) {
             throw new Error("You must specify task name.");
-        }
-
-        if (commons == null) {
-            commons = new TreeMap();
-
-            for (Class<Task> task : I.findAs(Task.class)) {
-                String taskName = computeTaskName(task);
-                Info info = new Info(taskName, task);
-                if (!info.descriptions.isEmpty()) {
-                    commons.put(taskName, info);
-                }
-            }
         }
 
         // search from common tasks
