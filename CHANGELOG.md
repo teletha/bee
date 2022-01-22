@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.30.1](https://www.github.com/teletha/bee/compare/v0.30.0...v0.30.1) (2022-01-22)
+
+
+### Bug Fixes
+
+* Test task is broken. ([b7960d2](https://www.github.com/teletha/bee/commit/b7960d28c56491924ff73a60c1941c6be6dc8a82))
+
 ## [0.30.0](https://www.github.com/teletha/bee/compare/v0.29.0...v0.30.0) (2022-01-22)
 
 
