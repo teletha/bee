@@ -146,7 +146,7 @@ public class Bee {
         this.project = project;
 
         // inject project
-        LifestyleForProject.local.set(project);
+        LifestyleForProject.local.get().set(project);
     }
 
     /**

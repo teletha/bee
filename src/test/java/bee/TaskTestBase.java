@@ -9,8 +9,10 @@
  */
 package bee;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
+import bee.Task.Cache;
 import kiss.I;
 import psychopath.File;
 
@@ -31,8 +33,14 @@ public abstract class TaskTestBase {
         project = I.make(BlinkProject.class);
         noop = I.make(NoOPTask.class);
 
-        LifestyleForProject.local.set(project);
-        Task.results.clear();
+        LifestyleForProject.local.get().set(project);
+        System.out.println("Set project " + System.identityHashCode(project));
+    }
+
+    @AfterEach
+    public void after() {
+        project.associate(Cache.class).clear();
+        // LifestyleForProject.local.get().set(null);
     }
 
     /**

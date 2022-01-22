@@ -33,6 +33,7 @@ public class Compile extends Task {
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
     public void source() {
+        System.out.println("compile:source " + System.identityHashCode(project));
         compile("main", project.getSourceSet(), project.getClasses());
     }
 
@@ -79,6 +80,11 @@ public class Compile extends Task {
         });
 
         ui.info("Compiling ", type, " sources to ", output);
+
+        System.out.println("Compile  " + System.identityHashCode(project));
+        output.walkFile().to(file -> {
+            System.out.println("CC " + file);
+        });
 
         JavaCompiler.with(ui)
                 .addClassPath(output)

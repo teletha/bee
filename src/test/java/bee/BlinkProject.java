@@ -40,7 +40,7 @@ public class BlinkProject extends Project {
      */
     public BlinkProject() {
         product("blink", "Blink", "1.0");
-        LifestyleForProject.local.set(this);
+        LifestyleForProject.local.get().set(this);
         LifestyleForUI.local.set(Null.UI);
     }
 
@@ -49,7 +49,7 @@ public class BlinkProject extends Project {
      */
     public BlinkProject(UserInterface ui) {
         product("blink", "Blink", "1.0");
-        LifestyleForProject.local.set(this);
+        LifestyleForProject.local.get().set(this);
         LifestyleForUI.local.set(ui);
     }
 

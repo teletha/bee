@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -40,6 +41,7 @@ import org.objectweb.asm.Type;
 import bee.Task.TaskLifestyle;
 import bee.api.Command;
 import bee.api.Project;
+import bee.task.Install;
 import bee.util.EnhancedClassWriter;
 import bee.util.EnhancedMethodWriter;
 import bee.util.Inputs;
@@ -187,7 +189,7 @@ public abstract class Task implements Extensible {
             Method method = I.type(s.getImplClass().replaceAll("/", ".")).getMethod(s.getImplMethodName());
 
             return execute(computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase(), parallels.pollFirst());
-        }).to().v;
+        }, Executors.newSingleThreadExecutor()).to().v;
     }
 
     /**
@@ -579,6 +581,7 @@ public abstract class Task implements Extensible {
         // create task and initialize
         Task task = I.make(info.task);
         task.ui = ui;
+        System.out.println("Execute task " + fullname + "   " + System.identityHashCode(task.project));
 
         // execute task
         try (var x = Profiling.of("Task [" + fullname + "]")) {
@@ -711,20 +714,43 @@ public abstract class Task implements Extensible {
         }
     }
 
-    /** The executed commands results. */
-    static final Map<String, Object> results = new HashMap();
+    @SuppressWarnings("serial")
+    static class Cache extends HashMap<String, Object> {
+    }
+
+    private static class A extends Install {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void jar() {
+            Map<String, Object> cache = project.associate(Cache.class);
+            String name = Inputs.hyphenize("Install:jar");
+            Object cached = cache.get(name);
+            if (!cache.containsKey(name)) {
+                ui.startCommand(name, null);
+                super.jar();
+                ui.endCommand(name, null);
+                cache.put(name, cached);
+            }
+        }
+    }
 
     /**
      * 
      */
-    static class TaskLifestyle implements Lifestyle<Object> {
+    static class TaskLifestyle<M> implements Lifestyle<Object> {
 
-        private final Lifestyle lifestyle;
+        private final Class<M> type;
+
+        private final Lifestyle<M> lifestyle;
 
         /**
          * @param model
          */
-        public TaskLifestyle(Class<?> model) {
+        public TaskLifestyle(Class<M> model) {
+            type = model;
             lifestyle = I.prototype(EnhancedClassWriter.define(Task.class, "Memoized" + model.getSimpleName(), writer -> {
                 // ======================================
                 // Define and build the memoized task class
@@ -749,45 +775,52 @@ public abstract class Task implements Extensible {
                         boolean valued = m.getReturnType() != void.class;
 
                         mw = writer.writeMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
+                        mw.visitVarInsn(ALOAD, 0);
+                        mw.visitFieldInsn(GETFIELD, parent, "project", "Lbee/api/Project;");
+                        mw.visitLdcInsn(Type.getType("Lbee/Task$Cache;"));
+                        mw.visitMethodInsn(INVOKEVIRTUAL, "bee/api/Project", "associate", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                        mw.visitTypeInsn(CHECKCAST, "java/util/Map");
+                        mw.visitVarInsn(ASTORE, 1);
+
                         mw.visitLdcInsn(model.getSimpleName() + ":" + Inputs.hyphenize(methodName));
                         mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
-                        mw.visitVarInsn(ASTORE, 1);
-                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                        mw.visitVarInsn(ALOAD, 1);
-                        mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
                         mw.visitVarInsn(ASTORE, 2);
-                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
                         mw.visitVarInsn(ALOAD, 1);
+                        mw.visitVarInsn(ALOAD, 2);
+                        mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
+                        mw.visitVarInsn(ASTORE, 3);
+                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitVarInsn(ALOAD, 2);
                         mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "containsKey", "(Ljava/lang/Object;)Z", true);
                         Label label3 = new Label();
                         mw.visitJumpInsn(IFNE, label3);
                         mw.visitVarInsn(ALOAD, 0);
                         mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
-                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitVarInsn(ALOAD, 2);
                         mw.visitInsn(ACONST_NULL);
                         mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "startCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
                         mw.visitVarInsn(ALOAD, 0);
                         mw.visitMethodInsn(INVOKESPECIAL, parent, methodName, methodDesc, false);
                         if (valued) {
                             mw.wrap(returnType);
-                            mw.visitVarInsn(Opcodes.ASTORE, 2);
+                            mw.visitVarInsn(Opcodes.ASTORE, 3);
                         }
 
                         mw.visitVarInsn(ALOAD, 0);
                         mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
-                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitVarInsn(ALOAD, 2);
                         mw.visitInsn(ACONST_NULL);
                         mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "endCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
 
-                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
                         mw.visitVarInsn(ALOAD, 1);
                         mw.visitVarInsn(ALOAD, 2);
+                        mw.visitVarInsn(ALOAD, 3);
                         mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
                         mw.visitInsn(POP);
 
                         mw.visitLabel(label3);
                         if (valued) {
-                            mw.visitVarInsn(ALOAD, 2);
+                            mw.visitVarInsn(ALOAD, 3);
                             mw.unwrap(returnType);
                             mw.visitInsn(returnType.getOpcode(IRETURN));
                         } else {
@@ -805,8 +838,8 @@ public abstract class Task implements Extensible {
          * {@inheritDoc}
          */
         @Override
-        public Object call() {
-            return lifestyle.get();
+        public M call() throws Exception {
+            return (M) I.make(Project.class).associates.computeIfAbsent(type, key -> lifestyle.get());
         }
     }
 

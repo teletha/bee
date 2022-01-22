@@ -54,6 +54,7 @@ public class Jar extends Task {
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
     public void source() {
+        System.out.println("Jar:source " + System.identityHashCode(project));
         require(Compile::source);
 
         Directory dir = project.getClasses();

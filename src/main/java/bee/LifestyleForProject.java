@@ -13,18 +13,19 @@ import bee.api.Project;
 import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.Singleton;
+import kiss.Variable;
 
 @Managed(Singleton.class)
 class LifestyleForProject implements Lifestyle<Project> {
 
     /** The actual store. */
-    static final ThreadLocal<Project> local = new InheritableThreadLocal();
+    static final ThreadLocal<Variable<Project>> local = InheritableThreadLocal.withInitial(Variable::empty);
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Project call() throws Exception {
-        return local.get();
+        return local.get().get();
     }
 }
