@@ -34,7 +34,6 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.objectweb.asm.Label;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import bee.Task.TaskLifestyle;
@@ -721,8 +720,29 @@ public abstract class Task implements Extensible {
         }
     }
 
-    /** The executed commands results. */
-    static final Map<String, Object> results = new HashMap();
+    /**
+     * Store for each command result.
+     */
+    @SuppressWarnings("serial")
+    private static class Cache extends HashMap<String, Object> {
+    }
+
+    // private static class ForASMifier extends Jar {
+    //
+    // @Override
+    // public void source() {
+    // String name = Inputs.hyphenize("Jar:source");
+    // Map<String, Object> results = project.associate(Cache.class);
+    // Object o = results.get(name);
+    // if (!results.containsKey(name)) {
+    // ui.startCommand(name, null);
+    // super.source();
+    // ui.endCommand(name, null);
+    //
+    // results.put(name, o);
+    // }
+    // }
+    // }
 
     /**
      * 
@@ -739,6 +759,7 @@ public abstract class Task implements Extensible {
                 // ======================================
                 // Define and build the memoized task class
                 // ======================================
+                String task = Type.getInternalName(Task.class);
                 String parent = Type.getInternalName(model);
                 writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
 
@@ -762,17 +783,28 @@ public abstract class Task implements Extensible {
                         mw.visitLdcInsn(model.getSimpleName() + ":" + Inputs.hyphenize(methodName));
                         mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
                         mw.visitVarInsn(ASTORE, 1);
-                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+
+                        mw.visitVarInsn(ALOAD, 0);
+                        mw.visitFieldInsn(GETFIELD, task, "project", "Lbee/api/Project;");
+                        mw.visitLdcInsn(Type.getType(Cache.class));
+                        mw.visitMethodInsn(INVOKEVIRTUAL, "bee/api/Project", "associate", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
+                        mw.visitTypeInsn(CHECKCAST, "java/util/Map");
+                        mw.visitVarInsn(ASTORE, 2);
+
+                        mw.visitVarInsn(ALOAD, 2);
                         mw.visitVarInsn(ALOAD, 1);
                         mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "get", "(Ljava/lang/Object;)Ljava/lang/Object;", true);
-                        mw.visitVarInsn(ASTORE, 2);
-                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
+                        mw.visitVarInsn(ASTORE, 3);
+
+                        mw.visitVarInsn(ALOAD, 2);
                         mw.visitVarInsn(ALOAD, 1);
                         mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "containsKey", "(Ljava/lang/Object;)Z", true);
+
                         Label label3 = new Label();
                         mw.visitJumpInsn(IFNE, label3);
                         mw.visitVarInsn(ALOAD, 0);
                         mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
+
                         mw.visitVarInsn(ALOAD, 1);
                         mw.visitInsn(ACONST_NULL);
                         mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "startCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
@@ -780,7 +812,7 @@ public abstract class Task implements Extensible {
                         mw.visitMethodInsn(INVOKESPECIAL, parent, methodName, methodDesc, false);
                         if (valued) {
                             mw.wrap(returnType);
-                            mw.visitVarInsn(Opcodes.ASTORE, 2);
+                            mw.visitVarInsn(ASTORE, 3);
                         }
 
                         mw.visitVarInsn(ALOAD, 0);
@@ -789,15 +821,15 @@ public abstract class Task implements Extensible {
                         mw.visitInsn(ACONST_NULL);
                         mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "endCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);
 
-                        mw.visitFieldInsn(GETSTATIC, "bee/Task", "results", "Ljava/util/Map;");
-                        mw.visitVarInsn(ALOAD, 1);
                         mw.visitVarInsn(ALOAD, 2);
+                        mw.visitVarInsn(ALOAD, 1);
+                        mw.visitVarInsn(ALOAD, 3);
                         mw.visitMethodInsn(INVOKEINTERFACE, "java/util/Map", "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", true);
                         mw.visitInsn(POP);
 
                         mw.visitLabel(label3);
                         if (valued) {
-                            mw.visitVarInsn(ALOAD, 2);
+                            mw.visitVarInsn(ALOAD, 3);
                             mw.unwrap(returnType);
                             mw.visitInsn(returnType.getOpcode(IRETURN));
                         } else {

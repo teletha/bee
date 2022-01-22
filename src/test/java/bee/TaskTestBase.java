@@ -9,7 +9,6 @@
  */
 package bee;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import kiss.I;
@@ -29,11 +28,6 @@ public abstract class TaskTestBase {
         noop = I.make(NoOPTask.class);
 
         LifestyleForProject.local.set(project);
-    }
-
-    @AfterEach
-    public void after() {
-        Task.results.clear();
     }
 
     /**
