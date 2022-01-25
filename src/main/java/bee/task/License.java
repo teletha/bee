@@ -28,6 +28,8 @@ public class License extends Task {
         update(project.getSourceSet());
         update(project.getTestSourceSet());
         update(project.getProjectSourceSet());
+
+        ui.info("Complete license update.");
     }
 
     /**
@@ -47,7 +49,7 @@ public class License extends Task {
 
                 if (converted != null) {
                     file.text(project.getEncoding(), converted);
-                    ui.info("Update ", project.getRoot().relativize(file));
+                    ui.trace("Update ", project.getRoot().relativize(file));
                 }
             }
         });
