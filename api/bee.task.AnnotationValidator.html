@@ -5,14 +5,14 @@
 		<title>Bee API</title>
 		<base href="../"/>
 		<link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/zenburn.min.css" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<script async="true" src="highlight.js"></script>
+		<script async="true" src="highlight.js" type="module"></script>
 		<script src="mimic.js" type="module"></script>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="i">
-		<header class="a">
-			<h1 class="L" date="2022-01-22" ver="0.30.1"><code>Bee</code></h1>
-			<nav class="U"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="d">
+		<header class="T">
+			<h1 class="Q" date="2022-01-25" ver="0.30.1"><code>Bee</code></h1>
+			<nav class="H"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
@@ -21,7 +21,7 @@
 					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>Repository</a></nav>
-			<div class="X" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+			<div class="g" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg>
 				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
@@ -29,65 +29,74 @@
 					</svg>
 				</a></div>
 		</header>
-		<main class="P">
-			<nav class="J">
+		<main class="i">
+			<nav class="e">
 				<div></div>
 			</nav>
-			<article class="R" id="Article">
-				<section class="W"><code class="I">bee.task</code>
-					<h2 class="AbstractClass T"><code class="Y">AnnotationValidator</code><code class="V">&#60;<code>A</code>&#62;</code></h2>
-					<ul class="C D">
-						<li><code>A</code><code class="extends"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/annotation/Annotation.html">Annotation</a></code></code></li>
-					</ul>
-					<ul class="C F">
-						<li><code>kiss.Extensible</code></li>
-					</ul>
+			<article class="c" id="Article">
+				<section class="S"><code class="k">bee.task</code>
+					<h2 class="AbstractClass X"><code class="j">AnnotationValidator</code><code class="P">&#60;<code>A</code>&#62;</code></h2>
+					<div class="J">
+						<ul class="C D">
+							<li><code>A</code><code class="extends"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/annotation/Annotation.html">Annotation</a></code></code></li>
+						</ul>
+						<ul class="C F">
+							<li><code>kiss.Extensible</code></li>
+						</ul>
+					</div>
 				</section>
-				<section class="W" id="AnnotationValidator()">
-					<h2 class="j"><i class="PUBLIC"></i><code class="Y">AnnotationValidator</code><code class="V">()</code></h2>
+				<section class="S" id="AnnotationValidator()">
+					<h2 class="R"><i class="PUBLIC"></i><code class="j">AnnotationValidator</code><code class="P">()</code></h2>
 				</section>
-				<section class="W" id="validate(java.lang.Object)">
-					<h2 class="j"><i class="ABSTRACT"><i class="PROTECTED"></i></i><code class="Y">validate</code><code class="V">(<code>A</code> <code class="parameterName">annotation</code>)</code><i class="S"><code>void</code></i></h2>
-					<table class="O">
-						<tr class="k">
+				<section class="S" id="validate(java.lang.Object)">
+					<h2 class="R"><i class="ABSTRACT"><i class="PROTECTED"></i></i><code class="j">validate</code><code class="P">(<code>A</code> <code class="parameterName">annotation</code>)</code><i class="h"><code>void</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code>A</code> <code>annotation</code></td>
-							<td><span>An target annotation to validate.</span></td>
+							<td><span><p>An target annotation to validate.</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Validate an annotation value.</span></section>
-				<section class="W" id="getClassName()">
-					<h2 class="j"><i class="FINAL"><i class="PROTECTED"></i></i><code class="Y">getClassName</code><code class="V">()</code><i class="S"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="O">
-						<tr class="M">
+					</table><span class="B"><p>Validate an annotation value.</p>
+					</span></section>
+				<section class="S" id="getClassName()">
+					<h2 class="R"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">getClassName</code><code class="P">()</code><i class="h"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></td>
 							<td></td>
 						</tr>
-					</table><span class="B">Returns the fully qualified class name of the annotated element.</span></section>
-				<section class="W" id="isSubClassOf(java.lang.Class)">
-					<h2 class="j"><i class="FINAL"><i class="PROTECTED"></i></i><code class="Y">isSubClassOf</code><code class="V">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a></code> <code class="parameterName">type</code>)</code><i class="S"><code>boolean</code></i></h2>
-					<table class="O">
-						<tr class="k">
+					</table><span class="B"><p>Returns the fully qualified class name of the annotated element.</p>
+					</span></section>
+				<section class="S" id="isSubClassOf(java.lang.Class)">
+					<h2 class="R"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">isSubClassOf</code><code class="P">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a></code> <code class="parameterName">type</code>)</code><i class="h"><code>boolean</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a></code> <code>type</code></td>
 							<td></td>
 						</tr>
-						<tr class="M">
+						<tr class="a">
 							<td><code>boolean</code></td>
 							<td></td>
 						</tr>
-					</table><span class="B">Detecte the root element is sub class of the specified class or not.</span></section>
-				<section class="W" id="getSourceFile()">
-					<h2 class="j"><i class="FINAL"><i class="PROTECTED"></i></i><code class="Y">getSourceFile</code><code class="V">()</code><i class="S"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></h2>
-					<table class="O">
-						<tr class="M">
+					</table><span class="B"><p>Detecte the root element is sub class of the specified class or not.</p>
+					</span></section>
+				<section class="S" id="getSourceFile()">
+					<h2 class="R"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">getSourceFile</code><code class="P">()</code><i class="h"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></td>
-							<td><span>A path to source file.</span></td>
+							<td><span><p>A path to source file.</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Compute source file path.</span></section>
-				<section class="W" id="getDocument()">
-					<h2 class="j"><i class="FINAL"><i class="PROTECTED"></i></i><code class="Y">getDocument</code><code class="V">()</code><i class="S"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="O">
-						<tr class="M">
+					</table><span class="B"><p>Compute source file path.</p>
+					</span></section>
+				<section class="S" id="getDocument()">
+					<h2 class="R"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">getDocument</code><code class="P">()</code><i class="h"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></td>
-							<td><span>A documentation comment of the source code, or empty string if there is none</span></td>
+							<td><span><p>A documentation comment of the source code, or empty string if there is none</p>
+								</span></td>
 						</tr>
 					</table><span class="B"><p>
  Returns the text of the documentation (&#34;Javadoc&#34;) comment of an element.
@@ -103,47 +112,53 @@
  concatenated together (including line terminators) and returned.
  </p>
 					</span></section>
-				<section class="W" id="notice(java.lang.Object...)">
-					<h2 class="j"><i class="FINAL"><i class="PROTECTED"></i></i><code class="Y">notice</code><code class="V">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="S"><code>void</code></i></h2>
-					<table class="O">
-						<tr class="k">
+				<section class="S" id="notice(java.lang.Object...)">
+					<h2 class="R"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">notice</code><code class="P">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="h"><code>void</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
-							<td><span>Your message.</span></td>
+							<td><span><p>Your message.</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Talk to user.</span></section>
-				<section class="W" id="warn(java.lang.Object...)">
-					<h2 class="j"><i class="FINAL"><i class="PROTECTED"></i></i><code class="Y">warn</code><code class="V">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="S"><code>void</code></i></h2>
-					<table class="O">
-						<tr class="k">
+					</table><span class="B"><p>Talk to user.</p>
+					</span></section>
+				<section class="S" id="warn(java.lang.Object...)">
+					<h2 class="R"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">warn</code><code class="P">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="h"><code>void</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
-							<td><span>Your warning message.</span></td>
+							<td><span><p>Your warning message.</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Warn to user.</span></section>
-				<section class="W" id="error(java.lang.Object...)">
-					<h2 class="j"><i class="FINAL"><i class="PROTECTED"></i></i><code class="Y">error</code><code class="V">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="S"><code>void</code></i></h2>
-					<table class="O">
-						<tr class="k">
+					</table><span class="B"><p>Warn to user.</p>
+					</span></section>
+				<section class="S" id="error(java.lang.Object...)">
+					<h2 class="R"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">error</code><code class="P">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="h"><code>void</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
-							<td><span>Your emergency message.</span></td>
+							<td><span><p>Your emergency message.</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Declare a state of emergency.</span></section>
+					</table><span class="B"><p>Declare a state of emergency.</p>
+					</span></section>
 			</article>
-			<aside class="Q" id="SubNavi">
-				<div class="f">
-					<h5 class="K">Constructors</h5>
+			<aside class="b" id="SubNavi">
+				<div class="I">
+					<h5 class="O">Constructors</h5>
 					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.task.AnnotationValidator.html#AnnotationValidator()">AnnotationValidator</a></code><code class="V">()</code></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.task.AnnotationValidator.html#AnnotationValidator()">AnnotationValidator</a></code><code class="P">()</code></li>
 					</ul>
-					<h5 class="K">Methods</h5>
+					<h5 class="O">Methods</h5>
 					<ul>
-						<li><i class="ABSTRACT"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#validate(java.lang.Object)">validate</a></code><code class="V">(<code>A</code> <code class="parameterName">annotation</code>)</code><i class="c"><code>void</code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#getClassName()">getClassName</a></code><code class="V">()</code><i class="c"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#isSubClassOf(java.lang.Class)">isSubClassOf</a></code><code class="V">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a></code> <code class="parameterName">type</code>)</code><i class="c"><code>boolean</code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#getSourceFile()">getSourceFile</a></code><code class="V">()</code><i class="c"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#getDocument()">getDocument</a></code><code class="V">()</code><i class="c"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#notice(java.lang.Object...)">notice</a></code><code class="V">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="c"><code>void</code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#warn(java.lang.Object...)">warn</a></code><code class="V">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="c"><code>void</code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#error(java.lang.Object...)">error</a></code><code class="V">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="c"><code>void</code></i></li>
+						<li><i class="ABSTRACT"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#validate(java.lang.Object)">validate</a></code><code class="P">(<code>A</code> <code class="parameterName">annotation</code>)</code><i class="M"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#getClassName()">getClassName</a></code><code class="P">()</code><i class="M"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#isSubClassOf(java.lang.Class)">isSubClassOf</a></code><code class="P">(<code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Class.html">Class</a></code> <code class="parameterName">type</code>)</code><i class="M"><code>boolean</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#getSourceFile()">getSourceFile</a></code><code class="P">()</code><i class="M"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#getDocument()">getDocument</a></code><code class="P">()</code><i class="M"><code><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#notice(java.lang.Object...)">notice</a></code><code class="P">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="M"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#warn(java.lang.Object...)">warn</a></code><code class="P">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="M"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.AnnotationValidator.html#error(java.lang.Object...)">error</a></code><code class="P">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="M"><code>void</code></i></li>
 					</ul>
 				</div>
 			</aside>

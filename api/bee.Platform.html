@@ -5,14 +5,14 @@
 		<title>Bee API</title>
 		<base href="../"/>
 		<link href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/zenburn.min.css" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<script async="true" src="highlight.js"></script>
+		<script async="true" src="highlight.js" type="module"></script>
 		<script src="mimic.js" type="module"></script>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="i">
-		<header class="a">
-			<h1 class="L" date="2022-01-22" ver="0.30.1"><code>Bee</code></h1>
-			<nav class="U"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="d">
+		<header class="T">
+			<h1 class="Q" date="2022-01-25" ver="0.30.1"><code>Bee</code></h1>
+			<nav class="H"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg><code>API</code></a><a href="https://github.com//teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
@@ -21,7 +21,7 @@
 					</svg>Activity</a><a href="https://github.com//teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>Repository</a></nav>
-			<div class="X" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+			<div class="g" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg>
 				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
@@ -29,87 +29,106 @@
 					</svg>
 				</a></div>
 		</header>
-		<main class="P">
-			<nav class="J">
+		<main class="i">
+			<nav class="e">
 				<div></div>
 			</nav>
-			<article class="R" id="Article">
-				<section class="W"><code class="I">bee</code>
-					<h2 class="Class T"><code class="Y">Platform</code></h2><span class="B">Define platform specific default configurations.</span></section>
-				<section class="W" id="Encoding">
-					<h2 class="j"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="Y">Encoding</code><i class="S"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code></i></h2><span class="B">The encoding.</span></section>
-				<section class="W" id="EOL">
-					<h2 class="j"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="Y">EOL</code><i class="S"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B">The line separator.</span></section>
-				<section class="W" id="Java">
-					<h2 class="j"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="Y">Java</code><i class="S"><code class="return">psychopath.File</code></i></h2><span class="B">The executable file for Java.</span></section>
-				<section class="W" id="JavaHome">
-					<h2 class="j"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="Y">JavaHome</code><i class="S"><code class="return">psychopath.Directory</code></i></h2><span class="B">The root directory for Java.</span></section>
-				<section class="W" id="Bee">
-					<h2 class="j"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="Y">Bee</code><i class="S"><code class="return">psychopath.File</code></i></h2><span class="B">The executable file for Bee.</span></section>
-				<section class="W" id="BeeHome">
-					<h2 class="j"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="Y">BeeHome</code><i class="S"><code class="return">psychopath.Directory</code></i></h2><span class="B">The root directory for Bee.</span></section>
-				<section class="W" id="BeeLocalRepository">
-					<h2 class="j"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="Y">BeeLocalRepository</code><i class="S"><code class="return">psychopath.Directory</code></i></h2><span class="B">The local repository.</span></section>
-				<section class="W" id="isWindows()">
-					<h2 class="j"><i class="PUBLIC STATIC"></i><code class="Y">isWindows</code><code class="V">()</code><i class="S"><code>boolean</code></i></h2>
-					<table class="O">
-						<tr class="M">
+			<article class="c" id="Article">
+				<section class="S"><code class="k">bee</code>
+					<h2 class="Class X"><code class="j">Platform</code></h2>
+					<div class="J"></div><span class="B"><p>Define platform specific default configurations.</p>
+					</span></section>
+				<section class="S" id="Encoding">
+					<h2 class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="j">Encoding</code><i class="h"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code></i></h2><span class="B"><p>The encoding.</p>
+					</span></section>
+				<section class="S" id="EOL">
+					<h2 class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="j">EOL</code><i class="h"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The line separator.</p>
+					</span></section>
+				<section class="S" id="Java">
+					<h2 class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="j">Java</code><i class="h"><code class="return">psychopath.File</code></i></h2><span class="B"><p>The executable file for Java.</p>
+					</span></section>
+				<section class="S" id="JavaHome">
+					<h2 class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="j">JavaHome</code><i class="h"><code class="return">psychopath.Directory</code></i></h2><span class="B"><p>The root directory for Java.</p>
+					</span></section>
+				<section class="S" id="Bee">
+					<h2 class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="j">Bee</code><i class="h"><code class="return">psychopath.File</code></i></h2><span class="B"><p>The executable file for Bee.</p>
+					</span></section>
+				<section class="S" id="BeeHome">
+					<h2 class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="j">BeeHome</code><i class="h"><code class="return">psychopath.Directory</code></i></h2><span class="B"><p>The root directory for Bee.</p>
+					</span></section>
+				<section class="S" id="BeeLocalRepository">
+					<h2 class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="j">BeeLocalRepository</code><i class="h"><code class="return">psychopath.Directory</code></i></h2><span class="B"><p>The local repository.</p>
+					</span></section>
+				<section class="S" id="isWindows()">
+					<h2 class="R"><i class="PUBLIC STATIC"></i><code class="j">isWindows</code><code class="P">()</code><i class="h"><code>boolean</code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code>boolean</code></td>
-							<td><span>Result</span></td>
+							<td><span><p>Result</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Check whether the current platform is Windows OS or not.</span></section>
-				<section class="W" id="isLinux()">
-					<h2 class="j"><i class="PUBLIC STATIC"></i><code class="Y">isLinux</code><code class="V">()</code><i class="S"><code>boolean</code></i></h2>
-					<table class="O">
-						<tr class="M">
+					</table><span class="B"><p>Check whether the current platform is Windows OS or not.</p>
+					</span></section>
+				<section class="S" id="isLinux()">
+					<h2 class="R"><i class="PUBLIC STATIC"></i><code class="j">isLinux</code><code class="P">()</code><i class="h"><code>boolean</code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code>boolean</code></td>
-							<td><span>Result</span></td>
+							<td><span><p>Result</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Check whether the current platform is Linux like OS or not.</span></section>
-				<section class="W" id="isGithub()">
-					<h2 class="j"><i class="PUBLIC STATIC"></i><code class="Y">isGithub</code><code class="V">()</code><i class="S"><code>boolean</code></i></h2>
-					<table class="O">
-						<tr class="M">
+					</table><span class="B"><p>Check whether the current platform is Linux like OS or not.</p>
+					</span></section>
+				<section class="S" id="isGithub()">
+					<h2 class="R"><i class="PUBLIC STATIC"></i><code class="j">isGithub</code><code class="P">()</code><i class="h"><code>boolean</code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code>boolean</code></td>
-							<td><span>Result</span></td>
+							<td><span><p>Result</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Check whether the current platform is Github Action or not.</span></section>
-				<section class="W" id="isJitPack()">
-					<h2 class="j"><i class="PUBLIC STATIC"></i><code class="Y">isJitPack</code><code class="V">()</code><i class="S"><code>boolean</code></i></h2>
-					<table class="O">
-						<tr class="M">
+					</table><span class="B"><p>Check whether the current platform is Github Action or not.</p>
+					</span></section>
+				<section class="S" id="isJitPack()">
+					<h2 class="R"><i class="PUBLIC STATIC"></i><code class="j">isJitPack</code><code class="P">()</code><i class="h"><code>boolean</code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code>boolean</code></td>
-							<td><span>Result</span></td>
+							<td><span><p>Result</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Check whether the current platform is JitPack or not.</span></section>
-				<section class="W" id="isEclipse()">
-					<h2 class="j"><i class="PUBLIC STATIC"></i><code class="Y">isEclipse</code><code class="V">()</code><i class="S"><code>boolean</code></i></h2>
-					<table class="O">
-						<tr class="M">
+					</table><span class="B"><p>Check whether the current platform is JitPack or not.</p>
+					</span></section>
+				<section class="S" id="isEclipse()">
+					<h2 class="R"><i class="PUBLIC STATIC"></i><code class="j">isEclipse</code><code class="P">()</code><i class="h"><code>boolean</code></i></h2>
+					<table class="Z">
+						<tr class="a">
 							<td><code>boolean</code></td>
-							<td><span>Result</span></td>
+							<td><span><p>Result</p>
+								</span></td>
 						</tr>
-					</table><span class="B">Check whether the current platform is Eclipse or not.</span></section>
+					</table><span class="B"><p>Check whether the current platform is Eclipse or not.</p>
+					</span></section>
 			</article>
-			<aside class="Q" id="SubNavi">
-				<div class="f">
-					<h5 class="K">Static Fields</h5>
+			<aside class="b" id="SubNavi">
+				<div class="I">
+					<h5 class="O">Static Fields</h5>
 					<ul>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#Encoding">Encoding</a></code><i class="c"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#EOL">EOL</a></code><i class="c"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#Java">Java</a></code><i class="c"><code class="return">psychopath.File</code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#JavaHome">JavaHome</a></code><i class="c"><code class="return">psychopath.Directory</code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#Bee">Bee</a></code><i class="c"><code class="return">psychopath.File</code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#BeeHome">BeeHome</a></code><i class="c"><code class="return">psychopath.Directory</code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#BeeLocalRepository">BeeLocalRepository</a></code><i class="c"><code class="return">psychopath.Directory</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#Encoding">Encoding</a></code><i class="M"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#EOL">EOL</a></code><i class="M"><code class="return"><a href="https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#Java">Java</a></code><i class="M"><code class="return">psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#JavaHome">JavaHome</a></code><i class="M"><code class="return">psychopath.Directory</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#Bee">Bee</a></code><i class="M"><code class="return">psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#BeeHome">BeeHome</a></code><i class="M"><code class="return">psychopath.Directory</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.Platform.html#BeeLocalRepository">BeeLocalRepository</a></code><i class="M"><code class="return">psychopath.Directory</code></i></li>
 					</ul>
-					<h5 class="K">Static Methods</h5>
+					<h5 class="O">Static Methods</h5>
 					<ul>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isWindows()">isWindows</a></code><code class="V">()</code><i class="c"><code>boolean</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isLinux()">isLinux</a></code><code class="V">()</code><i class="c"><code>boolean</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isGithub()">isGithub</a></code><code class="V">()</code><i class="c"><code>boolean</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isJitPack()">isJitPack</a></code><code class="V">()</code><i class="c"><code>boolean</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isEclipse()">isEclipse</a></code><code class="V">()</code><i class="c"><code>boolean</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isWindows()">isWindows</a></code><code class="P">()</code><i class="M"><code>boolean</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isLinux()">isLinux</a></code><code class="P">()</code><i class="M"><code>boolean</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isGithub()">isGithub</a></code><code class="P">()</code><i class="M"><code>boolean</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isJitPack()">isJitPack</a></code><code class="P">()</code><i class="M"><code>boolean</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.Platform.html#isEclipse()">isEclipse</a></code><code class="P">()</code><i class="M"><code>boolean</code></i></li>
 					</ul>
 				</div>
 			</aside>
