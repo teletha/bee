@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.30.2](https://www.github.com/teletha/bee/compare/v0.30.1...v0.30.2) (2022-01-26)
+
+
+### Bug Fixes
+
+* Reduce message on license task. ([5230c6e](https://www.github.com/teletha/bee/commit/5230c6efddc7eea4f3d817162690c300d811ee6d))
+
 ### [0.30.1](https://www.github.com/teletha/bee/compare/v0.30.0...v0.30.1) (2022-01-22)
 
 
