@@ -113,7 +113,7 @@ const
 		} else if (Array.isArray(v)) {
 			v.forEach(i => nodify(i, action))
 		} else if (isString(v)) {
-			action(v.trim()[0] === "<" ? parseHTML(v) : $(v))
+			action(v.trim()[0] === "<" ? parseHTML(v) : Mimic(v))
 		} else if (v instanceof Mimic) {
 			nodify(v.nodes, action)
 		}
