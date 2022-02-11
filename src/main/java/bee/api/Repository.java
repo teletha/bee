@@ -686,7 +686,7 @@ public class Repository {
          * @return
          */
         private boolean shouldAccessToSource() {
-            return lastAccessToSource.plusDays(7).isBefore(LocalDate.now());
+            return BeeOption.Cacheless.value() ? true : lastAccessToSource.plusDays(14).isBefore(LocalDate.now());
         }
 
         /**

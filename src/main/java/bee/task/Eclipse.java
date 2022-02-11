@@ -11,10 +11,10 @@ package bee.task;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
 
 import bee.Bee;
 import bee.BeeInstaller;
@@ -140,7 +140,7 @@ public class Eclipse extends Task implements IDESupport {
         });
 
         // library
-        List<Library> libraries = I.signal(project.getDependency(Scope.Compile, Scope.Annotation)).toList();
+        Set<Library> libraries = project.getDependency(Scope.Compile, Scope.Annotation);
         libraries.remove(project.asLibrary());
 
         // test library
@@ -148,9 +148,11 @@ public class Eclipse extends Task implements IDESupport {
         tests.removeAll(libraries);
         tests.remove(project.asLibrary());
 
-        for (Library library : tests) {
-            File jar = library.getLocalJar();
-            File source = library.getLocalSourceJar();
+        ForkJoinPool fork = new ForkJoinPool(24);
+
+        I.signal(tests).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar()), fork).to(x -> {
+            File jar = x.ⅰ;
+            File source = x.ⅱ;
 
             if (jar.isPresent()) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar).effect(this::assignVisibleForTest);
@@ -159,13 +161,13 @@ public class Eclipse extends Task implements IDESupport {
                     child.attr("sourcepath", source);
                 }
             }
-        }
+        });
 
         boolean isModuledProject = project.getSources().existFile("*/module-info.java");
 
-        for (Library library : libraries) {
-            File jar = library.getLocalJar();
-            File source = library.getLocalSourceJar();
+        I.signal(libraries).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar()), fork).to(x -> {
+            File jar = x.ⅰ;
+            File source = x.ⅱ;
 
             if (jar.isPresent()) {
                 XML child = doc.child("classpathentry").attr("kind", "lib").attr("path", jar);
@@ -178,7 +180,7 @@ public class Eclipse extends Task implements IDESupport {
                     child.child("attributes").child("attribute").attr("name", "module").attr("value", true);
                 }
             }
-        }
+        });
 
         // Bee API
         if (!project.equals(Bee.Tool)) {
