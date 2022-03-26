@@ -9,6 +9,8 @@
  */
 package bee.util;
 
+import javax.lang.model.SourceVersion;
+
 import org.junit.jupiter.api.Test;
 
 import bee.BlinkProject;
@@ -78,6 +80,7 @@ class JavaCompilerTest {
                 .addSourceDirectory(project.getSourceSet())
                 .setOutput(project.getClasses())
                 .setEclipseCompiler(true)
+                .setVersion(SourceVersion.RELEASE_17)
                 .compile();
 
         assert source.isPresent();

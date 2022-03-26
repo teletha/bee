@@ -275,8 +275,10 @@ public class Test extends Task {
                     int line = element.getClassName().equals(name) ? element.getLineNumber() : 0;
 
                     StringBuilder message = new StringBuilder("FIX: ").append(e.name())
-                            .append(" @" + line + " \t")
-                            .append(e.message().trim().split("[" + Platform.EOL + "]")[0]);
+                            .append(" @")
+                            .append(line)
+                            .append(Platform.EOL)
+                            .append(e.message());
 
                     fail.solve(message);
                 }
