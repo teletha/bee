@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -104,6 +105,7 @@ class DependencyTest {
     }
 
     @Test
+    @Disabled
     void atProvided2() {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm", "9.2");

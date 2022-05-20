@@ -64,6 +64,7 @@ import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
 import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.checksum.DefaultChecksumAlgorithmFactorySelector;
 import org.eclipse.aether.internal.impl.collect.FastDependencyCollector;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactorySelector;
@@ -77,6 +78,7 @@ import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
+import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactorySelector;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.locator.Service;
@@ -737,6 +739,8 @@ public class Repository {
             define(DefaultTransporterProvider.class, impl -> {
                 impl.addTransporterFactory(I.make(TransporterFactory.class));
             });
+
+            define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector::new);
             define(DefaultChecksumPolicyProvider.class);
             define(DefaultRepositoryConnectorProvider.class, impl -> {
                 impl.addRepositoryConnectorFactory(I.make(BasicRepositoryConnectorFactory.class));
