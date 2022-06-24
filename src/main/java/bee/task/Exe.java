@@ -9,11 +9,15 @@
  */
 package bee.task;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Attributes.Name;
+import java.util.jar.Manifest;
 
 import bee.Platform;
 import bee.Task;
@@ -33,6 +37,9 @@ public class Exe extends Task {
     /** The location for icon of exe file. */
     protected Path icon;
 
+    /** The usage of custom JRE. */
+    protected boolean useCustomJRE;
+
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
         if (!Platform.isWindows()) {
@@ -42,6 +49,24 @@ public class Exe extends Task {
 
         // search main classes
         String main = require(FindMain::main);
+
+        // search main class in MANIFEST.MF
+        File file = project.getSourceSet()
+                .flatMap(dir -> dir.walkFile("META-INF/MANIFEST.MF"))
+                .first()
+                .to()
+                .or(project.getSources().file("resources/META-INF/MANIFEST.MF"));
+
+        try {
+            Manifest manifest = new Manifest(file.newInputStream());
+            try (OutputStream out = file.newOutputStream()) {
+                manifest.getMainAttributes().putValue(Name.MANIFEST_VERSION.toString(), "1.0");
+                manifest.getMainAttributes().putValue(Name.MAIN_CLASS.toString(), main);
+                manifest.write(out);
+            }
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
 
         require(Jar::source);
 
@@ -72,8 +97,6 @@ public class Exe extends Task {
                         command.add(Inputs.normalize(project.getJavaClassVersion()));
                         command.add("-j");
                         command.add(project.locateJar().toString());
-                        command.add("-M");
-                        command.add(main);
                         command.add("-o");
                         command.add(exe.absolutize().toString());
                         if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
@@ -93,6 +116,19 @@ public class Exe extends Task {
         folder.add(project.locateJar(), o -> o.allocateIn("lib"));
         for (Library library : project.getDependency(Scope.Runtime)) {
             folder.add(library.getLocalJar(), o -> o.allocateIn("lib"));
+        }
+
+        // Build custom JRE
+        if (useCustomJRE) {
+            Directory jre = Locator.temporaryDirectory("jre");
+            List<String> command = new ArrayList();
+            command.add("jlink");
+            command.add("--add-modules");
+            command.add("java.base,java.xml,java.net.http,java.logging,jdk.unsupported,jdk.charsets,jdk.zipfs,jdk.localedata");
+            command.add("--output");
+            command.add(jre.toString());
+            Process.with().run(command);
+            folder.add(jre);
         }
 
         ui.info("Packing application and libraries.");
