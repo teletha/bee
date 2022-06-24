@@ -9,15 +9,11 @@
  */
 package bee.task;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Attributes.Name;
-import java.util.jar.Manifest;
 
 import bee.Platform;
 import bee.Task;
@@ -47,27 +43,6 @@ public class Exe extends Task {
         // search main classes
         String main = require(FindMain::main);
 
-        // search main class in MANIFEST.MF
-        File file = project.getSourceSet()
-                .flatMap(dir -> dir.walkFile("META-INF/MANIFEST.MF"))
-                .first()
-                .to()
-                .or(project.getSources().file("resources/META-INF/MANIFEST.MF"));
-
-        try {
-            Manifest manifest = new Manifest(file.newInputStream());
-            Object userDefinedMainClass = manifest.getMainAttributes().get(Name.MAIN_CLASS.toString());
-            if (userDefinedMainClass == null) {
-                try (OutputStream out = file.newOutputStream()) {
-                    manifest.getMainAttributes().putValue(Name.MANIFEST_VERSION.toString(), "1.0");
-                    manifest.getMainAttributes().putValue(Name.MAIN_CLASS.toString(), main);
-                    manifest.write(out);
-                }
-            }
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-
         require(Jar::source);
 
         // pack with dependency libraries
@@ -82,9 +57,9 @@ public class Exe extends Task {
                 .waitForTerminate()
                 .to(dir -> {
                     Directory temporary = Locator.temporaryDirectory();
-                    File exewrap = dir.file("exewrap1.6.4/x86/exewrap.exe");
 
                     for (String suffix : List.of("86", "64")) {
+                        File exewrap = dir.file("exewrap1.6.4/x" + suffix + "/exewrap.exe");
                         File exe = temporary.file(project.getProduct() + suffix + ".exe");
 
                         // build command line
