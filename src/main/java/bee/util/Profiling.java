@@ -87,8 +87,10 @@ public class Profiling implements AutoCloseable {
     @Override
     public void close() {
         stop();
-        current = current.previous;
-        if (current != null) current.start();
+        if (current != null) {
+            current = current.previous;
+            if (current != null) current.start();
+        }
     }
 
     /**

@@ -49,6 +49,8 @@ import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
 import org.eclipse.aether.internal.impl.DefaultDeployer;
 import org.eclipse.aether.internal.impl.DefaultFileProcessor;
 import org.eclipse.aether.internal.impl.DefaultInstaller;
+import org.eclipse.aether.internal.impl.DefaultLocalPathComposer;
+import org.eclipse.aether.internal.impl.DefaultLocalPathPrefixComposerFactory;
 import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
 import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
 import org.eclipse.aether.internal.impl.DefaultOfflineController;
@@ -753,6 +755,8 @@ public class Repository {
             define(DefaultSyncContextFactory.class);
             define(DefaultRepositoryEventDispatcher.class);
             define(DefaultOfflineController.class);
+            define(DefaultLocalPathComposer.class);
+            define(DefaultLocalPathPrefixComposerFactory.class);
             define(DefaultLocalRepositoryProvider.class, impl -> {
                 impl.addLocalRepositoryManagerFactory(I.make(SimpleLocalRepositoryManagerFactory.class));
                 impl.addLocalRepositoryManagerFactory(I.make(EnhancedLocalRepositoryManagerFactory.class));

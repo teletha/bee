@@ -97,6 +97,8 @@ public class Exe extends Task {
                         command.add(Inputs.normalize(project.getJavaClassVersion()));
                         command.add("-j");
                         command.add(project.locateJar().toString());
+                        command.add("-M");
+                        command.add(main);
                         command.add("-o");
                         command.add(exe.absolutize().toString());
                         if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
