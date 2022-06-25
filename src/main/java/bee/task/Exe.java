@@ -12,10 +12,15 @@ package bee.task;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.module.ModuleDescriptor.Requires;
+import java.lang.module.ModuleFinder;
+import java.lang.module.ModuleReference;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
@@ -38,7 +43,7 @@ public class Exe extends Task {
     protected Path icon;
 
     /** The usage of custom JRE. */
-    protected boolean useCustomJRE;
+    protected boolean useCustomJRE = true;
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
@@ -124,9 +129,12 @@ public class Exe extends Task {
             List<String> command = new ArrayList();
             command.add("jlink");
             command.add("--add-modules");
-            command.add("java.base,java.xml,java.net.http,java.logging,jdk.unsupported,jdk.charsets,jdk.zipfs,jdk.localedata");
+            command.add(String.join(",", modules(project.getDependency(Scope.Runtime))));
             command.add("--output");
             command.add(jre.toString());
+            command.add("--compress");
+            command.add("2");
+            command.add("--strip-native-commands");
             Process.with().run(command);
             folder.add(jre);
         }
@@ -134,5 +142,31 @@ public class Exe extends Task {
         ui.info("Packing application and libraries.");
 
         return folder.packTo(project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip"));
+    }
+
+    /**
+     * Collect all JDK modules.
+     * 
+     * @param libraries
+     * @return
+     */
+    private static Set<String> modules(Set<Library> libraries) {
+        Set<String> names = new HashSet();
+        names.add("jdk.localedata");
+
+        for (Library library : libraries) {
+            ModuleFinder finder = ModuleFinder.of(library.getLocalJar().asJavaPath());
+            for (ModuleReference ref : finder.findAll()) {
+                for (Requires requires : ref.descriptor().requires()) {
+                    String name = requires.name();
+                    if (name.startsWith("java.") || name.startsWith("jdk.")) {
+                        if (ModuleLayer.boot().findModule(name).isPresent()) {
+                            names.add(name);
+                        }
+                    }
+                }
+            }
+        }
+        return names;
     }
 }
