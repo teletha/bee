@@ -52,6 +52,8 @@ public class Exe extends Task {
             return null;
         }
 
+        require(Test::test);
+
         // search main classes
         String main = require(FindMain::main);
 
