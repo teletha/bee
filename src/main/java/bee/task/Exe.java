@@ -90,36 +90,34 @@ public class Exe extends Task {
                 .to(dir -> {
                     Directory temporary = Locator.temporaryDirectory();
 
-                    for (String suffix : List.of("86", "64")) {
-                        File exewrap = dir.file("exewrap1.6.4/x" + suffix + "/exewrap.exe");
-                        File exe = temporary.file(project.getProduct() + suffix + ".exe");
+                    File exewrap = dir.file("exewrap1.6.4/x64/exewrap.exe");
+                    File exe = temporary.file(project.getProduct() + ".exe");
 
-                        // build command line
-                        List<String> command = new ArrayList();
-                        command.add(exewrap.toString());
-                        command.add("-g");
-                        command.add("-A");
-                        command.add("x" + suffix);
-                        command.add("-t");
-                        command.add(Inputs.normalize(project.getJavaClassVersion()));
-                        command.add("-j");
-                        command.add(project.locateJar().toString());
-                        command.add("-e");
-                        command.add("IGNORE_UNCAUGHT_EXCEPTION");
-                        command.add("-o");
-                        command.add(exe.absolutize().toString());
-                        if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
-                            command.add("-i");
-                            command.add(icon.toString());
-                        }
-
-                        // execute exewrap
-                        Process.with().workingDirectory(exewrap.parent()).ignoreOutput().run(command);
-                        ui.info("Write " + exe.name() + ".");
-
-                        // pack
-                        folder.add(exe);
+                    // build command line
+                    List<String> command = new ArrayList();
+                    command.add(exewrap.toString());
+                    command.add("-g");
+                    command.add("-A");
+                    command.add("x64");
+                    command.add("-t");
+                    command.add(Inputs.normalize(project.getJavaClassVersion()));
+                    command.add("-j");
+                    command.add(project.locateJar().toString());
+                    command.add("-e");
+                    command.add("IGNORE_UNCAUGHT_EXCEPTION");
+                    command.add("-o");
+                    command.add(exe.absolutize().toString());
+                    if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
+                        command.add("-i");
+                        command.add(icon.toString());
                     }
+
+                    // execute exewrap
+                    Process.with().workingDirectory(exewrap.parent()).ignoreOutput().run(command);
+                    ui.info("Write " + exe.name() + ".");
+
+                    // pack
+                    folder.add(exe);
                 });
 
         folder.add(project.locateJar(), o -> o.allocateIn("lib"));
