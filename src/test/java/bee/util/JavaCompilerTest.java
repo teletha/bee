@@ -80,7 +80,7 @@ class JavaCompilerTest {
                 .addSourceDirectory(project.getSourceSet())
                 .setOutput(project.getClasses())
                 .setEclipseCompiler(true)
-                .setVersion(SourceVersion.RELEASE_17)
+                .setVersion(SourceVersion.RELEASE_16)
                 .compile();
 
         assert source.isPresent();
