@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.31.0](https://www.github.com/teletha/bee/compare/v0.30.1...v0.31.0) (2022-06-30)
+
+
+### Features
+
+* Eclipse task resolves sources in parallel. ([91eeead](https://www.github.com/teletha/bee/commit/91eeead9d9d050fbcbecff8ee7689e5d68a8dd31))
+* Exe task can build custom JRE. ([6f24e8b](https://www.github.com/teletha/bee/commit/6f24e8bafe0c0ffa3873bd98826a7d68181ad190))
+* Exe task generates custom JRE automatically. ([26cf5fd](https://www.github.com/teletha/bee/commit/26cf5fdb2c84cb2e1d2ce1a34bcd295f7e0ade07))
+* Exe task requires the passing tests. ([00b1bd4](https://www.github.com/teletha/bee/commit/00b1bd4e00d6bc73b50a23a6398b629ef7abfca3))
+
+
+### Bug Fixes
+
+* Exe task generates 64bit application only. ([2536e12](https://www.github.com/teletha/bee/commit/2536e127fc7714d650ad52f1bedadcc2dc3e2264))
+* Exe task ignore uncaught exception. ([eae6f84](https://www.github.com/teletha/bee/commit/eae6f8475cb92ed65f698c79c3b8932f4e397a59))
+* Exe task is broken. ([b3e41a4](https://www.github.com/teletha/bee/commit/b3e41a4d9e278e6a9b6bf41c09c597f39bd9e1bb))
+* JavaCompilerTest was failed. ([e9e61e7](https://www.github.com/teletha/bee/commit/e9e61e74899dfde790c2ad20b93e097ab38433ff))
+* Reduce message on license task. ([5230c6e](https://www.github.com/teletha/bee/commit/5230c6efddc7eea4f3d817162690c300d811ee6d))
+* update aether resolver ([0a17783](https://www.github.com/teletha/bee/commit/0a17783695bb634c1e9f7755c4f71d0eb55d95b7))
+
 ### [0.30.1](https://www.github.com/teletha/bee/compare/v0.30.0...v0.30.1) (2022-01-22)
 
 
