@@ -139,8 +139,13 @@ public class CI extends Task {
                         </p>
 
 
-                        ## About The Project
+                        ## Summary
                         {description}
+                        <p align="right"><a href="#top">back to top</a></p>
+
+
+                        ## Usage
+                        {usage}
                         <p align="right"><a href="#top">back to top</a></p>
 
 
@@ -155,7 +160,7 @@ public class CI extends Task {
                         ```
                         <p align="right"><a href="#top">back to top</a></p>
 
-                        ## Using in your build
+                        ## Install
                         For any code snippet below, please substitute the version given with the version of {ProductName} you wish to use.
                         #### [Maven](https://maven.apache.org/)
                         Add JitPack repository at the end of repositories element in your build.xml:
@@ -233,7 +238,7 @@ public class CI extends Task {
                         <p align="right"><a href="#top">back to top</a></p>
 
 
-                        ## Built with
+                        ## Dependency
                         {ProductName} depends on the following products on runtime.
                         {#dependencies}
                         * [{.}](https://mvnrepository.com/artifact/{group}/{name}/{version})
@@ -346,5 +351,68 @@ public class CI extends Task {
             updated.pollLast();
         }
         return updated;
+    }
+
+    /**
+     * 
+     */
+    @SuppressWarnings("serial")
+    static class UsageList extends ArrayList<Usage> {
+
+        /**
+         * Create new {@link Usage}.
+         * 
+         * @return
+         */
+        private Usage createNewUsage() {
+            Usage usage = new Usage();
+            add(usage);
+            return usage;
+        }
+
+        /**
+         * Parse source.
+         * 
+         * @param source
+         * @return
+         */
+        static UsageList parse(String source) {
+            UsageList list = new UsageList();
+
+            int start = 0;
+            int end = 0;
+            String indent = "";
+            Usage usage = null;
+
+            String[] lines = source.split("[\\r\\n]+");
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+
+                if (line.strip().startsWith("@Test")) {
+                    indent = line.substring(0, line.indexOf("@Test"));
+                    start = i;
+                    usage = list.createNewUsage();
+                } else if (start != 0) {
+                    if (line.equals(indent.concat("}"))) {
+                        start = 0;
+                    } else {
+                        usage.lines.add(line);
+                    }
+                }
+            }
+            return list;
+        }
+    }
+
+    /**
+     * 
+     */
+    static class Usage {
+
+        List<String> lines = new ArrayList();
+
+        String text() {
+            return lines.stream().collect(Collectors.joining("\\r\\n"));
+        }
     }
 }

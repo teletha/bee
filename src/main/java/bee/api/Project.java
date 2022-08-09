@@ -75,6 +75,9 @@ public class Project {
     /** The product description. */
     private String description = "";
 
+    /** The product example. */
+    private String usage = "";
+
     /** The license. */
     private License license = License.MIT;
 
@@ -246,6 +249,38 @@ public class Project {
             description = "";
         }
         this.description = description.trim();
+    }
+
+    /**
+     * Return product usage.
+     * 
+     * @return The product usage.
+     */
+    public String getUsage() {
+        return usage;
+    }
+
+    /**
+     * Internal setter for property access.
+     * 
+     * @param usage
+     */
+    @SuppressWarnings("unused")
+    private void setUsage(String usage) {
+        this.usage = usage;
+    }
+
+    /**
+     * Declare product usage.
+     * 
+     * @param usageClassName A product usage.
+     */
+    protected final void usage(String usageClassName) {
+        if (usageClassName != null && usageClassName.length() != 0) {
+            getRoot().walkFile("**/" + usageClassName + ".java").to(file -> {
+                this.usage = file.text();
+            });
+        }
     }
 
     /**
