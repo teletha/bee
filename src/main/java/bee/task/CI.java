@@ -23,6 +23,7 @@ import bee.api.License;
 import bee.api.Scope;
 import bee.api.VCS;
 import bee.util.Inputs;
+import bee.util.Snippet;
 import kiss.I;
 import psychopath.File;
 
@@ -128,6 +129,9 @@ public class CI extends Task {
      * Create README file if needed
      */
     private void makeReadMeFile() {
+        List<Snippet> snippets = Snippet
+                .parse(project.getRoot().walkFile("**/ReadMeUsageTest.java", "**/SnippetTest.java").first().map(File::text).to().v, "Test");
+
         makeFile("README.md", I
                 .express("""
                         <p align="center">
@@ -145,7 +149,7 @@ public class CI extends Task {
 
 
                         ## Usage
-                        {usage}
+                        {snippets}
                         <p align="right"><a href="#top">back to top</a></p>
 
 
@@ -287,6 +291,11 @@ public class CI extends Task {
                             case "license":
                                 return project.license().text(false).stream().collect(Collectors.joining(Platform.EOL));
 
+                            case "snippets":
+                                return snippets.stream()
+                                        .map(sn -> sn.comment + "\n```java\n" + sn.code + "\n```\n")
+                                        .collect(Collectors.joining(Platform.EOL));
+
                             default:
                                 return null;
                             }
@@ -351,68 +360,5 @@ public class CI extends Task {
             updated.pollLast();
         }
         return updated;
-    }
-
-    /**
-     * 
-     */
-    @SuppressWarnings("serial")
-    static class UsageList extends ArrayList<Usage> {
-
-        /**
-         * Create new {@link Usage}.
-         * 
-         * @return
-         */
-        private Usage createNewUsage() {
-            Usage usage = new Usage();
-            add(usage);
-            return usage;
-        }
-
-        /**
-         * Parse source.
-         * 
-         * @param source
-         * @return
-         */
-        static UsageList parse(String source) {
-            UsageList list = new UsageList();
-
-            int start = 0;
-            int end = 0;
-            String indent = "";
-            Usage usage = null;
-
-            String[] lines = source.split("[\\r\\n]+");
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-
-                if (line.strip().startsWith("@Test")) {
-                    indent = line.substring(0, line.indexOf("@Test"));
-                    start = i;
-                    usage = list.createNewUsage();
-                } else if (start != 0) {
-                    if (line.equals(indent.concat("}"))) {
-                        start = 0;
-                    } else {
-                        usage.lines.add(line);
-                    }
-                }
-            }
-            return list;
-        }
-    }
-
-    /**
-     * 
-     */
-    static class Usage {
-
-        List<String> lines = new ArrayList();
-
-        String text() {
-            return lines.stream().collect(Collectors.joining("\\r\\n"));
-        }
     }
 }

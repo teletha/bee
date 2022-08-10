@@ -15,7 +15,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import bee.TaskTestBase;
-import bee.task.CI.UsageList;
 
 class CiTest extends TaskTestBase {
 
@@ -64,30 +63,5 @@ class CiTest extends TaskTestBase {
             assert one.get(i).equals(other.get(i));
         }
         return true;
-    }
-
-    @Test
-    void parse() {
-        String source = """
-                package test;
-
-                import org.junit.Test;
-
-                class SomeTest {
-
-                    @Test
-                    void method() {
-                        assert "test" != null;
-                    }
-                }
-                """;
-
-        UsageList list = UsageList.parse(source);
-        assert list.size() == 1;
-        assert list.get(0).text().equals("""
-                void method() {
-                    assert "test" != null;
-                }
-                """);
     }
 }

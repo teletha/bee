@@ -733,7 +733,7 @@ public abstract class UserInterface {
         /**
          * Colorize the text.
          * 
-         * @param text
+         * @param code
          * @param colorCode
          * @return
          */
@@ -744,7 +744,7 @@ public abstract class UserInterface {
         /**
          * Colorize specified parts of text.
          * 
-         * @param text
+         * @param code
          * @param partAndColorCode
          * @return
          */
