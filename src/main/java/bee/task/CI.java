@@ -63,10 +63,10 @@ public class CI extends Task {
                     runs-on: ubuntu-latest
                     steps:
                     - name: Check out repository
-                      uses: actions/checkout@v2
+                      uses: actions/checkout@v3
 
                     - name: Set up JDK
-                      uses: actions/setup-java@v2
+                      uses: actions/setup-java@v3
                       with:
                         distribution: zulu
                         java-version: %s
@@ -88,7 +88,7 @@ public class CI extends Task {
                         publish_dir: target/site
 
                     - name: Request Releasing
-                      uses: GoogleCloudPlatform/release-please-action@v2
+                      uses: GoogleCloudPlatform/release-please-action@v3
                       with:
                         release-type: simple
                         package-name: %s
