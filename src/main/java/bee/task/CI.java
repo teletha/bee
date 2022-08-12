@@ -129,8 +129,12 @@ public class CI extends Task {
      * Create README file if needed
      */
     private void makeReadMeFile() {
-        List<Snippet> snippets = Snippet
-                .parse(project.getRoot().walkFile("**/ReadMeUsageTest.java", "**/SnippetTest.java").first().map(File::text).to().v, "Test");
+        List<Snippet> snippets = project.getRoot()
+                .walkFile("**/ReadMe*Test.java")
+                .first()
+                .map(File::text)
+                .flatIterable(text -> Snippet.parse(text, "Test"))
+                .toList();
 
         makeFile("README.md", I
                 .express("""
