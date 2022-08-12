@@ -567,6 +567,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Snippet",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "StandardHeaderStyle",
 			"packageName": "bee.coder",
 			"type": "Enum"
