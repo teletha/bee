@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import bee.Platform;
+
 class SnippetTest {
 
     @Test
@@ -52,7 +54,7 @@ class SnippetTest {
                 assert "test" != null;
                 """.trim());
 
-        assert snippets.get(1).comment.equals("First line.\r\nSecond line.");
+        assert snippets.get(1).comment.equals("First line." + Platform.EOL + "Second line.");
         assert snippets.get(1).code.equals("""
                 assert "test1" != null;
 
