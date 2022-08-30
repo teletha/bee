@@ -87,7 +87,7 @@ public abstract class Task implements Extensible {
      */
     @Override
     public String toString() {
-        return Model.of(this).name;
+        return Model.of(this).type.getSimpleName();
     }
 
     /**
