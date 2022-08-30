@@ -254,14 +254,6 @@ public class CI extends Task {
                         {^dependencies}
                         * No Dependency
                         {/dependencies}
-
-                        {ProductName} depends on the following products on test.
-                        {#testDependencies}
-                        * [{.}](https://mvnrepository.com/artifact/{group}/{name}/{version})
-                        {/testDependencies}
-                        {^testDependencies}
-                        * No Dependency
-                        {/testDependencies}
                         <p align="right"><a href="#top">back to top</a></p>
 
 
