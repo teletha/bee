@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.32.0](https://www.github.com/teletha/bee/compare/v0.31.0...v0.32.0) (2022-11-29)
+
+
+### Features
+
+* Add snippet. ([9a6ecda](https://www.github.com/teletha/bee/commit/9a6ecda4b124d2f68b55ca1d25189976f7864286))
+* Update maven and aether api. ([565d57d](https://www.github.com/teletha/bee/commit/565d57d53cebafda0eeed611fc56068a6b220579))
+
+
+### Bug Fixes
+
+* NPE on CI task. ([5c5cfbf](https://www.github.com/teletha/bee/commit/5c5cfbf4ddc9280933e142312e3668f1b1ea38ea))
+* Update github actions. ([63fdb99](https://www.github.com/teletha/bee/commit/63fdb99a1e6bad9fc24d12ab3f57be2ee93c9d56))
+* update readme on ci ([4bfc326](https://www.github.com/teletha/bee/commit/4bfc326283788cd14bcef6d841d293fc55bd96a2))
+* Update sinobu. ([c91dd50](https://www.github.com/teletha/bee/commit/c91dd5019afb35583d56e4a229fd901b7b897009))
+
 ## [0.31.0](https://www.github.com/teletha/bee/compare/v0.30.1...v0.31.0) (2022-06-30)
 
 
