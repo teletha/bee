@@ -48,7 +48,7 @@ Add it into in the dependencies element like so:
 <dependency>
     <groupId>com.github.teletha</groupId>
     <artifactId>bee</artifactId>
-    <version>0.32.0</version>
+    <version>0.32.2</version>
 </dependency>
 ```
 #### [Gradle](https://gradle.org/)
@@ -61,7 +61,7 @@ repositories {
 Add it into the dependencies section like so:
 ```gradle
 dependencies {
-    implementation 'com.github.teletha:bee:0.32.0'
+    implementation 'com.github.teletha:bee:0.32.2'
 }
 ```
 #### [SBT](https://www.scala-sbt.org/)
@@ -71,7 +71,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 ```
 Add it into the libraryDependencies section like so:
 ```scala
-libraryDependencies += "com.github.teletha" % "bee" % "0.32.0"
+libraryDependencies += "com.github.teletha" % "bee" % "0.32.2"
 ```
 #### [Leiningen](https://leiningen.org/)
 Add JitPack repository at the end of repositories in your project.clj:
@@ -80,12 +80,12 @@ Add JitPack repository at the end of repositories in your project.clj:
 ```
 Add it into the dependencies section like so:
 ```clj
-:dependencies [[com.github.teletha/bee "0.32.0"]]
+:dependencies [[com.github.teletha/bee "0.32.2"]]
 ```
 #### [Bee](https://teletha.github.io/bee)
 Add it into your project definition class like so:
 ```java
-require("com.github.teletha", "bee", "0.32.0");
+require("com.github.teletha", "bee", "0.32.2");
 ```
 <p align="right"><a href="#top">back to top</a></p>
 
@@ -114,6 +114,7 @@ If you think something might be a bug, but you're not sure, ask on StackOverflow
 ## Built with
 Bee depends on the following products on runtime.
 * [asm-9.4](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.4)
+* [cdi-api-1.2](https://mvnrepository.com/artifact/javax.enterprise/cdi-api/1.2)
 * [commons-lang3-3.12.0](https://mvnrepository.com/artifact/org.apache.commons/commons-lang3/3.12.0)
 * [httpclient-4.5.13](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient/4.5.13)
 * [httpcore-4.4.15](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore/4.4.15)
