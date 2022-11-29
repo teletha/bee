@@ -190,7 +190,7 @@ public class CI extends Task {
                         Add JitPack repository at the end of repositories in your build.gradle:
                         ```gradle
                         repositories {
-                            maven }} url "https://jitpack.io" }
+                            maven { url "https://jitpack.io" }
                         }
                         ```
                         Add it into the dependencies section like so:
