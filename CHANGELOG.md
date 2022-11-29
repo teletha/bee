@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.32.2](https://www.github.com/teletha/bee/compare/v0.32.1...v0.32.2) (2022-11-29)
+
+
+### Bug Fixes
+
+* update javadng ([336731d](https://www.github.com/teletha/bee/commit/336731dbd776fd32717419390fe945396b32a490))
+
 ### [0.32.1](https://www.github.com/teletha/bee/compare/v0.32.0...v0.32.1) (2022-11-29)
 
 
