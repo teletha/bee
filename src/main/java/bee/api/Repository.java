@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
+import org.apache.maven.repository.internal.DefaultModelCacheFactory;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
@@ -59,6 +60,7 @@ import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
 import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
 import org.eclipse.aether.internal.impl.DefaultRepositoryLayoutProvider;
 import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystemLifecycle;
 import org.eclipse.aether.internal.impl.DefaultTrackingFileManager;
 import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
 import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
@@ -68,9 +70,9 @@ import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.checksum.DefaultChecksumAlgorithmFactorySelector;
 import org.eclipse.aether.internal.impl.collect.FastDependencyCollector;
+import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
-import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactorySelector;
-import org.eclipse.aether.internal.impl.synccontext.named.SimpleNamedLockFactorySelector;
+import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactoryImpl;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -104,6 +106,7 @@ import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
 import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
+import org.eclipse.aether.util.version.GenericVersionScheme;
 
 import bee.BeeLoader;
 import bee.BeeOption;
@@ -751,7 +754,6 @@ public class Repository {
             define(DefaultUpdateCheckManager.class);
             define(DefaultUpdatePolicyAnalyzer.class);
             define(DefaultFileProcessor.class);
-            define(org.eclipse.aether.internal.impl.synccontext.legacy.DefaultSyncContextFactory.class);
             define(DefaultSyncContextFactory.class);
             define(DefaultRepositoryEventDispatcher.class);
             define(DefaultOfflineController.class);
@@ -765,13 +767,17 @@ public class Repository {
             define(DefaultTrackingFileManager.class);
             define(DefaultVersionResolver.class);
             define(DefaultVersionRangeResolver.class);
+            define(DefaultRemoteRepositoryFilterManager.class);
+            define(DefaultRepositorySystemLifecycle.class);
+            define(NamedLockFactoryAdapterFactoryExposure.class);
+            define(GenericVersionScheme.class);
+            define(DefaultModelCacheFactory.class);
             defineSelf(SnapshotMetadataGeneratorFactory.class);
             defineSelf(VersionsMetadataGeneratorFactory.class);
             defineSelf(SimpleLocalRepositoryManagerFactory.class);
             defineSelf(EnhancedLocalRepositoryManagerFactory.class);
             define(BasicRepositoryConnectorFactory.class);
             define(HttpTransporterFactory.class);
-            define(NamedLockFactorySelector.class, SimpleNamedLockFactorySelector::new);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
         }
 
@@ -831,5 +837,12 @@ public class Repository {
             }
             return instance;
         }
+    }
+
+    /**
+     * Avoid deprecation.
+     */
+    @SuppressWarnings("deprecation")
+    private static class NamedLockFactoryAdapterFactoryExposure extends NamedLockFactoryAdapterFactoryImpl {
     }
 }
