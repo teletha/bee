@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.32.1](https://www.github.com/teletha/bee/compare/v0.32.0...v0.32.1) (2022-11-29)
+
+
+### Bug Fixes
+
+* Can't load project related classes. ([413bde3](https://www.github.com/teletha/bee/commit/413bde3ae291f7a749e8ab7a11f5f8cbed0687be))
+* CI task outputs the invalid code. ([fb6c454](https://www.github.com/teletha/bee/commit/fb6c4545207b2c3bdfdc5a93eece406bef58bfe6))
+
 ## [0.32.0](https://www.github.com/teletha/bee/compare/v0.31.0...v0.32.0) (2022-11-29)
 
 
