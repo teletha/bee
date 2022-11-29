@@ -1,11 +1,11 @@
 @echo off
 setlocal enabledelayedexpansion
-set "bee=bee-0.30.0.far"
+set "bee=bee-0.32.2.far"
 if not exist %bee% (
-   set "bee=%JAVA_HOME%/lib/bee/bee-0.30.0.jar"
+   set "bee=%JAVA_HOME%/lib/bee/bee-0.32.2.jar"
     if not exist !bee! (
         echo bee is not found locally, try to download it from network.
-        curl -#L -o !bee! https://jitpack.io/com/github/teletha/bee/0.30.0/bee-0.30.0.jar
+        curl -#L -o !bee! https://jitpack.io/com/github/teletha/bee/0.32.2/bee-0.32.2.jar
     )
 )
 java -javaagent:%bee% -cp %bee% bee.Bee %*
