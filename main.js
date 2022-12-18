@@ -74,7 +74,7 @@ function FlashMan({ paged, cacheSize = 20, preload = "mouseover", preview = "sec
 	}
 
 	function update(text, poped, same) {
-		$("article").add("fadeout")
+		if (poped !== undefined || same !== undefined) $("article").add("fadeout")
 		setTimeout(() => {
 			if (text) {
 				$("article").html(text.substring(text.indexOf(">", text.indexOf("<article")) + 1, text.lastIndexOf("</article>")));
