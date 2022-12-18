@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.33.0](https://github.com/teletha/bee/compare/v0.32.2...v0.33.0) (2022-12-18)
+
+
+### Features
+
+* Update required java version to 17 ([cd875b8](https://github.com/teletha/bee/commit/cd875b8cc1db9c369a600e600c601e861de1161b))
+
 ### [0.32.2](https://www.github.com/teletha/bee/compare/v0.32.1...v0.32.2) (2022-11-29)
 
 
