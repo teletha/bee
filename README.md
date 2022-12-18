@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://docs.oracle.com/en/java/javase/16/"><img src="https://img.shields.io/badge/Java-Release%2016-green"/></a>
+    <a href="https://docs.oracle.com/en/java/javase/19/"><img src="https://img.shields.io/badge/Java-Release%2019-green"/></a>
     <span>&nbsp;</span>
     <a href="https://jitpack.io/#teletha/bee"><img src="https://img.shields.io/jitpack/v/github/teletha/bee?label=Repository&color=green"></a>
     <span>&nbsp;</span>
@@ -7,7 +7,7 @@
 </p>
 
 
-## About The Project
+## Summary
 Bee is an open source build automation tool that focuses on conventions, type safety and performance.
 Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
 
@@ -22,8 +22,13 @@ It recognizes source code and package repositories and automates the entire life
 <p align="right"><a href="#top">back to top</a></p>
 
 
+## Usage
+
+<p align="right"><a href="#top">back to top</a></p>
+
+
 ## Prerequisites
-Bee runs on all major operating systems and requires only [Java version 16](https://docs.oracle.com/en/java/javase/16/) or later to run.
+Bee runs on all major operating systems and requires only [Java version 19](https://docs.oracle.com/en/java/javase/19/) or later to run.
 To check, please run `java -version` from the command line interface. You should see something like this:
 ```
 > java -version
@@ -33,7 +38,7 @@ OpenJDK 64-Bit Server VM (build 16+36-2231, mixed mode, sharing)
 ```
 <p align="right"><a href="#top">back to top</a></p>
 
-## Using in your build
+## Install
 For any code snippet below, please substitute the version given with the version of Bee you wish to use.
 #### [Maven](https://maven.apache.org/)
 Add JitPack repository at the end of repositories element in your build.xml:
@@ -111,56 +116,42 @@ If you think something might be a bug, but you're not sure, ask on StackOverflow
 <p align="right"><a href="#top">back to top</a></p>
 
 
-## Built with
+## Dependency
 Bee depends on the following products on runtime.
 * [asm-9.4](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.4)
-* [cdi-api-1.2](https://mvnrepository.com/artifact/javax.enterprise/cdi-api/1.2)
 * [commons-lang3-3.12.0](https://mvnrepository.com/artifact/org.apache.commons/commons-lang3/3.12.0)
 * [httpclient-4.5.13](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient/4.5.13)
 * [httpcore-4.4.15](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore/4.4.15)
 * [javax.annotation-api-1.2](https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api/1.2)
 * [javax.inject-1](https://mvnrepository.com/artifact/javax.inject/javax.inject/1)
-* [jcl-over-slf4j-2.0.5](https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j/2.0.5)
-* [jul-to-slf4j-2.0.5](https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j/2.0.5)
-* [maven-api-meta-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-2)
-* [maven-api-model-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-2)
-* [maven-api-xml-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-xml/4.0.0-alpha-2)
-* [maven-artifact-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-artifact/4.0.0-alpha-2)
-* [maven-builder-support-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-builder-support/4.0.0-alpha-2)
-* [maven-model-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model/4.0.0-alpha-2)
-* [maven-model-builder-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder/4.0.0-alpha-2)
-* [maven-model-transform-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model-transform/4.0.0-alpha-2)
-* [maven-repository-metadata-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-repository-metadata/4.0.0-alpha-2)
+* [jcl-over-slf4j-2.0.6](https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j/2.0.6)
+* [jul-to-slf4j-2.0.6](https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j/2.0.6)
+* [maven-api-meta-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-3)
+* [maven-api-model-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-3)
+* [maven-api-xml-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-api-xml/4.0.0-alpha-3)
+* [maven-artifact-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-artifact/4.0.0-alpha-3)
+* [maven-builder-support-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-builder-support/4.0.0-alpha-3)
+* [maven-model-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-model/4.0.0-alpha-3)
+* [maven-model-builder-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder/4.0.0-alpha-3)
+* [maven-model-transform-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-model-transform/4.0.0-alpha-3)
+* [maven-repository-metadata-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-repository-metadata/4.0.0-alpha-3)
 * [maven-resolver-api-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-api/1.9.2)
 * [maven-resolver-connector-basic-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-connector-basic/1.9.2)
 * [maven-resolver-impl-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-impl/1.9.2)
 * [maven-resolver-named-locks-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-named-locks/1.9.2)
-* [maven-resolver-provider-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-resolver-provider/4.0.0-alpha-2)
+* [maven-resolver-provider-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-resolver-provider/4.0.0-alpha-3)
 * [maven-resolver-spi-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-spi/1.9.2)
 * [maven-resolver-transport-http-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-transport-http/1.9.2)
 * [maven-resolver-util-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util/1.9.2)
-* [maven-xml-impl-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-2)
+* [maven-xml-impl-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-3)
 * [org.eclipse.sisu.plexus-0.3.5](https://mvnrepository.com/artifact/org.eclipse.sisu/org.eclipse.sisu.plexus/0.3.5)
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
-* [plexus-utils-3.4.2](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/3.4.2)
-* [plexus-utils-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/plexus-utils/4.0.0-alpha-2)
+* [plexus-utils-3.5.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/3.5.0)
+* [plexus-utils-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/plexus-utils/4.0.0-alpha-3)
 * [psychopath-1.6.0](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.6.0)
-* [sinobu-2.21.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/2.21.0)
-* [slf4j-api-2.0.5](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.0.5)
-* [slf4j-nop-2.0.5](https://mvnrepository.com/artifact/org.slf4j/slf4j-nop/2.0.5)
-
-Bee depends on the following products on test.
-* [antibug-1.4.1](https://mvnrepository.com/artifact/com.github.teletha/antibug/1.4.1)
-* [apiguardian-api-1.1.2](https://mvnrepository.com/artifact/org.apiguardian/apiguardian-api/1.1.2)
-* [byte-buddy-1.12.19](https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy/1.12.19)
-* [byte-buddy-agent-1.12.19](https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy-agent/1.12.19)
-* [junit-jupiter-api-5.9.0-M1](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api/5.9.0-M1)
-* [junit-jupiter-engine-5.9.0-M1](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-engine/5.9.0-M1)
-* [junit-jupiter-params-5.9.0-M1](https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params/5.9.0-M1)
-* [junit-platform-commons-1.9.0-M1](https://mvnrepository.com/artifact/org.junit.platform/junit-platform-commons/1.9.0-M1)
-* [junit-platform-engine-1.9.0-M1](https://mvnrepository.com/artifact/org.junit.platform/junit-platform-engine/1.9.0-M1)
-* [junit-platform-launcher-1.9.1](https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher/1.9.1)
-* [opentest4j-1.2.0](https://mvnrepository.com/artifact/org.opentest4j/opentest4j/1.2.0)
+* [sinobu-2.22.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/2.22.0)
+* [slf4j-api-2.0.6](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.0.6)
+* [slf4j-nop-2.0.6](https://mvnrepository.com/artifact/org.slf4j/slf4j-nop/2.0.6)
 <p align="right"><a href="#top">back to top</a></p>
 
 

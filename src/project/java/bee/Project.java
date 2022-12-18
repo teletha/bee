@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.api.License.MIT;
+import static bee.api.License.*;
 
 import javax.lang.model.SourceVersion;
 
@@ -32,7 +32,7 @@ public class Project extends bee.api.Project {
                 It recognizes source code and package repositories and automates the entire lifecycle from development to release.
                 """);
 
-        require(SourceVersion.RELEASE_16);
+        require(SourceVersion.RELEASE_19);
 
         // MAVEN REPOSITORY
         require("org.apache.maven", "maven-resolver-provider");
