@@ -13,7 +13,6 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
@@ -104,7 +103,6 @@ class DependencyTest {
     }
 
     @Test
-    @Disabled
     void atProvided2() {
         BlinkProject project = new BlinkProject();
         project.require("org.ow2.asm", "asm", "9.2");
@@ -135,7 +133,6 @@ class DependencyTest {
     }
 
     @Test
-    @Disabled
     void byLibraryWithClassifier() {
         Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
         Repository repo = new Repository(new BlinkProject());
