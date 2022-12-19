@@ -32,7 +32,6 @@ import bee.Fail;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
-import bee.api.Require;
 import bee.api.Scope;
 import bee.util.Inputs;
 import javadng.page.Javadoc;
@@ -115,22 +114,22 @@ public class Doc extends Task {
         Listener listener = new Listener();
         Directory output = project.getOutput().directory("site");
 
-        new Require("com.github.teletha : javadng") {
-            {
-                Javadoc.with.sources(project.getSourceSet().toList())
-                        .output(output)
-                        .product(project.getProduct())
-                        .project(project.getGroup())
-                        .version(project.getVersion())
-                        .encoding(project.getEncoding())
-                        .sample(project.getTestSourceSet().toList())
-                        .classpath(I.signal(project.getDependency(Scope.values())).map(Library::getLocalJar).toList())
-                        .repository(CodeRepository.of(project.getVersionControlSystem().toString()))
-                        .listener(listener)
-                        .useExternalJDKDoc()
-                        .build();
-            }
-        };
+        // new Require("com.github.teletha : javadng") {
+        // {
+        Javadoc.with.sources(project.getSourceSet().toList())
+                .output(output)
+                .product(project.getProduct())
+                .project(project.getGroup())
+                .version(project.getVersion())
+                .encoding(project.getEncoding())
+                .sample(project.getTestSourceSet().toList())
+                .classpath(I.signal(project.getDependency(Scope.values())).map(Library::getLocalJar).toList())
+                .repository(CodeRepository.of(project.getVersionControlSystem().toString()))
+                .listener(listener)
+                .useExternalJDKDoc()
+                .build();
+        // }
+        // };
 
         if (listener.errors.isEmpty()) {
             ui.info("Build site resources to " + output);
