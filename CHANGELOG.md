@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.33.1](https://github.com/teletha/bee/compare/v0.33.0...v0.33.1) (2022-12-19)
+
+
+### Bug Fixes
+
+* update sinobu ([6dc3cc5](https://github.com/teletha/bee/commit/6dc3cc519b5dee7ba4ca37171d4293d253c3dee7))
+
 ## [0.33.0](https://github.com/teletha/bee/compare/v0.32.2...v0.33.0) (2022-12-18)
 
 
