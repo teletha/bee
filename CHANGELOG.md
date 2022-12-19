@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.33.2](https://github.com/teletha/bee/compare/v0.33.1...v0.33.2) (2022-12-19)
+
+
+### Bug Fixes
+
+* revert maven-resolver-provider because of its bug ([727eeac](https://github.com/teletha/bee/commit/727eeac017f0e30b6c608f543cf902ec5632b7a7))
+* update sinobu and javadng ([caa0f54](https://github.com/teletha/bee/commit/caa0f54b14bd05edccf0689443d79774da6d2a3a))
+
 ## [0.33.1](https://github.com/teletha/bee/compare/v0.33.0...v0.33.1) (2022-12-19)
 
 
