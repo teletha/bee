@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.0](https://github.com/teletha/bee/compare/v0.33.2...v0.34.0) (2022-12-25)
+
+
+### Features
+
+* Latest version means snapshoted version. ([464574a](https://github.com/teletha/bee/commit/464574af3f27f5b4609fbe946d446b7e2794e808))
+
 ## [0.33.2](https://github.com/teletha/bee/compare/v0.33.1...v0.33.2) (2022-12-19)
 
 
