@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.34.1](https://github.com/teletha/bee/compare/v0.34.0...v0.34.1) (2022-12-27)
+
+
+### Bug Fixes
+
+* Don't load this compiled project. ([6049675](https://github.com/teletha/bee/commit/6049675617757954617520d64d1123efbdefc7a6))
+
 ## [0.34.0](https://github.com/teletha/bee/compare/v0.33.2...v0.34.0) (2022-12-25)
 
 
