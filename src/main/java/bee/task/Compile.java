@@ -9,7 +9,6 @@
  */
 package bee.task;
 
-import bee.BeeLoader;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Scope;
@@ -88,6 +87,6 @@ public class Compile extends Task {
                 .compile();
 
         // load project related classes
-        BeeLoader.load(project.getClasses());
+        // BeeLoader.load(project.getClasses());
     }
 }
