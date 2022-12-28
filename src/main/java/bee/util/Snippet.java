@@ -78,8 +78,8 @@ public class Snippet {
         List<Snippet> snippets = new ArrayList();
 
         String[] lines = source.split("\\r?\\n");
-        StaticJavaParser.getConfiguration().setLanguageLevel(LanguageLevel.JAVA_17);
-        StaticJavaParser.getConfiguration().setLexicalPreservationEnabled(true);
+
+        StaticJavaParser.getParserConfiguration().setLanguageLevel(LanguageLevel.JAVA_17).setLexicalPreservationEnabled(true);
 
         CompilationUnit root = StaticJavaParser.parse(source);
         List<MethodDeclaration> methods = root.findAll(MethodDeclaration.class);
