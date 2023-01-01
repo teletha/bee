@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 The BEE Development Team
+ * Copyright (C) 2023 The BEE Development Team
  *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
