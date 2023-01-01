@@ -53,7 +53,7 @@ Add it into in the dependencies element like so:
 <dependency>
     <groupId>com.github.teletha</groupId>
     <artifactId>bee</artifactId>
-    <version>0.33.0</version>
+    <version>0.34.1</version>
 </dependency>
 ```
 #### [Gradle](https://gradle.org/)
@@ -66,7 +66,7 @@ repositories {
 Add it into the dependencies section like so:
 ```gradle
 dependencies {
-    implementation 'com.github.teletha:bee:0.33.0'
+    implementation 'com.github.teletha:bee:0.34.1'
 }
 ```
 #### [SBT](https://www.scala-sbt.org/)
@@ -76,7 +76,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 ```
 Add it into the libraryDependencies section like so:
 ```scala
-libraryDependencies += "com.github.teletha" % "bee" % "0.33.0"
+libraryDependencies += "com.github.teletha" % "bee" % "0.34.1"
 ```
 #### [Leiningen](https://leiningen.org/)
 Add JitPack repository at the end of repositories in your project.clj:
@@ -85,12 +85,12 @@ Add JitPack repository at the end of repositories in your project.clj:
 ```
 Add it into the dependencies section like so:
 ```clj
-:dependencies [[com.github.teletha/bee "0.33.0"]]
+:dependencies [[com.github.teletha/bee "0.34.1"]]
 ```
 #### [Bee](https://teletha.github.io/bee)
 Add it into your project definition class like so:
 ```java
-require("com.github.teletha", "bee", "0.33.0");
+require("com.github.teletha", "bee", "0.34.1");
 ```
 <p align="right"><a href="#top">back to top</a></p>
 
@@ -126,37 +126,37 @@ Bee depends on the following products on runtime.
 * [javax.inject-1](https://mvnrepository.com/artifact/javax.inject/javax.inject/1)
 * [jcl-over-slf4j-2.0.6](https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j/2.0.6)
 * [jul-to-slf4j-2.0.6](https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j/2.0.6)
-* [maven-api-meta-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-3)
-* [maven-api-model-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-3)
-* [maven-api-xml-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-api-xml/4.0.0-alpha-3)
-* [maven-artifact-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-artifact/4.0.0-alpha-3)
-* [maven-builder-support-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-builder-support/4.0.0-alpha-3)
-* [maven-model-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-model/4.0.0-alpha-3)
-* [maven-model-builder-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder/4.0.0-alpha-3)
-* [maven-model-transform-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-model-transform/4.0.0-alpha-3)
-* [maven-repository-metadata-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-repository-metadata/4.0.0-alpha-3)
+* [maven-api-meta-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-2)
+* [maven-api-model-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-2)
+* [maven-api-xml-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-xml/4.0.0-alpha-2)
+* [maven-artifact-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-artifact/4.0.0-alpha-2)
+* [maven-builder-support-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-builder-support/4.0.0-alpha-2)
+* [maven-model-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model/4.0.0-alpha-2)
+* [maven-model-builder-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder/4.0.0-alpha-2)
+* [maven-model-transform-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model-transform/4.0.0-alpha-2)
+* [maven-repository-metadata-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-repository-metadata/4.0.0-alpha-2)
 * [maven-resolver-api-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-api/1.9.2)
 * [maven-resolver-connector-basic-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-connector-basic/1.9.2)
 * [maven-resolver-impl-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-impl/1.9.2)
 * [maven-resolver-named-locks-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-named-locks/1.9.2)
-* [maven-resolver-provider-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-resolver-provider/4.0.0-alpha-3)
+* [maven-resolver-provider-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-resolver-provider/4.0.0-alpha-2)
 * [maven-resolver-spi-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-spi/1.9.2)
 * [maven-resolver-transport-http-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-transport-http/1.9.2)
 * [maven-resolver-util-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util/1.9.2)
-* [maven-xml-impl-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-3)
+* [maven-xml-impl-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-2)
 * [org.eclipse.sisu.plexus-0.3.5](https://mvnrepository.com/artifact/org.eclipse.sisu/org.eclipse.sisu.plexus/0.3.5)
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
-* [plexus-utils-3.5.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/3.5.0)
-* [plexus-utils-4.0.0-alpha-3](https://mvnrepository.com/artifact/org.apache.maven/plexus-utils/4.0.0-alpha-3)
+* [plexus-utils-3.4.2](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/3.4.2)
+* [plexus-utils-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/plexus-utils/4.0.0-alpha-2)
 * [psychopath-1.6.0](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.6.0)
-* [sinobu-2.22.1](https://mvnrepository.com/artifact/com.github.teletha/sinobu/2.22.1)
+* [sinobu-3.0.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.0.0)
 * [slf4j-api-2.0.6](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.0.6)
 * [slf4j-nop-2.0.6](https://mvnrepository.com/artifact/org.slf4j/slf4j-nop/2.0.6)
 <p align="right"><a href="#top">back to top</a></p>
 
 
 ## License
-Copyright (C) 2022 The BEE Development Team
+Copyright (C) 2023 The BEE Development Team
 
 MIT License
 
