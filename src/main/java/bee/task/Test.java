@@ -274,11 +274,9 @@ public class Test extends Task {
                     StackTraceElement element = e.error.getStackTrace()[0];
                     int line = element.getClassName().equals(name) ? element.getLineNumber() : 0;
 
-                    StringBuilder message = new StringBuilder("FIX: ").append(e.name())
-                            .append(" @")
-                            .append(line)
-                            .append(Platform.EOL)
-                            .append(e.message());
+                    StringBuilder message = new StringBuilder(e.name());
+                    if (line != 0) message.append(" @line").append(line);
+                    message.append(Platform.EOL).append(e.message().indent(4));
 
                     fail.solve(message);
                 }

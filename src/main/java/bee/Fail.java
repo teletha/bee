@@ -64,7 +64,6 @@ public class Fail extends Error {
         if (size == 0) {
             builder.append("No solution.");
         } else {
-            builder.append(Platform.EOL);
             for (String solution : solutions) {
                 builder.append(Platform.EOL).append("  -").append(solution);
             }

@@ -436,6 +436,10 @@ public class Java {
              */
             @Override
             protected void write(int type, String message) {
+                if (message == null || message.isEmpty()) {
+                    return;
+                }
+
                 switch (type) {
                 case TRACE:
                     transporter.trace(message);
@@ -467,6 +471,10 @@ public class Java {
              */
             @Override
             protected void write(Throwable error) {
+                if (error == null) {
+                    return;
+                }
+
                 try {
                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     ObjectOutputStream out = new ObjectOutputStream(bytes);
