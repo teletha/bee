@@ -9,6 +9,13 @@
  */
 package bee.api;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpRetryException;
+import java.net.http.HttpHeaders;
+import java.net.http.HttpResponse;
+import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +46,7 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
+import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
@@ -84,14 +94,20 @@ import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
 import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactorySelector;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
+import org.eclipse.aether.spi.connector.transport.GetTask;
+import org.eclipse.aether.spi.connector.transport.PeekTask;
+import org.eclipse.aether.spi.connector.transport.PutTask;
+import org.eclipse.aether.spi.connector.transport.TransportListener;
+import org.eclipse.aether.spi.connector.transport.Transporter;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.locator.Service;
+import org.eclipse.aether.transfer.ChecksumFailureException;
+import org.eclipse.aether.transfer.NoTransporterException;
 import org.eclipse.aether.transfer.TransferCancelledException;
 import org.eclipse.aether.transfer.TransferEvent;
 import org.eclipse.aether.transfer.TransferEvent.RequestType;
 import org.eclipse.aether.transfer.TransferListener;
 import org.eclipse.aether.transfer.TransferResource;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
@@ -119,6 +135,7 @@ import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.Singleton;
 import kiss.Storable;
+import kiss.WiseConsumer;
 import kiss.model.Model;
 import psychopath.Directory;
 import psychopath.File;
@@ -777,7 +794,7 @@ public class Repository {
             defineSelf(SimpleLocalRepositoryManagerFactory.class);
             defineSelf(EnhancedLocalRepositoryManagerFactory.class);
             define(BasicRepositoryConnectorFactory.class);
-            define(HttpTransporterFactory.class);
+            define(NetTransporterFactory.class);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
         }
 
@@ -844,5 +861,115 @@ public class Repository {
      */
     @SuppressWarnings("deprecation")
     private static class NamedLockFactoryAdapterFactoryExposure extends NamedLockFactoryAdapterFactoryImpl {
+    }
+
+    /**
+     * For HTTP and HTTPS.
+     */
+    private static class NetTransporterFactory implements TransporterFactory {
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public float getPriority() {
+            return 10;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Transporter newInstance(RepositorySystemSession session, RemoteRepository repository) throws NoTransporterException {
+            return new Transporter() {
+
+                private int error;
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void put(PutTask task) throws Exception {
+                    throw new Error("HTTP PUT is not implemented, please FIX.");
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void peek(PeekTask task) throws Exception {
+                    throw new Error("HTTP PEEK is not implemented, please FIX.");
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void get(GetTask task) throws Exception {
+                    String uri = repository.getUrl() + task.getLocation();
+
+                    I.http(uri, HttpResponse.class).waitForTerminate(true).to((WiseConsumer<HttpResponse>) res -> {
+                        // analyze header
+                        HttpHeaders headers = res.headers();
+                        OptionalLong length = headers.firstValueAsLong("Content-Length");
+
+                        // transfer data
+                        try (InputStream in = (InputStream) res.body(); OutputStream out = new FileOutputStream(task.getDataFile())) {
+                            TransportListener listener = task.getListener();
+                            listener.transportStarted(0, length.orElse(0));
+
+                            int read = -1;
+                            byte[] buffer = new byte[1024 * 32];
+                            while (0 < (read = in.read(buffer))) {
+                                out.write(buffer, 0, read);
+                                listener.transportProgressed(ByteBuffer.wrap(buffer, 0, read));
+                            }
+                        }
+
+                        // detect checksum
+                        readChecksum(headers, task);
+                    });
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public void close() {
+                }
+
+                /**
+                 * {@inheritDoc}
+                 */
+                @Override
+                public int classify(Throwable error) {
+                    return error instanceof HttpRetryException http && http.responseCode() == 404 ? ERROR_NOT_FOUND : ERROR_OTHER;
+                }
+
+                private void readChecksum(HttpHeaders headers, GetTask task) throws ChecksumFailureException {
+                    String checksum = headers.firstValue("ETAG") //
+                            .flatMap(etag -> {
+                                int start = etag.indexOf("SHA1{") + 5;
+                                int end = etag.indexOf("}", start);
+                                return start == -1 || end == -1 ? Optional.empty() : Optional.of(etag.substring(start, end));
+                            })
+                            .or(() -> headers.firstValue("x-checksum-sha1"))
+                            .or(() -> headers.firstValue("x-checksum-md5"))
+                            .or(() -> headers.firstValue("x-goog-meta-checksum-sha1"))
+                            .or(() -> headers.firstValue("x-goog-meta-checksum-md5"))
+                            .orElse("");
+
+                    switch (checksum.length()) {
+                    case 32:
+                        task.setChecksum("MD5", checksum);
+                        break;
+
+                    case 40:
+                        task.setChecksum("SHA-1", checksum);
+                        break;
+                    }
+                }
+            };
+        }
     }
 }
