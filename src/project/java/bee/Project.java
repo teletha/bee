@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.api.License.*;
+import static bee.api.License.MIT;
 
 import javax.lang.model.SourceVersion;
 

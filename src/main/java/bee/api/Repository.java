@@ -202,6 +202,8 @@ public class Repository {
         session.setCache(new DefaultRepositoryCache());
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
         session.setConfigProperty("maven.artifact.threads", 24);
+        // session.setConfigProperty("aether.dependencyCollector.impl", "bf");
+        // session.setConfigProperty("aether.conflictResolver.verbose", true);
         session.setOffline(BeeOption.Offline.value());
 
         // event listener
@@ -268,6 +270,11 @@ public class Repository {
             } catch (Exception e) {
                 throw I.quiet(e);
             }
+        }
+
+        System.out.println("OKOKO");
+        for (Library library : set) {
+            System.out.println(library);
         }
         return set;
     }
@@ -908,7 +915,7 @@ public class Repository {
                 public void get(GetTask task) throws Exception {
                     String uri = repository.getUrl() + task.getLocation();
 
-                    I.http(uri, HttpResponse.class).waitForTerminate(true).to((WiseConsumer<HttpResponse>) res -> {
+                    I.http(uri, HttpResponse.class).waitForTerminate().to((WiseConsumer<HttpResponse>) res -> {
                         // analyze header
                         HttpHeaders headers = res.headers();
                         OptionalLong length = headers.firstValueAsLong("Content-Length");
