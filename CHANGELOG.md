@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.35.0](https://github.com/teletha/bee/compare/v0.34.1...v0.35.0) (2023-01-05)
+
+
+### Features
+
+* Replace maven-resolver-transport-http ([99f08ee](https://github.com/teletha/bee/commit/99f08eec3c36137cb8be1eb7b1cc90c6c3061b87))
+* resolve conflict by nearest-latest-strategy ([606b55e](https://github.com/teletha/bee/commit/606b55e26adf085d1e2779de533dcf92117bbe20))
+
+
+### Bug Fixes
+
+* format test output ([4ff0316](https://github.com/teletha/bee/commit/4ff0316b06c31c062fe0012d4d8da8a8a3c4440e))
+* update javaparser ([219f408](https://github.com/teletha/bee/commit/219f4086ac5c1f0c25b06837e255d881ae0de701))
+
 ## [0.34.1](https://github.com/teletha/bee/compare/v0.34.0...v0.34.1) (2022-12-27)
 
 
