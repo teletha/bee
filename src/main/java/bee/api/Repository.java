@@ -90,6 +90,7 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.eclipse.aether.resolution.DependencyRequest;
+import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
 import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactorySelector;
@@ -210,6 +211,28 @@ public class Repository {
         session.setRepositoryListener(view);
 
         this.session = session;
+    }
+
+    public DependencyNode buildDependencyGraph(Project project) {
+        try {
+            // collect dependency
+            CollectRequest request = new CollectRequest(null, remoteRepositories());
+            for (Library library : project.libraries) {
+                if (library.scope.accept("compile")) {
+                    // spcify the latest version
+                    Artifact artifact = library.artifact;
+                    if (artifact.getVersion().equals("LATEST")) {
+                        artifact = artifact.setVersion("[" + resolveLatestVersion(library) + ",)");
+                    }
+                    request.addDependency(new Dependency(artifact, library.scope.id));
+                }
+            }
+            request.setRootArtifact(project.asLibrary().artifact);
+
+            return system.resolveDependencies(session, new DependencyRequest(request, null)).getRoot();
+        } catch (DependencyResolutionException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
