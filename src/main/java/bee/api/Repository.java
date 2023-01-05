@@ -202,8 +202,6 @@ public class Repository {
         session.setCache(new DefaultRepositoryCache());
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
         session.setConfigProperty("maven.artifact.threads", 24);
-        // session.setConfigProperty("aether.dependencyCollector.impl", "bf");
-        // session.setConfigProperty("aether.conflictResolver.verbose", true);
         session.setOffline(BeeOption.Offline.value());
 
         // event listener
@@ -251,14 +249,18 @@ public class Repository {
             CollectRequest request = new CollectRequest(null, remoteRepositories());
             for (Library library : libraries) {
                 if (scope.accept(library.scope.id)) {
-                    request.addDependency(new Dependency(library.artifact, library.scope.id));
+                    // spcify the latest version
+                    Artifact artifact = library.artifact;
+                    if (artifact.getVersion().equals("LATEST")) {
+                        artifact = artifact.setVersion("[" + resolveLatestVersion(library) + ",)");
+                    }
+                    request.addDependency(new Dependency(artifact, library.scope.id));
                 }
             }
 
             try {
                 DependencyResult result = system.resolveDependencies(session, new DependencyRequest(request, (node, parents) -> {
                     List<DependencyNode> list = I.signal(parents).startWith(node).skip(p -> p.getArtifact() == null).toList();
-
                     return list.isEmpty() || list.stream().allMatch(n -> {
                         return scope.accept(n.getDependency().getScope());
                     });
@@ -272,10 +274,6 @@ public class Repository {
             }
         }
 
-        System.out.println("OKOKO");
-        for (Library library : set) {
-            System.out.println(library);
-        }
         return set;
     }
 

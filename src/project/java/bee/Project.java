@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.api.License.MIT;
+import static bee.api.License.*;
 
 import javax.lang.model.SourceVersion;
 
@@ -41,7 +41,7 @@ public class Project extends bee.api.Project {
         require("org.apache.maven.resolver", "maven-resolver-util");
         require("org.apache.maven.resolver", "maven-resolver-impl");
         require("org.apache.maven.resolver", "maven-resolver-connector-basic");
-        require("org.apache.maven.resolver", "maven-resolver-transport-http");
+        // require("org.apache.maven.resolver", "maven-resolver-transport-http");
 
         // LOGGER
         require("org.slf4j", "slf4j-nop");

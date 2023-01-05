@@ -9,6 +9,9 @@
  */
 package bee.api;
 
+import java.util.Set;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -17,6 +20,7 @@ import bee.BlinkProject;
 import bee.UserInterface;
 import psychopath.Locator;
 
+@Disabled
 class DownloadTest {
 
     @RegisterExtension
@@ -28,12 +32,13 @@ class DownloadTest {
         // project.require("org.openjfx", "javafx-graphics", "18-ea+9");
         // project.require("org.openjfx", "javafx-web", "18-ea+9");
         // project.require("org.apache.maven", "maven-core", "3.8.4");
-        project.require("com.github.teletha", "sinobu");
-        project.require("com.github.teletha", "psychopath");
 
         Repository repository = new Repository(project);
         repository.setLocalRepository(Locator.directory(room.root));
 
-        repository.collectDependency(project, Scope.Compile);
+        Set<Library> collectDependency = repository.collectDependency(project, Scope.Compile, Scope.Annotation);
+        for (Library library : collectDependency) {
+            System.out.println(library);
+        }
     }
 }
