@@ -7,7 +7,6 @@ const root = {
 		"bee.coder",
 		"bee.task",
 		"bee.util",
-		"org.apache.maven.wagon.shared.http",
 		"org.eclipse.aether.internal.impl.collect"
 	],
 	"types": [
@@ -107,13 +106,6 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Eclipse",
 			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "EncodingUtil",
-			"packageName": "org.apache.maven.wagon.shared.http",
 			"type": "Class"
 		},
 		{
