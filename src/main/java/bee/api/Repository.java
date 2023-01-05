@@ -888,8 +888,6 @@ public class Repository {
         public Transporter newInstance(RepositorySystemSession session, RemoteRepository repository) throws NoTransporterException {
             return new Transporter() {
 
-                private int error;
-
                 /**
                  * {@inheritDoc}
                  */
