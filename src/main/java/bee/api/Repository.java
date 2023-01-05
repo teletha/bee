@@ -213,18 +213,18 @@ public class Repository {
         this.session = session;
     }
 
+    /**
+     * Build the dependency graph for compile scope.
+     * 
+     * @param project
+     * @return
+     */
     public DependencyNode buildDependencyGraph(Project project) {
         try {
-            // collect dependency
             CollectRequest request = new CollectRequest(null, remoteRepositories());
             for (Library library : project.libraries) {
-                if (library.scope.accept("compile")) {
-                    // spcify the latest version
-                    Artifact artifact = library.artifact;
-                    if (artifact.getVersion().equals("LATEST")) {
-                        artifact = artifact.setVersion("[" + resolveLatestVersion(library) + ",)");
-                    }
-                    request.addDependency(new Dependency(artifact, library.scope.id));
+                if (library.scope.accept(Scope.Compile.id)) {
+                    request.addDependency(new Dependency(library.artifact, library.scope.id));
                 }
             }
             request.setRootArtifact(project.asLibrary().artifact);

@@ -53,7 +53,7 @@ Add it into in the dependencies element like so:
 <dependency>
     <groupId>com.github.teletha</groupId>
     <artifactId>bee</artifactId>
-    <version>0.34.1</version>
+    <version>0.35.0</version>
 </dependency>
 ```
 #### [Gradle](https://gradle.org/)
@@ -66,7 +66,7 @@ repositories {
 Add it into the dependencies section like so:
 ```gradle
 dependencies {
-    implementation 'com.github.teletha:bee:0.34.1'
+    implementation 'com.github.teletha:bee:0.35.0'
 }
 ```
 #### [SBT](https://www.scala-sbt.org/)
@@ -76,7 +76,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 ```
 Add it into the libraryDependencies section like so:
 ```scala
-libraryDependencies += "com.github.teletha" % "bee" % "0.34.1"
+libraryDependencies += "com.github.teletha" % "bee" % "0.35.0"
 ```
 #### [Leiningen](https://leiningen.org/)
 Add JitPack repository at the end of repositories in your project.clj:
@@ -85,12 +85,12 @@ Add JitPack repository at the end of repositories in your project.clj:
 ```
 Add it into the dependencies section like so:
 ```clj
-:dependencies [[com.github.teletha/bee "0.34.1"]]
+:dependencies [[com.github.teletha/bee "0.35.0"]]
 ```
 #### [Bee](https://teletha.github.io/bee)
 Add it into your project definition class like so:
 ```java
-require("com.github.teletha", "bee", "0.34.1");
+require("com.github.teletha", "bee", "0.35.0");
 ```
 <p align="right"><a href="#top">back to top</a></p>
 
@@ -120,11 +120,8 @@ If you think something might be a bug, but you're not sure, ask on StackOverflow
 Bee depends on the following products on runtime.
 * [asm-9.4](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.4)
 * [commons-lang3-3.12.0](https://mvnrepository.com/artifact/org.apache.commons/commons-lang3/3.12.0)
-* [httpclient-4.5.13](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient/4.5.13)
-* [httpcore-4.4.15](https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore/4.4.15)
 * [javax.annotation-api-1.2](https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api/1.2)
 * [javax.inject-1](https://mvnrepository.com/artifact/javax.inject/javax.inject/1)
-* [jcl-over-slf4j-2.0.6](https://mvnrepository.com/artifact/org.slf4j/jcl-over-slf4j/2.0.6)
 * [jul-to-slf4j-2.0.6](https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j/2.0.6)
 * [maven-api-meta-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-2)
 * [maven-api-model-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-2)
@@ -141,15 +138,13 @@ Bee depends on the following products on runtime.
 * [maven-resolver-named-locks-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-named-locks/1.9.2)
 * [maven-resolver-provider-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-resolver-provider/4.0.0-alpha-2)
 * [maven-resolver-spi-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-spi/1.9.2)
-* [maven-resolver-transport-http-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-transport-http/1.9.2)
 * [maven-resolver-util-1.9.2](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util/1.9.2)
 * [maven-xml-impl-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-2)
 * [org.eclipse.sisu.plexus-0.3.5](https://mvnrepository.com/artifact/org.eclipse.sisu/org.eclipse.sisu.plexus/0.3.5)
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
-* [plexus-utils-3.4.2](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/3.4.2)
-* [plexus-utils-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/plexus-utils/4.0.0-alpha-2)
-* [psychopath-1.6.0](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.6.0)
-* [sinobu-3.0.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.0.0)
+* [plexus-utils-3.0.24](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/3.0.24)
+* [psychopath-1.7.1](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.7.1)
+* [sinobu-3.1.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.1.0)
 * [slf4j-api-2.0.6](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.0.6)
 * [slf4j-nop-2.0.6](https://mvnrepository.com/artifact/org.slf4j/slf4j-nop/2.0.6)
 <p align="right"><a href="#top">back to top</a></p>

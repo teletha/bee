@@ -9,6 +9,10 @@
  */
 package bee.task;
 
+import java.util.Comparator;
+import java.util.List;
+
+import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.DependencyNode;
 
 import bee.Task;
@@ -20,13 +24,24 @@ public class Dependency extends Task {
 
     @Command("Display the dependency tree.")
     public void tree() {
-        Repository repo = I.make(Repository.class);
+        show(0, I.make(Repository.class).buildDependencyGraph(project));
+    }
 
-        DependencyNode dependencies = repo.buildDependencyGraph(project);
-        System.out.println(dependencies);
+    /**
+     * Write out the dependency.
+     * 
+     * @param depth
+     * @param node
+     */
+    private void show(int depth, DependencyNode node) {
+        Artifact artifact = node.getArtifact();
+        ui.info("\t".repeat(depth) + artifact.getGroupId() + "  :  " + artifact.getArtifactId() + "  :  " + artifact.getVersion());
 
-        for (DependencyNode child : dependencies.getChildren()) {
-            System.out.println(child + "   " + child.getChildren());
+        List<DependencyNode> children = node.getChildren();
+        children.sort(Comparator.comparing(o -> o.getArtifact().getArtifactId()));
+
+        for (DependencyNode child : children) {
+            show(depth + 1, child);
         }
     }
 }

@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.api.License.*;
+import static bee.api.License.MIT;
 
 import javax.lang.model.SourceVersion;
 
@@ -45,8 +45,8 @@ public class Project extends bee.api.Project {
 
         // LOGGER
         require("org.slf4j", "slf4j-nop");
-        require("org.slf4j", "jcl-over-slf4j");
         require("org.slf4j", "jul-to-slf4j");
+        // require("org.slf4j", "jcl-over-slf4j"); for maven-resolver-transport-http
 
         // REQUIRED
         require("com.github.teletha", "sinobu");
@@ -65,6 +65,7 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "antibug").atTest();
 
         unrequire("commons-codec", "commons-codec");
+        unrequire("org.apache.maven", "plexus-utils");
         unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
