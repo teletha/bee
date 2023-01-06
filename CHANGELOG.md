@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.36.0](https://github.com/teletha/bee/compare/v0.35.0...v0.36.0) (2023-01-06)
+
+
+### Features
+
+* Add dependency task. ([947212f](https://github.com/teletha/bee/commit/947212f700a9e0a11647cdb0ce49d9ed42994a7e))
+
+
+### Bug Fixes
+
+* Ignore HTTP error status. ([4701cf4](https://github.com/teletha/bee/commit/4701cf48eefe8edf82e3a7f3f628b17b3adde3f5))
+
 ## [0.35.0](https://github.com/teletha/bee/compare/v0.34.1...v0.35.0) (2023-01-05)
 
 
