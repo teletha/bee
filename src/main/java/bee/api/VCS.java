@@ -318,8 +318,8 @@ public abstract class VCS {
                         commit.message = o.get("commit").text("message");
                         return commit;
                     })
-                    .skipError()
                     .waitForTerminate()
+                    .skipError()
                     .toList();
         }
 
@@ -339,6 +339,7 @@ public abstract class VCS {
                         return contributor;
                     })
                     .waitForTerminate()
+                    .skipError()
                     .toList();
         }
 
