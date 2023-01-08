@@ -35,7 +35,14 @@ public class Dependency extends Task {
      */
     private void show(int depth, DependencyNode node) {
         Artifact artifact = node.getArtifact();
-        ui.info("\t".repeat(depth) + artifact.getGroupId() + "  :  " + artifact.getArtifactId() + "  :  " + artifact.getVersion());
+        StringBuilder name = new StringBuilder("\t".repeat(depth)).append(artifact.getGroupId())
+                .append("  :  ")
+                .append(artifact.getArtifactId())
+                .append("  :  ");
+        if (artifact.getClassifier().length() != 0) name.append(artifact.getClassifier()).append("  :  ");
+        name.append(artifact.getVersion());
+
+        ui.info(name);
 
         List<DependencyNode> children = node.getChildren();
         children.sort(Comparator.comparing(o -> o.getArtifact().getArtifactId()));
