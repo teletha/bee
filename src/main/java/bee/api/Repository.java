@@ -13,7 +13,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpRetryException;
+import java.net.URI;
 import java.net.http.HttpHeaders;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
 import java.time.LocalDate;
@@ -924,7 +927,14 @@ public class Repository {
                  */
                 @Override
                 public void peek(PeekTask task) throws Exception {
-                    throw new Error("HTTP PEEK is not implemented, please FIX.");
+                    URI uri = URI.create(repository.getUrl() + task.getLocation());
+                    Builder request = HttpRequest.newBuilder(uri).HEAD();
+                    I.http(request, HttpResponse.class).waitForTerminate().to((WiseConsumer<HttpResponse>) res -> {
+                        int code = res.statusCode();
+                        if (400 <= code) {
+                            throw new HttpRetryException("Fail to peek resource [" + uri + "]", code);
+                        }
+                    });
                 }
 
                 /**
