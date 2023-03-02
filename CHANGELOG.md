@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.37.0](https://github.com/teletha/bee/compare/v0.36.0...v0.37.0) (2023-03-02)
+
+
+### Features
+
+* NetTransporter implements peek method. ([f112d18](https://github.com/teletha/bee/commit/f112d184dba88e170daac8c6c828df728f68f0d3))
+
+
+### Bug Fixes
+
+* dependency task shows classifier ([6e66798](https://github.com/teletha/bee/commit/6e6679864ee16b23a0d2dd5256126b51dec4d883))
+* HEAD is not implemented in Java17. ([684f0c1](https://github.com/teletha/bee/commit/684f0c1072ce90caa0f436e0690f43480fb998f0))
+* update sinobu ([667889c](https://github.com/teletha/bee/commit/667889ce732edd949b5d11861be54f8f2539835d))
+
 ## [0.36.0](https://github.com/teletha/bee/compare/v0.35.0...v0.36.0) (2023-01-06)
 
 
