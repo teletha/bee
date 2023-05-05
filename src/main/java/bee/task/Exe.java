@@ -157,16 +157,20 @@ public class Exe extends Task {
         names.add("jdk.localedata");
 
         for (Library library : libraries) {
-            ModuleFinder finder = ModuleFinder.of(library.getLocalJar().asJavaPath());
-            for (ModuleReference ref : finder.findAll()) {
-                for (Requires requires : ref.descriptor().requires()) {
-                    String name = requires.name();
-                    if (name.startsWith("java.") || name.startsWith("jdk.")) {
-                        if (ModuleLayer.boot().findModule(name).isPresent()) {
-                            names.add(name);
+            try {
+                ModuleFinder finder = ModuleFinder.of(library.getLocalJar().asJavaPath());
+                for (ModuleReference ref : finder.findAll()) {
+                    for (Requires requires : ref.descriptor().requires()) {
+                        String name = requires.name();
+                        if (name.startsWith("java.") || name.startsWith("jdk.")) {
+                            if (ModuleLayer.boot().findModule(name).isPresent()) {
+                                names.add(name);
+                            }
                         }
                     }
                 }
+            } catch (Throwable e) {
+                // ignore
             }
         }
         return names;
