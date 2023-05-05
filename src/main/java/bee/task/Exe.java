@@ -152,9 +152,16 @@ public class Exe extends Task {
      * @param libraries
      * @return
      */
-    private static Set<String> modules(Set<Library> libraries) {
+    private Set<String> modules(Set<Library> libraries) {
         Set<String> names = new HashSet();
         names.add("jdk.localedata");
+        names.add("jdk.crypto.ec");
+        names.add("jdk.crypto.cryptoki");
+        names.add("jdk.crypto.mscapi");
+        names.add("jdk.net");
+        names.add("jdk.zipfs");
+        names.add("java.naming");
+        names.add("jdk.naming.dns");
 
         for (Library library : libraries) {
             try {
@@ -173,6 +180,8 @@ public class Exe extends Task {
                 // ignore
             }
         }
+
+        ui.info("Modules: " + names.stream().sorted().toList());
         return names;
     }
 }
