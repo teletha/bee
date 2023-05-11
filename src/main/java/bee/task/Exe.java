@@ -83,14 +83,14 @@ public class Exe extends Task {
         // download and unzip exewrap
         ui.info("Download and extract exewrap binary.");
 
-        I.http("http://osdn.net/frs/redir.php?m=nchc&f=exewrap%2F73589%2Fexewrap1.6.4.zip", InputStream.class)
+        I.http("http://osdn.net/frs/redir.php?m=nchc&f=exewrap%2F77554%2Fexewrap1.6.5.zip", InputStream.class)
                 .map(Locator.temporaryFile("exewrap.zip")::writeFrom)
                 .map(File::unpackToTemporary)
                 .waitForTerminate()
                 .to(dir -> {
                     Directory temporary = Locator.temporaryDirectory();
 
-                    File exewrap = dir.file("exewrap1.6.4/x64/exewrap.exe");
+                    File exewrap = dir.file("exewrap1.6.5/x64/exewrap.exe");
                     File exe = temporary.file(project.getProduct() + ".exe");
 
                     // build command line
