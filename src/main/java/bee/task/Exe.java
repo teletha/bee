@@ -128,6 +128,7 @@ public class Exe extends Task {
         // Build custom JRE
         if (useCustomJRE) {
             Directory jre = Locator.temporaryDirectory("jre");
+
             List<String> command = new ArrayList();
             command.add("jlink");
             command.add("--add-modules");
@@ -138,6 +139,10 @@ public class Exe extends Task {
             command.add("2");
             command.add("--strip-native-commands");
             Process.with().run(command);
+
+            // copy java.exe
+            Platform.JavaHome.file("bin/java.exe").copyTo(jre.directory("bin"));
+
             folder.add(jre);
         }
 
