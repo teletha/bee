@@ -167,6 +167,7 @@ public class Exe extends Task {
         names.add("jdk.zipfs");
         names.add("java.naming");
         names.add("jdk.naming.dns");
+        names.add("java.management");
 
         for (Library library : libraries) {
             try {
