@@ -35,6 +35,7 @@ import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Folder;
+import psychopath.Location;
 import psychopath.Locator;
 
 public class Exe extends Task {
@@ -44,6 +45,9 @@ public class Exe extends Task {
 
     /** The usage of custom JRE. */
     protected boolean useCustomJRE = true;
+
+    /** The additional packing data. */
+    protected final Set<Location> additional = new HashSet();
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
@@ -144,6 +148,11 @@ public class Exe extends Task {
             Platform.JavaHome.file("bin/java.exe").copyTo(jre.directory("bin"));
 
             folder.add(jre);
+        }
+
+        // addtional data
+        for (Location location : additional) {
+            folder.add(location);
         }
 
         ui.info("Packing application and libraries.");
