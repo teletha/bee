@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.38.0](https://github.com/teletha/bee/compare/v0.37.0...v0.38.0) (2023-05-18)
+
+
+### Features
+
+* Exe task can archive additional resources. ([6e10499](https://github.com/teletha/bee/commit/6e10499f1d05f9fd3628393ac11787d0a71aab02))
+
+
+### Bug Fixes
+
+* exe task must have built-in modules. ([6ae86a1](https://github.com/teletha/bee/commit/6ae86a1cad85ca56cc1fac41c3a5c115a1d653c5))
+* Exe task should hold java.exe too. ([932218e](https://github.com/teletha/bee/commit/932218e09c28056b02d6ee69b407335b732033f1))
+* Ignore error on module finding process. ([5d1b375](https://github.com/teletha/bee/commit/5d1b3750e5a40e04f25e7aecc9e48108362807d7))
+* Update exewrap. ([ad0509c](https://github.com/teletha/bee/commit/ad0509c0a03679036864e04aa71d886ba1581aad))
+
 ## [0.37.0](https://github.com/teletha/bee/compare/v0.36.0...v0.37.0) (2023-03-02)
 
 
