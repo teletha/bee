@@ -147,6 +147,15 @@ public class Exe extends Task {
             // copy java.exe
             Platform.JavaHome.file("bin/java.exe").copyTo(jre.directory("bin"));
 
+            // sync last-modified datetime
+            jre.walkFileWithBase().to(copy -> {
+                File relativize = copy.ⅰ.relativize(copy.ⅱ);
+                File original = Platform.JavaHome.file(relativize);
+                if (original.isPresent()) {
+                    copy.ⅱ.lastModifiedTime(original.lastModifiedMilli());
+                }
+            });
+
             folder.add(jre);
         }
 
