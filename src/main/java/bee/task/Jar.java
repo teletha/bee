@@ -96,7 +96,7 @@ public class Jar extends Task {
                 classReader.accept(modification, 0);
                 modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
             } else {
-                file.moveTo(modifiedFile);
+                file.copyTo(modifiedFile);
             }
         });
 
