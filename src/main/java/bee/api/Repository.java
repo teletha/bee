@@ -294,14 +294,31 @@ public class Repository {
                 }));
 
                 for (ArtifactResult dependency : result.getArtifactResults()) {
-                    set.add(new Library(dependency.getArtifact()));
+                    Library lib = new Library(dependency.getArtifact());
+                    Library old = checkDupilication(set, lib);
+                    if (old != null) {
+                        if (lib.version.compareToIgnoreCase(old.version) > 0) {
+                            set.remove(old);
+                            set.add(lib);
+                        }
+                    } else {
+                        set.add(lib);
+                    }
                 }
             } catch (Exception e) {
                 throw I.quiet(e);
             }
         }
-
         return set;
+    }
+
+    private Library checkDupilication(Set<Library> set, Library target) {
+        for (Library lib : set) {
+            if (lib.isSame(target)) {
+                return lib;
+            }
+        }
+        return null;
     }
 
     /**

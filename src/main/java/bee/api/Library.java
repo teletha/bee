@@ -285,6 +285,16 @@ public class Library implements Comparable<Library> {
     }
 
     /**
+     * Test whether the specified library is same product or not.
+     * 
+     * @param library
+     * @return
+     */
+    public boolean isSame(Library library) {
+        return Objects.equals(group, library.group) && Objects.equals(name, library.name) && Objects.equals(classfier, library.classfier);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
