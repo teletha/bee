@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.39.0](https://github.com/teletha/bee/compare/v0.38.0...v0.39.0) (2023-06-06)
+
+
+### Features
+
+* Use latest version resolver when conflicts libraries. ([36c4ae1](https://github.com/teletha/bee/commit/36c4ae1b9650ec1aade2e5e0f5847359083c1b5e))
+
+
+### Bug Fixes
+
+* Change location of the downloadable exewrap. ([7e62957](https://github.com/teletha/bee/commit/7e62957c10c365fac58ccdc4a4b4e1944a687b32))
+* Jar:source task should not delete resources. ([1581231](https://github.com/teletha/bee/commit/15812317a8f1d76996af50dd6cb4032b0b9c938c))
+* JLink can sync the last modified date. ([246596b](https://github.com/teletha/bee/commit/246596bbc8cf7a55b4036a11cba64586d46b3100))
+* Use the latest slf4j. ([29f1b53](https://github.com/teletha/bee/commit/29f1b53d7fa22a53e74adcd7a19a4258511886c6))
+
 ## [0.38.0](https://github.com/teletha/bee/compare/v0.37.0...v0.38.0) (2023-05-18)
 
 
