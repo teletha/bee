@@ -34,8 +34,6 @@ import psychopath.Locator;
 
 /**
  * Task based project builder for Java.
- * <p>
- * Bee represents a single project build process.
  */
 public class Bee {
 
