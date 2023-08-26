@@ -27,7 +27,7 @@ import bee.sample.annotation.SourceAnnotation;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.JavaCompiler;
 import kiss.I;
-import kiss.model.Model;
+import kiss.Model;
 import psychopath.File;
 
 class AnnotationValidatorTest extends TaskTestBase {

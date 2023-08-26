@@ -47,9 +47,9 @@ import kiss.Extensible;
 import kiss.I;
 import kiss.Lifestyle;
 import kiss.Managed;
+import kiss.Model;
 import kiss.WiseFunction;
 import kiss.XML;
-import kiss.model.Model;
 import psychopath.Directory;
 import psychopath.File;
 
