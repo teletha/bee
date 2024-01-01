@@ -12,6 +12,7 @@ package bee.api;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.net.HttpRetryException;
 import java.net.URI;
 import java.net.http.HttpHeaders;
@@ -23,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -33,7 +35,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Consumer;
+
+import javax.inject.Named;
 
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
@@ -42,6 +45,7 @@ import org.apache.maven.repository.internal.DefaultModelCacheFactory;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
 import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
+import org.apache.maven.repository.internal.ModelCacheFactory;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.eclipse.aether.AbstractRepositoryListener;
@@ -57,6 +61,23 @@ import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
+import org.eclipse.aether.impl.ArtifactDescriptorReader;
+import org.eclipse.aether.impl.ArtifactResolver;
+import org.eclipse.aether.impl.DependencyCollector;
+import org.eclipse.aether.impl.Deployer;
+import org.eclipse.aether.impl.Installer;
+import org.eclipse.aether.impl.LocalRepositoryProvider;
+import org.eclipse.aether.impl.MetadataResolver;
+import org.eclipse.aether.impl.OfflineController;
+import org.eclipse.aether.impl.RemoteRepositoryFilterManager;
+import org.eclipse.aether.impl.RemoteRepositoryManager;
+import org.eclipse.aether.impl.RepositoryConnectorProvider;
+import org.eclipse.aether.impl.RepositoryEventDispatcher;
+import org.eclipse.aether.impl.RepositorySystemLifecycle;
+import org.eclipse.aether.impl.UpdateCheckManager;
+import org.eclipse.aether.impl.UpdatePolicyAnalyzer;
+import org.eclipse.aether.impl.VersionRangeResolver;
+import org.eclipse.aether.impl.VersionResolver;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
 import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
@@ -80,12 +101,16 @@ import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
 import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
 import org.eclipse.aether.internal.impl.DefaultUpdatePolicyAnalyzer;
 import org.eclipse.aether.internal.impl.EnhancedLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.LocalPathComposer;
+import org.eclipse.aether.internal.impl.LocalPathPrefixComposerFactory;
 import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.internal.impl.TrackingFileManager;
 import org.eclipse.aether.internal.impl.checksum.DefaultChecksumAlgorithmFactorySelector;
 import org.eclipse.aether.internal.impl.collect.FastDependencyCollector;
 import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
+import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactoryImpl;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
@@ -97,15 +122,20 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
+import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactorySelector;
+import org.eclipse.aether.spi.connector.checksum.ChecksumPolicyProvider;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
+import org.eclipse.aether.spi.connector.layout.RepositoryLayoutProvider;
 import org.eclipse.aether.spi.connector.transport.GetTask;
 import org.eclipse.aether.spi.connector.transport.PeekTask;
 import org.eclipse.aether.spi.connector.transport.PutTask;
 import org.eclipse.aether.spi.connector.transport.TransportListener;
 import org.eclipse.aether.spi.connector.transport.Transporter;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
-import org.eclipse.aether.spi.locator.Service;
+import org.eclipse.aether.spi.connector.transport.TransporterProvider;
+import org.eclipse.aether.spi.io.FileProcessor;
+import org.eclipse.aether.spi.synccontext.SyncContextFactory;
 import org.eclipse.aether.transfer.ChecksumFailureException;
 import org.eclipse.aether.transfer.NoTransporterException;
 import org.eclipse.aether.transfer.TransferCancelledException;
@@ -128,6 +158,7 @@ import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.VersionScheme;
 
 import bee.BeeLoader;
 import bee.BeeOption;
@@ -791,77 +822,54 @@ public class Repository {
         private final Map<Class, Lifestyle> lifestyles = new ConcurrentHashMap();
 
         private Lifestyles() {
-            define(DefaultRepositorySystem.class);
-            define(DefaultArtifactResolver.class);
-            define(FastDependencyCollector.class);
-            define(DefaultMetadataResolver.class);
-            define(DefaultDeployer.class, impl -> {
-                impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));
-                impl.addMetadataGeneratorFactory(I.make(VersionsMetadataGeneratorFactory.class));
-            });
-            define(DefaultInstaller.class, impl -> {
-                impl.addMetadataGeneratorFactory(I.make(SnapshotMetadataGeneratorFactory.class));
-                impl.addMetadataGeneratorFactory(I.make(VersionsMetadataGeneratorFactory.class));
-            });
-            define(DefaultRepositoryLayoutProvider.class, impl -> {
-                impl.addRepositoryLayoutFactory(I.make(RepositoryLayoutFactory.class));
-            });
-            define(Maven2RepositoryLayoutFactory.class);
-            define(DefaultTransporterProvider.class, impl -> {
-                impl.addTransporterFactory(I.make(TransporterFactory.class));
-            });
+            System.out.println("INIT");
+            define(RepositorySystem.class, DefaultRepositorySystem.class);
+            define(ArtifactResolver.class, DefaultArtifactResolver.class);
+            define(DependencyCollector.class, FastDependencyCollector.class);
+            define(MetadataResolver.class, DefaultMetadataResolver.class);
+            define2(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+            define2(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+            define2(RepositoryLayoutProvider.class, DefaultRepositoryLayoutProvider.class, RepositoryLayoutFactory.class);
+            define2(RepositoryLayoutFactory.class, Maven2RepositoryLayoutFactory.class);
+            define2(TransporterProvider.class, DefaultTransporterProvider.class, TransporterFactory.class);
 
-            define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector::new);
-            define(DefaultChecksumPolicyProvider.class);
-            define(DefaultRepositoryConnectorProvider.class, impl -> {
-                impl.addRepositoryConnectorFactory(I.make(BasicRepositoryConnectorFactory.class));
-            });
-            define(DefaultRemoteRepositoryManager.class);
-            define(DefaultUpdateCheckManager.class);
-            define(DefaultUpdatePolicyAnalyzer.class);
-            define(DefaultFileProcessor.class);
-            define(DefaultSyncContextFactory.class);
-            define(DefaultRepositoryEventDispatcher.class);
-            define(DefaultOfflineController.class);
-            define(DefaultLocalPathComposer.class);
-            define(DefaultLocalPathPrefixComposerFactory.class);
-            define(DefaultLocalRepositoryProvider.class, impl -> {
-                impl.addLocalRepositoryManagerFactory(I.make(SimpleLocalRepositoryManagerFactory.class));
-                impl.addLocalRepositoryManagerFactory(I.make(EnhancedLocalRepositoryManagerFactory.class));
-            });
-            define(DefaultArtifactDescriptorReader.class);
-            define(DefaultTrackingFileManager.class);
-            define(DefaultVersionResolver.class);
-            define(DefaultVersionRangeResolver.class);
-            define(DefaultRemoteRepositoryFilterManager.class);
-            define(DefaultRepositorySystemLifecycle.class);
-            define(NamedLockFactoryAdapterFactoryExposure.class);
-            define(GenericVersionScheme.class);
-            define(DefaultModelCacheFactory.class);
-            defineSelf(SnapshotMetadataGeneratorFactory.class);
-            defineSelf(VersionsMetadataGeneratorFactory.class);
-            defineSelf(SimpleLocalRepositoryManagerFactory.class);
-            defineSelf(EnhancedLocalRepositoryManagerFactory.class);
-            define(BasicRepositoryConnectorFactory.class);
-            define(NetTransporterFactory.class);
+            define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector.class);
+            define(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
+            define2(RepositoryConnectorProvider.class, DefaultRepositoryConnectorProvider.class, BasicRepositoryConnectorFactory.class);
+            define(RemoteRepositoryManager.class, DefaultRemoteRepositoryManager.class);
+            define(UpdateCheckManager.class, DefaultUpdateCheckManager.class);
+            define(UpdatePolicyAnalyzer.class, DefaultUpdatePolicyAnalyzer.class);
+            define(FileProcessor.class, DefaultFileProcessor.class);
+            define(SyncContextFactory.class, DefaultSyncContextFactory.class);
+            define(RepositoryEventDispatcher.class, DefaultRepositoryEventDispatcher.class);
+            define(OfflineController.class, DefaultOfflineController.class);
+            define(LocalPathComposer.class, DefaultLocalPathComposer.class);
+            define(LocalPathPrefixComposerFactory.class, DefaultLocalPathPrefixComposerFactory.class);
+            define2(LocalRepositoryProvider.class, DefaultLocalRepositoryProvider.class, SimpleLocalRepositoryManagerFactory.class, EnhancedLocalRepositoryManagerFactory.class);
+            define(ArtifactDescriptorReader.class, DefaultArtifactDescriptorReader.class);
+            define(TrackingFileManager.class, DefaultTrackingFileManager.class);
+            define(VersionResolver.class, DefaultVersionResolver.class);
+            define(VersionRangeResolver.class, DefaultVersionRangeResolver.class);
+            define(RemoteRepositoryFilterManager.class, DefaultRemoteRepositoryFilterManager.class);
+            define(RepositorySystemLifecycle.class, DefaultRepositorySystemLifecycle.class);
+            define(NamedLockFactoryAdapterFactory.class, NamedLockFactoryAdapterFactoryImpl.class);
+            define(VersionScheme.class, GenericVersionScheme.class);
+            define(ModelCacheFactory.class, DefaultModelCacheFactory.class);
+            define(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+            define(TransporterFactory.class, NetTransporterFactory.class);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
         }
 
-        private <T> void define(Class<T> clazz, Consumer<T>... initializer) {
-            for (Class type : Model.collectTypes(clazz)) {
-                if (type.isInterface() && type != Service.class) {
-                    lifestyles.put(type, new LazySingleton(clazz, initializer));
-                    break;
-                }
-            }
-        }
-
-        private <T> void defineSelf(Class<T> clazz, Consumer<T>... initializer) {
-            lifestyles.put(clazz, new LazySingleton(clazz, initializer));
+        private <T> void define2(Class<T> type, Class<? extends T> clazz, Class... names) {
+            lifestyles.put(clazz, new LazySingleton(clazz, names));
         }
 
         private <T> void define(Class<T> type, Lifestyle<T> lifestyle) {
             lifestyles.put(type, lifestyle);
+        }
+
+        private <T> void define(Class<T> type, Class<? extends T> implemetation) {
+            lifestyles.put(type, () -> I.make(implemetation));
         }
 
         /**
@@ -869,6 +877,7 @@ public class Repository {
          */
         @Override
         public Lifestyle create(Class key) {
+            System.out.println("Find " + key);
             return lifestyles.get(key);
         }
     }
@@ -876,17 +885,24 @@ public class Repository {
     /**
      * Lazy intializable singleton.
      */
-    private static class LazySingleton<M> implements Lifestyle<M> {
+    private static class LazySingleton<M, N> implements Lifestyle<M> {
 
-        protected final Class<? extends M> type;
+        private final Class<? extends M> type;
 
-        protected M instance;
+        private final Map<String, N> names;
 
-        private Consumer<M> initializer;
+        private M instance;
 
-        protected LazySingleton(Class<? extends M> type, Consumer<M>... initializer) {
+        private LazySingleton(Class<? extends M> type, Class<N>... names) {
             this.type = type;
-            this.initializer = initializer.length == 0 ? null : initializer[0];
+            this.names = new HashMap();
+
+            for (Class<N> name : names) {
+                Named named = name.getAnnotation(Named.class);
+                if (named != null) {
+                    this.names.put(named.value(), I.make(name));
+                }
+            }
         }
 
         /**
@@ -895,21 +911,34 @@ public class Repository {
         @Override
         public synchronized M call() throws Exception {
             if (instance == null) {
-                instance = I.prototype(type).get();
+                // find default constructor as instantiator
+                Constructor constructor = Model.collectConstructors(type)[0];
+                constructor.setAccessible(true);
 
-                if (initializer != null) {
-                    initializer.accept(instance);
+                Class[] types = constructor.getParameterTypes();
+
+                // constructor injection
+                Object[] params = null;
+
+                // We should use lazy initialization of parameter array to avoid that the
+                // constructor
+                // without parameters doesn't create futile array instance.
+                if (types.length != 0) {
+                    params = new Object[types.length];
+
+                    for (int i = 0; i < params.length; i++) {
+                        if (types[i] == Map.class) {
+                            params[i] = names;
+                        } else {
+                            params[i] = I.make(types[i]);
+                        }
+                    }
                 }
+                // create new instance
+                instance = (M) constructor.newInstance(params);
             }
             return instance;
         }
-    }
-
-    /**
-     * Avoid deprecation.
-     */
-    @SuppressWarnings("deprecation")
-    private static class NamedLockFactoryAdapterFactoryExposure extends NamedLockFactoryAdapterFactoryImpl {
     }
 
     /**
