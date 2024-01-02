@@ -107,11 +107,18 @@ import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.TrackingFileManager;
 import org.eclipse.aether.internal.impl.checksum.DefaultChecksumAlgorithmFactorySelector;
+import org.eclipse.aether.internal.impl.checksum.Md5ChecksumAlgorithmFactory;
+import org.eclipse.aether.internal.impl.checksum.Sha1ChecksumAlgorithmFactory;
+import org.eclipse.aether.internal.impl.checksum.Sha256ChecksumAlgorithmFactory;
+import org.eclipse.aether.internal.impl.checksum.Sha512ChecksumAlgorithmFactory;
 import org.eclipse.aether.internal.impl.checksum.SparseDirectoryTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.SummaryFileTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.TrustedToProvidedChecksumsSourceAdapter;
 import org.eclipse.aether.internal.impl.collect.FastDependencyCollector;
 import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
+import org.eclipse.aether.internal.impl.filter.GroupIdRemoteRepositoryFilterSource;
+import org.eclipse.aether.internal.impl.filter.PrefixesRemoteRepositoryFilterSource;
+import org.eclipse.aether.internal.impl.resolution.TrustedChecksumsArtifactResolverPostProcessor;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMapper;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMappers;
@@ -834,18 +841,19 @@ public class Repository {
 
         private Lifestyles() {
             define(RepositorySystem.class, DefaultRepositorySystem.class);
-            define(ArtifactResolver.class, DefaultArtifactResolver.class);
+            define(ArtifactResolver.class, DefaultArtifactResolver.class, TrustedChecksumsArtifactResolverPostProcessor.class, GroupIdRemoteRepositoryFilterSource.class);
             define(DependencyCollector.class, FastDependencyCollector.class);
             define(MetadataResolver.class, DefaultMetadataResolver.class);
             define(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
             define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
             define(RepositoryLayoutProvider.class, DefaultRepositoryLayoutProvider.class, RepositoryLayoutFactory.class);
             define(RepositoryLayoutFactory.class, Maven2RepositoryLayoutFactory.class);
-            define(TransporterProvider.class, DefaultTransporterProvider.class, TransporterFactory.class);
 
-            define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector.class);
+            define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector.class, Md5ChecksumAlgorithmFactory.class, Sha1ChecksumAlgorithmFactory.class, Sha256ChecksumAlgorithmFactory.class, Sha512ChecksumAlgorithmFactory.class);
             define(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
             define(RepositoryConnectorProvider.class, DefaultRepositoryConnectorProvider.class, RepositoryConnectorFactory.class);
+            define(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class, ProvidedChecksumsSource.class);
+            define(ProvidedChecksumsSource.class, TrustedToProvidedChecksumsSourceAdapter.class, SparseDirectoryTrustedChecksumsSource.class, SummaryFileTrustedChecksumsSource.class);
             define(RemoteRepositoryManager.class, DefaultRemoteRepositoryManager.class);
             define(UpdateCheckManager.class, DefaultUpdateCheckManager.class);
             define(UpdatePolicyAnalyzer.class, DefaultUpdatePolicyAnalyzer.class);
@@ -860,13 +868,12 @@ public class Repository {
             define(TrackingFileManager.class, DefaultTrackingFileManager.class);
             define(VersionResolver.class, DefaultVersionResolver.class);
             define(VersionRangeResolver.class, DefaultVersionRangeResolver.class);
-            define(RemoteRepositoryFilterManager.class, DefaultRemoteRepositoryFilterManager.class);
+            define(RemoteRepositoryFilterManager.class, DefaultRemoteRepositoryFilterManager.class, GroupIdRemoteRepositoryFilterSource.class, PrefixesRemoteRepositoryFilterSource.class);
             define(RepositorySystemLifecycle.class, DefaultRepositorySystemLifecycle.class);
             define(NamedLockFactoryAdapterFactory.class, BeeNamedLockFactoryAdapterFactory.class);
             define(VersionScheme.class, GenericVersionScheme.class);
             define(ModelCacheFactory.class, DefaultModelCacheFactory.class);
-            define(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class, ProvidedChecksumsSource.class);
-            define(ProvidedChecksumsSource.class, TrustedToProvidedChecksumsSourceAdapter.class, SparseDirectoryTrustedChecksumsSource.class, SummaryFileTrustedChecksumsSource.class);
+            define(TransporterProvider.class, DefaultTransporterProvider.class, TransporterFactory.class);
             define(TransporterFactory.class, NetTransporterFactory.class);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
         }
@@ -933,6 +940,12 @@ public class Repository {
                                 Named named = name.getAnnotation(Named.class);
                                 if (named != null) {
                                     map.put(named.value(), I.make(name));
+                                } else {
+                                    N impl = I.make(name);
+                                    named = impl.getClass().getAnnotation(Named.class);
+                                    if (named != null) {
+                                        map.put(named.value(), impl);
+                                    }
                                 }
                             }
                             params[i] = map;
@@ -977,6 +990,7 @@ public class Repository {
     /**
      * For HTTP and HTTPS.
      */
+    @Named("https")
     private static class NetTransporterFactory implements TransporterFactory {
 
         /**

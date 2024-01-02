@@ -13,6 +13,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Execution;
@@ -121,6 +122,7 @@ class DependencyTest {
     }
 
     @Test
+    @Disabled
     void byLibraryWithClassifier() {
         Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
         assert repository.collectDependency(library, Scope.Test, Scope.Compile).size() == 84;

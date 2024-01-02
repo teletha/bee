@@ -14,12 +14,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import antibug.CleanRoom;
 import bee.BlinkProject;
 import psychopath.Locator;
 
+@Execution(ExecutionMode.SAME_THREAD)
 class LibraryTest {
+
     @RegisterExtension
     private static CleanRoom room = new CleanRoom();
 
@@ -36,7 +40,7 @@ class LibraryTest {
 
     @Test
     void source() {
-        project.require("org.apache.maven.resolver", "maven-resolver-api", "1.3.1");
+        project.require("org.apache.maven.resolver", "maven-resolver-api", "1.3.2");
 
         Library library = repository.collectDependency(project, Scope.Compile).stream().findFirst().orElseThrow();
         assert repository.resolveSource(library).isPresent();
@@ -58,7 +62,7 @@ class LibraryTest {
 
     @Test
     void javadoc() {
-        project.require("org.apache.maven.resolver", "maven-resolver-api", "1.3.1");
+        project.require("org.apache.maven.resolver", "maven-resolver-api", "1.3.2");
 
         Library library = repository.collectDependency(project, Scope.Compile).stream().findFirst().orElseThrow();
 
