@@ -20,8 +20,6 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-
 import bee.UserInterface;
 import kiss.I;
 
@@ -116,7 +114,7 @@ public class Profiling implements AutoCloseable {
             Duration duration = Duration.ofNanos(total).truncatedTo(ChronoUnit.MILLIS);
             if (100 <= duration.toMillis()) {
                 String time = duration.toString().substring(2).toLowerCase();
-                output.put(duration, StringUtils.rightPad(time, 7) + "\t" + name);
+                output.put(duration, time + " ".repeat(7 - time.length()) + "\t" + name);
             }
         }
 

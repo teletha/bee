@@ -926,16 +926,13 @@ public class Repository {
                     params = new Object[types.length];
 
                     for (int i = 0; i < params.length; i++) {
-                        System.out.println("Need " + type + " on " + types[i]);
                         if (types[i] == Map.class) {
                             Map map = new HashMap();
 
                             for (Class<N> name : names) {
                                 Named named = name.getAnnotation(Named.class);
                                 if (named != null) {
-                                    System.out.println("Create named " + name);
                                     map.put(named.value(), I.make(name));
-                                    System.out.println("Created named " + name);
                                 }
                             }
                             params[i] = map;

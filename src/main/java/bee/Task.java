@@ -32,7 +32,6 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.reflect.MethodUtils;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
 
@@ -772,8 +771,10 @@ public abstract class Task implements Extensible {
                 mw.visitEnd();
 
                 // overwrite command methods
-                for (Method m : model.getMethods()) {
-                    if (MethodUtils.getAnnotation(m, Command.class, true, true) != null) {
+                Map<Method, List<Annotation>> methods = Model.collectAnnotatedMethods(model);
+                for (Entry<Method, List<Annotation>> entry : methods.entrySet()) {
+                    if (entry.getValue().stream().anyMatch(x -> x.annotationType() == Command.class)) {
+                        Method m = entry.getKey();
                         String methodName = m.getName();
                         String methodDesc = Type.getMethodDescriptor(m);
                         Type returnType = Type.getReturnType(m);

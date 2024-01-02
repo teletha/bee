@@ -9,9 +9,9 @@
  */
 package bee.api;
 
+import java.util.Random;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -614,7 +614,19 @@ class DependencyTest {
          * 
          */
         private TemporaryProject() {
-            this(RandomStringUtils.randomAlphabetic(5) + "-root");
+            this(generateRandomString(5) + "-root");
+        }
+
+        private static String generateRandomString(int length) {
+            String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            StringBuilder randomString = new StringBuilder();
+
+            Random random = new Random();
+            for (int i = 0; i < length; i++) {
+                int randomIndex = random.nextInt(characters.length());
+                randomString.append(characters.charAt(randomIndex));
+            }
+            return randomString.toString();
         }
 
         /**
