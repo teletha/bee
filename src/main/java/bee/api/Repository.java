@@ -107,11 +107,21 @@ import org.eclipse.aether.internal.impl.Maven2RepositoryLayoutFactory;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.internal.impl.TrackingFileManager;
 import org.eclipse.aether.internal.impl.checksum.DefaultChecksumAlgorithmFactorySelector;
+import org.eclipse.aether.internal.impl.checksum.SparseDirectoryTrustedChecksumsSource;
+import org.eclipse.aether.internal.impl.checksum.SummaryFileTrustedChecksumsSource;
+import org.eclipse.aether.internal.impl.checksum.TrustedToProvidedChecksumsSourceAdapter;
 import org.eclipse.aether.internal.impl.collect.FastDependencyCollector;
 import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
+import org.eclipse.aether.internal.impl.synccontext.named.NameMapper;
+import org.eclipse.aether.internal.impl.synccontext.named.NameMappers;
 import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactoryImpl;
+import org.eclipse.aether.named.NamedLockFactory;
+import org.eclipse.aether.named.providers.FileLockNamedLockFactory;
+import org.eclipse.aether.named.providers.LocalReadWriteLockNamedLockFactory;
+import org.eclipse.aether.named.providers.LocalSemaphoreNamedLockFactory;
+import org.eclipse.aether.named.providers.NoopNamedLockFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RepositoryPolicy;
@@ -122,6 +132,7 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
+import org.eclipse.aether.spi.checksums.ProvidedChecksumsSource;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactorySelector;
 import org.eclipse.aether.spi.connector.checksum.ChecksumPolicyProvider;
@@ -822,20 +833,19 @@ public class Repository {
         private final Map<Class, Lifestyle> lifestyles = new ConcurrentHashMap();
 
         private Lifestyles() {
-            System.out.println("INIT");
             define(RepositorySystem.class, DefaultRepositorySystem.class);
             define(ArtifactResolver.class, DefaultArtifactResolver.class);
             define(DependencyCollector.class, FastDependencyCollector.class);
             define(MetadataResolver.class, DefaultMetadataResolver.class);
-            define2(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
-            define2(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
-            define2(RepositoryLayoutProvider.class, DefaultRepositoryLayoutProvider.class, RepositoryLayoutFactory.class);
-            define2(RepositoryLayoutFactory.class, Maven2RepositoryLayoutFactory.class);
-            define2(TransporterProvider.class, DefaultTransporterProvider.class, TransporterFactory.class);
+            define(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+            define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+            define(RepositoryLayoutProvider.class, DefaultRepositoryLayoutProvider.class, RepositoryLayoutFactory.class);
+            define(RepositoryLayoutFactory.class, Maven2RepositoryLayoutFactory.class);
+            define(TransporterProvider.class, DefaultTransporterProvider.class, TransporterFactory.class);
 
             define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector.class);
             define(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
-            define2(RepositoryConnectorProvider.class, DefaultRepositoryConnectorProvider.class, BasicRepositoryConnectorFactory.class);
+            define(RepositoryConnectorProvider.class, DefaultRepositoryConnectorProvider.class, RepositoryConnectorFactory.class);
             define(RemoteRepositoryManager.class, DefaultRemoteRepositoryManager.class);
             define(UpdateCheckManager.class, DefaultUpdateCheckManager.class);
             define(UpdatePolicyAnalyzer.class, DefaultUpdatePolicyAnalyzer.class);
@@ -845,31 +855,28 @@ public class Repository {
             define(OfflineController.class, DefaultOfflineController.class);
             define(LocalPathComposer.class, DefaultLocalPathComposer.class);
             define(LocalPathPrefixComposerFactory.class, DefaultLocalPathPrefixComposerFactory.class);
-            define2(LocalRepositoryProvider.class, DefaultLocalRepositoryProvider.class, SimpleLocalRepositoryManagerFactory.class, EnhancedLocalRepositoryManagerFactory.class);
+            define(LocalRepositoryProvider.class, DefaultLocalRepositoryProvider.class, SimpleLocalRepositoryManagerFactory.class, EnhancedLocalRepositoryManagerFactory.class);
             define(ArtifactDescriptorReader.class, DefaultArtifactDescriptorReader.class);
             define(TrackingFileManager.class, DefaultTrackingFileManager.class);
             define(VersionResolver.class, DefaultVersionResolver.class);
             define(VersionRangeResolver.class, DefaultVersionRangeResolver.class);
             define(RemoteRepositoryFilterManager.class, DefaultRemoteRepositoryFilterManager.class);
             define(RepositorySystemLifecycle.class, DefaultRepositorySystemLifecycle.class);
-            define(NamedLockFactoryAdapterFactory.class, NamedLockFactoryAdapterFactoryImpl.class);
+            define(NamedLockFactoryAdapterFactory.class, BeeNamedLockFactoryAdapterFactory.class);
             define(VersionScheme.class, GenericVersionScheme.class);
             define(ModelCacheFactory.class, DefaultModelCacheFactory.class);
-            define(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
+            define(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class, ProvidedChecksumsSource.class);
+            define(ProvidedChecksumsSource.class, TrustedToProvidedChecksumsSourceAdapter.class, SparseDirectoryTrustedChecksumsSource.class, SummaryFileTrustedChecksumsSource.class);
             define(TransporterFactory.class, NetTransporterFactory.class);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
         }
 
-        private <T> void define2(Class<T> type, Class<? extends T> clazz, Class... names) {
-            lifestyles.put(clazz, new LazySingleton(clazz, names));
+        private <T> void define(Class<T> type, Class<? extends T> clazz, Class... names) {
+            lifestyles.put(type, new LazySingleton(clazz, names));
         }
 
         private <T> void define(Class<T> type, Lifestyle<T> lifestyle) {
             lifestyles.put(type, lifestyle);
-        }
-
-        private <T> void define(Class<T> type, Class<? extends T> implemetation) {
-            lifestyles.put(type, () -> I.make(implemetation));
         }
 
         /**
@@ -877,7 +884,6 @@ public class Repository {
          */
         @Override
         public Lifestyle create(Class key) {
-            System.out.println("Find " + key);
             return lifestyles.get(key);
         }
     }
@@ -889,20 +895,13 @@ public class Repository {
 
         private final Class<? extends M> type;
 
-        private final Map<String, N> names;
+        private final Class<N>[] names;
 
         private M instance;
 
         private LazySingleton(Class<? extends M> type, Class<N>... names) {
             this.type = type;
-            this.names = new HashMap();
-
-            for (Class<N> name : names) {
-                Named named = name.getAnnotation(Named.class);
-                if (named != null) {
-                    this.names.put(named.value(), I.make(name));
-                }
-            }
+            this.names = names;
         }
 
         /**
@@ -927,8 +926,19 @@ public class Repository {
                     params = new Object[types.length];
 
                     for (int i = 0; i < params.length; i++) {
+                        System.out.println("Need " + type + " on " + types[i]);
                         if (types[i] == Map.class) {
-                            params[i] = names;
+                            Map map = new HashMap();
+
+                            for (Class<N> name : names) {
+                                Named named = name.getAnnotation(Named.class);
+                                if (named != null) {
+                                    System.out.println("Create named " + name);
+                                    map.put(named.value(), I.make(name));
+                                    System.out.println("Created named " + name);
+                                }
+                            }
+                            params[i] = map;
                         } else {
                             params[i] = I.make(types[i]);
                         }
@@ -938,6 +948,32 @@ public class Repository {
                 instance = (M) constructor.newInstance(params);
             }
             return instance;
+        }
+    }
+
+    private static class BeeNamedLockFactoryAdapterFactory extends NamedLockFactoryAdapterFactoryImpl {
+
+        public BeeNamedLockFactoryAdapterFactory(RepositorySystemLifecycle lifecycle) {
+            super(getManuallyCreatedFactories(), getManuallyCreatedNameMappers(), lifecycle);
+        }
+
+        private static Map<String, NamedLockFactory> getManuallyCreatedFactories() {
+            HashMap<String, NamedLockFactory> factories = new HashMap<>();
+            factories.put(NoopNamedLockFactory.NAME, new NoopNamedLockFactory());
+            factories.put(LocalReadWriteLockNamedLockFactory.NAME, new LocalReadWriteLockNamedLockFactory());
+            factories.put(LocalSemaphoreNamedLockFactory.NAME, new LocalSemaphoreNamedLockFactory());
+            factories.put(FileLockNamedLockFactory.NAME, new FileLockNamedLockFactory());
+            return Collections.unmodifiableMap(factories);
+        }
+
+        private static Map<String, NameMapper> getManuallyCreatedNameMappers() {
+            HashMap<String, NameMapper> mappers = new HashMap<>();
+            mappers.put(NameMappers.STATIC_NAME, NameMappers.staticNameMapper());
+            mappers.put(NameMappers.GAV_NAME, NameMappers.gavNameMapper());
+            mappers.put(NameMappers.DISCRIMINATING_NAME, NameMappers.discriminatingNameMapper());
+            mappers.put(NameMappers.FILE_GAV_NAME, NameMappers.fileGavNameMapper());
+            mappers.put(NameMappers.FILE_HGAV_NAME, NameMappers.fileHashingGavNameMapper());
+            return Collections.unmodifiableMap(mappers);
         }
     }
 
