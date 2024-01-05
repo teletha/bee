@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.40.0](https://github.com/teletha/bee/compare/v0.39.1...v0.40.0) (2024-01-05)
+
+
+### Features
+
+* update maven-resolver ([abb37aa](https://github.com/teletha/bee/commit/abb37aae3b5b1807dbc0e07755edc50b98bc46a2))
+
+
+### Bug Fixes
+
+* dependency injection ([8f1101c](https://github.com/teletha/bee/commit/8f1101c97797e8ef4ff0b4bba84f6b7ff24e5314))
+* update conjure ([6237320](https://github.com/teletha/bee/commit/62373201b5a3edaeb335c6ef77380cea72abe40f))
+* update license ([9dd399d](https://github.com/teletha/bee/commit/9dd399d71324b6e485604932df1e8ac87260b883))
+* update maven-resolver ([565fe85](https://github.com/teletha/bee/commit/565fe850ae965be51f146a38a0d6ba174c1bd85b))
+* use temporal local repository in test ([acf9412](https://github.com/teletha/bee/commit/acf941236510364a643158b952ec87d3b5fcb8d2))
+
 ## [0.39.1](https://github.com/teletha/bee/compare/v0.39.0...v0.39.1) (2023-08-26)
 
 
