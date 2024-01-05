@@ -43,6 +43,7 @@ public class Project extends bee.api.Project {
         require("org.apache.maven.resolver", "maven-resolver-util");
         require("org.apache.maven.resolver", "maven-resolver-impl");
         require("org.apache.maven.resolver", "maven-resolver-connector-basic");
+        require("org.apache.maven.resolver", "maven-resolver-named-locks");
         // require("org.apache.maven.resolver", "maven-resolver-transport-http");
 
         // LOGGER
