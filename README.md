@@ -53,7 +53,7 @@ Add it into in the dependencies element like so:
 <dependency>
     <groupId>com.github.teletha</groupId>
     <artifactId>bee</artifactId>
-    <version>0.37.0</version>
+    <version>0.40.0</version>
 </dependency>
 ```
 #### [Gradle](https://gradle.org/)
@@ -66,7 +66,7 @@ repositories {
 Add it into the dependencies section like so:
 ```gradle
 dependencies {
-    implementation 'com.github.teletha:bee:0.37.0'
+    implementation 'com.github.teletha:bee:0.40.0'
 }
 ```
 #### [SBT](https://www.scala-sbt.org/)
@@ -76,7 +76,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 ```
 Add it into the libraryDependencies section like so:
 ```scala
-libraryDependencies += "com.github.teletha" % "bee" % "0.37.0"
+libraryDependencies += "com.github.teletha" % "bee" % "0.40.0"
 ```
 #### [Leiningen](https://leiningen.org/)
 Add JitPack repository at the end of repositories in your project.clj:
@@ -85,12 +85,12 @@ Add JitPack repository at the end of repositories in your project.clj:
 ```
 Add it into the dependencies section like so:
 ```clj
-:dependencies [[com.github.teletha/bee "0.37.0"]]
+:dependencies [[com.github.teletha/bee "0.40.0"]]
 ```
 #### [Bee](https://teletha.github.io/bee)
 Add it into your project definition class like so:
 ```java
-require("com.github.teletha", "bee", "0.37.0");
+require("com.github.teletha", "bee", "0.40.0");
 ```
 <p align="right"><a href="#top">back to top</a></p>
 
@@ -118,40 +118,42 @@ If you think something might be a bug, but you're not sure, ask on StackOverflow
 
 ## Dependency
 Bee depends on the following products on runtime.
-* [asm-9.5](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.5)
-* [commons-lang3-3.12.0](https://mvnrepository.com/artifact/org.apache.commons/commons-lang3/3.12.0)
-* [javax.annotation-api-1.2](https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api/1.2)
+* [asm-9.6](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.6)
+* [conjure-1.1.1](https://mvnrepository.com/artifact/com.github.teletha/conjure/1.1.1)
 * [javax.inject-1](https://mvnrepository.com/artifact/javax.inject/javax.inject/1)
-* [jul-to-slf4j-2.0.7](https://mvnrepository.com/artifact/org.slf4j/jul-to-slf4j/2.0.7)
-* [maven-api-meta-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-2)
-* [maven-api-model-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-2)
-* [maven-api-xml-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-api-xml/4.0.0-alpha-2)
-* [maven-artifact-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-artifact/4.0.0-alpha-2)
-* [maven-builder-support-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-builder-support/4.0.0-alpha-2)
-* [maven-model-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model/4.0.0-alpha-2)
-* [maven-model-builder-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder/4.0.0-alpha-2)
-* [maven-model-transform-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-model-transform/4.0.0-alpha-2)
-* [maven-repository-metadata-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-repository-metadata/4.0.0-alpha-2)
-* [maven-resolver-api-1.9.7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-api/1.9.7)
-* [maven-resolver-connector-basic-1.9.7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-connector-basic/1.9.7)
-* [maven-resolver-impl-1.9.7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-impl/1.9.7)
-* [maven-resolver-named-locks-1.9.7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-named-locks/1.9.7)
-* [maven-resolver-provider-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-resolver-provider/4.0.0-alpha-2)
-* [maven-resolver-spi-1.9.7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-spi/1.9.7)
-* [maven-resolver-util-1.9.7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util/1.9.7)
-* [maven-xml-impl-4.0.0-alpha-2](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-2)
-* [org.eclipse.sisu.plexus-0.3.5](https://mvnrepository.com/artifact/org.eclipse.sisu/org.eclipse.sisu.plexus/0.3.5)
+* [maven-api-core-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-api-core/4.0.0-alpha-8)
+* [maven-api-meta-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-8)
+* [maven-api-model-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-8)
+* [maven-api-settings-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-api-settings/4.0.0-alpha-8)
+* [maven-api-spi-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-api-spi/4.0.0-alpha-8)
+* [maven-api-toolchain-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-api-toolchain/4.0.0-alpha-8)
+* [maven-api-xml-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-api-xml/4.0.0-alpha-8)
+* [maven-artifact-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-artifact/4.0.0-alpha-8)
+* [maven-builder-support-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-builder-support/4.0.0-alpha-8)
+* [maven-model-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-model/4.0.0-alpha-8)
+* [maven-model-builder-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-model-builder/4.0.0-alpha-8)
+* [maven-repository-metadata-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-repository-metadata/4.0.0-alpha-8)
+* [maven-resolver-api-2.0.0-alpha-5](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-api/2.0.0-alpha-5)
+* [maven-resolver-connector-basic-2.0.0-alpha-5](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-connector-basic/2.0.0-alpha-5)
+* [maven-resolver-impl-2.0.0-alpha-5](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-impl/2.0.0-alpha-5)
+* [maven-resolver-named-locks-2.0.0-alpha-5](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-named-locks/2.0.0-alpha-5)
+* [maven-resolver-provider-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-resolver-provider/4.0.0-alpha-8)
+* [maven-resolver-spi-2.0.0-alpha-5](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-spi/2.0.0-alpha-5)
+* [maven-resolver-util-2.0.0-alpha-5](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util/2.0.0-alpha-5)
+* [maven-xml-impl-4.0.0-alpha-8](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-8)
+* [org.eclipse.sisu.inject-0.9.0.M2-no_asm](https://mvnrepository.com/artifact/org.eclipse.sisu/org.eclipse.sisu.inject/0.9.0.M2)
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
-* [plexus-utils-3.0.24](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/3.0.24)
-* [psychopath-1.7.1](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.7.1)
-* [sinobu-3.2.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.2.0)
-* [slf4j-api-1.7.36](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/1.7.36)
-* [slf4j-nop-2.0.7](https://mvnrepository.com/artifact/org.slf4j/slf4j-nop/2.0.7)
+* [plexus-xml-4.0.1](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-xml/4.0.1)
+* [psychopath-1.12.1](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.12.1)
+* [sinobu-3.8.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.8.0)
+* [slf4j-api-2.1.0-alpha0](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.1.0-alpha0)
+* [stax2-api-4.2.1](https://mvnrepository.com/artifact/org.codehaus.woodstox/stax2-api/4.2.1)
+* [woodstox-core-6.5.1](https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core/6.5.1)
 <p align="right"><a href="#top">back to top</a></p>
 
 
 ## License
-Copyright (C) 2023 The BEE Development Team
+Copyright (C) 2024 The BEE Development Team
 
 MIT License
 
