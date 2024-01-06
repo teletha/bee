@@ -37,7 +37,7 @@ public class Project extends bee.api.Project {
         // MAVEN REPOSITORY
         // jakarta.inject has replaced javax.inject since alpha-9, but some maven-resolver APIs do
         // not support jakarta.inject, so it was stopped in alpha-8
-        require("org.apache.maven", "maven-resolver-provider", "4.0.0-alpha-8");
+        require("org.apache.maven", "maven-resolver-provider", "4.0.0-alpha-2");
         require("org.apache.maven.resolver", "maven-resolver-api");
         require("org.apache.maven.resolver", "maven-resolver-spi");
         require("org.apache.maven.resolver", "maven-resolver-util");
@@ -71,8 +71,6 @@ public class Project extends bee.api.Project {
 
         unrequire("commons-codec", "commons-codec");
         unrequire("org.apache.maven", "plexus-utils");
-        unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");
-        unrequire("org.eclipse.sisu", "org.eclipse.sisu.plexus");
         unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
     }
