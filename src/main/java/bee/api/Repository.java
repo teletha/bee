@@ -257,6 +257,8 @@ public class Repository {
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
         session.setConfigProperty("maven.artifact.threads", 24);
         session.setOffline(BeeOption.Offline.value());
+        session.setSystemProperties(System.getProperties());
+        session.setConfigProperties(System.getProperties());
 
         // event listener
         View view = I.make(View.class);
