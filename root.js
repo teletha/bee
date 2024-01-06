@@ -496,7 +496,7 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "POM",
+			"name": "Maven",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
