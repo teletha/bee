@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.40.1](https://github.com/teletha/bee/compare/v0.40.0...v0.40.1) (2024-01-06)
+
+
+### Bug Fixes
+
+* correct resolving dependencies ([1966e84](https://github.com/teletha/bee/commit/1966e84e59e859a58a37be71de362ae08f3d1f98))
+
 ## [0.40.0](https://github.com/teletha/bee/compare/v0.39.1...v0.40.0) (2024-01-05)
 
 
