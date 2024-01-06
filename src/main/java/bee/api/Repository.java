@@ -255,10 +255,10 @@ public class Repository {
         session.setIgnoreArtifactDescriptorRepositories(true);
         session.setCache(new DefaultRepositoryCache());
         session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
-        session.setConfigProperty("maven.artifact.threads", 24);
         session.setOffline(BeeOption.Offline.value());
         session.setSystemProperties(System.getProperties());
         session.setConfigProperties(System.getProperties());
+        session.setConfigProperty("maven.artifact.threads", 24);
 
         // event listener
         View view = I.make(View.class);
