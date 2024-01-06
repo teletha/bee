@@ -12,10 +12,10 @@ package bee.task;
 import bee.Task;
 import bee.api.Command;
 
-public class POM extends Task {
+public class Maven extends Task {
 
     @Command("Generate pom file.")
-    public void build() {
-        makeFile("pom.xml", project.toString());
+    public void pom() {
+        makeFile("pom.xml", project.toMavenDefinition());
     }
 }

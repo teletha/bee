@@ -40,7 +40,7 @@ public class IDE extends Task {
             if (support.exist(project)) {
                 task.accept(support);
 
-                require(POM::build);
+                require(Maven::pom);
                 return;
             }
         }

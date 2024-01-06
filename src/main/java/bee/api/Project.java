@@ -781,10 +781,35 @@ public class Project {
     }
 
     /**
-     * {@inheritDoc}
+     * Returns literal project definition.
+     * 
+     * @return
      */
-    @Override
-    public String toString() {
+    public List<String> toBeeDefinition() {
+        List<String> code = Inputs.templates("""
+                {=${ }=}
+                import static bee.api.License.*;
+
+                public class Project extends bee.api.Project {
+                    {
+                        product("${group}", "${product}", "${version}");
+                        license(${license.name});
+                        ${#versionControlSystem}
+                        versionControlSystem("${versionControlSystem}");
+                        ${/versionControlSystem}
+                    }
+                }
+                """, this);
+
+        return StandardHeaderStyle.SlashStar.convert(code, license);
+    }
+
+    /**
+     * Returns literal of POM file.
+     * 
+     * @return
+     */
+    public String toMavenDefinition() {
         XML pom = I.xml("project");
         pom.child("modelVersion").text("4.0.0");
         pom.child("groupId").text(getGroup());
@@ -877,30 +902,6 @@ public class Project {
 
         // write as pom
         return pom.toString();
-    }
-
-    /**
-     * Returns literal project definition.
-     * 
-     * @return
-     */
-    public List<String> toBeeDefinition() {
-        List<String> code = Inputs.templates("""
-                {=${ }=}
-                import static bee.api.License.*;
-
-                public class Project extends bee.api.Project {
-                    {
-                        product("${group}", "${product}", "${version}");
-                        license(${license.name});
-                        ${#versionControlSystem}
-                        versionControlSystem("${versionControlSystem}");
-                        ${/versionControlSystem}
-                    }
-                }
-                """, this);
-
-        return StandardHeaderStyle.SlashStar.convert(code, license);
     }
 
     /**
