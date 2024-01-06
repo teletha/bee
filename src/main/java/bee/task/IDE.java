@@ -39,6 +39,8 @@ public class IDE extends Task {
         for (IDESupport support : supports) {
             if (support.exist(project)) {
                 task.accept(support);
+
+                require(POM::build);
                 return;
             }
         }
