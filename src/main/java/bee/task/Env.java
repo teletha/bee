@@ -107,19 +107,22 @@ public class Env extends Task {
         String bat = I.express("""
                 @echo off
                 setlocal enabledelayedexpansion
-                set "bee=bee-{ⅰ}.far"
-                if not exist %bee% (
+                set "version={ⅰ}"
+                set "bee=bee-%version%.far"
+
+                if not exist !bee! (
                     if not "!JAVA_HOME!" == "" (
-                        set "bee=!JAVA_HOME!/lib/bee/bee-{ⅰ}.jar"
+                        set "bee=!JAVA_HOME!/lib/bee/bee-%version%.jar"
                     ) else (
                         for /f "delims=" %%i in ('where java') do (
                             set "javaDir=%%~dpi"
-                            set "bee=!javaDir!/../lib/bee/bee-{ⅰ}.jar"
+                            set "bee=!javaDir!/../lib/bee/bee-%version%.jar"
                         )
                     )
+
                     if not exist !bee! (
                         echo bee is not found locally, try to download it from network.
-                        curl -#L -o !bee! {ⅱ}
+                        curl -#L -o !bee! https://jitpack.io/com/github/teletha/bee/%version%/bee-%version%.jar
                     )
                 )
                 java -javaagent:%bee% -cp %bee% bee.Bee %*
