@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.41.0](https://github.com/teletha/bee/compare/v0.40.1...v0.41.0) (2024-01-07)
+
+
+### Features
+
+* guess location if JAVA_HOME environment variable is not found ([cc050e3](https://github.com/teletha/bee/commit/cc050e35865f7b166d28c8c89029ca2a9529267d))
+* IDE task creates the maven's file also. ([1df18ea](https://github.com/teletha/bee/commit/1df18ea144b6396aa0b31919c85b09262850115b))
+* rename task from pom to maven ([a055260](https://github.com/teletha/bee/commit/a0552600fd07ffce2e2a460975b340ca819090c9))
+
+
+### Bug Fixes
+
+* strip whitespace ([40b4be7](https://github.com/teletha/bee/commit/40b4be7d5cd54b8e1306c812cf8e1a90051707d0))
+
 ## [0.40.1](https://github.com/teletha/bee/compare/v0.40.0...v0.40.1) (2024-01-06)
 
 
