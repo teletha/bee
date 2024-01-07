@@ -100,6 +100,8 @@ public class Env extends Task {
      * @param version
      */
     private void build(String version) {
+        version = version.strip();
+
         Ⅱ<String, String> context = I.pair(version, "https://jitpack.io/com/github/teletha/bee/" + version + "/bee-" + version + ".jar");
 
         String bat = I.express("""
