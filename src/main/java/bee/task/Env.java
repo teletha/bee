@@ -109,7 +109,14 @@ public class Env extends Task {
                 setlocal enabledelayedexpansion
                 set "bee=bee-{ⅰ}.far"
                 if not exist %bee% (
-                   set "bee=%JAVA_HOME%/lib/bee/bee-{ⅰ}.jar"
+                    if not "!JAVA_HOME!" == "" (
+                        set "bee=!JAVA_HOME!/lib/bee/bee-{ⅰ}.jar"
+                    ) else (
+                        for /f "delims=" %%i in ('where java') do (
+                            set "javaDir=%%~dpi"
+                            set "bee=!javaDir!/../lib/bee/bee-{ⅰ}.jar"
+                        )
+                    )
                     if not exist !bee! (
                         echo bee is not found locally, try to download it from network.
                         curl -#L -o !bee! {ⅱ}
@@ -121,14 +128,23 @@ public class Env extends Task {
         String sh = I.express("""
                 #!/bin/bash
                 bee=bee-{ⅰ}.far
-                if [ ! -e $bee ]; then
-                    bee=$JAVA_HOME/lib/bee-{ⅰ}.jar
-                    if [ ! -e $bee ]; then
-                        echo $bee is not found locally, try to download it from network.
-                        curl -#L -o $bee {ⅱ}
+                if [ ! -f "$bee" ]; then
+                    if [ -n "$JAVA_HOME" ]; then
+                        bee="$JAVA_HOME/lib/bee/bee-{ⅰ}.jar"
+                    else
+                        # Try to infer JAVA_HOME from PATH
+                        java_path=$(command -v java)
+                        if [ -n "$java_path" ]; then
+                            javaDir=$(dirname "$java_path")
+                            bee="$javaDir/../lib/bee/bee-{ⅰ}.jar"
+                        fi
+                    fi
+                    if [ ! -f "$bee" ]; then
+                        echo "bee is not found locally, try to download it from network."
+                        curl -#L -o "$bee" {ⅱ}
                     fi
                 fi
-                java -javaagent:$bee -cp $bee bee.Bee "$@"
+                java -javaagent:"$bee" -cp "$bee" bee.Bee "$@"
                 """, context);
 
         makeFile("bee.bat", bat);
