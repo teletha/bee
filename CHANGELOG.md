@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.42.0](https://github.com/teletha/bee/compare/v0.41.0...v0.42.0) (2024-01-08)
+
+
+### Features
+
+* install task requires generating maven file ([bcfa13c](https://github.com/teletha/bee/commit/bcfa13c5f864349feabe3411806d9ac390ae4442))
+
+
+### Bug Fixes
+
+* update ci process ([7d19b13](https://github.com/teletha/bee/commit/7d19b139f943d15aab3637fcc7751e24dc9276aa))
+
 ## [0.41.0](https://github.com/teletha/bee/compare/v0.40.1...v0.41.0) (2024-01-07)
 
 
