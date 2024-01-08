@@ -320,7 +320,7 @@ public class CI extends Task {
                   else
                     version=$(curl -SsL https://git.io/stable-bee)
                     curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                    java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install pom
+                    java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install maven
                   fi
                 """, sourceVersion, sourceVersion));
     }

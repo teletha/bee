@@ -12,7 +12,6 @@ package bee.api;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Constructor;
 import java.net.HttpRetryException;
 import java.net.URI;
 import java.net.http.HttpHeaders;
@@ -187,7 +186,6 @@ import kiss.ExtensionFactory;
 import kiss.I;
 import kiss.Lifestyle;
 import kiss.Managed;
-import kiss.Model;
 import kiss.Singleton;
 import kiss.Storable;
 import kiss.WiseConsumer;
@@ -902,15 +900,32 @@ public class Repository {
      */
     private static class LazySingleton<M, N> implements Lifestyle<M> {
 
-        private final Class<? extends M> type;
-
-        private final Class<N>[] names;
+        private final Lifestyle<M> lifestyle;
 
         private M instance;
 
-        private LazySingleton(Class<? extends M> type, Class<N>... names) {
-            this.type = type;
-            this.names = names;
+        private LazySingleton(Class<M> type, Class<N>... subs) {
+            this.lifestyle = I.prototype(type, paramType -> {
+                if (paramType == Map.class) {
+                    Map map = new HashMap();
+
+                    for (Class<N> sub : subs) {
+                        Named named = sub.getAnnotation(Named.class);
+                        if (named != null) {
+                            map.put(named.value(), I.make(sub));
+                        } else {
+                            N impl = I.make(sub);
+                            named = impl.getClass().getAnnotation(Named.class);
+                            if (named != null) {
+                                map.put(named.value(), impl);
+                            }
+                        }
+                    }
+                    return map;
+                } else {
+                    return I.make(paramType);
+                }
+            });
         }
 
         /**
@@ -919,45 +934,7 @@ public class Repository {
         @Override
         public synchronized M call() throws Exception {
             if (instance == null) {
-                // find default constructor as instantiator
-                Constructor constructor = Model.collectConstructors(type)[0];
-                constructor.setAccessible(true);
-
-                Class[] types = constructor.getParameterTypes();
-
-                // constructor injection
-                Object[] params = null;
-
-                // We should use lazy initialization of parameter array to avoid that the
-                // constructor
-                // without parameters doesn't create futile array instance.
-                if (types.length != 0) {
-                    params = new Object[types.length];
-
-                    for (int i = 0; i < params.length; i++) {
-                        if (types[i] == Map.class) {
-                            Map map = new HashMap();
-
-                            for (Class<N> name : names) {
-                                Named named = name.getAnnotation(Named.class);
-                                if (named != null) {
-                                    map.put(named.value(), I.make(name));
-                                } else {
-                                    N impl = I.make(name);
-                                    named = impl.getClass().getAnnotation(Named.class);
-                                    if (named != null) {
-                                        map.put(named.value(), impl);
-                                    }
-                                }
-                            }
-                            params[i] = map;
-                        } else {
-                            params[i] = I.make(types[i]);
-                        }
-                    }
-                }
-                // create new instance
-                instance = (M) constructor.newInstance(params);
+                instance = lifestyle.call();
             }
             return instance;
         }
