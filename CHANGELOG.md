@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.44.0](https://github.com/teletha/bee/compare/v0.43.0...v0.44.0) (2024-01-09)
+
+
+### Features
+
+* enahnce ci/cd ([eb27277](https://github.com/teletha/bee/commit/eb27277190919299ad8b8fb45667a715de21c8e8))
+
 ## [0.43.0](https://github.com/teletha/bee/compare/v0.42.0...v0.43.0) (2024-01-09)
 
 
