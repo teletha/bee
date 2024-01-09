@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.teletha</groupId>
 	<artifactId>bee</artifactId>
-	<version>0.40.1</version>
+	<version>0.44.0</version>
 	<packaging>jar</packaging>
 	<name>bee</name>
 	<description>Bee is an open source build automation tool that focuses on conventions, type safety and performance.
@@ -180,7 +180,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>javadng</artifactId>
-			<version>1.14.0</version>
+			<version>1.14.1</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -564,7 +564,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>sinobu</artifactId>
-			<version>3.8.0</version>
+			<version>3.9.1</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
