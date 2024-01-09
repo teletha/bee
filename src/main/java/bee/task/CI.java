@@ -63,10 +63,10 @@ public class CI extends Task {
                     runs-on: ubuntu-latest
                     steps:
                     - name: Check out repository
-                      uses: actions/checkout@v3
+                      uses: actions/checkout@v4
 
                     - name: Set up JDK
-                      uses: actions/setup-java@v3
+                      uses: actions/setup-java@v4
                       with:
                         distribution: zulu
                         java-version: %s
@@ -74,11 +74,11 @@ public class CI extends Task {
                     - name: Build artifact and site
                       run: |
                         if [ -e "bee" ]; then
-                          source bee install doc:site
+                          source bee install doc:site maven:pom ci:readme ci:license
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
                           curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                          java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install doc:site
+                          java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
                         fi
 
                     - name: Deploy site
@@ -88,10 +88,15 @@ public class CI extends Task {
                         publish_dir: target/site
 
                     - name: Request Releasing
-                      uses: GoogleCloudPlatform/release-please-action@v3
+                      uses: GoogleCloudPlatform/release-please-action@v4
                       with:
                         release-type: simple
                         package-name: %s
+
+                    - name: Auto commit
+                      uses: stefanzweifel/git-auto-commit-action@v5
+                      with:
+                        commit_message: update repository info
                 """;
 
         String version = Inputs.normalize(project.getJavaSourceVersion());
@@ -100,8 +105,8 @@ public class CI extends Task {
         // so we will adjust it.
         makeFile("version.txt", List.of(project.getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
         makeFile(".github/workflows/build.yml", String.format(build, version, project.getProduct()));
-        makeLicenseFile();
-        makeReadMeFile();
+        license();
+        readme();
 
         // delete old settings
         deleteFile(".github/workflows/java-ci-with-maven.yml");
@@ -111,7 +116,8 @@ public class CI extends Task {
     /**
      * Create license file if needed
      */
-    private void makeLicenseFile() {
+    @Command("Generate license file.")
+    public void license() {
         License license = project.license();
 
         if (license == null) {
@@ -128,7 +134,8 @@ public class CI extends Task {
     /**
      * Create README file if needed
      */
-    private void makeReadMeFile() {
+    @Command("Generate readme file.")
+    public void readme() {
         List<Snippet> snippets = project.getRoot()
                 .walkFile("**/ReadMe*Test.java")
                 .first()
