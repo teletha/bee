@@ -154,7 +154,7 @@ public class Wrapper extends Task {
         makeFile("bew", sh);
 
         ui.info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
-        ui.info("To clear this setting, execute the command [bee env:clean].");
+        ui.info("To clear this setting, execute the command [bew env:clean].");
 
         deleteLocalFars();
     }
