@@ -40,6 +40,9 @@ public class BeeOption<T> {
     /** Instructs the system not to output error log only at build time. */
     public static final BeeOption<List<String>> Skip = new BeeOption("skip", "Skip the specified task.", List.of(), 24, "x");
 
+    /** Instructs the system not to use wrapper bee. */
+    public static final BeeOption<List<Boolean>> Unwrap = new BeeOption("unwrap", "Use the installed bee instead of the local wrapper.", false, 0, "u");
+
     /**
      * Instructs the system to display information related to the current execution environment.
      * Synonymous with the task [help:version].

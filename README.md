@@ -53,7 +53,7 @@ Add it into in the dependencies element like so:
 <dependency>
     <groupId>com.github.teletha</groupId>
     <artifactId>bee</artifactId>
-    <version>0.40.0</version>
+    <version>0.44.0</version>
 </dependency>
 ```
 #### [Gradle](https://gradle.org/)
@@ -66,7 +66,7 @@ repositories {
 Add it into the dependencies section like so:
 ```gradle
 dependencies {
-    implementation 'com.github.teletha:bee:0.40.0'
+    implementation 'com.github.teletha:bee:0.44.0'
 }
 ```
 #### [SBT](https://www.scala-sbt.org/)
@@ -76,7 +76,7 @@ resolvers += "jitpack" at "https://jitpack.io"
 ```
 Add it into the libraryDependencies section like so:
 ```scala
-libraryDependencies += "com.github.teletha" % "bee" % "0.40.0"
+libraryDependencies += "com.github.teletha" % "bee" % "0.44.0"
 ```
 #### [Leiningen](https://leiningen.org/)
 Add JitPack repository at the end of repositories in your project.clj:
@@ -85,12 +85,12 @@ Add JitPack repository at the end of repositories in your project.clj:
 ```
 Add it into the dependencies section like so:
 ```clj
-:dependencies [[com.github.teletha/bee "0.40.0"]]
+:dependencies [[com.github.teletha/bee "0.44.0"]]
 ```
 #### [Bee](https://teletha.github.io/bee)
 Add it into your project definition class like so:
 ```java
-require("com.github.teletha", "bee", "0.40.0");
+require("com.github.teletha", "bee", "0.44.0");
 ```
 <p align="right"><a href="#top">back to top</a></p>
 
@@ -145,8 +145,8 @@ Bee depends on the following products on runtime.
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
 * [plexus-xml-4.0.1](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-xml/4.0.1)
 * [psychopath-1.12.1](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.12.1)
-* [sinobu-3.8.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.8.0)
-* [slf4j-api-2.1.0-alpha0](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.1.0-alpha0)
+* [sinobu-3.9.1](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.9.1)
+* [slf4j-api-2.1.0-alpha1](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.1.0-alpha1)
 * [stax2-api-4.2.1](https://mvnrepository.com/artifact/org.codehaus.woodstox/stax2-api/4.2.1)
 * [woodstox-core-6.5.1](https://mvnrepository.com/artifact/com.fasterxml.woodstox/woodstox-core/6.5.1)
 <p align="right"><a href="#top">back to top</a></p>
