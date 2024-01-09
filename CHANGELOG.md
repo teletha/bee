@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.43.0](https://github.com/teletha/bee/compare/v0.42.0...v0.43.0) (2024-01-09)
+
+
+### Features
+
+* 'env' task is renamed to 'wrapper' ([23ab53e](https://github.com/teletha/bee/commit/23ab53e9702086279fbbae5324b5f0bc7e070362))
+
+
+### Bug Fixes
+
+* bee wrapper use the command name not 'bew' but 'bee' ([0ea2b16](https://github.com/teletha/bee/commit/0ea2b1627bfa35479d4f156b7714e73a134629a3))
+
 ## [0.42.0](https://github.com/teletha/bee/compare/v0.41.0...v0.42.0) (2024-01-08)
 
 
