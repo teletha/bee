@@ -25,7 +25,7 @@ import kiss.Ⅱ;
 import psychopath.File;
 import psychopath.Locator;
 
-public class Env extends Task {
+public class Wrapper extends Task {
 
     /** Specify the bee version. */
     protected String version = Bee.Tool.getVersion();
@@ -87,8 +87,8 @@ public class Env extends Task {
 
     @Command("Clean local bee environment.")
     public void clean() {
-        deleteFile("bee");
-        deleteFile("bee.bat");
+        deleteFile("bew");
+        deleteFile("bew.bat");
         deleteLocalFars();
 
         ui.info("Remove the local bee environment. From now on, you will use Bee installed at [", Platform.Bee, "].");
@@ -150,8 +150,8 @@ public class Env extends Task {
                 java -javaagent:"$bee" -cp "$bee" bee.Bee "$@"
                 """, context);
 
-        makeFile("bee.bat", bat);
-        makeFile("bee", sh);
+        makeFile("bew.bat", bat);
+        makeFile("bew", sh);
 
         ui.info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
         ui.info("To clear this setting, execute the command [bee env:clean].");
