@@ -87,8 +87,8 @@ public class Wrapper extends Task {
 
     @Command("Clean local bee environment.")
     public void clean() {
-        deleteFile("bew");
-        deleteFile("bew.bat");
+        deleteFile("bee");
+        deleteFile("bee.bat");
         deleteLocalFars();
 
         ui.info("Remove the local bee environment. From now on, you will use Bee installed at [", Platform.Bee, "].");
@@ -122,7 +122,7 @@ public class Wrapper extends Task {
 
                     if not exist !bee! (
                         echo bee is not found locally, try to download it from network.
-                        curl -#L -o !bee! https://jitpack.io/com/github/teletha/bee/%version%/bee-%version%.jar
+                        curl -#L -o !bee! --create-dirs https://jitpack.io/com/github/teletha/bee/%version%/bee-%version%.jar
                     )
                 )
                 java -javaagent:%bee% -cp %bee% bee.Bee %*
@@ -144,17 +144,17 @@ public class Wrapper extends Task {
                     fi
                     if [ ! -f "$bee" ]; then
                         echo "bee is not found locally, try to download it from network."
-                        curl -#L -o "$bee" {ⅱ}
+                        curl -#L -o "$bee" --create-dirs {ⅱ}
                     fi
                 fi
                 java -javaagent:"$bee" -cp "$bee" bee.Bee "$@"
                 """, context);
 
-        makeFile("bew.bat", bat);
-        makeFile("bew", sh);
+        makeFile("bee.bat", bat);
+        makeFile("bee", sh);
 
         ui.info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
-        ui.info("To clear this setting, execute the command [bew env:clean].");
+        ui.info("To clear this setting, execute the command [bee env:clean].");
 
         deleteLocalFars();
     }
