@@ -139,13 +139,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Env",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Exe",
 			"packageName": "bee.task",
 			"type": "Class"
@@ -652,6 +645,13 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "VCS.Release",
 			"packageName": "bee.api",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Wrapper",
+			"packageName": "bee.task",
 			"type": "Class"
 		}
 	]
