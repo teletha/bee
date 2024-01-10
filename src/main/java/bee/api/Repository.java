@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalLong;
@@ -47,10 +46,8 @@ import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.repository.internal.ModelCacheFactory;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
-import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
@@ -155,11 +152,6 @@ import org.eclipse.aether.spi.io.FileProcessor;
 import org.eclipse.aether.spi.synccontext.SyncContextFactory;
 import org.eclipse.aether.transfer.ChecksumFailureException;
 import org.eclipse.aether.transfer.NoTransporterException;
-import org.eclipse.aether.transfer.TransferCancelledException;
-import org.eclipse.aether.transfer.TransferEvent;
-import org.eclipse.aether.transfer.TransferEvent.RequestType;
-import org.eclipse.aether.transfer.TransferListener;
-import org.eclipse.aether.transfer.TransferResource;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
@@ -181,7 +173,6 @@ import bee.BeeLoader;
 import bee.BeeOption;
 import bee.Platform;
 import bee.UserInterface;
-import bee.util.Inputs;
 import kiss.ExtensionFactory;
 import kiss.I;
 import kiss.Lifestyle;
@@ -259,9 +250,9 @@ public class Repository {
         session.setConfigProperty("maven.artifact.threads", 24);
 
         // event listener
-        View view = I.make(View.class);
-        session.setTransferListener(view);
-        session.setRepositoryListener(view);
+        Transfers transfers = I.make(Transfers.class);
+        session.setTransferListener(transfers);
+        session.setRepositoryListener(transfers);
 
         this.session = session;
     }
@@ -636,152 +627,6 @@ public class Repository {
             }
 
             context.setDerivedScope(derived);
-        }
-    }
-
-    /**
-     * 
-     */
-    private static class View extends AbstractRepositoryListener implements TransferListener {
-
-        /** The user notifier. */
-        private final UserInterface ui;
-
-        /**
-         * @param ui
-         */
-        private View(UserInterface ui) {
-            this.ui = ui;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void artifactInstalled(RepositoryEvent event) {
-            ui.info("Install " + event.getArtifact() + " to " + event.getFile());
-        }
-
-        /** The progress event interval. (ms) */
-        private static final long interval = 200 * 1000 * 1000;
-
-        /** The last progress event time. */
-        private long last = 0;
-
-        /** The downloading items. */
-        private Map<TransferResource, TransferEvent> downloading = new ConcurrentHashMap();
-
-        /** The uploading items. */
-        private Map<TransferResource, TransferEvent> uploading = new ConcurrentHashMap();
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void transferInitiated(TransferEvent event) {
-            boolean download = event.getRequestType() != RequestType.PUT;
-            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
-            resources.put(event.getResource(), event);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void transferStarted(TransferEvent event) throws TransferCancelledException {
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void transferProgressed(TransferEvent event) {
-            boolean download = event.getRequestType() != RequestType.PUT;
-            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
-            resources.put(event.getResource(), event);
-
-            long now = System.nanoTime();
-            if (interval < now - last) {
-                last = now; // update last event time
-
-                StringBuilder message = new StringBuilder();
-                for (Entry<TransferResource, TransferEvent> entry : resources.entrySet().stream().limit(5).toList()) {
-                    if (!message.isEmpty()) message.append(Platform.EOL);
-                    message.append(buildMessage(download ? "Downloading" : "Uploading", entry.getValue(), true));
-                }
-                ui.trace(message);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void transferSucceeded(TransferEvent event) {
-            boolean download = event.getRequestType() != RequestType.PUT;
-            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
-            resources.remove(event.getResource());
-
-            ui.info(buildMessage(download ? "Downloaded" : "Uploaded", event, false));
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void transferFailed(TransferEvent event) {
-            boolean download = event.getRequestType() != RequestType.PUT;
-            Map<TransferResource, TransferEvent> resources = download ? downloading : uploading;
-            resources.remove(event.getResource());
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void transferCorrupted(TransferEvent event) {
-            ui.error(event.getException());
-        }
-
-        /**
-         * Build item transfering message.
-         * 
-         * @param type
-         * @param event
-         * @return
-         */
-        private static String buildMessage(String type, TransferEvent event, boolean progress) {
-            TransferResource resource = event.getResource();
-            long current = event.getTransferredBytes();
-            long size = resource.getContentLength();
-
-            StringBuilder message = new StringBuilder(type).append(" : ").append(name(resource)).append(" (");
-            if (progress && 0 < size) {
-                message.append(Inputs.formatAsSize(current, false)).append('/').append(Inputs.formatAsSize(size));
-            } else {
-                message.append(Inputs.formatAsSize(current));
-            }
-            message.append(" @ ").append(resource.getRepositoryId()).append(") ");
-
-            return message.toString();
-        }
-
-        /**
-         * Compute readable resource name.
-         * 
-         * @param resource
-         * @return
-         */
-        private static String name(TransferResource resource) {
-            String full = resource.getResourceName();
-            int last = full.lastIndexOf('/');
-            String name = full.substring(last + 1);
-
-            if (name.equals("maven-metadata.xml")) {
-                return name + " for " + full.substring(full.lastIndexOf('/', last - 1) + 1, last);
-            } else {
-                return name;
-            }
         }
     }
 
