@@ -9,22 +9,14 @@
  */
 package bee.bun;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpResponse;
 import java.util.Objects;
-import java.util.OptionalLong;
 
 import bee.Platform;
+import bee.api.Loader;
 import bee.api.Project;
-import bee.api.Transfers;
 import kiss.I;
-import kiss.WiseConsumer;
 import psychopath.Directory;
 import psychopath.File;
-import psychopath.Locator;
 
 public class Bun {
 
@@ -74,26 +66,7 @@ public class Bun {
                     : Platform.isLinux() ? "https://github.com/oven-sh/bun/releases/download/bun-v" + version + "/bun-linux-x64.zip"
                             : "https://github.com/oven-sh/bun/releases/download/bun-v" + version + "/bun-darwin-x64.zip";
 
-            File zip = Locator.temporaryFile();
-
-            I.http(uri, HttpResponse.class).waitForTerminate().to((WiseConsumer<HttpResponse>) res -> {
-                // analyze header
-                HttpHeaders headers = res.headers();
-                OptionalLong length = headers.firstValueAsLong("Content-Length");
-
-                // transfer data
-                try (InputStream in = (InputStream) res.body(); OutputStream out = new FileOutputStream(zip.asJavaFile())) {
-                    Transfers transfers = I.make(Transfers.class);
-                    transfers.transferProgressed(0, length.orElse(0));
-
-                    int read = -1;
-                    byte[] buffer = new byte[1024 * 32];
-                    while (0 < (read = in.read(buffer))) {
-                        out.write(buffer, 0, read);
-                        transfers.transferProgressed(read, length.orElse(0));
-                    }
-                }
-            });
+            Loader.download(uri).unpackTo(home);
         }
     }
 

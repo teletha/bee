@@ -250,7 +250,7 @@ public class Repository {
         session.setConfigProperty("maven.artifact.threads", 24);
 
         // event listener
-        Transfers transfers = I.make(Transfers.class);
+        Loader transfers = I.make(Loader.class);
         session.setTransferListener(transfers);
         session.setRepositoryListener(transfers);
 
