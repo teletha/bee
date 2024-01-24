@@ -22,7 +22,6 @@ public class Install extends Task {
     public void project() {
         require(Test::test);
         require(Jar::document, Jar::source);
-        require(Maven::pom);
 
         I.make(Repository.class).install(project);
     }
