@@ -57,14 +57,14 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Bun",
-			"packageName": "bee.task",
+			"packageName": "bee.bun",
 			"type": "Class"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Bun",
-			"packageName": "bee.bun",
+			"packageName": "bee.task",
 			"type": "Class"
 		},
 		{
