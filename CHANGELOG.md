@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.45.0](https://github.com/teletha/bee/compare/v0.44.0...v0.45.0) (2024-01-29)
+
+
+### Features
+
+* java command detects agent lib automatically ([b51d1ed](https://github.com/teletha/bee/commit/b51d1ed576181ca19f6a2338a77b535e145b93f1))
+
+
+### Bug Fixes
+
+* don't update pom on install task ([c819af9](https://github.com/teletha/bee/commit/c819af989259412013afa67841076fd186f19fbc))
+
 ## [0.44.0](https://github.com/teletha/bee/compare/v0.43.0...v0.44.0) (2024-01-09)
 
 
