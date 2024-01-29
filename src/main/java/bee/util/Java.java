@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -25,6 +26,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 import javax.management.MBeanServer;
@@ -239,6 +243,20 @@ public class Java {
         if (classpaths.size() != 0) {
             command.add("-cp");
             command.add(classpaths.stream().map(Path::toString).collect(Collectors.joining(File.pathSeparator)));
+
+            I.signal(classpaths).map(Locator::file).take(psychopath.File::isFile).take(file -> {
+                try (JarFile jar = new JarFile(file.asJavaFile())) {
+                    Manifest manifest = jar.getManifest();
+                    if (manifest != null) {
+                        Attributes main = manifest.getMainAttributes();
+                        String clazz = main.getValue("Premain-Class");
+                        return clazz != null;
+                    }
+                } catch (IOException e) {
+                    // ignore
+                }
+                return false;
+            }).to(x -> command.add("-javaagent:\"" + x.path() + '"'));
         }
 
         if (enableAssertion) {
