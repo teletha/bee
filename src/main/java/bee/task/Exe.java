@@ -139,8 +139,6 @@ public class Exe extends Task {
             command.add(String.join(",", modules(project.getDependency(Scope.Runtime))));
             command.add("--output");
             command.add(jre.toString());
-            command.add("--compress");
-            command.add("2");
             command.add("--strip-native-commands");
             Process.with().run(command);
 
