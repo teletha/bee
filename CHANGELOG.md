@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.45.2](https://github.com/teletha/bee/compare/v0.45.1...v0.45.2) (2024-02-20)
+
+
+### Bug Fixes
+
+* avoid NPE ([5de287d](https://github.com/teletha/bee/commit/5de287de2497ff4e8bf2642b0a00570ca4854f5b))
+
 ## [0.45.1](https://github.com/teletha/bee/compare/v0.45.0...v0.45.1) (2024-02-20)
 
 
