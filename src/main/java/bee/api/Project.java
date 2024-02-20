@@ -875,7 +875,7 @@ public class Project {
             XML contributors = pom.child("developers");
 
             for (Contributor contributor : vcs.contributors()) {
-                if (!contributor.getName().isEmpty()) {
+                if (contributor.getName() != null) {
                     XML xml = contributors.child("developer");
                     xml.child("name").text(contributor.getName());
                     xml.child("email").text(contributor.getEmail());
