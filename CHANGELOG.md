@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.45.1](https://github.com/teletha/bee/compare/v0.45.0...v0.45.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* ignore developer without name ([090d78a](https://github.com/teletha/bee/commit/090d78a404750bee88be5d1c7956af6c764cab5f))
+* update jlink command option ([940e7de](https://github.com/teletha/bee/commit/940e7dea648228da832588058a7c689a9f18f33d))
+
 ## [0.45.0](https://github.com/teletha/bee/compare/v0.44.0...v0.45.0) (2024-01-29)
 
 
