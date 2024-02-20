@@ -875,10 +875,12 @@ public class Project {
             XML contributors = pom.child("developers");
 
             for (Contributor contributor : vcs.contributors()) {
-                XML xml = contributors.child("developer");
-                xml.child("name").text(contributor.getName());
-                xml.child("email").text(contributor.getEmail());
-                xml.child("url").text(contributor.getUrl());
+                if (!contributor.getName().isEmpty()) {
+                    XML xml = contributors.child("developer");
+                    xml.child("name").text(contributor.getName());
+                    xml.child("email").text(contributor.getEmail());
+                    xml.child("url").text(contributor.getUrl());
+                }
             }
         }
 
