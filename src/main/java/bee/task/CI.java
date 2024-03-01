@@ -323,7 +323,7 @@ public class CI extends Task {
 
                 install: |
                   if [ -e "bee" ]; then
-                    source bee install pom
+                    source bee install maven
                   else
                     version=$(curl -SsL https://git.io/stable-bee)
                     curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
