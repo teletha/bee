@@ -256,7 +256,7 @@ public class Java {
                     // ignore
                 }
                 return false;
-            }).to(x -> command.add("-javaagent:\"" + x.path() + '"'));
+            }).to(x -> command.add("-javaagent:" + x.path()));
         }
 
         if (enableAssertion) {
