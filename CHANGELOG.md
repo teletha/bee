@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.46.0](https://github.com/teletha/bee/compare/v0.45.2...v0.46.0) (2024-03-01)
+
+
+### Features
+
+* update maven-resolver ([bbebbf0](https://github.com/teletha/bee/commit/bbebbf09d2c4540af6eb00a3a2b931731857e7e1))
+
+
+### Bug Fixes
+
+* jitpack is broken ([30b4114](https://github.com/teletha/bee/commit/30b4114ac113b82e19ccbc5e481d7cf22749acca))
+
 ## [0.45.2](https://github.com/teletha/bee/compare/v0.45.1...v0.45.2) (2024-02-20)
 
 
