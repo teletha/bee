@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.46.1](https://github.com/teletha/bee/compare/v0.46.0...v0.46.1) (2024-03-02)
+
+
+### Bug Fixes
+
+* update ci ([1060a8a](https://github.com/teletha/bee/commit/1060a8ac41e22a85e6df899c36bb0816ed49f92f))
+
 ## [0.46.0](https://github.com/teletha/bee/compare/v0.45.2...v0.46.0) (2024-03-01)
 
 
