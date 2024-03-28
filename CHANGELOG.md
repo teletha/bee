@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.46.2](https://github.com/teletha/bee/compare/v0.46.1...v0.46.2) (2024-03-28)
+
+
+### Bug Fixes
+
+* check task cache on task executor ([d29cfef](https://github.com/teletha/bee/commit/d29cfef1c5fc1153be576b459c95ac9d8276a0fe))
+
 ## [0.46.1](https://github.com/teletha/bee/compare/v0.46.0...v0.46.1) (2024-03-02)
 
 
