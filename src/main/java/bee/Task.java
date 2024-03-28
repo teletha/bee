@@ -574,22 +574,27 @@ public abstract class Task implements Extensible {
         Task task = I.make(info.task);
         task.ui = ui;
 
-        // execute task
-        try (var x = Profiling.of("Task [" + fullname + "]")) {
-            return command.invoke(task);
-        } catch (TaskCancel e) {
-            ui.warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
-            return null;
-        } catch (Throwable e) {
-            if (e instanceof InvocationTargetException) {
-                e = ((InvocationTargetException) e).getTargetException();
+        // execute task with checking cache
+        Cache cache = project.associate(Cache.class);
+        Method m = command;
+
+        return cache.computeIfAbsent(Inputs.hyphenize(fullname), key -> {
+            try (var x = Profiling.of("Task [" + fullname + "]")) {
+                return m.invoke(task);
+            } catch (TaskCancel e) {
+                ui.warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
+                return null;
+            } catch (Throwable e) {
+                if (e instanceof InvocationTargetException) {
+                    e = ((InvocationTargetException) e).getTargetException();
+                }
+                throw I.quiet(e);
+            } finally {
+                if (ui instanceof ParallelInterface) {
+                    ((ParallelInterface) ui).finish();
+                }
             }
-            throw I.quiet(e);
-        } finally {
-            if (ui instanceof ParallelInterface) {
-                ((ParallelInterface) ui).finish();
-            }
-        }
+        });
     }
 
     /**
@@ -780,7 +785,7 @@ public abstract class Task implements Extensible {
                         Type returnType = Type.getReturnType(m);
                         boolean valued = m.getReturnType() != void.class;
 
-                        mw = writer.writeMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
+                        mw = writer.writeMethod(ACC_PUBLIC | ACC_SYNCHRONIZED, methodName, methodDesc, null, null);
                         mw.visitLdcInsn(model.getSimpleName() + ":" + Inputs.hyphenize(methodName));
                         mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
                         mw.visitVarInsn(ASTORE, 1);

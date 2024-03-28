@@ -18,6 +18,10 @@ import kiss.I;
 
 class TaskCacheTest extends TaskTestBase {
 
+    static {
+        I.load(TaskCacheTest.class);
+    }
+
     @Test
     void noValue() {
         NoValue task = I.make(NoValue.class);
@@ -178,6 +182,43 @@ class TaskCacheTest extends TaskTestBase {
         public boolean run() {
             count++;
             return true;
+        }
+    }
+
+    @Test
+    void require() {
+        Req task = I.make(Req.class);
+        assert ReqCaller.count == 0;
+        task.run();
+        assert ReqCaller.count == 1;
+        task.run();
+        assert ReqCaller.count == 1;
+    }
+
+    /**
+     * Task returns no value.
+     */
+    protected static class Req extends Task {
+    
+        @Command("Test")
+        public void run() {
+            require(ReqCaller::run);
+            require(ReqCaller::run);
+            require(ReqCaller::run);
+            require(ReqCaller::run);
+        }
+    }
+
+    /**
+     * Task returns no value.
+     */
+    protected static class ReqCaller extends Task {
+
+        private static int count;
+
+        @Command("Test")
+        public void run() {
+            count++;
         }
     }
 }
