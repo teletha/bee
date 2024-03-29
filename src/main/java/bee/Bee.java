@@ -23,7 +23,6 @@ import bee.api.Project;
 import bee.api.Scope;
 import bee.api.VCS;
 import bee.task.Help;
-import bee.task.IDE;
 import bee.task.Prototype;
 import bee.util.JavaCompiler;
 import bee.util.Profiling;
@@ -279,7 +278,7 @@ public class Bee {
                 @Override
                 public void execute() {
                     require(Prototype::java);
-                    require(IDE::execute);
+                    // require(IDE::execute);
                 }
             });
         }

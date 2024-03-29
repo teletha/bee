@@ -42,9 +42,7 @@ import psychopath.Location;
 public class Eclipse extends Task implements IDESupport {
 
     /**
-     * <p>
      * Create eclipse's project file.
-     * </p>
      */
     @Override
     @Command(value = "Generate configuration files for Eclipse.", defaults = true)
@@ -87,9 +85,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
      * Create project file.
-     * </p>
      * 
      * @param file
      */
@@ -107,9 +103,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
      * Create classpath file.
-     * </p>
      * 
      * @param file
      */
@@ -213,9 +207,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
      * Create factorypath file.
-     * </p>
      * 
      * @param localFile
      */
@@ -235,9 +227,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
      * Create factorypath file.
-     * </p>
      * 
      * @param localFile
      */
@@ -258,9 +248,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
      * Create factorypath file.
-     * </p>
      * 
      * @param localFile
      */
@@ -282,9 +270,7 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * <p>
      * Locate relative path.
-     * </p>
      * 
      * @param path
      * @return
@@ -325,18 +311,14 @@ public class Eclipse extends Task implements IDESupport {
     private static abstract class EclipseApplication {
 
         /**
-         * <p>
          * Locate the active eclipse application.
-         * </p>
          * 
          * @return
          */
         abstract Variable<File> locateActive();
 
         /**
-         * <p>
          * Locate the eclipse application.
-         * </p>
          * 
          * @return
          */
@@ -345,9 +327,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         /**
-         * <p>
          * Check whether the specified eclipse application is customized or not.
-         * </p>
          * 
          * @return A result.
          */
@@ -361,9 +341,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         /**
-         * <p>
          * Create the platform specific {@link EclipseApplication}.
-         * </p>
          * 
          * @return
          */

@@ -780,7 +780,7 @@ public abstract class Task implements Extensible {
                         Type returnType = Type.getReturnType(m);
                         boolean valued = m.getReturnType() != void.class;
 
-                        mw = writer.writeMethod(ACC_PUBLIC, methodName, methodDesc, null, null);
+                        mw = writer.writeMethod(ACC_PUBLIC | ACC_SYNCHRONIZED, methodName, methodDesc, null, null);
                         mw.visitLdcInsn(model.getSimpleName() + ":" + Inputs.hyphenize(methodName));
                         mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
                         mw.visitVarInsn(ASTORE, 1);
