@@ -9,7 +9,7 @@
  */
 package bee.util;
 
-import static bee.util.Inputs.normalize;
+import static bee.util.Inputs.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -615,7 +615,7 @@ public class JavaCompiler {
         // Run Compiler
         // =============================================
         if (task.call()) {
-            ui.info("Compile " + sources.size() + " sources.");
+            ui.info("Compiles " + sources.size() + " sources. (" + (useECJ ? "ECJ" : "Javac") + ")");
         } else {
             throw new Fail("Fail compiling code.");
         }
