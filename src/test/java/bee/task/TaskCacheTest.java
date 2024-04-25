@@ -199,7 +199,7 @@ class TaskCacheTest extends TaskTestBase {
      * Task returns no value.
      */
     protected static class Req extends Task {
-    
+
         @Command("Test")
         public void run() {
             require(ReqCaller::run);
@@ -212,7 +212,7 @@ class TaskCacheTest extends TaskTestBase {
     /**
      * Task returns no value.
      */
-    protected static class ReqCaller extends Task {
+    public static class ReqCaller extends Task {
 
         private static int count;
 
