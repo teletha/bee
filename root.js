@@ -491,14 +491,14 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "License",
-			"packageName": "bee.task",
+			"packageName": "bee.api",
 			"type": "Class"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "License",
-			"packageName": "bee.api",
+			"packageName": "bee.task",
 			"type": "Class"
 		},
 		{
