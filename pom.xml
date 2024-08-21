@@ -84,7 +84,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy-agent</artifactId>
-			<version>1.14.14</version>
+			<version>1.14.19</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -148,7 +148,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>org.eclipse.jdt</groupId>
 			<artifactId>ecj</artifactId>
-			<version>3.37.0</version>
+			<version>3.38.0</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -212,7 +212,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-engine</artifactId>
-			<version>1.11.0-M1</version>
+			<version>1.11.0</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -244,7 +244,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.11.0-M1</version>
+			<version>1.11.0</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -500,7 +500,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>6.9.0.202403050737-r</version>
+			<version>6.10.0.202406032230-r</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -532,7 +532,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>psychopath</artifactId>
-			<version>1.12.2</version>
+			<version>1.13.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -564,7 +564,7 @@ It recognizes source code and package repositories and automates the entire life
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>sinobu</artifactId>
-			<version>3.11.0</version>
+			<version>3.13.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
