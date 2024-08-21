@@ -20,6 +20,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -662,9 +663,9 @@ public class Repository {
          * {@inheritDoc}
          */
         @Override
-        public String locate() {
+        public Path locate() {
             File pom = library.getLocalPOM();
-            return pom.parent().file(pom.name().replace(".pom", ".bee")).path();
+            return pom.parent().file(pom.name().replace(".pom", ".bee")).asJavaPath();
         }
 
         /**
