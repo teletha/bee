@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.47.0](https://github.com/teletha/bee/compare/v0.46.1...v0.47.0) (2024-08-21)
+
+
+### Features
+
+* update sinobu ([6010453](https://github.com/teletha/bee/commit/601045358b704b050a1b7131354185c26112ff96))
+
+
+### Bug Fixes
+
+* check task cache on task executor ([d29cfef](https://github.com/teletha/bee/commit/d29cfef1c5fc1153be576b459c95ac9d8276a0fe))
+* duplcated task ([5f15830](https://github.com/teletha/bee/commit/5f1583066c3528992582c89228a9cd1af580089e))
+* show compiler name ([092aa2f](https://github.com/teletha/bee/commit/092aa2f81a34b37ac6c71fe35b5467e0b8d398f1))
+
 ## [0.46.1](https://github.com/teletha/bee/compare/v0.46.0...v0.46.1) (2024-03-02)
 
 
