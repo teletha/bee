@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.48.0](https://github.com/teletha/bee/compare/v0.47.0...v0.48.0) (2024-09-10)
+
+
+### Features
+
+* maven can download pom in parallel ([63ee982](https://github.com/teletha/bee/commit/63ee982f5df64d79ea01c19657f7dbada09e8e63))
+* update maven related dependencies ([d210134](https://github.com/teletha/bee/commit/d210134ff9ebe4965f03e44dd762c3eb4431906f))
+
 ## [0.47.0](https://github.com/teletha/bee/compare/v0.46.1...v0.47.0) (2024-08-21)
 
 
