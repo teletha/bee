@@ -7,7 +7,8 @@ const root = {
 		"bee.bun",
 		"bee.coder",
 		"bee.task",
-		"bee.util"
+		"bee.util",
+		"org.eclipse.aether.internal.impl.collect"
 	],
 	"types": [
 		{
@@ -163,6 +164,13 @@ const root = {
 			"name": "Fail",
 			"packageName": "bee",
 			"type": "Exception"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "FastDependencyCollector",
+			"packageName": "org.eclipse.aether.internal.impl.collect",
+			"type": "Class"
 		},
 		{
 			"modifiers": {
