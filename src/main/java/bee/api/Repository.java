@@ -9,7 +9,6 @@
  */
 package bee.api;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpRetryException;
@@ -20,6 +19,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpRequest.Builder;
 import java.net.http.HttpResponse;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,9 +34,11 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.inject.Named;
-
+import org.apache.maven.api.di.Named;
+import org.apache.maven.api.services.model.ModelVersionParser;
+import org.apache.maven.internal.impl.DefaultModelVersionParser;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
@@ -56,6 +58,7 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
+import org.eclipse.aether.generator.gnupg.GnupgSignatureArtifactGeneratorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
 import org.eclipse.aether.impl.ArtifactDescriptorReader;
@@ -77,6 +80,7 @@ import org.eclipse.aether.impl.VersionRangeResolver;
 import org.eclipse.aether.impl.VersionResolver;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
+import org.eclipse.aether.internal.impl.DefaultArtifactPredicateFactory;
 import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
 import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
 import org.eclipse.aether.internal.impl.DefaultChecksumProcessor;
@@ -119,6 +123,8 @@ import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterMana
 import org.eclipse.aether.internal.impl.filter.GroupIdRemoteRepositoryFilterSource;
 import org.eclipse.aether.internal.impl.filter.PrefixesRemoteRepositoryFilterSource;
 import org.eclipse.aether.internal.impl.resolution.TrustedChecksumsArtifactResolverPostProcessor;
+import org.eclipse.aether.internal.impl.scope.OptionalDependencySelector;
+import org.eclipse.aether.internal.impl.scope.ScopeDependencySelector;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMapper;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMappers;
@@ -139,6 +145,7 @@ import org.eclipse.aether.resolution.DependencyRequest;
 import org.eclipse.aether.resolution.DependencyResolutionException;
 import org.eclipse.aether.resolution.DependencyResult;
 import org.eclipse.aether.resolution.ResolutionErrorPolicy;
+import org.eclipse.aether.spi.artifact.ArtifactPredicateFactory;
 import org.eclipse.aether.spi.checksums.ProvidedChecksumsSource;
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactorySelector;
@@ -160,15 +167,12 @@ import org.eclipse.aether.transfer.NoTransporterException;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
-import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
-import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.transformer.ChainedDependencyGraphTransformer;
+import org.eclipse.aether.util.graph.transformer.ConfigurableVersionSelector;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeContext;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeDeriver;
-import org.eclipse.aether.util.graph.transformer.JavaDependencyContextRefiner;
 import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
-import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import org.eclipse.aether.util.version.GenericVersionScheme;
@@ -241,8 +245,10 @@ public class Repository {
 
         // ============ RepositorySystemSession ============ //
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        session.setDependencySelector(new AndDependencySelector(new OptionalDependencySelector(), new ScopeDependencySelector(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id), new ExclusionDependencySelector(project.exclusions)));
-        session.setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver()), new JavaDependencyContextRefiner()));
+        session.setDependencySelector(new AndDependencySelector(OptionalDependencySelector.fromDirect(), ScopeDependencySelector
+                .fromDirect(null, List
+                        .of(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id)), new ExclusionDependencySelector(project.exclusions)));
+        session.setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConfigurableVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver())));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
         session.setUpdatePolicy(BeeOption.Cacheless.value() ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_DAILY);
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
@@ -464,7 +470,7 @@ public class Repository {
                 ArtifactResult result = system.resolveArtifact(session, request);
 
                 if (result.isResolved()) {
-                    return Locator.file(result.getArtifact().getFile().toPath());
+                    return Locator.file(result.getArtifact().getPath());
                 } else {
                     ui.info("Artifact [", sub, "] is not resolved.");
                 }
@@ -543,7 +549,7 @@ public class Repository {
      * @return
      */
     public final Directory getLocalRepository() {
-        return Locator.directory(localRepository.getBasedir().toPath());
+        return Locator.directory(localRepository.getBasePath());
     }
 
     /**
@@ -695,8 +701,10 @@ public class Repository {
             define(ArtifactResolver.class, DefaultArtifactResolver.class, TrustedChecksumsArtifactResolverPostProcessor.class, GroupIdRemoteRepositoryFilterSource.class);
             define(DependencyCollector.class, DefaultDependencyCollector.class, BfDependencyCollector.class, DfDependencyCollector.class);
             define(MetadataResolver.class, DefaultMetadataResolver.class);
-            define(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
-            define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
+            define(Deployer.class, DefaultDeployer.class, new Class[] {GnupgSignatureArtifactGeneratorFactory.class}, new Class[] {
+                    SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class});
+            define(Installer.class, DefaultInstaller.class, new Class[] {GnupgSignatureArtifactGeneratorFactory.class}, new Class[] {
+                    SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class});
             define(RepositoryLayoutProvider.class, DefaultRepositoryLayoutProvider.class, RepositoryLayoutFactory.class);
             define(RepositoryLayoutFactory.class, Maven2RepositoryLayoutFactory.class);
 
@@ -728,6 +736,12 @@ public class Repository {
             define(TransporterProvider.class, DefaultTransporterProvider.class, TransporterFactory.class);
             define(TransporterFactory.class, NetTransporterFactory.class);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
+            define(ArtifactPredicateFactory.class, DefaultArtifactPredicateFactory.class);
+            define(ModelVersionParser.class, DefaultModelVersionParser.class);
+        }
+
+        private <T> void define(Class<T> type, Class<? extends T> clazz, Class[] firsts, Class[] seconds) {
+            lifestyles.put(type, new LazySingleton(clazz, firsts, seconds));
         }
 
         private <T> void define(Class<T> type, Class<? extends T> clazz, Class... names) {
@@ -757,27 +771,39 @@ public class Repository {
         private M instance;
 
         private LazySingleton(Class<M> type, Class<N>... subs) {
+            this(type, new Class[][] {subs});
+        }
+
+        private LazySingleton(Class<M> type, Class[]... subs) {
+            AtomicInteger index = new AtomicInteger();
+
             this.lifestyle = I.prototype(type, paramType -> {
                 if (paramType == Map.class) {
-                    Map map = new HashMap();
-
-                    for (Class<N> sub : subs) {
-                        Named named = sub.getAnnotation(Named.class);
-                        if (named != null) {
-                            map.put(named.value(), I.make(sub));
-                        } else {
-                            N impl = I.make(sub);
-                            named = impl.getClass().getAnnotation(Named.class);
-                            if (named != null) {
-                                map.put(named.value(), impl);
-                            }
-                        }
-                    }
-                    return map;
+                    return createMapParam(subs[index.getAndIncrement()]);
                 } else {
                     return I.make(paramType);
                 }
             });
+        }
+
+        private Map createMapParam(Class[] subs) {
+            Map map = new HashMap();
+
+            for (Class<N> sub : subs) {
+                N impl = I.make(sub);
+                findName(sub).or(() -> findName(impl.getClass())).ifPresent(x -> map.put(x, impl));
+            }
+            return map;
+        }
+
+        private Optional<String> findName(Class<?> type) {
+            if (type.isAnnotationPresent(Named.class)) {
+                return Optional.of(type.getAnnotation(Named.class).value());
+            } else if (type.isAnnotationPresent(javax.inject.Named.class)) {
+                return Optional.of(type.getAnnotation(javax.inject.Named.class).value());
+            } else {
+                return Optional.empty();
+            }
         }
 
         /**
@@ -875,7 +901,7 @@ public class Repository {
                         OptionalLong length = headers.firstValueAsLong("Content-Length");
 
                         // transfer data
-                        try (InputStream in = (InputStream) res.body(); OutputStream out = new FileOutputStream(task.getDataFile())) {
+                        try (InputStream in = (InputStream) res.body(); OutputStream out = Files.newOutputStream(task.getDataPath())) {
                             TransportListener listener = task.getListener();
                             listener.transportStarted(0, length.orElse(0));
 

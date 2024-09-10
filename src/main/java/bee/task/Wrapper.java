@@ -13,7 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.api.Version;
+import org.apache.maven.api.services.model.ModelVersionParser;
 
 import bee.Bee;
 import bee.Platform;
@@ -47,10 +48,10 @@ public class Wrapper extends Task {
                 .flatIterable(json -> json.asMap(String.class).entrySet())
                 .take(e -> e.getValue().equals("ok"))
                 .map(Entry::getKey)
-                .map(DefaultArtifactVersion::new)
+                .map(I.make(ModelVersionParser.class)::parseVersion)
                 .sort(Comparator.reverseOrder())
                 .take(15)
-                .map(DefaultArtifactVersion::toString)
+                .map(Version::asString)
                 .toList();
 
         build(ui.ask("Which version of Bee do you want to use?", list));

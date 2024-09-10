@@ -37,15 +37,17 @@ public class Project extends bee.api.Project {
         // MAVEN REPOSITORY
         // jakarta.inject has replaced javax.inject since alpha-9, but some maven-resolver APIs do
         // not support jakarta.inject, so it was stopped in alpha-8
-        String version = "2.0.0-alpha-8";
-        require("org.apache.maven", "maven-resolver-provider", "4.0.0-alpha-8");
+        String version = "2.0.1";
+        require("org.apache.maven", "maven-resolver-provider", "4.0.0-beta-4");
         require("org.apache.maven.resolver", "maven-resolver-api", version);
         require("org.apache.maven.resolver", "maven-resolver-spi", version);
         require("org.apache.maven.resolver", "maven-resolver-util", version);
         require("org.apache.maven.resolver", "maven-resolver-impl", version);
         require("org.apache.maven.resolver", "maven-resolver-connector-basic", version);
         require("org.apache.maven.resolver", "maven-resolver-named-locks", version);
+        require("org.apache.maven.resolver", "maven-resolver-generator-gnupg", version);
         // require("org.apache.maven.resolver", "maven-resolver-transport-http");
+        require("javax.inject", "javax.inject");
 
         // LOGGER
         require("org.slf4j", "slf4j-api", "[2.0,)");
