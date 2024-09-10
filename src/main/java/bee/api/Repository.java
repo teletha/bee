@@ -174,6 +174,7 @@ import org.eclipse.aether.util.graph.transformer.ConfigurableVersionSelector.Hig
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeContext;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeDeriver;
+import org.eclipse.aether.util.graph.transformer.JavaDependencyContextRefiner;
 import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
@@ -249,24 +250,24 @@ public class Repository {
         // ==================================================
         // Initialize
         // ==================================================
-        setLocalRepository(Platform.BeeLocalRepository);
+        setLocalRepository(BeeOption.Cacheless.value() ? Locator.temporaryDirectory() : Platform.BeeLocalRepository);
 
         // ============ RepositorySystemSession ============ //
         this.builder = new MavenSessionBuilderSupplier(system).get()
                 .setDependencySelector(new AndDependencySelector(OptionalDependencySelector.fromDirect(), ScopeDependencySelector
                         .fromDirect(null, List
                                 .of(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id)), new ExclusionDependencySelector(project.exclusions)))
-                .setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConfigurableVersionSelector(new Highest()), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver())))
+                .setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConfigurableVersionSelector(new Highest()), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver()), new JavaDependencyContextRefiner()))
                 .setUpdatePolicy(BeeOption.Cacheless.value() ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_DAILY)
                 .setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN)
                 .setIgnoreArtifactDescriptorRepositories(true)
                 .setCache(new DefaultRepositoryCache())
                 .setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL))
                 .setOffline(BeeOption.Offline.value())
+                .setConfigProperty("maven.artifact.threads", 24)
+                .setConfigProperty("aether.dependencyCollector.impl", "df")
                 .setSystemProperties(System.getProperties())
                 .setConfigProperties(System.getProperties())
-                .setConfigProperty("maven.artifact.threads", 24)
-                .setConfigProperty("aether.dependencyCollector.impl", "bf")
                 .setTransferListener(transfers)
                 .setRepositoryListener(transfers)
                 .withLocalRepositories(localRepository);
@@ -704,6 +705,7 @@ public class Repository {
         private Lifestyles() {
             define(RepositorySystem.class, DefaultRepositorySystem.class);
             define(ArtifactResolver.class, DefaultArtifactResolver.class, TrustedChecksumsArtifactResolverPostProcessor.class, GroupIdRemoteRepositoryFilterSource.class);
+            // define(DependencyCollector.class, FastDependencyCollector.class);
             define(DependencyCollector.class, DefaultDependencyCollector.class, BfDependencyCollector.class, DfDependencyCollector.class);
             define(MetadataResolver.class, DefaultMetadataResolver.class);
             define(Deployer.class, DefaultDeployer.class, new Class[] {GnupgSignatureArtifactGeneratorFactory.class}, new Class[] {
@@ -943,7 +945,18 @@ public class Repository {
                             .flatMap(etag -> {
                                 int start = etag.indexOf("SHA1{") + 5;
                                 int end = etag.indexOf("}", start);
-                                return start == -1 || end == -1 ? Optional.empty() : Optional.of(etag.substring(start, end));
+
+                                if (start != 4 && end != -1) {
+                                    return Optional.of(etag.substring(start, end));
+                                }
+
+                                start = etag.indexOf('"') + 1;
+                                end = etag.indexOf('"', start);
+
+                                if (start != 0 && end != -1) {
+                                    return Optional.of(etag.substring(start, end));
+                                }
+                                return etag == null || etag.isBlank() ? Optional.empty() : Optional.of(etag);
                             })
                             .or(() -> headers.firstValue("x-checksum-sha1"))
                             .or(() -> headers.firstValue("x-checksum-md5"))
