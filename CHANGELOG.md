@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.48.1](https://github.com/teletha/bee/compare/v0.48.0...v0.48.1) (2024-09-10)
+
+
+### Bug Fixes
+
+* revert FastDependencyCollector ([6b79071](https://github.com/teletha/bee/commit/6b7907187e6f9d595fc3cf12ced1cef8af73681d))
+* use highest version strategy ([36dfea0](https://github.com/teletha/bee/commit/36dfea081ef3f318b3958cbef4929563d5e79dbf))
+
 ## [0.48.0](https://github.com/teletha/bee/compare/v0.47.0...v0.48.0) (2024-09-10)
 
 
