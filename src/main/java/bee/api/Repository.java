@@ -39,21 +39,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.maven.api.di.Named;
 import org.apache.maven.api.services.model.ModelVersionParser;
 import org.apache.maven.internal.impl.DefaultModelVersionParser;
+import org.apache.maven.internal.impl.resolver.MavenSessionBuilderSupplier;
 import org.apache.maven.model.building.DefaultModelBuilderFactory;
 import org.apache.maven.model.building.ModelBuilder;
 import org.apache.maven.repository.internal.DefaultArtifactDescriptorReader;
 import org.apache.maven.repository.internal.DefaultModelCacheFactory;
 import org.apache.maven.repository.internal.DefaultVersionRangeResolver;
 import org.apache.maven.repository.internal.DefaultVersionResolver;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.repository.internal.ModelCacheFactory;
 import org.apache.maven.repository.internal.SnapshotMetadataGeneratorFactory;
 import org.apache.maven.repository.internal.VersionsMetadataGeneratorFactory;
 import org.eclipse.aether.DefaultRepositoryCache;
-import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
+import org.eclipse.aether.RepositorySystemSession.CloseableSession;
+import org.eclipse.aether.RepositorySystemSession.SessionBuilder;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
@@ -220,8 +221,11 @@ public class Repository {
     /** The root repository system. */
     private final RepositorySystem system;
 
+    /** The session builder. */
+    private final SessionBuilder builder;
+
     /** The session. */
-    private final DefaultRepositorySystemSession session;
+    private CloseableSession session;
 
     /** The path to local repository. */
     private LocalRepository localRepository;
@@ -236,7 +240,10 @@ public class Repository {
         this.project = project;
 
         // ============ RepositorySystem ============ //
-        system = I.make(RepositorySystem.class);
+        this.system = I.make(RepositorySystem.class);
+
+        // ============ EventListener ============ //
+        Loader transfers = I.make(Loader.class);
 
         // ==================================================
         // Initialize
@@ -244,29 +251,26 @@ public class Repository {
         setLocalRepository(Platform.BeeLocalRepository);
 
         // ============ RepositorySystemSession ============ //
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        session.setDependencySelector(new AndDependencySelector(OptionalDependencySelector.fromDirect(), ScopeDependencySelector
-                .fromDirect(null, List
-                        .of(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id)), new ExclusionDependencySelector(project.exclusions)));
-        session.setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConfigurableVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver())));
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
-        session.setUpdatePolicy(BeeOption.Cacheless.value() ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_DAILY);
-        session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
-        session.setIgnoreArtifactDescriptorRepositories(true);
-        session.setCache(new DefaultRepositoryCache());
-        session.setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL));
-        session.setOffline(BeeOption.Offline.value());
-        session.setSystemProperties(System.getProperties());
-        session.setConfigProperties(System.getProperties());
-        session.setConfigProperty("maven.artifact.threads", 24);
-        session.setConfigProperty("aether.dependencyCollector.impl", "bf");
+        this.builder = new MavenSessionBuilderSupplier(system).get()
+                .setDependencySelector(new AndDependencySelector(OptionalDependencySelector.fromDirect(), ScopeDependencySelector
+                        .fromDirect(null, List
+                                .of(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id)), new ExclusionDependencySelector(project.exclusions)))
+                .setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConfigurableVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver())))
+                .setUpdatePolicy(BeeOption.Cacheless.value() ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_DAILY)
+                .setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN)
+                .setIgnoreArtifactDescriptorRepositories(true)
+                .setCache(new DefaultRepositoryCache())
+                .setResolutionErrorPolicy(new SimpleResolutionErrorPolicy(ResolutionErrorPolicy.CACHE_ALL, ResolutionErrorPolicy.CACHE_ALL))
+                .setOffline(BeeOption.Offline.value())
+                .setSystemProperties(System.getProperties())
+                .setConfigProperties(System.getProperties())
+                .setConfigProperty("maven.artifact.threads", 24)
+                .setConfigProperty("aether.dependencyCollector.impl", "bf")
+                .setTransferListener(transfers)
+                .setRepositoryListener(transfers)
+                .withLocalRepositories(localRepository);
 
-        // event listener
-        Loader transfers = I.make(Loader.class);
-        session.setTransferListener(transfers);
-        session.setRepositoryListener(transfers);
-
-        this.session = session;
+        this.session = builder.build();
     }
 
     /**
@@ -561,7 +565,7 @@ public class Repository {
         this.localRepository = new LocalRepository(path.absolutize().toString());
 
         if (session != null) {
-            session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
+            session = builder.withLocalRepositories(localRepository).build();
         }
     }
 
