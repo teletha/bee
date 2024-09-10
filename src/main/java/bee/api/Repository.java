@@ -170,6 +170,7 @@ import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
 import org.eclipse.aether.util.graph.transformer.ChainedDependencyGraphTransformer;
 import org.eclipse.aether.util.graph.transformer.ConfigurableVersionSelector;
+import org.eclipse.aether.util.graph.transformer.ConfigurableVersionSelector.Highest;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeContext;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeDeriver;
@@ -255,7 +256,7 @@ public class Repository {
                 .setDependencySelector(new AndDependencySelector(OptionalDependencySelector.fromDirect(), ScopeDependencySelector
                         .fromDirect(null, List
                                 .of(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id)), new ExclusionDependencySelector(project.exclusions)))
-                .setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConfigurableVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver())))
+                .setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConfigurableVersionSelector(new Highest()), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver())))
                 .setUpdatePolicy(BeeOption.Cacheless.value() ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_DAILY)
                 .setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN)
                 .setIgnoreArtifactDescriptorRepositories(true)
