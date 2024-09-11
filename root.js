@@ -4,7 +4,6 @@ const root = {
 	"packages": [
 		"bee",
 		"bee.api",
-		"bee.bun",
 		"bee.coder",
 		"bee.task",
 		"bee.util",
@@ -51,20 +50,6 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "BeeOption",
 			"packageName": "bee",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Bun",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Bun",
-			"packageName": "bee.bun",
 			"type": "Class"
 		},
 		{
