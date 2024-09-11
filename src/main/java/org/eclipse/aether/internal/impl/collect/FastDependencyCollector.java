@@ -41,7 +41,6 @@ import org.eclipse.aether.impl.ArtifactDescriptorReader;
 import org.eclipse.aether.impl.DependencyCollector;
 import org.eclipse.aether.impl.RemoteRepositoryManager;
 import org.eclipse.aether.impl.VersionRangeResolver;
-import org.eclipse.aether.internal.impl.collect.DataPool.DescriptorKey;
 import org.eclipse.aether.repository.ArtifactRepository;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactDescriptorException;
@@ -276,7 +275,7 @@ public class FastDependencyCollector implements DependencyCollector {
         final List<RemoteRepository> childRepos = args.ignoreRepos ? repositories
                 : remoteRepositoryManager.aggregateRepositories(args.session, repositories, descriptorResult.getRepositories(), true);
 
-        Object key = d.getArtifact();
+        Object key = args.pool.toKey(d.getArtifact(), childRepos, childSelector, childManager, childTraverser, childFilter);
 
         List<DependencyNode> children = args.pool.getChildren(key);
         if (children == null) {
@@ -296,7 +295,7 @@ public class FastDependencyCollector implements DependencyCollector {
     }
 
     private ArtifactDescriptorResult resolveCachedArtifactDescriptor(DataPool pool, ArtifactDescriptorRequest descriptorRequest, RepositorySystemSession session, Dependency d, Args args) {
-        DescriptorKey key = pool.toKey(descriptorRequest);
+        Object key = pool.toKey(descriptorRequest);
         ArtifactDescriptorResult descriptorResult = pool.getDescriptor(key, descriptorRequest);
         if (descriptorResult == null) {
             try {
