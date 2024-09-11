@@ -370,55 +370,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Inputs.DebugBiConsumer",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Inputs.DebugBiFunction",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Inputs.DebugConsumer",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Inputs.DebugFunction",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Inputs.DebugRunnable",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Inputs.DebugTriConsumer",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Inputs.DebugTriFunction",
-			"packageName": "bee.util",
-			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Install",
 			"packageName": "bee.task",
 			"type": "Class"
