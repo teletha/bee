@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.49.0](https://github.com/teletha/bee/compare/v0.48.1...v0.49.0) (2024-09-11)
+
+
+### Features
+
+* casheless option ignore local repository ([b35b771](https://github.com/teletha/bee/commit/b35b771cff2b071963248f0222fd60f652c75ee3))
+* downgrade maven ([0799d21](https://github.com/teletha/bee/commit/0799d21cb823d635f5d9b57b4176796ede8bdf6c))
+
 ## [0.48.1](https://github.com/teletha/bee/compare/v0.48.0...v0.48.1) (2024-09-10)
 
 
