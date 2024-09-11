@@ -79,15 +79,14 @@ import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallationException;
 import org.eclipse.aether.internal.impl.DefaultArtifactResolver;
 import org.eclipse.aether.internal.impl.DefaultChecksumPolicyProvider;
-import org.eclipse.aether.internal.impl.DefaultChecksumProcessor;
 import org.eclipse.aether.internal.impl.DefaultDeployer;
+import org.eclipse.aether.internal.impl.DefaultFileProcessor;
 import org.eclipse.aether.internal.impl.DefaultInstaller;
 import org.eclipse.aether.internal.impl.DefaultLocalPathComposer;
 import org.eclipse.aether.internal.impl.DefaultLocalPathPrefixComposerFactory;
 import org.eclipse.aether.internal.impl.DefaultLocalRepositoryProvider;
 import org.eclipse.aether.internal.impl.DefaultMetadataResolver;
 import org.eclipse.aether.internal.impl.DefaultOfflineController;
-import org.eclipse.aether.internal.impl.DefaultPathProcessor;
 import org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager;
 import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
 import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
@@ -150,8 +149,7 @@ import org.eclipse.aether.spi.connector.transport.TransportListener;
 import org.eclipse.aether.spi.connector.transport.Transporter;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterProvider;
-import org.eclipse.aether.spi.io.ChecksumProcessor;
-import org.eclipse.aether.spi.io.PathProcessor;
+import org.eclipse.aether.spi.io.FileProcessor;
 import org.eclipse.aether.spi.synccontext.SyncContextFactory;
 import org.eclipse.aether.transfer.ChecksumFailureException;
 import org.eclipse.aether.transfer.NoTransporterException;
@@ -461,7 +459,7 @@ public class Repository {
                 ArtifactResult result = system.resolveArtifact(session, request);
 
                 if (result.isResolved()) {
-                    return Locator.file(result.getArtifact().getPath());
+                    return Locator.file(result.getArtifact().getFile().getPath());
                 } else {
                     ui.info("Artifact [", sub, "] is not resolved.");
                 }
@@ -540,7 +538,7 @@ public class Repository {
      * @return
      */
     public final Directory getLocalRepository() {
-        return Locator.directory(localRepository.getBasePath());
+        return Locator.directory(localRepository.getBasedir().getPath());
     }
 
     /**
@@ -705,8 +703,7 @@ public class Repository {
             define(RemoteRepositoryManager.class, DefaultRemoteRepositoryManager.class);
             define(UpdateCheckManager.class, DefaultUpdateCheckManager.class);
             define(UpdatePolicyAnalyzer.class, DefaultUpdatePolicyAnalyzer.class);
-            define(PathProcessor.class, DefaultPathProcessor.class);
-            define(ChecksumProcessor.class, DefaultChecksumProcessor.class);
+            define(FileProcessor.class, DefaultFileProcessor.class);
             define(SyncContextFactory.class, DefaultSyncContextFactory.class);
             define(RepositoryEventDispatcher.class, DefaultRepositoryEventDispatcher.class);
             define(OfflineController.class, DefaultOfflineController.class);

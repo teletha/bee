@@ -41,10 +41,9 @@ public class Project extends bee.api.Project {
         // Maven seems to thoroughly adhere to backward compatibility, so further version upgrades
         // are currently unnecessary.
         //
-        // jakarta.inject has replaced javax.inject since alpha-9, but some maven-resolver APIs do
-        // not support jakarta.inject, so it was stopped in alpha-8
-        String version = "2.0.0-alpha-8";
-        require("org.apache.maven", "maven-resolver-provider", "4.0.0-alpha-8");
+        // The use of alpha-8 causes a dependency on woodstox, so it is stopped at alpha-7.
+        String version = "2.0.0-alpha-7";
+        require("org.apache.maven", "maven-resolver-provider", "4.0.0-alpha-7");
         require("org.apache.maven.resolver", "maven-resolver-api", version);
         require("org.apache.maven.resolver", "maven-resolver-spi", version);
         require("org.apache.maven.resolver", "maven-resolver-util", version);
