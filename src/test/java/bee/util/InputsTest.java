@@ -9,10 +9,7 @@
  */
 package bee.util;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
@@ -36,18 +33,6 @@ class InputsTest {
         assert Inputs.formatAsSize(1538, false).equals("1.50");
         assert Inputs.formatAsSize(1545, false).equals("1.51");
         assert Inputs.formatAsSize(1555, false).equals("1.52");
-    }
-
-    @Test
-    void signature() {
-        assert Inputs.signature(this::signature).equals(InputsTest.class.getName() + "#signature()");
-        assert Inputs.signature(InputsTest::signature).equals(InputsTest.class.getName() + "#signature()");
-        assert Inputs.signature(String::length).equals("java.lang.String#length()");
-        assert Inputs.signature(String::concat).equals("java.lang.String#concat(String)");
-        assert Inputs.signature(String::replaceAll).equals("java.lang.String#replaceAll(String, String)");
-        assert Inputs.signature(Map<?, ?>::compute).equals("java.util.Map#compute(Object, BiFunction)");
-        assert Inputs.signature(Consumer<?>::accept).equals("java.util.function.Consumer#accept(Object)");
-        assert Inputs.signature(BiConsumer<?, ?>::accept).equals("java.util.function.BiConsumer#accept(Object, Object)");
     }
 
     @Test

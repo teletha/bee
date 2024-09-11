@@ -20,7 +20,6 @@ import java.util.StringJoiner;
 
 import org.apache.maven.model.Contributor;
 
-import bee.util.Inputs;
 import kiss.I;
 import kiss.JSON;
 import psychopath.Directory;
@@ -75,17 +74,17 @@ public abstract class VCS {
 
     /** The uri for read access. */
     public String uriForRead() {
-        throw unsupport(Inputs.signature(VCS::uriForRead));
+        throw unsupport("uriForRead");
     }
 
     /** The uri for write access. */
     public String uriForWrite() {
-        throw unsupport(Inputs.signature(VCS::uriForWrite));
+        throw unsupport("uriForWrite");
     }
 
     /** The issue tracker uri. */
     public String issue() {
-        throw unsupport(Inputs.signature(VCS::issue));
+        throw unsupport("issue");
     }
 
     /**
@@ -94,7 +93,7 @@ public abstract class VCS {
      * @return
      */
     public List<Commit> commits() {
-        throw unsupport(Inputs.signature(VCS::commits));
+        throw unsupport("commits");
     }
 
     /**
@@ -103,7 +102,7 @@ public abstract class VCS {
      * @return
      */
     public List<Contributor> contributors() {
-        throw unsupport(Inputs.signature(VCS::contributors));
+        throw unsupport("contributors");
     }
 
     /**
@@ -113,7 +112,7 @@ public abstract class VCS {
      * @return
      */
     public boolean exist(String filePath) {
-        throw unsupport(Inputs.signature(VCS::exist));
+        throw unsupport("exist(String)");
     }
 
     /**
@@ -123,7 +122,7 @@ public abstract class VCS {
      * @return
      */
     public Content file(String filePath) {
-        throw unsupport(Inputs.signature(VCS::file));
+        throw unsupport("file(String)");
     }
 
     /**
