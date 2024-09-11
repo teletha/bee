@@ -235,7 +235,7 @@ public class Repository {
         // ==================================================
         // Initialize
         // ==================================================
-        setLocalRepository(Platform.BeeLocalRepository);
+        setLocalRepository(BeeOption.Cacheless.value() ? Locator.temporaryDirectory() : Platform.BeeLocalRepository);
 
         // ============ RepositorySystemSession ============ //
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
