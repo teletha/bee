@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.51.0](https://github.com/teletha/bee/compare/v0.50.0...v0.51.0) (2024-09-11)
+
+
+### Features
+
+* Jar task can configure the packing and merging option. ([75333ed](https://github.com/teletha/bee/commit/75333edc2cca1b6e5093a73f3cea55a9df4a766e))
+* remove bun task ([0ea6c2a](https://github.com/teletha/bee/commit/0ea6c2ad3528b79cad25a9e7ade2b9085a698946))
+
+
+### Bug Fixes
+
+* avoiding compile error to upgrade bee ([a6a4e45](https://github.com/teletha/bee/commit/a6a4e45950739b750af58cc52157e1e5c4f18036))
+* remain the service locator related files ([020a006](https://github.com/teletha/bee/commit/020a0065a92e8ef47bfc677eb3ab9e1adb7fd8d9))
+* remove unused methods ([c20ec3c](https://github.com/teletha/bee/commit/c20ec3cc80138ac51184557aa62e642166897b75))
+
 ## [0.50.0](https://github.com/teletha/bee/compare/v0.49.0...v0.50.0) (2024-09-11)
 
 
