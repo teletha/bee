@@ -10,7 +10,6 @@
 package bee;
 
 import bee.api.Repository;
-import bee.task.Jar;
 import bee.task.Test;
 import kiss.I;
 
@@ -29,11 +28,10 @@ public class Install extends bee.task.Install {
         BeeInstaller.install(true, true);
     }
 
-    // static class Jar extends bee.task.Jar {
-    // {
-    // merging = o -> o
-    // .glob("!licenses/**", "!META-INF/*", "!META-INF/licenses/**", "!META-INF/maven/**",
-    // "!META-INF/sisu/**", "!META-INF/versions/**");
-    // }
-    // }
+    static class Jar extends bee.task.Jar {
+        {
+            merging = o -> o
+                    .glob("!licenses/**", "!META-INF/*", "!META-INF/licenses/**", "!META-INF/maven/**", "!META-INF/sisu/**", "!META-INF/versions/**");
+        }
+    }
 }
