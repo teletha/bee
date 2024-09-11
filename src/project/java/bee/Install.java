@@ -10,7 +10,6 @@
 package bee;
 
 import bee.api.Repository;
-import bee.task.Jar;
 import bee.task.Test;
 import kiss.I;
 
@@ -27,5 +26,11 @@ public class Install extends bee.task.Install {
         I.make(Repository.class).install(project);
 
         BeeInstaller.install(true, true);
+    }
+
+    static class Jar extends bee.task.Jar {
+        {
+            merging = o -> o.glob("!licenses/**", "!META-INF/**");
+        }
     }
 }

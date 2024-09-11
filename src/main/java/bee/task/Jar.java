@@ -10,6 +10,7 @@
 package bee.task;
 
 import java.io.ByteArrayInputStream;
+import java.util.function.Function;
 import java.util.jar.Attributes.Name;
 
 import javax.lang.model.SourceVersion;
@@ -50,6 +51,16 @@ public class Jar extends Task {
     protected boolean removeTraceInfo = false;
 
     /**
+     * Configure how to handle your resources when creating project jar.
+     */
+    protected Function<Option, Option> packing = Function.identity();
+
+    /**
+     * Configure how to handle merged resources when merging dependent jars.
+     */
+    protected Function<Option, Option> merging = Function.identity();
+
+    /**
      * Package main classes and other resources.
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
@@ -61,8 +72,8 @@ public class Jar extends Task {
             dir = modify(dir);
         }
 
-        pack("main classe", I.signal(dir), project.locateJar());
-        pack("main source", project.getSourceSet(), project.locateSourceJar());
+        pack("main classe", I.signal(dir), project.locateJar(), packing);
+        pack("main source", project.getSourceSet(), project.locateSourceJar(), null);
     }
 
     /**
@@ -113,8 +124,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test class", I.signal(project.getTestClasses()), classes);
-        pack("test source", project.getTestSourceSet(), sources);
+        pack("test class", I.signal(project.getTestClasses()), classes, null);
+        pack("test source", project.getTestSourceSet(), sources, null);
     }
 
     /**
@@ -127,8 +138,8 @@ public class Jar extends Task {
         File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
         File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project class", I.signal(project.getProjectClasses()), classes);
-        pack("project source", project.getProjectSourceSet(), sources);
+        pack("project class", I.signal(project.getProjectClasses()), classes, null);
+        pack("project source", project.getProjectSourceSet(), sources, null);
     }
 
     /**
@@ -138,7 +149,7 @@ public class Jar extends Task {
     public void document() {
         Directory output = require(Doc::javadoc);
 
-        pack("javadoc", I.signal(output), project.locateJavadocJar());
+        pack("javadoc", I.signal(output), project.locateJavadocJar(), null);
     }
 
     /**
@@ -148,11 +159,12 @@ public class Jar extends Task {
      * @param input
      * @param output
      */
-    private void pack(String type, Signal<Directory> input, File output) {
+    private void pack(String type, Signal<Directory> input, File output, Function<Option, Option> option) {
         input = input.skipNull();
+        option = option == null ? Function.identity() : option;
 
         Locator.folder()
-                .add(input, Option::strip)
+                .add(input, option.andThen(Option::strip))
                 .trackPackingTo(output)
                 .to(Inputs.observerFor(ui, output, "Packaging " + type + " files", "Build " + type + " jar"));
     }
@@ -183,7 +195,7 @@ public class Jar extends Task {
         folder.add(manifest, o -> o.allocateIn("META-INF"));
 
         for (Library library : project.getDependency(Scope.Runtime)) {
-            folder.add(library.getLocalJar().asArchive());
+            folder.add(library.getLocalJar().asArchive(), merging);
         }
         folder.trackPackingTo(output).to(Inputs.observerFor(ui, output, "Merging class files", "Build merged classes jar"));
     }
