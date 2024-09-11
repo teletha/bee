@@ -25,6 +25,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiPredicate;
 
 import javax.inject.Named;
 
@@ -55,6 +58,7 @@ import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
+import org.eclipse.aether.collection.UnsolvableVersionConflictException;
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
 import org.eclipse.aether.graph.Dependency;
 import org.eclipse.aether.graph.DependencyNode;
@@ -160,14 +164,20 @@ import org.eclipse.aether.util.graph.selector.OptionalDependencySelector;
 import org.eclipse.aether.util.graph.selector.ScopeDependencySelector;
 import org.eclipse.aether.util.graph.transformer.ChainedDependencyGraphTransformer;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver;
+import org.eclipse.aether.util.graph.transformer.ConflictResolver.ConflictContext;
+import org.eclipse.aether.util.graph.transformer.ConflictResolver.ConflictItem;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeContext;
 import org.eclipse.aether.util.graph.transformer.ConflictResolver.ScopeDeriver;
+import org.eclipse.aether.util.graph.transformer.ConflictResolver.VersionSelector;
 import org.eclipse.aether.util.graph.transformer.JavaDependencyContextRefiner;
 import org.eclipse.aether.util.graph.transformer.JavaScopeSelector;
-import org.eclipse.aether.util.graph.transformer.NearestVersionSelector;
 import org.eclipse.aether.util.graph.transformer.SimpleOptionalitySelector;
+import org.eclipse.aether.util.graph.visitor.PathRecordingDependencyVisitor;
+import org.eclipse.aether.util.graph.visitor.TreeDependencyVisitor;
 import org.eclipse.aether.util.repository.SimpleResolutionErrorPolicy;
 import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.Version;
+import org.eclipse.aether.version.VersionConstraint;
 import org.eclipse.aether.version.VersionScheme;
 
 import bee.BeeLoader;
@@ -238,7 +248,7 @@ public class Repository {
         // ============ RepositorySystemSession ============ //
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         session.setDependencySelector(new AndDependencySelector(new OptionalDependencySelector(), new ScopeDependencySelector(Scope.Test.id, Scope.Provided.id, Scope.Annotation.id), new ExclusionDependencySelector(project.exclusions)));
-        session.setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new NearestVersionSelector(), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver()), new JavaDependencyContextRefiner()));
+        session.setDependencyGraphTransformer(new ChainedDependencyGraphTransformer(new ConflictResolver(new ConflictVersionSelector(true), new JavaScopeSelector(), new SimpleOptionalitySelector(), new BeeScopeDeriver()), new JavaDependencyContextRefiner()));
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
         session.setUpdatePolicy(BeeOption.Cacheless.value() ? RepositoryPolicy.UPDATE_POLICY_ALWAYS : RepositoryPolicy.UPDATE_POLICY_DAILY);
         session.setChecksumPolicy(RepositoryPolicy.CHECKSUM_POLICY_WARN);
@@ -937,4 +947,93 @@ public class Repository {
             };
         }
     }
+
+    private static class ConflictVersionSelector extends VersionSelector {
+
+        private final BiPredicate<ConflictItem, ConflictItem> selectionStrategy;
+
+        private ConflictVersionSelector(boolean highest) {
+            this.selectionStrategy = highest ? (candidate, winner) -> {
+                return candidate.getNode().getVersion().compareTo(winner.getNode().getVersion()) > 0;
+            } : (candidate, winner) -> {
+                if (candidate.isSibling(winner)) {
+                    return candidate.getNode().getVersion().compareTo(winner.getNode().getVersion()) > 0;
+                } else {
+                    return candidate.getDepth() < winner.getDepth();
+                }
+            };
+        }
+
+        @Override
+        public void selectVersion(ConflictContext context) throws RepositoryException {
+            ConflictGroup group = new ConflictGroup();
+            for (ConflictItem candidate : context.getItems()) {
+                DependencyNode node = candidate.getNode();
+                VersionConstraint constraint = node.getVersionConstraint();
+
+                boolean backtrack = false;
+                boolean hardConstraint = constraint.getRange() != null;
+
+                if (hardConstraint) {
+                    if (group.constraints.add(constraint)) {
+                        if (group.winner != null && !constraint.containsVersion(group.winner.getNode().getVersion())) {
+                            backtrack = true;
+                        }
+                    }
+                }
+
+                if (isAcceptableByConstraints(group, node.getVersion())) {
+                    group.candidates.add(candidate);
+
+                    if (backtrack) {
+                        backtrack(group, context);
+                    } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
+                        group.winner = candidate;
+                    }
+                } else if (backtrack) {
+                    backtrack(group, context);
+                }
+            }
+            context.setWinner(group.winner);
+        }
+
+        private void backtrack(ConflictGroup group, ConflictContext context) throws UnsolvableVersionConflictException {
+            group.winner = null;
+
+            for (Iterator<ConflictItem> it = group.candidates.iterator(); it.hasNext();) {
+                ConflictItem candidate = it.next();
+
+                if (!isAcceptableByConstraints(group, candidate.getNode().getVersion())) {
+                    it.remove();
+                } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
+                    group.winner = candidate;
+                }
+            }
+
+            if (group.winner == null) {
+                PathRecordingDependencyVisitor visitor = new PathRecordingDependencyVisitor((node, parents) -> context.isIncluded(node));
+                context.getRoot().accept(new TreeDependencyVisitor(visitor));
+                throw new UnsolvableVersionConflictException(visitor.getPaths());
+            }
+        }
+
+        private boolean isAcceptableByConstraints(ConflictGroup group, Version version) {
+            for (VersionConstraint constraint : group.constraints) {
+                if (!constraint.containsVersion(version)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private static class ConflictGroup {
+
+            private final Set<VersionConstraint> constraints = new HashSet();
+
+            private final List<ConflictItem> candidates = new ArrayList();
+
+            private ConflictItem winner;
+        }
+    }
+
 }
