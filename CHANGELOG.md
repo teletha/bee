@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.50.0](https://github.com/teletha/bee/compare/v0.49.0...v0.50.0) (2024-09-11)
+
+
+### Features
+
+* downgrade maven to 4.0.0-alpha-7 ([ebde1ad](https://github.com/teletha/bee/commit/ebde1ad91da5c20535332d4b0015b43bf5df3979))
+* select highest version when artifact was conflicted ([2d43a99](https://github.com/teletha/bee/commit/2d43a994736a6abf5f5c30fcd4428c692a651387))
+
+
+### Bug Fixes
+
+* correct etag resolver ([4c903e7](https://github.com/teletha/bee/commit/4c903e772d2ba94c89e3a22990f25229610423aa))
+
 ## [0.49.0](https://github.com/teletha/bee/compare/v0.48.1...v0.49.0) (2024-09-11)
 
 
