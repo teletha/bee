@@ -906,7 +906,17 @@ public class Repository {
                             .flatMap(etag -> {
                                 int start = etag.indexOf("SHA1{") + 5;
                                 int end = etag.indexOf("}", start);
-                                return start == -1 || end == -1 ? Optional.empty() : Optional.of(etag.substring(start, end));
+                                if (start != 4 && end != -1) {
+                                    return Optional.of(etag.substring(start, end));
+                                }
+
+                                start = etag.indexOf('"');
+                                end = etag.indexOf('"', start);
+                                if (start != 0 && end != -1) {
+                                    return Optional.of(etag.substring(start, end));
+                                }
+
+                                return etag.isBlank() ? Optional.empty() : Optional.of(etag);
                             })
                             .or(() -> headers.firstValue("x-checksum-sha1"))
                             .or(() -> headers.firstValue("x-checksum-md5"))
