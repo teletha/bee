@@ -10,6 +10,7 @@
 package bee;
 
 import bee.api.Repository;
+import bee.task.Jar;
 import bee.task.Test;
 import kiss.I;
 
