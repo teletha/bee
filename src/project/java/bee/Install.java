@@ -30,7 +30,8 @@ public class Install extends bee.task.Install {
 
     static class Jar extends bee.task.Jar {
         {
-            merging = o -> o.glob("!licenses/**", "!META-INF/**");
+            merging = o -> o
+                    .glob("!licenses/**", "!META-INF/*", "!META-INF/licenses/**", "!META-INF/maven/**", "!META-INF/sisu/**", "!META-INF/versions/**");
         }
     }
 }
