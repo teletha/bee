@@ -461,7 +461,7 @@ public class Repository {
                 ArtifactResult result = system.resolveArtifact(session, request);
 
                 if (result.isResolved()) {
-                    return Locator.file(result.getArtifact().getFile().toPath());
+                    return Locator.file(result.getArtifact().getPath());
                 } else {
                     ui.info("Artifact [", sub, "] is not resolved.");
                 }
@@ -540,7 +540,7 @@ public class Repository {
      * @return
      */
     public final Directory getLocalRepository() {
-        return Locator.directory(localRepository.getBasedir().toPath());
+        return Locator.directory(localRepository.getBasePath());
     }
 
     /**
