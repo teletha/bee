@@ -215,51 +215,49 @@ public class FastDependencyCollector implements DependencyCollector {
         boolean noDescriptor = isLackingDescriptor(dependency.getArtifact());
         boolean traverse = !noDescriptor && (depTraverser == null || depTraverser.traverseDependency(dependency));
 
-        List<? extends Version> versions;
-        VersionRangeResult rangeResult;
         try {
             VersionRangeRequest rangeRequest = createVersionRangeRequest(args, repositories, dependency);
+            VersionRangeResult rangeResult = cachedResolveRangeResult(rangeRequest, args.pool, args.session);
 
-            rangeResult = cachedResolveRangeResult(rangeRequest, args.pool, args.session);
+            for (Version version : filterVersions(dependency, rangeResult, verFilter, args.versionContext)) {
+                args.fork.submit(() -> {
 
-            versions = filterVersions(dependency, rangeResult, verFilter, args.versionContext);
+                    Artifact originalArtifact = dependency.getArtifact().setVersion(version.toString());
+                    Dependency d = dependency.setArtifact(originalArtifact);
+
+                    ArtifactDescriptorRequest descriptorRequest = createArtifactDescriptorRequest(args, repositories, d);
+                    ArtifactDescriptorResult descriptorResult = getArtifactDescriptorResult(args, noDescriptor, d, descriptorRequest);
+                    if (descriptorResult != null) {
+                        d = d.setArtifact(descriptorResult.getArtifact());
+                        List<Artifact> subRelocations = descriptorResult.getRelocations();
+
+                        if (!subRelocations.isEmpty()) {
+                            processDependency(args, repositories, depSelector, depManager, depTraverser, verFilter, d, subRelocations, node);
+                        } else {
+                            d = args.pool.intern(d.setArtifact(args.pool.intern(d.getArtifact())));
+
+                            DefaultDependencyNode child = createDependencyNode(relocations, rangeResult, version, d, descriptorResult
+                                    .getAliases(), repositories, args);
+
+                            synchronized (node) {
+                                node.getChildren().add(child);
+                            }
+
+                            boolean recurse = traverse && !descriptorResult.getDependencies().isEmpty();
+                            if (recurse) {
+                                doRecurse(args, repositories, depSelector, depManager, depTraverser, verFilter, d, descriptorResult, child);
+                            }
+                        }
+                    } else {
+                        DefaultDependencyNode child = createDependencyNode(relocations, rangeResult, version, d, null, repositories, args);
+                        synchronized (node) {
+                            node.getChildren().add(child);
+                        }
+                    }
+                });
+            }
         } catch (VersionRangeResolutionException e) {
             return;
-        }
-
-        for (Version version : versions) {
-            Artifact originalArtifact = dependency.getArtifact().setVersion(version.toString());
-            Dependency d = dependency.setArtifact(originalArtifact);
-
-            ArtifactDescriptorRequest descriptorRequest = createArtifactDescriptorRequest(args, repositories, d);
-            ArtifactDescriptorResult descriptorResult = getArtifactDescriptorResult(args, noDescriptor, d, descriptorRequest);
-            if (descriptorResult != null) {
-                d = d.setArtifact(descriptorResult.getArtifact());
-                List<Artifact> subRelocations = descriptorResult.getRelocations();
-
-                if (!subRelocations.isEmpty()) {
-                    processDependency(args, repositories, depSelector, depManager, depTraverser, verFilter, d, subRelocations, node);
-                } else {
-                    d = args.pool.intern(d.setArtifact(args.pool.intern(d.getArtifact())));
-
-                    DefaultDependencyNode child = createDependencyNode(relocations, rangeResult, version, d, descriptorResult
-                            .getAliases(), repositories, args);
-
-                    synchronized (node) {
-                        node.getChildren().add(child);
-                    }
-
-                    boolean recurse = traverse && !descriptorResult.getDependencies().isEmpty();
-                    if (recurse) {
-                        doRecurse(args, repositories, depSelector, depManager, depTraverser, verFilter, d, descriptorResult, child);
-                    }
-                }
-            } else {
-                DefaultDependencyNode child = createDependencyNode(relocations, rangeResult, version, d, null, repositories, args);
-                synchronized (node) {
-                    node.getChildren().add(child);
-                }
-            }
         }
     }
 
