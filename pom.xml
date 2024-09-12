@@ -9,13 +9,27 @@
 Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
 
 #### Minimize settings
-Use default values to minimize the number of items that need to be set as much as possible. Also, all settings are type-safe and complementary, so you don&#39;t have to search for minor settings in the documentation.
+Use default values to minimize the number of items that need to be set as much as possible. Also, all settings are type-safe and completion, so you don&#39;t have to search for minor settings in the documentation.
 
 #### Fast execution
 All tasks are executed in parallel, and all output is cached and reused.
 
 #### Repository oriented
-It recognizes source code and package repositories and automates the entire lifecycle from development to release.</description>
+It recognizes source code and package repositories and automates the entire lifecycle from development to release.
+
+
+# Install by script
+Execute the following command in Terminal.
+
+#### In Linux
+```bash
+curl -Ls https://git.io/install-bee | bash
+```
+
+#### In Windows
+```cmd
+curl -Ls https://git.io/install-bee -o install.bat &#38;&#38; install.bat &#38;&#38; del install.bat
+```</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.teletha</groupId>
