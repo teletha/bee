@@ -53,11 +53,11 @@ public class Project extends bee.api.Project {
                 ## Basic Usage
                 Once installed, you can start using Bee by running the following commands:
 
-                ### Setup with your IDE
+                #### Setup with your IDE
                 ```
                 bee ide
                 ```
-                ### Install library into local repository
+                #### Install library into local repository
                 ```
                 bee install
                 ```
