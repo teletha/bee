@@ -23,13 +23,27 @@ public class Project extends bee.api.Project {
                 Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
 
                 #### Minimize settings
-                Use default values to minimize the number of items that need to be set as much as possible. Also, all settings are type-safe and complementary, so you don't have to search for minor settings in the documentation.
+                Use default values to minimize the number of items that need to be set as much as possible. Also, all settings are type-safe and completion, so you don't have to search for minor settings in the documentation.
 
                 #### Fast execution
                 All tasks are executed in parallel, and all output is cached and reused.
 
                 #### Repository oriented
                 It recognizes source code and package repositories and automates the entire lifecycle from development to release.
+
+
+                # Install by script
+                Execute the following command in Terminal.
+
+                #### In Linux
+                ```bash
+                curl -Ls https://git.io/install-bee | bash
+                ```
+
+                #### In Windows
+                ```cmd
+                curl -Ls https://git.io/install-bee -o install.bat && install.bat && del install.bat
+                ```
                 """);
 
         require(SourceVersion.RELEASE_19, SourceVersion.RELEASE_17);
