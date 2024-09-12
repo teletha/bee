@@ -41,7 +41,7 @@ public class Help extends Task {
     @Command("Display all options.")
     public void option() {
         ui.info("The available options are listed below.");
-    
+
         try {
             Field field = BeeOption.class.getDeclaredField("options");
             field.setAccessible(true);
@@ -60,5 +60,25 @@ public class Help extends Task {
         ui.info("OS     \t", System.getProperty("os.name"), " ", System.getProperty("os.arch"), " ", System.getProperty("os.version"));
         ui.info("Locale \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
         ui.info("Charset\t", Platform.Encoding.displayName(Locale.ENGLISH));
+    }
+
+    @Command("Show welcome message.")
+    public void welcome() {
+        ui.title("Welcome to Bee!");
+        ui.info("""
+                Thank you for installing Bee. We're excited to have you on board!
+                Here’s what you can do next:
+
+                Get Started Quickly
+                If you are using an IDE, simply type [bee ide] in your project directory.
+                After answering a few questions, the necessary files for your IDE should be generated.
+                Once that’s done, use your IDE to edit the generated Project class and define your project.
+
+                Explore Tasks
+                You can also type [bee help] to display a list of all currently available tasks.
+                Feel free to try out the commands and explore what you can do!
+                """);
+
+        require(Help::task);
     }
 }

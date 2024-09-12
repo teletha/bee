@@ -18,7 +18,7 @@ import kiss.Singleton;
 class LifestyleForProject implements Lifestyle<Project> {
 
     /** The actual store. */
-    static final ThreadLocal<Project> local = new InheritableThreadLocal();
+    static final ThreadLocal<Project> local = InheritableThreadLocal.withInitial(ZeroProject::new);
 
     /**
      * {@inheritDoc}

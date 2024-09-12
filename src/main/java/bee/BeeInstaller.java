@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 
 import bee.api.Project;
 import bee.api.Repository;
+import bee.task.Help;
 import kiss.I;
 import psychopath.File;
 import psychopath.Locator;
@@ -29,15 +30,16 @@ public class BeeInstaller {
      */
     public static final void main(String... args) {
         I.load(Bee.class);
-        install(true, true);
+        install(true, true, true);
     }
 
     /**
      * Install Bee into your system.
      */
-    public static final void install(boolean installLauncher, boolean installAPI) {
+    public static final void install(boolean installLauncher, boolean installAPI, boolean showWelcome) {
         UserInterface ui = I.make(UserInterface.class);
         Project project = I.make(Project.class);
+
         File source = bee.Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(bee.Bee.class).asFile();
 
         if (installLauncher) {
@@ -85,6 +87,11 @@ public class BeeInstaller {
 
                 I.make(Repository.class).install(bee.Bee.API, api);
             }
+        }
+
+        if (showWelcome) {
+            Task help = I.make(Help.class);
+            help.execute("help:welcome", ui);
         }
     }
 }

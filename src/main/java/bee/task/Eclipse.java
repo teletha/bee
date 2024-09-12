@@ -178,7 +178,7 @@ public class Eclipse extends Task implements IDESupport {
 
         // Bee API
         if (!project.equals(Bee.Tool)) {
-            BeeInstaller.install(false, true);
+            BeeInstaller.install(false, true, false);
             doc.child("classpathentry")
                     .attr("kind", "lib")
                     .attr("path", Bee.API.asLibrary().getLocalJar())

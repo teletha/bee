@@ -133,7 +133,7 @@ public class Bee {
 
         // set up
         inject(ui);
-        inject(new FavricProject());
+        inject(new ZeroProject());
     }
 
     /**
@@ -267,7 +267,7 @@ public class Bee {
             License license = ui.ask("Product license", License.builtins());
 
             // build temporary project
-            inject(new FavricProject(group, name, version, license, VCS.detect(project.getRoot())));
+            inject(new ZeroProject(group, name, version, license, VCS.detect(project.getRoot())));
 
             definition.text(project.toBeeDefinition());
             ui.info("Generate project definition.");
@@ -329,27 +329,6 @@ public class Bee {
             for (String task : tasks) {
                 execute(task, ui);
             }
-        }
-    }
-
-    /**
-     * 
-     */
-    private static class FavricProject extends Project {
-
-        /**
-         * 
-         */
-        private FavricProject() {
-        }
-
-        /**
-         * @param projectName
-         */
-        private FavricProject(String group, String name, String version, License license, VCS vcs) {
-            product(group, name, version);
-            license(license);
-            if (vcs != null) versionControlSystem(vcs.uri());
         }
     }
 }
