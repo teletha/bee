@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.51.2](https://github.com/teletha/bee/compare/v0.51.1...v0.51.2) (2024-09-12)
+
+
+### Bug Fixes
+
+* make dependency resolution more faster ([de86898](https://github.com/teletha/bee/commit/de868985a7e7b1a014050513f65bc47c365894fb))
+
 ## [0.51.1](https://github.com/teletha/bee/compare/v0.51.0...v0.51.1) (2024-09-11)
 
 
