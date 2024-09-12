@@ -32,17 +32,34 @@ public class Project extends bee.api.Project {
                 It recognizes source code and package repositories and automates the entire lifecycle from development to release.
 
 
-                # Install by script
-                Execute the following command in Terminal.
+                ## Install by script
+                Open your terminal and execute the following command to install bee.
 
-                #### In Linux
+                #### In Linux / MacOS
                 ```bash
                 curl -Ls https://git.io/install-bee | bash
                 ```
 
                 #### In Windows
                 ```cmd
-                curl -Ls https://git.io/install-bee -o install.bat && install.bat && del install.bat
+                curl -Ls https://git.io/install-bee -o install.bat && install
+                ```
+
+                After installation is complete, verify that the tool was installed successfully by running:
+                ```
+                bee -v
+                ```
+
+                ## Basic Usage
+                Once installed, you can start using Bee by running the following commands:
+
+                ### Setup with your IDE
+                ```
+                bee ide
+                ```
+                ### Install library into local repository
+                ```
+                bee install
                 ```
                 """);
 
