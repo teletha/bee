@@ -704,7 +704,6 @@ public class Repository {
             define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
             define(RepositoryLayoutProvider.class, DefaultRepositoryLayoutProvider.class, RepositoryLayoutFactory.class);
             define(RepositoryLayoutFactory.class, Maven2RepositoryLayoutFactory.class);
-
             define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector.class, Md5ChecksumAlgorithmFactory.class, Sha1ChecksumAlgorithmFactory.class, Sha256ChecksumAlgorithmFactory.class, Sha512ChecksumAlgorithmFactory.class);
             define(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
             define(RepositoryConnectorProvider.class, DefaultRepositoryConnectorProvider.class, RepositoryConnectorFactory.class);
