@@ -9,17 +9,6 @@
  */
 package bee.api;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpRetryException;
-import java.net.URI;
-import java.net.http.HttpHeaders;
-import java.net.http.HttpRequest;
-import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpRequest.Builder;
-import java.net.http.HttpResponse;
-import java.nio.ByteBuffer;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -30,8 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalLong;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -54,7 +41,6 @@ import org.eclipse.aether.DefaultRepositoryCache;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositoryException;
 import org.eclipse.aether.RepositorySystem;
-import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.collection.CollectRequest;
@@ -115,7 +101,9 @@ import org.eclipse.aether.internal.impl.checksum.Sha512ChecksumAlgorithmFactory;
 import org.eclipse.aether.internal.impl.checksum.SparseDirectoryTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.SummaryFileTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.TrustedToProvidedChecksumsSourceAdapter;
-import org.eclipse.aether.internal.impl.collect.FastDependencyCollector;
+import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
+import org.eclipse.aether.internal.impl.collect.bf.BfDependencyCollector;
+import org.eclipse.aether.internal.impl.collect.df.DfDependencyCollector;
 import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
 import org.eclipse.aether.internal.impl.filter.GroupIdRemoteRepositoryFilterSource;
 import org.eclipse.aether.internal.impl.filter.PrefixesRemoteRepositoryFilterSource;
@@ -146,17 +134,10 @@ import org.eclipse.aether.spi.connector.checksum.ChecksumAlgorithmFactorySelecto
 import org.eclipse.aether.spi.connector.checksum.ChecksumPolicyProvider;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutFactory;
 import org.eclipse.aether.spi.connector.layout.RepositoryLayoutProvider;
-import org.eclipse.aether.spi.connector.transport.GetTask;
-import org.eclipse.aether.spi.connector.transport.PeekTask;
-import org.eclipse.aether.spi.connector.transport.PutTask;
-import org.eclipse.aether.spi.connector.transport.TransportListener;
-import org.eclipse.aether.spi.connector.transport.Transporter;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterProvider;
 import org.eclipse.aether.spi.io.FileProcessor;
 import org.eclipse.aether.spi.synccontext.SyncContextFactory;
-import org.eclipse.aether.transfer.ChecksumFailureException;
-import org.eclipse.aether.transfer.NoTransporterException;
 import org.eclipse.aether.util.artifact.SubArtifact;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
 import org.eclipse.aether.util.graph.selector.ExclusionDependencySelector;
@@ -190,7 +171,6 @@ import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.Singleton;
 import kiss.Storable;
-import kiss.WiseConsumer;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
@@ -259,6 +239,7 @@ public class Repository {
         session.setSystemProperties(System.getProperties());
         session.setConfigProperties(System.getProperties());
         session.setConfigProperty("maven.artifact.threads", 24);
+        session.setConfigProperty("aether.dependencyCollector.impl", "fast");
 
         // event listener
         Loader transfers = I.make(Loader.class);
@@ -698,7 +679,7 @@ public class Repository {
         private Lifestyles() {
             define(RepositorySystem.class, DefaultRepositorySystem.class);
             define(ArtifactResolver.class, DefaultArtifactResolver.class, TrustedChecksumsArtifactResolverPostProcessor.class, GroupIdRemoteRepositoryFilterSource.class);
-            define(DependencyCollector.class, FastDependencyCollector.class);
+            define(DependencyCollector.class, DefaultDependencyCollector.class, FastScanner.class, BfDependencyCollector.class, DfDependencyCollector.class);
             define(MetadataResolver.class, DefaultMetadataResolver.class);
             define(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
             define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
@@ -729,7 +710,7 @@ public class Repository {
             define(VersionScheme.class, GenericVersionScheme.class);
             define(ModelCacheFactory.class, DefaultModelCacheFactory.class);
             define(TransporterProvider.class, DefaultTransporterProvider.class, TransporterFactory.class);
-            define(TransporterFactory.class, NetTransporterFactory.class);
+            define(TransporterFactory.class, FastTransporter.class);
             define(ModelBuilder.class, new DefaultModelBuilderFactory()::newInstance);
         }
 
@@ -795,6 +776,97 @@ public class Repository {
         }
     }
 
+    /**
+     * Select nearest or highest strategy.
+     */
+    private static class ConflictVersionSelector extends VersionSelector {
+    
+        private final BiPredicate<ConflictItem, ConflictItem> selectionStrategy;
+    
+        private ConflictVersionSelector(boolean highest) {
+            this.selectionStrategy = highest ? (candidate, winner) -> {
+                return candidate.getNode().getVersion().compareTo(winner.getNode().getVersion()) > 0;
+            } : (candidate, winner) -> {
+                if (candidate.isSibling(winner)) {
+                    return candidate.getNode().getVersion().compareTo(winner.getNode().getVersion()) > 0;
+                } else {
+                    return candidate.getDepth() < winner.getDepth();
+                }
+            };
+        }
+    
+        @Override
+        public void selectVersion(ConflictContext context) throws RepositoryException {
+            ConflictGroup group = new ConflictGroup();
+            for (ConflictItem candidate : context.getItems()) {
+                DependencyNode node = candidate.getNode();
+                VersionConstraint constraint = node.getVersionConstraint();
+    
+                boolean backtrack = false;
+                boolean hardConstraint = constraint.getRange() != null;
+    
+                if (hardConstraint) {
+                    if (group.constraints.add(constraint)) {
+                        if (group.winner != null && !constraint.containsVersion(group.winner.getNode().getVersion())) {
+                            backtrack = true;
+                        }
+                    }
+                }
+    
+                if (isAcceptableByConstraints(group, node.getVersion())) {
+                    group.candidates.add(candidate);
+    
+                    if (backtrack) {
+                        backtrack(group, context);
+                    } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
+                        group.winner = candidate;
+                    }
+                } else if (backtrack) {
+                    backtrack(group, context);
+                }
+            }
+            context.setWinner(group.winner);
+        }
+    
+        private void backtrack(ConflictGroup group, ConflictContext context) throws UnsolvableVersionConflictException {
+            group.winner = null;
+    
+            for (Iterator<ConflictItem> it = group.candidates.iterator(); it.hasNext();) {
+                ConflictItem candidate = it.next();
+    
+                if (!isAcceptableByConstraints(group, candidate.getNode().getVersion())) {
+                    it.remove();
+                } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
+                    group.winner = candidate;
+                }
+            }
+    
+            if (group.winner == null) {
+                PathRecordingDependencyVisitor visitor = new PathRecordingDependencyVisitor((node, parents) -> context.isIncluded(node));
+                context.getRoot().accept(new TreeDependencyVisitor(visitor));
+                throw new UnsolvableVersionConflictException(visitor.getPaths());
+            }
+        }
+    
+        private boolean isAcceptableByConstraints(ConflictGroup group, Version version) {
+            for (VersionConstraint constraint : group.constraints) {
+                if (!constraint.containsVersion(version)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    
+        private static class ConflictGroup {
+    
+            private final Set<VersionConstraint> constraints = new HashSet();
+    
+            private final List<ConflictItem> candidates = new ArrayList();
+    
+            private ConflictItem winner;
+        }
+    }
+
     private static class BeeNamedLockFactoryAdapterFactory extends NamedLockFactoryAdapterFactoryImpl {
 
         public BeeNamedLockFactoryAdapterFactory(RepositorySystemLifecycle lifecycle) {
@@ -818,220 +890,6 @@ public class Repository {
             mappers.put(NameMappers.FILE_GAV_NAME, NameMappers.fileGavNameMapper());
             mappers.put(NameMappers.FILE_HGAV_NAME, NameMappers.fileHashingGavNameMapper());
             return Collections.unmodifiableMap(mappers);
-        }
-    }
-
-    /**
-     * For HTTP and HTTPS.
-     */
-    @Named("https")
-    private static class NetTransporterFactory implements TransporterFactory {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public float getPriority() {
-            return 10;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public Transporter newInstance(RepositorySystemSession session, RemoteRepository repository) throws NoTransporterException {
-            return new Transporter() {
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void put(PutTask task) throws Exception {
-                    throw new Error("HTTP PUT is not implemented, please FIX.");
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void peek(PeekTask task) throws Exception {
-                    URI uri = URI.create(repository.getUrl() + task.getLocation());
-                    Builder request = HttpRequest.newBuilder(uri).method("HEAD", BodyPublishers.noBody());
-                    I.http(request, HttpResponse.class).waitForTerminate().to((WiseConsumer<HttpResponse>) res -> {
-                        int code = res.statusCode();
-                        if (400 <= code) {
-                            throw new HttpRetryException("Fail to peek resource [" + uri + "]", code);
-                        }
-                    });
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void get(GetTask task) throws Exception {
-                    String uri = repository.getUrl() + task.getLocation();
-
-                    I.http(uri, HttpResponse.class).waitForTerminate().to((WiseConsumer<HttpResponse>) res -> {
-                        // analyze header
-                        HttpHeaders headers = res.headers();
-                        OptionalLong length = headers.firstValueAsLong("Content-Length");
-
-                        // transfer data
-                        try (InputStream in = (InputStream) res.body(); OutputStream out = new FileOutputStream(task.getDataFile())) {
-                            TransportListener listener = task.getListener();
-                            listener.transportStarted(0, length.orElse(0));
-
-                            int read = -1;
-                            byte[] buffer = new byte[1024 * 32];
-                            while (0 < (read = in.read(buffer))) {
-                                out.write(buffer, 0, read);
-                                listener.transportProgressed(ByteBuffer.wrap(buffer, 0, read));
-                            }
-                        }
-
-                        // detect checksum
-                        readChecksum(headers, task);
-                    });
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public void close() {
-                }
-
-                /**
-                 * {@inheritDoc}
-                 */
-                @Override
-                public int classify(Throwable error) {
-                    return error instanceof HttpRetryException http && http.responseCode() == 404 ? ERROR_NOT_FOUND : ERROR_OTHER;
-                }
-
-                private void readChecksum(HttpHeaders headers, GetTask task) throws ChecksumFailureException {
-                    String checksum = headers.firstValue("ETAG") //
-                            .flatMap(etag -> {
-                                int start = etag.indexOf("SHA1{") + 5;
-                                int end = etag.indexOf("}", start);
-                                if (start != 4 && end != -1) {
-                                    return Optional.of(etag.substring(start, end));
-                                }
-
-                                start = etag.indexOf('"');
-                                end = etag.indexOf('"', start);
-                                if (start != 0 && end != -1) {
-                                    return Optional.of(etag.substring(start, end));
-                                }
-
-                                return etag.isBlank() ? Optional.empty() : Optional.of(etag);
-                            })
-                            .or(() -> headers.firstValue("x-checksum-sha1"))
-                            .or(() -> headers.firstValue("x-checksum-md5"))
-                            .or(() -> headers.firstValue("x-goog-meta-checksum-sha1"))
-                            .or(() -> headers.firstValue("x-goog-meta-checksum-md5"))
-                            .orElse("");
-
-                    switch (checksum.length()) {
-                    case 32:
-                        task.setChecksum("MD5", checksum);
-                        break;
-
-                    case 40:
-                        task.setChecksum("SHA-1", checksum);
-                        break;
-                    }
-                }
-            };
-        }
-    }
-
-    private static class ConflictVersionSelector extends VersionSelector {
-
-        private final BiPredicate<ConflictItem, ConflictItem> selectionStrategy;
-
-        private ConflictVersionSelector(boolean highest) {
-            this.selectionStrategy = highest ? (candidate, winner) -> {
-                return candidate.getNode().getVersion().compareTo(winner.getNode().getVersion()) > 0;
-            } : (candidate, winner) -> {
-                if (candidate.isSibling(winner)) {
-                    return candidate.getNode().getVersion().compareTo(winner.getNode().getVersion()) > 0;
-                } else {
-                    return candidate.getDepth() < winner.getDepth();
-                }
-            };
-        }
-
-        @Override
-        public void selectVersion(ConflictContext context) throws RepositoryException {
-            ConflictGroup group = new ConflictGroup();
-            for (ConflictItem candidate : context.getItems()) {
-                DependencyNode node = candidate.getNode();
-                VersionConstraint constraint = node.getVersionConstraint();
-
-                boolean backtrack = false;
-                boolean hardConstraint = constraint.getRange() != null;
-
-                if (hardConstraint) {
-                    if (group.constraints.add(constraint)) {
-                        if (group.winner != null && !constraint.containsVersion(group.winner.getNode().getVersion())) {
-                            backtrack = true;
-                        }
-                    }
-                }
-
-                if (isAcceptableByConstraints(group, node.getVersion())) {
-                    group.candidates.add(candidate);
-
-                    if (backtrack) {
-                        backtrack(group, context);
-                    } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
-                        group.winner = candidate;
-                    }
-                } else if (backtrack) {
-                    backtrack(group, context);
-                }
-            }
-            context.setWinner(group.winner);
-        }
-
-        private void backtrack(ConflictGroup group, ConflictContext context) throws UnsolvableVersionConflictException {
-            group.winner = null;
-
-            for (Iterator<ConflictItem> it = group.candidates.iterator(); it.hasNext();) {
-                ConflictItem candidate = it.next();
-
-                if (!isAcceptableByConstraints(group, candidate.getNode().getVersion())) {
-                    it.remove();
-                } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
-                    group.winner = candidate;
-                }
-            }
-
-            if (group.winner == null) {
-                PathRecordingDependencyVisitor visitor = new PathRecordingDependencyVisitor((node, parents) -> context.isIncluded(node));
-                context.getRoot().accept(new TreeDependencyVisitor(visitor));
-                throw new UnsolvableVersionConflictException(visitor.getPaths());
-            }
-        }
-
-        private boolean isAcceptableByConstraints(ConflictGroup group, Version version) {
-            for (VersionConstraint constraint : group.constraints) {
-                if (!constraint.containsVersion(version)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        private static class ConflictGroup {
-
-            private final Set<VersionConstraint> constraints = new HashSet();
-
-            private final List<ConflictItem> candidates = new ArrayList();
-
-            private ConflictItem winner;
         }
     }
 
