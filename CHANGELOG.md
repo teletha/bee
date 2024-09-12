@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.51.1](https://github.com/teletha/bee/compare/v0.51.0...v0.51.1) (2024-09-11)
+
+
+### Bug Fixes
+
+* installer creats compact jar ([a72d93d](https://github.com/teletha/bee/commit/a72d93ddbc6067a2482512b0a69b8a51c20b8dbf))
+
 ## [0.51.0](https://github.com/teletha/bee/compare/v0.50.0...v0.51.0) (2024-09-11)
 
 
