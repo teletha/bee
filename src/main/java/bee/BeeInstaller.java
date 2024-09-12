@@ -36,6 +36,13 @@ public class BeeInstaller {
     /**
      * Install Bee into your system.
      */
+    public static final void install(boolean installLauncher, boolean installAPI) {
+        install(installLauncher, installAPI, false);
+    }
+
+    /**
+     * Install Bee into your system.
+     */
     public static final void install(boolean installLauncher, boolean installAPI, boolean showWelcome) {
         UserInterface ui = I.make(UserInterface.class);
         Project project = I.make(Project.class);
