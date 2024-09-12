@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.52.0](https://github.com/teletha/bee/compare/v0.51.2...v0.52.0) (2024-09-12)
+
+
+### Features
+
+* enhance installer ([c764d8b](https://github.com/teletha/bee/commit/c764d8bab33009cc486bb376dc9edc7f8257b0b3))
+
+
+### Bug Fixes
+
+* avoid CI error ([5a48507](https://github.com/teletha/bee/commit/5a48507e1fc52d8cdb86546423526c17658cf417))
+* refactoring aether components ([850569e](https://github.com/teletha/bee/commit/850569e232a0e885e794ad2199ea1f050f7b9b87))
+
 ## [0.51.2](https://github.com/teletha/bee/compare/v0.51.1...v0.51.2) (2024-09-12)
 
 
