@@ -46,6 +46,8 @@ import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.util.ConfigUtils;
 import org.eclipse.aether.version.Version;
 
+import bee.util.Profiling;
+
 /**
  * Enable parallel dependency requests.
  */
@@ -62,21 +64,23 @@ class FastScanner extends DependencyCollectorDelegate {
     @Override
     protected void doCollectDependencies(RepositorySystemSession session, RequestTrace trace, DataPool pool, DefaultDependencyCollectionContext context, DefaultVersionFilterContext versionContext, CollectRequest request, DependencyNode node, List<RemoteRepository> repositories, List<Dependency> dependencies, List<Dependency> managedDependencies, Results results)
             throws DependencyCollectionException {
-        FastScanner.Context args = new Context(session, trace, pool, context, versionContext, request);
+        try (var x = Profiling.of("Dependency Collect")) {
+            FastScanner.Context args = new Context(session, trace, pool, context, versionContext, request);
 
-        DependencySelector selector = session.getDependencySelector();
-        DependencyManager manager = session.getDependencyManager();
-        DependencyTraverser traverser = session.getDependencyTraverser();
-        VersionFilter filter = session.getVersionFilter();
+            DependencySelector selector = session.getDependencySelector();
+            DependencyManager manager = session.getDependencyManager();
+            DependencyTraverser traverser = session.getDependencyTraverser();
+            VersionFilter filter = session.getVersionFilter();
 
-        selector = selector == null ? null : selector.deriveChildSelector(context);
-        manager = manager == null ? null : manager.deriveChildManager(context);
-        traverser = traverser == null ? null : traverser.deriveChildTraverser(context);
-        filter = filter == null ? null : filter.deriveChildFilter(context);
+            selector = selector == null ? null : selector.deriveChildSelector(context);
+            manager = manager == null ? null : manager.deriveChildManager(context);
+            traverser = traverser == null ? null : traverser.deriveChildTraverser(context);
+            filter = filter == null ? null : filter.deriveChildFilter(context);
 
-        process(args, dependencies, repositories, selector, manager, traverser, filter, node);
+            process(args, dependencies, repositories, selector, manager, traverser, filter, node);
 
-        args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
+            args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
+        }
     }
 
     private void process(FastScanner.Context con, List<Dependency> dependencies, List<RemoteRepository> repositories, DependencySelector selector, DependencyManager manager, DependencyTraverser traverser, VersionFilter filter, DependencyNode node) {
