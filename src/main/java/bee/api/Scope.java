@@ -12,24 +12,22 @@ package bee.api;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.aether.util.artifact.JavaScopes;
-
 public enum Scope {
 
     /** Depend at anytime. */
-    Compile(JavaScopes.COMPILE, JavaScopes.PROVIDED, JavaScopes.SYSTEM),
+    Compile("compile", "provided", "system"),
 
     /** Depend at test phase only. */
-    Test(JavaScopes.TEST),
+    Test("test"),
 
     /** Depend at runtime phase only. */
-    Runtime(JavaScopes.RUNTIME, JavaScopes.COMPILE),
+    Runtime("runtime", "compile"),
 
     /** Depend at runtime phase only. */
-    Provided(JavaScopes.PROVIDED),
+    Provided("provided"),
 
     /** Depend at runtime phase only. */
-    System(JavaScopes.SYSTEM),
+    System("system"),
 
     /** Depend at Pluggable Annotation Processing phase only. */
     Annotation("annotation");

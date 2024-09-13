@@ -17,9 +17,6 @@ import org.junit.jupiter.api.Test;
 
 import kiss.I;
 
-/**
- * @version 2018/03/31 21:58:22
- */
 public class HeaderTypeTest {
 
     @Test
