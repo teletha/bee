@@ -36,6 +36,7 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transfer.ChecksumFailureException;
 import org.eclipse.aether.transfer.NoTransporterException;
 
+import bee.UserInterface;
 import kiss.I;
 import kiss.WiseConsumer;
 
@@ -137,7 +138,7 @@ class FastTransporter implements TransporterFactory {
                                 return Optional.of(etag.substring(start, end));
                             }
 
-                            start = etag.indexOf('"');
+                            start = etag.indexOf('"') + 1;
                             end = etag.indexOf('"', start);
                             if (start != 0 && end != -1) {
                                 return Optional.of(etag.substring(start, end));
@@ -150,7 +151,6 @@ class FastTransporter implements TransporterFactory {
                         .or(() -> headers.firstValue("x-goog-meta-checksum-sha1"))
                         .or(() -> headers.firstValue("x-goog-meta-checksum-md5"))
                         .orElse("");
-
                 switch (checksum.length()) {
                 case 32:
                     task.setChecksum("MD5", checksum);
@@ -159,6 +159,9 @@ class FastTransporter implements TransporterFactory {
                 case 40:
                     task.setChecksum("SHA-1", checksum);
                     break;
+
+                default:
+                    I.make(UserInterface.class).warn("CHECKSUM Error ", headers.map());
                 }
             }
         };
