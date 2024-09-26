@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.53.0](https://github.com/teletha/bee/compare/v0.52.0...v0.53.0) (2024-09-25)
+
+
+### Features
+
+* add file type (kotlin and rust) ([6fa210b](https://github.com/teletha/bee/commit/6fa210b5ff55eb35535e3cf4cefde4ed665a9e9e))
+* update lambok to 1.18.34 ([37f0af4](https://github.com/teletha/bee/commit/37f0af419e935d138c580882b8c85a1e306b1d4b))
+
+
+### Bug Fixes
+
+* http header parsing is broken ([2824814](https://github.com/teletha/bee/commit/28248140b7f6c8298114ffdc3995795a44fbf78b))
+* remove unused method ([d1d4e54](https://github.com/teletha/bee/commit/d1d4e541187016ede399fc7a4fa26b1e3803189d))
+
 ## [0.52.0](https://github.com/teletha/bee/compare/v0.51.2...v0.52.0) (2024-09-12)
 
 
