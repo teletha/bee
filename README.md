@@ -5,8 +5,6 @@
     <span>&nbsp;</span>
     <a href="https://teletha.github.io/bee"><img src="https://img.shields.io/website.svg?down_color=red&down_message=CLOSE&label=Official%20Site&up_color=green&up_message=OPEN&url=https%3A%2F%2Fteletha.github.io%2Fbee"></a>
 </p>
-
-
 ## Summary
 Bee is an open source build automation tool that focuses on conventions, type safety and performance.
 Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
@@ -53,20 +51,9 @@ bee install
 <p align="right"><a href="#top">back to top</a></p>
 
 
-## Usage
-
-<p align="right"><a href="#top">back to top</a></p>
-
-
 ## Prerequisites
 Bee runs on all major operating systems and requires only [Java version 17](https://docs.oracle.com/en/java/javase/17/) or later to run.
-To check, please run `java -version` from the command line interface. You should see something like this:
-```
-> java -version
-openjdk version "16" 2021-03-16
-OpenJDK Runtime Environment (build 16+36-2231)
-OpenJDK 64-Bit Server VM (build 16+36-2231, mixed mode, sharing)
-```
+To check, please run `java -version` on your terminal.
 <p align="right"><a href="#top">back to top</a></p>
 
 ## Install
