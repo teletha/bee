@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.teletha</groupId>
 	<artifactId>bee</artifactId>
-	<version>0.54.0</version>
+	<version>0.54.1</version>
 	<packaging>jar</packaging>
 	<name>bee</name>
 	<description>Bee is an open source build automation tool that focuses on conventions, type safety and performance.
