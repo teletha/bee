@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.54.1](https://github.com/teletha/bee/compare/v0.54.0...v0.54.1) (2024-09-27)
+
+
+### Bug Fixes
+
+* update sinobu ([592d986](https://github.com/teletha/bee/commit/592d986af4e34648596de0362fd2697b0596a0cb))
+
 ## [0.54.0](https://github.com/teletha/bee/compare/v0.53.0...v0.54.0) (2024-09-27)
 
 
