@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.54.0](https://github.com/teletha/bee/compare/v0.53.0...v0.54.0) (2024-09-27)
+
+
+### Features
+
+* show benchmark on readme ([7b6b5fb](https://github.com/teletha/bee/commit/7b6b5fb7bc68c20ae8c25fe5c7a4d1144deac558))
+
 ## [0.53.0](https://github.com/teletha/bee/compare/v0.52.0...v0.53.0) (2024-09-25)
 
 
