@@ -153,7 +153,6 @@ public class CI extends Task {
                             <a href="https://{owner}.github.io/{repo}"><img src="https://img.shields.io/website.svg?down_color=red&down_message=CLOSE&label=Official%20Site&up_color=green&up_message=OPEN&url=https%3A%2F%2F{owner}.github.io%2F{repo}"></a>
                         </p>
 
-
                         {#description}
                         ## Summary
                         {.}
