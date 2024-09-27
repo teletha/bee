@@ -154,25 +154,23 @@ public class CI extends Task {
                         </p>
 
 
+                        {#description}
                         ## Summary
-                        {description}
+                        {.}
                         <p align="right"><a href="#top">back to top</a></p>
+                        {/description}
 
 
+                        {#snippets}
                         ## Usage
-                        {snippets}
+                        {.}
                         <p align="right"><a href="#top">back to top</a></p>
+                        {/snippets}
 
 
                         ## Prerequisites
                         {ProductName} runs on all major operating systems and requires only [Java version {java}](https://docs.oracle.com/en/java/javase/{java}/) or later to run.
-                        To check, please run `java -version` from the command line interface. You should see something like this:
-                        ```
-                        > java -version
-                        openjdk version "16" 2021-03-16
-                        OpenJDK Runtime Environment (build 16+36-2231)
-                        OpenJDK 64-Bit Server VM (build 16+36-2231, mixed mode, sharing)
-                        ```
+                        To check, please run `java -version` on your terminal.
                         <p align="right"><a href="#top">back to top</a></p>
 
                         ## Install
@@ -233,6 +231,7 @@ public class CI extends Task {
                         ```
                         <p align="right"><a href="#top">back to top</a></p>
 
+                        {benchmark}
 
                         ## Contributing
                         Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -300,6 +299,10 @@ public class CI extends Task {
                                 return snippets.stream()
                                         .map(sn -> sn.comment + "\n```java\n" + sn.code + "\n```\n")
                                         .collect(Collectors.joining(Platform.EOL));
+
+                            case "benchmark":
+                                File benchmark = project.getRoot().file("benchmark/README.md");
+                                return benchmark.isAbsent() ? "" : benchmark.text();
 
                             default:
                                 return null;
