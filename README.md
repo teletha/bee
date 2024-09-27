@@ -4,7 +4,7 @@
     <a href="https://jitpack.io/#teletha/bee"><img src="https://img.shields.io/jitpack/v/github/teletha/bee?label=Repository&color=green"></a>
     <span>&nbsp;</span>
     <a href="https://teletha.github.io/bee"><img src="https://img.shields.io/website.svg?down_color=red&down_message=CLOSE&label=Official%20Site&up_color=green&up_message=OPEN&url=https%3A%2F%2Fteletha.github.io%2Fbee"></a>
-</p><br>
+</p>
 ## Summary
 Bee is an open source build automation tool that focuses on conventions, type safety and performance.
 Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
