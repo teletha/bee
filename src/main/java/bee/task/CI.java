@@ -168,6 +168,13 @@ public class CI extends Task {
                         {/snippets}
 
 
+                        {#benchmark}
+                        ## Benchmark
+                        {.}
+                        <p align="right"><a href="#top">back to top</a></p>
+                        {/benchmark}
+
+
                         ## Prerequisites
                         {ProductName} runs on all major operating systems and requires only [Java version {java}](https://docs.oracle.com/en/java/javase/{java}/) or later to run.
                         To check, please run `java -version` on your terminal.
@@ -231,7 +238,6 @@ public class CI extends Task {
                         ```
                         <p align="right"><a href="#top">back to top</a></p>
 
-                        {benchmark}
 
                         ## Contributing
                         Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
@@ -296,13 +302,14 @@ public class CI extends Task {
                                 return project.license().text(false).stream().collect(Collectors.joining(Platform.EOL));
 
                             case "snippets":
-                                return snippets.stream()
-                                        .map(sn -> sn.comment + "\n```java\n" + sn.code + "\n```\n")
-                                        .collect(Collectors.joining(Platform.EOL));
+                                return snippets.isEmpty() ? null
+                                        : snippets.stream()
+                                                .map(sn -> sn.comment + "\n```java\n" + sn.code + "\n```\n")
+                                                .collect(Collectors.joining(Platform.EOL));
 
                             case "benchmark":
                                 File benchmark = project.getRoot().file("benchmark/README.md");
-                                return benchmark.isAbsent() ? "" : benchmark.text();
+                                return benchmark.isAbsent() ? null : benchmark.text();
 
                             default:
                                 return null;
