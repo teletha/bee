@@ -69,6 +69,17 @@ class DependencyTest {
     }
 
     @Test
+    void atCompile3() {
+        project.require("org.apache.pdfbox", "pdfbox", "3.0.1");
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 10;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 12;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
     void atTest1() {
         project.require("org.ow2.asm", "asm", "9.2").atTest();
 
