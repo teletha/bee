@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.54.2](https://github.com/teletha/bee/compare/v0.54.1...v0.54.2) (2024-09-30)
+
+
+### Bug Fixes
+
+* await resolving dependencies manually ([16ea1d6](https://github.com/teletha/bee/commit/16ea1d69eca8156158bd8a548140e9b95097fe1a))
+
 ## [0.54.1](https://github.com/teletha/bee/compare/v0.54.0...v0.54.1) (2024-09-27)
 
 
