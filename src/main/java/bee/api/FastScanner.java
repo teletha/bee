@@ -12,7 +12,6 @@ package bee.api;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 
@@ -47,6 +46,7 @@ import org.eclipse.aether.util.ConfigUtils;
 import org.eclipse.aether.version.Version;
 
 import bee.util.Profiling;
+import kiss.I;
 
 /**
  * Enable parallel dependency requests.
@@ -79,7 +79,13 @@ class FastScanner extends DependencyCollectorDelegate {
 
             process(args, dependencies, repositories, selector, manager, traverser, filter, node);
 
-            args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
+            while (!args.fork.isQuiescent()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw I.quiet(e);
+                }
+            }
         }
     }
 
