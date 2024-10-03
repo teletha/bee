@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.54.3](https://github.com/teletha/bee/compare/v0.54.2...v0.54.3) (2024-10-03)
+
+
+### Bug Fixes
+
+* revert FastScanner ([d11c1da](https://github.com/teletha/bee/commit/d11c1da7b3d51dafcb5c2a95110eb4488630b0b5))
+
 ## [0.54.2](https://github.com/teletha/bee/compare/v0.54.1...v0.54.2) (2024-09-30)
 
 
