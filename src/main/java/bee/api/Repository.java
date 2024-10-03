@@ -101,9 +101,6 @@ import org.eclipse.aether.internal.impl.checksum.Sha512ChecksumAlgorithmFactory;
 import org.eclipse.aether.internal.impl.checksum.SparseDirectoryTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.SummaryFileTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.TrustedToProvidedChecksumsSourceAdapter;
-import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
-import org.eclipse.aether.internal.impl.collect.bf.BfDependencyCollector;
-import org.eclipse.aether.internal.impl.collect.df.DfDependencyCollector;
 import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
 import org.eclipse.aether.internal.impl.filter.GroupIdRemoteRepositoryFilterSource;
 import org.eclipse.aether.internal.impl.filter.PrefixesRemoteRepositoryFilterSource;
@@ -679,7 +676,7 @@ public class Repository {
         private Lifestyles() {
             define(RepositorySystem.class, DefaultRepositorySystem.class);
             define(ArtifactResolver.class, DefaultArtifactResolver.class, TrustedChecksumsArtifactResolverPostProcessor.class, GroupIdRemoteRepositoryFilterSource.class);
-            define(DependencyCollector.class, DefaultDependencyCollector.class, FastScanner.class, BfDependencyCollector.class, DfDependencyCollector.class);
+            define(DependencyCollector.class, FastScanner.class);
             define(MetadataResolver.class, DefaultMetadataResolver.class);
             define(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
             define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
@@ -780,9 +777,9 @@ public class Repository {
      * Select nearest or highest strategy.
      */
     private static class ConflictVersionSelector extends VersionSelector {
-    
+
         private final BiPredicate<ConflictItem, ConflictItem> selectionStrategy;
-    
+
         private ConflictVersionSelector(boolean highest) {
             this.selectionStrategy = highest ? (candidate, winner) -> {
                 return candidate.getNode().getVersion().compareTo(winner.getNode().getVersion()) > 0;
@@ -794,17 +791,17 @@ public class Repository {
                 }
             };
         }
-    
+
         @Override
         public void selectVersion(ConflictContext context) throws RepositoryException {
             ConflictGroup group = new ConflictGroup();
             for (ConflictItem candidate : context.getItems()) {
                 DependencyNode node = candidate.getNode();
                 VersionConstraint constraint = node.getVersionConstraint();
-    
+
                 boolean backtrack = false;
                 boolean hardConstraint = constraint.getRange() != null;
-    
+
                 if (hardConstraint) {
                     if (group.constraints.add(constraint)) {
                         if (group.winner != null && !constraint.containsVersion(group.winner.getNode().getVersion())) {
@@ -812,10 +809,10 @@ public class Repository {
                         }
                     }
                 }
-    
+
                 if (isAcceptableByConstraints(group, node.getVersion())) {
                     group.candidates.add(candidate);
-    
+
                     if (backtrack) {
                         backtrack(group, context);
                     } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
@@ -827,27 +824,27 @@ public class Repository {
             }
             context.setWinner(group.winner);
         }
-    
+
         private void backtrack(ConflictGroup group, ConflictContext context) throws UnsolvableVersionConflictException {
             group.winner = null;
-    
+
             for (Iterator<ConflictItem> it = group.candidates.iterator(); it.hasNext();) {
                 ConflictItem candidate = it.next();
-    
+
                 if (!isAcceptableByConstraints(group, candidate.getNode().getVersion())) {
                     it.remove();
                 } else if (group.winner == null || selectionStrategy.test(candidate, group.winner)) {
                     group.winner = candidate;
                 }
             }
-    
+
             if (group.winner == null) {
                 PathRecordingDependencyVisitor visitor = new PathRecordingDependencyVisitor((node, parents) -> context.isIncluded(node));
                 context.getRoot().accept(new TreeDependencyVisitor(visitor));
                 throw new UnsolvableVersionConflictException(visitor.getPaths());
             }
         }
-    
+
         private boolean isAcceptableByConstraints(ConflictGroup group, Version version) {
             for (VersionConstraint constraint : group.constraints) {
                 if (!constraint.containsVersion(version)) {
@@ -856,13 +853,13 @@ public class Repository {
             }
             return true;
         }
-    
+
         private static class ConflictGroup {
-    
+
             private final Set<VersionConstraint> constraints = new HashSet();
-    
+
             private final List<ConflictItem> candidates = new ArrayList();
-    
+
             private ConflictItem winner;
         }
     }
