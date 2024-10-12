@@ -164,8 +164,8 @@ Bee depends on the following products on runtime.
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
 * [plexus-utils-4.0.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/4.0.0)
 * [plexus-xml-4.0.1](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-xml/4.0.1)
-* [psychopath-1.13.0](https://mvnrepository.com/artifact/com.github.teletha/psychopath/1.13.0)
-* [sinobu-3.14.1](https://mvnrepository.com/artifact/com.github.teletha/sinobu/3.14.1)
+* [psychopath-2.0.0](https://mvnrepository.com/artifact/com.github.teletha/psychopath/2.0.0)
+* [sinobu-4.0.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/4.0.0)
 * [slf4j-api-2.1.0-alpha1](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.1.0-alpha1)
 <p align="right"><a href="#top">back to top</a></p>
 
