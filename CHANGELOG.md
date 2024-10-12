@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.55.0](https://github.com/teletha/bee/compare/v0.54.3...v0.55.0) (2024-10-12)
+
+
+### Features
+
+* remove plugin version on pom.xml ([d95e0c4](https://github.com/teletha/bee/commit/d95e0c4ae46ef8dbcd82d1ed5e6e301902e07980))
+
 ## [0.54.3](https://github.com/teletha/bee/compare/v0.54.2...v0.54.3) (2024-10-03)
 
 
