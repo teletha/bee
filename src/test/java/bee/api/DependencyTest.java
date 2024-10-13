@@ -15,14 +15,11 @@ import java.util.function.Consumer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import antibug.CleanRoom;
 import bee.BlinkProject;
 import psychopath.Locator;
 
-@Execution(ExecutionMode.SAME_THREAD)
 class DependencyTest {
 
     @RegisterExtension
