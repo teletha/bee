@@ -13,21 +13,17 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import antibug.CleanRoom;
 import bee.BlinkProject;
 import psychopath.Locator;
 
-@Execution(ExecutionMode.SAME_THREAD)
 class DependencyTest {
 
     @RegisterExtension
-    private static CleanRoom room = new CleanRoom();
+    private CleanRoom room = new CleanRoom(true);
 
     private TemporaryProject project;
 
@@ -46,8 +42,8 @@ class DependencyTest {
     }
 
     @Test
-    void atCompile1() {
-        project.require("org.ow2.asm", "asm", "9.2");
+    void compile() {
+        project.require("one");
 
         assert repository.collectDependency(project, Scope.Annotation).size() == 0;
         assert repository.collectDependency(project, Scope.Compile).size() == 1;
@@ -55,99 +51,6 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.Runtime).size() == 1;
         assert repository.collectDependency(project, Scope.Test).size() == 0;
         assert repository.collectDependency(project, Scope.System).size() == 0;
-    }
-
-    @Test
-    void atCompile2() {
-        project.require("org.apache.pdfbox", "pdfbox", "3.0.3");
-        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
-        assert repository.collectDependency(project, Scope.Compile).size() == 4;
-        assert repository.collectDependency(project, Scope.Provided).size() == 0;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 4;
-        assert repository.collectDependency(project, Scope.Test).size() == 0;
-        assert repository.collectDependency(project, Scope.System).size() == 0;
-    }
-
-    @Test
-    void atCompile3() {
-        project.require("org.apache.pdfbox", "pdfbox", "3.0.1");
-        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
-        assert repository.collectDependency(project, Scope.Compile).size() == 10;
-        assert repository.collectDependency(project, Scope.Provided).size() == 0;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 12;
-        assert repository.collectDependency(project, Scope.Test).size() == 0;
-        assert repository.collectDependency(project, Scope.System).size() == 0;
-    }
-
-    @Test
-    void atTest1() {
-        project.require("org.ow2.asm", "asm", "9.2").atTest();
-
-        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
-        assert repository.collectDependency(project, Scope.Compile).size() == 0;
-        assert repository.collectDependency(project, Scope.Provided).size() == 0;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
-        assert repository.collectDependency(project, Scope.Test).size() == 1;
-        assert repository.collectDependency(project, Scope.System).size() == 0;
-    }
-
-    @Test
-    void atTest2() {
-        project.require("org.ow2.asm", "asm-tree", "5.0.4").atTest();
-
-        assert repository.collectDependency(project, Scope.Test).size() == 2;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
-    }
-
-    @Test
-    void atAnnotation() {
-        project.require("org.atteo.classindex", "classindex", "3.4").atAnnotation();
-
-        Repository repository = new Repository(project);
-        assert repository.collectDependency(project, Scope.Annotation).size() == 1;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
-    }
-
-    @Test
-    void atProvided1() {
-        BlinkProject project = new BlinkProject();
-        project.require("org.ow2.asm", "asm", "9.2").atProvided();
-
-        assert repository.collectDependency(project, Scope.Compile).size() == 1;
-        assert repository.collectDependency(project, Scope.Provided).size() == 1;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
-    }
-
-    @Test
-    void atProvided2() {
-        project.require("org.ow2.asm", "asm", "9.2");
-        project.require("org.ow2.asm", "asm-util", "9.2").atProvided();
-
-        assert repository.collectDependency(project, Scope.Compile).size() == 4;
-        assert repository.collectDependency(project, Scope.Provided).size() == 4;
-        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
-    }
-
-    @Test
-    void external1() {
-        project.require("org.skyscreamer", "jsonassert", "1.2.3");
-
-        assert repository.collectDependency(project, Scope.Runtime).size() == 2;
-        assert repository.collectDependency(project, Scope.Test, Scope.Compile).size() == 2;
-    }
-
-    @Test
-    void byLibrary() {
-        Library library = new Library("org.skyscreamer", "jsonassert", "1.2.3");
-        assert repository.collectDependency(library, Scope.Runtime).size() == 2;
-        assert repository.collectDependency(library, Scope.Test, Scope.Compile).size() == 2;
-    }
-
-    @Test
-    @Disabled
-    void byLibraryWithClassifier() {
-        Library library = new Library("org.bytedeco", "javacv-platform", "1.3.1");
-        assert repository.collectDependency(library, Scope.Test, Scope.Compile).size() == 84;
     }
 
     @Test
@@ -174,6 +77,21 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.Compile).size() == 1;
         assert repository.collectDependency(project, Scope.Provided).size() == 0;
         assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void compile_compileAndTest() {
+        project.require("one", one -> {
+            one.require("nest1");
+            one.require("nest2").atTest();
+        });
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 2;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 2;
         assert repository.collectDependency(project, Scope.Test).size() == 0;
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }
@@ -231,6 +149,106 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.Provided).size() == 0;
         assert repository.collectDependency(project, Scope.Runtime).size() == 2;
         assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void compile_complex1() {
+        project.require("one", one -> {
+            one.require("logger", logger -> {
+                logger.require("avalon").atProvided();
+                logger.require("logkit").atProvided();
+                logger.require("log-api").atProvided();
+                logger.require("slf-api").atProvided();
+            });
+            one.require("io", io -> {
+                io.require("logger");
+            });
+            one.require("font", font -> {
+                font.require("logger");
+                font.require("io", io -> {
+                    io.require("logger");
+                });
+            });
+        });
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 4;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 4;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void compile_complex2() {
+        project.require("one", one -> {
+            one.require("child1", logger -> {
+                logger.require("avalon").atProvided();
+                logger.require("logkit").atProvided();
+                logger.require("log-api").atProvided();
+                logger.require("slf-api").atProvided();
+            });
+            one.require("child2", io -> {
+                io.require("child1");
+            });
+            one.require("child3", font -> {
+                font.require("child1");
+                font.require("child2");
+            });
+            one.require("jupiter", jupiter -> {
+                jupiter.require("other1", other1 -> {
+                    other1.require("other2");
+                    other1.require("jupiter-c", c -> {
+                        c.require("other2");
+                    });
+                    other1.require("open");
+                });
+                jupiter.require("jupiter-a", a -> {
+                    a.require("other1", other1 -> {
+                        other1.require("other2");
+                        other1.require("jupiter-c", c -> {
+                            c.require("other2");
+                        });
+                        other1.require("open");
+                    });
+                    a.require("other2");
+                });
+                jupiter.require("jupiter-b", b -> {
+                    b.require("other1", other1 -> {
+                        other1.require("other2");
+                        other1.require("jupiter-c", c -> {
+                            c.require("other2");
+                        });
+                        other1.require("open");
+                    });
+                    b.require("other2");
+                }).atProvided();
+            });
+            one.require("bcprov").atRuntime();
+            one.require("bcpkix", pkix -> {
+                pkix.require("bcprov");
+                pkix.require("util", util -> {
+                    util.require("bcprov");
+                });
+            }).atRuntime();
+        });
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 10;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 13;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void test() {
+        project.require("one").atTest();
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 0;
+        assert repository.collectDependency(project, Scope.Provided).size() == 0;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
+        assert repository.collectDependency(project, Scope.Test).size() == 1;
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }
 
@@ -315,6 +333,35 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.Provided).size() == 0;
         assert repository.collectDependency(project, Scope.Runtime).size() == 0;
         assert repository.collectDependency(project, Scope.Test).size() == 2;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void provided() {
+        project.require("one").atProvided();
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 1;
+        assert repository.collectDependency(project, Scope.Provided).size() == 1;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 0;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
+        assert repository.collectDependency(project, Scope.System).size() == 0;
+    }
+
+    @Test
+    void provided2() {
+        project.require("compile");
+        project.require("one", one -> {
+            one.require("sub1");
+            one.require("sub2");
+            one.require("compile");
+        }).atProvided();
+
+        assert repository.collectDependency(project, Scope.Annotation).size() == 0;
+        assert repository.collectDependency(project, Scope.Compile).size() == 4;
+        assert repository.collectDependency(project, Scope.Provided).size() == 4;
+        assert repository.collectDependency(project, Scope.Runtime).size() == 1;
+        assert repository.collectDependency(project, Scope.Test).size() == 0;
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }
 
@@ -518,7 +565,9 @@ class DependencyTest {
     @Test
     void annotation_test() {
         project.require("one", one -> {
-            one.require("nest").atTest();
+            one.require("nest1").atTest();
+            one.require("nest2").atTest();
+            one.require("nest3").atTest();
         }).atAnnotation();
 
         assert repository.collectDependency(project, Scope.Annotation).size() == 1;

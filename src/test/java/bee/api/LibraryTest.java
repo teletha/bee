@@ -14,18 +14,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.RegisterExtension;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 
 import antibug.CleanRoom;
 import bee.BlinkProject;
 import psychopath.Locator;
 
-@Execution(ExecutionMode.SAME_THREAD)
 class LibraryTest {
 
     @RegisterExtension
-    private static CleanRoom room = new CleanRoom();
+    private CleanRoom room = new CleanRoom(true);
 
     private BlinkProject project;
 

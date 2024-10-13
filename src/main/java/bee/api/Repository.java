@@ -101,6 +101,9 @@ import org.eclipse.aether.internal.impl.checksum.Sha512ChecksumAlgorithmFactory;
 import org.eclipse.aether.internal.impl.checksum.SparseDirectoryTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.SummaryFileTrustedChecksumsSource;
 import org.eclipse.aether.internal.impl.checksum.TrustedToProvidedChecksumsSourceAdapter;
+import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
+import org.eclipse.aether.internal.impl.collect.bf.BfDependencyCollector;
+import org.eclipse.aether.internal.impl.collect.df.DfDependencyCollector;
 import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
 import org.eclipse.aether.internal.impl.filter.GroupIdRemoteRepositoryFilterSource;
 import org.eclipse.aether.internal.impl.filter.PrefixesRemoteRepositoryFilterSource;
@@ -235,8 +238,9 @@ public class Repository {
         session.setOffline(BeeOption.Offline.value());
         session.setSystemProperties(System.getProperties());
         session.setConfigProperties(System.getProperties());
-        session.setConfigProperty("maven.artifact.threads", 24);
-        session.setConfigProperty("aether.dependencyCollector.impl", "fast");
+        session.setConfigProperty("maven.artifact.threads", 10);
+        session.setConfigProperty("aether.dependencyCollector.impl", "bf");
+        session.setConfigProperty("aether.dependencyCollector.bf.threads", 10);
 
         // event listener
         Loader transfers = I.make(Loader.class);
@@ -676,7 +680,7 @@ public class Repository {
         private Lifestyles() {
             define(RepositorySystem.class, DefaultRepositorySystem.class);
             define(ArtifactResolver.class, DefaultArtifactResolver.class, TrustedChecksumsArtifactResolverPostProcessor.class, GroupIdRemoteRepositoryFilterSource.class);
-            define(DependencyCollector.class, FastScanner.class);
+            define(DependencyCollector.class, DefaultDependencyCollector.class, BfDependencyCollector.class, DfDependencyCollector.class);
             define(MetadataResolver.class, DefaultMetadataResolver.class);
             define(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
             define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
