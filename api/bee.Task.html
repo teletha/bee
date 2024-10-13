@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta content="width=device-width, initial-scale=1" name="viewport"/>
+		<meta content="Explains how to use Bee and its API. " name="description"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<script src="mimic.js" type="module"></script>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="f">
+		<header class="O">
+			<h1 class="j" date="2024-10-12" ver="0.55.0"><code>Bee</code></h1>
+			<nav class="M"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg><code>API</code></a><a href="https://github.com/teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>Activity</a><a href="https://github.com/teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>Repository</a></nav>
+			<div class="h" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg>
+				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<main class="m">
+			<nav class="k">
+				<div></div>
+			</nav>
+			<article class="e" id="Article">
+				<section class="J"><code class="L">bee</code>
+					<h2 class="AbstractClass Y"><code class="c">Task</code></h2>
+					<div class="Z">
+						<ul class="C F">
+							<li><code>kiss.Extensible</code></li>
+						</ul>
+						<ul class="C G">
+							<li><code><a href="api/bee.task.CI.html">CI</a></code></li>
+							<li><code><a href="api/bee.task.Clean.html">Clean</a></code></li>
+							<li><code><a href="api/bee.task.Compile.html">Compile</a></code></li>
+							<li><code><a href="api/bee.task.Dependency.html">Dependency</a></code></li>
+							<li><code><a href="api/bee.task.Doc.html">Doc</a></code></li>
+							<li><code><a href="api/bee.task.Eclipse.html">Eclipse</a></code></li>
+							<li><code><a href="api/bee.task.Exe.html">Exe</a></code></li>
+							<li><code><a href="api/bee.task.FindMain.html">FindMain</a></code></li>
+							<li><code><a href="api/bee.task.Help.html">Help</a></code></li>
+							<li><code><a href="api/bee.task.IDE.html">IDE</a></code></li>
+							<li><code><a href="api/bee.task.Install.html">Install</a></code></li>
+							<li><code><a href="api/bee.task.Intellij.html">Intellij</a></code></li>
+							<li><code><a href="api/bee.task.Jar.html">Jar</a></code></li>
+							<li><code><a href="api/bee.task.License.html">License</a></code></li>
+							<li><code><a href="api/bee.task.Maven.html">Maven</a></code></li>
+							<li><code><a href="api/bee.task.Prototype.html">Prototype</a></code></li>
+							<li><code><a href="api/bee.task.Test.html">Test</a></code></li>
+							<li><code><a href="api/bee.task.Wrapper.html">Wrapper</a></code></li>
+						</ul>
+					</div>
+				</section>
+				<section class="J" id="project">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">project</code><i class="U"><code class="return"><a href="api/bee.api.Project.html">Project</a></code></i></h2><span class="B"><p>The current processing project.</p>
+</span></section>
+				<section class="J" id="ui">
+					<h2 class="i"><i class="PROTECTED"></i><code class="c">ui</code><i class="U"><code class="return"><a href="api/bee.UserInterface.html">UserInterface</a></code></i></h2><span class="B"><p>The user interface.</p>
+</span></section>
+				<section class="J" id="Task()">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">Task</code><code class="S">()</code></h2>
+				</section>
+				<section class="J" id="execute()">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">execute</code><code class="S">()</code><i class="U"><code>void</code></i></h2><span class="B"><p>Execute manual tasks.</p>
+</span></section>
+				<section class="J" id="help()">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">help</code><code class="S">()</code><i class="U"><code>void</code></i></h2>
+				</section>
+				<section class="J" id="toString()">
+					<h2 class="i"><i class="OVERRIDE PUBLIC"></i><code class="c">toString</code><code class="S">()</code><i class="U"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="V">
+						<tr class="l">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td></td>
+						</tr>
+					</table>
+				</section>
+				<section class="J" id="require(bee.Task.ValuedTaskRef)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">require</code><code class="S">(<code><a href="api/bee.Task.ValuedTaskRef.html">ValuedTaskRef</a><code class="parameters"><code>T</code>, <code>R</code></code></code> <code class="parameterName">task</code>)</code><i class="U"><code>R</code></i></h2>
+					<table class="V">
+						<tr class="T">
+							<td><code>T</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>R</code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.ValuedTaskRef.html">ValuedTaskRef</a><code class="parameters"><code>T</code>, <code>R</code></code></code> <code>task</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>R</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Execute required tasks.</p>
+</span></section>
+				<section class="J" id="require(bee.Task.TaskRef)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">require</code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">task</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="T">
+							<td><code>T</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T</code></code></code> <code>task</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Execute required tasks.</p>
+</span></section>
+				<section class="J" id="require(bee.Task.TaskRef,bee.Task.TaskRef)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">require</code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="T">
+							<td><code>T1</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T2</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code>task1</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code>task2</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Execute required tasks in parallel.</p>
+</span></section>
+				<section class="J" id="require(bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">require</code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code class="parameterName">task3</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="T">
+							<td><code>T1</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T2</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T3</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code>task1</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code>task2</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code>task3</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Execute required tasks in parallel.</p>
+</span></section>
+				<section class="J" id="require(bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">require</code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code class="parameterName">task3</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T4</code></code></code> <code class="parameterName">task4</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="T">
+							<td><code>T1</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T2</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T3</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T4</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code>task1</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code>task2</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code>task3</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T4</code></code></code> <code>task4</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Execute required tasks in parallel.</p>
+</span></section>
+				<section class="J" id="require(bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">require</code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code class="parameterName">task3</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T4</code></code></code> <code class="parameterName">task4</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T5</code></code></code> <code class="parameterName">task5</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="T">
+							<td><code>T1</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T2</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T3</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T4</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="T">
+							<td><code>T5</code><code class="extends"><code><a href="api/bee.Task.html">Task</a></code></code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code>task1</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code>task2</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code>task3</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T4</code></code></code> <code>task4</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T5</code></code></code> <code>task5</code></td>
+							<td><span><p>A task to execute.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Execute required tasks in parallel.</p>
+</span></section>
+				<section class="J" id="makeDirectory(psychopath.Directory,java.lang.String)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeDirectory</code><code class="S">(<code>psychopath.Directory</code> <code class="parameterName">base</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>)</code><i class="U"><code>psychopath.Directory</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.Directory</code> <code>base</code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>path</code></td>
+							<td></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.Directory</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method for task.</p>
+</span></section>
+				<section class="J" id="makeFile(psychopath.File,kiss.XML)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code>kiss.XML</code> <code class="parameterName">xml</code>)</code><i class="U"><code>psychopath.File</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>file</code></td>
+							<td><span><p>A file path to write.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code>kiss.XML</code> <code>xml</code></td>
+							<td><span><p>A file contents.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.File</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to write xml file.</p>
+</span></section>
+				<section class="J" id="makeFile(psychopath.File,java.util.Properties)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">path</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Properties.html">Properties</a></code> <code class="parameterName">properties</code>)</code><i class="U"><code>psychopath.File</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>path</code></td>
+							<td><span><p>A file path to write.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Properties.html">Properties</a></code> <code>properties</code></td>
+							<td><span><p>A file contents.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.File</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to write property file.</p>
+</span></section>
+				<section class="J" id="makeFile(java.lang.String,java.lang.String)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeFile</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">content</code>)</code><i class="U"><code>psychopath.File</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>path</code></td>
+							<td><span><p>A file path to write.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>content</code></td>
+							<td><span><p>A file content.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.File</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to write file.</p>
+</span></section>
+				<section class="J" id="makeFile(psychopath.File,java.lang.String)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">content</code>)</code><i class="U"><code>psychopath.File</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>file</code></td>
+							<td><span><p>A file path to write.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>content</code></td>
+							<td><span><p>A file content.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.File</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to write file.</p>
+</span></section>
+				<section class="J" id="makeFile(java.lang.String,java.lang.Iterable)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeFile</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Iterable.html">Iterable</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">content</code>)</code><i class="U"><code>psychopath.File</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>path</code></td>
+							<td><span><p>A file path to write.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Iterable.html">Iterable</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code>content</code></td>
+							<td><span><p>A file content.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.File</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to write file.</p>
+</span></section>
+				<section class="J" id="makeFile(psychopath.File,java.lang.Iterable)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Iterable.html">Iterable</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">content</code>)</code><i class="U"><code>psychopath.File</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>file</code></td>
+							<td><span><p>A file path to write.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Iterable.html">Iterable</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code>content</code></td>
+							<td><span><p>A file content.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.File</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to write file.</p>
+</span></section>
+				<section class="J" id="makeFile(psychopath.File,kiss.WiseFunction)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">makeFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code>kiss.WiseFunction<code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">replacer</code>)</code><i class="U"><code>psychopath.File</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>file</code></td>
+							<td><span><p>A file path to write.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code>kiss.WiseFunction<code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code>replacer</code></td>
+							<td><span><p>A file content replacer.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>psychopath.File</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to write file.</p>
+</span></section>
+				<section class="J" id="deleteFile(java.lang.String)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">deleteFile</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>path</code></td>
+							<td><span><p>A file path to delete.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Utility method to delete file.</p>
+</span></section>
+				<section class="J" id="deleteFile(psychopath.File)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">deleteFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>file</code></td>
+							<td><span><p>A file to delete.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Utility method to delete file.</p>
+</span></section>
+				<section class="J" id="copyFile(psychopath.File,psychopath.File)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">copyFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">from</code>, <code>psychopath.File</code> <code class="parameterName">to</code>)</code><i class="U"><code>void</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>from</code></td>
+							<td><span><p>A file to copy.</p>
+</span></td>
+						</tr>
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>to</code></td>
+							<td><span><p>A destination.</p>
+</span></td>
+						</tr>
+					</table><span class="B"><p>Utility method to delete file.</p>
+</span></section>
+				<section class="J" id="checkFile(java.lang.String)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">checkFile</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>)</code><i class="U"><code>boolean</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>path</code></td>
+							<td><span><p>A file path to check.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>boolean</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to check file.</p>
+</span></section>
+				<section class="J" id="checkFile(psychopath.File)">
+					<h2 class="i"><i class="FINAL"><i class="PROTECTED"></i></i><code class="c">checkFile</code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>)</code><i class="U"><code>boolean</code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>psychopath.File</code> <code>file</code></td>
+							<td><span><p>A file to check.</p>
+</span></td>
+						</tr>
+						<tr class="l">
+							<td><code>boolean</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Utility method to check file.</p>
+</span></section>
+			</article>
+			<aside class="N" id="SubNavi">
+				<div class="H">
+					<h5 class="I">Constructors</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Task.html#Task()">Task</a></code><code class="S">()</code></li>
+					</ul>
+					<h5 class="I">Fields</h5>
+					<ul>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#project">project</a></code><i class="a"><code class="return"><a href="api/bee.api.Project.html">Project</a></code></i></li>
+						<li><i class="PROTECTED"></i><code><a href="api/bee.Task.html#ui">ui</a></code><i class="a"><code class="return"><a href="api/bee.UserInterface.html">UserInterface</a></code></i></li>
+					</ul>
+					<h5 class="I">Methods</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Task.html#execute()">execute</a></code><code class="S">()</code><i class="a"><code>void</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Task.html#help()">help</a></code><code class="S">()</code><i class="a"><code>void</code></i></li>
+						<li><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.Task.html#toString()">toString</a></code><code class="S">()</code><i class="a"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#require(bee.Task.ValuedTaskRef)">require</a></code><code class="S">(<code><a href="api/bee.Task.ValuedTaskRef.html">ValuedTaskRef</a><code class="parameters"><code>T</code>, <code>R</code></code></code> <code class="parameterName">task</code>)</code><i class="a"><code>R</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#require(bee.Task.TaskRef)">require</a></code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T</code></code></code> <code class="parameterName">task</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#require(bee.Task.TaskRef,bee.Task.TaskRef)">require</a></code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#require(bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef)">require</a></code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code class="parameterName">task3</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#require(bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef)">require</a></code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code class="parameterName">task3</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T4</code></code></code> <code class="parameterName">task4</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#require(bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef,bee.Task.TaskRef)">require</a></code><code class="S">(<code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T1</code></code></code> <code class="parameterName">task1</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T2</code></code></code> <code class="parameterName">task2</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T3</code></code></code> <code class="parameterName">task3</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T4</code></code></code> <code class="parameterName">task4</code>, <code><a href="api/bee.Task.TaskRef.html">TaskRef</a><code class="parameters"><code>T5</code></code></code> <code class="parameterName">task5</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeDirectory(psychopath.Directory,java.lang.String)">makeDirectory</a></code><code class="S">(<code>psychopath.Directory</code> <code class="parameterName">base</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>)</code><i class="a"><code>psychopath.Directory</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeFile(psychopath.File,kiss.XML)">makeFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code>kiss.XML</code> <code class="parameterName">xml</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeFile(psychopath.File,java.util.Properties)">makeFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">path</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Properties.html">Properties</a></code> <code class="parameterName">properties</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeFile(java.lang.String,java.lang.String)">makeFile</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">content</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeFile(psychopath.File,java.lang.String)">makeFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">content</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeFile(java.lang.String,java.lang.Iterable)">makeFile</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Iterable.html">Iterable</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">content</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeFile(psychopath.File,java.lang.Iterable)">makeFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Iterable.html">Iterable</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">content</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#makeFile(psychopath.File,kiss.WiseFunction)">makeFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>, <code>kiss.WiseFunction<code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">replacer</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#deleteFile(java.lang.String)">deleteFile</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#deleteFile(psychopath.File)">deleteFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#copyFile(psychopath.File,psychopath.File)">copyFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">from</code>, <code>psychopath.File</code> <code class="parameterName">to</code>)</code><i class="a"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#checkFile(java.lang.String)">checkFile</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">path</code>)</code><i class="a"><code>boolean</code></i></li>
+						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.Task.html#checkFile(psychopath.File)">checkFile</a></code><code class="S">(<code>psychopath.File</code> <code class="parameterName">file</code>)</code><i class="a"><code>boolean</code></i></li>
+					</ul>
+				</div>
+			</aside>
+		</main>
+		<script src="root.js"></script>
+		<script src="main.js" type="module"></script>
+	</body>
+</html>

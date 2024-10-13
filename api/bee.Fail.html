@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta content="width=device-width, initial-scale=1" name="viewport"/>
+		<meta content="Explains how to use Bee and its API. " name="description"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<script src="mimic.js" type="module"></script>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="f">
+		<header class="O">
+			<h1 class="j" date="2024-10-12" ver="0.55.0"><code>Bee</code></h1>
+			<nav class="M"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg><code>API</code></a><a href="https://github.com/teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>Activity</a><a href="https://github.com/teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>Repository</a></nav>
+			<div class="h" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg>
+				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<main class="m">
+			<nav class="k">
+				<div></div>
+			</nav>
+			<article class="e" id="Article">
+				<section class="J"><code class="L">bee</code>
+					<h2 class="Exception Y"><code class="c">Fail</code></h2>
+					<div class="Z">
+						<ul class="C E">
+							<li><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Error.html">Error</a></code></li>
+							<li><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code></li>
+						</ul>
+						<ul class="C F">
+							<li><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code></li>
+						</ul>
+					</div>
+				</section>
+				<section class="J" id="reason">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">reason</code><i class="U"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The reason,</p>
+</span></section>
+				<section class="J" id="solutions">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">solutions</code><i class="U"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2><span class="B"><p>The solution messages.</p>
+</span></section>
+				<section class="J" id="Fail(java.lang.String)">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">Fail</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">reason</code>)</code></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>reason</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Create failure with reason message.</p>
+</span></section>
+				<section class="J" id="Fail(java.lang.String,java.util.List)">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">Fail</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">reason</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">solutions</code>)</code></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>reason</code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code>solutions</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Create failure with reason message.</p>
+</span></section>
+				<section class="J" id="solve(java.lang.Object...)">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">solve</code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="U"><code><a href="api/bee.Fail.html">Fail</a></code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code> <code>messages</code></td>
+							<td></td>
+						</tr>
+						<tr class="l">
+							<td><code><a href="api/bee.Fail.html">Fail</a></code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Write solution for this failure.</p>
+</span></section>
+				<section class="J" id="getMessage()">
+					<h2 class="i"><i class="OVERRIDE PUBLIC"></i><code class="c">getMessage</code><code class="S">()</code><i class="U"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="V">
+						<tr class="l">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td></td>
+						</tr>
+					</table>
+				</section>
+				<section class="J" id="toString()">
+					<h2 class="i"><i class="OVERRIDE PUBLIC"></i><code class="c">toString</code><code class="S">()</code><i class="U"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="V">
+						<tr class="l">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td></td>
+						</tr>
+					</table>
+				</section>
+			</article>
+			<aside class="N" id="SubNavi">
+				<div class="H">
+					<h5 class="I">Constructors</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#Fail(java.lang.String)">Fail</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">reason</code>)</code></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#Fail(java.lang.String,java.util.List)">Fail</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">reason</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code> <code class="parameterName">solutions</code>)</code></li>
+					</ul>
+					<h5 class="I">Fields</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#reason">reason</a></code><i class="a"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#solutions">solutions</a></code><i class="a"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					</ul>
+					<h5 class="I">Methods</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#solve(java.lang.Object...)">solve</a></code><code class="S">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code> <code class="parameterName">messages</code>)</code><i class="a"><code><a href="api/bee.Fail.html">Fail</a></code></i></li>
+						<li><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.Fail.html#getMessage()">getMessage</a></code><code class="S">()</code><i class="a"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.Fail.html#toString()">toString</a></code><code class="S">()</code><i class="a"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					</ul>
+				</div>
+			</aside>
+		</main>
+		<script src="root.js"></script>
+		<script src="main.js" type="module"></script>
+	</body>
+</html>

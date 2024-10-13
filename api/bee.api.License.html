@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta content="width=device-width, initial-scale=1" name="viewport"/>
+		<meta content="Explains how to use Bee and its API. " name="description"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<script src="mimic.js" type="module"></script>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="f">
+		<header class="O">
+			<h1 class="j" date="2024-10-12" ver="0.55.0"><code>Bee</code></h1>
+			<nav class="M"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg><code>API</code></a><a href="https://github.com/teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>Activity</a><a href="https://github.com/teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>Repository</a></nav>
+			<div class="h" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg>
+				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<main class="m">
+			<nav class="k">
+				<div></div>
+			</nav>
+			<article class="e" id="Article">
+				<section class="J"><code class="L">bee.api</code>
+					<h2 class="Class Y"><code class="c">License</code></h2>
+					<div class="Z"></div>
+				</section>
+				<section class="J" id="AGPL">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">AGPL</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="Apache">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">Apache</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="BSD">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">BSD</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="EPL">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">EPL</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="GPL">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">GPL</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="LGPL">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">LGPL</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="MIT">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">MIT</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="MPL">
+					<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="c">MPL</code><i class="U"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></h2><span class="B"><p>Builtin</p>
+</span></section>
+				<section class="J" id="name">
+					<h2 class="i"><i class="FINAL"><i class="PUBLIC"></i></i><code class="c">name</code><i class="U"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The license name.</p>
+</span></section>
+				<section class="J" id="id">
+					<h2 class="i"><i class="FINAL"><i class="PUBLIC"></i></i><code class="c">id</code><i class="U"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The license identifier.</p>
+</span></section>
+				<section class="J" id="full">
+					<h2 class="i"><i class="FINAL"><i class="PUBLIC"></i></i><code class="c">full</code><i class="U"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The license full name.</p>
+</span></section>
+				<section class="J" id="uri">
+					<h2 class="i"><i class="FINAL"><i class="PUBLIC"></i></i><code class="c">uri</code><i class="U"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The license uri.</p>
+</span></section>
+				<section class="J" id="License(java.lang.String,java.lang.String,java.lang.String,java.lang.String)">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">License</code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">name</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">version</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">full</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">uri</code>)</code></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>name</code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>version</code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>full</code></td>
+							<td></td>
+						</tr>
+						<tr class="Q">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code>uri</code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Create <code><a href="api/bee.api.License.html">License</a></code>.</p>
+</span></section>
+				<section class="J" id="text(boolean)">
+					<h2 class="i"><i class="PUBLIC"></i><code class="c">text</code><code class="S">(<code>boolean</code> <code class="parameterName">simple</code>)</code><i class="U"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+					<table class="V">
+						<tr class="Q">
+							<td><code>boolean</code> <code>simple</code></td>
+							<td></td>
+						</tr>
+						<tr class="l">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>Write lisence text.</p>
+</span></section>
+				<section class="J" id="toString()">
+					<h2 class="i"><i class="OVERRIDE PUBLIC"></i><code class="c">toString</code><code class="S">()</code><i class="U"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="V">
+						<tr class="l">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+							<td></td>
+						</tr>
+					</table>
+				</section>
+				<section class="J" id="builtins()">
+					<h2 class="i"><i class="STATIC PUBLIC"></i><code class="c">builtins</code><code class="S">()</code><i class="U"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="api/bee.api.License.html">License</a></code></code></code></i></h2>
+					<table class="V">
+						<tr class="l">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="api/bee.api.License.html">License</a></code></code></code></td>
+							<td></td>
+						</tr>
+					</table><span class="B"><p>List up all builtin <code><a href="api/bee.api.License.html">License</a></code>s.</p>
+</span></section>
+			</article>
+			<aside class="N" id="SubNavi">
+				<div class="H">
+					<h5 class="I">Constructors</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.License.html#License(java.lang.String,java.lang.String,java.lang.String,java.lang.String)">License</a></code><code class="S">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">name</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">version</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">full</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code> <code class="parameterName">uri</code>)</code></li>
+					</ul>
+					<h5 class="I">Static Fields</h5>
+					<ul>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#AGPL">AGPL</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#Apache">Apache</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#BSD">BSD</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#EPL">EPL</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#GPL">GPL</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#LGPL">LGPL</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#MIT">MIT</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+						<li><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.License.html#MPL">MPL</a></code><i class="a"><code class="return"><a href="api/bee.api.License.html">License</a></code></i></li>
+					</ul>
+					<h5 class="I">Fields</h5>
+					<ul>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.License.html#name">name</a></code><i class="a"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.License.html#id">id</a></code><i class="a"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.License.html#full">full</a></code><i class="a"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.License.html#uri">uri</a></code><i class="a"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					</ul>
+					<h5 class="I">Static Methods</h5>
+					<ul>
+						<li><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.License.html#builtins()">builtins</a></code><code class="S">()</code><i class="a"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="api/bee.api.License.html">License</a></code></code></code></i></li>
+					</ul>
+					<h5 class="I">Methods</h5>
+					<ul>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.License.html#text(boolean)">text</a></code><code class="S">(<code>boolean</code> <code class="parameterName">simple</code>)</code><i class="a"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+						<li><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.License.html#toString()">toString</a></code><code class="S">()</code><i class="a"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					</ul>
+				</div>
+			</aside>
+		</main>
+		<script src="root.js"></script>
+		<script src="main.js" type="module"></script>
+	</body>
+</html>
