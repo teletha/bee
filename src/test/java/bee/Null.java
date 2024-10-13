@@ -9,6 +9,7 @@
  */
 package bee;
 
+import java.io.InputStream;
 import java.util.List;
 
 import bee.api.Command;
@@ -74,6 +75,14 @@ public class Null {
         @Override
         public Appendable getInterface() {
             return new StringBuilder();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected InputStream getSink() {
+            return InputStream.nullInputStream();
         }
 
         /**

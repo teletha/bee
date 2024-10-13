@@ -13,6 +13,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
@@ -214,6 +215,14 @@ public abstract class Task implements Extensible {
         @Override
         public Appendable getInterface() {
             return ui.getInterface();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected InputStream getSink() {
+            return ui.getSink();
         }
 
         /**

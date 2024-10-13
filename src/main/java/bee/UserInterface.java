@@ -14,6 +14,7 @@ import static bee.Platform.*;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.file.Files;
@@ -219,6 +220,7 @@ public abstract class UserInterface {
      * @param validator Input validator.
      * @return An answer.
      */
+    @SuppressWarnings("resource")
     private <T> T ask(String question, T defaultAnswer, Predicate<T> validator) {
         StringBuilder builder = new StringBuilder();
         builder.append(question);
@@ -230,7 +232,7 @@ public abstract class UserInterface {
 
         try {
             // Answer
-            String answer = new BufferedReader(new InputStreamReader(System.in, Encoding)).readLine();
+            String answer = new BufferedReader(new InputStreamReader(getSink(), Encoding)).readLine();
 
             // Remove whitespaces.
             answer = answer == null ? "" : answer.trim();
@@ -258,6 +260,8 @@ public abstract class UserInterface {
             }
         } catch (IOException e) {
             throw I.quiet(e);
+        } catch (Exception e) {
+            return defaultAnswer;
         }
     }
 
@@ -537,6 +541,13 @@ public abstract class UserInterface {
     public abstract Appendable getInterface();
 
     /**
+     * Get underlaying message sink.
+     * 
+     * @return
+     */
+    protected abstract InputStream getSink();
+
+    /**
      * Write message to user.
      * 
      * @param message
@@ -569,7 +580,7 @@ public abstract class UserInterface {
     /**
      * Default implementation.
      */
-    private static class CommandLineUserInterface extends UserInterface {
+    static class CommandLineUserInterface extends UserInterface {
 
         /** Ansi escape code must start with this PREFIX. */
         public static final String PREFIX = "[";
@@ -585,6 +596,9 @@ public abstract class UserInterface {
         @SuppressWarnings("unused")
         private final PrintStream standardError;
 
+        /** The original standard input. */
+        private final InputStream standardInput;
+
         /** The task state. */
         private boolean first = false;
 
@@ -598,11 +612,22 @@ public abstract class UserInterface {
         private int erasableLine;
 
         /**
-         * 
+         * Build with standard output and error.
          */
-        private CommandLineUserInterface() {
-            standardOutput = System.out;
-            standardError = System.err;
+        CommandLineUserInterface() {
+            this(System.out, System.err, System.in);
+        }
+
+        /**
+         * Build with your output and error.
+         * 
+         * @param output
+         * @param error
+         */
+        CommandLineUserInterface(PrintStream output, PrintStream error, InputStream input) {
+            standardOutput = output;
+            standardError = error;
+            standardInput = input;
 
             System.setOut(new Delegator());
             System.setErr(new Delegator());
@@ -714,6 +739,14 @@ public abstract class UserInterface {
                 first = false;
             }
             return System.out; // use delegator
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected InputStream getSink() {
+            return standardInput;
         }
 
         /**

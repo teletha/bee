@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -424,6 +425,16 @@ public class Java {
              */
             @Override
             public Appendable getInterface() {
+                // If this exception will be thrown, it is bug of this program. So we must rethrow
+                // the wrapped error in here.
+                throw new Error();
+            }
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            protected InputStream getSink() {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
                 throw new Error();

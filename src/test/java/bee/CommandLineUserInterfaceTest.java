@@ -13,19 +13,16 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import antibug.CommandLineUser;
+import bee.UserInterface.CommandLineUserInterface;
 
-@Disabled
 class CommandLineUserInterfaceTest {
 
-    @RegisterExtension
-    static final CommandLineUser user = new CommandLineUser();
+    private final CommandLineUser user = new CommandLineUser(true);
 
-    private UserInterface ui = UserInterface.CUI;
+    private final UserInterface ui = new CommandLineUserInterface(user.output, user.error, user.input);
 
     @Test
     void input() {
@@ -101,7 +98,6 @@ class CommandLineUserInterfaceTest {
         assert ui.ask("question", def).equals(def);
     }
 
-    @Test
     void select() {
         List<String> items = new ArrayList();
         items.add("one");
@@ -116,6 +112,5 @@ class CommandLineUserInterfaceTest {
 
         user.willInput("3");
         assert ui.ask("question", items).equals("three");
-
     }
 }
