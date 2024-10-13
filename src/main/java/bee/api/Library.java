@@ -193,7 +193,7 @@ public class Library implements Comparable<Library> {
      * 
      * @return
      */
-    public String getPOM() {
+    String getPOM() {
         return localPath(".pom");
     }
 
@@ -202,7 +202,7 @@ public class Library implements Comparable<Library> {
      * 
      * @return
      */
-    public File getLocalPOM() {
+    File getLocalPOM() {
         return I.make(Repository.class).getLocalRepository().file(getPOM());
     }
 
