@@ -152,13 +152,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "FastScanner",
-			"packageName": "bee.api",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "FileType",
 			"packageName": "bee.coder",
 			"type": "Interface"
