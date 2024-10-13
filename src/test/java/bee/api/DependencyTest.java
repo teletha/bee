@@ -26,7 +26,7 @@ import psychopath.Locator;
 class DependencyTest {
 
     @RegisterExtension
-    private CleanRoom room = new CleanRoom(true);
+    private static CleanRoom room = new CleanRoom();
 
     private TemporaryProject project;
 

@@ -25,7 +25,7 @@ import psychopath.Locator;
 class LibraryTest {
 
     @RegisterExtension
-    private CleanRoom room = new CleanRoom(true);
+    private static CleanRoom room = new CleanRoom();
 
     private BlinkProject project;
 
