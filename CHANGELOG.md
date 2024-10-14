@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.2](https://github.com/teletha/bee/compare/v0.56.1...v0.56.2) (2024-10-14)
+
+
+### Bug Fixes
+
+* revert pom ([72be254](https://github.com/teletha/bee/commit/72be254594155813986082f9c39269391a6f2cb3))
+
 ## [0.56.1](https://github.com/teletha/bee/compare/v0.56.0...v0.56.1) (2024-10-14)
 
 
