@@ -626,9 +626,8 @@ public abstract class Task implements Extensible {
         }
 
         synchronized (Task.class) {
-            if (commons == null) {
+            if (commons == null || !commons.containsKey(name)) {
                 commons = new TreeMap();
-
                 for (Class<Task> task : I.findAs(Task.class)) {
                     String taskName = computeTaskName(task);
                     Info info = new Info(taskName, task);
@@ -769,7 +768,7 @@ public abstract class Task implements Extensible {
                 // ======================================
                 String task = Type.getInternalName(Task.class);
                 String parent = Type.getInternalName(model);
-                writer.visit(V16, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
+                writer.visit(V21, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
 
                 // constructor
                 EnhancedMethodWriter mw = writer.writeMethod(ACC_PUBLIC, "<init>", "()V", null, null);

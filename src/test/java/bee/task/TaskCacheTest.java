@@ -9,7 +9,6 @@
  */
 package bee.task;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import bee.Task;
@@ -187,7 +186,6 @@ class TaskCacheTest extends TaskTestBase {
     }
 
     @Test
-    @Disabled
     void require() {
         Req task = I.make(Req.class);
         assert ReqCaller.count == 0;

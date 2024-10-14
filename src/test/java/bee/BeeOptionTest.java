@@ -122,7 +122,7 @@ class BeeOptionTest {
     }
 
     @Test
-    @Disabled
+    @Disabled("From a consistency point of view, this format should not be supported by Bee.")
     void parameterizedShortWithoutSpace() {
         List<String> washed = BeeOption.parse("task", "-xparam");
         assert washed.size() == 1;
