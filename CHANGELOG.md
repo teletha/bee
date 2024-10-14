@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.1](https://github.com/teletha/bee/compare/v0.56.0...v0.56.1) (2024-10-14)
+
+
+### Bug Fixes
+
+* user FastScanner ([ad81e15](https://github.com/teletha/bee/commit/ad81e1564407f6810af8dc026241684c453773c7))
+
 ## [0.56.0](https://github.com/teletha/bee/compare/v0.55.0...v0.56.0) (2024-10-14)
 
 
