@@ -890,11 +890,17 @@ public class Project {
         // compiler-plugin
         XML plugin = plugins.child("plugin");
         plugin.child("artifactId").text("maven-compiler-plugin");
+        plugin.child("version").text("3.8.1");
         XML conf = plugin.child("configuration");
         conf.child("encoding").text(getEncoding().displayName());
         conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
         XML args = conf.child("compilerArgs");
         if (getClasses().file("META-INF/services/javax.annotation.processing.Processor").isPresent()) args.child("arg").text("-proc:none");
+
+        // surefire-plugin
+        plugin = plugins.child("plugin");
+        plugin.child("artifactId").text("maven-surefire-plugin");
+        plugin.child("version").text("3.0.0-M5");
 
         // write as pom
         return pom.toString();
