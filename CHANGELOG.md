@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.56.0](https://github.com/teletha/bee/compare/v0.55.0...v0.56.0) (2024-10-14)
+
+
+### Features
+
+* revert FastScanner ([e652240](https://github.com/teletha/bee/commit/e652240a6b27632551ff99c70b3aed558a839340))
+* use BfDependencyCollector ([0d64561](https://github.com/teletha/bee/commit/0d6456189de12a5c935b4c99b20bc60c41bc6621))
+
+
+### Bug Fixes
+
+* command line interface related tests ([40a0071](https://github.com/teletha/bee/commit/40a00716b462d030c770d53999901f531a40907d))
+* concurrent mode will throw error on test ([3ed2a9c](https://github.com/teletha/bee/commit/3ed2a9c6e9a5b6a49e8503ef60e5ebf8a202e9cc))
+* enhance tests ([af951ca](https://github.com/teletha/bee/commit/af951caa2fa075a1f4ca1411e7f97f915345c365))
+* non-static clean room will throw error on test ([ba887d1](https://github.com/teletha/bee/commit/ba887d17c1906dc6399ae07f9015fa34bf29f677))
+* test Library ([ca42b23](https://github.com/teletha/bee/commit/ca42b231a46c04793ead299e2c310626490fccd3))
+* update ci ([a7eeb3f](https://github.com/teletha/bee/commit/a7eeb3f0b7a731fad5b4971c0ba528f7b52e110e))
+
 ## [0.55.0](https://github.com/teletha/bee/compare/v0.54.3...v0.55.0) (2024-10-12)
 
 
