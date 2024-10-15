@@ -15,10 +15,8 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import javax.lang.model.SourceVersion;
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
 import javax.tools.DocumentationTool;
@@ -50,12 +48,13 @@ public class Doc extends Task {
      */
     @Command(defaults = true, value = "Generate product javadoc.")
     public Directory javadoc() {
+        ui.info(1);
         Directory output = project.getOutput().directory("api").create();
 
         Class<? extends Doclet> doclet = null;
-        List<String> options = new CopyOnWriteArrayList();
+        List<String> options = new ArrayList();
         options.add("--release");
-        options.add(Inputs.normalize(SourceVersion.latest()));
+        options.add(Inputs.normalize(project.getJavaSourceVersion()));
         options.add("-Xdoclint:none");
         options.add("-Xmaxwarns");
         options.add("1");
@@ -68,8 +67,9 @@ public class Doc extends Task {
 
         // external links
         options.add("-link");
-        options.add("https://docs.oracle.com/en/java/javase/17/docs/api/");
+        options.add("https://docs.oracle.com/en/java/javase/" + Inputs.normalize(project.getJavaSourceVersion()) + "/docs/api/");
 
+        ui.info(1);
         DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
         try (Listener listener = new Listener();
                 StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), project.getEncoding())) {
@@ -80,23 +80,25 @@ public class Doc extends Task {
                     .map(lib -> lib.getLocalJar().asJavaPath())
                     .collect(Collectors.toList()));
 
+            ui.info(2);
             List<Path> sourceFiles = project.getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
 
+            ui.info(3);
             if (sourceFiles.isEmpty()) {
                 ui.info("No documentation will be generated because the source files don't exist in the following directories.");
                 ui.info(project.getSourceSet().toList());
                 return output;
             }
-
+            ui.info(4);
             DocumentationTask task = doc
                     .getTask(listener, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(sourceFiles));
-
+            ui.info(5);
             if (task.call() && listener.errors.isEmpty()) {
                 ui.info("Build javadoc to " + output);
             } else {
                 throw new Fail("Fail building Javadoc.", listener.errors);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw I.quiet(e);
         }
         return output;
