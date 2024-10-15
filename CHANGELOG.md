@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.9](https://github.com/teletha/bee/compare/v0.56.8...v0.56.9) (2024-10-15)
+
+
+### Bug Fixes
+
+* revert collector ([86ea953](https://github.com/teletha/bee/commit/86ea9530c943157b2201ca218a824e65dc0c82a9))
+
 ## [0.56.8](https://github.com/teletha/bee/compare/v0.56.7...v0.56.8) (2024-10-15)
 
 
