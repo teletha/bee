@@ -30,7 +30,7 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -179,7 +179,7 @@ public abstract class Task implements Extensible {
             Method method = I.type(s.getImplClass().replaceAll("/", ".")).getMethod(s.getImplMethodName());
 
             return execute(computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase(), parallels.pollFirst());
-        }, ForkJoinPool.commonPool()).to().v;
+        }, Executors.newVirtualThreadPerTaskExecutor()).to().v;
     }
 
     /**
