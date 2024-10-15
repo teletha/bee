@@ -679,6 +679,7 @@ bee install
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.8.1</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 					<release>21</release>
@@ -686,6 +687,10 @@ bee install
 						<arg>-proc:none</arg>
 					</compilerArgs>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
 			</plugin>
 		</plugins>
 	</build>
