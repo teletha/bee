@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.56.7](https://github.com/teletha/bee/compare/v0.56.6...v0.56.7) (2024-10-15)
+
+
+### Bug Fixes
+
+* remove local bee ([4efe1a6](https://github.com/teletha/bee/commit/4efe1a62d3850d523460c4f92cda83af6c07ff7f))
+* task ([d7d42a6](https://github.com/teletha/bee/commit/d7d42a68841594f67e430ec075f2de575e4bf1bf))
+
 ## [0.56.6](https://github.com/teletha/bee/compare/v0.56.5...v0.56.6) (2024-10-15)
 
 
