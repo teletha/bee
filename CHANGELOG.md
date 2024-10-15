@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.5](https://github.com/teletha/bee/compare/v0.56.4...v0.56.5) (2024-10-15)
+
+
+### Bug Fixes
+
+* task ([7b1ef9b](https://github.com/teletha/bee/commit/7b1ef9b656027879c6250a6f55f8ee913b440c4d))
+
 ## [0.56.4](https://github.com/teletha/bee/compare/v0.56.3...v0.56.4) (2024-10-15)
 
 
