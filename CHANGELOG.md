@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.56.8](https://github.com/teletha/bee/compare/v0.56.7...v0.56.8) (2024-10-15)
+
+
+### Bug Fixes
+
+* use bf collector ([98dc6e4](https://github.com/teletha/bee/commit/98dc6e43c4e55e0cab060ff76181107ca220e980))
+
 ## [0.56.7](https://github.com/teletha/bee/compare/v0.56.6...v0.56.7) (2024-10-15)
 
 
