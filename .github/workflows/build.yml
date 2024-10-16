@@ -27,6 +27,12 @@ jobs:
         cache: 'maven'
         cache-dependency-path: 'pom.xml'
 
+    - name: Show java
+      run: |
+        echo $JAVA_HOME
+        echo $PATH
+        java -version
+
     - name: Build artifact and site
       run: |
         if [ -e "bee" ]; then
