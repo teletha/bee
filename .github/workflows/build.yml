@@ -18,13 +18,6 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
 
-    - name: Cache JDK
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.JAVA_HOME }}/**
-        key: ${{ runner.os }}-jdk-${{ hashFiles('**/pom.xml') }}
-        restore-keys: ${{ runner.os }}-jdk
-
     - name: Set up JDK
       uses: actions/setup-java@v4
       if: steps.cache-java.outputs.cache-hit != 'true'
@@ -39,12 +32,12 @@ jobs:
         java -version
         cat /home/runner/.m2/settings.xml
 
-   # - name: Cache Maven packages
-   #   uses: actions/cache@v4
-   #   with:
-   #     path: ${{ env.JAVA_HOME }}/lib/bee/repository
-   #     key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
-   #     restore-keys: ${{ runner.os }}-bee
+    - name: Cache Maven packages
+      uses: actions/cache@v4
+      with:
+        path: ${{ env.JAVA_HOME }}/lib/bee/repository
+        key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-bee
 
     - name: Build artifact and site
       run: |
