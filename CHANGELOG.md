@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.58.0](https://github.com/teletha/bee/compare/v0.57.0...v0.58.0) (2024-10-16)
+
+
+### Features
+
+* ci task can cache the local repository ([0db20ed](https://github.com/teletha/bee/commit/0db20eda49c2e5db8f42ceb9df989687b4549abc))
+
 ## [0.57.0](https://github.com/teletha/bee/compare/v0.56.9...v0.57.0) (2024-10-16)
 
 
