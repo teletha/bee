@@ -53,7 +53,7 @@ public class CI extends Task {
 
                 on:
                   push:
-                    branches: [master, main]
+                    branches: [master, main,test*]
                   pull_request:
                     branches: [master, main]
                   workflow_dispatch:
@@ -66,10 +66,17 @@ public class CI extends Task {
                       uses: actions/checkout@v4
 
                     - name: Set up JDK
-                      uses: actions/setup-java@v4
+                      uses: actions/setup-java@v4.4.0
                       with:
                         distribution: zulu
                         java-version: %s
+
+                    - name: Cache local Repository
+                      uses: actions/cache@v4
+                      with:
+                        path: ${{ env.JAVA_HOME }}/lib/bee/repository
+                        key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
+                        restore-keys: ${{ runner.os }}-bee
 
                     - name: Build artifact and site
                       run: |
@@ -88,7 +95,7 @@ public class CI extends Task {
                         publish_dir: target/site
 
                     - name: Request Releasing
-                      uses: GoogleCloudPlatform/release-please-action@v4
+                      uses: googleapis/release-please-action@v4.1.3
                       with:
                         release-type: simple
                         package-name: %s
