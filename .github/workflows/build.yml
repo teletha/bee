@@ -30,6 +30,7 @@ jobs:
         echo $JAVA_HOME
         echo $PATH
         java -version
+        cat /home/runner/.m2/settings.xml
 
     - name: Cache Maven packages
       uses: actions/cache@v4
