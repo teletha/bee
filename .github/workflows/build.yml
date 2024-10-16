@@ -33,6 +33,13 @@ jobs:
         echo $PATH
         java -version
 
+    - name: Cache Maven packages
+      uses: actions/cache@v4
+      with:
+        path: $JAVA_HOME/lib/bee/repository
+        key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-bee
+
     - name: Build artifact and site
       run: |
         if [ -e "bee" ]; then
