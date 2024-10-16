@@ -35,7 +35,7 @@ jobs:
     - name: Cache Maven packages
       uses: actions/cache@v4
       with:
-        path: $JAVA_HOME/lib/bee/repository
+        path: ${{ env.JAVA_HOME }}/lib/bee/repository
         key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-bee
 
