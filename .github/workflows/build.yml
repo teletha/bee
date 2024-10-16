@@ -18,27 +18,13 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v4
 
-    - name: Setup Java cache
-      uses: actions/cache@v3
-      id: cache-java
-      with:
-        path: ${{ env.JAVA_HOME }}
-        key: ${{ runner.os }}-jdk-${{ env.JAVA_VERSION }}-${{ env.DISTRIBUTION }}
-
     - name: Set up JDK
       uses: actions/setup-java@v4
       if: steps.cache-java.outputs.cache-hit != 'true'
       with:
         distribution: ${{ env.DISTRIBUTION }}
         java-version: ${{ env.JAVA_VERSION }}
-
-    - name: Cache Maven packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
+        cache: 'maven'
 
     - name: Build artifact and site
       run: |
