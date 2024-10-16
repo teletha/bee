@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.57.0](https://github.com/teletha/bee/compare/v0.56.9...v0.57.0) (2024-10-16)
+
+
+### Features
+
+* FastCollector can collect any dependency in parallel ([aaec66e](https://github.com/teletha/bee/commit/aaec66ebd3b8acb1fb6ddee387d744a85b8d03c1))
+
 ## [0.56.9](https://github.com/teletha/bee/compare/v0.56.8...v0.56.9) (2024-10-15)
 
 
