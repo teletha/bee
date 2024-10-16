@@ -238,7 +238,7 @@ public class Repository {
         session.setSystemProperties(System.getProperties());
         session.setConfigProperties(System.getProperties());
         session.setConfigProperty("maven.artifact.threads", 10);
-        session.setConfigProperty("aether.dependencyCollector.impl", "bf");
+        session.setConfigProperty("aether.dependencyCollector.impl", "fast");
         session.setConfigProperty("aether.dependencyCollector.bf.threads", 10);
 
         // event listener
@@ -682,8 +682,7 @@ public class Repository {
             define(ChecksumAlgorithmFactorySelector.class, DefaultChecksumAlgorithmFactorySelector.class, Md5ChecksumAlgorithmFactory.class, Sha1ChecksumAlgorithmFactory.class, Sha256ChecksumAlgorithmFactory.class, Sha512ChecksumAlgorithmFactory.class);
             define(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
             define(Deployer.class, DefaultDeployer.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
-            // define(DependencyCollector.class, FastScanner.class);
-            define(DependencyCollector.class, DefaultDependencyCollector.class, BfDependencyCollector.class);
+            define(DependencyCollector.class, DefaultDependencyCollector.class, BfDependencyCollector.class, FastCollector.class);
             define(FileProcessor.class, DefaultFileProcessor.class);
             define(Installer.class, DefaultInstaller.class, SnapshotMetadataGeneratorFactory.class, VersionsMetadataGeneratorFactory.class);
             define(LocalPathComposer.class, DefaultLocalPathComposer.class);
