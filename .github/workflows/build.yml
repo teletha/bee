@@ -24,8 +24,6 @@ jobs:
       with:
         distribution: ${{ env.DISTRIBUTION }}
         java-version: ${{ env.JAVA_VERSION }}
-        cache: 'maven'
-        cache-dependency-path: 'pom.xml'
 
     - name: Show java
       run: |
