@@ -53,7 +53,7 @@ public class CI extends Task {
 
                 on:
                   push:
-                    branches: [master, main,test*]
+                    branches: [master, main, test*]
                   pull_request:
                     branches: [master, main]
                   workflow_dispatch:
@@ -71,7 +71,7 @@ public class CI extends Task {
                         distribution: zulu
                         java-version: %s
 
-                    - name: Cache local Repository
+                    - name: Cache bee local repository
                       uses: actions/cache@v4
                       with:
                         path: ${{ env.JAVA_HOME }}/lib/bee/repository
