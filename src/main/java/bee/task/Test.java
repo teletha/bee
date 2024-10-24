@@ -96,14 +96,14 @@ public class Test extends Task {
                     .selectors(DiscoverySelectors.selectClasspathRoots(classes))
                     .build();
 
-            Summury summury = new Summury();
-            LauncherFactory.create().execute(request, summury);
+            Summary summary = new Summary();
+            LauncherFactory.create().execute(request, summary);
         }
 
         /**
          * 
          */
-        private class Summury implements TestExecutionListener {
+        private class Summary implements TestExecutionListener {
 
             /** The number of test suite. */
             private int suites = 0;
