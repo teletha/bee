@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.58.0](https://github.com/teletha/bee/compare/v0.57.0...v0.58.0) (2024-10-24)
+
+
+### Features
+
+* ci task can cache the local repository ([0db20ed](https://github.com/teletha/bee/commit/0db20eda49c2e5db8f42ceb9df989687b4549abc))
+
+
+### Bug Fixes
+
+* revert plugin version in pom ([f06eedc](https://github.com/teletha/bee/commit/f06eedc8ba3d224bd4d68caf9dfc91289c40e3c2))
+
 ## [0.57.0](https://github.com/teletha/bee/compare/v0.56.9...v0.57.0) (2024-10-16)
 
 
