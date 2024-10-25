@@ -13,6 +13,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
@@ -155,7 +156,7 @@ public abstract class VCS {
         }
 
         try {
-            URL u = new URL(uri.replaceAll("\\.git$", ""));
+            URL u = URI.create(uri.replaceAll("\\.git$", "")).toURL();
 
             switch (u.getHost()) {
             case "github.com":
