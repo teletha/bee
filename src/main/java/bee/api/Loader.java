@@ -188,8 +188,8 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
 
     private record Resource(RequestType type, String name, String repository, long size, long current) {
         Resource(TransferEvent e) {
-            this(e.getRequestType(), e.getResource().getResourceName(), e.getResource().getRepositoryId(), e.getDataLength(), e
-                    .getTransferredBytes());
+            this(e.getRequestType(), e.getResource().getResourceName(), e.getResource().getRepositoryId(), e.getResource()
+                    .getContentLength(), e.getTransferredBytes());
         }
     }
 
