@@ -734,23 +734,6 @@ public abstract class Task implements Extensible {
     private static class Cache extends HashMap<String, Object> {
     }
 
-    // private static class ForASMifier extends Jar {
-    //
-    // @Override
-    // public void source() {
-    // String name = Inputs.hyphenize("Jar:source");
-    // Map<String, Object> results = project.associate(Cache.class);
-    // Object o = results.get(name);
-    // if (!results.containsKey(name)) {
-    // ui.startCommand(name, null);
-    // super.source();
-    // ui.endCommand(name, null);
-    //
-    // results.put(name, o);
-    // }
-    // }
-    // }
-
     /**
      * 
      */
@@ -768,7 +751,7 @@ public abstract class Task implements Extensible {
                 // ======================================
                 String task = Type.getInternalName(Task.class);
                 String parent = Type.getInternalName(model);
-                writer.visit(V21, ACC_PUBLIC | ACC_SUPER, writer.classInternalName, null, parent, null);
+                writer.visit(V21, ACC_PUBLIC | ACC_SUPER | ACC_SYNTHETIC, writer.classInternalName, null, parent, null);
 
                 // constructor
                 EnhancedMethodWriter mw = writer.writeMethod(ACC_PUBLIC, "<init>", "()V", null, null);
