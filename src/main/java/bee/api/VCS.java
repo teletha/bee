@@ -12,7 +12,6 @@ package bee.api;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -165,7 +164,7 @@ public abstract class VCS {
             default:
                 return null;
             }
-        } catch (MalformedURLException e) {
+        } catch (Throwable e) {
             return null;
         }
     }
