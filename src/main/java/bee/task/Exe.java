@@ -12,16 +12,12 @@ package bee.task;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.module.ModuleDescriptor.Requires;
-import java.lang.module.ModuleFinder;
-import java.lang.module.ModuleReference;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
@@ -49,9 +45,6 @@ public class Exe extends Task {
 
     /** The additional packing data. */
     protected final Set<Location> resources = new HashSet();
-
-    /** The additional module names. */
-    protected final Set<String> modules = new HashSet();
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
@@ -140,7 +133,7 @@ public class Exe extends Task {
             List<String> command = new ArrayList();
             command.add("jlink");
             command.add("--add-modules");
-            command.add(String.join(",", modules(project.getDependency(Scope.Runtime))));
+            command.add(String.join(",", require(Dependency::module)));
             command.add("--output");
             command.add(jre.toString());
             command.add("--strip-native-commands");
@@ -169,37 +162,5 @@ public class Exe extends Task {
         ui.info("Packing application and libraries.");
 
         return folder.packTo(project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip"));
-    }
-
-    /**
-     * Collect all JDK modules.
-     * 
-     * @param libraries
-     * @return
-     */
-    private Set<String> modules(Set<Library> libraries) {
-        Set<String> names = new TreeSet(modules);
-        names.add("java.base");
-
-        for (Library library : libraries) {
-            try {
-                ModuleFinder finder = ModuleFinder.of(library.getLocalJar().asJavaPath());
-                for (ModuleReference ref : finder.findAll()) {
-                    for (Requires requires : ref.descriptor().requires()) {
-                        String name = requires.name();
-                        if (name.startsWith("java.") || name.startsWith("jdk.")) {
-                            if (ModuleLayer.boot().findModule(name).isPresent()) {
-                                names.add(name);
-                            }
-                        }
-                    }
-                }
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
-
-        ui.info("Modules: " + names);
-        return names;
     }
 }

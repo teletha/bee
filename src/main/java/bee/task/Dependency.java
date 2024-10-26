@@ -17,14 +17,31 @@ import org.eclipse.aether.graph.DependencyNode;
 
 import bee.Task;
 import bee.api.Command;
+import bee.api.Library;
 import bee.api.Repository;
+import bee.api.Scope;
+import bee.util.Process;
 import kiss.I;
 
 public class Dependency extends Task {
 
-    @Command("Display the dependency tree.")
+    @Command(value = "Display the dependency tree.", defaults = true)
     public void tree() {
         show(0, I.make(Repository.class).buildDependencyGraph(project));
+    }
+
+    @Command("Display all dependency modules.")
+    public List<String> module() {
+        require(Compile::source);
+
+        List<String> command = I.list("jdeps", "-q", "--print-module-deps", "--ignore-missing-deps", "--multi-release", "base");
+        command.add(project.getClasses().path());
+        for (Library library : project.getDependency(Scope.Runtime)) {
+            command.add(library.getLocalJar().path());
+        }
+        List<String> result = I.list(Process.with().read(command).split(","));
+        ui.info("Analyze dependency modules.", result);
+        return result;
     }
 
     /**
