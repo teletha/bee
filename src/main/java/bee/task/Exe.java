@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
@@ -47,7 +48,10 @@ public class Exe extends Task {
     protected boolean useCustomJRE = true;
 
     /** The additional packing data. */
-    protected final Set<Location> additional = new HashSet();
+    protected final Set<Location> resources = new HashSet();
+
+    /** The additional module names. */
+    protected final Set<String> modules = new HashSet();
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
@@ -158,7 +162,7 @@ public class Exe extends Task {
         }
 
         // addtional data
-        for (Location location : additional) {
+        for (Location location : resources) {
             folder.add(location);
         }
 
@@ -174,15 +178,8 @@ public class Exe extends Task {
      * @return
      */
     private Set<String> modules(Set<Library> libraries) {
-        Set<String> names = new HashSet();
-        names.add("jdk.localedata");
-        names.add("jdk.crypto.ec");
-        names.add("jdk.crypto.cryptoki");
-        names.add("jdk.crypto.mscapi");
-        names.add("jdk.net");
-        names.add("jdk.zipfs");
-        names.add("java.naming");
-        names.add("jdk.naming.dns");
+        Set<String> names = new TreeSet(modules);
+        names.add("java.base");
 
         for (Library library : libraries) {
             try {
@@ -202,7 +199,7 @@ public class Exe extends Task {
             }
         }
 
-        ui.info("Modules: " + names.stream().sorted().toList());
+        ui.info("Modules: " + names);
         return names;
     }
 }
