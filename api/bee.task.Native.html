@@ -37,7 +37,7 @@
 			</nav>
 			<article class="i" id="Article">
 				<section class="c"><code class="f">bee.task</code>
-					<h2 class="Class O"><code class="j">Exe</code></h2>
+					<h2 class="Class O"><code class="j">Native</code></h2>
 					<div class="H">
 						<ul class="C E">
 							<li><code><a href="api/bee.Task.html">Task</a></code></li>
@@ -47,43 +47,41 @@
 						</ul>
 					</div>
 				</section>
-				<section class="c" id="icon">
-					<h2 class="W"><i class="PROTECTED"></i><code class="j">icon</code><i class="Y"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></h2><span class="B"><p>The location for icon of exe file.</p>
+				<section class="c" id="jdk">
+					<h2 class="W"><i class="PROTECTED"></i><code class="j">jdk</code><i class="Y"><code class="return">psychopath.Directory</code></i></h2><span class="B"><p>The location of graal builders.</p>
 </span></section>
-				<section class="c" id="useCustomJRE">
-					<h2 class="W"><i class="PROTECTED"></i><code class="j">useCustomJRE</code><i class="Y"><code class="return">boolean</code></i></h2><span class="B"><p>The usage of custom JRE.</p>
+				<section class="c" id="output">
+					<h2 class="W"><i class="PROTECTED"></i><code class="j">output</code><i class="Y"><code class="return">psychopath.File</code></i></h2><span class="B"><p>The output location of the generated native execution file.</p>
 </span></section>
-				<section class="c" id="resources">
-					<h2 class="W"><i class="FINAL"><i class="PROTECTED"></i></i><code class="j">resources</code><i class="Y"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code>psychopath.Location</code></code></code></i></h2><span class="B"><p>The additional packing data.</p>
+				<section class="c" id="protocols">
+					<h2 class="W"><i class="PROTECTED"></i><code class="j">protocols</code><i class="Y"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The available protocols. default is &#39;http,https&#39;</p>
 </span></section>
-				<section class="c" id="Exe()">
-					<h2 class="W"><i class="PUBLIC"></i><code class="j">Exe</code><code class="d">()</code></h2>
+				<section class="c" id="Native()">
+					<h2 class="W"><i class="PUBLIC"></i><code class="j">Native</code><code class="d">()</code></h2>
 				</section>
 				<section class="c" id="build()">
-					<h2 class="W"><i class="PUBLIC"></i><code class="j">build</code><code class="d">()</code><i class="Y"><code>psychopath.File</code></i></h2>
-					<table class="J">
-						<tr class="g">
-							<td><code>psychopath.File</code></td>
-							<td></td>
-						</tr>
-					</table>
+					<h2 class="W"><i class="PUBLIC"></i><code class="j">build</code><code class="d">()</code><i class="Y"><code>void</code></i></h2>
+				</section>
+				<section class="c" id="agent()">
+					<h2 class="W"><i class="PUBLIC"></i><code class="j">agent</code><code class="d">()</code><i class="Y"><code>void</code></i></h2>
 				</section>
 			</article>
 			<aside class="P" id="SubNavi">
 				<div class="a">
 					<h5 class="K">Constructors</h5>
 					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.task.Exe.html#Exe()">Exe</a></code><code class="d">()</code></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.task.Native.html#Native()">Native</a></code><code class="d">()</code></li>
 					</ul>
 					<h5 class="K">Fields</h5>
 					<ul>
-						<li><i class="PROTECTED"></i><code><a href="api/bee.task.Exe.html#icon">icon</a></code><i class="Z"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/nio/file/Path.html">Path</a></code></i></li>
-						<li><i class="PROTECTED"></i><code><a href="api/bee.task.Exe.html#useCustomJRE">useCustomJRE</a></code><i class="Z"><code class="return">boolean</code></i></li>
-						<li><i class="FINAL"><i class="PROTECTED"></i></i><code><a href="api/bee.task.Exe.html#resources">resources</a></code><i class="Z"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code>psychopath.Location</code></code></code></i></li>
+						<li><i class="PROTECTED"></i><code><a href="api/bee.task.Native.html#jdk">jdk</a></code><i class="Z"><code class="return">psychopath.Directory</code></i></li>
+						<li><i class="PROTECTED"></i><code><a href="api/bee.task.Native.html#output">output</a></code><i class="Z"><code class="return">psychopath.File</code></i></li>
+						<li><i class="PROTECTED"></i><code><a href="api/bee.task.Native.html#protocols">protocols</a></code><i class="Z"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 					</ul>
 					<h5 class="K">Methods</h5>
 					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.task.Exe.html#build()">build</a></code><code class="d">()</code><i class="Z"><code>psychopath.File</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.task.Native.html#build()">build</a></code><code class="d">()</code><i class="Z"><code>void</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.task.Native.html#agent()">agent</a></code><code class="d">()</code><i class="Z"><code>void</code></i></li>
 					</ul>
 				</div>
 			</aside>
