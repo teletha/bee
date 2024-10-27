@@ -98,6 +98,7 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "javadng").atProvided();
         require("org.eclipse.jgit", "org.eclipse.jgit").atProvided();
         require("org.eclipse.jdt", "ecj").atProvided();
+        require("io.github.classgraph", "classgraph").atProvided();
 
         // TEST
         require("com.github.teletha", "antibug").atTest();

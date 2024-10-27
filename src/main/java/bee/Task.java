@@ -32,6 +32,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
@@ -52,6 +53,7 @@ import kiss.WiseFunction;
 import kiss.XML;
 import psychopath.Directory;
 import psychopath.File;
+import psychopath.Option;
 
 @Managed(value = TaskLifestyle.class)
 public abstract class Task implements Extensible {
@@ -493,6 +495,30 @@ public abstract class Task implements Extensible {
 
         from.copyTo(to);
         ui.info("Copy file from [", from.absolutize(), "] to [", to.absolutize() + "]");
+    }
+
+    /**
+     * Utilitu method to unpack archive.
+     * 
+     * @param from
+     * @param to
+     */
+    protected final void unpackFile(File from, Directory to, UnaryOperator<Option> options) {
+        if (from == null) {
+            throw new Fail("The specified file is null.");
+        }
+
+        if (from.isAbsent()) {
+            throw new Fail("File [" + from + "] is not found.");
+        }
+
+        from.trackUnpackingTo(to, options).to(progress -> {
+            ui.trace("Unpacking ", progress.location, " (", progress.completedFiles(), "/", progress.totalFiles, ")");
+        }, e -> {
+            ui.error(e);
+        }, () -> {
+            ui.info("Unpacked ", from.name(), " to ", to);
+        });
     }
 
     /**

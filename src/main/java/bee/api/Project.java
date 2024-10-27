@@ -343,6 +343,15 @@ public class Project {
     }
 
     /**
+     * Gather all classpaths needed to run this project.
+     * 
+     * @return
+     */
+    public Set<String> getClasspath() {
+        return I.signal(getDependency(Scope.Runtime)).map(file -> file.getLocalJar().path()).startWith(locateJar().path()).toSet();
+    }
+
+    /**
      * Declare dependency against to Lombok library.
      */
     protected final Library requireLombok() {
