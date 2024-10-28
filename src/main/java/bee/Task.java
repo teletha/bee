@@ -503,6 +503,16 @@ public abstract class Task implements Extensible {
      * @param from
      * @param to
      */
+    protected final void unpackFile(File from, Directory to) {
+        unpackFile(from, to, UnaryOperator.identity());
+    }
+
+    /**
+     * Utilitu method to unpack archive.
+     * 
+     * @param from
+     * @param to
+     */
     protected final void unpackFile(File from, Directory to, UnaryOperator<Option> options) {
         if (from == null) {
             throw new Fail("The specified file is null.");
@@ -513,7 +523,7 @@ public abstract class Task implements Extensible {
         }
 
         from.trackUnpackingTo(to, options).to(progress -> {
-            ui.trace("Unpacking ", progress.location, " (", progress.completedFiles(), "/", progress.totalFiles, ")");
+            ui.trace("Unpacking ", from.name(), " to ", to, " (", progress.rateByFiles(), "%)");
         }, e -> {
             ui.error(e);
         }, () -> {

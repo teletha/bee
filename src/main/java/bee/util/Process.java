@@ -35,6 +35,9 @@ public class Process {
     /** The flag. */
     private boolean showOutput = true;
 
+    /** The exit code. */
+    private int exit;
+
     /**
      * Hide Constructor.
      */
@@ -124,13 +127,13 @@ public class Process {
      * 
      * @param commands
      */
-    public void run(Object... commands) {
+    public int run(Object... commands) {
         List<String> list = new ArrayList();
 
         for (Object command : commands) {
             list.add(String.valueOf(command));
         }
-        run(list);
+        return run(list);
     }
 
     /**
@@ -138,8 +141,10 @@ public class Process {
      * 
      * @param command
      */
-    public void run(List<String> command) {
+    public int run(List<String> command) {
         run(command, true);
+
+        return exit;
     }
 
     /**
@@ -210,14 +215,14 @@ public class Process {
             }
 
             if (sync || !userOutput) {
-                process.waitFor();
+                exit = process.waitFor();
             }
 
             if (sync) {
                 process.destroy();
             }
             return userOutput ? null : output.toString().trim();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new Error("Command " + command + " is failed.", e);
         }
     }

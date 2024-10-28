@@ -13,14 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Loader;
 import bee.api.Require;
+import bee.api.Scope;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import kiss.Extensible;
+import kiss.Variable;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
@@ -40,13 +43,17 @@ public class Native extends Task {
     @Command(value = "Build native execution file.", defaults = true)
     public void build() {
         require(Jar::source);
+        String main = require(FindMain::main);
 
-        Directory jdk = detectEnvironment(false, "23", "windows-x64");
+        validateBuildEnvironment();
+
         buildRuntimeInfo();
+
+        Directory graal = findGraalVM("windows-x64");
 
         // build native-image command
         List<String> command = new ArrayList(Platform.isWindows() ? List.of("cmd", "/c") : List.of("bash", "-c"));
-        command.add(jdk.file("bin/native-image").path());
+        command.add(graal.file("bin/native-image").path());
 
         // output location
         // command.add("-o");
@@ -67,15 +74,44 @@ public class Native extends Task {
         command.add(project.getClasspath().stream().collect(Collectors.joining(java.io.File.pathSeparator)));
 
         // entry point
-        command.add(require(FindMain::main));
+        command.add(main);
 
-        // bee.util.Process.with().run(command);
+        if (bee.util.Process.with().run(command) != 0) {
+            throw new Fail("Fail to build native execution file.");
+        }
     }
 
-    private Directory detectEnvironment(boolean needJavaFX, String version, String platform) {
+    /**
+     * Validate the requirement of building environment.
+     */
+    private void validateBuildEnvironment() {
+        if (Platform.isWindows()) {
+            // ===============================================================
+            // Windows - https://www.graalvm.org/latest/getting-started/windows/
+            // ===============================================================
+            // 1 - Installing from an Archive (Automatically)
+            // 2 - Install Visual Studio Build Tools and Windows SDK (Manually, validate it)
+            Variable<File> file = Locator.directory("C:\\Program Files\\Microsoft Visual Studio").walkFile("**/cl.exe").first().to();
+            if (file.isAbsent()) {
+                throw new Fail("On Windows, Native Image requires Visual Studio and Microsoft Visual C++(MSVC). Use Visual Studio 2022 version 17.6.0 or later.")
+                        .solve("Install Visual Studio Build Tools and Windows SDK. see https://www.graalvm.org/latest/getting-started/windows/");
+            }
+        }
+    }
+
+    /**
+     * Detect GraalVM.
+     * 
+     * @param platform
+     * @return
+     */
+    private Directory findGraalVM(String platform) {
         if (jdk != null) {
             return jdk;
         }
+
+        boolean needJavaFX = project.getDependency(Scope.Runtime).stream().anyMatch(lib -> lib.group.equals("org.openjfx"));
+        int version = project.getJavaClassVersion().runtimeVersion().feature();
 
         Directory dest = Platform.BeeHome.directory("jdk").directory((needJavaFX ? "gluon-" : "graal-") + version);
 
@@ -85,10 +121,10 @@ public class Native extends Task {
                     : "https://download.oracle.com/graalvm/" + version + "/archive/graalvm-jdk-" + version + "_" + platform + "_bin.zip";
 
             // download archive
-            File temp = Locator.temporaryFile();
+            File temp = Locator.temporaryFile(url.substring(url.lastIndexOf('/') + 1));
             Loader.donwload(url, temp);
 
-            // unpack to local jdk holder
+            // unpack to local graal holder
             unpackFile(temp, dest, Option::strip);
         }
         return dest;
