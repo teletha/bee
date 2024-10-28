@@ -23,7 +23,6 @@ import bee.api.Scope;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import kiss.Extensible;
-import kiss.Variable;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
@@ -44,8 +43,6 @@ public class Native extends Task {
     public void build() {
         require(Jar::source);
         String main = require(FindMain::main);
-
-        validateBuildEnvironment();
 
         buildRuntimeInfo();
 
@@ -77,25 +74,17 @@ public class Native extends Task {
         command.add(main);
 
         if (bee.util.Process.with().run(command) != 0) {
-            throw new Fail("Fail to build native execution file.");
-        }
-    }
+            Fail fail = new Fail("Fail to build native execution file.");
 
-    /**
-     * Validate the requirement of building environment.
-     */
-    private void validateBuildEnvironment() {
-        if (Platform.isWindows()) {
-            // ===============================================================
-            // Windows - https://www.graalvm.org/latest/getting-started/windows/
-            // ===============================================================
-            // 1 - Installing from an Archive (Automatically)
-            // 2 - Install Visual Studio Build Tools and Windows SDK (Manually, validate it)
-            Variable<File> file = Locator.directory("C:\\Program Files\\Microsoft Visual Studio").walkFile("**/cl.exe").first().to();
-            if (file.isAbsent()) {
-                throw new Fail("On Windows, Native Image requires Visual Studio and Microsoft Visual C++(MSVC). Use Visual Studio 2022 version 17.6.0 or later.")
-                        .solve("Install Visual Studio Build Tools and Windows SDK. see https://www.graalvm.org/latest/getting-started/windows/");
+            if (Platform.isWindows()) {
+                // ===============================================================
+                // Windows - https://www.graalvm.org/latest/getting-started/windows/
+                // ===============================================================
+                // 1 - Installing from an Archive (Automatically)
+                // 2 - Install Visual Studio Build Tools and Windows SDK (Manually, validate it)
+                fail.solve("Install Visual Studio Build Tools and Windows SDK. see https://www.graalvm.org/latest/getting-started/windows/");
             }
+            throw fail;
         }
     }
 
