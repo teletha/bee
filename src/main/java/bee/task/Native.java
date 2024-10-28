@@ -44,13 +44,22 @@ public class Native extends Task {
     private Directory config = project.getOutput().directory("native-config/" + kind + "-" + project.getVersion()).create();
 
     /** The output root. */
-    private Directory output = project.getOutput().directory("native/" + project.getProduct() + "-" + project.getVersion()).create();
+    private Directory output = project.getOutput().directory("native/" + qualifier()).create();
 
     /** The executional file. */
     private File executional = output.file(project.getProduct());
 
     /** The artifact's archive. */
-    private File archive = project.getOutput().file(project.getProduct() + "-" + kind + "-" + project.getVersion() + ".zip");
+    private File archive = project.getOutput().file(qualifier() + ".zip");
+
+    /**
+     * Compute the product qualifier.
+     * 
+     * @return
+     */
+    private String qualifier() {
+        return project.getProduct() + "-" + kind + "-" + project.getVersion();
+    }
 
     @Command(value = "Build native execution file.", defaults = true)
     public File build() {
@@ -93,11 +102,11 @@ public class Native extends Task {
         command.add(main);
 
         if (bee.util.Process.with().run(command) == 0) {
-            pack(output, archive, Option::strip);
+            pack(output, archive);
 
             return archive;
         } else {
-            Fail fail = new Fail("Fail to build native execution file.");
+            Fail fail = new Fail("Fail to build native execution file.").solve("Executing: " + String.join(" ", command));
 
             if (Platform.isWindows()) {
                 // ===============================================================
