@@ -23,6 +23,7 @@ import bee.api.Scope;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import kiss.Extensible;
+import kiss.I;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
@@ -33,38 +34,56 @@ public class Native extends Task {
     /** The location of graal builders. */
     protected Directory jdk;
 
-    /** The output location of the generated native execution file. */
-    protected File output = project.getOutput().file(project.getProduct() + "-" + project.getVersion());
-
     /** The available protocols. default is 'http,https' */
     protected String protocols = "http,https";
 
+    /** The platform type. */
+    private String kind = "windows-x64";
+
+    /** The configuration directory. */
+    private Directory config = project.getOutput().directory("native-config/" + kind + "-" + project.getVersion()).create();
+
+    /** The output root. */
+    private Directory output = project.getOutput().directory("native/" + project.getProduct() + "-" + project.getVersion()).create();
+
+    /** The executional file. */
+    private File executional = output.file(project.getProduct());
+
+    /** The artifact's archive. */
+    private File archive = project.getOutput().file(project.getProduct() + "-" + kind + "-" + project.getVersion() + ".zip");
+
     @Command(value = "Build native execution file.", defaults = true)
-    public void build() {
+    public File build() {
+        // run test with native-image-agent
+        Test test = I.make(Test.class);
+        test.java = findGraalVM(kind);
+        test.params.add("-agentlib:native-image-agent=config-output-dir=" + config.path());
+        test.test();
+
         require(Jar::source);
         String main = require(FindMain::main);
+        Directory graal = findGraalVM(kind);
 
         buildRuntimeInfo();
-
-        Directory graal = findGraalVM("windows-x64");
 
         // build native-image command
         List<String> command = new ArrayList(Platform.isWindows() ? List.of("cmd", "/c") : List.of("bash", "-c"));
         command.add(graal.file("bin/native-image").path());
 
         // output location
-        // command.add("-o");
-        // command.add(output.path());
+        command.add("-o");
+        command.add(executional.path());
 
         command.add("--no-fallback");
         command.add("--enable-url-protocols=" + protocols);
 
         // for debug
+        command.add("-Ob");
+        command.add("--color=always");
         command.add("-H:+ReportExceptionStackTraces");
-        command.add("-H:+PrintClassInitialization");
+        // command.add("-H:+PrintClassInitialization");
 
-        //
-        command.add("-H:ConfigurationFileDirectories=agent");
+        command.add("-H:ConfigurationFileDirectories=" + config.path());
 
         // locate codes
         command.add("--class-path");
@@ -73,7 +92,11 @@ public class Native extends Task {
         // entry point
         command.add(main);
 
-        if (bee.util.Process.with().run(command) != 0) {
+        if (bee.util.Process.with().run(command) == 0) {
+            pack(output, archive, Option::strip);
+
+            return archive;
+        } else {
             Fail fail = new Fail("Fail to build native execution file.");
 
             if (Platform.isWindows()) {
@@ -114,7 +137,7 @@ public class Native extends Task {
             Loader.donwload(url, temp);
 
             // unpack to local graal holder
-            unpackFile(temp, dest, Option::strip);
+            unpack(temp, dest, Option::strip);
         }
         return dest;
     }
@@ -128,13 +151,9 @@ public class Native extends Task {
                             .map(info -> info.getName())
                             .collect(Collectors.joining(","));
 
-                    makeFile(".env", Extensible.class.getName() + "=" + extensions);
+                    makeFile(output.file(".env"), Extensible.class.getName() + "=" + extensions);
                 }
             }
         };
-    }
-
-    @Command("Run anlyzer agent.")
-    public void agent() {
     }
 }

@@ -37,11 +37,18 @@ import bee.api.Scope;
 import bee.util.Java;
 import bee.util.Java.JVM;
 import kiss.I;
+import psychopath.Directory;
 
 public class Test extends Task {
 
     /** The threshold time (ms) to show the prolonged test. */
     protected int showProlongedTest = 1000;
+
+    /** The test executing JVM. */
+    protected Directory java;
+
+    /** The additional paramters for the test execution JVM. */
+    protected List<String> params = new ArrayList();
 
     @Command("Test product codes.")
     public void test() {
@@ -56,6 +63,8 @@ public class Test extends Task {
             new Require("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
                 {
                     Java.with()
+                            .java(java)
+                            .param(params)
                             .classPath(project.getClasses())
                             .classPath(project.getTestClasses())
                             .classPath(project.getDependency(Scope.Test, Scope.Compile))

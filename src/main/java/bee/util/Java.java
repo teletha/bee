@@ -73,6 +73,9 @@ public class Java {
     /** The assertion usage state. */
     private boolean enableAssertion = false;
 
+    /** The java's root direcotry. (optional) */
+    private Directory jdk;
+
     /** The working directory. */
     private Directory directory;
 
@@ -88,6 +91,9 @@ public class Java {
     /** Xmx option. */
     private int maxMemory = 2048;
 
+    /** The additional parameters for JVM. */
+    private final List<String> params = new ArrayList();
+
     /** The system properties. */
     private final List<String> properties = new ArrayList();
 
@@ -102,6 +108,16 @@ public class Java {
      */
     public static Java with() {
         return new Java();
+    }
+
+    /**
+     * Set JDK.
+     * 
+     * @return
+     */
+    public Java java(Directory jdk) {
+        this.jdk = jdk;
+        return this;
     }
 
     /**
@@ -213,6 +229,25 @@ public class Java {
     }
 
     /**
+     * Add parameters.
+     * 
+     * @return
+     */
+    public Java param(String... params) {
+        return param(List.of(params));
+    }
+
+    /**
+     * Add parameters.
+     * 
+     * @return
+     */
+    public Java param(List<String> params) {
+        this.params.addAll(params);
+        return this;
+    }
+
+    /**
      * Set system property for this JVM.
      * 
      * @param key A property key.
@@ -239,7 +274,7 @@ public class Java {
         String address = "service:jmx:rmi:///jndi/rmi://localhost:" + port + "/hello";
 
         List<String> command = new ArrayList();
-        command.add("java");
+        command.add(jdk == null ? "java" : jdk.file("bin/java").path());
 
         if (classpaths.size() != 0) {
             command.add("-cp");
@@ -263,6 +298,8 @@ public class Java {
         if (enableAssertion) {
             command.add("-ea");
         }
+
+        command.addAll(params);
 
         for (String property : properties) {
             command.add(property);
@@ -355,7 +392,6 @@ public class Java {
 
             // execute main process
             JVM vm = (JVM) I.make(Class.forName(args[2]));
-
             try {
                 // check sync mode
                 if (args[1].equals("true")) {

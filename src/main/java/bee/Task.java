@@ -503,8 +503,8 @@ public abstract class Task implements Extensible {
      * @param from
      * @param to
      */
-    protected final void unpackFile(File from, Directory to) {
-        unpackFile(from, to, UnaryOperator.identity());
+    protected final void pack(Directory from, File to) {
+        pack(from, to, UnaryOperator.identity());
     }
 
     /**
@@ -513,7 +513,41 @@ public abstract class Task implements Extensible {
      * @param from
      * @param to
      */
-    protected final void unpackFile(File from, Directory to, UnaryOperator<Option> options) {
+    protected final void pack(Directory from, File to, UnaryOperator<Option> options) {
+        if (from == null) {
+            throw new Fail("The specified file is null.");
+        }
+
+        if (from.isAbsent()) {
+            throw new Fail("File [" + from + "] is not found.");
+        }
+
+        from.trackPackingTo(to, options).to(progress -> {
+            ui.trace("Packing ", from.name(), " to ", to, " (", progress.rateByFiles(), "%)");
+        }, e -> {
+            ui.error(e);
+        }, () -> {
+            ui.info("Packed ", from.name(), " to ", to);
+        });
+    }
+
+    /**
+     * Utilitu method to unpack archive.
+     * 
+     * @param from
+     * @param to
+     */
+    protected final void unpack(File from, Directory to) {
+        unpack(from, to, UnaryOperator.identity());
+    }
+
+    /**
+     * Utilitu method to unpack archive.
+     * 
+     * @param from
+     * @param to
+     */
+    protected final void unpack(File from, Directory to, UnaryOperator<Option> options) {
         if (from == null) {
             throw new Fail("The specified file is null.");
         }
