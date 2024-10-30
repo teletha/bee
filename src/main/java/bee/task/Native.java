@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import java.awt.Desktop;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +35,9 @@ public class Native extends Task {
 
     /** The available protocols. default is 'http,https' */
     protected String protocols = "http,https";
+
+    /** The additional parameters. */
+    protected List<String> params = new ArrayList();
 
     /** The graal kind. */
     private String kind = project.getDependency(Scope.Runtime).stream().anyMatch(lib -> lib.group.equals("org.openjfx")) ? "gluon"
@@ -84,6 +89,8 @@ public class Native extends Task {
         List<String> command = new ArrayList(Platform.isWindows() ? List.of("cmd", "/c") : List.of("bash", "-c"));
         command.add(graal.file("bin/native-image").path());
 
+        command.addAll(params);
+
         // output location
         command.add("-o");
         command.add(executional.path());
@@ -107,7 +114,7 @@ public class Native extends Task {
         command.add(main);
 
         if (bee.util.Process.with().run(command) == 0) {
-            pack(output, archive);
+            pack(output, archive, o -> o.glob("*"));
 
             return archive;
         } else {
@@ -122,6 +129,15 @@ public class Native extends Task {
                 fail.solve("Install Visual Studio Build Tools and Windows SDK. see https://www.graalvm.org/latest/getting-started/windows/");
             }
             throw fail;
+        }
+    }
+
+    @Command("Run the native executable.")
+    public void run() {
+        try {
+            Desktop.getDesktop().open(executional.extension(Platform.isWindows() ? "exe" : "").asJavaFile());
+        } catch (IOException e) {
+            throw I.quiet(e);
         }
     }
 
