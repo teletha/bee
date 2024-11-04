@@ -9,9 +9,6 @@
  */
 package bee.task;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.lang.invoke.SerializedLambda;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.graalvm.nativeimage.hosted.Feature;
+import org.graalvm.nativeimage.hosted.RuntimeResourceAccess;
 import org.graalvm.nativeimage.hosted.RuntimeSerialization;
 
 import bee.Bee;
@@ -101,7 +99,7 @@ public class Native extends Task {
 
         command.addAll(params);
 
-        command.add("--features=" + Features.class.getName());
+        command.add("--features=bee.task.Native$Features");
 
         // output location
         command.add("-o");
@@ -150,11 +148,7 @@ public class Native extends Task {
 
     @Command("Run the native executable.")
     public void run() {
-        try {
-            Desktop.getDesktop().open(executional.extension(Platform.isWindows() ? "exe" : "").asJavaFile());
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
+        bee.util.Process.with().verbose().workingDirectory(output).encoding(project.getEncoding()).run(executional.path());
     }
 
     /**
@@ -195,9 +189,16 @@ public class Native extends Task {
                             .map(ClassInfo::getName)
                             .collect(Collectors.joining(","));
 
+                    String resources = scan.getAllResources()
+                            .stream()
+                            .filter(res -> res.getPath().endsWith(".class"))
+                            .map(res -> res.getPath() + "@" + (res.getModuleRef() == null ? "" : res.getModuleRef().getName()))
+                            .collect(Collectors.joining(","));
+
                     StringBuilder builder = new StringBuilder();
                     builder.append(Extensible.class.getName()).append("=").append(extensions).append("\n");
-                    builder.append(SerializedLambda.class.getName()).append("=").append(lambdas);
+                    builder.append("native.lambda").append("=").append(lambdas).append("\n");
+                    builder.append("native.resource").append("=").append(resources);
 
                     File file = makeFile(output.file(".env"), builder.toString());
 
@@ -238,7 +239,7 @@ public class Native extends Task {
     /**
      * Special features.
      */
-    private static class Features implements Feature {
+    static class Features implements Feature {
         /**
          * {@inheritDoc}
          */
@@ -248,8 +249,14 @@ public class Native extends Task {
                 Properties env = new Properties();
                 env.load(Files.newBufferedReader(Path.of(System.getProperty("native.config"))));
 
-                for (String name : env.getProperty(SerializedLambda.class.getName()).split(",")) {
+                for (String name : env.getProperty("native.lambda").split(",")) {
                     RuntimeSerialization.registerLambdaCapturingClass(Class.forName(name, false, ClassLoader.getSystemClassLoader()));
+                }
+
+                for (String name : env.getProperty("native.resource").split(",")) {
+                    int index = name.indexOf('@');
+                    String path = name.substring(0, index);
+                    RuntimeResourceAccess.addResource(Bee.class.getModule(), path);
                 }
             } catch (Exception e) {
                 throw I.quiet(e);

@@ -14,12 +14,12 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import bee.Platform;
 import bee.UserInterface;
 import kiss.I;
 import psychopath.Directory;
-import psychopath.Locator;
 
 public class Process {
 
@@ -37,6 +37,9 @@ public class Process {
 
     /** The exit code. */
     private int exit;
+
+    /** The logger. */
+    private boolean verbose;
 
     /**
      * Hide Constructor.
@@ -123,6 +126,16 @@ public class Process {
     }
 
     /**
+     * Configure debugging log.
+     * 
+     * @return
+     */
+    public Process verbose() {
+        verbose = true;
+        return this;
+    }
+
+    /**
      * Execute sub process.
      * 
      * @param commands
@@ -185,19 +198,24 @@ public class Process {
                 encoding = Platform.Encoding;
             }
 
-            if (directory == null) {
-                directory = Locator.temporaryDirectory();
+            if (directory != null) {
+                if (directory.isAbsent()) {
+                    directory.create();
+                } else if (!directory.isDirectory()) {
+                    directory = directory.parent();
+                }
+                builder.directory(directory.asJavaFile());
             }
 
-            if (directory.isAbsent()) {
-                directory.create();
-            }
-
-            if (!directory.isDirectory()) {
-                directory = directory.parent();
-            }
             builder.redirectErrorStream(true);
             builder.command(command);
+
+            if (verbose) {
+                UserInterface ui = I.make(UserInterface.class);
+                ui.info("Execution \t", command.stream().collect(Collectors.joining(" ")));
+                ui.info("Directory \t", directory.absolutize().path());
+                ui.info("Encoding \t", encoding);
+            }
 
             java.lang.Process process = builder.start();
             Appendable output = new StringBuilder();
