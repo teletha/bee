@@ -115,7 +115,7 @@ bee install
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy-agent</artifactId>
-			<version>1.15.7</version>
+			<version>1.15.10</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -561,6 +561,38 @@ bee install
 			</exclusions>
 		</dependency>
 		<dependency>
+			<groupId>org.graalvm.sdk</groupId>
+			<artifactId>nativeimage</artifactId>
+			<version>24.1.1</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.plexus</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.maven</groupId>
+					<artifactId>plexus-utils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.plexus</groupId>
+					<artifactId>plexus-classworlds</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>7.0.0.202409031743-r</version>
@@ -627,7 +659,7 @@ bee install
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>sinobu</artifactId>
-			<version>4.2.0</version>
+			<version>4.3.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
