@@ -335,6 +335,17 @@ public class Project {
      * 
      * @param projectName
      * @param productName
+     * @return
+     */
+    public Set<Library> getLibrary(String projectName, String productName) {
+        return getLibrary(projectName, productName, "LATEST");
+    }
+
+    /**
+     * Find {@link Library} by name.
+     * 
+     * @param projectName
+     * @param productName
      * @param version
      * @return
      */

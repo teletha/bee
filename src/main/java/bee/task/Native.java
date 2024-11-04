@@ -11,10 +11,18 @@ package bee.task;
 
 import java.awt.Desktop;
 import java.io.IOException;
+import java.lang.invoke.SerializedLambda;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.graalvm.nativeimage.hosted.Feature;
+import org.graalvm.nativeimage.hosted.RuntimeSerialization;
+
+import bee.Bee;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
@@ -23,6 +31,7 @@ import bee.api.Loader;
 import bee.api.Require;
 import bee.api.Scope;
 import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import kiss.Extensible;
 import kiss.I;
@@ -91,6 +100,8 @@ public class Native extends Task {
 
         command.addAll(params);
 
+        command.add("--features=" + Features.class.getName());
+
         // output location
         command.add("-o");
         command.add(executional.path());
@@ -108,7 +119,10 @@ public class Native extends Task {
 
         // locate codes
         command.add("--class-path");
-        command.add(project.getClasspath().stream().collect(Collectors.joining(java.io.File.pathSeparator)));
+        command.add(I.signal(project.getClasspath())
+                .startWith(Locator.locate(Bee.class).path())
+                .scan(Collectors.joining(java.io.File.pathSeparator))
+                .to().v);
 
         // entry point
         command.add(main);
@@ -170,10 +184,22 @@ public class Native extends Task {
                 try (ScanResult scan = new ClassGraph().enableAllInfo().overrideClasspath(project.getClasspath()).scan()) {
                     String extensions = scan.getClassesImplementing(Extensible.class)
                             .stream()
-                            .map(info -> info.getName())
+                            .map(ClassInfo::getName)
                             .collect(Collectors.joining(","));
 
-                    makeFile(output.file(".env"), Extensible.class.getName() + "=" + extensions);
+                    String lambdas = scan.getAllClasses()
+                            .stream()
+                            .filter(x -> x.hasDeclaredMethod("$deserializeLambda$"))
+                            .map(ClassInfo::getName)
+                            .collect(Collectors.joining(","));
+
+                    StringBuilder builder = new StringBuilder();
+                    builder.append(Extensible.class.getName()).append("=").append(extensions).append("\n");
+                    builder.append(SerializedLambda.class.getName()).append("=").append(lambdas);
+
+                    File file = makeFile(output.file(".env"), builder.toString());
+
+                    params.add("-Dnative.config=" + file.path());
                 }
             }
         };
@@ -204,6 +230,28 @@ public class Native extends Task {
             return "arm";
         } else {
             throw new Error("Unknown Architecture [" + name + "]");
+        }
+    }
+
+    /**
+     * Special features.
+     */
+    private static class Features implements Feature {
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void beforeAnalysis(BeforeAnalysisAccess access) {
+            try {
+                Properties env = new Properties();
+                env.load(Files.newBufferedReader(Path.of(System.getProperty("native.config"))));
+
+                for (String name : env.getProperty(SerializedLambda.class.getName()).split(",")) {
+                    RuntimeSerialization.registerLambdaCapturingClass(Class.forName(name, false, ClassLoader.getSystemClassLoader()));
+                }
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
         }
     }
 }
