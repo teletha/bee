@@ -15,6 +15,7 @@ import java.lang.invoke.SerializedLambda;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -121,6 +122,7 @@ public class Native extends Task {
         command.add("--class-path");
         command.add(I.signal(project.getClasspath())
                 .startWith(Locator.locate(Bee.class).path())
+                .sort(Comparator.naturalOrder())
                 .scan(Collectors.joining(java.io.File.pathSeparator))
                 .to().v);
 
