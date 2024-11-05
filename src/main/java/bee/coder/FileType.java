@@ -9,6 +9,7 @@
  */
 package bee.coder;
 
+import java.lang.reflect.Modifier;
 import java.util.List;
 
 import kiss.Extensible;
@@ -28,6 +29,8 @@ public interface FileType extends Extensible {
 
     FileType DocumentTypeDefinition = new File("dtd", StandardHeaderStyle.XML);
 
+    FileType GIF = new File("gif", StandardHeaderStyle.Unknown);
+
     FileType Go = new File("go", StandardHeaderStyle.SlashStar);
 
     FileType Groovy = new File("groovy", StandardHeaderStyle.SlashStar);
@@ -38,23 +41,39 @@ public interface FileType extends Extensible {
 
     FileType JavaScript = new File("js", StandardHeaderStyle.SlashStar);
 
+    FileType JPEG = new File("jpg", StandardHeaderStyle.Unknown);
+
+    FileType JSON = new File("json", StandardHeaderStyle.Unknown);
+
     FileType Kotlin = new File("kt", StandardHeaderStyle.SlashStar);
+
+    FileType Markdown = new File("md", StandardHeaderStyle.XML);
 
     FileType Perl = new File("pl", StandardHeaderStyle.Sharp);
 
+    FileType PNG = new File("png", StandardHeaderStyle.Unknown);
+
     FileType POM = new File("pom", StandardHeaderStyle.XML);
+
+    FileType Properties = new File("properties", StandardHeaderStyle.Sharp);
+
+    FileType Python = new File("py", StandardHeaderStyle.Sharp);
 
     FileType Ruby = new File("rb", StandardHeaderStyle.Sharp);
 
     FileType Rust = new File("rs", StandardHeaderStyle.SlashStar);
 
-    FileType Python = new File("py", StandardHeaderStyle.Sharp);
-
     FileType Scala = new File("scala", StandardHeaderStyle.SlashStar);
 
     FileType Shell = new File("sh", StandardHeaderStyle.Sharp);
 
+    FileType SVG = new File("svg", StandardHeaderStyle.XML);
+
+    FileType Text = new File("txt", StandardHeaderStyle.Unknown);
+
     FileType TypeScript = new File("ts", StandardHeaderStyle.SlashTriple);
+
+    FileType WebP = new File("webp", StandardHeaderStyle.Unknown);
 
     FileType WindowsBatch = new File("bat", StandardHeaderStyle.Batch);
 
@@ -109,5 +128,17 @@ public interface FileType extends Extensible {
      */
     static FileType of(psychopath.File file) {
         return of(file.extension());
+    }
+
+    /**
+     * List up all built-in types.
+     * 
+     * @return
+     */
+    static List<FileType> list() {
+        return I.signal(FileType.class.getFields())
+                .take(x -> Modifier.isStatic(x.getModifiers()))
+                .map(x -> (FileType) x.get(null))
+                .toList();
     }
 }

@@ -18,7 +18,6 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 import org.graalvm.nativeimage.hosted.Feature;
-import org.graalvm.nativeimage.hosted.RuntimeResourceAccess;
 import org.graalvm.nativeimage.hosted.RuntimeSerialization;
 
 import bee.Bee;
@@ -29,6 +28,7 @@ import bee.api.Command;
 import bee.api.Loader;
 import bee.api.Require;
 import bee.api.Scope;
+import bee.coder.FileType;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
@@ -42,7 +42,10 @@ import psychopath.Option;
 public class Native extends Task {
 
     /** The available protocols. default is 'http,https' */
-    protected String protocols = "http,https";
+    protected List<String> protocols = I.list("http", "https");
+
+    /** The available resources. default is {@link FileType#list()} */
+    protected List<String> resources = FileType.list().stream().map(FileType::extension).toList();
 
     /** The additional parameters. */
     protected List<String> params = new ArrayList();
@@ -106,7 +109,7 @@ public class Native extends Task {
         command.add(executional.path());
 
         command.add("--no-fallback");
-        command.add("--enable-url-protocols=" + protocols);
+        command.add("--enable-url-protocols=" + protocols.stream().collect(Collectors.joining(",")));
 
         // for debug
         command.add("-Ob");
@@ -114,7 +117,20 @@ public class Native extends Task {
         command.add("-H:+ReportExceptionStackTraces");
         // command.add("-H:+PrintClassInitialization");
 
-        command.add("-H:ConfigurationFileDirectories=" + config.path());
+        // metadata
+        command.add("-H:+UnlockExperimentalVMOptions");
+        command.add("-H:ConfigurationFileDirectories=" + config);
+        command.add("-H:ResourceConfigurationFiles=" + config.file("auto-resources.json").text(I.express("""
+                {=< >=}
+                {
+                  "resources": [
+                    <#.>
+                    { "pattern": ".*.<.>$" },
+                    </.>
+                    { "pattern": ".*.zip$" }
+                  ]
+                }
+                """, resources)));
 
         // locate codes
         command.add("--class-path");
@@ -189,16 +205,9 @@ public class Native extends Task {
                             .map(ClassInfo::getName)
                             .collect(Collectors.joining(","));
 
-                    String resources = scan.getAllResources()
-                            .stream()
-                            .filter(res -> res.getPath().endsWith(".class"))
-                            .map(res -> res.getPath() + "@" + (res.getModuleRef() == null ? "" : res.getModuleRef().getName()))
-                            .collect(Collectors.joining(","));
-
                     StringBuilder builder = new StringBuilder();
                     builder.append(Extensible.class.getName()).append("=").append(extensions).append("\n");
                     builder.append("native.lambda").append("=").append(lambdas).append("\n");
-                    builder.append("native.resource").append("=").append(resources);
 
                     File file = makeFile(output.file(".env"), builder.toString());
 
@@ -251,12 +260,6 @@ public class Native extends Task {
 
                 for (String name : env.getProperty("native.lambda").split(",")) {
                     RuntimeSerialization.registerLambdaCapturingClass(Class.forName(name, false, ClassLoader.getSystemClassLoader()));
-                }
-
-                for (String name : env.getProperty("native.resource").split(",")) {
-                    int index = name.indexOf('@');
-                    String path = name.substring(0, index);
-                    RuntimeResourceAccess.addResource(Bee.class.getModule(), path);
                 }
             } catch (Exception e) {
                 throw I.quiet(e);
