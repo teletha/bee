@@ -9,18 +9,11 @@
  */
 package bee.task;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
-import org.graalvm.nativeimage.hosted.Feature;
-import org.graalvm.nativeimage.hosted.RuntimeSerialization;
-
-import bee.Bee;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
@@ -72,6 +65,9 @@ public class Native extends Task {
     /** The artifact's archive. */
     private File archive = project.getOutput().file(qualifier() + ".zip");
 
+    /** The configuration for serialization. */
+    private final Serialization serialization = new Serialization();
+
     /**
      * Compute the product qualifier.
      * 
@@ -102,8 +98,6 @@ public class Native extends Task {
 
         command.addAll(params);
 
-        command.add("--features=bee.task.Native$Features");
-
         // output location
         command.add("-o");
         command.add(executional.path());
@@ -131,11 +125,11 @@ public class Native extends Task {
                   ]
                 }
                 """, resources)));
+        command.add("-H:SerializationConfigurationFiles=" + config.file("auto-serialize.json").text(I.write(serialization)));
 
         // locate codes
         command.add("--class-path");
         command.add(I.signal(project.getClasspath())
-                .startWith(Locator.locate(Bee.class).path())
                 .sort(Comparator.naturalOrder())
                 .scan(Collectors.joining(java.io.File.pathSeparator))
                 .to().v);
@@ -199,19 +193,16 @@ public class Native extends Task {
                             .map(ClassInfo::getName)
                             .collect(Collectors.joining(","));
 
-                    String lambdas = scan.getAllClasses()
+                    serialization.lambdaCapturingTypes.addAll(scan.getAllClasses()
                             .stream()
                             .filter(x -> x.hasDeclaredMethod("$deserializeLambda$"))
-                            .map(ClassInfo::getName)
-                            .collect(Collectors.joining(","));
+                            .map(info -> new Item(info.getName()))
+                            .toList());
 
                     StringBuilder builder = new StringBuilder();
                     builder.append(Extensible.class.getName()).append("=").append(extensions).append("\n");
-                    builder.append("native.lambda").append("=").append(lambdas).append("\n");
 
-                    File file = makeFile(output.file(".env"), builder.toString());
-
-                    params.add("-Dnative.config=" + file.path());
+                    makeFile(output.file(".env"), builder.toString());
                 }
             }
         };
@@ -245,25 +236,13 @@ public class Native extends Task {
         }
     }
 
-    /**
-     * Special features.
-     */
-    static class Features implements Feature {
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void beforeAnalysis(BeforeAnalysisAccess access) {
-            try {
-                Properties env = new Properties();
-                env.load(Files.newBufferedReader(Path.of(System.getProperty("native.config"))));
+    static class Serialization {
 
-                for (String name : env.getProperty("native.lambda").split(",")) {
-                    RuntimeSerialization.registerLambdaCapturingClass(Class.forName(name, false, ClassLoader.getSystemClassLoader()));
-                }
-            } catch (Exception e) {
-                throw I.quiet(e);
-            }
-        }
+        public List<Item> types = new ArrayList();
+
+        public List<Item> lambdaCapturingTypes = new ArrayList();
+    }
+
+    private record Item(String name) {
     }
 }
