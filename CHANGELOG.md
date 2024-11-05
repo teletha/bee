@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.58.0](https://github.com/teletha/bee/compare/v0.57.0...v0.58.0) (2024-11-05)
+
+
+### Features
+
+* add dependency:module task ([15c6f5c](https://github.com/teletha/bee/commit/15c6f5c627e6ad5bd29a27d5f376172103532e76))
+* add native task ([6aadcdc](https://github.com/teletha/bee/commit/6aadcdcbb235ecf0544adb7bc705307a53eab007))
+* add native:run task ([bec28aa](https://github.com/teletha/bee/commit/bec28aa7effce93d8d928813cdcebed831a79f66))
+* add Task#pack and #unpack with tracking ([bd12f75](https://github.com/teletha/bee/commit/bd12f75281a6689766f7c062eab21e3d8eaa1146))
+* ci task can cache the local repository ([0db20ed](https://github.com/teletha/bee/commit/0db20eda49c2e5db8f42ceb9df989687b4549abc))
+* Exe task accepts additional modules ([02942d8](https://github.com/teletha/bee/commit/02942d8884147ffe9915bff460df4a0184a092e2))
+* Java and Test can configure the JVM and additional parameters ([bd12f75](https://github.com/teletha/bee/commit/bd12f75281a6689766f7c062eab21e3d8eaa1146))
+* Native task detects various resources automatically. ([d83d684](https://github.com/teletha/bee/commit/d83d6840f7f5ef035b409729394fb40a1df53dd0))
+* native task install native image builder automatically ([dc552c9](https://github.com/teletha/bee/commit/dc552c9ef51929082b65b9b5b85c0d0ec70535b9))
+* native task run tests with agent ([bd12f75](https://github.com/teletha/bee/commit/bd12f75281a6689766f7c062eab21e3d8eaa1146))
+* Native task supports SerializedLambda automatically ([42e6737](https://github.com/teletha/bee/commit/42e67376c972bfb7f3b6ac579d6f8bafda05c324))
+* Process accepts working directory. ([20efc37](https://github.com/teletha/bee/commit/20efc3758935d4197a5e6ff0049653108a4a6150))
+* use sorted classpath in native task ([a535508](https://github.com/teletha/bee/commit/a53550849dde714d1ed5784d32fb21c48408f7b7))
+
+
+### Bug Fixes
+
+* remove deprecated api ([be374bb](https://github.com/teletha/bee/commit/be374bb2242f3d8d5e88fcf38e57ad207dbe6ee2))
+* revert plugin version in pom ([f06eedc](https://github.com/teletha/bee/commit/f06eedc8ba3d224bd4d68caf9dfc91289c40e3c2))
+* show correct resource size ([66a1a83](https://github.com/teletha/bee/commit/66a1a8307adbda1d88cd2c2d49eca6ff70411212))
+* skip illegal data ([ecb2b31](https://github.com/teletha/bee/commit/ecb2b318c9acb6cebc528b01d15d3d462af48851))
+* task:help is broken ([919894b](https://github.com/teletha/bee/commit/919894bb173ca9c238852ccddc638954277c769d))
+
 ## [0.57.0](https://github.com/teletha/bee/compare/v0.56.9...v0.57.0) (2024-10-16)
 
 
