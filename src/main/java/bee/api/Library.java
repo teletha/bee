@@ -11,6 +11,7 @@ package bee.api;
 
 import java.util.Objects;
 
+import org.apache.maven.repository.internal.ArtifactDescriptorUtils;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 
@@ -35,7 +36,7 @@ public class Library implements Comparable<Library> {
     public Scope scope = Scope.Compile;
 
     /** The actual artifact. */
-    final Artifact artifact;
+    Artifact artifact;
 
     /**
      * @param qualified
@@ -131,6 +132,16 @@ public class Library implements Comparable<Library> {
      */
     public Library atTest() {
         scope = Scope.Test;
+        return this;
+    }
+
+    /**
+     * Configure the dependency type.
+     * 
+     * @return
+     */
+    public Library byPom() {
+        artifact = ArtifactDescriptorUtils.toPomArtifact(artifact);
         return this;
     }
 
