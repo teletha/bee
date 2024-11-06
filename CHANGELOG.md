@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.59.0](https://github.com/teletha/bee/compare/v0.58.0...v0.59.0) (2024-11-06)
+
+
+### Features
+
+* add Library#byPom ([2fee6cf](https://github.com/teletha/bee/commit/2fee6cfb328571dc477634c35ade759343ae656a))
+
 ## [0.58.0](https://github.com/teletha/bee/compare/v0.57.0...v0.58.0) (2024-11-05)
 
 
