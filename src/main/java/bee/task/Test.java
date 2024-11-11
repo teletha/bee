@@ -17,9 +17,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
+import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -157,7 +159,7 @@ public class Test extends Task {
             public synchronized void testPlanExecutionFinished(TestPlan testPlan) {
                 if (shows) showHeader();
 
-                ui.info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " classes)"));
+                ui.info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " suites)"));
                 if (fails.size() != 0 || errors.size() != 0) {
                     Fail fail = new Fail("Test has failed.");
                     // The stack trace created here is useless and should be deleted. (Since it is
@@ -190,16 +192,13 @@ public class Test extends Task {
             public synchronized void executionStarted(TestIdentifier identifier) {
                 if (identifier.isContainer()) {
                     suites++;
-                    identifier.getSource().ifPresent(source -> {
-                        TestSuite container = new TestSuite(identifier);
-                        container.startTime = System.nanoTime();
-                        containers.put(identifier.getUniqueId(), container);
-                    });
+                    TestSuite container = new TestSuite(identifier);
+                    container.startTime = System.nanoTime();
+                    containers.put(identifier.getUniqueId(), container);
                 } else {
                     runs++;
                     containers.get(identifier.getParentId().get()).runs++;
                 }
-
             }
 
             /**
@@ -210,7 +209,7 @@ public class Test extends Task {
                 if (identifier.isContainer()) {
                     TestSuite container = containers.get(identifier.getUniqueId());
 
-                    identifier.getSource().ifPresent(source -> {
+                    if (identifier.getSource().get() instanceof ClassSource) {
                         long elapsed = System.nanoTime() - container.startTime;
                         times += elapsed;
 
@@ -220,16 +219,20 @@ public class Test extends Task {
                             shows = show;
                         }
 
-                        String message = buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, container.identifier
-                                .getLegacyReportingName());
+                        String message = buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, name(container.identifier));
 
                         if (show) {
                             ui.info(message);
                         } else {
                             ui.trace(message);
                         }
-                    });
-                    containers.remove(identifier.getUniqueId());
+                    } else {
+                        TestSuite parent = containers.get(identifier.getParentId().get());
+                        parent.runs += container.runs;
+                        parent.errors += container.errors;
+                        parent.failures += container.failures;
+                        parent.skips += container.skips;
+                    }
                 } else {
                     TestSuite container = containers.get(identifier.getParentId().get());
 
@@ -238,7 +241,7 @@ public class Test extends Task {
                         break;
 
                     case FAILED:
-                        Failure failure = new Failure(container.identifier, identifier, result.getThrowable().get());
+                        Failure failure = new Failure(identifier, result.getThrowable().get());
 
                         if (failure.error instanceof AssertionError) {
                             fails.add(failure);
@@ -279,16 +282,25 @@ public class Test extends Task {
              */
             private void buildFailure(Fail fail, List<Failure> list) {
                 for (Failure e : list) {
-                    String name = e.clazz.getLegacyReportingName();
+                    String name = e.test.getUniqueIdObject().getSegments().get(1).getValue();
                     StackTraceElement element = e.error.getStackTrace()[0];
                     int line = element.getClassName().equals(name) ? element.getLineNumber() : 0;
 
-                    StringBuilder message = new StringBuilder(e.name());
+                    StringBuilder message = new StringBuilder(name(e.test));
                     if (line != 0) message.append(" @line").append(line);
                     message.append(Platform.EOL).append(e.message().indent(4));
 
                     fail.solve(message);
                 }
+            }
+
+            /**
+             * Compute the identical test name.
+             * 
+             * @return
+             */
+            private String name(TestIdentifier id) {
+                return id.getUniqueIdObject().getSegments().stream().skip(1).map(x -> x.getValue()).collect(Collectors.joining("#"));
             }
 
             /**
@@ -327,9 +339,6 @@ public class Test extends Task {
              */
             private class Failure {
 
-                /** The container identifier. */
-                private final TestIdentifier clazz;
-
                 /** The test identifier. */
                 private final TestIdentifier test;
 
@@ -339,27 +348,12 @@ public class Test extends Task {
                 /**
                  * Data holder.
                  * 
-                 * @param clazz
                  * @param test
                  * @param error
                  */
-                private Failure(TestIdentifier clazz, TestIdentifier test, Throwable error) {
-                    this.clazz = clazz;
+                private Failure(TestIdentifier test, Throwable error) {
                     this.test = test;
                     this.error = error;
-                }
-
-                /**
-                 * Retrieve the human-readable test case's name.
-                 * 
-                 * @return
-                 */
-                private String name() {
-                    String methodName = test.getDisplayName();
-                    if (methodName.endsWith("()")) {
-                        methodName = methodName.substring(0, methodName.length() - 2);
-                    }
-                    return clazz.getDisplayName() + " #" + methodName;
                 }
 
                 /**

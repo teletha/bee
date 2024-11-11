@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.61.1](https://github.com/teletha/bee/compare/v0.61.0...v0.61.1) (2024-11-12)
+
+
+### Bug Fixes
+
+* skip annotation processor in invalid environment ([6e6bbc6](https://github.com/teletha/bee/commit/6e6bbc613979f4b88f4387d1db6e163210947118))
+
+## [0.61.0](https://github.com/teletha/bee/compare/v0.60.1...v0.61.0) (2024-11-12)
+
+
+### Features
+
+* maven task updates pom ([062d012](https://github.com/teletha/bee/commit/062d01225cd0c871f845eec75f02d6dbe4b6df22))
+
+## [0.60.1](https://github.com/teletha/bee/compare/v0.60.0...v0.60.1) (2024-11-12)
+
+
+### Bug Fixes
+
+* Test task can show more readable output on Junit5 ([4a255e8](https://github.com/teletha/bee/commit/4a255e8bf231e295fe5fd56f89e70623b31e4d40))
+* test task shows class name on MethodTestSource ([4b333a1](https://github.com/teletha/bee/commit/4b333a1119081d03f2506a1e14c575b214c3c97b))
+
 ## [0.60.0](https://github.com/teletha/bee/compare/v0.59.0...v0.60.0) (2024-11-11)
 
 

@@ -904,7 +904,9 @@ public class Project {
             }
         }
 
-        // maven properties
+        // ==============================================================
+        // Maven Plugins
+        // ==============================================================
         XML plugins = pom.child("build").child("plugins");
 
         // compiler-plugin
@@ -912,15 +914,35 @@ public class Project {
         plugin.child("artifactId").text("maven-compiler-plugin");
         plugin.child("version").text("3.13.0");
         XML conf = plugin.child("configuration");
+        conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
+        conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
         conf.child("encoding").text(getEncoding().displayName());
-        conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
         XML args = conf.child("compilerArgs");
         if (getClasses().file("META-INF/services/javax.annotation.processing.Processor").isPresent()) args.child("arg").text("-proc:none");
 
         // surefire-plugin
-        plugin = plugins.child("plugin");
-        plugin.child("artifactId").text("maven-surefire-plugin");
-        plugin.child("version").text("3.5.1");
+        plugins.append("""
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.5.2</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>me.fabriciorby</groupId>
+                            <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+                            <version>0.1.0</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
+                        <reportFormat>plain</reportFormat>
+                        <consoleOutputReporter>
+                            <disable>true</disable>
+                        </consoleOutputReporter>
+                        <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
+                    </configuration>
+                </plugin>
+                """);
 
         // write as pom
         return pom.toString();

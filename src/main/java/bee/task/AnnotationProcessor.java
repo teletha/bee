@@ -92,7 +92,9 @@ public class AnnotationProcessor implements Processor {
         this.util = environment.getElementUtils();
         this.types = environment.getTypeUtils();
         this.options = environment.getOptions();
-        this.info = I.json(options.get(ProjectInfo.class.getName())).as(ProjectInfo.class);
+
+        String conf = options.get(ProjectInfo.class.getName());
+        this.info = conf == null ? null : I.json(conf).as(ProjectInfo.class);
     }
 
     /**
@@ -100,6 +102,10 @@ public class AnnotationProcessor implements Processor {
      */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment round) {
+        if (this.info == null) {
+            return false;
+        }
+
         try {
             for (TypeElement annotationType : annotations) {
                 for (Element element : round.getElementsAnnotatedWith(annotationType)) {
