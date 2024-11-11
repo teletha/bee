@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.60.0](https://github.com/teletha/bee/compare/v0.59.0...v0.60.0) (2024-11-11)
+
+
+### Features
+
+* add commnads eclipse:live and eclipse:repository ([d5bb012](https://github.com/teletha/bee/commit/d5bb012abc003c783a4f8aec1c93d62bcbde3219))
+
+
+### Bug Fixes
+
+* require Java 21 ([5fd7b20](https://github.com/teletha/bee/commit/5fd7b2004bb82cdebe346b5102e531c2162bd56e))
+
 ## [0.59.0](https://github.com/teletha/bee/compare/v0.58.0...v0.59.0) (2024-11-06)
 
 
