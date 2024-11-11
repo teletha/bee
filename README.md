@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://docs.oracle.com/en/java/javase/23/"><img src="https://img.shields.io/badge/Java-Release%2023-green"/></a>
+    <a href="https://docs.oracle.com/en/java/javase/21/"><img src="https://img.shields.io/badge/Java-Release%2021-green"/></a>
     <span>&nbsp;</span>
     <a href="https://jitpack.io/#teletha/bee"><img src="https://img.shields.io/jitpack/v/github/teletha/bee?label=Repository&color=green"></a>
     <span>&nbsp;</span>
@@ -57,7 +57,7 @@ bee install
 
 
 ## Prerequisites
-Bee runs on all major operating systems and requires only [Java version 23](https://docs.oracle.com/en/java/javase/23/) or later to run.
+Bee runs on all major operating systems and requires only [Java version 21](https://docs.oracle.com/en/java/javase/21/) or later to run.
 To check, please run `java -version` on your terminal.
 <p align="right"><a href="#top">back to top</a></p>
 
@@ -142,7 +142,7 @@ If you think something might be a bug, but you're not sure, ask on StackOverflow
 ## Dependency
 Bee depends on the following products on runtime.
 * [asm-9.7.1](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.7.1)
-* [conjure-1.1.1](https://mvnrepository.com/artifact/com.github.teletha/conjure/1.1.1)
+* [conjure-1.2.0](https://mvnrepository.com/artifact/com.github.teletha/conjure/1.2.0)
 * [javax.inject-1](https://mvnrepository.com/artifact/javax.inject/javax.inject/1)
 * [maven-api-meta-4.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-7)
 * [maven-api-model-4.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-7)
@@ -164,8 +164,8 @@ Bee depends on the following products on runtime.
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
 * [plexus-utils-4.0.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/4.0.0)
 * [plexus-xml-4.0.1](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-xml/4.0.1)
-* [psychopath-2.0.1](https://mvnrepository.com/artifact/com.github.teletha/psychopath/2.0.1)
-* [sinobu-4.3.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/4.3.0)
+* [psychopath-2.0.2](https://mvnrepository.com/artifact/com.github.teletha/psychopath/2.0.2)
+* [sinobu-4.4.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/4.4.0)
 * [slf4j-api-2.1.0-alpha1](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.1.0-alpha1)
 <p align="right"><a href="#top">back to top</a></p>
 

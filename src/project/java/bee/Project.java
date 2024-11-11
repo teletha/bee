@@ -11,6 +11,8 @@ package bee;
 
 import static bee.api.License.*;
 
+import javax.lang.model.SourceVersion;
+
 public class Project extends bee.api.Project {
 
     {
@@ -60,6 +62,8 @@ public class Project extends bee.api.Project {
                 bee install
                 ```
                 """);
+
+        require(SourceVersion.latest(), SourceVersion.RELEASE_21);
 
         // MAVEN REPOSITORY
         // Since 4.0.0-beta, Maven has become a super heavyweight library, with dependencies
