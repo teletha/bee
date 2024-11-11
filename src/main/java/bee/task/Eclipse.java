@@ -23,6 +23,7 @@ import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Project;
+import bee.api.Repository;
 import bee.api.Scope;
 import bee.task.AnnotationProcessor.ProjectInfo;
 import bee.util.Config;
@@ -277,6 +278,53 @@ public class Eclipse extends Task implements IDESupport {
      */
     private Directory relative(Directory path) {
         return project.getRoot().relativize(path);
+    }
+
+    /**
+     * Rewrite sibling eclipse projects to use the current project directly.
+     */
+    @Command("Rewrite sibling eclipse projects to use the current project directly.")
+    public void live() {
+        syncProject(true);
+    }
+
+    /**
+     * Rewrite sibling eclipse projects to use the repository.
+     */
+    @Command("Rewrite sibling eclipse projects to use the current project in repository.")
+    public void repository() {
+        syncProject(false);
+    }
+
+    /**
+     * Rewrite sibling eclipse projects.
+     */
+    private void syncProject(boolean live) {
+        String jar = I.make(Repository.class).resolveJar(project.asLibrary()).toString();
+        String currentProjectName = project.getRoot().base();
+
+        String oldPath = live ? jar.substring(0, jar.lastIndexOf(java.io.File.separator + project.getVersion() + java.io.File.separator))
+                : "/" + currentProjectName;
+        String newPath = live ? "/" + currentProjectName : jar;
+
+        for (File file : project.getRoot().parent().walkFile("*/.classpath").toList()) {
+            if (!file.parent().equals(project.getRoot())) {
+                String targetProjectName = file.parent().base();
+
+                XML root = I.xml(file.newBufferedReader());
+                XML classpath = root.find("classpathentry[path^=\"" + oldPath + "\"]");
+
+                if (classpath.size() != 0) {
+                    // use project source directly
+                    classpath.attr("kind", live ? "src" : "lib").attr("path", newPath);
+
+                    // rewrite
+                    root.to(file.newBufferedWriter());
+
+                    ui.info("Project ", targetProjectName, " references ", currentProjectName, live ? " directly." : " in repository.");
+                }
+            }
+        }
     }
 
     /**

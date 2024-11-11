@@ -99,6 +99,12 @@ public class Project extends bee.api.Project {
         require("org.eclipse.jgit", "org.eclipse.jgit").atProvided();
         require("org.eclipse.jdt", "ecj").atProvided();
         require("io.github.classgraph", "classgraph").atProvided();
+        require("org.graalvm.polyglot", "polyglot").atProvided();
+        require("org.graalvm.polyglot", "java-community").atProvided().byPom();
+        require("org.graalvm.polyglot", "js-community").atProvided().byPom();
+        require("org.graalvm.polyglot", "python-community").atProvided().byPom();
+        require("org.graalvm.espresso", "java").atProvided().byPom();
+        require("org.graalvm.espresso", "espresso-runtime-resources-jdk21").atProvided();
 
         // TEST
         require("com.github.teletha", "antibug").atTest();
