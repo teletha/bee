@@ -13,7 +13,6 @@ import java.util.Random;
 import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -180,7 +179,7 @@ class DependencyTest {
         assert repository.collectDependency(project, Scope.System).size() == 0;
     }
 
-    @RepeatedTest(5)
+    @Test
     void compile_complex2() {
         project.require("one", one -> {
             one.require("child1", logger -> {

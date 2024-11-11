@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Handler;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
@@ -189,6 +190,7 @@ public class Test extends Task {
             @Override
             public synchronized void executionStarted(TestIdentifier identifier) {
                 if (identifier.isContainer()) {
+                    System.out.println(identifier.getType() + "   " + identifier.getSource() + "  " + identifier.getUniqueId() + "  ");
                     suites++;
                     identifier.getSource().ifPresent(source -> {
                         TestSuite container = new TestSuite(identifier);
@@ -220,8 +222,7 @@ public class Test extends Task {
                             shows = show;
                         }
 
-                        String message = buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, container.identifier
-                                .getLegacyReportingName());
+                        String message = buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, name(container.identifier));
 
                         if (show) {
                             ui.info(message);
@@ -283,12 +284,21 @@ public class Test extends Task {
                     StackTraceElement element = e.error.getStackTrace()[0];
                     int line = element.getClassName().equals(name) ? element.getLineNumber() : 0;
 
-                    StringBuilder message = new StringBuilder(e.name());
+                    StringBuilder message = new StringBuilder(name(e.test));
                     if (line != 0) message.append(" @line").append(line);
                     message.append(Platform.EOL).append(e.message().indent(4));
 
                     fail.solve(message);
                 }
+            }
+
+            /**
+             * Compute the identical test name.
+             * 
+             * @return
+             */
+            private String name(TestIdentifier id) {
+                return id.getUniqueIdObject().getSegments().stream().skip(1).map(x -> x.getValue()).collect(Collectors.joining("#"));
             }
 
             /**
@@ -347,19 +357,6 @@ public class Test extends Task {
                     this.clazz = clazz;
                     this.test = test;
                     this.error = error;
-                }
-
-                /**
-                 * Retrieve the human-readable test case's name.
-                 * 
-                 * @return
-                 */
-                private String name() {
-                    String methodName = test.getDisplayName();
-                    if (methodName.endsWith("()")) {
-                        methodName = methodName.substring(0, methodName.length() - 2);
-                    }
-                    return clazz.getDisplayName() + " #" + methodName;
                 }
 
                 /**
