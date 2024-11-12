@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.61.1](https://github.com/teletha/bee/compare/v0.61.0...v0.61.1) (2024-11-12)
+
+
+### Bug Fixes
+
+* skip annotation processor in invalid environment ([6e6bbc6](https://github.com/teletha/bee/commit/6e6bbc613979f4b88f4387d1db6e163210947118))
+
 ## [0.61.0](https://github.com/teletha/bee/compare/v0.60.1...v0.61.0) (2024-11-12)
 
 
