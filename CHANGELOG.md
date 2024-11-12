@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.61.0](https://github.com/teletha/bee/compare/v0.60.1...v0.61.0) (2024-11-12)
+
+
+### Features
+
+* maven task updates pom ([062d012](https://github.com/teletha/bee/commit/062d01225cd0c871f845eec75f02d6dbe4b6df22))
+
 ## [0.60.1](https://github.com/teletha/bee/compare/v0.60.0...v0.60.1) (2024-11-12)
 
 
