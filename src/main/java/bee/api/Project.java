@@ -904,7 +904,9 @@ public class Project {
             }
         }
 
-        // maven properties
+        // ==============================================================
+        // Maven Plugins
+        // ==============================================================
         XML plugins = pom.child("build").child("plugins");
 
         // compiler-plugin
@@ -912,8 +914,9 @@ public class Project {
         plugin.child("artifactId").text("maven-compiler-plugin");
         plugin.child("version").text("3.13.0");
         XML conf = plugin.child("configuration");
+        conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
+        conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
         conf.child("encoding").text(getEncoding().displayName());
-        conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
         XML args = conf.child("compilerArgs");
         if (getClasses().file("META-INF/services/javax.annotation.processing.Processor").isPresent()) args.child("arg").text("-proc:none");
 
@@ -931,6 +934,7 @@ public class Project {
                         </dependency>
                     </dependencies>
                     <configuration>
+                        <argLine>-Dfile.encoding=UTF-8</argLine>
                         <reportFormat>plain</reportFormat>
                         <consoleOutputReporter>
                             <disable>true</disable>
