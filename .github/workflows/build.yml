@@ -69,6 +69,6 @@ jobs:
     - name: Request External Repository
       run: |
         URL="https://jitpack.io/com/github/teletha/bee/$(cat version.txt)/build.log"
-        echo "Accessing $URL"
-        curl -X GET $URL
+        echo "Start building $URL"
+        curl -m 1 -o GET $URL > /dev/null
         
