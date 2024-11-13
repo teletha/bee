@@ -106,7 +106,7 @@ public class CI extends Task {
                         commit_message: update repository info
 
                     - name: Request building artifact in Jitpack
-                      if: github.event_name == 'pull_request'
+                      if: contains(github.event.head_commit.message, 'chore(master): release')
                       run: |
                         URL="https://jitpack.io/%s/$(cat version.txt)/build.log"
                         echo "Request building $URL"
