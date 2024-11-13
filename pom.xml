@@ -47,6 +47,12 @@ bee ide
 ```
 bee install
 ```</description>
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>https://opensource.org/licenses/MIT</url>
+		</license>
+	</licenses>
 	<dependencies>
 		<dependency>
 			<groupId>com.github.teletha</groupId>
@@ -689,12 +695,6 @@ bee install
 			</exclusions>
 		</dependency>
 	</dependencies>
-	<licenses>
-		<license>
-			<name>MIT License</name>
-			<url>https://opensource.org/licenses/MIT</url>
-		</license>
-	</licenses>
 	<repositories>
 		<repository>
 			<id>Maven</id>
@@ -716,30 +716,32 @@ bee install
 					<source>23</source>
 					<target>21</target>
 					<encoding>UTF-8</encoding>
+					<compilerId>javac</compilerId>
 					<compilerArgs>
+						<arg>-parameters</arg>
+						<arg>-warn:none</arg>
 						<arg>-proc:none</arg>
 					</compilerArgs>
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.5.2</version>
-				<dependencies>
-					<dependency>
-						<groupId>me.fabriciorby</groupId>
-						<artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-						<version>0.1.0</version>
-					</dependency>
-				</dependencies>
 				<configuration>
-					<argLine>-Dfile.encoding=UTF-8</argLine>
+					<argLine>-ea   -Dfile.encoding=UTF-8</argLine>
 					<reportFormat>plain</reportFormat>
 					<consoleOutputReporter>
 						<disable>true</disable>
 					</consoleOutputReporter>
 					<statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
 				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>me.fabriciorby</groupId>
+						<artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+						<version>1.3.0</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
