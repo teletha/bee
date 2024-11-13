@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.63.0](https://github.com/teletha/bee/compare/v0.62.0...v0.63.0) (2024-11-13)
+
+
+### Features
+
+* Enhance Jitpack support ([4c75a25](https://github.com/teletha/bee/commit/4c75a2524223caffa8780feed4a1ce332a9afb14))
+
+
+### Bug Fixes
+
+* refactoring pom generator ([13bfd99](https://github.com/teletha/bee/commit/13bfd997a3cfbd122f7def581f9ea163c65ae70b))
+
 ## [0.62.0](https://github.com/teletha/bee/compare/v0.61.1...v0.62.0) (2024-11-13)
 
 
