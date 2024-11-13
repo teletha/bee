@@ -11,10 +11,10 @@
 		<script src="mimic.js" type="module"></script>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="L">
-		<header class="M">
-			<h1 class="g" date="2024-11-13" ver="0.57.0"><code>Bee</code></h1>
-			<nav class="i"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="i">
+		<header class="P">
+			<h1 class="m" date="2024-11-13" ver="0.62.0"><code>Bee</code></h1>
+			<nav class="c"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg><code>API</code></a><a href="https://github.com/teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
@@ -23,7 +23,7 @@
 					</svg>Activity</a><a href="https://github.com/teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>Repository</a></nav>
-			<div class="H" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+			<div class="S" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg>
 				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
@@ -31,222 +31,192 @@
 					</svg>
 				</a></div>
 		</header>
-		<main class="I">
-			<nav class="l">
+		<main class="K">
+			<nav class="b">
 				<div></div>
 			</nav>
-			<article class="b" id="Article">
-				<section class="O"><code class="e">bee.api</code>
-					<h2 class="Class V"><code class="Z">Repository</code></h2>
-					<div class="j"></div>
+			<article class="h" id="Article">
+				<section class="e"><code class="Y">bee.api</code>
+					<h2 class="Class d"><code class="M">Repository</code></h2>
+					<div class="U"></div>
 				</section>
-				<section class="O" id="buildDependencyGraph(bee.api.Project)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">buildDependencyGraph</code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="J"><code>org.eclipse.aether.graph.DependencyNode</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="buildDependencyGraph(bee.api.Project)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">buildDependencyGraph</code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="Z"><code>org.eclipse.aether.graph.DependencyNode</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Project.html">Project</a></code><code>project</code></td>
 							<td></td>
 						</tr>
-						<tr class="h">
+						<tr class="L">
 							<td><code>org.eclipse.aether.graph.DependencyNode</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Build the dependency graph for compile scope.</p></span></section>
-				<section class="O" id="collectDependency(bee.api.Project,bee.api.Scope...)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">collectDependency</code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="J"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="collectDependency(bee.api.Project,bee.api.Scope...)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">collectDependency</code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="Z"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Project.html">Project</a></code><code>project</code></td>
 							<td></td>
 						</tr>
-						<tr class="N">
+						<tr class="O">
 							<td><code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code>scopes</code></td>
 							<td></td>
 						</tr>
-						<tr class="h">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Collect all dependencies in the specified scope.</p></span></section>
-				<section class="O" id="collectDependency(bee.api.Library,bee.api.Scope...)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">collectDependency</code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="J"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="collectDependency(bee.api.Library,bee.api.Scope...)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">collectDependency</code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="Z"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Library.html">Library</a></code><code>library</code></td>
 							<td></td>
 						</tr>
-						<tr class="N">
+						<tr class="O">
 							<td><code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code>scopes</code></td>
 							<td></td>
 						</tr>
-						<tr class="h">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Collect all dependencies in the specified scope.</p></span></section>
-				<section class="O" id="resolveLatestVersion(bee.api.Library)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">resolveLatestVersion</code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="J"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="resolveLatestVersion(bee.api.Library)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">resolveLatestVersion</code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="Z"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Library.html">Library</a></code><code>library</code></td>
 							<td></td>
 						</tr>
-						<tr class="h">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Resolve the latest version of the specified library.</p></span></section>
-				<section class="O" id="resolveJar(bee.api.Library)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">resolveJar</code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="J"><code>psychopath.File</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="resolveJar(bee.api.Library)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">resolveJar</code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="Z"><code>psychopath.File</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Library.html">Library</a></code><code>library</code></td>
 							<td></td>
 						</tr>
-						<tr class="h">
+						<tr class="L">
 							<td><code>psychopath.File</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Resolve the jar of the specified library.</p></span></section>
-				<section class="O" id="resolveJavadoc(bee.api.Library)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">resolveJavadoc</code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="J"><code>psychopath.File</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="resolveJavadoc(bee.api.Library)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">resolveJavadoc</code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="Z"><code>psychopath.File</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Library.html">Library</a></code><code>library</code></td>
 							<td></td>
 						</tr>
-						<tr class="h">
+						<tr class="L">
 							<td><code>psychopath.File</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Resolve the javadoc of the specified library.</p></span></section>
-				<section class="O" id="resolveSource(bee.api.Library)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">resolveSource</code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="J"><code>psychopath.File</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="resolveSource(bee.api.Library)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">resolveSource</code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="Z"><code>psychopath.File</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Library.html">Library</a></code><code>library</code></td>
 							<td></td>
 						</tr>
-						<tr class="h">
+						<tr class="L">
 							<td><code>psychopath.File</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Resolve the source codes of the specified library.</p></span></section>
-				<section class="O" id="install(bee.api.Project)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">install</code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="J"><code>void</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="install(bee.api.Project)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">install</code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="Z"><code>void</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Project.html">Project</a></code><code>project</code></td>
 							<td><span><p>A project to install.</p></span></td>
 						</tr>
 					</table><span class="B"><p>Install project into the local repository.</p></span></section>
-				<section class="O" id="install(bee.api.Project,psychopath.File)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">install</code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>)</code><i class="J"><code>void</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="install(bee.api.Project,psychopath.File)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">install</code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>)</code><i class="Z"><code>void</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Project.html">Project</a></code><code>project</code></td>
 							<td><span><p>A project to install.</p></span></td>
 						</tr>
-						<tr class="N">
+						<tr class="O">
 							<td><code>psychopath.File</code><code>classes</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Install project into the local repository.</p></span></section>
-				<section class="O" id="install(bee.api.Project,psychopath.File,psychopath.File,psychopath.File)">
-					<h2 class="S"><i class="PUBLIC"></i><code class="Z">install</code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>, <code>psychopath.File</code><code class="parameterName">sources</code>, <code>psychopath.File</code><code class="parameterName">javadoc</code>)</code><i class="J"><code>void</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="install(bee.api.Project,psychopath.File,psychopath.File,psychopath.File)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="M">install</code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>, <code>psychopath.File</code><code class="parameterName">sources</code>, <code>psychopath.File</code><code class="parameterName">javadoc</code>)</code><i class="Z"><code>void</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code><a href="api/bee.api.Project.html">Project</a></code><code>project</code></td>
 							<td><span><p>A project to install.</p></span></td>
 						</tr>
-						<tr class="N">
+						<tr class="O">
 							<td><code>psychopath.File</code><code>classes</code></td>
 							<td></td>
 						</tr>
-						<tr class="N">
+						<tr class="O">
 							<td><code>psychopath.File</code><code>sources</code></td>
 							<td></td>
 						</tr>
-						<tr class="N">
+						<tr class="O">
 							<td><code>psychopath.File</code><code>javadoc</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Install project into the local repository.</p></span></section>
-				<section class="O" id="getLocalRepository()">
-					<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="Z">getLocalRepository</code><code class="c">()</code><i class="J"><code>psychopath.Directory</code></i></h2>
-					<table class="P">
-						<tr class="h">
+				<section class="e" id="getLocalRepository()">
+					<h2 class="f"><i class="FINAL"><i class="PUBLIC"></i></i><code class="M">getLocalRepository</code><code class="g">()</code><i class="Z"><code>psychopath.Directory</code></i></h2>
+					<table class="T">
+						<tr class="L">
 							<td><code>psychopath.Directory</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Get the local repository path.</p></span></section>
-				<section class="O" id="setLocalRepository(psychopath.Directory)">
-					<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="Z">setLocalRepository</code><code class="c">(<code>psychopath.Directory</code><code class="parameterName">path</code>)</code><i class="J"><code>void</code></i></h2>
-					<table class="P">
-						<tr class="N">
+				<section class="e" id="setLocalRepository(psychopath.Directory)">
+					<h2 class="f"><i class="FINAL"><i class="PUBLIC"></i></i><code class="M">setLocalRepository</code><code class="g">(<code>psychopath.Directory</code><code class="parameterName">path</code>)</code><i class="Z"><code>void</code></i></h2>
+					<table class="T">
+						<tr class="O">
 							<td><code>psychopath.Directory</code><code>path</code></td>
 							<td><span><p>The local value to set.</p></span></td>
 						</tr>
 					</table><span class="B"><p>Set the local property of this <code><a href="api/bee.api.Repository.html">Repository</a></code>.</p></span></section>
-				<section class="O" id="require(java.lang.String)">
-					<h2 class="S"><i class="PUBLIC STATIC"></i><code class="Z">require</code><code class="c">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">groupProductVersion</code>)</code><i class="J"><code>void</code></i></h2>
-					<table class="P">
-						<tr class="N">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>groupProductVersion</code></td>
+				<section class="e" id="require(java.lang.String)">
+					<h2 class="f"><i class="PUBLIC STATIC"></i><code class="M">require</code><code class="g">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">qualifier</code>)</code><i class="Z"><code>void</code></i></h2>
+					<table class="T">
+						<tr class="O">
+							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>qualifier</code></td>
 							<td><span><p>A colon separated values. (group:product:version)</p></span></td>
 						</tr>
 					</table><span class="B"><p>Load the latest library and import it dynamically.</p></span></section>
-				<section class="O" id="require(java.lang.String,java.lang.String)">
-					<h2 class="S"><i class="PUBLIC STATIC"></i><code class="Z">require</code><code class="c">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">group</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">product</code>)</code><i class="J"><code>void</code></i></h2>
-					<table class="P">
-						<tr class="N">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>group</code></td>
-							<td><span><p>A group name.</p></span></td>
-						</tr>
-						<tr class="N">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>product</code></td>
-							<td><span><p>A product name.</p></span></td>
-						</tr>
-					</table><span class="B"><p>Load the latest library and import it dynamically.</p></span></section>
-				<section class="O" id="require(java.lang.String,java.lang.String,java.lang.String)">
-					<h2 class="S"><i class="PUBLIC STATIC"></i><code class="Z">require</code><code class="c">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">group</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">product</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">version</code>)</code><i class="J"><code>void</code></i></h2>
-					<table class="P">
-						<tr class="N">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>group</code></td>
-							<td><span><p>A group name.</p></span></td>
-						</tr>
-						<tr class="N">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>product</code></td>
-							<td><span><p>A product name.</p></span></td>
-						</tr>
-						<tr class="N">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>version</code></td>
-							<td><span><p>A product version.</p></span></td>
-						</tr>
-					</table><span class="B"><p>Load library and import it dynamically.</p></span></section>
 			</article>
-			<aside class="d" id="SubNavi">
-				<div class="f">
-					<h5 class="m">Static Methods</h5>
+			<aside class="N" id="SubNavi">
+				<div class="R">
+					<h5 class="H">Static Methods</h5>
 					<ul>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.api.Repository.html#require(java.lang.String)">require</a></code><code class="c">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">groupProductVersion</code>)</code><i class="k"><code>void</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.api.Repository.html#require(java.lang.String,java.lang.String)">require</a></code><code class="c">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">group</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">product</code>)</code><i class="k"><code>void</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.api.Repository.html#require(java.lang.String,java.lang.String,java.lang.String)">require</a></code><code class="c">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">group</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">product</code>, <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">version</code>)</code><i class="k"><code>void</code></i></li>
+						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.api.Repository.html#require(java.lang.String)">require</a></code><code class="g">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">qualifier</code>)</code><i class="j"><code>void</code></i></li>
 					</ul>
-					<h5 class="m">Methods</h5>
+					<h5 class="H">Methods</h5>
 					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#buildDependencyGraph(bee.api.Project)">buildDependencyGraph</a></code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="k"><code>org.eclipse.aether.graph.DependencyNode</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#collectDependency(bee.api.Project,bee.api.Scope...)">collectDependency</a></code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="k"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#collectDependency(bee.api.Library,bee.api.Scope...)">collectDependency</a></code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="k"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveLatestVersion(bee.api.Library)">resolveLatestVersion</a></code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="k"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveJar(bee.api.Library)">resolveJar</a></code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="k"><code>psychopath.File</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveJavadoc(bee.api.Library)">resolveJavadoc</a></code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="k"><code>psychopath.File</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveSource(bee.api.Library)">resolveSource</a></code><code class="c">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="k"><code>psychopath.File</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#install(bee.api.Project)">install</a></code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="k"><code>void</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#install(bee.api.Project,psychopath.File)">install</a></code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>)</code><i class="k"><code>void</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#install(bee.api.Project,psychopath.File,psychopath.File,psychopath.File)">install</a></code><code class="c">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>, <code>psychopath.File</code><code class="parameterName">sources</code>, <code>psychopath.File</code><code class="parameterName">javadoc</code>)</code><i class="k"><code>void</code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.Repository.html#getLocalRepository()">getLocalRepository</a></code><code class="c">()</code><i class="k"><code>psychopath.Directory</code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.Repository.html#setLocalRepository(psychopath.Directory)">setLocalRepository</a></code><code class="c">(<code>psychopath.Directory</code><code class="parameterName">path</code>)</code><i class="k"><code>void</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#buildDependencyGraph(bee.api.Project)">buildDependencyGraph</a></code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="j"><code>org.eclipse.aether.graph.DependencyNode</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#collectDependency(bee.api.Project,bee.api.Scope...)">collectDependency</a></code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="j"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#collectDependency(bee.api.Library,bee.api.Scope...)">collectDependency</a></code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>, <code array="var"><a href="api/bee.api.Scope.html">Scope</a></code><code class="parameterName">scopes</code>)</code><i class="j"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/Set.html">Set</a><code class="parameters"><code><a href="api/bee.api.Library.html">Library</a></code></code></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveLatestVersion(bee.api.Library)">resolveLatestVersion</a></code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="j"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveJar(bee.api.Library)">resolveJar</a></code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="j"><code>psychopath.File</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveJavadoc(bee.api.Library)">resolveJavadoc</a></code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="j"><code>psychopath.File</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#resolveSource(bee.api.Library)">resolveSource</a></code><code class="g">(<code><a href="api/bee.api.Library.html">Library</a></code><code class="parameterName">library</code>)</code><i class="j"><code>psychopath.File</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#install(bee.api.Project)">install</a></code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>)</code><i class="j"><code>void</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#install(bee.api.Project,psychopath.File)">install</a></code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>)</code><i class="j"><code>void</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Repository.html#install(bee.api.Project,psychopath.File,psychopath.File,psychopath.File)">install</a></code><code class="g">(<code><a href="api/bee.api.Project.html">Project</a></code><code class="parameterName">project</code>, <code>psychopath.File</code><code class="parameterName">classes</code>, <code>psychopath.File</code><code class="parameterName">sources</code>, <code>psychopath.File</code><code class="parameterName">javadoc</code>)</code><i class="j"><code>void</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.Repository.html#getLocalRepository()">getLocalRepository</a></code><code class="g">()</code><i class="j"><code>psychopath.Directory</code></i></li>
+						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.Repository.html#setLocalRepository(psychopath.Directory)">setLocalRepository</a></code><code class="g">(<code>psychopath.Directory</code><code class="parameterName">path</code>)</code><i class="j"><code>void</code></i></li>
 					</ul>
 				</div>
 			</aside>
