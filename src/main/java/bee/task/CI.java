@@ -109,7 +109,7 @@ public class CI extends Task {
                       run: |
                         URL="https://jitpack.io/%s/$(cat version.txt)/build.log"
                         echo "Start building $URL"
-                        curl -m 1 -s -X GET $URL > /dev/null
+                        sleep 10 && curl -m 1 -s -X GET $URL > /dev/null
                 """;
 
         String version = Inputs.normalize(project.getJavaSourceVersion());

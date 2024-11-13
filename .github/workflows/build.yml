@@ -54,8 +54,8 @@ jobs:
       with:
         commit_message: update repository info
 
-    - name: Building Artifact in Jitpack
+    - name: Request building artifact in Jitpack
       run: |
         URL="https://jitpack.io/com/github/teletha/bee/$(cat version.txt)/build.log"
         echo "Start building $URL"
-        curl -m 1 -s -X GET $URL > /dev/null
+        sleep 10 && curl -m 1 -s -X GET $URL > /dev/null
