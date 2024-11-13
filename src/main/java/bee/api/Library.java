@@ -39,10 +39,24 @@ public class Library implements Comparable<Library> {
     Artifact artifact;
 
     /**
+     * Resolve by qualified artifact name.
+     * 
      * @param qualified
+     * @return
      */
-    Library(String qualified) {
-        this(new DefaultArtifact(qualified));
+    static Library parse(String qualified) {
+        String[] values = qualified.split(":");
+        switch (values.length) {
+        case 2:
+            return new Library(values[0], values[1], I.make(Repository.class)
+                    .resolveLatestVersion(new Library(values[0], values[1], "LATEST")));
+
+        case 3:
+            return new Library(values[0], values[1], values[2]);
+
+        default:
+            throw new IllegalArgumentException(qualified + " is invalid format.");
+        }
     }
 
     /**
