@@ -921,8 +921,7 @@ public class Project {
 
         ////////////////////   Compiler Plugin      ////////////////////
         plugins.child("plugin", p -> {
-            p.child("artifactId").text("maven-compiler-plugin");
-            p.child("version").text("3.13.0");
+            lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.13.0");
             p.child("configuration", conf -> {
                 conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
                 conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
@@ -944,8 +943,7 @@ public class Project {
 
         ////////////////////   Surefire Plugin      ////////////////////
         plugins.child("plugin", p -> {
-            p.child("artifactId").text("maven-surefire-plugin");
-            p.child("version").text("3.5.2");
+            lib(p, "org.apache.maven.plugins : maven-surefire-plugin");
             p.child("configuration", conf -> {
                 conf.child("argLine").text("-ea   -Dfile.encoding=UTF-8");
                 conf.child("reportFormat").text("plain");
@@ -963,16 +961,19 @@ public class Project {
     }
 
     private XML deps(String... artifacts) {
-        XML root = I.xml("<dependencies/>");
+        XML root = I.xml("dependencies");
         for (String artifact : artifacts) {
-            Library library = Library.parse(artifact);
-            root.child("dependency", dep -> {
-                dep.child("groupId").text(library.getGroup());
-                dep.child("artifactId").text(library.getName());
-                dep.child("version").text(I.make(Repository.class).resolveLatestVersion(library));
-            });
+            lib(root.child("dependency"), artifact);
         }
         return root;
+    }
+
+    private void lib(XML xml, String artifact) {
+        Library library = Library.parse(artifact);
+
+        xml.child("groupId").text(library.getGroup());
+        xml.child("artifactId").text(library.getName());
+        xml.child("version").text(I.make(Repository.class).resolveLatestVersion(library));
     }
 
     /**
