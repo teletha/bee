@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.63.7](https://github.com/teletha/bee/compare/v0.63.6...v0.63.7) (2024-11-13)
+
+
+### Bug Fixes
+
+* invalid javac option ([bbe18bf](https://github.com/teletha/bee/commit/bbe18bfee8cc152f8d5c2496ef0f27f0df44f747))
+
 ## [0.63.6](https://github.com/teletha/bee/compare/v0.63.5...v0.63.6) (2024-11-13)
 
 
