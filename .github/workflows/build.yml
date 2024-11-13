@@ -59,4 +59,4 @@ jobs:
       run: |
         URL="https://jitpack.io/com/github/teletha/bee/$(cat version.txt)/build.log"
         echo "Request building $URL"
-        sleep 3 && (curl -m 1 -s -X GET $URL > /dev/null || true)
+        sleep 5 && (curl -m 1 -s -X GET $URL > /dev/null || true)
