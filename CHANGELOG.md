@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.63.3](https://github.com/teletha/bee/compare/v0.63.2...v0.63.3) (2024-11-13)
+
+
+### Bug Fixes
+
+* jitpack test ([ccf3262](https://github.com/teletha/bee/commit/ccf3262c477a0c7a478351833ee3a29c1b48fdf0))
+
 ## [0.63.2](https://github.com/teletha/bee/compare/v0.63.1...v0.63.2) (2024-11-13)
 
 
