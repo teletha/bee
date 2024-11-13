@@ -1,5 +1,76 @@
 # Changelog
 
+## [0.63.7](https://github.com/teletha/bee/compare/v0.63.6...v0.63.7) (2024-11-13)
+
+
+### Bug Fixes
+
+* invalid javac option ([bbe18bf](https://github.com/teletha/bee/commit/bbe18bfee8cc152f8d5c2496ef0f27f0df44f747))
+
+## [0.63.6](https://github.com/teletha/bee/compare/v0.63.5...v0.63.6) (2024-11-13)
+
+
+### Bug Fixes
+
+* jitpack test ([8d78a47](https://github.com/teletha/bee/commit/8d78a47703f38c92aa9096af02d28d8c7dcf9ad9))
+
+## [0.63.5](https://github.com/teletha/bee/compare/v0.63.4...v0.63.5) (2024-11-13)
+
+
+### Bug Fixes
+
+* jitpack test ([0cee17d](https://github.com/teletha/bee/commit/0cee17dc5e703903c41c3d4b792a16b1fc52b37a))
+* jitpack test ([ab1a657](https://github.com/teletha/bee/commit/ab1a65776e02e7221836b1dc1c272dd701158c14))
+
+## [0.63.4](https://github.com/teletha/bee/compare/v0.63.3...v0.63.4) (2024-11-13)
+
+
+### Bug Fixes
+
+* jitpack test ([dc4d752](https://github.com/teletha/bee/commit/dc4d752752e2c539bdbd7a13581c9efab2434a52))
+
+## [0.63.3](https://github.com/teletha/bee/compare/v0.63.2...v0.63.3) (2024-11-13)
+
+
+### Bug Fixes
+
+* jitpack test ([ccf3262](https://github.com/teletha/bee/commit/ccf3262c477a0c7a478351833ee3a29c1b48fdf0))
+
+## [0.63.2](https://github.com/teletha/bee/compare/v0.63.1...v0.63.2) (2024-11-13)
+
+
+### Bug Fixes
+
+* jitpack test ([ba43fb9](https://github.com/teletha/bee/commit/ba43fb9b72d2aba38a141a858f4bfeb0660d1a90))
+
+## [0.63.1](https://github.com/teletha/bee/compare/v0.63.0...v0.63.1) (2024-11-13)
+
+
+### Bug Fixes
+
+* jitpack test ([1c7e550](https://github.com/teletha/bee/commit/1c7e550c9bacbdb5520abd7455d621ca78d6a318))
+
+## [0.63.0](https://github.com/teletha/bee/compare/v0.62.0...v0.63.0) (2024-11-13)
+
+
+### Features
+
+* Enhance Jitpack support ([4c75a25](https://github.com/teletha/bee/commit/4c75a2524223caffa8780feed4a1ce332a9afb14))
+
+
+### Bug Fixes
+
+* refactoring pom generator ([13bfd99](https://github.com/teletha/bee/commit/13bfd997a3cfbd122f7def581f9ea163c65ae70b))
+
+## [0.62.0](https://github.com/teletha/bee/compare/v0.61.1...v0.62.0) (2024-11-13)
+
+
+### Features
+
+* add Task#find ([9b2dc9a](https://github.com/teletha/bee/commit/9b2dc9a5bd403f4a62390a2282dc5fa9ace489cd))
+* drop Repository#require(String, String, String) ([9b2dc9a](https://github.com/teletha/bee/commit/9b2dc9a5bd403f4a62390a2282dc5fa9ace489cd))
+* POM recognizes the usage of eclipse compiler automatically. ([9b2dc9a](https://github.com/teletha/bee/commit/9b2dc9a5bd403f4a62390a2282dc5fa9ace489cd))
+
 ## [0.61.1](https://github.com/teletha/bee/compare/v0.61.0...v0.61.1) (2024-11-12)
 
 

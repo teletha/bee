@@ -34,8 +34,10 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
 
 import bee.Bee;
+import bee.Task;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
+import bee.task.Compile;
 import bee.util.Ensure;
 import bee.util.Inputs;
 import kiss.I;
@@ -839,8 +841,16 @@ public class Project {
         pom.child("name").text(getProduct());
         pom.child("description").text(getDescription());
 
-        XML dependencies = pom.child("dependencies");
+        if (this.license != null) {
+            XML license = pom.child("licenses").child("license");
+            license.child("name").text(this.license.full);
+            license.child("url").text(this.license.uri);
+        }
 
+        // =================================================
+        // Dependency Section
+        // =================================================
+        XML dependencies = pom.child("dependencies");
         for (Library library : libraries) {
             XML dependency = dependencies.child("dependency");
             dependency.child("groupId").text(library.group);
@@ -862,12 +872,9 @@ public class Project {
             }
         }
 
-        if (this.license != null) {
-            XML license = pom.child("licenses").child("license");
-            license.child("name").text(this.license.full);
-            license.child("url").text(this.license.uri);
-        }
-
+        // =================================================
+        // Repository Section
+        // =================================================
         List<RemoteRepository> repos = new ArrayList();
         repos.addAll(this.repositories);
         repos.addAll(Repository.builtinRepositories);
@@ -880,6 +887,9 @@ public class Project {
             repository.child("url").text(repo.getUrl());
         }
 
+        // =================================================
+        // Version Control System Section
+        // =================================================
         if (vcs != null) {
             pom.child("url").text(vcs.uri());
 
@@ -904,48 +914,65 @@ public class Project {
             }
         }
 
-        // ==============================================================
-        // Maven Plugins
-        // ==============================================================
+        // =================================================
+        // Maven Plugin Section
+        // =================================================
         XML plugins = pom.child("build").child("plugins");
 
-        // compiler-plugin
-        XML plugin = plugins.child("plugin");
-        plugin.child("artifactId").text("maven-compiler-plugin");
-        plugin.child("version").text("3.13.0");
-        XML conf = plugin.child("configuration");
-        conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
-        conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
-        conf.child("encoding").text(getEncoding().displayName());
-        XML args = conf.child("compilerArgs");
-        if (getClasses().file("META-INF/services/javax.annotation.processing.Processor").isPresent()) args.child("arg").text("-proc:none");
+        ////////////////////   Compiler Plugin      ////////////////////
+        plugins.child("plugin", p -> {
+            lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.13.0");
+            p.child("configuration", conf -> {
+                conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
+                conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
+                conf.child("encoding").text(getEncoding().displayName());
 
-        // surefire-plugin
-        plugins.append("""
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.2</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>me.fabriciorby</groupId>
-                            <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
-                            <version>0.1.0</version>
-                        </dependency>
-                    </dependencies>
-                    <configuration>
-                        <argLine>-Dfile.encoding=UTF-8</argLine>
-                        <reportFormat>plain</reportFormat>
-                        <consoleOutputReporter>
-                            <disable>true</disable>
-                        </consoleOutputReporter>
-                        <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
-                    </configuration>
-                </plugin>
-                """);
+                boolean ecj = Task.find(Compile.class).useECJ;
+                boolean apt = getClasses().file("META-INF/services/javax.annotation.processing.Processor").isPresent();
+
+                conf.child("compilerId").text(ecj ? "eclipse" : "javac");
+                conf.child("compilerArgs", args -> {
+                    args.child("arg").text("-parameters");
+                    if (ecj) args.child("arg").text("-preserveAllLocals");
+                    if (apt) args.child("arg").text("-proc:none");
+                });
+                if (ecj) p.append(deps("org.codehaus.plexus : plexus-compiler-eclipse", "org.eclipse.jdt : ecj"));
+            });
+        });
+
+        ////////////////////   Surefire Plugin      ////////////////////
+        plugins.child("plugin", p -> {
+            lib(p, "org.apache.maven.plugins : maven-surefire-plugin");
+            p.child("configuration", conf -> {
+                conf.child("argLine").text("-ea   -Dfile.encoding=UTF-8");
+                conf.child("reportFormat").text("plain");
+                conf.child("consoleOutputReporter", rep -> {
+                    rep.child("disable").text("true");
+                });
+                conf.child("statelessTestsetInfoReporter")
+                        .attr("implementation", "org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter");
+            });
+            p.append(deps("me.fabriciorby : maven-surefire-junit5-tree-reporter"));
+        });
 
         // write as pom
         return pom.toString();
+    }
+
+    private XML deps(String... artifacts) {
+        XML root = I.xml("dependencies");
+        for (String artifact : artifacts) {
+            lib(root.child("dependency"), artifact);
+        }
+        return root;
+    }
+
+    private void lib(XML xml, String artifact) {
+        Library library = Library.parse(artifact);
+
+        xml.child("groupId").text(library.getGroup());
+        xml.child("artifactId").text(library.getName());
+        xml.child("version").text(I.make(Repository.class).resolveLatestVersion(library));
     }
 
     /**

@@ -20,7 +20,7 @@ import psychopath.Locator;
 public class Compile extends Task {
 
     /** The kind of compiler. */
-    protected boolean useECJ = false;
+    public boolean useECJ = false;
 
     /**
      * Compile main sources and copy other resources.

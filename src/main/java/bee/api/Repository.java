@@ -548,43 +548,10 @@ public class Repository {
     /**
      * Load the latest library and import it dynamically.
      * 
-     * @param groupProductVersion A colon separated values. (group:product:version)
+     * @param qualifier A colon separated values. (group:product:version)
      */
-    public static void require(String groupProductVersion) {
-        String[] values = groupProductVersion.split(":");
-        switch (values.length) {
-        case 2:
-            require(values[0], values[1]);
-            break;
-
-        case 3:
-            require(values[0], values[1], values[2]);
-            break;
-
-        default:
-            throw new IllegalArgumentException(groupProductVersion + " is invalid format.");
-        }
-    }
-
-    /**
-     * Load the latest library and import it dynamically.
-     * 
-     * @param group A group name.
-     * @param product A product name.
-     */
-    public static void require(String group, String product) {
-        require(group, product, I.make(Repository.class).resolveLatestVersion(new Library(group, product, "LATEST")));
-    }
-
-    /**
-     * Load library and import it dynamically.
-     * 
-     * @param group A group name.
-     * @param product A product name.
-     * @param version A product version.
-     */
-    public static void require(String group, String product, String version) {
-        Library require = new Library(group, product, version);
+    public static void require(String qualifier) {
+        Library require = Library.parse(qualifier);
         BeeLoader.load(require.getLocalJar());
 
         for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {

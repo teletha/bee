@@ -73,7 +73,7 @@ public class Snippet {
      * @return
      */
     static List<Snippet> parse(boolean test, String source, String annotationFQCN) {
-        if (!test) Repository.require("com.github.javaparser", "javaparser-core");
+        if (!test) Repository.require("com.github.javaparser : javaparser-core");
 
         List<Snippet> snippets = new ArrayList();
 

@@ -72,6 +72,13 @@ public abstract class VCS {
         }
     }
 
+    /**
+     * Get the inverted name of the domain to be used as the identifier.
+     * 
+     * @return
+     */
+    public abstract String domain();
+
     /** The uri for read access. */
     public String uriForRead() {
         throw unsupport("uriForRead");
@@ -263,6 +270,14 @@ public abstract class VCS {
          */
         GitHub(URL uri) {
             super(uri);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String domain() {
+            return "com/github/" + owner + "/" + repo;
         }
 
         /**

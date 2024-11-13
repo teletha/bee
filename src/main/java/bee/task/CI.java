@@ -104,6 +104,13 @@ public class CI extends Task {
                       uses: stefanzweifel/git-auto-commit-action@v5
                       with:
                         commit_message: update repository info
+
+                    - name: Request building artifact in Jitpack
+                      if: contains(github.event.head_commit.message, 'release-please')
+                      run: |
+                        URL="https://jitpack.io/%s/$(cat version.txt)/build.log"
+                        echo "Request building $URL"
+                        sleep 5 && (curl -m 1 -s -X GET $URL > /dev/null || true)
                 """;
 
         String version = Inputs.normalize(project.getJavaSourceVersion());
@@ -111,7 +118,8 @@ public class CI extends Task {
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
         makeFile("version.txt", List.of(project.getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
-        makeFile(".github/workflows/build.yml", String.format(build, version, project.getProduct()));
+        makeFile(".github/workflows/build.yml", String
+                .format(build, version, project.getProduct(), project.getVersionControlSystem().domain()));
         license();
         readme();
 

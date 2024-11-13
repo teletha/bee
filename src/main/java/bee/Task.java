@@ -672,12 +672,23 @@ public abstract class Task implements Extensible {
     }
 
     /**
+     * Find the task instance by type.
+     * 
+     * @param <T>
+     * @param type
+     * @return
+     */
+    public static <T extends Task> T find(Class<T> type) {
+        return (T) I.make(info(computeTaskName(type)).task);
+    }
+
+    /**
      * Compute human-readable task name.
      * 
      * @param taskClass A target task.
      * @return A task name.
      */
-    private final String computeTaskName(Class taskClass) {
+    private static final String computeTaskName(Class taskClass) {
         if (taskClass.isSynthetic()) {
             return computeTaskName(taskClass.getSuperclass());
         }
@@ -690,7 +701,7 @@ public abstract class Task implements Extensible {
      * @param name A task name.
      * @return A specified task.
      */
-    private final Info info(String name) {
+    private static final Info info(String name) {
         if (name == null) {
             throw new Error("You must specify task name.");
         }
@@ -714,7 +725,7 @@ public abstract class Task implements Extensible {
         if (info == null) {
             // Search for tasks with similar names for possible misspellings.
             String recommend = Inputs.recommend(name, commons.keySet());
-            if (recommend != null && ui.confirm("Isn't it a misspelling of task [" + recommend + "] ?")) {
+            if (recommend != null && I.make(UserInterface.class).confirm("Isn't it a misspelling of task [" + recommend + "] ?")) {
                 return commons.get(recommend);
             }
 
