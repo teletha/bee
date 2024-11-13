@@ -106,10 +106,11 @@ public class CI extends Task {
                         commit_message: update repository info
 
                     - name: Request building artifact in Jitpack
+                      if: github.event_name == 'pull_request'
                       run: |
                         URL="https://jitpack.io/%s/$(cat version.txt)/build.log"
                         echo "Request building $URL"
-                        sleep 7 && (curl -m 1 -s -X GET $URL > /dev/null || true)
+                        sleep 3 && (curl -m 1 -s -X GET $URL > /dev/null || true)
                 """;
 
         String version = Inputs.normalize(project.getJavaSourceVersion());
