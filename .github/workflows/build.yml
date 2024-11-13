@@ -55,7 +55,7 @@ jobs:
         commit_message: update repository info
 
     - name: Request building artifact in Jitpack
-      if: contains(github.event.head_commit.message, 'chore(master): release')
+      if: contains(${{ github.event.head_commit.message }}, 'chore(master): release')
       run: |
         URL="https://jitpack.io/com/github/teletha/bee/$(cat version.txt)/build.log"
         echo "Request building $URL"
