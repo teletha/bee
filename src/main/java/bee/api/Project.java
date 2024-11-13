@@ -933,7 +933,6 @@ public class Project {
                 conf.child("compilerId").text(ecj ? "eclipse" : "javac");
                 conf.child("compilerArgs", args -> {
                     args.child("arg").text("-parameters");
-                    args.child("arg").text("-warn:none");
                     if (ecj) args.child("arg").text("-preserveAllLocals");
                     if (apt) args.child("arg").text("-proc:none");
                 });
