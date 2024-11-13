@@ -53,3 +53,9 @@ jobs:
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: update repository info
+
+    - name: Building Artifact in Jitpack
+      run: |
+        URL="https://jitpack.io/com/github/teletha/bee/$(cat version.txt)/build.log"
+        echo "Start building $URL"
+        curl -m 1 -s -X GET $URL > /dev/null
