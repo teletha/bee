@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.62.0](https://github.com/teletha/bee/compare/v0.61.1...v0.62.0) (2024-11-13)
+
+
+### Features
+
+* add Task#find ([9b2dc9a](https://github.com/teletha/bee/commit/9b2dc9a5bd403f4a62390a2282dc5fa9ace489cd))
+* drop Repository#require(String, String, String) ([9b2dc9a](https://github.com/teletha/bee/commit/9b2dc9a5bd403f4a62390a2282dc5fa9ace489cd))
+* POM recognizes the usage of eclipse compiler automatically. ([9b2dc9a](https://github.com/teletha/bee/commit/9b2dc9a5bd403f4a62390a2282dc5fa9ace489cd))
+
 ## [0.61.1](https://github.com/teletha/bee/compare/v0.61.0...v0.61.1) (2024-11-12)
 
 
