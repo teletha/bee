@@ -38,13 +38,13 @@ import psychopath.Locator;
 public class Exe extends Task {
 
     /** The location for icon of exe file. */
-    protected Path icon;
+    public Path icon;
 
     /** The usage of custom JRE. */
-    protected boolean useCustomJRE = true;
+    public boolean useCustomJRE = true;
 
     /** The additional packing data. */
-    protected final Set<Location> resources = new HashSet();
+    public final Set<Location> resources = new HashSet();
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {

@@ -28,7 +28,7 @@ import psychopath.Locator;
 public class Wrapper extends Task {
 
     /** Specify the bee version. */
-    protected String version = Bee.Tool.getVersion();
+    public String version = Bee.Tool.getVersion();
 
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
     public void stable() {

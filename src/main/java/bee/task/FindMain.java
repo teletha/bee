@@ -28,13 +28,13 @@ import kiss.Singleton;
 public class FindMain extends Task {
 
     /** In subclass, you can specify the fully qualified class name for project main class. */
-    protected String main;
+    public String main;
 
     /** In subclass, you can specify the fully qualified class name for project premain class. */
-    protected String premain;
+    public String premain;
 
     /** In subclass, you can specify the fully qualified class name for project agentmain class. */
-    protected String agentmain;
+    public String agentmain;
 
     /**
      * <p>

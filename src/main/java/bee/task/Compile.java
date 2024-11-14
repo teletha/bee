@@ -19,7 +19,7 @@ import psychopath.Locator;
 
 public class Compile extends Task {
 
-    /** The kind of compiler. */
+    /** Force to use the eclipse compiler for Java. */
     public boolean useECJ = false;
 
     /**

@@ -43,22 +43,22 @@ public class Jar extends Task {
      * Determines whether or not the class file should contain the local variable name and parameter
      * name.
      */
-    protected boolean removeDebugInfo = false;
+    public boolean removeDebugInfo = false;
 
     /**
      * Determines whether or not the class file should contain the source file name and line number.
      */
-    protected boolean removeTraceInfo = false;
+    public boolean removeTraceInfo = false;
 
     /**
      * Configure how to handle your resources when creating project jar.
      */
-    protected Function<Option, Option> packing = Function.identity();
+    public Function<Option, Option> packing = Function.identity();
 
     /**
      * Configure how to handle merged resources when merging dependent jars.
      */
-    protected Function<Option, Option> merging = Function.identity();
+    public Function<Option, Option> merging = Function.identity();
 
     /**
      * Package main classes and other resources.

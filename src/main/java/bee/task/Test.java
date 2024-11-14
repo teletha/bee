@@ -44,13 +44,13 @@ import psychopath.Directory;
 public class Test extends Task {
 
     /** The threshold time (ms) to show the prolonged test. */
-    protected int showProlongedTest = 1000;
+    public int showProlongedTest = 1000;
 
     /** The test executing JVM. */
-    protected Directory java;
+    public Directory java;
 
     /** The additional paramters for the test execution JVM. */
-    protected List<String> params = new ArrayList();
+    public List<String> params = new ArrayList();
 
     @Command("Test product codes.")
     public void test() {

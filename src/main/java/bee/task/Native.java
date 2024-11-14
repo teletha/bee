@@ -35,13 +35,13 @@ import psychopath.Option;
 public class Native extends Task {
 
     /** The available protocols. default is 'http,https' */
-    protected List<String> protocols = I.list("http", "https");
+    public List<String> protocols = I.list("http", "https");
 
     /** The available resources. default is {@link FileType#list()} */
-    protected List<String> resources = FileType.list().stream().map(FileType::extension).toList();
+    public List<String> resources = FileType.list().stream().map(FileType::extension).toList();
 
     /** The additional parameters. */
-    protected List<String> params = new ArrayList();
+    public List<String> params = new ArrayList();
 
     /** The graal kind. */
     private String kind = project.getDependency(Scope.Runtime).stream().anyMatch(lib -> lib.group.equals("org.openjfx")) ? "gluon"
