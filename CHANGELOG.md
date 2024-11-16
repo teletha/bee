@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.64.0](https://github.com/teletha/bee/compare/v0.59.0...v0.64.0) (2024-11-16)
+
+
+### Features
+
+* add commnads eclipse:live and eclipse:repository ([d5d8791](https://github.com/teletha/bee/commit/d5d8791de060d14caabb816b62e17d75a08cce80))
+* add Task#find ([3666cfe](https://github.com/teletha/bee/commit/3666cfe4c92d292866ad91164655dc7412abc630))
+* drop Repository#require(String, String, String) ([3666cfe](https://github.com/teletha/bee/commit/3666cfe4c92d292866ad91164655dc7412abc630))
+* Enhance Jitpack support ([3666cfe](https://github.com/teletha/bee/commit/3666cfe4c92d292866ad91164655dc7412abc630))
+* expose the configurable option on tasks ([b499bcf](https://github.com/teletha/bee/commit/b499bcf799af3db17d45a5fbcbfc7c5362f5bf5e))
+* maven task updates pom ([44b626e](https://github.com/teletha/bee/commit/44b626e7142af18c7273e459423193de69fc52d5))
+* POM recognizes the usage of eclipse compiler automatically. ([3666cfe](https://github.com/teletha/bee/commit/3666cfe4c92d292866ad91164655dc7412abc630))
+
+
+### Bug Fixes
+
+* require Java 21 ([d5d8791](https://github.com/teletha/bee/commit/d5d8791de060d14caabb816b62e17d75a08cce80))
+* skip annotation processor in invalid environment ([44b626e](https://github.com/teletha/bee/commit/44b626e7142af18c7273e459423193de69fc52d5))
+* Test task can show more readable output on Junit5 ([44b626e](https://github.com/teletha/bee/commit/44b626e7142af18c7273e459423193de69fc52d5))
+* test task shows class name on MethodTestSource ([44b626e](https://github.com/teletha/bee/commit/44b626e7142af18c7273e459423193de69fc52d5))
+* update sinobu ([45f52f9](https://github.com/teletha/bee/commit/45f52f92de0a7d8b975cf9593818cb882caddd95))
+
 ## [0.63.7](https://github.com/teletha/bee/compare/v0.63.6...v0.63.7) (2024-11-13)
 
 
