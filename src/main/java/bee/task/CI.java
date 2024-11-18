@@ -104,13 +104,6 @@ public class CI extends Task {
                       uses: stefanzweifel/git-auto-commit-action@v5
                       with:
                         commit_message: update repository info
-
-                    - name: Request building artifact in Jitpack
-                      if: contains(github.event.head_commit.message, 'release-please')
-                      run: |
-                        URL="https://jitpack.io/%s/$(cat version.txt)/build.log"
-                        echo "Request building $URL"
-                        sleep 5 && (curl -m 1 -s -X GET $URL > /dev/null || true)
                 """;
 
         String version = Inputs.normalize(project.getJavaSourceVersion());
