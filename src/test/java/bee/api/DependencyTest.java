@@ -669,7 +669,7 @@ class DependencyTest {
         }
 
         private Library require(String productName) {
-            return require(productName, _ -> {
+            return require(productName, noop -> {
             });
         }
 

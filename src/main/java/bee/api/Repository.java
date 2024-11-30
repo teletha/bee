@@ -809,7 +809,7 @@ public class Repository {
             }
 
             if (group.winner == null) {
-                PathRecordingDependencyVisitor visitor = new PathRecordingDependencyVisitor((node, _) -> context.isIncluded(node));
+                PathRecordingDependencyVisitor visitor = new PathRecordingDependencyVisitor((node, parents) -> context.isIncluded(node));
                 context.getRoot().accept(new TreeDependencyVisitor(visitor));
                 throw new UnsolvableVersionConflictException(visitor.getPaths());
             }

@@ -772,7 +772,7 @@ public class Project {
      * @return
      */
     public <A> A associate(Class<A> type) {
-        return (A) associates.computeIfAbsent(type, _ -> I.make(type));
+        return (A) associates.computeIfAbsent(type, key -> I.make(type));
     }
 
     /**

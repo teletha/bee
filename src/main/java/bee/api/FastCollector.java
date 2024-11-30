@@ -64,7 +64,7 @@ class FastCollector extends DependencyCollectorDelegate {
     @Override
     protected void doCollectDependencies(RepositorySystemSession session, RequestTrace trace, DataPool pool, DefaultDependencyCollectionContext context, DefaultVersionFilterContext versionContext, CollectRequest request, DependencyNode node, List<RemoteRepository> repositories, List<Dependency> dependencies, List<Dependency> managedDependencies, Results results)
             throws DependencyCollectionException {
-        try (var _ = Profiling.of("Dependency Collect")) {
+        try (var x = Profiling.of("Dependency Collect")) {
             FastCollector.Context args = new Context(session, trace, pool, context, versionContext, request);
 
             DependencySelector selector = session.getDependencySelector();

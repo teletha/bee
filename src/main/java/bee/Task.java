@@ -934,7 +934,7 @@ public abstract class Task implements Extensible {
     /**
      * 
      */
-    public interface ValuedTaskRef<T, R> extends Function<T, R>, TaskRef<T> {
+    public interface ValuedTaskRef<T, R> extends Function<T, R>, Serializable, TaskRef<T> {
 
         @Override
         default void accept(T task) {
