@@ -282,7 +282,7 @@ public class CI extends Task {
                         {license}
                         <p align="right"><a href="#top">back to top</a></p>
                         """, new Object[] {
-                        project}, (m, o, e) -> {
+                        project}, (_, _, e) -> {
                             switch (e) {
                             case "ProductName":
                                 return Inputs.capitalize(project.getProduct());

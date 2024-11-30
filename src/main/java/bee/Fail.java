@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.EOL;
+import static bee.Platform.*;
 
 import java.util.ArrayList;
 import java.util.List;

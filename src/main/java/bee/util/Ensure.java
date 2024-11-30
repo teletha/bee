@@ -160,7 +160,7 @@ public class Ensure<T> {
      */
     public final boolean test(T value) {
         boolean[] result = {true};
-        validate(value, x -> result[0] = false);
+        validate(value, _ -> result[0] = false);
         return result[0];
     }
 

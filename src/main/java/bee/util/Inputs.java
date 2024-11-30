@@ -134,7 +134,7 @@ public class Inputs {
      * @return
      */
     public static String template(String template, Object... context) {
-        return I.express(template, context, (m, o, p) -> {
+        return I.express(template, context, (_, o, p) -> {
             try {
                 return o.getClass().getField(p).get(o);
             } catch (Exception e) {

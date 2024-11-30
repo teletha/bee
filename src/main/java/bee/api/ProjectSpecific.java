@@ -47,6 +47,6 @@ public class ProjectSpecific<M> implements Lifestyle<M> {
      */
     @Override
     public M call() throws Exception {
-        return (M) I.make(Project.class).associates.computeIfAbsent(type, key -> lifestyle.get());
+        return (M) I.make(Project.class).associates.computeIfAbsent(type, _ -> lifestyle.get());
     }
 }
