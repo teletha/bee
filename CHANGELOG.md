@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.64.1](https://github.com/teletha/bee/compare/v0.64.0...v0.64.1) (2024-12-01)
+
+
+### Bug Fixes
+
+* remove build request on github action ([25ebcd1](https://github.com/teletha/bee/commit/25ebcd1f23d534d45652ab271599c040ec1ba906))
+
 ## [0.64.0](https://github.com/teletha/bee/compare/v0.59.0...v0.64.0) (2024-11-16)
 
 
