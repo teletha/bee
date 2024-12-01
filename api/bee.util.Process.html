@@ -4,17 +4,26 @@
 		<meta charset="UTF-8"/>
 		<meta content="width=device-width, initial-scale=1" name="viewport"/>
 		<meta content="Explains how to use Bee and its API. " name="description"/>
-		<link href="https://fonts.googleapis.com" rel="preconnect"/>
 		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="preload"/>
+		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<title>Bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="i">
-		<header class="Y">
-			<h1 class="b" date="2024-11-16" ver="0.64.0"><code>Bee</code></h1>
-			<nav class="c"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="S">
+		<header class="k">
+			<h1 class="c" date="2024-11-16" ver="0.64.0"><code>Bee</code></h1>
+			<nav class="i"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg><code>API</code></a><a href="https://github.com/teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
@@ -23,7 +32,7 @@
 					</svg>Activity</a><a href="https://github.com/teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>Repository</a></nav>
-			<div class="e" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
+			<div class="l" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg>
 				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
@@ -31,159 +40,159 @@
 					</svg>
 				</a></div>
 		</header>
-		<main class="M">
-			<nav class="g">
+		<main class="Q">
+			<nav class="a">
 				<div></div>
 			</nav>
-			<article class="P" id="Article">
-				<section class="Q"><code class="X">bee.util</code>
-					<h2 class="Class k"><code class="L">Process</code></h2>
-					<div class="I"></div>
+			<article class="K" id="Article">
+				<section class="N"><code class="m">bee.util</code>
+					<h2 class="Class g"><code class="j">Process</code></h2>
+					<div class="U"></div>
 				</section>
-				<section class="Q" id="with()">
-					<h2 class="Z"><i class="PUBLIC STATIC"></i><code class="L">with</code><code class="f">()</code><i class="W"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
-					<table class="K">
-						<tr class="j">
+				<section class="N" id="with()">
+					<h2 class="f"><i class="STATIC PUBLIC"></i><code class="j">with</code><code class="J">()</code><i class="P"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
+					<table class="Z">
+						<tr class="L">
 							<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Create new <code><a href="api/bee.util.Process.html">Process</a></code> builder.</p></span></section>
-				<section class="Q" id="runWith(java.lang.Object...)">
-					<h2 class="Z"><i class="PUBLIC STATIC"></i><code class="L">runWith</code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="W"><code>void</code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="runWith(java.lang.Object...)">
+					<h2 class="f"><i class="STATIC PUBLIC"></i><code class="j">runWith</code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="P"><code>void</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code>commands</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Shorthand to Process.with().run(commands).</p></span></section>
-				<section class="Q" id="readWith(java.lang.Object...)">
-					<h2 class="Z"><i class="PUBLIC STATIC"></i><code class="L">readWith</code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="W"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="readWith(java.lang.Object...)">
+					<h2 class="f"><i class="STATIC PUBLIC"></i><code class="j">readWith</code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="P"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code>commands</code></td>
 							<td></td>
 						</tr>
-						<tr class="j">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Shorthand to Process.with().read(commands).</p></span></section>
-				<section class="Q" id="workingDirectory(psychopath.Directory)">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">workingDirectory</code><code class="f">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="W"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="workingDirectory(psychopath.Directory)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">workingDirectory</code><code class="J">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="P"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code>psychopath.Directory</code><code>directory</code></td>
 							<td><span><p>A working directory.</p></span></td>
 						</tr>
-						<tr class="j">
+						<tr class="L">
 							<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
 							<td><span><p>Fluent API.</p></span></td>
 						</tr>
 					</table><span class="B"><p>Set the working directory of the sub process.</p></span></section>
-				<section class="Q" id="encoding(java.nio.charset.Charset)">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">encoding</code><code class="f">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code><code class="parameterName">encoding</code>)</code><i class="W"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="encoding(java.nio.charset.Charset)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">encoding</code><code class="J">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code><code class="parameterName">encoding</code>)</code><i class="P"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code><code>encoding</code></td>
 							<td></td>
 						</tr>
-						<tr class="j">
+						<tr class="L">
 							<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Set <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/System.html#out">System#out</a></code> and <code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/System.html#in">System#in</a></code> encoding. .</p></span></section>
-				<section class="Q" id="inParallel()">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">inParallel</code><code class="f">()</code><i class="W"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
-					<table class="K">
-						<tr class="j">
+				<section class="N" id="inParallel()">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">inParallel</code><code class="J">()</code><i class="P"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
+					<table class="Z">
+						<tr class="L">
 							<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
 							<td><span><p>Fluent API.</p></span></td>
 						</tr>
 					</table><span class="B"><p>Make this process running asynchronously.</p></span></section>
-				<section class="Q" id="ignoreOutput()">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">ignoreOutput</code><code class="f">()</code><i class="W"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
-					<table class="K">
-						<tr class="j">
+				<section class="N" id="ignoreOutput()">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">ignoreOutput</code><code class="J">()</code><i class="P"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
+					<table class="Z">
+						<tr class="L">
 							<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
 							<td><span><p>Fluent API.</p></span></td>
 						</tr>
 					</table><span class="B"><p>Make this process ignore system output.</p></span></section>
-				<section class="Q" id="verbose()">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">verbose</code><code class="f">()</code><i class="W"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
-					<table class="K">
-						<tr class="j">
+				<section class="N" id="verbose()">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">verbose</code><code class="J">()</code><i class="P"><code><a href="api/bee.util.Process.html">Process</a></code></i></h2>
+					<table class="Z">
+						<tr class="L">
 							<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Configure debugging log.</p></span></section>
-				<section class="Q" id="run(java.lang.Object...)">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">run</code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="W"><code>int</code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="run(java.lang.Object...)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">run</code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="P"><code>int</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code>commands</code></td>
 							<td></td>
 						</tr>
-						<tr class="j">
+						<tr class="L">
 							<td><code>int</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Execute sub process.</p></span></section>
-				<section class="Q" id="run(java.util.List)">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">run</code><code class="f">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="W"><code>int</code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="run(java.util.List)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">run</code><code class="J">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="P"><code>int</code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code>command</code></td>
 							<td></td>
 						</tr>
-						<tr class="j">
+						<tr class="L">
 							<td><code>int</code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Execute sub process.</p></span></section>
-				<section class="Q" id="read(java.lang.Object...)">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">read</code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="W"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="read(java.lang.Object...)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">read</code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="P"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code>commands</code></td>
 							<td></td>
 						</tr>
-						<tr class="j">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Execute sub process and accept its result.</p></span></section>
-				<section class="Q" id="read(java.util.List)">
-					<h2 class="Z"><i class="PUBLIC"></i><code class="L">read</code><code class="f">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="W"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="K">
-						<tr class="h">
+				<section class="N" id="read(java.util.List)">
+					<h2 class="f"><i class="PUBLIC"></i><code class="j">read</code><code class="J">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="P"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+					<table class="Z">
+						<tr class="W">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code>command</code></td>
 							<td></td>
 						</tr>
-						<tr class="j">
+						<tr class="L">
 							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
 							<td></td>
 						</tr>
 					</table><span class="B"><p>Execute sub process and accept its result.</p></span></section>
 			</article>
-			<aside class="U" id="SubNavi">
-				<div class="d">
-					<h5 class="m">Static Methods</h5>
+			<aside class="O" id="SubNavi">
+				<div class="M">
+					<h5 class="X">Static Methods</h5>
 					<ul>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Process.html#with()">with</a></code><code class="f">()</code><i class="R"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Process.html#runWith(java.lang.Object...)">runWith</a></code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="R"><code>void</code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Process.html#readWith(java.lang.Object...)">readWith</a></code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="R"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Process.html#with()">with</a></code><code class="J">()</code><i class="e"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
+						<li><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Process.html#runWith(java.lang.Object...)">runWith</a></code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="e"><code>void</code></i></li>
+						<li><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Process.html#readWith(java.lang.Object...)">readWith</a></code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="e"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 					</ul>
-					<h5 class="m">Methods</h5>
+					<h5 class="X">Methods</h5>
 					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#workingDirectory(psychopath.Directory)">workingDirectory</a></code><code class="f">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="R"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#encoding(java.nio.charset.Charset)">encoding</a></code><code class="f">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code><code class="parameterName">encoding</code>)</code><i class="R"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#inParallel()">inParallel</a></code><code class="f">()</code><i class="R"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#ignoreOutput()">ignoreOutput</a></code><code class="f">()</code><i class="R"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#verbose()">verbose</a></code><code class="f">()</code><i class="R"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#run(java.lang.Object...)">run</a></code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="R"><code>int</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#run(java.util.List)">run</a></code><code class="f">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="R"><code>int</code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#read(java.lang.Object...)">read</a></code><code class="f">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="R"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#read(java.util.List)">read</a></code><code class="f">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="R"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#workingDirectory(psychopath.Directory)">workingDirectory</a></code><code class="J">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="e"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#encoding(java.nio.charset.Charset)">encoding</a></code><code class="J">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/nio/charset/Charset.html">Charset</a></code><code class="parameterName">encoding</code>)</code><i class="e"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#inParallel()">inParallel</a></code><code class="J">()</code><i class="e"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#ignoreOutput()">ignoreOutput</a></code><code class="J">()</code><i class="e"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#verbose()">verbose</a></code><code class="J">()</code><i class="e"><code><a href="api/bee.util.Process.html">Process</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#run(java.lang.Object...)">run</a></code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="e"><code>int</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#run(java.util.List)">run</a></code><code class="J">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="e"><code>int</code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#read(java.lang.Object...)">read</a></code><code class="J">(<code array="var"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">commands</code>)</code><i class="e"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+						<li><i class="PUBLIC"></i><code><a href="api/bee.util.Process.html#read(java.util.List)">read</a></code><code class="J">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="e"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 					</ul>
 				</div>
 			</aside>
