@@ -142,7 +142,7 @@ If you think something might be a bug, but you're not sure, ask on StackOverflow
 ## Dependency
 Bee depends on the following products on runtime.
 * [asm-9.7.1](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.7.1)
-* [conjure-1.2.0](https://mvnrepository.com/artifact/com.github.teletha/conjure/1.2.0)
+* [conjure-1.2.1](https://mvnrepository.com/artifact/com.github.teletha/conjure/1.2.1)
 * [javax.inject-1](https://mvnrepository.com/artifact/javax.inject/javax.inject/1)
 * [maven-api-meta-4.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven/maven-api-meta/4.0.0-alpha-7)
 * [maven-api-model-4.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven/maven-api-model/4.0.0-alpha-7)
