@@ -54,6 +54,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Bun",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "CI",
 			"packageName": "bee.task",
 			"type": "Class"
