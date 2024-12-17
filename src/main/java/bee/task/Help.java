@@ -57,7 +57,7 @@ public class Help extends Task {
         ui.info("Bee   \t", Bee.API.getVersion(), " [", Locator.locate(Bee.class), "]");
         ui.info("Java  \t", System.getProperty("java.vendor"), " ", Runtime.version(), "@", System
                 .getProperty("java.class.version"), " [", Platform.Java, "]");
-        ui.info("OS     \t", System.getProperty("os.name"), " ", System.getProperty("os.arch"), " ", System.getProperty("os.version"));
+        ui.info("OS     \t", Platform.OSName, " ", Platform.OSArch, " ", Platform.OSVersion);
         ui.info("Locale \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
         ui.info("Charset\t", Platform.Encoding.displayName(Locale.ENGLISH));
     }
