@@ -22,6 +22,15 @@ import psychopath.Locator;
  */
 public final class Platform {
 
+    /** OS */
+    public static final String OSName = System.getProperty("os.name");
+
+    /** OS */
+    public static final String OSVersion = System.getProperty("os.version");
+
+    /** OS */
+    public static final String OSArch = System.getProperty("os.arch");
+
     /** The encoding. */
     public static final Charset Encoding = Charset.forName(System.getProperty("sun.jnu.encoding"));
 
@@ -164,6 +173,15 @@ public final class Platform {
      */
     public static boolean isLinux() {
         return isLinux;
+    }
+
+    /**
+     * Check whether the current platform is Linux like OS or not.
+     * 
+     * @return Result
+     */
+    public static boolean isMac() {
+        return OSName.contains("Mac") || OSName.contains("Darwin");
     }
 
     /**

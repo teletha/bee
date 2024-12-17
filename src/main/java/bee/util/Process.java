@@ -14,6 +14,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 
 import bee.Platform;
@@ -35,16 +36,26 @@ public class Process {
     /** The flag. */
     private boolean showOutput = true;
 
+    /** The flag. */
+    private boolean inheritIO = false;
+
     /** The exit code. */
     private int exit;
 
     /** The logger. */
     private boolean verbose;
 
+    /** The overridden command for specific platform. */
+    private List<String> overriden;
+
     /**
-     * Hide Constructor.
+     * Test command.
+     * 
+     * @param command
+     * @return
      */
-    private Process() {
+    public static boolean isAvailable(String command) {
+        return Process.with().ignoreOutput().run(Platform.isWindows() ? "where" : "which", command) == 0;
     }
 
     /**
@@ -72,6 +83,12 @@ public class Process {
      */
     public static String readWith(Object... commands) {
         return with().read(commands);
+    }
+
+    /**
+     * Hide Constructor.
+     */
+    private Process() {
     }
 
     /**
@@ -136,6 +153,38 @@ public class Process {
     }
 
     /**
+     * Configure user IO.
+     * 
+     * @return
+     */
+    public Process inheritIO() {
+        inheritIO = true;
+        return this;
+    }
+
+    /**
+     * Configure the platform specific command.
+     * 
+     * @param command
+     * @return
+     */
+    public Process when(BooleanSupplier condition, String command) {
+        if (condition.getAsBoolean()) {
+            overriden = List.of(command.split(" "));
+        }
+        return this;
+    }
+
+    /**
+     * Execute sub process.
+     * 
+     * @param commands
+     */
+    public int run(String commands) {
+        return run(List.of(commands.split(" ")));
+    }
+
+    /**
      * Execute sub process.
      * 
      * @param commands
@@ -158,6 +207,15 @@ public class Process {
         run(command, true);
 
         return exit;
+    }
+
+    /**
+     * Execute sub process and accept its result.
+     * 
+     * @param commands
+     */
+    public String read(String commands) {
+        return read(List.of(commands.split(" ")));
     }
 
     /**
@@ -191,6 +249,10 @@ public class Process {
      * @return
      */
     private String run(List<String> command, boolean userOutput) {
+        if (overriden != null) {
+            command = overriden;
+        }
+
         try {
             ProcessBuilder builder = new ProcessBuilder();
 
@@ -207,7 +269,11 @@ public class Process {
                 builder.directory(directory.asJavaFile());
             }
 
-            builder.redirectErrorStream(true);
+            if (inheritIO) {
+                builder.inheritIO();
+            } else {
+                builder.redirectErrorStream(true);
+            }
             builder.command(command);
 
             if (verbose) {
