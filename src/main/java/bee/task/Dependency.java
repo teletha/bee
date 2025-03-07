@@ -9,8 +9,13 @@
  */
 package bee.task;
 
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.DependencyNode;
@@ -31,17 +36,31 @@ public class Dependency extends Task {
     }
 
     @Command("Display all dependency modules.")
-    public List<String> module() {
+    public Set<String> module() {
         require(Compile::source);
+        TreeSet<String> set = new TreeSet();
 
         List<String> command = I.list("jdeps", "-q", "--print-module-deps", "--ignore-missing-deps", "--multi-release", "base");
         command.add(project.getClasses().path());
         for (Library library : project.getDependency(Scope.Runtime)) {
             command.add(library.getLocalJar().path());
+
+            try (JarFile jar = new JarFile(library.getLocalJar().asJavaFile())) {
+                Manifest manifest = jar.getManifest();
+                if (manifest != null) {
+                    String value = manifest.getMainAttributes().getValue("Require-Module");
+                    if (value != null) {
+                        set.addAll(List.of(value.split(",")));
+                    }
+                }
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
         }
-        List<String> result = I.list(Process.with().read(command).split(","));
-        ui.info("Analyze dependency modules.", result);
-        return result;
+
+        set.addAll(I.list(Process.with().read(command).split(",")));
+        ui.info("Analyze dependency modules.", set);
+        return set;
     }
 
     /**

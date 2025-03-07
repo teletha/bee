@@ -477,8 +477,8 @@ public abstract class UserInterface {
                     buildArray(builder, type.getComponentType(), message);
                 } else if (CharSequence.class.isAssignableFrom(type)) {
                     builder.append((CharSequence) message);
-                } else if (List.class.isAssignableFrom(type)) {
-                    buildList(builder, (List) message);
+                } else if (Iterable.class.isAssignableFrom(type)) {
+                    buildIterable(builder, (Iterable) message);
                 } else {
                     builder.append(I.transform(message, String.class));
                 }
@@ -522,14 +522,16 @@ public abstract class UserInterface {
      * @param builder A message builder.
      * @param list Items.
      */
-    private static void buildList(StringBuilder builder, List list) {
+    private static void buildIterable(StringBuilder builder, Iterable list) {
         if (builder.length() != 0) {
             builder.append(EOL);
         }
         builder.append(EOL);
 
-        for (int i = 0; i < list.size(); i++) {
-            builder.append("  [").append(i + 1).append("] ").append(list.get(i)).append(EOL);
+        int i = 0;
+        for (Object item : list) {
+            builder.append("  [").append(i + 1).append("] ").append(item).append(EOL);
+            i++;
         }
     }
 
