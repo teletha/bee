@@ -13,107 +13,106 @@
 		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
 		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" rel="preload"/>
 		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<link as="style" fetchpriority="high" href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="preload"/>
-		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<title>Bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
+		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="a">
-		<header class="M">
-			<h1 class="Q" date="2024-11-16" ver="0.64.0"><code>Bee</code></h1>
-			<nav class="b"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="q">
+		<header class="k" date="2024-11-16" ver="0.64.0">
+			<h1 class="l"><code>Bee</code></h1>
+			<nav class="g"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
-					</svg><code>API</code></a><a href="https://github.com/teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#user"/>
-					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#activity"/>
-					</svg>Activity</a><a href="https://github.com/teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#github"/>
-					</svg>Repository</a></nav>
-			<div class="J" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#sun"/>
 					</svg>
-				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>
+				</a></nav>
+			<div class="Z"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<main class="c">
-			<nav class="X">
-				<div></div>
-			</nav>
-			<article class="V" id="Article">
-				<section class="I"><code class="Z">bee</code>
-					<h2 class="Class i"><code class="K">BeeOption</code><code class="m">&#60;<code>T</code>&#62;</code></h2>
-					<div class="L">
-						<ul class="C D">
-							<li><code>T</code></li>
-						</ul>
-					</div>
-				</section>
-				<section class="I" id="Cacheless">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Cacheless</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system not to use any cache at build time.</p></span></section>
-				<section class="I" id="Debug">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Debug</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system to output all debug log at build time.</p></span></section>
-				<section class="I" id="Help">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Help</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system to display information related to the current execution environment.
-Synonymous with the task [help:task help:option].</p></span></section>
-				<section class="I" id="Offline">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Offline</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system not to connect to an external network at build time.</p></span></section>
-				<section class="I" id="Profiling">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Profiling</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Perform profiling at build time and display the analysis results.</p></span></section>
-				<section class="I" id="Quiet">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Quiet</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system not to output error log only at build time.</p></span></section>
-				<section class="I" id="Skip">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Skip</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></code></code></i></h2><span class="B"><p>Instructs the system not to output error log only at build time.</p></span></section>
-				<section class="I" id="Unwrap">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Unwrap</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></code></code></i></h2><span class="B"><p>Instructs the system not to use wrapper bee.</p></span></section>
-				<section class="I" id="Version">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Version</code><i class="l"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system to display information related to the current execution environment.
-Synonymous with the task [help:version].</p></span></section>
-				<section class="I" id="value()">
-					<h2 class="k"><i class="PUBLIC"></i><code class="K">value</code><code class="m">()</code><i class="l"><code>T</code></i></h2>
-					<table class="H">
-						<tr class="P">
-							<td><code>T</code></td>
-							<td></td>
-						</tr>
-					</table><span class="B"><p>Get the value of this option.</p></span></section>
-				<section class="I" id="toString()">
-					<h2 class="k"><i class="OVERRIDE PUBLIC"></i><code class="K">toString</code><code class="m">()</code><i class="l"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="H">
-						<tr class="P">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
-							<td></td>
-						</tr>
-					</table>
-				</section>
-			</article>
-			<aside class="U" id="SubNavi">
-				<div class="O">
-					<h5 class="N">Static Fields</h5>
-					<ul>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Cacheless">Cacheless</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Debug">Debug</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Help">Help</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Offline">Offline</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Profiling">Profiling</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Quiet">Quiet</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Skip">Skip</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Unwrap">Unwrap</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></code></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeOption.html#Version">Version</a></code><i class="f"><code class="return"><a href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
-					</ul>
-					<h5 class="N">Methods</h5>
-					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.BeeOption.html#value()">value</a></code><code class="m">()</code><i class="f"><code>T</code></i></li>
-						<li><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.BeeOption.html#toString()">toString</a></code><code class="m">()</code><i class="f"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+		<nav class="O"></nav>
+		<article class="i" id="Article">
+			<section class="Q"><code class="U">bee</code>
+				<h2 class="Class W"><code class="j">BeeOption</code><code class="N">&#60;<code>T</code>&#62;</code></h2>
+				<div class="m">
+					<ul class="C D">
+						<li><code>T</code></li>
 					</ul>
 				</div>
-			</aside>
-		</main>
-		<script src="root.js"></script>
-		<script src="main.js" type="module"></script>
+			</section>
+			<section class="Q" id="Cacheless">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Cacheless</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system not to use any cache at build time.</p></span></section>
+			<section class="Q" id="Debug">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Debug</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system to output all debug log at build time.</p></span></section>
+			<section class="Q" id="Help">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Help</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system to display information related to the current execution environment.
+Synonymous with the task [help:task help:option].</p></span></section>
+			<section class="Q" id="Offline">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Offline</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system not to connect to an external network at build time.</p></span></section>
+			<section class="Q" id="Profiling">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Profiling</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Perform profiling at build time and display the analysis results.</p></span></section>
+			<section class="Q" id="Quiet">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Quiet</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system not to output error log only at build time.</p></span></section>
+			<section class="Q" id="Skip">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Skip</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></code></code></i></h2><span class="B"><p>Instructs the system not to output error log only at build time.</p></span></section>
+			<section class="Q" id="Unwrap">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Unwrap</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></code></code></i></h2><span class="B"><p>Instructs the system not to use wrapper bee.</p></span></section>
+			<section class="Q" id="Version">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Version</code><i class="n"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></h2><span class="B"><p>Instructs the system to display information related to the current execution environment.
+Synonymous with the task [help:version].</p></span></section>
+			<section class="Q" id="value()">
+				<h2 class="R"><i class="PUBLIC"></i><code class="j">value</code><code class="N">()</code><i class="n"><code>T</code></i></h2>
+				<table class="V">
+					<tr class="P">
+						<td><code>T</code></td>
+						<td></td>
+					</tr>
+				</table><span class="B"><p>Get the value of this option.</p></span></section>
+			<section class="Q" id="toString()">
+				<h2 class="R"><i class="OVERRIDE PUBLIC"></i><code class="j">toString</code><code class="N">()</code><i class="n"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="V">
+					<tr class="P">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+		</article>
+		<aside class="e">
+			<div class="S">
+				<h5 class="Y">Static Fields</h5>
+				<ul>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Cacheless">Cacheless</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Debug">Debug</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Help">Help</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Offline">Offline</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Profiling">Profiling</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Quiet">Quiet</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Skip">Skip</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Unwrap">Unwrap</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></code></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeOption.html#Version">Version</a></code><i class="X"><code class="return"><a aria-label="bee.BeeOption" href="api/bee.BeeOption.html">BeeOption</a><code class="parameters"><code><a aria-label="java.lang.Boolean 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Boolean.html">Boolean</a></code></code></code></i></li>
+				</ul>
+				<h5 class="Y">Methods</h5>
+				<ul>
+					<li class="h"><i class="PUBLIC"></i><code><a href="api/bee.BeeOption.html#value()">value</a></code><code class="N">()</code><i class="X"><code>T</code></i></li>
+					<li class="h"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.BeeOption.html#toString()">toString</a></code><code class="N">()</code><i class="X"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+				</ul>
+			</div>
+		</aside>
+		<footer class="c"/>
 	</body>
+	<script src="root.js"></script>
+	<script src="main.js" type="module"></script>
 </html>

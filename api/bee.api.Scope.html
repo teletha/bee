@@ -13,151 +13,150 @@
 		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
 		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" rel="preload"/>
 		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<link as="style" fetchpriority="high" href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="preload"/>
-		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<title>Bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
+		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="a">
-		<header class="M">
-			<h1 class="Q" date="2024-11-16" ver="0.64.0"><code>Bee</code></h1>
-			<nav class="b"><a href="api/"><svg class="A svg" viewBox="0 0 24 24">
+	<body class="q">
+		<header class="k" date="2024-11-16" ver="0.64.0">
+			<h1 class="l"><code>Bee</code></h1>
+			<nav class="g"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
-					</svg><code>API</code></a><a href="https://github.com/teletha/bee/discussions" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#user"/>
-					</svg>Community</a><a href="doc/changelog.html"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#activity"/>
-					</svg>Activity</a><a href="https://github.com/teletha/bee" target="_blank"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#github"/>
-					</svg>Repository</a></nav>
-			<div class="J" id="ViewMode"><a id="light" title="Change to a brighter color scheme"><svg class="A svg" viewBox="0 0 24 24">
-						<use href="main.svg#sun"/>
 					</svg>
-				</a><a id="dark" title="Change to a darker color scheme"><svg class="A svg" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>
+				</a></nav>
+			<div class="Z"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<main class="c">
-			<nav class="X">
-				<div></div>
-			</nav>
-			<article class="V" id="Article">
-				<section class="I"><code class="Z">bee.api</code>
-					<h2 class="Enum i"><code class="K">Scope</code></h2>
-					<div class="L">
-						<ul class="C E">
-							<li><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Enum.html">Enum</a><code class="parameters"><code><a href="api/bee.api.Scope.html">Scope</a></code></code></code></li>
-						</ul>
-						<ul class="C F">
-							<li><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Comparable.html">Comparable</a><code class="parameters"><code><a href="api/bee.api.Scope.html">Scope</a></code></code></code></li>
-							<li><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/constant/Constable.html">Constable</a></code></li>
-							<li><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code></li>
-						</ul>
-					</div>
-				</section>
-				<section class="I" id="Compile">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Compile</code><i class="l"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at anytime.</p></span></section>
-				<section class="I" id="Test">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Test</code><i class="l"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at test phase only.</p></span></section>
-				<section class="I" id="Runtime">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Runtime</code><i class="l"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at runtime phase only.</p></span></section>
-				<section class="I" id="Provided">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Provided</code><i class="l"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at runtime phase only.</p></span></section>
-				<section class="I" id="System">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">System</code><i class="l"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at runtime phase only.</p></span></section>
-				<section class="I" id="Annotation">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="K">Annotation</code><i class="l"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at Pluggable Annotation Processing phase only.</p></span></section>
-				<section class="I" id="id">
-					<h2 class="k"><i class="FINAL"><i class="PUBLIC"></i></i><code class="K">id</code><i class="l"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The identifier.</p></span></section>
-				<section class="I" id="values()">
-					<h2 class="k"><i class="PUBLIC STATIC"></i><code class="K">values</code><code class="m">()</code><i class="l"><code array="fix"><a href="api/bee.api.Scope.html">Scope</a></code></i></h2>
-					<table class="H">
-						<tr class="P">
-							<td><code array="fix"><a href="api/bee.api.Scope.html">Scope</a></code></td>
-							<td></td>
-						</tr>
-					</table>
-				</section>
-				<section class="I" id="valueOf(java.lang.String)">
-					<h2 class="k"><i class="PUBLIC STATIC"></i><code class="K">valueOf</code><code class="m">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="l"><code><a href="api/bee.api.Scope.html">Scope</a></code></i></h2>
-					<table class="H">
-						<tr class="S">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>name</code></td>
-							<td></td>
-						</tr>
-						<tr class="P">
-							<td><code><a href="api/bee.api.Scope.html">Scope</a></code></td>
-							<td></td>
-						</tr>
-					</table>
-				</section>
-				<section class="I" id="accept(java.lang.String)">
-					<h2 class="k"><i class="PUBLIC"></i><code class="K">accept</code><code class="m">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">scope</code>)</code><i class="l"><code>boolean</code></i></h2>
-					<table class="H">
-						<tr class="S">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>scope</code></td>
-							<td></td>
-						</tr>
-						<tr class="P">
-							<td><code>boolean</code></td>
-							<td></td>
-						</tr>
-					</table><span class="B"><p>Test scope.</p></span></section>
-				<section class="I" id="toString()">
-					<h2 class="k"><i class="OVERRIDE PUBLIC"></i><code class="K">toString</code><code class="m">()</code><i class="l"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-					<table class="H">
-						<tr class="P">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
-							<td></td>
-						</tr>
-					</table>
-				</section>
-				<section class="I" id="by(java.lang.String)">
-					<h2 class="k"><i class="PUBLIC STATIC"></i><code class="K">by</code><code class="m">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">keyword</code>)</code><i class="l"><code><a href="api/bee.api.Scope.html">Scope</a></code></i></h2>
-					<table class="H">
-						<tr class="S">
-							<td><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code>keyword</code></td>
-							<td></td>
-						</tr>
-						<tr class="P">
-							<td><code><a href="api/bee.api.Scope.html">Scope</a></code></td>
-							<td></td>
-						</tr>
-					</table><span class="B"><p>Find scope by keyword.</p></span></section>
-			</article>
-			<aside class="U" id="SubNavi">
-				<div class="O">
-					<h5 class="N">Static Fields</h5>
-					<ul>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.api.Scope.html#Compile">Compile</a></code><i class="f"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.api.Scope.html#Test">Test</a></code><i class="f"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.api.Scope.html#Runtime">Runtime</a></code><i class="f"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.api.Scope.html#Provided">Provided</a></code><i class="f"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.api.Scope.html#System">System</a></code><i class="f"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-						<li><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.api.Scope.html#Annotation">Annotation</a></code><i class="f"><code class="return"><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
+		<nav class="O"></nav>
+		<article class="i" id="Article">
+			<section class="Q"><code class="U">bee.api</code>
+				<h2 class="Enum W"><code class="j">Scope</code></h2>
+				<div class="m">
+					<ul class="C E">
+						<li><code><a aria-label="java.lang.Enum 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Enum.html">Enum</a><code class="parameters"><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></code></code></li>
 					</ul>
-					<h5 class="N">Fields</h5>
-					<ul>
-						<li><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#id">id</a></code><i class="f"><code class="return"><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					</ul>
-					<h5 class="N">Static Methods</h5>
-					<ul>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.api.Scope.html#values()">values</a></code><code class="m">()</code><i class="f"><code array="fix"><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.api.Scope.html#valueOf(java.lang.String)">valueOf</a></code><code class="m">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="f"><code><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-						<li><i class="PUBLIC STATIC"></i><code><a href="api/bee.api.Scope.html#by(java.lang.String)">by</a></code><code class="m">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">keyword</code>)</code><i class="f"><code><a href="api/bee.api.Scope.html">Scope</a></code></i></li>
-					</ul>
-					<h5 class="N">Methods</h5>
-					<ul>
-						<li><i class="PUBLIC"></i><code><a href="api/bee.api.Scope.html#accept(java.lang.String)">accept</a></code><code class="m">(<code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">scope</code>)</code><i class="f"><code>boolean</code></i></li>
-						<li><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Scope.html#toString()">toString</a></code><code class="m">()</code><i class="f"><code><a href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<ul class="C F">
+						<li><code><a aria-label="java.lang.Comparable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Comparable.html">Comparable</a><code class="parameters"><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></code></code></li>
+						<li><code><a aria-label="java.lang.constant.Constable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/constant/Constable.html">Constable</a></code></li>
+						<li><code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code></li>
 					</ul>
 				</div>
-			</aside>
-		</main>
-		<script src="root.js"></script>
-		<script src="main.js" type="module"></script>
+			</section>
+			<section class="Q" id="Compile">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Compile</code><i class="n"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at anytime.</p></span></section>
+			<section class="Q" id="Test">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Test</code><i class="n"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at test phase only.</p></span></section>
+			<section class="Q" id="Runtime">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Runtime</code><i class="n"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at runtime phase only.</p></span></section>
+			<section class="Q" id="Provided">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Provided</code><i class="n"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at runtime phase only.</p></span></section>
+			<section class="Q" id="System">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">System</code><i class="n"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at runtime phase only.</p></span></section>
+			<section class="Q" id="Annotation">
+				<h2 class="R"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="j">Annotation</code><i class="n"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2><span class="B"><p>Depend at Pluggable Annotation Processing phase only.</p></span></section>
+			<section class="Q" id="id">
+				<h2 class="R"><i class="FINAL"><i class="PUBLIC"></i></i><code class="j">id</code><i class="n"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="B"><p>The identifier.</p></span></section>
+			<section class="Q" id="values()">
+				<h2 class="R"><i class="STATIC PUBLIC"></i><code class="j">values</code><code class="N">()</code><i class="n"><code array="fix"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2>
+				<table class="V">
+					<tr class="P">
+						<td><code array="fix"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section class="Q" id="valueOf(java.lang.String)">
+				<h2 class="R"><i class="STATIC PUBLIC"></i><code class="j">valueOf</code><code class="N">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="n"><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2>
+				<table class="V">
+					<tr class="H">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
+						<td></td>
+					</tr>
+					<tr class="P">
+						<td><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section class="Q" id="accept(java.lang.String)">
+				<h2 class="R"><i class="PUBLIC"></i><code class="j">accept</code><code class="N">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">scope</code>)</code><i class="n"><code>boolean</code></i></h2>
+				<table class="V">
+					<tr class="H">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">scope</code></td>
+						<td></td>
+					</tr>
+					<tr class="P">
+						<td><code>boolean</code></td>
+						<td></td>
+					</tr>
+				</table><span class="B"><p>Test scope.</p></span></section>
+			<section class="Q" id="toString()">
+				<h2 class="R"><i class="OVERRIDE PUBLIC"></i><code class="j">toString</code><code class="N">()</code><i class="n"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="V">
+					<tr class="P">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section class="Q" id="by(java.lang.String)">
+				<h2 class="R"><i class="STATIC PUBLIC"></i><code class="j">by</code><code class="N">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">keyword</code>)</code><i class="n"><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></h2>
+				<table class="V">
+					<tr class="H">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">keyword</code></td>
+						<td></td>
+					</tr>
+					<tr class="P">
+						<td><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></td>
+						<td></td>
+					</tr>
+				</table><span class="B"><p>Find scope by keyword.</p></span></section>
+		</article>
+		<aside class="e">
+			<div class="S">
+				<h5 class="Y">Static Fields</h5>
+				<ul>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#Compile">Compile</a></code><i class="X"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#Test">Test</a></code><i class="X"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#Runtime">Runtime</a></code><i class="X"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#Provided">Provided</a></code><i class="X"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#System">System</a></code><i class="X"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+					<li class="h"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#Annotation">Annotation</a></code><i class="X"><code class="return"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+				</ul>
+				<h5 class="Y">Fields</h5>
+				<ul>
+					<li class="h"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.api.Scope.html#id">id</a></code><i class="X"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+				</ul>
+				<h5 class="Y">Static Methods</h5>
+				<ul>
+					<li class="h"><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.Scope.html#values()">values</a></code><code class="N">()</code><i class="X"><code array="fix"><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+					<li class="h"><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.Scope.html#valueOf(java.lang.String)">valueOf</a></code><code class="N">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="X"><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+					<li class="h"><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.Scope.html#by(java.lang.String)">by</a></code><code class="N">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">keyword</code>)</code><i class="X"><code><a aria-label="bee.api.Scope" href="api/bee.api.Scope.html">Scope</a></code></i></li>
+				</ul>
+				<h5 class="Y">Methods</h5>
+				<ul>
+					<li class="h"><i class="PUBLIC"></i><code><a href="api/bee.api.Scope.html#accept(java.lang.String)">accept</a></code><code class="N">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">scope</code>)</code><i class="X"><code>boolean</code></i></li>
+					<li class="h"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Scope.html#toString()">toString</a></code><code class="N">()</code><i class="X"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+				</ul>
+			</div>
+		</aside>
+		<footer class="c"/>
 	</body>
+	<script src="root.js"></script>
+	<script src="main.js" type="module"></script>
 </html>
