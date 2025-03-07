@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.65.0](https://github.com/teletha/bee/compare/v0.64.0...v0.65.0) (2025-03-07)
+
+
+### Features
+
+* add bun task ([28607bd](https://github.com/teletha/bee/commit/28607bd7468a2aded13f951117e3865d69bb4bd2))
+
+
+### Bug Fixes
+
+* change the interval time of update checking ([f4e8d39](https://github.com/teletha/bee/commit/f4e8d3914c8a2c7a0e45e433de40749fced4f701))
+* dependency:module awares Require-Module in MANIFEST.MF ([861a87d](https://github.com/teletha/bee/commit/861a87d9d9c94e6159ad255f22d5327dbf956b34))
+* remove build request on github action ([25ebcd1](https://github.com/teletha/bee/commit/25ebcd1f23d534d45652ab271599c040ec1ba906))
+* use Platform constants ([4f3f877](https://github.com/teletha/bee/commit/4f3f877809e620d091d113012340695bfdb12bcc))
+
 ## [0.64.0](https://github.com/teletha/bee/compare/v0.59.0...v0.64.0) (2024-11-16)
 
 
