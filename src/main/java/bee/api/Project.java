@@ -921,10 +921,9 @@ public class Project {
 
         ////////////////////   Compiler Plugin      ////////////////////
         plugins.child("plugin", p -> {
-            lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.13.0");
+            lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.14.0");
             p.child("configuration", conf -> {
-                conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
-                conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
+                conf.child("release").text(Inputs.normalize(getJavaClassVersion()));
                 conf.child("encoding").text(getEncoding().displayName());
 
                 boolean ecj = Task.find(Compile.class).useECJ;
@@ -942,7 +941,7 @@ public class Project {
 
         ////////////////////   Surefire Plugin      ////////////////////
         plugins.child("plugin", p -> {
-            lib(p, "org.apache.maven.plugins : maven-surefire-plugin");
+            lib(p, "org.apache.maven.plugins : maven-surefire-plugin : 3.5.2");
             p.child("configuration", conf -> {
                 conf.child("argLine").text("-ea   -Dfile.encoding=UTF-8");
                 conf.child("reportFormat").text("plain");
@@ -952,7 +951,33 @@ public class Project {
                 conf.child("statelessTestsetInfoReporter")
                         .attr("implementation", "org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter");
             });
-            p.append(deps("me.fabriciorby : maven-surefire-junit5-tree-reporter"));
+            p.append(deps("me.fabriciorby : maven-surefire-junit5-tree-reporter : 1.4.0"));
+        });
+
+        ////////////////////   Source Plugin      ////////////////////
+        plugins.child("plugin", p -> {
+            lib(p, "org.apache.maven.plugins : maven-source-plugin : 3.3.1");
+            p.child("executions", exes -> {
+                exes.child("execution", exe -> {
+                    exe.child("id").text("attach-sources");
+                    exe.child("goals", goals -> {
+                        goals.child("goal").text("jar");
+                    });
+                });
+            });
+        });
+
+        ////////////////////   Javadoc Plugin      ////////////////////
+        plugins.child("plugin", p -> {
+            lib(p, "org.apache.maven.plugins : maven-javadoc-plugin : 3.11.2");
+            p.child("executions", exes -> {
+                exes.child("execution", exe -> {
+                    exe.child("id").text("attach-javadocs");
+                    exe.child("goals", goals -> {
+                        goals.child("goal").text("jar");
+                    });
+                });
+            });
         });
 
         // write as pom
