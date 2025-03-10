@@ -93,10 +93,7 @@ public class Project {
     private Charset encoding = StandardCharsets.UTF_8;
 
     /** The requirement of Java version. */
-    private SourceVersion sourceFileVersion;
-
-    /** The requirement of class file version. */
-    private SourceVersion classFileVersion;
+    private SourceVersion requiredJavaVersion;
 
     /** The input base directory. */
     private Directory input;
@@ -416,8 +413,8 @@ public class Project {
      * 
      * @return A Java version requirement.
      */
-    public SourceVersion getJavaSourceVersion() {
-        return sourceFileVersion == null ? SourceVersion.latest() : sourceFileVersion;
+    public SourceVersion getJavaVersion() {
+        return requiredJavaVersion == null ? SourceVersion.latest() : requiredJavaVersion;
     }
 
     /**
@@ -426,27 +423,8 @@ public class Project {
      * @param version
      */
     @SuppressWarnings("unused")
-    private void setJavaSourceVersion(SourceVersion version) {
-        this.sourceFileVersion = version;
-    }
-
-    /**
-     * Returns Java version requirement.
-     * 
-     * @return A Java version requirement.
-     */
-    public SourceVersion getJavaClassVersion() {
-        return classFileVersion == null ? SourceVersion.latest() : classFileVersion;
-    }
-
-    /**
-     * Internal setter for property access.
-     * 
-     * @param version
-     */
-    @SuppressWarnings("unused")
-    private void setJavaClassVersion(SourceVersion version) {
-        this.classFileVersion = version;
+    private void setJavaVersion(SourceVersion version) {
+        this.requiredJavaVersion = version;
     }
 
     /**
@@ -455,18 +433,7 @@ public class Project {
      * @param version A Java version to require.
      */
     protected final void require(SourceVersion version) {
-        require(version, version);
-    }
-
-    /**
-     * Declare Java version requirement.
-     * 
-     * @param sourceVersion A Java source version to require.
-     * @param targetVersion A Java target version to require.
-     */
-    protected final void require(SourceVersion sourceVersion, SourceVersion targetVersion) {
-        this.sourceFileVersion = sourceVersion;
-        this.classFileVersion = targetVersion;
+        this.requiredJavaVersion = version;
     }
 
     /**
@@ -923,8 +890,7 @@ public class Project {
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.14.0");
             p.child("configuration", conf -> {
-                conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
-                conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
+                conf.child("release").text(Inputs.normalize(getJavaVersion()));
                 conf.child("encoding").text(getEncoding().displayName());
 
                 boolean ecj = Task.find(Compile.class).useECJ;

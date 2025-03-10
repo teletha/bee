@@ -107,7 +107,7 @@ public class CI extends Task {
                         commit_message: update repository info
                 """;
 
-        String version = Inputs.normalize(project.getJavaSourceVersion());
+        String version = Inputs.normalize(project.getJavaVersion());
 
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
@@ -289,7 +289,7 @@ public class CI extends Task {
                                 return Inputs.capitalize(project.getProduct());
 
                             case "java":
-                                return Inputs.normalize(project.getJavaClassVersion());
+                                return Inputs.normalize(project.getJavaVersion());
 
                             case "owner":
                                 return project.getVersionControlSystem().owner;
@@ -328,7 +328,7 @@ public class CI extends Task {
 
     @Command("Generate CI/CD configuration files for JitPack.")
     public void jitpack() {
-        String sourceVersion = Inputs.normalize(project.getJavaSourceVersion());
+        String javaVersion = Inputs.normalize(project.getJavaVersion());
 
         makeFile("jitpack.yml", String.format("""
                 jdk:
@@ -348,8 +348,8 @@ public class CI extends Task {
                     curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
                     java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install maven
                   fi
-                  mvn install -DskipTests
-                """, sourceVersion, sourceVersion, sourceVersion));
+                  mvn install -DskipTests -Xcompile
+                """, javaVersion, javaVersion, javaVersion));
     }
 
     @Command("Generate .gitignore file.")

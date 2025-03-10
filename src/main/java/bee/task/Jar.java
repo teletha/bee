@@ -68,7 +68,7 @@ public class Jar extends Task {
         require(Compile::source);
 
         Directory dir = project.getClasses();
-        if (SourceVersion.latest().compareTo(project.getJavaClassVersion()) > 0 || removeTraceInfo || removeDebugInfo) {
+        if (SourceVersion.latest().compareTo(project.getJavaVersion()) > 0 || removeTraceInfo || removeDebugInfo) {
             dir = modify(dir);
         }
 
@@ -84,7 +84,7 @@ public class Jar extends Task {
      */
     private Directory modify(Directory dir) {
         String oldVersion = Inputs.normalize(SourceVersion.latest());
-        String newVersion = Inputs.normalize(project.getJavaClassVersion());
+        String newVersion = Inputs.normalize(project.getJavaVersion());
         if (!oldVersion.equals(newVersion)) {
             ui.info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
         }
@@ -103,7 +103,7 @@ public class Jar extends Task {
             if (file.extension().equals("class")) {
                 ClassReader classReader = new ClassReader(file.bytes());
                 ClassWriter writer = new ClassWriter(classReader, 0);
-                ClassVisitor modification = new Modify(project.getJavaClassVersion(), writer);
+                ClassVisitor modification = new Modify(project.getJavaVersion(), writer);
                 classReader.accept(modification, 0);
                 modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
             } else {
