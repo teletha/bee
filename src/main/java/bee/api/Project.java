@@ -923,7 +923,8 @@ public class Project {
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.14.0");
             p.child("configuration", conf -> {
-                conf.child("release").text(Inputs.normalize(getJavaClassVersion()));
+                conf.child("source").text(Inputs.normalize(getJavaSourceVersion()));
+                conf.child("target").text(Inputs.normalize(getJavaClassVersion()));
                 conf.child("encoding").text(getEncoding().displayName());
 
                 boolean ecj = Task.find(Compile.class).useECJ;
