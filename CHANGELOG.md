@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.65.2](https://github.com/teletha/bee/compare/0.65.1...0.65.2) (2025-03-10)
+
+
+### Bug Fixes
+
+* update ci ([34956e2](https://github.com/teletha/bee/commit/34956e26fcf117716d294918bb0f0168a2ca8f53))
+
 ## [0.65.1](https://github.com/teletha/bee/compare/0.65.0...0.65.1) (2025-03-10)
 
 
