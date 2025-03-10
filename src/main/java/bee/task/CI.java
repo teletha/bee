@@ -348,7 +348,7 @@ public class CI extends Task {
                     curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
                     java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install maven
                   fi
-                  mvn install -DskipTests -Xcompile
+                  mvn install -DskipTests
                 """, javaVersion, javaVersion, javaVersion));
     }
 
