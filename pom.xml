@@ -249,7 +249,7 @@ bee install
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>javadng</artifactId>
-			<version>2.4.0</version>
+			<version>2.4.1</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -712,7 +712,7 @@ bee install
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.14.0</version>
+				<version>3.13.0</version>
 				<configuration>
 					<source>23</source>
 					<target>21</target>
@@ -743,32 +743,6 @@ bee install
 						<version>1.4.0</version>
 					</dependency>
 				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.3.1</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.11.2</version>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
