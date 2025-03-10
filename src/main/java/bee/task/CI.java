@@ -95,10 +95,11 @@ public class CI extends Task {
                         publish_dir: target/site
 
                     - name: Request Releasing
-                      uses: googleapis/release-please-action@v4.1.3
+                      uses: googleapis/release-please-action@v3.7.13
                       with:
                         release-type: simple
                         package-name: %s
+                        include-v-in-tag: false
 
                     - name: Auto commit
                       uses: stefanzweifel/git-auto-commit-action@v5
