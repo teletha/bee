@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.66.0](https://github.com/teletha/bee/compare/0.65.2...0.66.0) (2025-03-10)
+
+
+### Features
+
+* drop java version modification ([d2c888f](https://github.com/teletha/bee/commit/d2c888f50f2490e00df8fabf69d9dd8087fd93a9))
+
+
+### Bug Fixes
+
+* remove debug code ([e49eba8](https://github.com/teletha/bee/commit/e49eba8b9cbb952144d9c6a2ab5c258e51b50075))
+
 ## [0.65.2](https://github.com/teletha/bee/compare/0.65.1...0.65.2) (2025-03-10)
 
 
