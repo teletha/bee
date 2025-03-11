@@ -334,12 +334,6 @@ public class CI extends Task {
                 jdk:
                   - openjdk%s
 
-                before_install: |
-                  sdk install java %s-open
-                  sdk use java %s-open
-                  sdk install maven 3.9.9
-                  sdk use maven 3.9.9
-
                 install: |
                   if [ -e "bee" ]; then
                     source bee install maven
@@ -348,7 +342,6 @@ public class CI extends Task {
                     curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
                     java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install maven
                   fi
-                  mvn install -DskipTests
                 """, javaVersion, javaVersion, javaVersion));
     }
 
