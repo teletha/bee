@@ -95,7 +95,11 @@ public class Eclipse extends Task implements IDESupport {
             XML doc = I.xml("projectDescription");
             doc.child("name").text(project.getProduct());
             doc.child("comment").text(project.getDescription());
-            doc.child("buildSpec").child("buildCommand").child("name").text("org.eclipse.jdt.core.javabuilder");
+            doc.child("projects");
+            doc.child("buildSpec").child("buildCommand", com -> {
+                com.child("name").text("org.eclipse.jdt.core.javabuilder");
+                com.child("arguments");
+            });
             doc.child("natures").child("nature").text("org.eclipse.jdt.core.javanature");
 
             // write file
