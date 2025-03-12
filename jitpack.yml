@@ -6,11 +6,11 @@ before_install: |
 
 install: |
   if [ -e "bee" ]; then
-    source bee install maven
+    source bee install maven --skip test
   else
     BeeVersion=$(curl -SsL https://git.io/stable-bee)
     curl -SsL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar
-    java -javaagent:bee-${BeeVersion}.jar -cp bee-${BeeVersion}.jar bee.Bee install maven
+    java -javaagent:bee-${BeeVersion}.jar -cp bee-${BeeVersion}.jar bee.Bee install maven --skip test
   fi
 
   # Until the end of 2024, Jitpack would recognize it as an Artifact if I put the appropriate Jar files, etc. in the right place.

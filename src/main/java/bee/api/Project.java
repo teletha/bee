@@ -987,7 +987,7 @@ public class Project {
 
         xml.child("groupId").text(library.getGroup());
         xml.child("artifactId").text(library.getName());
-        xml.child("version").text(I.make(Repository.class).resolveLatestVersion(library));
+        xml.child("version").text(library.version);
     }
 
     /**
