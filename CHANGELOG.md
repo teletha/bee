@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.67.2](https://github.com/teletha/bee/compare/0.67.1...0.67.2) (2025-03-12)
+
+
+### Bug Fixes
+
+* revert java source version ([a1f5055](https://github.com/teletha/bee/commit/a1f5055ad791d17667ac527434c90106a0a2fafe))
+
 ## [0.67.1](https://github.com/teletha/bee/compare/0.67.0...0.67.1) (2025-03-12)
 
 
