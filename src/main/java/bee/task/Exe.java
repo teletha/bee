@@ -101,7 +101,7 @@ public class Exe extends Task {
                     command.add("-A");
                     command.add("x64");
                     command.add("-t");
-                    command.add(Inputs.normalize(project.getJavaVersion()));
+                    command.add(Inputs.normalize(project.getJavaRequiredVersion()));
                     command.add("-j");
                     command.add(project.locateJar().toString());
                     command.add("-e");

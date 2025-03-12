@@ -93,6 +93,9 @@ public class Project {
     private Charset encoding = StandardCharsets.UTF_8;
 
     /** The requirement of Java version. */
+    private SourceVersion sourceFileVersion;
+
+    /** The requirement of Java version. */
     private SourceVersion requiredJavaVersion;
 
     /** The input base directory. */
@@ -413,7 +416,16 @@ public class Project {
      * 
      * @return A Java version requirement.
      */
-    public SourceVersion getJavaVersion() {
+    public SourceVersion getJavaSourceVersion() {
+        return sourceFileVersion == null ? SourceVersion.latest() : sourceFileVersion;
+    }
+
+    /**
+     * Returns Java version requirement.
+     * 
+     * @return A Java version requirement.
+     */
+    public SourceVersion getJavaRequiredVersion() {
         return requiredJavaVersion == null ? SourceVersion.latest() : requiredJavaVersion;
     }
 
@@ -434,6 +446,17 @@ public class Project {
      */
     protected final void require(SourceVersion version) {
         this.requiredJavaVersion = version;
+    }
+
+    /**
+     * Declare Java version requirement.
+     * 
+     * @param sourceVersion A Java source version to require.
+     * @param requiredJavaVersion A Java target version to require.
+     */
+    protected final void require(SourceVersion sourceVersion, SourceVersion requiredJavaVersion) {
+        this.sourceFileVersion = sourceVersion;
+        this.requiredJavaVersion = requiredJavaVersion;
     }
 
     /**
@@ -890,7 +913,7 @@ public class Project {
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.14.0");
             p.child("configuration", conf -> {
-                conf.child("release").text(Inputs.normalize(getJavaVersion()));
+                conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
                 conf.child("encoding").text(getEncoding().displayName());
 
                 boolean ecj = Task.find(Compile.class).useECJ;

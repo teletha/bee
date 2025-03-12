@@ -107,7 +107,7 @@ public class CI extends Task {
                         commit_message: update repository info
                 """;
 
-        String version = Inputs.normalize(project.getJavaVersion());
+        String version = Inputs.normalize(project.getJavaSourceVersion());
 
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
@@ -289,7 +289,7 @@ public class CI extends Task {
                                 return Inputs.capitalize(project.getProduct());
 
                             case "java":
-                                return Inputs.normalize(project.getJavaVersion());
+                                return Inputs.normalize(project.getJavaRequiredVersion());
 
                             case "owner":
                                 return project.getVersionControlSystem().owner;
@@ -328,7 +328,7 @@ public class CI extends Task {
 
     @Command("Generate CI/CD configuration files for JitPack.")
     public void jitpack() {
-        String javaVersion = Inputs.normalize(project.getJavaVersion());
+        String javaVersion = Inputs.normalize(project.getJavaSourceVersion());
 
         makeFile("jitpack.yml", String
                 .format("""
@@ -342,11 +342,19 @@ public class CI extends Task {
                           if [ -e "bee" ]; then
                             source bee install maven
                           else
-                            version=$(curl -SsL https://git.io/stable-bee)
-                            curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                            java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install maven
+                            BeeVersion=$(curl -SsL https://git.io/stable-bee)
+                            curl -SsL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar
+                            java -javaagent:bee-${BeeVersion}.jar -cp bee-${BeeVersion}.jar bee.Bee install maven
                           fi
-                          mvn install:install-file -Dfile=target/${ARTIFACT}-${VERSION}.jar -DpomFile=pom.xml -DgroupId=${GROUP} -DartifactId=${ARTIFACT} -Dversion=${VERSION} -Dpackaging=jar
+
+                          # Until the end of 2024, Jitpack would recognize it as an Artifact if I put the appropriate Jar files, etc. in the right place.
+                          # However, since 2025, Jitpack no longer recognizes them, so I have to re-install them using Maven's install-file command
+                          # to make Jitpack recognize them.
+                          #
+                          # Reading the VERSION environment variable alone is not enough to support builds with SNAPSHOT and commit IDs,
+                          # so the necessary information is obtained from version.txt.
+                          ProductVersion=$(cat version.txt | xargs)
+                          mvn install:install-file -Dfile=target/${ARTIFACT}-${ProductVersion}.jar -DpomFile=pom.xml -DgroupId=${GROUP} -DartifactId=${ARTIFACT} -Dversion=${VERSION} -Dpackaging=jar
                         """, javaVersion, javaVersion, javaVersion));
     }
 

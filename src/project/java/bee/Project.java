@@ -63,7 +63,7 @@ public class Project extends bee.api.Project {
                 ```
                 """);
 
-        require(SourceVersion.RELEASE_23);
+        require(SourceVersion.latest(), SourceVersion.RELEASE_21);
 
         // MAVEN REPOSITORY
         // Since 4.0.0-beta, Maven has become a super heavyweight library, with dependencies

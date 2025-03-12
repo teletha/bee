@@ -53,7 +53,7 @@ public class Doc extends Task {
         Class<? extends Doclet> doclet = null;
         List<String> options = new ArrayList();
         options.add("--release");
-        options.add(Inputs.normalize(project.getJavaVersion()));
+        options.add(Inputs.normalize(project.getJavaSourceVersion()));
         options.add("-Xdoclint:none");
         options.add("-Xmaxwarns");
         options.add("1");
@@ -66,7 +66,7 @@ public class Doc extends Task {
 
         // external links
         options.add("-link");
-        options.add("https://docs.oracle.com/en/java/javase/" + Inputs.normalize(project.getJavaVersion()) + "/docs/api/");
+        options.add("https://docs.oracle.com/en/java/javase/" + Inputs.normalize(project.getJavaSourceVersion()) + "/docs/api/");
 
         DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
         try (Listener listener = new Listener();
