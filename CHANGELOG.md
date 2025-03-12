@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.67.3](https://github.com/teletha/bee/compare/0.67.2...0.67.3) (2025-03-12)
+
+
+### Bug Fixes
+
+* maven plugin's version are fixed ([e29f363](https://github.com/teletha/bee/commit/e29f3631e6b893137531bb8ca82c6bfaf68dd383))
+* skip test on jitpack's ci ([25013a2](https://github.com/teletha/bee/commit/25013a2cccee89e017961bfe64e87334fa0b0e2e))
+
 ## [0.67.2](https://github.com/teletha/bee/compare/0.67.1...0.67.2) (2025-03-12)
 
 
