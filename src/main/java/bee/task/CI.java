@@ -330,19 +330,24 @@ public class CI extends Task {
     public void jitpack() {
         String javaVersion = Inputs.normalize(project.getJavaVersion());
 
-        makeFile("jitpack.yml", String.format("""
-                jdk:
-                  - openjdk%s
+        makeFile("jitpack.yml", String
+                .format("""
+                        jdk:
+                          - openjdk%s
 
-                install: |
-                  if [ -e "bee" ]; then
-                    source bee install maven
-                  else
-                    version=$(curl -SsL https://git.io/stable-bee)
-                    curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                    java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install maven
-                  fi
-                """, javaVersion, javaVersion, javaVersion));
+                        before_install: |
+                          sdk install maven 3.9.9
+
+                        install: |
+                          if [ -e "bee" ]; then
+                            source bee install maven
+                          else
+                            version=$(curl -SsL https://git.io/stable-bee)
+                            curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                            java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install maven
+                          fi
+                          mvn install:install-file -Dfile=target/${ARTIFACT}-${VERSION}.jar -DpomFile=pom.xml -DgroupId=${GROUP} -DartifactId=${ARTIFACT} -Dversion=${VERSION} -Dpackaging=jar
+                        """, javaVersion, javaVersion, javaVersion));
     }
 
     @Command("Generate .gitignore file.")
