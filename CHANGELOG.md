@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.67.4](https://github.com/teletha/bee/compare/0.67.3...0.67.4) (2025-03-13)
+
+
+### Bug Fixes
+
+* jitpack process ([1e507a9](https://github.com/teletha/bee/commit/1e507a9b8641d9b6589ea002197d719ddf951b5a))
+
 ## [0.67.3](https://github.com/teletha/bee/compare/0.67.2...0.67.3) (2025-03-12)
 
 
