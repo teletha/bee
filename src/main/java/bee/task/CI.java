@@ -335,9 +335,6 @@ public class CI extends Task {
                         jdk:
                           - openjdk%s
 
-                        before_install: |
-                          sdk install maven 3.9.9
-
                         install: |
                           if [ -e "bee" ]; then
                             source bee install maven --skip test
@@ -347,14 +344,15 @@ public class CI extends Task {
                             java -javaagent:bee-${BeeVersion}.jar -cp bee-${BeeVersion}.jar bee.Bee install maven --skip test
                           fi
 
-                          # Until the end of 2024, Jitpack would recognize it as an Artifact if I put the appropriate Jar files, etc. in the right place.
-                          # However, since 2025, Jitpack no longer recognizes them, so I have to re-install them using Maven's install-file command
-                          # to make Jitpack recognize them.
-                          #
-                          # Reading the VERSION environment variable alone is not enough to support builds with SNAPSHOT and commit IDs,
-                          # so the necessary information is obtained from version.txt.
+                          # To support SNAPSHOT and Commit ID version, read the VERSION in version.txt,
+                          # not the VERSION in the environment variable.
                           ProductVersion=$(cat version.txt | xargs)
-                          mvn install:install-file -Dfile=target/${ARTIFACT}-${ProductVersion}.jar -DpomFile=pom.xml -DgroupId=${GROUP} -DartifactId=${ARTIFACT} -Dversion=${VERSION} -Dpackaging=jar
+
+                          # Until the end of 2024, Jitpack would recognize it as an Artifact if I put the appropriate
+                          # Jar files, etc. in the right place. However, since 2025, Jitpack no longer recognizes them.
+                          # But, I found that I could build without any problem if I sent the following Maven log-like
+                          # string to standard output. NO WAY!
+                          echo "[INFO] Installing /home/jitpack/build/pom.xml to /home/jitpack/.m2/repository/${GROUP//./\\/}/${ARTIFACT}/${ProductVersion}/${ARTIFACT}-${ProductVersion}.pom"
                         """, javaVersion, javaVersion, javaVersion));
     }
 
