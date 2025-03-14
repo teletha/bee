@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.67.5](https://github.com/teletha/bee/compare/0.67.4...0.67.5) (2025-03-14)
+
+
+### Bug Fixes
+
+* allow write access to github action ([a19e9fa](https://github.com/teletha/bee/commit/a19e9fa0f6e07b30d80a9d1dd4d05aa9485d60e1))
+
 ## [0.67.4](https://github.com/teletha/bee/compare/0.67.3...0.67.4) (2025-03-13)
 
 
