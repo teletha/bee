@@ -30,8 +30,8 @@ public class BeeOption<T> {
      */
     public static final BeeOption<Boolean> Help = new BeeOption("help", "Show task information. Synonymous with the task [help:task help:option].", false, 0, "?");
 
-    /** Unstructs the user input. */
-    public static final BeeOption<List<String>> Input = new BeeOption("input", "Predefine user input.", List.of(), 16);
+    /** Predefine the user input. */
+    public static final BeeOption<List<String>> Input = new BeeOption("input", "Predefine the user input.", List.of(), 16);
 
     /** Instructs the system not to connect to an external network at build time. */
     public static final BeeOption<Boolean> Offline = new BeeOption("offline", "Don't connect to external network.", false, 0);
@@ -59,7 +59,7 @@ public class BeeOption<T> {
     public static final BeeOption<Boolean> Version = new BeeOption("version", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false, 0);
 
     /** The list of builtin options. */
-    static final List<BeeOption> options = List.of(Cacheless, Debug, Root, Skip, Help, Offline, Profiling, Quiet, Version);
+    static final List<BeeOption> options = List.of(Cacheless, Debug, Input, Root, Skip, Help, Offline, Profiling, Quiet, Version);
 
     /** The name. */
     private final String name;
@@ -81,6 +81,8 @@ public class BeeOption<T> {
 
     /** The current value. */
     T value;
+
+    private int position;
 
     /**
      * Hide constructor.

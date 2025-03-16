@@ -64,6 +64,9 @@ public abstract class UserInterface {
     /** The debug mode. */
     private static final boolean quiet = BeeOption.Quiet.value();
 
+    /** The predefined answers. */
+    private final Deque<String> answers = new ArrayDeque(BeeOption.Input.value());
+
     /**
      * Talk to user with decoration like title.
      * 
@@ -232,10 +235,14 @@ public abstract class UserInterface {
 
         try {
             // Answer
-            String answer = new BufferedReader(new InputStreamReader(getSink(), Encoding)).readLine();
+            String answer = answers.pollFirst();
+            if (answer == null) {
+                answer = new BufferedReader(new InputStreamReader(getSink(), Encoding)).readLine();
+            } else {
+                info("Use the prepared answers. [", answer, "]");
+            }
 
             // Remove whitespaces.
-            answer = answer == null ? "" : answer.trim();
 
             // Validate user input.
             if (defaultAnswer == null) {

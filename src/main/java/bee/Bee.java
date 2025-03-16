@@ -303,7 +303,13 @@ public class Bee {
     public static void main(String... tasks) {
         if (tasks.length == 0) tasks = new String[] {"ide:delete", "ide", "prototype:java", "--root", "../act11", "--input", "1"};
 
-        System.exit(new Bee().execute(BeeOption.parse(tasks)));
+        // The first priority is to parse options.
+        // When the Bee is initialized, the CUI is also initialized, so the values of user input
+        // options are not properly reflected.
+        List<String> washed = BeeOption.parse(tasks);
+
+        // Don't call new Bee() before parsing options
+        System.exit(new Bee().execute(washed));
     }
 
     /**
