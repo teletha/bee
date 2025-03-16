@@ -137,6 +137,9 @@ public class Project {
             }
         }
 
+        // normalize path
+        this.root = root.normalize();
+
         setInput((Directory) null);
         setOutput((Directory) null);
     }

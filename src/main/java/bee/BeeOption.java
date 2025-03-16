@@ -30,6 +30,9 @@ public class BeeOption<T> {
      */
     public static final BeeOption<Boolean> Help = new BeeOption("help", "Show task information. Synonymous with the task [help:task help:option].", false, 0, "?");
 
+    /** Unstructs the user input. */
+    public static final BeeOption<List<String>> Input = new BeeOption("input", "Predefine user input.", List.of(), 16);
+
     /** Instructs the system not to connect to an external network at build time. */
     public static final BeeOption<Boolean> Offline = new BeeOption("offline", "Don't connect to external network.", false, 0);
 
@@ -44,7 +47,7 @@ public class BeeOption<T> {
             .absolutize(), 1, "dir", "directory");
 
     /** Instructs the system not to output error log only at build time. */
-    public static final BeeOption<List<String>> Skip = new BeeOption("skip", "Skip the specified task.", List.of(), 8, "x");
+    public static final BeeOption<List<String>> Skip = new BeeOption("skip", "Skip the specified task.", List.of(), 16, "x");
 
     /** Instructs the system not to use wrapper bee. */
     public static final BeeOption<List<Boolean>> Unwrap = new BeeOption("unwrap", "Use the installed bee instead of the local wrapper.", false, 0, "u");

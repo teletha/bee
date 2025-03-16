@@ -301,7 +301,7 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
-        if (tasks.length == 0) tasks = new String[] {"ide", "ide:delete", "--root", "temp11"};
+        if (tasks.length == 0) tasks = new String[] {"ide:delete", "ide", "prototype:java", "--root", "../act11", "--input", "1"};
 
         System.exit(new Bee().execute(BeeOption.parse(tasks)));
     }
