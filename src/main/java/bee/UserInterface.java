@@ -243,6 +243,7 @@ public abstract class UserInterface {
             }
 
             // Remove whitespaces.
+            answer = answer == null ? "" : answer.trim();
 
             // Validate user input.
             if (defaultAnswer == null) {
