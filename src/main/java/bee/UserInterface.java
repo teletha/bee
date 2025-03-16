@@ -58,12 +58,6 @@ public abstract class UserInterface {
     /** Message type magic number. */
     protected static final int TITLE = 5;
 
-    /** The debug mode. */
-    private static final boolean debug = BeeOption.Debug.value();
-
-    /** The debug mode. */
-    private static final boolean quiet = BeeOption.Quiet.value();
-
     /** The predefined answers. */
     private final Deque<String> answers = new ArrayDeque(BeeOption.Input.value());
 
@@ -91,7 +85,7 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public final void debug(Object... messages) {
-        if (debug) {
+        if (BeeOption.Debug.value()) {
             talk(DEBUG, messages);
         }
     }
@@ -130,7 +124,7 @@ public abstract class UserInterface {
      * @param messages
      */
     private void talk(int type, Object[] messages) {
-        if (quiet && type != ERROR) {
+        if (BeeOption.Quiet.value() && type != ERROR) {
             return;
         }
 
