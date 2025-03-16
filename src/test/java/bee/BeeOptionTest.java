@@ -209,4 +209,12 @@ class BeeOptionTest {
         assert washed.get(0) == "task";
         assert System.getProperty("setting.to.system.property").equals("anyValue");
     }
+
+    @Test
+    void root() {
+        List<String> washed = BeeOption.parse("task", "--root", "test");
+        assert washed.size() == 1;
+        assert washed.get(0) == "task";
+        assert BeeOption.Root.value.path().equals("test");
+    }
 }

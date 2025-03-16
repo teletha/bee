@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kiss.I;
+import psychopath.Directory;
+import psychopath.Locator;
 
 public class BeeOption<T> {
 
@@ -38,7 +40,11 @@ public class BeeOption<T> {
     public static final BeeOption<Boolean> Quiet = new BeeOption("quiet", "Output error log only.", false, 0);
 
     /** Instructs the system not to output error log only at build time. */
-    public static final BeeOption<List<String>> Skip = new BeeOption("skip", "Skip the specified task.", List.of(), 24, "x");
+    public static final BeeOption<Directory> Root = new BeeOption("root", "Specify the project's root directory.", Locator.directory("")
+            .absolutize(), 1, "dir", "directory");
+
+    /** Instructs the system not to output error log only at build time. */
+    public static final BeeOption<List<String>> Skip = new BeeOption("skip", "Skip the specified task.", List.of(), 8, "x");
 
     /** Instructs the system not to use wrapper bee. */
     public static final BeeOption<List<Boolean>> Unwrap = new BeeOption("unwrap", "Use the installed bee instead of the local wrapper.", false, 0, "u");
@@ -50,7 +56,7 @@ public class BeeOption<T> {
     public static final BeeOption<Boolean> Version = new BeeOption("version", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false, 0);
 
     /** The list of builtin options. */
-    static final List<BeeOption> options = List.of(Cacheless, Debug, Skip, Help, Offline, Profiling, Quiet, Version);
+    static final List<BeeOption> options = List.of(Cacheless, Debug, Root, Skip, Help, Offline, Profiling, Quiet, Version);
 
     /** The name. */
     private final String name;
@@ -170,17 +176,26 @@ public class BeeOption<T> {
                 } else {
                     skip = o.paramSize;
 
-                    List<String> params = new ArrayList(o.paramSize);
+                    List params = new ArrayList(o.paramSize);
                     for (int i = 0, max = Math.min(o.paramSize, args.length - index - 1); i < max; i++) {
                         String param = args[index + i + 1];
                         if (param.charAt(0) == '-') {
                             skip = i;
                             break;
                         } else {
-                            params.add(param);
+                            if (o.defaultValue instanceof List) {
+                                params.add(param);
+                            } else {
+                                params.add(I.transform(param, o.defaultValue.getClass()));
+                            }
                         }
                     }
-                    o.value = params;
+
+                    if (o.paramSize == 1) {
+                        o.value = params.get(0);
+                    } else {
+                        o.value = params;
+                    }
                 }
                 break;
             }
