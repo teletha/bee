@@ -123,7 +123,11 @@ public class Project {
 
                 if (archive.isDirectory()) {
                     // directory
-                    this.root = archive.parent().parent();
+                    if (BeeOption.Root.isDefault()) {
+                        this.root = archive.parent().parent();
+                    } else {
+                        this.root = BeeOption.Root.value();
+                    }
                 } else {
                     // some archive
                     if (archive.toString().contains("temporary")) {

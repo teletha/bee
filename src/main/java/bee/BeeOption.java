@@ -107,6 +107,15 @@ public class BeeOption<T> {
     }
 
     /**
+     * Check whether this option is used or not.
+     * 
+     * @return
+     */
+    public boolean isDefault() {
+        return defaultValue == value;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

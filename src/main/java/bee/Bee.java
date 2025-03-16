@@ -123,8 +123,9 @@ public class Bee {
         }
 
         if (directory == null) {
-            directory = Locator.directory("");
+            directory = BeeOption.Root.value();
         }
+
         directory.create();
 
         if (!directory.isDirectory()) {

@@ -18,6 +18,7 @@ import bee.api.Repository;
 import bee.task.Help;
 import kiss.I;
 import psychopath.File;
+import psychopath.Location;
 import psychopath.Locator;
 
 public class BeeInstaller {
@@ -40,7 +41,18 @@ public class BeeInstaller {
         UserInterface ui = I.make(UserInterface.class);
         Project project = I.make(Project.class);
 
-        File source = bee.Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(bee.Bee.class).asFile();
+        File source;
+        if (bee.Bee.Tool.equals(project)) {
+            source = project.locateJar();
+        } else {
+            Location location = Locator.locate(bee.Bee.class);
+            if (location.isFile()) {
+                source = location.asFile();
+            } else {
+                location.asDirectory();
+                return;
+            }
+        }
 
         if (installLauncher) {
             File dest = BeeHome.file("bee-" + bee.Bee.Tool.getVersion() + "-" + DATETIME.format(source.lastModifiedDateTime()) + ".jar");
