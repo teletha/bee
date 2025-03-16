@@ -34,6 +34,7 @@ import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.repository.RemoteRepository.Builder;
 
 import bee.Bee;
+import bee.BeeOption;
 import bee.Task;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
@@ -115,7 +116,7 @@ public class Project {
 
         if (projectClass.isMemberClass() || projectClass.isAnonymousClass()) {
             // fabric project
-            this.root = Locator.directory("").absolutize();
+            this.root = BeeOption.Root.value();
         } else {
             try {
                 Location archive = Locator.locate(projectClass);
@@ -126,13 +127,13 @@ public class Project {
                 } else {
                     // some archive
                     if (archive.toString().contains("temporary")) {
-                        this.root = Locator.directory("").absolutize();
+                        this.root = BeeOption.Root.value();
                     } else {
                         this.root = archive.asDirectory();
                     }
                 }
             } catch (Throwable e) {
-                this.root = Locator.directory("").absolutize();
+                this.root = BeeOption.Root.value();
             }
         }
 

@@ -479,6 +479,29 @@ public abstract class Task implements Extensible {
     }
 
     /**
+     * Utility method to delete directory.
+     * 
+     * @param path A directory path to delete.
+     */
+    protected final void deleteDirectory(String path) {
+        if (path != null) {
+            deletedirectory(project.getRoot().directory(path));
+        }
+    }
+
+    /**
+     * Utility method to delete directory.
+     * 
+     * @param dir A directory to delete.
+     */
+    protected final void deletedirectory(Directory dir) {
+        if (dir != null && dir.isPresent()) {
+            dir.delete();
+            ui.info("Delete directory [", dir.absolutize(), "]");
+        }
+    }
+
+    /**
      * Utility method to delete file.
      * 
      * @param from A file to copy.

@@ -23,9 +23,6 @@ import kiss.XML;
 import psychopath.Directory;
 import psychopath.File;
 
-/**
- * @version 2016/11/30 11:50:50
- */
 public class Intellij extends Task implements IDESupport {
 
     /**
@@ -34,13 +31,22 @@ public class Intellij extends Task implements IDESupport {
      * </p>
      */
     @Override
-    @Command("Generate configuration files for IntelliJ IDEA.")
+    @Command(value = "Generate configuration files for IntelliJ IDEA.", defaults = true)
     public void execute() {
         createModule(project.getSources(), project.getClasses(), Scope.Compile);
         createModule(project.getTestSources(), project.getTestClasses(), Scope.Test);
         createModule(project.getProjectSources(), project.getProjectClasses(), Scope.System);
 
         ui.info("Create IDEA configuration files.");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Command("Delete configuration files for IntelliJ IDEA.")
+    public void delete() {
+        deleteDirectory(".idea");
     }
 
     /**

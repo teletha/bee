@@ -22,11 +22,21 @@ public class IDE extends Task {
      * Create idea's project file.
      */
     @Override
-    @Command("Generate configuration files.")
+    @Command(value = "Generate configuration files.", defaults = true)
     public void execute() {
         task(IDESupport::execute);
 
         ui.info("Generate IDE configuration files.");
+    }
+
+    /**
+     * Delete idea's project file.
+     */
+    @Command("Delete configuration files.")
+    public void delete() {
+        task(IDESupport::delete);
+
+        ui.info("Delete IDE configuration files.");
     }
 
     /**

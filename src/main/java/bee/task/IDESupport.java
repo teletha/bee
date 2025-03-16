@@ -21,6 +21,12 @@ public interface IDESupport extends Extensible {
     void execute();
 
     /**
+     * Delete project configuration file.
+     */
+    @Command("Delete configuration files.")
+    void delete();
+
+    /**
      * Check whether the configuration file is already existed or not.
      * 
      * @return

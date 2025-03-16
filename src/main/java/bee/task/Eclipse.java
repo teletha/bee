@@ -81,6 +81,18 @@ public class Eclipse extends Task implements IDESupport {
      * {@inheritDoc}
      */
     @Override
+    @Command("Delete configuration files for Eclipse.")
+    public void delete() {
+        deleteFile(".classpath");
+        deleteFile(".factorypath");
+        deleteFile(".project");
+        deleteDirectory(".settings");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean exist(Project project) {
         return project.getRoot().file(".classpath").isReadable();
     }
