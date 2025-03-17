@@ -82,8 +82,6 @@ public class BeeOption<T> {
     /** The current value. */
     T value;
 
-    private int position;
-
     /**
      * Hide constructor.
      */
@@ -104,15 +102,6 @@ public class BeeOption<T> {
      */
     public T value() {
         return value;
-    }
-
-    /**
-     * Check whether this option is used or not.
-     * 
-     * @return
-     */
-    public boolean isDefault() {
-        return defaultValue == value;
     }
 
     /**
