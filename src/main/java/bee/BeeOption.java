@@ -105,6 +105,15 @@ public class BeeOption<T> {
     }
 
     /**
+     * Determine if this option has been configured by the user.
+     * 
+     * @return
+     */
+    public boolean isConfigured() {
+        return value != defaultValue;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
