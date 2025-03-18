@@ -180,7 +180,8 @@ public class Bee {
             // =====================================
             // build your project
             // =====================================
-            ui.info("Finding your project...   (Bee" + version + "  Java" + Runtime.version() + ")");
+            ui.info("Finding your project in ", project.getRoot().absolutize().normalize(), "   (Bee", version, "  Java", Runtime
+                    .version(), ")");
 
             // If you are running in help or version mode, there is no need to search for projects.
             // It will also ignore all user-specified tasks.
@@ -302,7 +303,9 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
-        if (tasks.length == 0) tasks = new String[] {"help", "--root", "../act11", "--input", "1"};
+        // if (tasks.length == 0) tasks = new String[] {"help", "--root", "../act11", "--input",
+        // "1"};
+        if (tasks.length == 0) tasks = new String[] {"install"};
 
         // The first priority is to parse options.
         // When the Bee is initialized, the CUI is also initialized, so the values of user input

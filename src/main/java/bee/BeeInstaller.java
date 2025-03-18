@@ -13,6 +13,7 @@ import static bee.Platform.*;
 
 import java.time.format.DateTimeFormatter;
 
+import bee.api.Project;
 import bee.api.Repository;
 import bee.task.Help;
 import kiss.I;
@@ -38,12 +39,17 @@ public class BeeInstaller {
      */
     public static final void install(boolean installLauncher, boolean installAPI, boolean showWelcome) {
         UserInterface ui = I.make(UserInterface.class);
+        Project project = I.make(Project.class);
 
         Location location = Locator.locate(bee.Bee.class);
         if (location.isDirectory()) {
             // If Bee binary exists in the directory, it is likely to be executed from the
-            // development environment of Bee itself, so ignore the installation.
-            return;
+            // development environment of Bee itself.
+            if (bee.Bee.Tool.equals(project)) {
+                location = project.locateJar();
+            } else {
+                return;
+            }
         }
 
         File source = location.asFile();

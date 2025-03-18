@@ -117,27 +117,11 @@ public class Project {
         if (BeeOption.Root.isConfigured()) {
             this.root = BeeOption.Root.value();
         } else {
-            if (projectClass.isMemberClass() || projectClass.isAnonymousClass()) {
-                // fabric project
-                this.root = BeeOption.Root.value();
+            Location archive = Locator.locate(projectClass);
+            if (archive.isDirectory()) {
+                this.root = archive.parent().parent();
             } else {
-                try {
-                    Location archive = Locator.locate(projectClass);
-
-                    if (archive.isDirectory()) {
-                        // directory
-                        this.root = archive.parent().parent();
-                    } else {
-                        // some archive
-                        if (archive.toString().contains("temporary")) {
-                            this.root = BeeOption.Root.value();
-                        } else {
-                            this.root = archive.asDirectory();
-                        }
-                    }
-                } catch (Throwable e) {
-                    this.root = BeeOption.Root.value();
-                }
+                this.root = BeeOption.Root.value();
             }
         }
 
