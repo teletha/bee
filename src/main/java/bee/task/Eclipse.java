@@ -104,6 +104,7 @@ public class Eclipse extends Task implements IDESupport {
      */
     private void createProject(File file) {
         if (file.isAbsent()) {
+            // create
             XML doc = I.xml("projectDescription");
             doc.child("name").text(project.getProduct());
             doc.child("comment").text(project.getDescription());
@@ -114,7 +115,22 @@ public class Eclipse extends Task implements IDESupport {
             });
             doc.child("natures").child("nature").text("org.eclipse.jdt.core.javanature");
 
-            // write file
+            makeFile(file, doc);
+        } else {
+            // modify
+            XML doc = I.xml(file.asJavaPath());
+
+            if (doc.find("buildCommand name:contains(org.eclipse.jdt.core.javabuilder)").size() == 0) {
+                doc.find("buildSpec").child("buildCommand", com -> {
+                    com.child("name").text("org.eclipse.jdt.core.javabuilder");
+                    com.child("arguments");
+                });
+            }
+
+            if (doc.find("nature:contains(org.eclipse.jdt.core.javanature)").size() == 0) {
+                doc.find("natures").child("nature").text("org.eclipse.jdt.core.javanature");
+            }
+
             makeFile(file, doc);
         }
     }

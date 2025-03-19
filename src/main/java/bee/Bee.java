@@ -303,8 +303,6 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
-        // if (tasks.length == 0) tasks = new String[] {"help", "--root", "../act11", "--input",
-        // "1"};
         if (tasks.length == 0) tasks = new String[] {"install"};
 
         // The first priority is to parse options.
