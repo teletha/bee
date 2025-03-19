@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.70.0](https://github.com/teletha/bee/compare/0.67.4...0.70.0) (2025-03-19)
+
+
+### Features
+
+* add --input option ([f11886d](https://github.com/teletha/bee/commit/f11886d707ca091dff474a79df03eaa43ef342a1))
+* add ide:delete command ([4c23e51](https://github.com/teletha/bee/commit/4c23e517f4b457576721e0b6aba2234f0be453d2))
+* add root option ([95575f3](https://github.com/teletha/bee/commit/95575f37c68f19b0de392d7f0d5d936d866dc497))
+
+
+### Bug Fixes
+
+* allow write access to github action ([a19e9fa](https://github.com/teletha/bee/commit/a19e9fa0f6e07b30d80a9d1dd4d05aa9485d60e1))
+* change the interval time of update to 7200 mins ([6a0c05a](https://github.com/teletha/bee/commit/6a0c05ade7f50d443b88c133b9ece8202501aa80))
+* handle root option well ([0e23699](https://github.com/teletha/bee/commit/0e236994518aed978e853e3c557f49ace07faa9b))
+
+
+### Miscellaneous Chores
+
+* release 0.70.0 ([503db7e](https://github.com/teletha/bee/commit/503db7e36b2c5291260c790969b6649146524700))
+
 ## [0.67.4](https://github.com/teletha/bee/compare/0.67.3...0.67.4) (2025-03-13)
 
 
