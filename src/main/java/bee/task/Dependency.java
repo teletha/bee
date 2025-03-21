@@ -9,8 +9,13 @@
  */
 package bee.task;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.graph.DependencyNode;
@@ -34,14 +39,31 @@ public class Dependency extends Task {
     public List<String> module() {
         require(Compile::source);
 
+        Set<String> modules = new TreeSet();
         List<String> command = I.list("jdeps", "-q", "--print-module-deps", "--ignore-missing-deps", "--multi-release", "base");
         command.add(project.getClasses().path());
         for (Library library : project.getDependency(Scope.Runtime)) {
             command.add(library.getLocalJar().path());
+
+            // Scrutinize the require-module listed in MANIFEST.MF of each Jar file. Note that
+            // multiple modules are possible.
+            try (JarFile file = new JarFile(library.getLocalJar().asJavaFile())) {
+                Manifest manifest = file.getManifest();
+                if (manifest != null) {
+                    String requires = manifest.getMainAttributes().getValue("require-module");
+                    if (requires != null) {
+                        for (String require : requires.split("[ ,]+")) {
+                            modules.add(require);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
         }
-        List<String> result = I.list(Process.with().read(command).split(","));
-        ui.info("Analyze dependency modules.", result);
-        return result;
+        modules.addAll(I.list(Process.with().read(command).split(",")));
+        ui.info("Analyze dependency modules.", modules);
+        return new ArrayList(modules);
     }
 
     /**
