@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.71.0](https://github.com/teletha/bee/compare/0.70.0...0.71.0) (2025-03-22)
+
+
+### Features
+
+* collect module from require-module entry on MANIFEST.MF ([8dfc884](https://github.com/teletha/bee/commit/8dfc884ad2f6978eb33e7166b912f6204083e870))
+
+
+### Bug Fixes
+
+* revert installer ([63c4871](https://github.com/teletha/bee/commit/63c4871ee66e5b8cb80975aefe4cf2897f7bb481))
+
 ## [0.70.0](https://github.com/teletha/bee/compare/0.67.4...0.70.0) (2025-03-19)
 
 
