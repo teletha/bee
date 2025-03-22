@@ -18,7 +18,6 @@ import bee.api.Repository;
 import bee.task.Help;
 import kiss.I;
 import psychopath.File;
-import psychopath.Location;
 import psychopath.Locator;
 
 public class BeeInstaller {
@@ -41,21 +40,10 @@ public class BeeInstaller {
         UserInterface ui = I.make(UserInterface.class);
         Project project = I.make(Project.class);
 
-        Location location = Locator.locate(bee.Bee.class);
-        if (location.isDirectory()) {
-            // If Bee binary exists in the directory, it is likely to be executed from the
-            // development environment of Bee itself.
-            if (bee.Bee.Tool.equals(project)) {
-                location = project.locateJar();
-            } else {
-                return;
-            }
-        }
+        File source = bee.Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(bee.Bee.class).asFile();
 
-        File source = location.asFile();
         if (installLauncher) {
             File dest = BeeHome.file("bee-" + bee.Bee.Tool.getVersion() + "-" + DATETIME.format(source.lastModifiedDateTime()) + ".jar");
-
             // The current bee.jar is newer.
             // We should copy it to JDK directory.
             // This process is mainly used by Bee users while install phase.
