@@ -58,26 +58,26 @@ public class Test extends Task {
     public void test() {
         require(Compile::test);
 
-        if (project.getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
-            ui.info("No test will be performed because the test files don't exist in the following directories.");
-            ui.info(List.of(project.getTestClasses()));
-            ui.info("In order to perform the test, you need to create a test class whose name ends with 'Test' in one of the following directories.");
-            ui.info(project.getTestSourceSet().toList());
+        if (project().getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
+            ui().info("No test will be performed because the test files don't exist in the following directories.");
+            ui().info(List.of(project().getTestClasses()));
+            ui().info("In order to perform the test, you need to create a test class whose name ends with 'Test' in one of the following directories.");
+            ui().info(project().getTestSourceSet().toList());
         } else {
             new Require("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
                 {
                     Java.with()
                             .java(java)
                             .param(params)
-                            .classPath(project.getClasses())
-                            .classPath(project.getTestClasses())
-                            .classPath(project.getDependency(Scope.Test, Scope.Compile))
+                            .classPath(project().getClasses())
+                            .classPath(project().getTestClasses())
+                            .classPath(project().getDependency(Scope.Test, Scope.Compile))
                             .classPath(Bee.class)
                             .enableAssertion()
-                            .encoding(project.getEncoding())
-                            .workingDirectory(project.getRoot())
-                            .run(Junit.class, project
-                                    .getTestClasses(), project.getOutput().directory("test-reports").create(), showProlongedTest);
+                            .encoding(project().getEncoding())
+                            .workingDirectory(project().getRoot())
+                            .run(Junit.class, project()
+                                    .getTestClasses(), project().getOutput().directory("test-reports").create(), showProlongedTest);
                 }
             };
         }
@@ -151,7 +151,7 @@ public class Test extends Task {
             }
 
             private void showHeader() {
-                ui.info(String.format("%-4s\t%-4s\t%-4s\t%-4s\t%-4s", "Run", "Fail", "Error", "Skip", "Time(sec)"));
+                ui().info(String.format("%-4s\t%-4s\t%-4s\t%-4s\t%-4s", "Run", "Fail", "Error", "Skip", "Time(sec)"));
             }
 
             /**
@@ -161,7 +161,7 @@ public class Test extends Task {
             public synchronized void testPlanExecutionFinished(TestPlan testPlan) {
                 if (shows) showHeader();
 
-                ui.info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " suites)"));
+                ui().info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " suites)"));
                 if (fails.size() != 0 || errors.size() != 0) {
                     Fail fail = new Fail("Test has failed.");
                     // The stack trace created here is useless and should be deleted. (Since it is
@@ -170,7 +170,7 @@ public class Test extends Task {
 
                     buildFailure(fail, errors);
                     buildFailure(fail, fails);
-                    ui.error(fail);
+                    ui().error(fail);
                 }
             }
 
@@ -224,9 +224,9 @@ public class Test extends Task {
                         String message = buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, name(container.identifier));
 
                         if (show) {
-                            ui.info(message);
+                            ui().info(message);
                         } else {
-                            ui.trace(message);
+                            ui().trace(message);
                         }
                     } else {
                         TestSuite parent = containers.get(identifier.getParentId().get());

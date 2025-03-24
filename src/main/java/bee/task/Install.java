@@ -12,6 +12,7 @@ package bee.task;
 import static bee.TaskOperations.*;
 
 import bee.Task;
+import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Project;
 import bee.api.Repository;
@@ -25,15 +26,15 @@ public class Install extends Task {
         require(Test::test);
         require(Jar::document, Jar::source);
 
-        I.make(Repository.class).install(project);
+        I.make(Repository.class).install(TaskOperations.project());
     }
 
     @Command("Install jar file only into the local repository.")
     public void jar() {
-        File selected = ui.ask("Select a jar file to install.", project.getRoot().walkFile("*.jar").toList());
-        String group = ui.ask("Input group name.", selected.name());
-        String product = ui.ask("Input product name.", group);
-        String version = ui.ask("Input product version.", "1.0");
+        File selected = ui().ask("Select a jar file to install.", TaskOperations.project().getRoot().walkFile("*.jar").toList());
+        String group = ui().ask("Input group name.", selected.name());
+        String product = ui().ask("Input product name.", group);
+        String version = ui().ask("Input product version.", "1.0");
 
         Repository repository = I.make(Repository.class);
         repository.install(new TemporaryProject(group, product, version), selected);

@@ -33,12 +33,12 @@ public class CI extends Task {
 
     @Command(defaults = true, value = "Setup CI/CD")
     public void setup() {
-        VCS vcs = project.getVersionControlSystem();
+        VCS vcs = project().getVersionControlSystem();
 
         if (vcs == null) {
-            ui.info("No version control system.");
+            ui().info("No version control system.");
         } else {
-            ui.info("Detect version control system.");
+            ui().info("Detect version control system.");
 
             if (vcs.name().equals("github")) {
                 require(CI::github);
@@ -112,13 +112,13 @@ public class CI extends Task {
                         commit_message: update repository info
                 """;
 
-        String version = Inputs.normalize(project.getJavaSourceVersion());
+        String version = Inputs.normalize(project().getJavaSourceVersion());
 
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
-        makeFile("version.txt", List.of(project.getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
+        makeFile("version.txt", List.of(project().getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
         makeFile(".github/workflows/build.yml", String
-                .format(build, version, project.getProduct(), project.getVersionControlSystem().domain()));
+                .format(build, version, project().getProduct(), project().getVersionControlSystem().domain()));
         license();
         readme();
 
@@ -132,7 +132,7 @@ public class CI extends Task {
      */
     @Command("Generate license file.")
     public void license() {
-        License license = project.license();
+        License license = project().license();
 
         if (license == null) {
             return; // not specified
@@ -150,7 +150,7 @@ public class CI extends Task {
      */
     @Command("Generate readme file.")
     public void readme() {
-        List<Snippet> snippets = project.getRoot()
+        List<Snippet> snippets = project().getRoot()
                 .walkFile("**/ReadMe*Test.java")
                 .first()
                 .map(File::text)
@@ -236,7 +236,7 @@ public class CI extends Task {
                         libraryDependencies += "{group}" % "{product}" % "{version}"
                         ```
                         #### [Leiningen](https://leiningen.org/)
-                        Add JitPack repository at the end of repositories in your project.clj:
+                        Add JitPack repository at the end of repositories in your project().clj:
                         ```clj
                         :repositories [["jitpack" "https://jitpack.io"]]
                         ```
@@ -288,31 +288,31 @@ public class CI extends Task {
                         {license}
                         <p align="right"><a href="#top">back to top</a></p>
                         """, new Object[] {
-                        project}, (m, o, e) -> {
+                        project()}, (m, o, e) -> {
                             switch (e) {
                             case "ProductName":
-                                return Inputs.capitalize(project.getProduct());
+                                return Inputs.capitalize(project().getProduct());
 
                             case "java":
-                                return Inputs.normalize(project.getJavaRequiredVersion());
+                                return Inputs.normalize(project().getJavaRequiredVersion());
 
                             case "owner":
-                                return project.getVersionControlSystem().owner;
+                                return project().getVersionControlSystem().owner;
 
                             case "repo":
-                                return project.getVersionControlSystem().repo;
+                                return project().getVersionControlSystem().repo;
 
                             case "name":
-                                return project.getVersionControlSystem().name();
+                                return project().getVersionControlSystem().name();
 
                             case "dependencies":
-                                return new ArrayList(project.getDependency(Scope.Runtime));
+                                return new ArrayList(project().getDependency(Scope.Runtime));
 
                             case "testDependencies":
-                                return new ArrayList(project.getDependency(Scope.Test));
+                                return new ArrayList(project().getDependency(Scope.Test));
 
                             case "license":
-                                return project.license().text(false).stream().collect(Collectors.joining(Platform.EOL));
+                                return project().license().text(false).stream().collect(Collectors.joining(Platform.EOL));
 
                             case "snippets":
                                 return snippets.isEmpty() ? null
@@ -321,7 +321,7 @@ public class CI extends Task {
                                                 .collect(Collectors.joining(Platform.EOL));
 
                             case "benchmark":
-                                File benchmark = project.getRoot().file("benchmark/README.md");
+                                File benchmark = project().getRoot().file("benchmark/README.md");
                                 return benchmark.isAbsent() ? null : benchmark.text();
 
                             default:
@@ -333,7 +333,7 @@ public class CI extends Task {
 
     @Command("Generate CI/CD configuration files for JitPack.")
     public void jitpack() {
-        String javaVersion = Inputs.normalize(project.getJavaSourceVersion());
+        String javaVersion = Inputs.normalize(project().getJavaSourceVersion());
 
         makeFile("jitpack.yml", String
                 .format("""
@@ -363,7 +363,7 @@ public class CI extends Task {
 
     @Command("Generate .gitignore file.")
     public void gitignore() {
-        File ignore = project.getRoot().file(".gitignore");
+        File ignore = project().getRoot().file(".gitignore");
 
         makeFile(ignore, update(ignore.lines().toList()));
     }

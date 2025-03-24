@@ -20,7 +20,7 @@ public class Sample extends Task {
     public void main() {
         require(A::main, B::main, C::main);
 
-        ui.info("FINISH MAIN");
+        ui().info("FINISH MAIN");
     }
 
     /**
@@ -32,7 +32,7 @@ public class Sample extends Task {
             for (int i = 0; i < count; i++) {
                 try {
                     Thread.sleep(500);
-                    ui.info(i + " at " + getClass().getSimpleName());
+                    ui().info(i + " at " + getClass().getSimpleName());
                 } catch (InterruptedException e) {
                     throw I.quiet(e);
                 }

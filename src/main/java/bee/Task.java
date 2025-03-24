@@ -9,6 +9,7 @@
  */
 package bee;
 
+import static bee.TaskOperations.*;
 import static org.objectweb.asm.Opcodes.*;
 
 import java.io.InputStream;
@@ -50,12 +51,6 @@ public abstract class Task implements Extensible {
     /** The common task repository. */
     static Map<String, Info> commons;
 
-    /** The current processing project. */
-    protected final Project project = I.make(Project.class);
-
-    /** The user interface. */
-    protected UserInterface ui = I.make(UserInterface.class);
-
     /**
      * Execute manual tasks.
      */
@@ -69,7 +64,7 @@ public abstract class Task implements Extensible {
 
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
             // display usage description for this command
-            ui.info(entry.getKey(), " - ", entry.getValue());
+            ui().info(entry.getKey(), " - ", entry.getValue());
         }
     }
 
@@ -155,12 +150,16 @@ public abstract class Task implements Extensible {
         ParallelInterface parallel = null;
 
         for (int i = 0; i < tasks.length; i++) {
-            parallels.offerFirst(parallel = new ParallelInterface(ui, parallel));
+            parallels.offerFirst(parallel = new ParallelInterface(ui(), parallel));
         }
         parallels.peekFirst().start();
 
+        // cache the current project
+        Project project = project();
+
         return I.signal(tasks).joinAll(task -> {
             LifestyleForProject.local.set(project);
+            LifestyleForUI.local.set(parallels.pollFirst());
 
             Method m = task.getClass().getDeclaredMethod("writeReplace");
             m.setAccessible(true);
@@ -168,7 +167,7 @@ public abstract class Task implements Extensible {
             SerializedLambda s = (SerializedLambda) m.invoke(task);
             Method method = I.type(s.getImplClass().replaceAll("/", ".")).getMethod(s.getImplMethodName());
 
-            return execute(computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase(), parallels.pollFirst());
+            return execute(computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase());
         }).to().v;
     }
 
@@ -327,9 +326,8 @@ public abstract class Task implements Extensible {
      * Execute literal expression task.
      * 
      * @param input User task for input.
-     * @param ui User interface for output.
      */
-    final Object execute(String input, UserInterface ui) {
+    final Object execute(String input) {
         // parse command
         if (input == null) {
             return null;
@@ -368,7 +366,7 @@ public abstract class Task implements Extensible {
         if (command == null) {
             // Search for command with similar names for possible misspellings.
             String recommend = Inputs.recommend(commandName, info.commands.keySet());
-            if (recommend != null && ui.confirm("Isn't it a misspelling of command [" + recommend + "] ?")) {
+            if (recommend != null && ui().confirm("Isn't it a misspelling of command [" + recommend + "] ?")) {
                 command = info.commands.get(recommend);
             } else {
                 Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
@@ -388,13 +386,12 @@ public abstract class Task implements Extensible {
 
         // create task and initialize
         Task task = I.make(info.task);
-        task.ui = ui;
 
         // execute task
         try (var x = Profiling.of("Task [" + fullname + "]")) {
             return command.invoke(task);
         } catch (TaskCancel e) {
-            ui.warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
+            ui().warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
             return null;
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
@@ -402,8 +399,8 @@ public abstract class Task implements Extensible {
             }
             throw I.quiet(e);
         } finally {
-            if (ui instanceof ParallelInterface) {
-                ((ParallelInterface) ui).finish();
+            if (ui() instanceof ParallelInterface parallel) {
+                parallel.finish();
             }
         }
     }
@@ -594,8 +591,7 @@ public abstract class Task implements Extensible {
                         mw.visitMethodInsn(INVOKESTATIC, "bee/util/Inputs", "hyphenize", "(Ljava/lang/String;)Ljava/lang/String;", false);
                         mw.visitVarInsn(ASTORE, 1);
 
-                        mw.visitVarInsn(ALOAD, 0);
-                        mw.visitFieldInsn(GETFIELD, task, "project", "Lbee/api/Project;");
+                        mw.visitMethodInsn(INVOKESTATIC, "bee/TaskOperations", "project", "()Lbee/api/Project;", false);
                         mw.visitLdcInsn(Type.getType(Cache.class));
                         mw.visitMethodInsn(INVOKEVIRTUAL, "bee/api/Project", "associate", "(Ljava/lang/Class;)Ljava/lang/Object;", false);
                         mw.visitTypeInsn(CHECKCAST, "java/util/Map");
@@ -612,8 +608,7 @@ public abstract class Task implements Extensible {
 
                         Label label3 = new Label();
                         mw.visitJumpInsn(IFNE, label3);
-                        mw.visitVarInsn(ALOAD, 0);
-                        mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
+                        mw.visitMethodInsn(INVOKESTATIC, "bee/TaskOperations", "ui", "()Lbee/UserInterface;", false);
 
                         mw.visitVarInsn(ALOAD, 1);
                         mw.visitInsn(ACONST_NULL);
@@ -625,8 +620,7 @@ public abstract class Task implements Extensible {
                             mw.visitVarInsn(ASTORE, 3);
                         }
 
-                        mw.visitVarInsn(ALOAD, 0);
-                        mw.visitFieldInsn(GETFIELD, parent, "ui", "Lbee/UserInterface;");
+                        mw.visitMethodInsn(INVOKESTATIC, "bee/TaskOperations", "ui", "()Lbee/UserInterface;", false);
                         mw.visitVarInsn(ALOAD, 1);
                         mw.visitInsn(ACONST_NULL);
                         mw.visitMethodInsn(INVOKEVIRTUAL, "bee/UserInterface", "endCommand", "(Ljava/lang/String;Lbee/api/Command;)V", false);

@@ -51,7 +51,7 @@ public class Exe extends Task {
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
         if (!Platform.isWindows()) {
-            ui.warn("Skip the task [exe] because it is available in windows platform only.");
+            ui().warn("Skip the task [exe] because it is available in windows platform only.");
             return null;
         }
 
@@ -61,11 +61,11 @@ public class Exe extends Task {
         String main = require(FindMain::main);
 
         // search main class in MANIFEST.MF
-        File file = project.getSourceSet()
+        File file = project().getSourceSet()
                 .flatMap(dir -> dir.walkFile("META-INF/MANIFEST.MF"))
                 .first()
                 .to()
-                .or(project.getSources().file("resources/META-INF/MANIFEST.MF"));
+                .or(project().getSources().file("resources/META-INF/MANIFEST.MF"));
 
         try {
             Manifest manifest = new Manifest(file.newInputStream());
@@ -84,7 +84,7 @@ public class Exe extends Task {
         Folder folder = Locator.folder();
 
         // download and unzip exewrap
-        ui.info("Download and extract exewrap binary.");
+        ui().info("Download and extract exewrap binary.");
 
         I.http("https://dforest.watch.impress.co.jp/library/e/exewrap/11824/exewrap1.6.5.zip", InputStream.class)
                 .map(Locator.temporaryFile("exewrap.zip")::writeFrom)
@@ -94,7 +94,7 @@ public class Exe extends Task {
                     Directory temporary = Locator.temporaryDirectory();
 
                     File exewrap = dir.file("exewrap1.6.5/x64/exewrap.exe");
-                    File exe = temporary.file(project.getProduct() + ".exe");
+                    File exe = temporary.file(project().getProduct() + ".exe");
 
                     // build command line
                     List<String> command = new ArrayList();
@@ -103,9 +103,9 @@ public class Exe extends Task {
                     command.add("-A");
                     command.add("x64");
                     command.add("-t");
-                    command.add(Inputs.normalize(project.getJavaRequiredVersion()));
+                    command.add(Inputs.normalize(project().getJavaRequiredVersion()));
                     command.add("-j");
-                    command.add(project.locateJar().toString());
+                    command.add(project().locateJar().toString());
                     command.add("-e");
                     command.add("IGNORE_UNCAUGHT_EXCEPTION");
                     command.add("-o");
@@ -117,14 +117,14 @@ public class Exe extends Task {
 
                     // execute exewrap
                     Process.with().workingDirectory(exewrap.parent()).ignoreOutput().run(command);
-                    ui.info("Write " + exe.name() + ".");
+                    ui().info("Write " + exe.name() + ".");
 
                     // pack
                     folder.add(exe);
                 });
 
-        folder.add(project.locateJar(), o -> o.allocateIn("lib"));
-        for (Library library : project.getDependency(Scope.Runtime)) {
+        folder.add(project().locateJar(), o -> o.allocateIn("lib"));
+        for (Library library : project().getDependency(Scope.Runtime)) {
             folder.add(library.getLocalJar(), o -> o.allocateIn("lib"));
         }
 
@@ -161,8 +161,8 @@ public class Exe extends Task {
             folder.add(location);
         }
 
-        ui.info("Packing application and libraries.");
+        ui().info("Packing application and libraries.");
 
-        return folder.packTo(project.getOutput().file(project.getProduct() + "-" + project.getVersion() + ".zip"));
+        return folder.packTo(project().getOutput().file(project().getProduct() + "-" + project().getVersion() + ".zip"));
     }
 }

@@ -335,7 +335,7 @@ public class Bee {
         @Override
         public void execute() {
             for (String task : tasks) {
-                execute(task, ui);
+                execute(task);
             }
         }
     }

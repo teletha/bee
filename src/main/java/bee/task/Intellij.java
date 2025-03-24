@@ -35,11 +35,11 @@ public class Intellij extends Task implements IDESupport {
     @Override
     @Command(value = "Generate configuration files for IntelliJ IDEA.", defaults = true)
     public void execute() {
-        createModule(project.getSources(), project.getClasses(), Scope.Compile);
-        createModule(project.getTestSources(), project.getTestClasses(), Scope.Test);
-        createModule(project.getProjectSources(), project.getProjectClasses(), Scope.System);
+        createModule(project().getSources(), project().getClasses(), Scope.Compile);
+        createModule(project().getTestSources(), project().getTestClasses(), Scope.Test);
+        createModule(project().getProjectSources(), project().getProjectClasses(), Scope.System);
 
-        ui.info("Create IDEA configuration files.");
+        ui().info("Create IDEA configuration files.");
     }
 
     /**
@@ -56,7 +56,7 @@ public class Intellij extends Task implements IDESupport {
      */
     @Override
     public boolean exist(Project project) {
-        return Files.isReadable(project.getRoot().asJavaPath().resolve(".idea/modules.xml"));
+        return Files.isReadable(project().getRoot().asJavaPath().resolve(".idea/modules.xml"));
     }
 
     /**
@@ -72,7 +72,7 @@ public class Intellij extends Task implements IDESupport {
         XML doc = I.xml("module").attr("type", "JAVA_MODULE").attr("version", 4);
         XML component = doc.child("component").attr("name", "NewModuleRootManager").attr("inherit-compiler-output", false);
         component.child("output").attr("url", output);
-        component.child("output-test").attr("url", project.getTestClasses());
+        component.child("output-test").attr("url", project().getTestClasses());
 
         XML content = component.child("content").attr("url", "file://$MODULE_DIR$");
         content.child("sourceFolder").attr("url", "file://$MODULE_DIR$/java").attr("isTestSource", scope == Scope.Test);
@@ -80,16 +80,16 @@ public class Intellij extends Task implements IDESupport {
         component.child("orderEntry").attr("type", "sourceFolder").attr("forTests", false);
 
         // Dependency Libraries
-        library(project.getDependency(scope), component, scope);
+        library(project().getDependency(scope), component, scope);
 
         switch (scope) {
         case Test: // For Test Module
-            component.child("orderEntry").attr("type", "module").attr("module-name", project.getSources().name());
+            component.child("orderEntry").attr("type", "module").attr("module-name", project().getSources().name());
             break;
 
         case System: // For Project Module
-            if (!project.equals(Bee.Tool)) {
-                library(project.getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion()), component, Scope.System);
+            if (!project().equals(Bee.Tool)) {
+                library(project().getLibrary(Bee.API.getGroup(), Bee.API.getProduct(), Bee.API.getVersion()), component, Scope.System);
             }
             break;
 

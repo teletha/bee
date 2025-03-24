@@ -11,6 +11,7 @@ package bee.task;
 
 import org.junit.jupiter.api.Test;
 
+import antibug.powerassert.PowerAssertOff;
 import bee.Task;
 import bee.TaskTestBase;
 import bee.api.Command;
@@ -186,6 +187,7 @@ class TaskCacheTest extends TaskTestBase {
     }
 
     @Test
+    @PowerAssertOff
     void require() {
         Req task = I.make(Req.class);
         assert ReqCaller.count == 0;

@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
@@ -19,7 +21,7 @@ public class Bun extends Task {
     @Command("Install bun.")
     public void install() {
         if (Process.isAvailable("bun")) {
-            ui.info("Bun [", Process.with().read("bun -v"), "] is already installed.");
+            ui().info("Bun [", Process.with().read("bun -v"), "] is already installed.");
         } else {
             Process.with()
                     .inheritIO()

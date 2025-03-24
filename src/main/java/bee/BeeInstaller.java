@@ -90,7 +90,7 @@ public class BeeInstaller {
 
         if (showWelcome) {
             Task help = I.make(Help.class);
-            help.execute("help:welcome", ui);
+            help.execute("help:welcome");
         }
     }
 }

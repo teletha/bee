@@ -34,7 +34,7 @@ public class Dependency extends Task {
 
     @Command(value = "Display the dependency tree.", defaults = true)
     public void tree() {
-        show(0, I.make(Repository.class).buildDependencyGraph(project));
+        show(0, I.make(Repository.class).buildDependencyGraph(project()));
     }
 
     @Command("Display all dependency modules.")
@@ -43,8 +43,8 @@ public class Dependency extends Task {
 
         Set<String> modules = new TreeSet();
         List<String> command = I.list("jdeps", "-q", "--print-module-deps", "--ignore-missing-deps", "--multi-release", "base");
-        command.add(project.getClasses().path());
-        for (Library library : project.getDependency(Scope.Runtime)) {
+        command.add(project().getClasses().path());
+        for (Library library : project().getDependency(Scope.Runtime)) {
             command.add(library.getLocalJar().path());
 
             // Scrutinize the require-module listed in MANIFEST.MF of each Jar file. Note that
@@ -64,7 +64,7 @@ public class Dependency extends Task {
             }
         }
         modules.addAll(I.list(Process.with().read(command).split(",")));
-        ui.info("Analyze dependency modules.", modules);
+        ui().info("Analyze dependency modules.", modules);
         return new ArrayList(modules);
     }
 
@@ -83,7 +83,7 @@ public class Dependency extends Task {
         if (artifact.getClassifier().length() != 0) name.append(artifact.getClassifier()).append("  :  ");
         name.append(artifact.getVersion());
 
-        ui.info(name);
+        ui().info(name);
 
         List<DependencyNode> children = node.getChildren();
         children.sort(Comparator.comparing(o -> o.getArtifact().getArtifactId()));

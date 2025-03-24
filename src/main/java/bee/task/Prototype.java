@@ -19,8 +19,8 @@ public class Prototype extends Task {
 
     @Command("Generate standard Java project skelton.")
     public void java() {
-        String packageName = project.getGroup().replaceAll("\\.", "/");
-        Directory sources = project.getInput();
+        String packageName = project().getGroup().replaceAll("\\.", "/");
+        Directory sources = project().getInput();
 
         makeDirectory(sources, "main/java/" + packageName);
         makeDirectory(sources, "main/resources/" + packageName);

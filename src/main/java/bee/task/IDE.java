@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -26,7 +28,7 @@ public class IDE extends Task {
     public void execute() {
         task(IDESupport::execute);
 
-        ui.info("Generate IDE configuration files.");
+        ui().info("Generate IDE configuration files.");
     }
 
     /**
@@ -36,7 +38,7 @@ public class IDE extends Task {
     public void delete() {
         task(IDESupport::delete);
 
-        ui.info("Delete IDE configuration files.");
+        ui().info("Delete IDE configuration files.");
     }
 
     /**
@@ -47,14 +49,14 @@ public class IDE extends Task {
 
         // search existing environment
         for (IDESupport support : supports) {
-            if (support.exist(project)) {
+            if (support.exist(project())) {
                 task.accept(support);
                 return;
             }
         }
 
         // initialize develop environemnt
-        ui.info("Project develop environment is not found.");
-        task.accept(ui.ask("Bee supports the following IDEs.", supports));
+        ui().info("Project develop environment is not found.");
+        task.accept(ui().ask("Bee supports the following IDEs.", supports));
     }
 }

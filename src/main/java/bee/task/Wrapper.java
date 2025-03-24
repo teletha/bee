@@ -55,17 +55,17 @@ public class Wrapper extends Task {
                 .map(DefaultArtifactVersion::toString)
                 .toList();
 
-        build(ui.ask("Which version of Bee do you want to use?", list));
+        build(ui().ask("Which version of Bee do you want to use?", list));
     }
 
     @Command("Build local bee environment using the local installed version.")
     public void local() {
         File from;
-        File to = project.getRoot().file("bee-" + Bee.Tool.getVersion() + ".far");
+        File to = project().getRoot().file("bee-" + Bee.Tool.getVersion() + ".far");
 
-        if (project.equals(Bee.Tool)) {
+        if (project().equals(Bee.Tool)) {
             require(Install::project);
-            from = project.locateJar();
+            from = project().locateJar();
         } else {
             from = Locator.locate(Bee.class).asFile();
         }
@@ -93,7 +93,7 @@ public class Wrapper extends Task {
         deleteFile("bee.bat");
         deleteLocalFars();
 
-        ui.info("Remove the local bee environment. From now on, you will use Bee installed at [", Platform.Bee, "].");
+        ui().info("Remove the local bee environment. From now on, you will use Bee installed at [", Platform.Bee, "].");
     }
 
     /**
@@ -155,8 +155,8 @@ public class Wrapper extends Task {
         makeFile("bee.bat", bat);
         makeFile("bee", sh);
 
-        ui.info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
-        ui.info("To clear this setting, execute the command [bee env:clean].");
+        ui().info("From now on, the bee command used in this directory will be fixed to version [", version, "].");
+        ui().info("To clear this setting, execute the command [bee env:clean].");
 
         deleteLocalFars();
     }
@@ -165,7 +165,7 @@ public class Wrapper extends Task {
      * Delete all local fat-jars.
      */
     private void deleteLocalFars() {
-        project.getRoot().walkFile("bee-*.far").to(file -> {
+        project().getRoot().walkFile("bee-*.far").to(file -> {
             // If you are executing Bee from wrapper, and you try to detele Bee's fat-jar
             // files, you will not be able to delete it because the JVM has the file handle already.
             // So we are forcing the external process to delete it.

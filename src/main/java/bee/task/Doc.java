@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Path;
@@ -48,12 +50,12 @@ public class Doc extends Task {
      */
     @Command(defaults = true, value = "Generate product javadoc.")
     public Directory javadoc() {
-        Directory output = project.getOutput().directory("api").create();
+        Directory output = project().getOutput().directory("api").create();
 
         Class<? extends Doclet> doclet = null;
         List<String> options = new ArrayList();
         options.add("--release");
-        options.add(Inputs.normalize(project.getJavaSourceVersion()));
+        options.add(Inputs.normalize(project().getJavaSourceVersion()));
         options.add("-Xdoclint:none");
         options.add("-Xmaxwarns");
         options.add("1");
@@ -66,23 +68,23 @@ public class Doc extends Task {
 
         // external links
         options.add("-link");
-        options.add("https://docs.oracle.com/en/java/javase/" + Inputs.normalize(project.getJavaSourceVersion()) + "/docs/api/");
+        options.add("https://docs.oracle.com/en/java/javase/" + Inputs.normalize(project().getJavaSourceVersion()) + "/docs/api/");
 
         DocumentationTool doc = ToolProvider.getSystemDocumentationTool();
         try (Listener listener = new Listener();
-                StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), project.getEncoding())) {
+                StandardJavaFileManager manager = doc.getStandardFileManager(null, Locale.getDefault(), project().getEncoding())) {
             manager.setLocationFromPaths(DocumentationTool.Location.DOCUMENTATION_OUTPUT, I.list(output.asJavaPath()));
-            manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project.getSourceSet().map(Location::asJavaPath).toList());
-            manager.setLocationFromPaths(StandardLocation.CLASS_PATH, project.getDependency(Scope.values())
+            manager.setLocationFromPaths(StandardLocation.SOURCE_PATH, project().getSourceSet().map(Location::asJavaPath).toList());
+            manager.setLocationFromPaths(StandardLocation.CLASS_PATH, project().getDependency(Scope.values())
                     .stream()
                     .map(lib -> lib.getLocalJar().asJavaPath())
                     .collect(Collectors.toList()));
 
-            List<Path> sourceFiles = project.getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
+            List<Path> sourceFiles = project().getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
 
             if (sourceFiles.isEmpty()) {
-                ui.info("No documentation will be generated because the source files don't exist in the following directories.");
-                ui.info(project.getSourceSet().toList());
+                ui().info("No documentation will be generated because the source files don't exist in the following directories.");
+                ui().info(project().getSourceSet().toList());
                 return output;
             }
 
@@ -90,7 +92,7 @@ public class Doc extends Task {
                     .getTask(listener, manager, listener, doclet, options, manager.getJavaFileObjectsFromPaths(sourceFiles));
 
             if (task.call() && listener.errors.isEmpty()) {
-                ui.info("Build javadoc to " + output);
+                ui().info("Build javadoc to " + output);
             } else {
                 throw new Fail("Fail building Javadoc.", listener.errors);
             }
@@ -102,28 +104,28 @@ public class Doc extends Task {
 
     @Command("Generate product site.")
     public void site() {
-        List<Path> sourceFiles = project.getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
+        List<Path> sourceFiles = project().getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
 
         if (sourceFiles.isEmpty()) {
-            ui.info("No documentation site will be generated because any document or source files don't exist in the following directories.");
-            ui.info(project.getSourceSet().toList());
+            ui().info("No documentation site will be generated because any document or source files don't exist in the following directories.");
+            ui().info(project().getSourceSet().toList());
             return;
         }
 
         Listener listener = new Listener();
-        Directory output = project.getOutput().directory("site");
+        Directory output = project().getOutput().directory("site");
 
         new Require("com.github.teletha : javadng") {
             {
-                Javadoc.with.sources(project.getSourceSet().toList())
+                Javadoc.with.sources(project().getSourceSet().toList())
                         .output(output)
-                        .product(project.getProduct())
-                        .project(project.getGroup())
-                        .version(project.getVersion())
-                        .encoding(project.getEncoding())
-                        .sample(project.getTestSourceSet().toList())
-                        .classpath(I.signal(project.getDependency(Scope.values())).map(Library::getLocalJar).toList())
-                        .repository(CodeRepository.of(project.getVersionControlSystem().toString()))
+                        .product(project().getProduct())
+                        .project(project().getGroup())
+                        .version(project().getVersion())
+                        .encoding(project().getEncoding())
+                        .sample(project().getTestSourceSet().toList())
+                        .classpath(I.signal(project().getDependency(Scope.values())).map(Library::getLocalJar).toList())
+                        .repository(CodeRepository.of(project().getVersionControlSystem().toString()))
                         .listener(listener)
                         .useExternalJDKDoc()
                         .build();
@@ -131,7 +133,7 @@ public class Doc extends Task {
         };
 
         if (listener.errors.isEmpty()) {
-            ui.info("Build site resources to " + output);
+            ui().info("Build site resources to " + output);
         } else {
             throw new Fail("Fail building document site.", listener.errors);
         }
@@ -157,20 +159,20 @@ public class Doc extends Task {
             switch (e.getKind()) {
             case ERROR:
                 errors.add(message);
-                ui.error(message);
+                ui().error(message);
                 break;
 
             case NOTE:
-                ui.trace(message);
+                ui().trace(message);
                 break;
 
             case WARNING:
             case MANDATORY_WARNING:
-                ui.warn(message);
+                ui().warn(message);
                 break;
 
             case OTHER:
-                ui.debug(message);
+                ui().debug(message);
                 break;
             }
         }
@@ -182,7 +184,7 @@ public class Doc extends Task {
         public void write(char[] cbuf, int off, int len) throws IOException {
             String message = new String(cbuf, off, len).trim();
             if (message.length() != 0) {
-                ui.trace(message);
+                ui().trace(message);
             }
         }
 

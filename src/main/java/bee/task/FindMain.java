@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +48,10 @@ public class FindMain extends Task {
     @Command(value = "Find main class.", defaults = true)
     public String main() {
         if (main == null) {
-            main = ui.ask("Multiple main classes were detected. Which one do you use?", I.make(Search.class).mains);
+            main = ui().ask("Multiple main classes were detected. Which one do you use?", I.make(Search.class).mains);
         }
 
-        ui.info("Using ", main, " as main class.");
+        ui().info("Using ", main, " as main class.");
 
         return main;
     }
@@ -64,10 +66,10 @@ public class FindMain extends Task {
     @Command("Find premain class.")
     public String premain() {
         if (premain == null) {
-            premain = ui.ask("Multiple premain classes were detected. Which one do you use?", I.make(Search.class).premains);
+            premain = ui().ask("Multiple premain classes were detected. Which one do you use?", I.make(Search.class).premains);
         }
 
-        ui.info("Using ", premain, " as premain class.");
+        ui().info("Using ", premain, " as premain class.");
 
         return premain;
     }
@@ -82,10 +84,10 @@ public class FindMain extends Task {
     @Command("Find agentmain class.")
     public String agentmain() {
         if (agentmain == null) {
-            agentmain = ui.ask("Multiple agentmain classes were detected. Which one do you use?", I.make(Search.class).agentmains);
+            agentmain = ui().ask("Multiple agentmain classes were detected. Which one do you use?", I.make(Search.class).agentmains);
         }
 
-        ui.info("Using ", agentmain, " as agentmain class.");
+        ui().info("Using ", agentmain, " as agentmain class.");
 
         return agentmain;
     }

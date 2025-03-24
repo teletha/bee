@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import bee.Task;
 import bee.api.Command;
 import bee.util.Inputs;
@@ -17,8 +19,8 @@ public class Clean extends Task {
 
     @Command("Clean output directory.")
     public void all() {
-        project.getOutput()
+        project().getOutput()
                 .trackDeleting("!*.jar")
-                .to(Inputs.observerFor(ui, project.getOutput(), "Deleting output directory", "Deleted output directory"));
+                .to(Inputs.observerFor(ui(), project().getOutput(), "Deleting output directory", "Deleted output directory"));
     }
 }

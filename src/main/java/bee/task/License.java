@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.util.List;
 
 import bee.Task;
@@ -25,11 +27,11 @@ public class License extends Task {
      */
     @Command("Write license header comment.")
     public void update() {
-        update(project.getSourceSet());
-        update(project.getTestSourceSet());
-        update(project.getProjectSourceSet());
+        update(project().getSourceSet());
+        update(project().getTestSourceSet());
+        update(project().getProjectSourceSet());
 
-        ui.info("Complete license update.");
+        ui().info("Complete license update.");
     }
 
     /**
@@ -42,14 +44,14 @@ public class License extends Task {
             FileType type = FileType.of(file);
 
             if (type.header() == StandardHeaderStyle.Unknown) {
-                ui.info("Unknown Format ", project.getRoot().relativize(file));
+                ui().info("Unknown Format ", project().getRoot().relativize(file));
             } else {
-                List<String> source = file.lines(project.getEncoding()).toList();
-                List<String> converted = type.header().convert(source, project.license());
+                List<String> source = file.lines(project().getEncoding()).toList();
+                List<String> converted = type.header().convert(source, project().license());
 
                 if (converted != null) {
-                    file.text(project.getEncoding(), converted);
-                    ui.trace("Update ", project.getRoot().relativize(file));
+                    file.text(project().getEncoding(), converted);
+                    ui().trace("Update ", project().getRoot().relativize(file));
                 }
             }
         });

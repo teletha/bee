@@ -27,6 +27,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
 
 import bee.Task;
+import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
@@ -69,13 +70,13 @@ public class Jar extends Task {
     public void source() {
         require(Compile::source);
 
-        Directory dir = project.getClasses();
-        if (SourceVersion.latest().compareTo(project.getJavaRequiredVersion()) > 0 || removeTraceInfo || removeDebugInfo) {
+        Directory dir = TaskOperations.project().getClasses();
+        if (SourceVersion.latest().compareTo(TaskOperations.project().getJavaRequiredVersion()) > 0 || removeTraceInfo || removeDebugInfo) {
             dir = modify(dir);
         }
 
-        pack("main classe", I.signal(dir), project.locateJar(), packing);
-        pack("main source", project.getSourceSet(), project.locateSourceJar(), null);
+        pack("main classe", I.signal(dir), TaskOperations.project().locateJar(), packing);
+        pack("main source", TaskOperations.project().getSourceSet(), TaskOperations.project().locateSourceJar(), null);
     }
 
     /**
@@ -86,15 +87,15 @@ public class Jar extends Task {
      */
     private Directory modify(Directory dir) {
         String oldVersion = Inputs.normalize(SourceVersion.latest());
-        String newVersion = Inputs.normalize(project.getJavaRequiredVersion());
+        String newVersion = Inputs.normalize(TaskOperations.project().getJavaRequiredVersion());
         if (!oldVersion.equals(newVersion)) {
-            ui.info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+            ui().info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
         }
         if (removeDebugInfo) {
-            ui.info("Remove all debugger-related information (local variables and parameters) from the class file.");
+            ui().info("Remove all debugger-related information (local variables and parameters) from the class file.");
         }
         if (removeTraceInfo) {
-            ui.info("Remove all debugging-related information (source file name and line number) from the class file.");
+            ui().info("Remove all debugging-related information (source file name and line number) from the class file.");
         }
 
         Directory modified = Locator.temporaryDirectory();
@@ -105,7 +106,7 @@ public class Jar extends Task {
             if (file.extension().equals("class")) {
                 ClassReader classReader = new ClassReader(file.bytes());
                 ClassWriter writer = new ClassWriter(classReader, 0);
-                ClassVisitor modification = new Modify(project.getJavaRequiredVersion(), writer);
+                ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer);
                 classReader.accept(modification, 0);
                 modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
             } else {
@@ -123,11 +124,15 @@ public class Jar extends Task {
     public void test() {
         require(Compile::test);
 
-        File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
-        File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
+        File classes = TaskOperations.project()
+                .getOutput()
+                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-tests.jar");
+        File sources = TaskOperations.project()
+                .getOutput()
+                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-tests-sources.jar");
 
-        pack("test class", I.signal(project.getTestClasses()), classes, null);
-        pack("test source", project.getTestSourceSet(), sources, null);
+        pack("test class", I.signal(TaskOperations.project().getTestClasses()), classes, null);
+        pack("test source", TaskOperations.project().getTestSourceSet(), sources, null);
     }
 
     /**
@@ -137,11 +142,15 @@ public class Jar extends Task {
     public void project() {
         require(Compile::project);
 
-        File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
-        File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
+        File classes = TaskOperations.project()
+                .getOutput()
+                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-projects.jar");
+        File sources = TaskOperations.project()
+                .getOutput()
+                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-projects-sources.jar");
 
-        pack("project class", I.signal(project.getProjectClasses()), classes, null);
-        pack("project source", project.getProjectSourceSet(), sources, null);
+        pack("project class", I.signal(TaskOperations.project().getProjectClasses()), classes, null);
+        pack("project source", TaskOperations.project().getProjectSourceSet(), sources, null);
     }
 
     /**
@@ -151,7 +160,7 @@ public class Jar extends Task {
     public void document() {
         Directory output = require(Doc::javadoc);
 
-        pack("javadoc", I.signal(output), project.locateJavadocJar(), null);
+        pack("javadoc", I.signal(output), TaskOperations.project().locateJavadocJar(), null);
     }
 
     /**
@@ -168,7 +177,7 @@ public class Jar extends Task {
         Locator.folder()
                 .add(input, option.andThen(Option::strip))
                 .trackPackingTo(output)
-                .to(Inputs.observerFor(ui, output, "Packaging " + type + " files", "Build " + type + " jar"));
+                .to(Inputs.observerFor(ui(), output, "Packaging " + type + " files", "Build " + type + " jar"));
     }
 
     /**
@@ -188,7 +197,7 @@ public class Jar extends Task {
                 "Premain-Class: " + require(FindMain::premain) // detect pre main class
         );
 
-        File output = project.locateJar();
+        File output = TaskOperations.project().locateJar();
         File temp = Locator.temporaryFile();
         output.moveTo(temp);
 
@@ -196,10 +205,10 @@ public class Jar extends Task {
         folder.add(temp.asArchive());
         folder.add(manifest, o -> o.allocateIn("META-INF"));
 
-        for (Library library : project.getDependency(Scope.Runtime)) {
+        for (Library library : TaskOperations.project().getDependency(Scope.Runtime)) {
             folder.add(library.getLocalJar().asArchive(), merging);
         }
-        folder.trackPackingTo(output).to(Inputs.observerFor(ui, output, "Merging class files", "Build merged classes jar"));
+        folder.trackPackingTo(output).to(Inputs.observerFor(ui(), output, "Merging class files", "Build merged classes jar"));
     }
 
     /**

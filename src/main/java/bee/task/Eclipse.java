@@ -50,31 +50,33 @@ public class Eclipse extends Task implements IDESupport {
     @Override
     @Command(value = "Generate configuration files for Eclipse.", defaults = true)
     public void execute() {
-        createClasspath(project.getRoot().file(".classpath"));
-        createProject(project.getRoot().file(".project"));
+        createClasspath(project().getRoot().file(".classpath"));
+        createProject(project().getRoot().file(".project"));
 
-        Set<Location> processors = project.getAnnotationProcessors();
+        Set<Location> processors = project().getAnnotationProcessors();
         boolean enableAnnotationProcessor = !processors.isEmpty();
         createFactorypath(enableAnnotationProcessor, processors);
-        createAPT(enableAnnotationProcessor, new ProjectInfo(project));
+        createAPT(enableAnnotationProcessor, new ProjectInfo(project()));
         createJDT(enableAnnotationProcessor);
-        ui.info("Create Eclipse configuration files.");
+        ui().info("Create Eclipse configuration files.");
 
         // check lombok
-        if (project.hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
+        if (project().hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
             EclipseApplication eclipse = EclipseApplication.create();
-            Library lombok = project.getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion()).iterator().next();
+            Library lombok = project().getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion())
+                    .iterator()
+                    .next();
 
             if (!eclipse.isLomboked()) {
                 // install lombok
                 Java.with()
                         .classPath(I.class, Bee.class)
                         .classPath(lombok.getLocalJar())
-                        .encoding(project.getEncoding())
+                        .encoding(project().getEncoding())
                         .run(LombokInstaller.class, "install", eclipse.locate().get());
 
                 // restart eclipse
-                ui.warn("Restart your Eclipse to enable Lombok.");
+                ui().warn("Restart your Eclipse to enable Lombok.");
             }
         }
     }
@@ -96,7 +98,7 @@ public class Eclipse extends Task implements IDESupport {
      */
     @Override
     public boolean exist(Project project) {
-        return project.getRoot().file(".classpath").isReadable();
+        return project().getRoot().file(".classpath").isReadable();
     }
 
     /**
@@ -108,8 +110,8 @@ public class Eclipse extends Task implements IDESupport {
         if (file.isAbsent()) {
             // create
             XML doc = I.xml("projectDescription");
-            doc.child("name").text(project.getProduct());
-            doc.child("comment").text(project.getDescription());
+            doc.child("name").text(project().getProduct());
+            doc.child("comment").text(project().getDescription());
             doc.child("projects");
             doc.child("buildSpec").child("buildCommand", com -> {
                 com.child("name").text("org.eclipse.jdt.core.javabuilder");
@@ -146,36 +148,36 @@ public class Eclipse extends Task implements IDESupport {
         XML doc = I.xml("classpath");
 
         // tests
-        project.getTestSourceSet().to(dir -> {
+        project().getTestSourceSet().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(dir))
-                    .attr("output", relative(project.getTestClasses()))
+                    .attr("output", relative(project().getTestClasses()))
                     .effect(this::assignVisibleForTest);
         });
 
         // sources
-        project.getSourceSet().to(dir -> {
-            doc.child("classpathentry").attr("kind", "src").attr("path", relative(dir)).attr("output", relative(project.getClasses()));
+        project().getSourceSet().to(dir -> {
+            doc.child("classpathentry").attr("kind", "src").attr("path", relative(dir)).attr("output", relative(project().getClasses()));
         });
 
         // projects
-        project.getProjectSourceSet().to(dir -> {
+        project().getProjectSourceSet().to(dir -> {
             doc.child("classpathentry")
                     .attr("kind", "src")
                     .attr("path", relative(dir))
-                    .attr("output", relative(project.getProjectClasses()))
+                    .attr("output", relative(project().getProjectClasses()))
                     .effect(this::assignVisibleForTest);
         });
 
         // library
-        Set<Library> libraries = project.getDependency(Scope.Compile, Scope.Annotation);
-        libraries.remove(project.asLibrary());
+        Set<Library> libraries = project().getDependency(Scope.Compile, Scope.Annotation);
+        libraries.remove(project().asLibrary());
 
         // test library
-        Set<Library> tests = project.getDependency(Scope.Test);
+        Set<Library> tests = project().getDependency(Scope.Test);
         tests.removeAll(libraries);
-        tests.remove(project.asLibrary());
+        tests.remove(project().asLibrary());
 
         ForkJoinPool fork = new ForkJoinPool(24);
 
@@ -192,7 +194,7 @@ public class Eclipse extends Task implements IDESupport {
             }
         });
 
-        boolean isModuledProject = project.getSources().existFile("*/module-info.java");
+        boolean isModuledProject = project().getSources().existFile("*/module-info.java");
 
         I.signal(libraries).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar()), fork).to(x -> {
             File jar = x.ⅰ;
@@ -212,7 +214,7 @@ public class Eclipse extends Task implements IDESupport {
         });
 
         // Bee API
-        if (!project.equals(Bee.Tool)) {
+        if (!project().equals(Bee.Tool)) {
             BeeInstaller.install(false, true, false);
             doc.child("classpathentry")
                     .attr("kind", "lib")
@@ -222,7 +224,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // Eclipse configurations
-        doc.child("classpathentry").attr("kind", "output").attr("path", relative(project.getClasses()));
+        doc.child("classpathentry").attr("kind", "output").attr("path", relative(project().getClasses()));
         doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER");
 
         // write file
@@ -258,7 +260,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // write file
-        makeFile(project.getRoot().file(".factorypath"), doc);
+        makeFile(project().getRoot().file(".factorypath"), doc);
     }
 
     /**
@@ -279,7 +281,7 @@ public class Eclipse extends Task implements IDESupport {
         }
 
         // write file
-        makeFile(project.getRoot().file(".settings/org.eclipse.jdt.apt.core.prefs"), properties);
+        makeFile(project().getRoot().file(".settings/org.eclipse.jdt.apt.core.prefs"), properties);
     }
 
     /**
@@ -288,7 +290,7 @@ public class Eclipse extends Task implements IDESupport {
      * @param localFile
      */
     private void createJDT(boolean enabled) {
-        File file = project.getRoot().file(".settings/org.eclipse.jdt.core.prefs");
+        File file = project().getRoot().file(".settings/org.eclipse.jdt.core.prefs");
 
         try {
             if (file.isAbsent()) {
@@ -311,7 +313,7 @@ public class Eclipse extends Task implements IDESupport {
      * @return
      */
     private Directory relative(Directory path) {
-        return project.getRoot().relativize(path);
+        return project().getRoot().relativize(path);
     }
 
     /**
@@ -334,15 +336,15 @@ public class Eclipse extends Task implements IDESupport {
      * Rewrite sibling eclipse projects.
      */
     private void syncProject(boolean live) {
-        String jar = I.make(Repository.class).resolveJar(project.asLibrary()).toString();
-        String currentProjectName = project.getRoot().base();
+        String jar = I.make(Repository.class).resolveJar(project().asLibrary()).toString();
+        String currentProjectName = project().getRoot().base();
 
-        String oldPath = live ? jar.substring(0, jar.lastIndexOf(java.io.File.separator + project.getVersion() + java.io.File.separator))
+        String oldPath = live ? jar.substring(0, jar.lastIndexOf(java.io.File.separator + project().getVersion() + java.io.File.separator))
                 : "/" + currentProjectName;
         String newPath = live ? "/" + currentProjectName : jar;
 
-        for (File file : project.getRoot().parent().walkFile("*/.classpath").toList()) {
-            if (!file.parent().equals(project.getRoot())) {
+        for (File file : project().getRoot().parent().walkFile("*/.classpath").toList()) {
+            if (!file.parent().equals(project().getRoot())) {
                 String targetProjectName = file.parent().base();
 
                 XML root = I.xml(file.newBufferedReader());
@@ -355,7 +357,7 @@ public class Eclipse extends Task implements IDESupport {
                     // rewrite
                     root.to(file.newBufferedWriter());
 
-                    ui.info("Project ", targetProjectName, " references ", currentProjectName, live ? " directly." : " in repository.");
+                    ui().info("Project ", targetProjectName, " references ", currentProjectName, live ? " directly." : " in repository.");
                 }
             }
         }

@@ -9,8 +9,6 @@
  */
 package bee;
 
-import static bee.TaskOperations.*;
-
 import bee.api.Repository;
 import bee.task.Test;
 import kiss.I;
@@ -25,7 +23,7 @@ public class Install extends bee.task.Install {
         require(Test::test);
         require(Jar::document, Jar::merge);
 
-        I.make(Repository.class).install(project);
+        I.make(Repository.class).install(TaskOperations.project());
 
         BeeInstaller.install(true, true, false);
     }

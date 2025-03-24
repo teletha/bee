@@ -18,6 +18,6 @@ public class Maven extends Task {
 
     @Command("Generate pom file.")
     public void pom() {
-        makeFile("pom.xml", project.toMavenDefinition());
+        makeFile("pom.xml", project().toMavenDefinition());
     }
 }

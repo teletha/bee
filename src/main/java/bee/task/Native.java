@@ -46,26 +46,26 @@ public class Native extends Task {
     public List<String> params = new ArrayList();
 
     /** The graal kind. */
-    private String kind = project.getDependency(Scope.Runtime).stream().anyMatch(lib -> lib.group.equals("org.openjfx")) ? "gluon"
+    private String kind = project().getDependency(Scope.Runtime).stream().anyMatch(lib -> lib.group.equals("org.openjfx")) ? "gluon"
             : "graal";
 
     /** The graal version. */
-    private int version = project.getJavaRequiredVersion().runtimeVersion().feature();
+    private int version = project().getJavaRequiredVersion().runtimeVersion().feature();
 
     /** The platform type. */
     private String target = detectOS() + "-" + detectArch();
 
     /** The configuration directory. */
-    private Directory config = project.getOutput().directory("native-config/" + kind + "-" + qualifier()).create();
+    private Directory config = project().getOutput().directory("native-config/" + kind + "-" + qualifier()).create();
 
     /** The output root. */
-    private Directory output = project.getOutput().directory("native/" + qualifier()).create();
+    private Directory output = project().getOutput().directory("native/" + qualifier()).create();
 
     /** The executional file. */
-    private File executional = output.file(project.getProduct());
+    private File executional = output.file(project().getProduct());
 
     /** The artifact's archive. */
-    private File archive = project.getOutput().file(qualifier() + ".zip");
+    private File archive = project().getOutput().file(qualifier() + ".zip");
 
     /** The configuration for serialization. */
     private final Serialization serialization = new Serialization();
@@ -76,7 +76,7 @@ public class Native extends Task {
      * @return
      */
     private String qualifier() {
-        return project.getProduct() + "-" + target + "-" + project.getVersion();
+        return project().getProduct() + "-" + target + "-" + project().getVersion();
     }
 
     @Command(value = "Build native execution file.", defaults = true)
@@ -131,7 +131,7 @@ public class Native extends Task {
 
         // locate codes
         command.add("--class-path");
-        command.add(I.signal(project.getClasspath())
+        command.add(I.signal(project().getClasspath())
                 .sort(Comparator.naturalOrder())
                 .scan(Collectors.joining(java.io.File.pathSeparator))
                 .to().v);
@@ -160,7 +160,7 @@ public class Native extends Task {
 
     @Command("Run the native executable.")
     public void run() {
-        bee.util.Process.with().verbose().workingDirectory(output).encoding(project.getEncoding()).run(executional.path());
+        bee.util.Process.with().verbose().workingDirectory(output).encoding(project().getEncoding()).run(executional.path());
     }
 
     /**
@@ -189,7 +189,7 @@ public class Native extends Task {
     private void buildRuntimeInfo() {
         new Require("io.github.classgraph:classgraph") {
             {
-                try (ScanResult scan = new ClassGraph().enableAllInfo().overrideClasspath(project.getClasspath()).scan()) {
+                try (ScanResult scan = new ClassGraph().enableAllInfo().overrideClasspath(project().getClasspath()).scan()) {
                     String extensions = scan.getClassesImplementing(Extensible.class)
                             .stream()
                             .map(ClassInfo::getName)
