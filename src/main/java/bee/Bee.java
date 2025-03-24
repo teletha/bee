@@ -187,11 +187,11 @@ public class Bee {
             // If you are running in help or version mode, there is no need to search for projects.
             // It will also ignore all user-specified tasks.
             if (BeeOption.Help.value()) {
-                build.require(Help::option);
-                build.require(Help::task);
+                TaskOperations.require(Help::option);
+                TaskOperations.require(Help::task);
                 return 0;
             } else if (BeeOption.Version.value()) {
-                build.require(Help::version);
+                TaskOperations.require(Help::version);
                 return 0;
             }
 
@@ -328,7 +328,7 @@ public class Bee {
             }
             throw I.quiet(e);
         } finally {
-            if (ui instanceof Task.ParallelInterface parallel) {
+            if (ui instanceof TaskOperations.ParallelInterface parallel) {
                 parallel.finish();
             }
         }
@@ -367,7 +367,7 @@ public class Bee {
 
                 @Override
                 public void execute() {
-                    require(Prototype::java);
+                    TaskOperations.require(Prototype::java);
                     // require(IDE::execute);
                 }
             });
