@@ -9,6 +9,8 @@
  */
 package bee;
 
+import static bee.TaskOperations.*;
+
 import bee.api.Repository;
 import bee.task.Test;
 import kiss.I;

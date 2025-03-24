@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import bee.Task;
 import bee.api.Command;
 

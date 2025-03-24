@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

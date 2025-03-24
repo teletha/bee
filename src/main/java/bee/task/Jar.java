@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.io.ByteArrayInputStream;
 import java.util.function.Function;
 import java.util.jar.Attributes.Name;

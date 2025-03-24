@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Map.Entry;

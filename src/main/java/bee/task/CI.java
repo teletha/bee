@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;

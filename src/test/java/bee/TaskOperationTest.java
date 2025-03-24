@@ -23,7 +23,7 @@ class TaskOperationTest extends TaskTestBase {
         File file = locateFile("file");
         assert file.isAbsent();
 
-        noop.makeFile(file, "text");
+        makeFile(file, "text");
 
         assert file.isPresent();
         assert file.text().equals("text");
@@ -34,7 +34,7 @@ class TaskOperationTest extends TaskTestBase {
         File file = locateFile("file");
         assert file.isAbsent();
 
-        noop.makeFile(file, """
+        makeFile(file, """
                 A
                 B
                 """);
@@ -48,7 +48,7 @@ class TaskOperationTest extends TaskTestBase {
         File file = locateFile("file");
         assert file.isAbsent();
 
-        noop.makeFile("file", """
+        makeFile("file", """
                 A
                 B
                 """);
@@ -62,7 +62,7 @@ class TaskOperationTest extends TaskTestBase {
         File file = locateFile("file");
         assert file.isAbsent();
 
-        noop.makeFile(file, List.of("A", "B"));
+        makeFile(file, List.of("A", "B"));
 
         assert file.isPresent();
         assert file.text().equals("A" + Platform.EOL + "B");
@@ -73,7 +73,7 @@ class TaskOperationTest extends TaskTestBase {
         File file = locateFile("file");
         assert file.isAbsent();
 
-        noop.makeFile("file", List.of("A", "B"));
+        makeFile("file", List.of("A", "B"));
 
         assert file.isPresent();
         assert file.text().equals("A" + Platform.EOL + "B");
@@ -81,14 +81,14 @@ class TaskOperationTest extends TaskTestBase {
 
     @Test
     void makeNullFile() {
-        Assertions.assertThrows(Fail.class, () -> noop.makeFile((File) null, "text"));
-        Assertions.assertThrows(Fail.class, () -> noop.makeFile((String) null, "text"));
+        Assertions.assertThrows(Fail.class, () -> makeFile((File) null, "text"));
+        Assertions.assertThrows(Fail.class, () -> makeFile((String) null, "text"));
     }
 
     @Test
     void makeNullFileMultiLinedIterable() {
-        Assertions.assertThrows(Fail.class, () -> noop.makeFile((File) null, List.of("A", "B")));
-        Assertions.assertThrows(Fail.class, () -> noop.makeFile((String) null, List.of("A", "B")));
+        Assertions.assertThrows(Fail.class, () -> makeFile((File) null, List.of("A", "B")));
+        Assertions.assertThrows(Fail.class, () -> makeFile((String) null, List.of("A", "B")));
     }
 
     @Test
@@ -96,7 +96,7 @@ class TaskOperationTest extends TaskTestBase {
         File file = locateFile("file").create();
         assert file.isPresent();
 
-        noop.deleteFile(file);
+        deleteFile(file);
 
         assert file.isAbsent();
     }
@@ -106,39 +106,39 @@ class TaskOperationTest extends TaskTestBase {
         File file = locateFile("file").create();
         assert file.isPresent();
 
-        noop.deleteFile("file");
+        deleteFile("file");
 
         assert file.isAbsent();
     }
 
     @Test
     void deleteNullFile() {
-        noop.deleteFile((File) null);
-        noop.deleteFile((String) null);
+        deleteFile((File) null);
+        deleteFile((String) null);
     }
 
     @Test
     void checkFile() {
         File file = locateFile("file");
-        assert noop.checkFile(file) == false;
+        assert checkFile(file) == false;
 
         file.create();
-        assert noop.checkFile(file) == true;
+        assert checkFile(file) == true;
     }
 
     @Test
     void checkStringFile() {
-        assert noop.checkFile("file") == false;
+        assert checkFile("file") == false;
 
         locateFile("file").create();
 
-        assert noop.checkFile("file") == true;
+        assert checkFile("file") == true;
     }
 
     @Test
     void checkNullFile() {
-        assert noop.checkFile((File) null) == false;
-        assert noop.checkFile((String) null) == false;
+        assert checkFile((File) null) == false;
+        assert checkFile((String) null) == false;
     }
 
     @Test
@@ -149,7 +149,7 @@ class TaskOperationTest extends TaskTestBase {
         assert input.isPresent();
         assert output.isAbsent();
 
-        noop.copyFile(input, output);
+        copyFile(input, output);
 
         assert input.isPresent();
         assert output.isPresent();
@@ -160,7 +160,7 @@ class TaskOperationTest extends TaskTestBase {
         File input = locateFile("input");
         File output = locateFile("output");
 
-        Assertions.assertThrows(Fail.class, () -> noop.copyFile(input, output));
+        Assertions.assertThrows(Fail.class, () -> copyFile(input, output));
     }
 
     @Test
@@ -168,6 +168,6 @@ class TaskOperationTest extends TaskTestBase {
         File input = null;
         File output = locateFile("output");
 
-        Assertions.assertThrows(Fail.class, () -> noop.copyFile(input, output));
+        Assertions.assertThrows(Fail.class, () -> copyFile(input, output));
     }
 }

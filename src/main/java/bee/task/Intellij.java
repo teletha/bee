@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.nio.file.Files;
 import java.util.Set;
 

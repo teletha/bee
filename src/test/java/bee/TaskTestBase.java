@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import kiss.I;
 import psychopath.File;
 
-public abstract class TaskTestBase {
+public abstract class TaskTestBase extends TaskOperations {
 
     /** The base project. */
     protected BlinkProject project;

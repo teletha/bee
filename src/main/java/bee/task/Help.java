@@ -9,6 +9,8 @@
  */
 package bee.task;
 
+import static bee.TaskOperations.*;
+
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;

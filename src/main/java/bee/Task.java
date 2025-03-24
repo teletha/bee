@@ -11,28 +11,22 @@ package bee;
 
 import static org.objectweb.asm.Opcodes.*;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Type;
@@ -49,11 +43,6 @@ import kiss.I;
 import kiss.Lifestyle;
 import kiss.Managed;
 import kiss.Model;
-import kiss.WiseFunction;
-import kiss.XML;
-import psychopath.Directory;
-import psychopath.File;
-import psychopath.Option;
 
 @Managed(value = TaskLifestyle.class)
 public abstract class Task implements Extensible {
@@ -332,281 +321,6 @@ public abstract class Task implements Extensible {
                 break;
             }
         }
-    }
-
-    /**
-     * Utility method for task.
-     * 
-     * @param path
-     */
-    protected final Directory makeDirectory(Directory base, String path) {
-        Directory directory = base.directory(path);
-
-        if (directory.isAbsent()) {
-            directory.create();
-
-            ui.info("Make directory [", directory.absolutize(), "]");
-        }
-        return directory;
-    }
-
-    /**
-     * Utility method to write xml file.
-     * 
-     * @param file A file path to write.
-     * @param xml A file contents.
-     */
-    protected final File makeFile(File file, XML xml) {
-        try (BufferedWriter writer = file.newBufferedWriter()) {
-            xml.to(writer);
-
-            ui.info("Make file [", file.absolutize(), "]");
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-        return file;
-    }
-
-    /**
-     * Utility method to write property file.
-     * 
-     * @param path A file path to write.
-     * @param properties A file contents.
-     */
-    protected final File makeFile(File path, Properties properties) {
-        path.parent().create();
-
-        try {
-            properties.store(path.newOutputStream(), "");
-
-            ui.info("Make file [", path.absolutize(), "]");
-        } catch (IOException e) {
-            throw I.quiet(e);
-        }
-        return path;
-    }
-
-    /**
-     * Utility method to write file.
-     * 
-     * @param path A file path to write.
-     * @param content A file content.
-     */
-    protected final File makeFile(String path, String content) {
-        if (path == null) {
-            throw new Fail("Input file is null.");
-        }
-        return makeFile(project.getRoot().file(path), content);
-    }
-
-    /**
-     * Utility method to write file.
-     * 
-     * @param file A file path to write.
-     * @param content A file content.
-     */
-    protected final File makeFile(File file, String content) {
-        return makeFile(file, Arrays.asList(content.split("\\R")));
-    }
-
-    /**
-     * Utility method to write file.
-     * 
-     * @param path A file path to write.
-     * @param content A file content.
-     */
-    protected final File makeFile(String path, Iterable<String> content) {
-        if (path == null) {
-            throw new Fail("Input file is null.");
-        }
-        return makeFile(project.getRoot().file(path), content);
-    }
-
-    /**
-     * Utility method to write file.
-     * 
-     * @param file A file path to write.
-     * @param content A file content.
-     */
-    protected final File makeFile(File file, Iterable<String> content) {
-        if (file == null) {
-            throw new Fail("Input file is null.");
-        }
-
-        file.text(content);
-
-        Iterator<String> iterator = content.iterator();
-        if (iterator.hasNext() && iterator.next().startsWith("#!")) {
-            file.text(x -> x.replaceAll("\\R", "\n"));
-        }
-
-        ui.info("Make file [", file.absolutize(), "]");
-
-        return file;
-    }
-
-    /**
-     * Utility method to write file.
-     * 
-     * @param file A file path to write.
-     * @param replacer A file content replacer.
-     */
-    protected final File makeFile(File file, WiseFunction<String, String> replacer) {
-        return makeFile(file, file.lines().map(replacer).toList());
-    }
-
-    /**
-     * Utility method to delete file.
-     * 
-     * @param path A file path to delete.
-     */
-    protected final void deleteFile(String path) {
-        if (path != null) {
-            deleteFile(project.getRoot().file(path));
-        }
-    }
-
-    /**
-     * Utility method to delete file.
-     * 
-     * @param file A file to delete.
-     */
-    protected final void deleteFile(File file) {
-        if (file != null && file.isPresent()) {
-            file.delete();
-            ui.info("Delete file [", file.absolutize(), "]");
-        }
-    }
-
-    /**
-     * Utility method to delete directory.
-     * 
-     * @param path A directory path to delete.
-     */
-    protected final void deleteDirectory(String path) {
-        if (path != null) {
-            deletedirectory(project.getRoot().directory(path));
-        }
-    }
-
-    /**
-     * Utility method to delete directory.
-     * 
-     * @param dir A directory to delete.
-     */
-    protected final void deletedirectory(Directory dir) {
-        if (dir != null && dir.isPresent()) {
-            dir.delete();
-            ui.info("Delete directory [", dir.absolutize(), "]");
-        }
-    }
-
-    /**
-     * Utility method to delete file.
-     * 
-     * @param from A file to copy.
-     * @param to A destination.
-     */
-    protected final void copyFile(File from, File to) {
-        if (from == null) {
-            throw new Fail("The specified file is null.");
-        }
-
-        if (from.isAbsent()) {
-            throw new Fail("File [" + from + "] is not found.");
-        }
-
-        from.copyTo(to);
-        ui.info("Copy file from [", from.absolutize(), "] to [", to.absolutize() + "]");
-    }
-
-    /**
-     * Utilitu method to unpack archive.
-     * 
-     * @param from
-     * @param to
-     */
-    protected final void pack(Directory from, File to) {
-        pack(from, to, UnaryOperator.identity());
-    }
-
-    /**
-     * Utilitu method to unpack archive.
-     * 
-     * @param from
-     * @param to
-     */
-    protected final void pack(Directory from, File to, UnaryOperator<Option> options) {
-        if (from == null) {
-            throw new Fail("The specified file is null.");
-        }
-
-        if (from.isAbsent()) {
-            throw new Fail("File [" + from + "] is not found.");
-        }
-
-        from.trackPackingTo(to, options).to(progress -> {
-            ui.trace("Packing ", from.name(), " to ", to, " (", progress.rateByFiles(), "%)");
-        }, e -> {
-            ui.error(e);
-        }, () -> {
-            ui.info("Packed ", from.name(), " to ", to);
-        });
-    }
-
-    /**
-     * Utilitu method to unpack archive.
-     * 
-     * @param from
-     * @param to
-     */
-    protected final void unpack(File from, Directory to) {
-        unpack(from, to, UnaryOperator.identity());
-    }
-
-    /**
-     * Utilitu method to unpack archive.
-     * 
-     * @param from
-     * @param to
-     */
-    protected final void unpack(File from, Directory to, UnaryOperator<Option> options) {
-        if (from == null) {
-            throw new Fail("The specified file is null.");
-        }
-
-        if (from.isAbsent()) {
-            throw new Fail("File [" + from + "] is not found.");
-        }
-
-        from.trackUnpackingTo(to, options).to(progress -> {
-            ui.trace("Unpacking ", from.name(), " to ", to, " (", progress.rateByFiles(), "%)");
-        }, e -> {
-            ui.error(e);
-        }, () -> {
-            ui.info("Unpacked ", from.name(), " to ", to);
-        });
-    }
-
-    /**
-     * Utility method to check file.
-     * 
-     * @param path A file path to check.
-     */
-    protected final boolean checkFile(String path) {
-        if (path == null) {
-            return false;
-        }
-        return checkFile(project.getRoot().file(path));
-    }
-
-    /**
-     * Utility method to check file.
-     * 
-     * @param file A file to check.
-     */
-    protected final boolean checkFile(File file) {
-        return file != null && file.isPresent();
     }
 
     /**
