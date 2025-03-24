@@ -12,6 +12,7 @@ package bee;
 import static bee.TaskOperations.*;
 
 import java.io.Serializable;
+import java.lang.reflect.Type;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -22,7 +23,7 @@ import kiss.Managed;
 import kiss.Model;
 
 @Managed(value = TaskLifestyle.class)
-public abstract class Task implements Extensible {
+public abstract class Task<C> implements Extensible {
 
     /**
      * Execute manual tasks.
@@ -38,6 +39,20 @@ public abstract class Task implements Extensible {
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
             // display usage description for this command
             ui().info(entry.getKey(), " - ", entry.getValue());
+        }
+    }
+
+    /**
+     * Get the user configuration which is associated with the project.
+     * 
+     * @return
+     */
+    public C config() {
+        Type[] types = Model.collectParameters(getClass(), Task.class);
+        if (types.length == 0) {
+            return null;
+        } else {
+            return project().associate((Class<C>) types[0]);
         }
     }
 

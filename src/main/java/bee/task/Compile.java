@@ -20,10 +20,7 @@ import kiss.Signal;
 import psychopath.Directory;
 import psychopath.Locator;
 
-public class Compile extends Task {
-
-    /** Force to use the eclipse compiler for Java. */
-    public boolean useECJ = false;
+public class Compile extends Task<Compile.Config> {
 
     /**
      * Compile main sources and copy other resources.
@@ -86,10 +83,19 @@ public class Compile extends Task {
                 .setOutput(output)
                 .setNoWarn()
                 .setEncoding(TaskOperations.project().getEncoding())
-                .setEclipseCompiler(useECJ)
+                .setEclipseCompiler(config().useECJ)
                 .compile();
 
         // load project related classes
         // BeeLoader.load(TaskOperations.project().getClasses());
+    }
+
+    /**
+     * Configuration for {@link Compile} task.
+     */
+    public static class Config {
+
+        /** Force to use the eclipse compiler for Java. */
+        public boolean useECJ = false;
     }
 }

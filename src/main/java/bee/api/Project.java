@@ -908,7 +908,7 @@ public class Project {
                 conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
                 conf.child("encoding").text(getEncoding().displayName());
 
-                boolean ecj = TaskInfo.find(Compile.class).useECJ;
+                boolean ecj = TaskInfo.find(Compile.class).config().useECJ;
                 boolean apt = getClasses().file("META-INF/services/javax.annotation.processing.Processor").isPresent();
 
                 conf.child("compilerId").text(ecj ? "eclipse" : "javac");
