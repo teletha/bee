@@ -9,16 +9,13 @@
  */
 package bee;
 
-import static bee.TaskOperations.*;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
-import bee.Task.ParallelInterface;
 import bee.api.Command;
 import bee.util.Inputs;
 import kiss.I;
@@ -128,7 +125,7 @@ public class TaskInfo {
         if (name == null) {
             throw new Error("You must specify task name.");
         }
-    
+
         synchronized (Task.class) {
             if (commons == null || !commons.containsKey(name)) {
                 commons = new TreeMap();
@@ -141,24 +138,24 @@ public class TaskInfo {
                 }
             }
         }
-    
+
         // search from common tasks
         TaskInfo info = commons.get(name);
-    
+
         if (info == null) {
             // Search for tasks with similar names for possible misspellings.
             String recommend = Inputs.recommend(name, commons.keySet());
             if (recommend != null && I.make(UserInterface.class).confirm("Isn't it a misspelling of task [" + recommend + "] ?")) {
                 return commons.get(recommend);
             }
-    
+
             Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
             for (TaskInfo i : commons.values()) {
                 failure.solve(i);
             }
             throw failure;
         }
-    
+
         // API definition
         return info;
     }

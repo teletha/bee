@@ -93,9 +93,6 @@ public class Bee {
     /** The current project. */
     private Project project;
 
-    /** The internal tasks. */
-    private final List<Task> builds = new ArrayList();
-
     /**
      * Create project builder in current location.
      */
@@ -199,7 +196,7 @@ public class Bee {
             }
 
             // build project definition
-            buildProjectDefinition(project.getProjectDefinition());
+            List<Task> tasks = buildProjectDefinition(project.getProjectDefinition());
 
             // load project related classes in system class loader
             // BeeLoader.load(project.getClasses());
@@ -226,11 +223,11 @@ public class Bee {
             I.load(projectClass);
 
             // compose build
-            builds.add(build);
+            tasks.add(build);
 
             // execute build
-            for (Task current : builds) {
-                current.execute();
+            for (Task task : tasks) {
+                task.execute();
             }
         } catch (Throwable e) {
             code = 1;
@@ -340,7 +337,9 @@ public class Bee {
     /**
      * Create project skeleton.
      */
-    private void buildProjectDefinition(File definition) throws Exception {
+    private List<Task> buildProjectDefinition(File definition) throws Exception {
+        List<Task> tasks = new ArrayList();
+
         // create project sources if needed
         if (definition.isAbsent()) {
             ui.info("Project definition is not found. [" + definition + "]");
@@ -364,7 +363,7 @@ public class Bee {
             ui.info("Generate project definition.");
 
             // build project architecture
-            builds.add(new Task() {
+            tasks.add(new Task() {
 
                 @Override
                 public void execute() {
@@ -384,6 +383,8 @@ public class Bee {
                     .setOutput(project.getProjectClasses())
                     .compile();
         }
+
+        return tasks;
     }
 
     /**
