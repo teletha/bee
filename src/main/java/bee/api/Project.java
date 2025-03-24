@@ -9,6 +9,7 @@
  */
 package bee.api;
 
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -25,6 +26,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 import javax.lang.model.SourceVersion;
 
@@ -35,6 +37,7 @@ import org.eclipse.aether.repository.RemoteRepository.Builder;
 
 import bee.Bee;
 import bee.BeeOption;
+import bee.Task;
 import bee.TaskInfo;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
@@ -42,6 +45,7 @@ import bee.task.Compile;
 import bee.util.Ensure;
 import bee.util.Inputs;
 import kiss.I;
+import kiss.Model;
 import kiss.Signal;
 import kiss.XML;
 import psychopath.Directory;
@@ -737,6 +741,24 @@ public class Project {
         this.vcs = VCS.of(uri);
     }
 
+    protected final <T extends Task<C>, C> void config(Class<T> task, Consumer<C> configuration) {
+        if (configuration != null) {
+            Type[] types = Model.collectParameters(task, Task.class);
+            if (types.length != 0) {
+                configuration.accept(associate((Class<C>) types[0]));
+            }
+        }
+    }
+
+    protected final <T extends Task<C>, C> C config(Class<T> task) {
+        Type[] types = Model.collectParameters(task, Task.class);
+        if (types.length != 0) {
+            return associate((Class<C>) types[0]);
+        } else {
+            throw new Error("Task [" + TaskInfo.computeTaskName(task) + "] has no configuration.");
+        }
+    }
+
     /**
      * Convert this project to {@link Library}.
      * 
@@ -754,7 +776,7 @@ public class Project {
      * @return
      */
     public <A> A associate(Class<A> type) {
-        return (A) associates.computeIfAbsent(type, key -> I.make(type));
+        return (A) associates.computeIfAbsent(type, I::make);
     }
 
     /**

@@ -98,7 +98,7 @@ public class TaskInfo {
      * @param type
      * @return
      */
-    public static <T extends Task> T find(Class<T> type) {
+    public static final <T extends Task> T find(Class<T> type) {
         return (T) I.make(by(computeTaskName(type)).task);
     }
 
@@ -108,7 +108,7 @@ public class TaskInfo {
      * @param taskClass A target task.
      * @return A task name.
      */
-    static final String computeTaskName(Class taskClass) {
+    public static final String computeTaskName(Class taskClass) {
         if (taskClass.isSynthetic()) {
             return computeTaskName(taskClass.getSuperclass());
         }

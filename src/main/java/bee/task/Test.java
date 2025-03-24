@@ -43,16 +43,18 @@ import bee.util.Java.JVM;
 import kiss.I;
 import psychopath.Directory;
 
-public class Test extends Task {
+public class Test extends Task<Test.Config> {
 
-    /** The threshold time (ms) to show the prolonged test. */
-    public int showProlongedTest = 1000;
+    public static class Config {
+        /** The threshold time (ms) to show the prolonged test. */
+        public int showProlongedTest = 1000;
 
-    /** The test executing JVM. */
-    public Directory java;
+        /** The test executing JVM. */
+        public Directory java;
 
-    /** The additional paramters for the test execution JVM. */
-    public List<String> params = new ArrayList();
+        /** The additional paramters for the test execution JVM. */
+        public List<String> params = new ArrayList();
+    }
 
     @Command("Test product codes.")
     public void test() {
@@ -64,11 +66,13 @@ public class Test extends Task {
             ui().info("In order to perform the test, you need to create a test class whose name ends with 'Test' in one of the following directories.");
             ui().info(project().getTestSourceSet().toList());
         } else {
+            Config conf = config();
+
             new Require("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
                 {
                     Java.with()
-                            .java(java)
-                            .param(params)
+                            .java(conf.java)
+                            .param(conf.params)
                             .classPath(project().getClasses())
                             .classPath(project().getTestClasses())
                             .classPath(project().getDependency(Scope.Test, Scope.Compile))
@@ -77,7 +81,7 @@ public class Test extends Task {
                             .encoding(project().getEncoding())
                             .workingDirectory(project().getRoot())
                             .run(Junit.class, project()
-                                    .getTestClasses(), project().getOutput().directory("test-reports").create(), showProlongedTest);
+                                    .getTestClasses(), project().getOutput().directory("test-reports").create(), conf.showProlongedTest);
                 }
             };
         }

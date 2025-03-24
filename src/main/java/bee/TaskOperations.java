@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,6 +28,8 @@ import bee.Task.ValuedTaskReference;
 import bee.api.Command;
 import bee.api.Project;
 import kiss.I;
+import kiss.Model;
+import kiss.WiseConsumer;
 import kiss.WiseFunction;
 import kiss.XML;
 import psychopath.Directory;
@@ -51,6 +54,18 @@ public class TaskOperations {
      */
     public static final UserInterface ui() {
         return I.make(UserInterface.class);
+    }
+
+    /**
+     * Get the task config which is associated with the current project.
+     */
+    public static <T extends Task<C>, C> void config(Class<T> task, WiseConsumer<C> config) {
+        if (config != null) {
+            Type[] types = Model.collectParameters(task, Task.class);
+            if (types.length != 0) {
+                config.accept(project().associate((Class<C>) types[0]));
+            }
+        }
     }
 
     /**

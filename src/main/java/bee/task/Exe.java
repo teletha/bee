@@ -37,16 +37,18 @@ import psychopath.Folder;
 import psychopath.Location;
 import psychopath.Locator;
 
-public class Exe extends Task {
+public class Exe extends Task<Exe.Config> {
 
-    /** The location for icon of exe file. */
-    public Path icon;
+    public static class Config {
+        /** The location for icon of exe file. */
+        public Path icon;
 
-    /** The usage of custom JRE. */
-    public boolean useCustomJRE = true;
+        /** The usage of custom JRE. */
+        public boolean useCustomJRE = true;
 
-    /** The additional packing data. */
-    public final Set<Location> resources = new HashSet();
+        /** The additional packing data. */
+        public final Set<Location> resources = new HashSet();
+    }
 
     @Command("Generate windows exe file which executes the main class.")
     public File build() {
@@ -80,6 +82,8 @@ public class Exe extends Task {
 
         require(Jar::source);
 
+        Config conf = config();
+
         // pack with dependency libraries
         Folder folder = Locator.folder();
 
@@ -110,9 +114,9 @@ public class Exe extends Task {
                     command.add("IGNORE_UNCAUGHT_EXCEPTION");
                     command.add("-o");
                     command.add(exe.absolutize().toString());
-                    if (icon != null && Files.isRegularFile(icon) && icon.toString().endsWith(".ico")) {
+                    if (conf.icon != null && Files.isRegularFile(conf.icon) && conf.icon.toString().endsWith(".ico")) {
                         command.add("-i");
-                        command.add(icon.toString());
+                        command.add(conf.icon.toString());
                     }
 
                     // execute exewrap
@@ -129,7 +133,7 @@ public class Exe extends Task {
         }
 
         // Build custom JRE
-        if (useCustomJRE) {
+        if (conf.useCustomJRE) {
             Directory jre = Locator.temporaryDirectory("jre");
 
             List<String> command = new ArrayList();
@@ -157,7 +161,7 @@ public class Exe extends Task {
         }
 
         // addtional data
-        for (Location location : resources) {
+        for (Location location : conf.resources) {
             folder.add(location);
         }
 

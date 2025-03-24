@@ -27,69 +27,60 @@ import kiss.I;
 import kiss.Managed;
 import kiss.Singleton;
 
-public class FindMain extends Task {
-
-    /** In subclass, you can specify the fully qualified class name for project main class. */
-    public String main;
-
-    /** In subclass, you can specify the fully qualified class name for project premain class. */
-    public String premain;
-
-    /** In subclass, you can specify the fully qualified class name for project agentmain class. */
-    public String agentmain;
+public class FindMain extends Task<FindMain.Config> {
 
     /**
-     * <p>
      * Find main class.
-     * </p>
      * 
      * @return A main class name.
      */
     @Command(value = "Find main class.", defaults = true)
     public String main() {
-        if (main == null) {
-            main = ui().ask("Multiple main classes were detected. Which one do you use?", I.make(Search.class).mains);
+        Config config = config();
+
+        if (config.main == null) {
+            config.main = ui().ask("Multiple main classes were detected. Which one do you use?", I.make(Search.class).mains);
         }
 
-        ui().info("Using ", main, " as main class.");
+        ui().info("Using ", config.main, " as main class.");
 
-        return main;
+        return config.main;
     }
 
     /**
-     * <p>
      * Find premain class.
-     * </p>
      * 
      * @return A premain class name.
      */
     @Command("Find premain class.")
     public String premain() {
-        if (premain == null) {
-            premain = ui().ask("Multiple premain classes were detected. Which one do you use?", I.make(Search.class).premains);
+        Config config = config();
+
+        if (config.premain == null) {
+            config.premain = ui().ask("Multiple premain classes were detected. Which one do you use?", I.make(Search.class).premains);
         }
 
-        ui().info("Using ", premain, " as premain class.");
+        ui().info("Using ", config.premain, " as premain class.");
 
-        return premain;
+        return config.premain;
     }
 
     /**
-     * <p>
      * Find agentmain class.
-     * </p>
      * 
      * @return A agentmain class name.
      */
     @Command("Find agentmain class.")
     public String agentmain() {
-        if (agentmain == null) {
-            agentmain = ui().ask("Multiple agentmain classes were detected. Which one do you use?", I.make(Search.class).agentmains);
+        Config config = config();
+
+        if (config.agentmain == null) {
+            config.agentmain = ui().ask("Multiple agentmain classes were detected. Which one do you use?", I.make(Search.class).agentmains);
         }
 
-        ui().info("Using ", agentmain, " as agentmain class.");
+        ui().info("Using ", config.agentmain, " as agentmain class.");
 
-        return agentmain;
+        return config.agentmain;
     }
 
     /**
@@ -173,5 +164,24 @@ public class FindMain extends Task {
             }
             return null;
         }
+    }
+
+    /**
+     * User configuration.
+     */
+    public static class Config {
+
+        /** In subclass, you can specify the fully qualified class name for project main class. */
+        public String main;
+
+        /**
+         * In subclass, you can specify the fully qualified class name for project premain class.
+         */
+        public String premain;
+
+        /**
+         * In subclass, you can specify the fully qualified class name for project agentmain class.
+         */
+        public String agentmain;
     }
 }

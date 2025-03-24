@@ -11,6 +11,7 @@ package bee.task;
 
 import org.junit.jupiter.api.Test;
 
+import bee.TaskOperations;
 import bee.TaskTestBase;
 import psychopath.Directory;
 import psychopath.File;
@@ -50,8 +51,10 @@ class JarTest extends TaskTestBase {
 
         assert createdJar.isAbsent();
 
+        TaskOperations.config(Jar.class, conf -> {
+            conf.removeTraceInfo = true;
+        });
         Jar task = new Jar();
-        task.removeTraceInfo = true;
         task.source();
 
         assert createdJar.isPresent();

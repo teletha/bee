@@ -12,6 +12,7 @@ package bee;
 import static bee.TaskOperations.*;
 
 import bee.api.Repository;
+import bee.task.Jar;
 import bee.task.Test;
 import kiss.I;
 
@@ -22,18 +23,16 @@ public class Install extends bee.task.Install {
      */
     @Override
     public void project() {
+        TaskOperations.config(Jar.class, conf -> {
+            conf.merging = o -> o
+                    .glob("!licenses/**", "!META-INF/*", "!META-INF/licenses/**", "!META-INF/maven/**", "!META-INF/sisu/**", "!META-INF/versions/**");
+        });
+
         require(Test::test);
         require(Jar::document, Jar::merge);
 
         I.make(Repository.class).install(TaskOperations.project());
 
         BeeInstaller.install(true, true, false);
-    }
-
-    static class Jar extends bee.task.Jar {
-        {
-            merging = o -> o
-                    .glob("!licenses/**", "!META-INF/*", "!META-INF/licenses/**", "!META-INF/maven/**", "!META-INF/sisu/**", "!META-INF/versions/**");
-        }
     }
 }

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
+import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Loader;
 import bee.api.Require;
@@ -34,78 +35,80 @@ import psychopath.File;
 import psychopath.Locator;
 import psychopath.Option;
 
-public class Native extends Task {
+public class Native extends Task<Native.Config> {
 
-    /** The available protocols. default is 'http,https' */
-    public List<String> protocols = I.list("http", "https");
+    public static class Config {
+        /** The available protocols. default is 'http,https' */
+        public List<String> protocols = I.list("http", "https");
 
-    /** The available resources. default is {@link FileType#list()} */
-    public List<String> resources = FileType.list().stream().map(FileType::extension).toList();
+        /** The available resources. default is {@link FileType#list()} */
+        public List<String> resources = FileType.list().stream().map(FileType::extension).toList();
 
-    /** The additional parameters. */
-    public List<String> params = new ArrayList();
+        /** The additional parameters. */
+        public List<String> params = new ArrayList();
 
-    /** The graal kind. */
-    private String kind = project().getDependency(Scope.Runtime).stream().anyMatch(lib -> lib.group.equals("org.openjfx")) ? "gluon"
-            : "graal";
+        /** The graal kind. */
+        private String kind = project().getDependency(Scope.Runtime).stream().anyMatch(lib -> lib.group.equals("org.openjfx")) ? "gluon"
+                : "graal";
 
-    /** The graal version. */
-    private int version = project().getJavaRequiredVersion().runtimeVersion().feature();
+        /** The graal version. */
+        private int version = project().getJavaRequiredVersion().runtimeVersion().feature();
 
-    /** The platform type. */
-    private String target = detectOS() + "-" + detectArch();
+        /** The platform type. */
+        private String target = detectOS() + "-" + detectArch();
 
-    /** The configuration directory. */
-    private Directory config = project().getOutput().directory("native-config/" + kind + "-" + qualifier()).create();
+        /** The configuration directory. */
+        private Directory config = project().getOutput().directory("native-config/" + kind + "-" + qualifier()).create();
 
-    /** The output root. */
-    private Directory output = project().getOutput().directory("native/" + qualifier()).create();
+        /** The output root. */
+        private Directory output = project().getOutput().directory("native/" + qualifier()).create();
 
-    /** The executional file. */
-    private File executional = output.file(project().getProduct());
+        /** The executional file. */
+        private File executional = output.file(project().getProduct());
 
-    /** The artifact's archive. */
-    private File archive = project().getOutput().file(qualifier() + ".zip");
+        /** The artifact's archive. */
+        private File archive = project().getOutput().file(qualifier() + ".zip");
 
-    /** The configuration for serialization. */
-    private final Serialization serialization = new Serialization();
+        private Serialization serialization = new Serialization();
 
-    /**
-     * Compute the product qualifier.
-     * 
-     * @return
-     */
-    private String qualifier() {
-        return project().getProduct() + "-" + target + "-" + project().getVersion();
+        /**
+         * Compute the product qualifier.
+         * 
+         * @return
+         */
+        private String qualifier() {
+            return project().getProduct() + "-" + target + "-" + project().getVersion();
+        }
     }
 
     @Command(value = "Build native execution file.", defaults = true)
     public File build() {
-        Directory graal = findGraalVM();
+        Config conf = config();
+        Directory graal = findGraalVM(conf);
 
         // run test with native-image-agent
-        Test test = I.make(Test.class);
-        test.java = graal;
-        test.params.add("-agentlib:native-image-agent=config-output-dir=" + config.path());
-        test.test();
-
+        TaskOperations.config(Test.class, test -> {
+            test.java = graal;
+            test.params.add("-agentlib:native-image-agent=config-output-dir=" + conf.config.path());
+        });
+        require(Test::test);
         require(Jar::source);
         String main = require(FindMain::main);
 
-        buildRuntimeInfo();
+        buildRuntimeInfo(conf);
 
         // build native-image command
         List<String> command = new ArrayList(Platform.isWindows() ? List.of("cmd", "/c") : List.of("bash", "-c"));
         command.add(graal.file("bin/native-image").path());
 
-        command.addAll(params);
+        command.addAll(conf.params);
 
         // output location
         command.add("-o");
-        command.add(executional.path());
+        command.add(conf.executional.path());
 
         command.add("--no-fallback");
-        command.add("--enable-url-protocols=" + protocols.stream().collect(Collectors.joining(",")));
+        command.add("--enable-url-protocols=" + conf.protocols.stream().collect(Collectors.joining(",")));
 
         // for debug
         command.add("-Ob");
@@ -115,8 +118,8 @@ public class Native extends Task {
 
         // metadata
         command.add("-H:+UnlockExperimentalVMOptions");
-        command.add("-H:ConfigurationFileDirectories=" + config);
-        command.add("-H:ResourceConfigurationFiles=" + config.file("auto-resources.json").text(I.express("""
+        command.add("-H:ConfigurationFileDirectories=" + conf.config);
+        command.add("-H:ResourceConfigurationFiles=" + conf.config.file("auto-resources.json").text(I.express("""
                 {=< >=}
                 {
                   "resources": [
@@ -126,8 +129,8 @@ public class Native extends Task {
                     { "pattern": ".*.zip$" }
                   ]
                 }
-                """, resources)));
-        command.add("-H:SerializationConfigurationFiles=" + config.file("auto-serialize.json").text(I.write(serialization)));
+                """, conf.resources)));
+        command.add("-H:SerializationConfigurationFiles=" + conf.config.file("auto-serialize.json").text(I.write(conf.serialization)));
 
         // locate codes
         command.add("--class-path");
@@ -140,9 +143,9 @@ public class Native extends Task {
         command.add(main);
 
         if (bee.util.Process.with().run(command) == 0) {
-            pack(output, archive, o -> o.glob("*"));
+            pack(conf.output, conf.archive, o -> o.glob("*"));
 
-            return archive;
+            return conf.archive;
         } else {
             Fail fail = new Fail("Fail to build native execution file.").solve("Executing: " + String.join(" ", command));
 
@@ -160,7 +163,8 @@ public class Native extends Task {
 
     @Command("Run the native executable.")
     public void run() {
-        bee.util.Process.with().verbose().workingDirectory(output).encoding(project().getEncoding()).run(executional.path());
+        Config conf = config();
+        bee.util.Process.with().verbose().workingDirectory(conf.output).encoding(project().getEncoding()).run(conf.executional.path());
     }
 
     /**
@@ -168,13 +172,13 @@ public class Native extends Task {
      * 
      * @return
      */
-    private Directory findGraalVM() {
-        Directory dest = Platform.BeeHome.directory("jdk").directory(kind + "-" + version);
+    private Directory findGraalVM(Config conf) {
+        Directory dest = Platform.BeeHome.directory("jdk").directory(conf.kind + "-" + conf.version);
 
         if (dest.isAbsent()) {
-            String url = kind.equals("gluon")
+            String url = conf.kind.equals("gluon")
                     ? "https://github.com/gluonhq/graal/releases/download/gluon-23+25.1-dev-2409082136/graalvm-java23-windows-amd64-gluon-23+25.1-dev.zip"
-                    : "https://download.oracle.com/graalvm/" + version + "/archive/graalvm-jdk-" + version + "_" + target + "_bin.zip";
+                    : "https://download.oracle.com/graalvm/" + conf.version + "/archive/graalvm-jdk-" + conf.version + "_" + conf.target + "_bin.zip";
 
             // download archive
             File temp = Locator.temporaryFile(url.substring(url.lastIndexOf('/') + 1));
@@ -186,7 +190,7 @@ public class Native extends Task {
         return dest;
     }
 
-    private void buildRuntimeInfo() {
+    private void buildRuntimeInfo(Config conf) {
         new Require("io.github.classgraph:classgraph") {
             {
                 try (ScanResult scan = new ClassGraph().enableAllInfo().overrideClasspath(project().getClasspath()).scan()) {
@@ -195,7 +199,7 @@ public class Native extends Task {
                             .map(ClassInfo::getName)
                             .collect(Collectors.joining(","));
 
-                    serialization.lambdaCapturingTypes.addAll(scan.getAllClasses()
+                    conf.serialization.lambdaCapturingTypes.addAll(scan.getAllClasses()
                             .stream()
                             .filter(x -> x.hasDeclaredMethod("$deserializeLambda$"))
                             .map(info -> new Item(info.getName()))
@@ -204,7 +208,7 @@ public class Native extends Task {
                     StringBuilder builder = new StringBuilder();
                     builder.append(Extensible.class.getName()).append("=").append(extensions).append("\n");
 
-                    makeFile(output.file(".env"), builder.toString());
+                    makeFile(conf.output.file(".env"), builder.toString());
                 }
             }
         };

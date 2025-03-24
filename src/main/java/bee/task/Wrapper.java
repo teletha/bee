@@ -27,10 +27,12 @@ import kiss.Ⅱ;
 import psychopath.File;
 import psychopath.Locator;
 
-public class Wrapper extends Task {
+public class Wrapper extends Task<Wrapper.Config> {
 
-    /** Specify the bee version. */
-    public String version = Bee.Tool.getVersion();
+    public static class Config {
+        /** Specify the bee version. */
+        public String version = Bee.Tool.getVersion();
+    }
 
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
     public void stable() {
@@ -84,7 +86,7 @@ public class Wrapper extends Task {
 
     @Command("Build local bee environment using the user specified version.")
     public void use() {
-        build(version);
+        build(config().version);
     }
 
     @Command("Clean local bee environment.")
