@@ -62,8 +62,8 @@ public abstract class Task implements Extensible {
      * 
      * @param task A task to execute.
      */
-    protected final <T extends Task, R> R require(ValuedTaskRef<T, R> task) {
-        return (R) requireParallel(new TaskRef[] {task});
+    protected final <T extends Task, R> R require(ValuedTaskReference<T, R> task) {
+        return (R) requireParallel(new TaskReference[] {task});
     }
 
     /**
@@ -71,8 +71,8 @@ public abstract class Task implements Extensible {
      * 
      * @param task A task to execute.
      */
-    protected final <T extends Task> void require(TaskRef<T> task) {
-        requireParallel(new TaskRef[] {task});
+    protected final <T extends Task> void require(TaskReference<T> task) {
+        requireParallel(new TaskReference[] {task});
     }
 
     /**
@@ -81,8 +81,8 @@ public abstract class Task implements Extensible {
      * @param task1 A task to execute.
      * @param task2 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2) {
-        requireParallel(new TaskRef[] {task1, task2});
+    protected final <T1 extends Task, T2 extends Task> void require(TaskReference<T1> task1, TaskReference<T2> task2) {
+        requireParallel(new TaskReference[] {task1, task2});
     }
 
     /**
@@ -92,8 +92,8 @@ public abstract class Task implements Extensible {
      * @param task2 A task to execute.
      * @param task3 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task, T3 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2, TaskRef<T3> task3) {
-        requireParallel(new TaskRef[] {task1, task2, task3});
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task> void require(TaskReference<T1> task1, TaskReference<T2> task2, TaskReference<T3> task3) {
+        requireParallel(new TaskReference[] {task1, task2, task3});
     }
 
     /**
@@ -104,8 +104,8 @@ public abstract class Task implements Extensible {
      * @param task3 A task to execute.
      * @param task4 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2, TaskRef<T3> task3, TaskRef<T4> task4) {
-        requireParallel(new TaskRef[] {task1, task2, task3, task4});
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task> void require(TaskReference<T1> task1, TaskReference<T2> task2, TaskReference<T3> task3, TaskReference<T4> task4) {
+        requireParallel(new TaskReference[] {task1, task2, task3, task4});
     }
 
     /**
@@ -117,8 +117,8 @@ public abstract class Task implements Extensible {
      * @param task4 A task to execute.
      * @param task5 A task to execute.
      */
-    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task, T5 extends Task> void require(TaskRef<T1> task1, TaskRef<T2> task2, TaskRef<T3> task3, TaskRef<T4> task4, TaskRef<T5> task5) {
-        requireParallel(new TaskRef[] {task1, task2, task3, task4, task5});
+    protected final <T1 extends Task, T2 extends Task, T3 extends Task, T4 extends Task, T5 extends Task> void require(TaskReference<T1> task1, TaskReference<T2> task2, TaskReference<T3> task3, TaskReference<T4> task4, TaskReference<T5> task5) {
+        requireParallel(new TaskReference[] {task1, task2, task3, task4, task5});
     }
 
     /**
@@ -126,7 +126,7 @@ public abstract class Task implements Extensible {
      * 
      * @param tasks
      */
-    private Object requireParallel(TaskRef<Task>[] tasks) {
+    private Object requireParallel(TaskReference<Task>[] tasks) {
         ConcurrentLinkedDeque<ParallelInterface> parallels = new ConcurrentLinkedDeque();
         ParallelInterface parallel = null;
 
@@ -304,15 +304,15 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * 
+     * Type-safe task referenece.
      */
-    public interface TaskRef<T> extends Consumer<T>, Serializable {
+    public interface TaskReference<T> extends Consumer<T>, Serializable {
     }
 
     /**
-     * 
+     * Type-safe task reference which can return a value.
      */
-    public interface ValuedTaskRef<T, R> extends Function<T, R>, Serializable, TaskRef<T> {
+    public interface ValuedTaskReference<T, R> extends Function<T, R>, Serializable, TaskReference<T> {
 
         @Override
         default void accept(T task) {
