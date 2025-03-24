@@ -9,13 +9,10 @@
  */
 package bee;
 
-import static bee.Platform.*;
-
 import java.time.format.DateTimeFormatter;
 
 import bee.api.Project;
 import bee.api.Repository;
-import bee.task.Help;
 import kiss.I;
 import psychopath.File;
 import psychopath.Locator;
@@ -40,16 +37,17 @@ public class BeeInstaller {
         UserInterface ui = I.make(UserInterface.class);
         Project project = I.make(Project.class);
 
-        File source = bee.Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(bee.Bee.class).asFile();
+        File source = Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(Bee.class).asFile();
 
         if (installLauncher) {
-            File dest = BeeHome.file("bee-" + bee.Bee.Tool.getVersion() + "-" + DATETIME.format(source.lastModifiedDateTime()) + ".jar");
+            File dest = Platform.BeeHome
+                    .file("bee-" + Bee.Tool.getVersion() + "-" + DATETIME.format(source.lastModifiedDateTime()) + ".jar");
             // The current bee.jar is newer.
             // We should copy it to JDK directory.
             // This process is mainly used by Bee users while install phase.
             if (source.lastModifiedMilli() != dest.lastModifiedMilli()) {
                 // delete old jars
-                BeeHome.walkFile("bee-*.jar").to(jar -> {
+                Platform.BeeHome.walkFile("bee-*.jar").to(jar -> {
                     try {
                         // delete only bee-version-yyyyMMddhhmmss.jar
                         if (jar.base().length() > 18) {
@@ -65,15 +63,15 @@ public class BeeInstaller {
                 ui.info("Build executor [", dest, "]");
 
                 // build launcher
-                Bee.text(String.format(Platform.isWindows() ? """
+                Platform.Bee.text(String.format(Platform.isWindows() ? """
                         @echo off
                         %s -javaagent:"%s" -cp "%s" bee.Bee %%*
                         """ : """
                         #!/bin/bash
                         %s -javaagent:"%s" -cp "%s" bee.Bee "$@"
-                        """, JavaHome.file("bin/java"), dest, dest));
+                        """, Platform.JavaHome.file("bin/java"), dest, dest));
 
-                ui.info("Build launcher [", Bee, "]");
+                ui.info("Build launcher [", Platform.Bee, "]");
             }
         }
 
@@ -84,13 +82,12 @@ public class BeeInstaller {
                         .add(source.asArchive(), "bee/**", "!**.java", "META-INF/services/javax.annotation.processing.Processor")
                         .packToTemporary();
 
-                I.make(Repository.class).install(bee.Bee.API, api);
+                I.make(Repository.class).install(Bee.API, api);
             }
         }
 
         if (showWelcome) {
-            Task help = I.make(Help.class);
-            help.execute("help:welcome");
+            Bee.execute("help:welcome");
         }
     }
 }

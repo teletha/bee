@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.TreeMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -38,7 +36,6 @@ import bee.api.Project;
 import bee.util.EnhancedClassWriter;
 import bee.util.EnhancedMethodWriter;
 import bee.util.Inputs;
-import bee.util.Profiling;
 import kiss.Extensible;
 import kiss.I;
 import kiss.Lifestyle;
@@ -47,9 +44,6 @@ import kiss.Model;
 
 @Managed(value = TaskLifestyle.class)
 public abstract class Task implements Extensible {
-
-    /** The common task repository. */
-    static Map<String, Info> commons;
 
     /**
      * Execute manual tasks.
@@ -60,7 +54,7 @@ public abstract class Task implements Extensible {
 
     @Command("Display help message for all commands of this task.")
     public void help() {
-        Info info = info(computeTaskName(getClass()));
+        TaskInfo info = TaskInfo.by(TaskInfo.computeTaskName(getClass()));
 
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
             // display usage description for this command
@@ -167,14 +161,14 @@ public abstract class Task implements Extensible {
             SerializedLambda s = (SerializedLambda) m.invoke(task);
             Method method = I.type(s.getImplClass().replaceAll("/", ".")).getMethod(s.getImplMethodName());
 
-            return execute(computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase());
+            return Bee.execute(TaskInfo.computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase());
         }).to().v;
     }
 
     /**
      * 
      */
-    private static class ParallelInterface extends UserInterface {
+    static class ParallelInterface extends UserInterface {
 
         /** The message mode. */
         // buffering(0) → buffered(2)
@@ -282,7 +276,7 @@ public abstract class Task implements Extensible {
         /**
          * Invoke when the task was finished.
          */
-        private synchronized void finish() {
+        synchronized void finish() {
             switch (mode) {
             case 0: // buffering
                 mode = 2;
@@ -323,226 +317,6 @@ public abstract class Task implements Extensible {
     }
 
     /**
-     * Execute literal expression task.
-     * 
-     * @param input User task for input.
-     */
-    final Object execute(String input) {
-        // parse command
-        if (input == null) {
-            return null;
-        }
-
-        // remove head and tail white space
-        input = input.trim();
-
-        if (input.length() == 0) {
-            return null;
-        }
-
-        // analyze task name
-        String taskName = "";
-        String commandName = "";
-        int index = input.indexOf(':');
-
-        if (index == -1) {
-            taskName = input;
-        } else {
-            taskName = input.substring(0, index);
-            commandName = input.substring(index + 1);
-        }
-
-        // search task
-        Info info = info(taskName);
-
-        if (commandName.isEmpty()) {
-            commandName = info.defaultCommnad;
-        }
-        commandName = commandName.toLowerCase();
-
-        // search command
-        Method command = info.commands.get(commandName);
-
-        if (command == null) {
-            // Search for command with similar names for possible misspellings.
-            String recommend = Inputs.recommend(commandName, info.commands.keySet());
-            if (recommend != null && ui().confirm("Isn't it a misspelling of command [" + recommend + "] ?")) {
-                command = info.commands.get(recommend);
-            } else {
-                Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
-                for (Entry<String, String> entry : info.descriptions.entrySet()) {
-                    failure.solve(String.format("%s:%-8s \t%s", taskName, entry.getKey(), entry.getValue()));
-                }
-                throw failure;
-            }
-        }
-
-        String fullname = taskName + ":" + commandName;
-
-        // skip option
-        if (BeeOption.Skip.value.contains(taskName) || BeeOption.Skip.value.contains(fullname)) {
-            return null;
-        }
-
-        // create task and initialize
-        Task task = I.make(info.task);
-
-        // execute task
-        try (var x = Profiling.of("Task [" + fullname + "]")) {
-            return command.invoke(task);
-        } catch (TaskCancel e) {
-            ui().warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
-            return null;
-        } catch (Throwable e) {
-            if (e instanceof InvocationTargetException) {
-                e = ((InvocationTargetException) e).getTargetException();
-            }
-            throw I.quiet(e);
-        } finally {
-            if (ui() instanceof ParallelInterface parallel) {
-                parallel.finish();
-            }
-        }
-    }
-
-    /**
-     * Find the task instance by type.
-     * 
-     * @param <T>
-     * @param type
-     * @return
-     */
-    public static <T extends Task> T find(Class<T> type) {
-        return (T) I.make(info(computeTaskName(type)).task);
-    }
-
-    /**
-     * Compute human-readable task name.
-     * 
-     * @param taskClass A target task.
-     * @return A task name.
-     */
-    private static final String computeTaskName(Class taskClass) {
-        if (taskClass.isSynthetic()) {
-            return computeTaskName(taskClass.getSuperclass());
-        }
-        return Inputs.hyphenize(taskClass.getSimpleName());
-    }
-
-    /**
-     * Find task information by name.
-     * 
-     * @param name A task name.
-     * @return A specified task.
-     */
-    private static final Info info(String name) {
-        if (name == null) {
-            throw new Error("You must specify task name.");
-        }
-
-        synchronized (Task.class) {
-            if (commons == null || !commons.containsKey(name)) {
-                commons = new TreeMap();
-                for (Class<Task> task : I.findAs(Task.class)) {
-                    String taskName = computeTaskName(task);
-                    Info info = new Info(taskName, task);
-                    if (!info.descriptions.isEmpty()) {
-                        commons.put(taskName, info);
-                    }
-                }
-            }
-        }
-
-        // search from common tasks
-        Info info = commons.get(name);
-
-        if (info == null) {
-            // Search for tasks with similar names for possible misspellings.
-            String recommend = Inputs.recommend(name, commons.keySet());
-            if (recommend != null && I.make(UserInterface.class).confirm("Isn't it a misspelling of task [" + recommend + "] ?")) {
-                return commons.get(recommend);
-            }
-
-            Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
-            for (Info i : commons.values()) {
-                failure.solve(i);
-            }
-            throw failure;
-        }
-
-        // API definition
-        return info;
-    }
-
-    /**
-     * 
-     */
-    private static class Info {
-
-        /** The task name. */
-        private final String name;
-
-        /** The task definition. */
-        private final Class<Task> task;
-
-        /** The default command name. */
-        private String defaultCommnad = "help";
-
-        /** The actual commands. */
-        private final Map<String, Method> commands = new TreeMap();
-
-        /** The command descriptions. */
-        private final Map<String, String> descriptions = new TreeMap();
-
-        /**
-         * @param name
-         * @param task
-         */
-        private Info(String name, Class<Task> task) {
-            this.name = name;
-            this.task = task;
-
-            for (Entry<Method, List<Annotation>> info : Model.collectAnnotatedMethods(task).entrySet()) {
-                for (Annotation annotation : info.getValue()) {
-                    if (annotation.annotationType() == Command.class) {
-                        Method method = info.getKey();
-
-                        // compute command name
-                        Command command = (Command) annotation;
-                        String commnadName = Inputs.hyphenize(method.getName());
-
-                        // register
-                        commands.put(commnadName, method);
-
-                        if (!commnadName.equals("help")) {
-                            descriptions.put(commnadName, command.value());
-                        }
-
-                        if (command.defaults()) {
-                            defaultCommnad = commnadName;
-                        }
-                    }
-                }
-            }
-
-            // search default command
-            if (descriptions.size() == 1) {
-                defaultCommnad = descriptions.keySet().iterator().next();
-            } else if (descriptions.containsKey(name)) {
-                defaultCommnad = name;
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public String toString() {
-            return String.format("%-8s \t%s", name, descriptions.get(defaultCommnad));
-        }
-    }
-
-    /**
      * Store for each command result.
      */
     @SuppressWarnings("serial")
@@ -564,7 +338,6 @@ public abstract class Task implements Extensible {
                 // ======================================
                 // Define and build the memoized task class
                 // ======================================
-                String task = Type.getInternalName(Task.class);
                 String parent = Type.getInternalName(model);
                 writer.visit(V21, ACC_PUBLIC | ACC_SUPER | ACC_SYNTHETIC, writer.classInternalName, null, parent, null);
 

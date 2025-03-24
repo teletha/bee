@@ -9,6 +9,8 @@
  */
 package bee;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -16,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import bee.api.Library;
 import bee.api.License;
@@ -24,6 +27,7 @@ import bee.api.Scope;
 import bee.api.VCS;
 import bee.task.Help;
 import bee.task.Prototype;
+import bee.util.Inputs;
 import bee.util.JavaCompiler;
 import bee.util.Profiling;
 import kiss.I;
@@ -249,6 +253,91 @@ public class Bee {
     }
 
     /**
+     * Execute literal expression task.
+     * 
+     * @param input User task for input.
+     */
+    static final Object execute(String input) {
+        // parse command
+        if (input == null) {
+            return null;
+        }
+
+        // remove head and tail white space
+        input = input.trim();
+
+        if (input.length() == 0) {
+            return null;
+        }
+
+        UserInterface ui = TaskOperations.ui();
+
+        // analyze task name
+        String taskName = "";
+        String commandName = "";
+        int index = input.indexOf(':');
+
+        if (index == -1) {
+            taskName = input;
+        } else {
+            taskName = input.substring(0, index);
+            commandName = input.substring(index + 1);
+        }
+
+        // search task
+        TaskInfo info = TaskInfo.by(taskName);
+
+        if (commandName.isEmpty()) {
+            commandName = info.defaultCommnad;
+        }
+        commandName = commandName.toLowerCase();
+
+        // search command
+        Method command = info.commands.get(commandName);
+
+        if (command == null) {
+            // Search for command with similar names for possible misspellings.
+            String recommend = Inputs.recommend(commandName, info.commands.keySet());
+            if (recommend != null && ui.confirm("Isn't it a misspelling of command [" + recommend + "] ?")) {
+                command = info.commands.get(recommend);
+            } else {
+                Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
+                for (Entry<String, String> entry : info.descriptions.entrySet()) {
+                    failure.solve(String.format("%s:%-8s \t%s", taskName, entry.getKey(), entry.getValue()));
+                }
+                throw failure;
+            }
+        }
+
+        String fullname = taskName + ":" + commandName;
+
+        // skip option
+        if (BeeOption.Skip.value.contains(taskName) || BeeOption.Skip.value.contains(fullname)) {
+            return null;
+        }
+
+        // create task and initialize
+        Task task = I.make(info.task);
+
+        // execute task
+        try (var x = Profiling.of("Task [" + fullname + "]")) {
+            return command.invoke(task);
+        } catch (TaskCancel e) {
+            ui.warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
+            return null;
+        } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                e = ((InvocationTargetException) e).getTargetException();
+            }
+            throw I.quiet(e);
+        } finally {
+            if (ui instanceof Task.ParallelInterface parallel) {
+                parallel.finish();
+            }
+        }
+    }
+
+    /**
      * Create project skeleton.
      */
     private void buildProjectDefinition(File definition) throws Exception {
@@ -335,7 +424,7 @@ public class Bee {
         @Override
         public void execute() {
             for (String task : tasks) {
-                execute(task);
+                Bee.execute(task);
             }
         }
     }
