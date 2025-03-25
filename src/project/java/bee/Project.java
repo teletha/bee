@@ -96,6 +96,7 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
         require("org.ow2.asm", "asm");
+        require("org.codehaus.plexus", "plexus-classworlds");
 
         // DYNAMICALLY ON RUNTIME
         require("org.junit.platform", "junit-platform-engine").atProvided();
@@ -119,7 +120,6 @@ public class Project extends bee.api.Project {
         unrequire("org.apache.maven", "plexus-utils");
         unrequire("org.eclipse.sisu", "org.eclipse.sisu.inject");
         unrequire("org.eclipse.sisu", "org.eclipse.sisu.plexus");
-        unrequire("org.codehaus.plexus", "plexus-classworlds");
         unrequire("org.codehaus.plexus", "plexus-component-annotations");
 
         config(FindMain.class, task -> {

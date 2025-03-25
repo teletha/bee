@@ -58,6 +58,14 @@ public interface Intellij extends Task, IDESupport {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    default String name() {
+        return "IntelliJ IDEA";
+    }
+
+    /**
      * <p>
      * Create module configuration.
      * </p>

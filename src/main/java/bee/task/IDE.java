@@ -11,10 +11,12 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import bee.Task;
+import bee.TaskInfo;
 import bee.api.Command;
 import kiss.I;
 
@@ -44,18 +46,22 @@ public interface IDE extends Task {
      * Find supported {@link IDESupport} and apply task.
      */
     private void task(Consumer<IDESupport> task) {
-        List<IDESupport> supports = I.find(IDESupport.class);
+        List<IDESupport> supports = new ArrayList();
 
         // search existing environment
-        for (IDESupport support : supports) {
-            if (support.exist(project())) {
-                task.accept(support);
-                return;
+        for (Class type : I.findAs(IDESupport.class)) {
+            if (type != IDESupport.class) {
+                IDESupport support = (IDESupport) TaskInfo.find(type);
+                if (support.exist(project())) {
+                    task.accept(support);
+                    return;
+                }
+                supports.add(support);
             }
         }
 
         // initialize develop environemnt
         ui().info("Project develop environment is not found.");
-        task.accept(ui().ask("Bee supports the following IDEs.", supports));
+        task.accept(ui().ask("Bee supports the following IDEs.", supports, IDESupport::name));
     }
 }

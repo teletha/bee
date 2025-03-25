@@ -102,6 +102,14 @@ public interface Eclipse extends Task, IDESupport {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    default String name() {
+        return "Eclipse";
+    }
+
+    /**
      * Create project file.
      * 
      * @param file

@@ -23,6 +23,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import bee.api.Command;
@@ -277,6 +278,19 @@ public abstract class UserInterface {
      * @return A selected item.
      */
     public <T> T ask(String question, List<T> items) {
+        return ask(question, items, (Function<T, String>) null);
+    }
+
+    /**
+     * Ask user about your question and return his/her selected item.
+     * <p>
+     * UserInterface can display a list of items and user can select it with simple action.
+     * 
+     * @param question Your question message.
+     * @param items A list of selectable items.
+     * @return A selected item.
+     */
+    public <T> T ask(String question, List<T> items, Function<T, String> naming) {
         if (items == null) {
             throw new Error(build("Question needs some items. [" + question, "]"));
         }
@@ -290,7 +304,7 @@ public abstract class UserInterface {
 
         default:
             info(question);
-            info(items);
+            info(naming == null ? items : items.stream().map(naming).toList());
 
             return items.get(select(1, items.size()) - 1);
         }

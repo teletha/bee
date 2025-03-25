@@ -100,11 +100,11 @@ public class TaskInfo {
      * Find the task instance by type.
      * 
      * @param <T>
-     * @param type
+     * @param support
      * @return
      */
-    public static final <T extends Task> T find(Class<T> type) {
-        return (T) by(computeTaskName(type)).create();
+    public static final <T extends Task> T find(Class<T> support) {
+        return (T) by(computeTaskName(support)).create();
     }
 
     /**
@@ -201,7 +201,7 @@ public class TaskInfo {
                     UserInterface ui = TaskOperations.ui();
                     try {
                         ui.startCommand(taskName, null);
-                        result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments();
+                        result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args);
                         cache.put(taskName, result);
                     } finally {
                         ui.endCommand(taskName, null);
@@ -209,7 +209,7 @@ public class TaskInfo {
                 }
                 return result;
             } else {
-                return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments();
+                return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args);
             }
         });
     }

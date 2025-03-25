@@ -32,4 +32,11 @@ public interface IDESupport extends Extensible {
      * @return
      */
     boolean exist(Project project);
+
+    /**
+     * IDE name.
+     * 
+     * @return
+     */
+    String name();
 }
