@@ -15,10 +15,10 @@ import kiss.Extensible;
 
 public interface IDESupport extends Extensible {
     /**
-     * Generate project configuration file.
+     * Create project configuration file.
      */
-    @Command("Generate configuration files.")
-    void execute();
+    @Command("Create configuration files.")
+    void create();
 
     /**
      * Delete project configuration file.

@@ -45,11 +45,11 @@ import psychopath.Location;
 public class Eclipse extends Task implements IDESupport {
 
     /**
-     * Create eclipse's project file.
+     * {@inheritDoc}
      */
     @Override
     @Command(value = "Generate configuration files for Eclipse.", defaults = true)
-    public void execute() {
+    public void create() {
         createClasspath(project().getRoot().file(".classpath"));
         createProject(project().getRoot().file(".project"));
 

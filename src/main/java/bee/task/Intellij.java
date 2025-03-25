@@ -28,13 +28,11 @@ import psychopath.File;
 public class Intellij extends Task implements IDESupport {
 
     /**
-     * <p>
-     * Create idea's project file.
-     * </p>
+     * {@inheritDoc}
      */
     @Override
     @Command(value = "Generate configuration files for IntelliJ IDEA.", defaults = true)
-    public void execute() {
+    public void create() {
         createModule(project().getSources(), project().getClasses(), Scope.Compile);
         createModule(project().getTestSources(), project().getTestClasses(), Scope.Test);
         createModule(project().getProjectSources(), project().getProjectClasses(), Scope.System);

@@ -23,10 +23,9 @@ public class IDE extends Task {
     /**
      * Create idea's project file.
      */
-    @Override
     @Command(value = "Generate configuration files.", defaults = true)
-    public void execute() {
-        task(IDESupport::execute);
+    public void create() {
+        task(IDESupport::create);
 
         ui().info("Generate IDE configuration files.");
     }

@@ -25,13 +25,6 @@ import kiss.Model;
 @Managed(value = TaskLifestyle.class)
 public abstract class Task<C> implements Extensible {
 
-    /**
-     * Execute manual tasks.
-     */
-    public void execute() {
-        // do nothing
-    }
-
     @Command("Display help message for all commands of this task.")
     public void help() {
         TaskInfo info = TaskInfo.by(TaskInfo.computeTaskName(getClass()));
@@ -54,14 +47,6 @@ public abstract class Task<C> implements Extensible {
         } else {
             return project().associate((Class<C>) types[0]);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return Model.of(this).type.getSimpleName();
     }
 
     /**
