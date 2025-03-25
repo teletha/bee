@@ -57,7 +57,7 @@ bee install
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>antibug</artifactId>
-			<version>1.12.2</version>
+			<version>1.13.0</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
@@ -79,10 +79,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -112,16 +108,12 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>net.bytebuddy</groupId>
 			<artifactId>byte-buddy-agent</artifactId>
-			<version>1.17.2</version>
+			<version>1.17.4</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -143,10 +135,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -176,10 +164,6 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -207,10 +191,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -240,10 +220,6 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -272,16 +248,12 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-engine</artifactId>
-			<version>1.12.1</version>
+			<version>1.13.0-M2</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -303,17 +275,13 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.platform</groupId>
 			<artifactId>junit-platform-launcher</artifactId>
-			<version>1.12.1</version>
+			<version>1.13.0-M2</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -335,10 +303,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -368,10 +332,6 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -399,10 +359,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -432,10 +388,6 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -463,10 +415,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -496,10 +444,6 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -527,10 +471,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -560,16 +500,12 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
-			<version>7.1.0.202411261347-r</version>
+			<version>7.2.0.202503040940-r</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -592,9 +528,33 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-classworlds</artifactId>
+			<version>2.8.0</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.plexus</artifactId>
+				</exclusion>
 				<exclusion>
 					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
+					<artifactId>plexus-component-annotations</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.maven</groupId>
+					<artifactId>plexus-utils</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.sisu</groupId>
+					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -624,16 +584,12 @@ bee install
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>sinobu</artifactId>
-			<version>4.5.2</version>
+			<version>4.6.0</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -655,10 +611,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -687,10 +639,6 @@ bee install
 				<exclusion>
 					<groupId>org.eclipse.sisu</groupId>
 					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

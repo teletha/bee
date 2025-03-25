@@ -102,7 +102,7 @@ Add it into the libraryDependencies section like so:
 libraryDependencies += "com.github.teletha" % "bee" % "0.70.0"
 ```
 #### [Leiningen](https://leiningen.org/)
-Add JitPack repository at the end of repositories in your project.clj:
+Add JitPack repository at the end of repositories in your project().clj:
 ```clj
 :repositories [["jitpack" "https://jitpack.io"]]
 ```
@@ -161,11 +161,12 @@ Bee depends on the following products on runtime.
 * [maven-resolver-spi-2.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-spi/2.0.0-alpha-7)
 * [maven-resolver-util-2.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util/2.0.0-alpha-7)
 * [maven-xml-impl-4.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-7)
+* [plexus-classworlds-2.8.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-classworlds/2.8.0)
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
 * [plexus-utils-4.0.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/4.0.0)
 * [plexus-xml-4.0.1](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-xml/4.0.1)
 * [psychopath-2.1.0](https://mvnrepository.com/artifact/com.github.teletha/psychopath/2.1.0)
-* [sinobu-4.5.2](https://mvnrepository.com/artifact/com.github.teletha/sinobu/4.5.2)
+* [sinobu-4.6.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/4.6.0)
 * [slf4j-api-2.1.0-alpha1](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.1.0-alpha1)
 <p align="right"><a href="#top">back to top</a></p>
 
