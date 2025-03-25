@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.71.0](https://github.com/teletha/bee/compare/0.70.0...0.71.0) (2025-03-25)
+
+
+### Features
+
+* add TaskInfo#computeTaskName(TaskReference) ([de25016](https://github.com/teletha/bee/commit/de25016a54f662e66c58bc0d00cf4133f4566bed))
+* collect module from require-module entry on MANIFEST.MF ([8dfc884](https://github.com/teletha/bee/commit/8dfc884ad2f6978eb33e7166b912f6204083e870))
+* drop Task#execute ([8b366d5](https://github.com/teletha/bee/commit/8b366d580a28c802dbde8ad29073d651787ba279))
+* remove fileds on task ([ab6bf71](https://github.com/teletha/bee/commit/ab6bf71946cece1f344eee266cd2686e47202fa5))
+* remove ui and project fields in Task ([70c0dc8](https://github.com/teletha/bee/commit/70c0dc842996352b3ac2717e3b4190da5fcd5857))
+* separate task info ([dcc6c08](https://github.com/teletha/bee/commit/dcc6c08f6d1182f6768bf6a0b2618c17f63947da))
+* separate task related operations ([eb20fb2](https://github.com/teletha/bee/commit/eb20fb29cdc4e14fb3920f6ac3e01a94f98b7724))
+* separate task requiring ([399b0bf](https://github.com/teletha/bee/commit/399b0bfab5b64f2d45523e0a7abfcb6b0cb77a24))
+* task configuration ([70cb23a](https://github.com/teletha/bee/commit/70cb23a82243781d492cc57be7071a9c385d2bcb))
+* Task is interface now ([771ad72](https://github.com/teletha/bee/commit/771ad72d338d95a838c772c8ae0812b44fb1b1e1))
+
+
+### Bug Fixes
+
+* IDE task is broken ([83251a3](https://github.com/teletha/bee/commit/83251a370599f0260f313b9bca6a55e3bedc992d))
+* revert installer ([63c4871](https://github.com/teletha/bee/commit/63c4871ee66e5b8cb80975aefe4cf2897f7bb481))
+
 ## [0.70.0](https://github.com/teletha/bee/compare/0.67.4...0.70.0) (2025-03-19)
 
 
