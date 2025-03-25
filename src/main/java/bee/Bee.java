@@ -302,7 +302,7 @@ public class Bee {
         }
 
         // create task and initialize
-        Task task = I.make(info.task);
+        Task task = info.create();
 
         // execute task
         try (var x = Profiling.of("Task [" + fullname + "]")) {

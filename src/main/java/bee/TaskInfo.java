@@ -10,8 +10,10 @@
 package bee;
 
 import java.lang.annotation.Annotation;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -19,6 +21,7 @@ import java.util.TreeMap;
 
 import bee.Task.TaskReference;
 import bee.api.Command;
+import bee.api.Project;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Model;
@@ -101,7 +104,7 @@ public class TaskInfo {
      * @return
      */
     public static final <T extends Task> T find(Class<T> type) {
-        return (T) I.make(by(computeTaskName(type)).task);
+        return (T) by(computeTaskName(type)).create();
     }
 
     /**
@@ -180,5 +183,41 @@ public class TaskInfo {
 
         // API definition
         return info;
+    }
+
+    /**
+     * @return
+     */
+    public Task create() {
+        return I.make(task, (object, method, args) -> {
+            String commnadName = Inputs.hyphenize(method.getName());
+
+            if (commands.containsKey(commnadName)) {
+                String taskName = Inputs.hyphenize(task.getSimpleName()) + ":" + commnadName;
+                Project project = TaskOperations.project();
+                Cache cache = project.associate(Cache.class);
+                Object result = cache.get(taskName);
+                if (!cache.containsKey(taskName)) {
+                    UserInterface ui = TaskOperations.ui();
+                    try {
+                        ui.startCommand(taskName, null);
+                        result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments();
+                        cache.put(taskName, result);
+                    } finally {
+                        ui.endCommand(taskName, null);
+                    }
+                }
+                return result;
+            } else {
+                return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments();
+            }
+        });
+    }
+
+    /**
+     * Store for each command result.
+     */
+    @SuppressWarnings("serial")
+    private static class Cache extends HashMap<String, Object> {
     }
 }

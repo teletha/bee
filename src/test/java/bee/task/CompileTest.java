@@ -34,7 +34,8 @@ public class CompileTest extends TaskTestBase {
         assert B.isAbsent();
         assert C.isAbsent();
 
-        Compile compile = new Compile();
+        Compile compile = new Compile() {
+        };
         compile.source();
 
         assert A.isPresent();
@@ -56,7 +57,8 @@ public class CompileTest extends TaskTestBase {
         assert B.isAbsent();
         assert C.isAbsent();
 
-        Compile compile = new Compile();
+        Compile compile = new Compile() {
+        };
         compile.test();
 
         assert A.isPresent();
@@ -78,7 +80,8 @@ public class CompileTest extends TaskTestBase {
         assert Files.notExists(B);
         assert Files.notExists(C);
 
-        Compile compile = new Compile();
+        Compile compile = new Compile() {
+        };
         compile.project();
 
         assert Files.exists(A);
@@ -91,7 +94,8 @@ public class CompileTest extends TaskTestBase {
         Assertions.assertThrows(Throwable.class, () -> {
             project.source("A", "invalid");
 
-            Compile compile = new Compile();
+            Compile compile = new Compile() {
+            };
             compile.source();
         });
     }

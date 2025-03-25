@@ -20,13 +20,13 @@ import kiss.Signal;
 import psychopath.Directory;
 import psychopath.Locator;
 
-public class Compile extends Task<Compile.Config> {
+public interface Compile extends Task<Compile.Config> {
 
     /**
      * Compile main sources and copy other resources.
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
-    public void source() {
+    default void source() {
         compile("main", TaskOperations.project().getSourceSet(), TaskOperations.project().getClasses());
     }
 
@@ -34,7 +34,7 @@ public class Compile extends Task<Compile.Config> {
      * Compile test sources and copy other resources.
      */
     @Command("Compile test sources and copy other resources.")
-    public void test() {
+    default void test() {
         require(Compile::source);
 
         compile("test", TaskOperations.project().getTestSourceSet(), TaskOperations.project().getTestClasses());
@@ -44,7 +44,7 @@ public class Compile extends Task<Compile.Config> {
      * Compile project sources and copy other resources.
      */
     @Command("Compile project sources and copy other resources.")
-    public void project() {
+    default void project() {
         compile("project", TaskOperations.project().getProjectSourceSet(), TaskOperations.project().getProjectClasses());
     }
 
@@ -52,7 +52,7 @@ public class Compile extends Task<Compile.Config> {
      * Validate all sources which are compilable or not.
      */
     @Command(value = "Compile main sources and copy other resources.", defaults = true)
-    public void check() {
+    default void check() {
         Directory dir = Locator.temporaryDirectory();
         compile("main", TaskOperations.project().getSourceSet(), dir);
         compile("test", TaskOperations.project().getTestSourceSet(), dir);

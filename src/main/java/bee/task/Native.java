@@ -35,7 +35,7 @@ import psychopath.File;
 import psychopath.Locator;
 import psychopath.Option;
 
-public class Native extends Task<Native.Config> {
+public interface Native extends Task<Native.Config> {
 
     public static class Config {
         /** The available protocols. default is 'http,https' */
@@ -82,7 +82,7 @@ public class Native extends Task<Native.Config> {
     }
 
     @Command(value = "Build native execution file.", defaults = true)
-    public File build() {
+    default File build() {
         Config conf = config();
         Directory graal = findGraalVM(conf);
 
@@ -162,7 +162,7 @@ public class Native extends Task<Native.Config> {
     }
 
     @Command("Run the native executable.")
-    public void run() {
+    default void run() {
         Config conf = config();
         bee.util.Process.with().verbose().workingDirectory(conf.output).encoding(project().getEncoding()).run(conf.executional.path());
     }
@@ -249,6 +249,6 @@ public class Native extends Task<Native.Config> {
         public List<Item> lambdaCapturingTypes = new ArrayList();
     }
 
-    private record Item(String name) {
+    record Item(String name) {
     }
 }

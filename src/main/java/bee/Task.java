@@ -19,14 +19,12 @@ import java.util.function.Function;
 
 import bee.api.Command;
 import kiss.Extensible;
-import kiss.Managed;
 import kiss.Model;
 
-@Managed(value = TaskLifestyle.class)
-public abstract class Task<C> implements Extensible {
+public interface Task<C> extends Extensible {
 
     @Command("Display help message for all commands of this task.")
-    public void help() {
+    default void help() {
         TaskInfo info = TaskInfo.by(TaskInfo.computeTaskName(getClass()));
 
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
@@ -40,7 +38,7 @@ public abstract class Task<C> implements Extensible {
      * 
      * @return
      */
-    public C config() {
+    default C config() {
         Type[] types = Model.collectParameters(getClass(), Task.class);
         if (types.length == 0) {
             return null;

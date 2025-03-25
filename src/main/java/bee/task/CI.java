@@ -29,10 +29,10 @@ import bee.util.Snippet;
 import kiss.I;
 import psychopath.File;
 
-public class CI extends Task {
+public interface CI extends Task {
 
     @Command(defaults = true, value = "Setup CI/CD")
-    public void setup() {
+    default void setup() {
         VCS vcs = project().getVersionControlSystem();
 
         if (vcs == null) {
@@ -47,7 +47,7 @@ public class CI extends Task {
     }
 
     @Command("Generate CI/CD configuration files for GitHub.")
-    public void github() {
+    default void github() {
         require(CI::gitignore, CI::jitpack);
 
         String build = """
@@ -131,7 +131,7 @@ public class CI extends Task {
      * Create license file if needed
      */
     @Command("Generate license file.")
-    public void license() {
+    default void license() {
         License license = project().license();
 
         if (license == null) {
@@ -149,7 +149,7 @@ public class CI extends Task {
      * Create README file if needed
      */
     @Command("Generate readme file.")
-    public void readme() {
+    default void readme() {
         List<Snippet> snippets = project().getRoot()
                 .walkFile("**/ReadMe*Test.java")
                 .first()
@@ -332,7 +332,7 @@ public class CI extends Task {
     }
 
     @Command("Generate CI/CD configuration files for JitPack.")
-    public void jitpack() {
+    default void jitpack() {
         String javaVersion = Inputs.normalize(project().getJavaSourceVersion());
 
         makeFile("jitpack.yml", String
@@ -362,7 +362,7 @@ public class CI extends Task {
     }
 
     @Command("Generate .gitignore file.")
-    public void gitignore() {
+    default void gitignore() {
         File ignore = project().getRoot().file(".gitignore");
 
         makeFile(ignore, update(ignore.lines().toList()));
@@ -374,7 +374,7 @@ public class CI extends Task {
      * @param lines Lines to update.
      * @return An updated lines.
      */
-    List<String> update(List<String> lines) {
+    default List<String> update(List<String> lines) {
         StringJoiner uri = new StringJoiner(",", "https://www.gitignore.io/api/", "").add("Java").add("Maven").add("Windows").add("Linux");
 
         // IDE

@@ -30,15 +30,15 @@ import bee.api.Scope;
 import bee.util.Process;
 import kiss.I;
 
-public class Dependency extends Task {
+public interface Dependency extends Task {
 
     @Command(value = "Display the dependency tree.", defaults = true)
-    public void tree() {
+    default void tree() {
         show(0, I.make(Repository.class).buildDependencyGraph(project()));
     }
 
     @Command("Display all dependency modules.")
-    public List<String> module() {
+    default List<String> module() {
         require(Compile::source);
 
         Set<String> modules = new TreeSet();

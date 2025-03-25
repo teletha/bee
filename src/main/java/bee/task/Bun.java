@@ -16,10 +16,10 @@ import bee.Task;
 import bee.api.Command;
 import bee.util.Process;
 
-public class Bun extends Task {
+public interface Bun extends Task {
 
     @Command("Install bun.")
-    public void install() {
+    default void install() {
         if (Process.isAvailable("bun")) {
             ui().info("Bun [", Process.with().read("bun -v"), "] is already installed.");
         } else {
@@ -31,7 +31,7 @@ public class Bun extends Task {
     }
 
     @Command("Launch development server.")
-    public void dev() {
+    default void dev() {
         Process.with().inheritIO().run("bun run dev");
     }
 }

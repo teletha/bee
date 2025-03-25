@@ -18,13 +18,13 @@ import bee.Task;
 import bee.api.Command;
 import kiss.I;
 
-public class IDE extends Task {
+public interface IDE extends Task {
 
     /**
      * Create idea's project file.
      */
     @Command(value = "Generate configuration files.", defaults = true)
-    public void create() {
+    default void create() {
         task(IDESupport::create);
 
         ui().info("Generate IDE configuration files.");
@@ -34,7 +34,7 @@ public class IDE extends Task {
      * Delete idea's project file.
      */
     @Command("Delete configuration files.")
-    public void delete() {
+    default void delete() {
         task(IDESupport::delete);
 
         ui().info("Delete IDE configuration files.");

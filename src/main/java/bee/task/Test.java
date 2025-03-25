@@ -43,7 +43,7 @@ import bee.util.Java.JVM;
 import kiss.I;
 import psychopath.Directory;
 
-public class Test extends Task<Test.Config> {
+public interface Test extends Task<Test.Config> {
 
     public static class Config {
         /** The threshold time (ms) to show the prolonged test. */
@@ -57,7 +57,7 @@ public class Test extends Task<Test.Config> {
     }
 
     @Command("Test product codes.")
-    public void test() {
+    default void test() {
         require(Compile::test);
 
         if (project().getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
@@ -90,7 +90,7 @@ public class Test extends Task<Test.Config> {
     /**
      * 
      */
-    private static final class Junit extends JVM implements TestExecutionListener {
+    final class Junit extends JVM implements TestExecutionListener {
 
         /** The threshold time (ns) to show the prolonged test. */
         private long showProlongedTime;

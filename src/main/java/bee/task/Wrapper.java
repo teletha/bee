@@ -27,25 +27,28 @@ import kiss.Ⅱ;
 import psychopath.File;
 import psychopath.Locator;
 
-public class Wrapper extends Task<Wrapper.Config> {
+public interface Wrapper extends Task<Wrapper.Config> {
 
     public static class Config {
+
+        private static final StringBuilder commands = new StringBuilder();
+
         /** Specify the bee version. */
         public String version = Bee.Tool.getVersion();
     }
 
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
-    public void stable() {
+    default void stable() {
         build(I.http("https://git.io/stable-bee", String.class).waitForTerminate().to().v);
     }
 
     @Command("Build local bee environment using the latest version.")
-    public void latest() {
+    default void latest() {
         build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
     }
 
     @Command("Build local bee environment using the selected version.")
-    public void select() {
+    default void select() {
         List<String> list = I
                 .signal(I.json("https://jitpack.io/api/builds/" + Bee.Tool.getGroup() + "/" + Bee.Tool.getProduct()).find("*", "*"))
                 .flatIterable(json -> json.asMap(String.class).entrySet())
@@ -61,7 +64,7 @@ public class Wrapper extends Task<Wrapper.Config> {
     }
 
     @Command("Build local bee environment using the local installed version.")
-    public void local() {
+    default void local() {
         File from;
         File to = project().getRoot().file("bee-" + Bee.Tool.getVersion() + ".far");
 
@@ -85,12 +88,12 @@ public class Wrapper extends Task<Wrapper.Config> {
     }
 
     @Command("Build local bee environment using the user specified version.")
-    public void use() {
+    default void use() {
         build(config().version);
     }
 
     @Command("Clean local bee environment.")
-    public void clean() {
+    default void clean() {
         deleteFile("bee");
         deleteFile("bee.bat");
         deleteLocalFars();
@@ -179,8 +182,6 @@ public class Wrapper extends Task<Wrapper.Config> {
         });
     }
 
-    private static final StringBuilder commands = new StringBuilder();
-
     /**
      * Invoke native command after the current build process.
      * 
@@ -189,15 +190,15 @@ public class Wrapper extends Task<Wrapper.Config> {
      * @param params
      */
     private void runAfter(String bat, String shell, Object... params) {
-        if (commands.isEmpty()) {
+        if (Config.commands.isEmpty()) {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 Process.with()
                         .inParallel()
                         .run(Platform.isWindows() //
-                                ? List.of("cmd", "/c", "ping localhost -n 2" + commands)
-                                : List.of("sleep 2" + commands));
+                                ? List.of("cmd", "/c", "ping localhost -n 2" + Config.commands)
+                                : List.of("sleep 2" + Config.commands));
             }));
         }
-        commands.append(" && ").append((Platform.isWindows() ? bat : shell).strip().formatted(params));
+        Config.commands.append(" && ").append((Platform.isWindows() ? bat : shell).strip().formatted(params));
     }
 }

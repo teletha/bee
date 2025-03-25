@@ -16,13 +16,13 @@ import bee.task.Jar;
 import bee.task.Test;
 import kiss.I;
 
-public class Install extends bee.task.Install {
+public interface Install extends bee.task.Install {
 
     /**
      * Install the current Bee into your environment.
      */
     @Override
-    public void project() {
+    default void project() {
         TaskOperations.config(Jar.class, conf -> {
             conf.merging = o -> o
                     .glob("!licenses/**", "!META-INF/*", "!META-INF/licenses/**", "!META-INF/maven/**", "!META-INF/sisu/**", "!META-INF/versions/**");

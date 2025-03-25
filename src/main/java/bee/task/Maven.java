@@ -14,10 +14,10 @@ import static bee.TaskOperations.*;
 import bee.Task;
 import bee.api.Command;
 
-public class Maven extends Task {
+public interface Maven extends Task {
 
     @Command("Generate pom file.")
-    public void pom() {
+    default void pom() {
         makeFile("pom.xml", project().toMavenDefinition());
     }
 }

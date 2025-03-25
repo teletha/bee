@@ -37,7 +37,7 @@ import psychopath.Folder;
 import psychopath.Location;
 import psychopath.Locator;
 
-public class Exe extends Task<Exe.Config> {
+public interface Exe extends Task<Exe.Config> {
 
     public static class Config {
         /** The location for icon of exe file. */
@@ -51,7 +51,7 @@ public class Exe extends Task<Exe.Config> {
     }
 
     @Command("Generate windows exe file which executes the main class.")
-    public File build() {
+    default File build() {
         if (!Platform.isWindows()) {
             ui().warn("Skip the task [exe] because it is available in windows platform only.");
             return null;

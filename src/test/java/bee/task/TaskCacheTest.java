@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import antibug.powerassert.PowerAssertOff;
 import bee.Task;
+import bee.TaskInfo;
 import bee.TaskTestBase;
 import bee.api.Command;
 import kiss.I;
@@ -23,187 +24,189 @@ class TaskCacheTest extends TaskTestBase {
         I.load(TaskCacheTest.class);
     }
 
+    private static int countNoValue;
+
     @Test
     void noValue() {
-        NoValue task = I.make(NoValue.class);
-        assert NoValue.count == 0;
+        NoValue task = TaskInfo.find(NoValue.class);
+        assert countNoValue == 0;
         task.run();
-        assert NoValue.count == 1;
+        assert countNoValue == 1;
         task.run();
-        assert NoValue.count == 1;
+        assert countNoValue == 1;
     }
 
     /**
      * Task returns no value.
      */
-    protected static class NoValue extends Task {
-
-        private static int count;
+    protected interface NoValue extends Task {
 
         @Command("Test")
-        public void run() {
-            count++;
+        default void run() {
+            countNoValue++;
         }
     }
 
+    private static int countValue;
+
     @Test
     void valued() {
-        Value task = I.make(Value.class);
-        assert Value.count == 0;
+        Value task = TaskInfo.find(Value.class);
+        assert countValue == 0;
         assert task.run().equals("1");
-        assert Value.count == 1;
+        assert countValue == 1;
         assert task.run().equals("1");
-        assert Value.count == 1;
+        assert countValue == 1;
     }
 
     /**
      * Task returns some value.
      */
-    protected static class Value extends Task {
-
-        private static int count;
+    protected interface Value extends Task {
 
         @Command("Test")
-        public String run() {
-            count++;
-            return String.valueOf(count);
+        default String run() {
+            countValue++;
+            return String.valueOf(countValue);
         }
     }
+
+    private static int countPrimitiveInt;
 
     @Test
     void primitiveInt() {
-        Int task = I.make(Int.class);
-        assert Int.count == 0;
+        Int task = TaskInfo.find(Int.class);
+        assert countPrimitiveInt == 0;
         assert task.run() == 1;
-        assert Int.count == 1;
+        assert countPrimitiveInt == 1;
         assert task.run() == 1;
-        assert Int.count == 1;
+        assert countPrimitiveInt == 1;
     }
 
     /**
      * Task returns primitive value.
      */
-    protected static class Int extends Task {
-
-        private static int count;
+    protected interface Int extends Task {
 
         @Command("Test")
-        public int run() {
-            return ++count;
+        default int run() {
+            return ++countPrimitiveInt;
         }
     }
+
+    private static int countPrimitiveLong;
 
     @Test
     void primitiveLong() {
-        Long task = I.make(Long.class);
-        assert Long.count == 0;
+        Long task = TaskInfo.find(Long.class);
+        assert countPrimitiveLong == 0;
         assert task.run() == 1;
-        assert Long.count == 1;
+        assert countPrimitiveLong == 1;
         assert task.run() == 1;
-        assert Long.count == 1;
+        assert countPrimitiveLong == 1;
     }
 
     /**
      * Task returns primitive value.
      */
-    protected static class Long extends Task {
-
-        private static int count;
+    protected interface Long extends Task {
 
         @Command("Test")
-        public long run() {
-            return ++count;
+        default long run() {
+            return ++countPrimitiveLong;
         }
     }
+
+    private static int countPrimitiveFloat;
 
     @Test
     void primitiveFloat() {
-        Float task = I.make(Float.class);
-        assert Float.count == 0;
+        Float task = TaskInfo.find(Float.class);
+        assert countPrimitiveFloat == 0;
         assert task.run() == 1;
-        assert Float.count == 1;
+        assert countPrimitiveFloat == 1;
         assert task.run() == 1;
-        assert Float.count == 1;
+        assert countPrimitiveFloat == 1;
     }
 
     /**
      * Task returns primitive value.
      */
-    protected static class Float extends Task {
-
-        private static int count;
+    protected interface Float extends Task {
 
         @Command("Test")
-        public float run() {
-            return ++count;
+        default float run() {
+            return ++countPrimitiveFloat;
         }
     }
+
+    private static int countPRimitiveDouble;
 
     @Test
     void primitiveDouble() {
-        Double task = I.make(Double.class);
-        assert Double.count == 0;
+        Double task = TaskInfo.find(Double.class);
+        assert countPRimitiveDouble == 0;
         assert task.run() == 1;
-        assert Double.count == 1;
+        assert countPRimitiveDouble == 1;
         assert task.run() == 1;
-        assert Double.count == 1;
+        assert countPRimitiveDouble == 1;
     }
 
     /**
      * Task returns primitive value.
      */
-    protected static class Double extends Task {
-
-        private static int count;
+    protected interface Double extends Task {
 
         @Command("Test")
-        public double run() {
-            return ++count;
+        default double run() {
+            return ++countPRimitiveDouble;
         }
     }
 
+    private static int countPrimitiveBoolean;
+
     @Test
     void primitiveBoolean() {
-        Boolean task = I.make(Boolean.class);
-        assert Boolean.count == 0;
+        Boolean task = TaskInfo.find(Boolean.class);
+        assert countPrimitiveBoolean == 0;
         assert task.run();
-        assert Boolean.count == 1;
+        assert countPrimitiveBoolean == 1;
         assert task.run();
-        assert Boolean.count == 1;
+        assert countPrimitiveBoolean == 1;
     }
 
     /**
      * Task returns primitive value.
      */
-    protected static class Boolean extends Task {
-
-        private static int count;
+    protected interface Boolean extends Task {
 
         @Command("Test")
-        public boolean run() {
-            count++;
+        default boolean run() {
+            countPrimitiveBoolean++;
             return true;
         }
     }
 
+    private static int countRequire;
+
     @Test
     @PowerAssertOff
     void require() {
-        Req task = I.make(Req.class);
-        assert ReqCaller.count == 0;
+        Req task = TaskInfo.find(Req.class);
+        assert countRequire == 0;
         task.run();
-        assert ReqCaller.count == 1;
+        assert countRequire == 1;
         task.run();
-        assert ReqCaller.count == 1;
+        assert countRequire == 1;
     }
 
     /**
      * Task returns no value.
      */
-    protected static class Req extends Task {
+    protected interface Req extends Task {
 
         @Command("Test")
-        public void run() {
+        default void run() {
             require(ReqCaller::run);
             require(ReqCaller::run);
             require(ReqCaller::run);
@@ -214,13 +217,11 @@ class TaskCacheTest extends TaskTestBase {
     /**
      * Task returns no value.
      */
-    public static class ReqCaller extends Task {
-
-        private static int count;
+    public interface ReqCaller extends Task {
 
         @Command("Test")
-        public void run() {
-            count++;
+        default void run() {
+            countRequire++;
         }
     }
 }

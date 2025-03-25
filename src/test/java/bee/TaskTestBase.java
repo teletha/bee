@@ -25,7 +25,8 @@ public abstract class TaskTestBase extends TaskOperations {
     @BeforeEach
     public void before() {
         project = I.make(BlinkProject.class);
-        noop = I.make(NoOPTask.class);
+        noop = new NoOPTask() {
+        };
 
         LifestyleForProject.local.set(project);
     }
@@ -43,6 +44,6 @@ public abstract class TaskTestBase extends TaskOperations {
     /**
      * No-Operation Task.
      */
-    protected static class NoOPTask extends Task {
+    interface NoOPTask extends Task {
     }
 }

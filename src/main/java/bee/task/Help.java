@@ -24,10 +24,10 @@ import bee.api.Command;
 import kiss.I;
 import psychopath.Locator;
 
-public class Help extends Task {
+public interface Help extends Task {
 
     @Command(defaults = true, value = "Display all tasks.")
-    public void task() {
+    default void task() {
         ui().info("The available tasks are listed below. If you want to know more about each task, please run [YourTaskName:help].");
 
         try {
@@ -41,7 +41,7 @@ public class Help extends Task {
     }
 
     @Command("Display all options.")
-    public void option() {
+    default void option() {
         ui().info("The available options are listed below.");
 
         try {
@@ -55,7 +55,7 @@ public class Help extends Task {
     }
 
     @Command("Display Bee runtime environment.")
-    public void version() {
+    default void version() {
         ui().info("Bee   \t", Bee.API.getVersion(), " [", Locator.locate(Bee.class), "]");
         ui().info("Java  \t", System.getProperty("java.vendor"), " ", Runtime.version(), "@", System
                 .getProperty("java.class.version"), " [", Platform.Java, "]");
@@ -65,7 +65,7 @@ public class Help extends Task {
     }
 
     @Command("Show welcome message.")
-    public void welcome() {
+    default void welcome() {
         ui().title("Welcome to Bee!");
         ui().info("""
                 Thank you for installing Bee. We're excited to have you on board!

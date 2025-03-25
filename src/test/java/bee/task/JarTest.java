@@ -28,7 +28,8 @@ class JarTest extends TaskTestBase {
 
         assert createdJar.isAbsent();
 
-        Jar task = new Jar();
+        Jar task = new Jar() {
+        };
         task.source();
 
         assert createdJar.isPresent();
@@ -54,7 +55,8 @@ class JarTest extends TaskTestBase {
         TaskOperations.config(Jar.class, conf -> {
             conf.removeTraceInfo = true;
         });
-        Jar task = new Jar();
+        Jar task = new Jar() {
+        };
         task.source();
 
         assert createdJar.isPresent();

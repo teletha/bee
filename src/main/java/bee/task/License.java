@@ -20,13 +20,13 @@ import bee.coder.StandardHeaderStyle;
 import kiss.Signal;
 import psychopath.Directory;
 
-public class License extends Task {
+public interface License extends Task {
 
     /**
      * Update license text.
      */
     @Command("Write license header comment.")
-    public void update() {
+    default void update() {
         update(project().getSourceSet());
         update(project().getTestSourceSet());
         update(project().getProjectSourceSet());

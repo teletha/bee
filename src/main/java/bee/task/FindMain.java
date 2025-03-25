@@ -27,7 +27,7 @@ import kiss.I;
 import kiss.Managed;
 import kiss.Singleton;
 
-public class FindMain extends Task<FindMain.Config> {
+public interface FindMain extends Task<FindMain.Config> {
 
     /**
      * Find main class.
@@ -35,7 +35,7 @@ public class FindMain extends Task<FindMain.Config> {
      * @return A main class name.
      */
     @Command(value = "Find main class.", defaults = true)
-    public String main() {
+    default String main() {
         Config config = config();
 
         if (config.main == null) {
@@ -53,7 +53,7 @@ public class FindMain extends Task<FindMain.Config> {
      * @return A premain class name.
      */
     @Command("Find premain class.")
-    public String premain() {
+    default String premain() {
         Config config = config();
 
         if (config.premain == null) {
@@ -71,7 +71,7 @@ public class FindMain extends Task<FindMain.Config> {
      * @return A agentmain class name.
      */
     @Command("Find agentmain class.")
-    public String agentmain() {
+    default String agentmain() {
         Config config = config();
 
         if (config.agentmain == null) {
@@ -87,7 +87,7 @@ public class FindMain extends Task<FindMain.Config> {
      * 
      */
     @Managed(value = Singleton.class)
-    private static class Search extends ClassVisitor {
+    class Search extends ClassVisitor {
 
         /** The main classes. */
         private List<String> mains = new ArrayList();

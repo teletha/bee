@@ -15,10 +15,10 @@ import bee.Task;
 import bee.api.Command;
 import psychopath.Directory;
 
-public class Prototype extends Task {
+public interface Prototype extends Task {
 
     @Command("Generate standard Java project skelton.")
-    public void java() {
+    default void java() {
         String packageName = project().getGroup().replaceAll("\\.", "/");
         Directory sources = project().getInput();
 

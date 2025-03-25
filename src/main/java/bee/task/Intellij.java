@@ -25,14 +25,14 @@ import kiss.XML;
 import psychopath.Directory;
 import psychopath.File;
 
-public class Intellij extends Task implements IDESupport {
+public interface Intellij extends Task, IDESupport {
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Command(value = "Generate configuration files for IntelliJ IDEA.", defaults = true)
-    public void create() {
+    default void create() {
         createModule(project().getSources(), project().getClasses(), Scope.Compile);
         createModule(project().getTestSources(), project().getTestClasses(), Scope.Test);
         createModule(project().getProjectSources(), project().getProjectClasses(), Scope.System);
@@ -45,7 +45,7 @@ public class Intellij extends Task implements IDESupport {
      */
     @Override
     @Command("Delete configuration files for IntelliJ IDEA.")
-    public void delete() {
+    default void delete() {
         deleteDirectory(".idea");
     }
 
@@ -53,7 +53,7 @@ public class Intellij extends Task implements IDESupport {
      * {@inheritDoc}
      */
     @Override
-    public boolean exist(Project project) {
+    default boolean exist(Project project) {
         return Files.isReadable(project().getRoot().asJavaPath().resolve(".idea/modules.xml"));
     }
 
@@ -129,13 +129,5 @@ public class Intellij extends Task implements IDESupport {
                 }
             }
         });
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "IntelliJ";
     }
 }

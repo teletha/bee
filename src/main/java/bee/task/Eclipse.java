@@ -42,14 +42,14 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
 
-public class Eclipse extends Task implements IDESupport {
+public interface Eclipse extends Task, IDESupport {
 
     /**
      * {@inheritDoc}
      */
     @Override
     @Command(value = "Generate configuration files for Eclipse.", defaults = true)
-    public void create() {
+    default void create() {
         createClasspath(project().getRoot().file(".classpath"));
         createProject(project().getRoot().file(".project"));
 
@@ -86,7 +86,7 @@ public class Eclipse extends Task implements IDESupport {
      */
     @Override
     @Command("Delete configuration files for Eclipse.")
-    public void delete() {
+    default void delete() {
         deleteFile(".classpath");
         deleteFile(".factorypath");
         deleteFile(".project");
@@ -97,7 +97,7 @@ public class Eclipse extends Task implements IDESupport {
      * {@inheritDoc}
      */
     @Override
-    public boolean exist(Project project) {
+    default boolean exist(Project project) {
         return project().getRoot().file(".classpath").isReadable();
     }
 
@@ -320,7 +320,7 @@ public class Eclipse extends Task implements IDESupport {
      * Rewrite sibling eclipse projects to use the current project directly.
      */
     @Command("Rewrite sibling eclipse projects to use the current project directly.")
-    public void live() {
+    default void live() {
         syncProject(true);
     }
 
@@ -328,7 +328,7 @@ public class Eclipse extends Task implements IDESupport {
      * Rewrite sibling eclipse projects to use the repository.
      */
     @Command("Rewrite sibling eclipse projects to use the current project in repository.")
-    public void repository() {
+    default void repository() {
         syncProject(false);
     }
 
@@ -364,17 +364,9 @@ public class Eclipse extends Task implements IDESupport {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "Eclipse";
-    }
-
-    /**
      * 
      */
-    private static class LombokInstaller extends JVM {
+    class LombokInstaller extends JVM {
 
         /**
          * {@inheritDoc}
@@ -392,7 +384,7 @@ public class Eclipse extends Task implements IDESupport {
      * 
      */
     @Managed(value = Singleton.class)
-    private static abstract class EclipseApplication {
+    abstract class EclipseApplication {
 
         /**
          * Locate the active eclipse application.

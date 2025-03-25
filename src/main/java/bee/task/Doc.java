@@ -43,13 +43,13 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
 
-public class Doc extends Task {
+public interface Doc extends Task {
 
     /**
      * Generate javadoc with the specified doclet.
      */
     @Command(defaults = true, value = "Generate product javadoc.")
-    public Directory javadoc() {
+    default Directory javadoc() {
         Directory output = project().getOutput().directory("api").create();
 
         Class<? extends Doclet> doclet = null;
@@ -103,7 +103,7 @@ public class Doc extends Task {
     }
 
     @Command("Generate product site.")
-    public void site() {
+    default void site() {
         List<Path> sourceFiles = project().getSourceSet().flatMap(dir -> dir.walkFile("**.java")).map(File::asJavaPath).toList();
 
         if (sourceFiles.isEmpty()) {
@@ -142,7 +142,7 @@ public class Doc extends Task {
     /**
      * 
      */
-    private class Listener extends Writer implements DiagnosticListener<FileObject> {
+    class Listener extends Writer implements DiagnosticListener<FileObject> {
 
         private List<String> errors = new ArrayList();
 

@@ -40,13 +40,13 @@ import psychopath.Folder;
 import psychopath.Locator;
 import psychopath.Option;
 
-public class Jar extends Task<Jar.Config> {
+public interface Jar extends Task<Jar.Config> {
 
     /**
      * Package main classes and other resources.
      */
     @Command(value = "Package main classes and other resources.", defaults = true)
-    public void source() {
+    default void source() {
         require(Compile::source);
 
         Config conf = config();
@@ -89,7 +89,7 @@ public class Jar extends Task<Jar.Config> {
             if (file.extension().equals("class")) {
                 ClassReader classReader = new ClassReader(file.bytes());
                 ClassWriter writer = new ClassWriter(classReader, 0);
-                ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer);
+                ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer, config());
                 classReader.accept(modification, 0);
                 modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
             } else {
@@ -104,7 +104,7 @@ public class Jar extends Task<Jar.Config> {
      * Package test classes and other resources.
      */
     @Command("Package test classes and other resources.")
-    public void test() {
+    default void test() {
         require(Compile::test);
 
         File classes = TaskOperations.project()
@@ -122,7 +122,7 @@ public class Jar extends Task<Jar.Config> {
      * Package project classes and other resources.
      */
     @Command("Package project classes and other resources.")
-    public void project() {
+    default void project() {
         require(Compile::project);
 
         File classes = TaskOperations.project()
@@ -140,7 +140,7 @@ public class Jar extends Task<Jar.Config> {
      * Package documentations and other resources.
      */
     @Command("Package main documentations and other resources.")
-    public void document() {
+    default void document() {
         Directory output = require(Doc::javadoc);
 
         pack("javadoc", I.signal(output), TaskOperations.project().locateJavadocJar(), null);
@@ -167,7 +167,7 @@ public class Jar extends Task<Jar.Config> {
      * Package main classes and other resources.
      */
     @Command("Package all main classes and resources with dependencies.")
-    public void merge() {
+    default void merge() {
         require(Jar::source);
 
         // create manifest
@@ -198,14 +198,16 @@ public class Jar extends Task<Jar.Config> {
     /**
      * 
      */
-    private class Modify extends ClassVisitor {
+    class Modify extends ClassVisitor {
 
         private final int version;
 
-        private final Config conf = config();
+        private final Config conf;
 
-        public Modify(SourceVersion ver, ClassVisitor classVisitor) {
+        public Modify(SourceVersion ver, ClassVisitor classVisitor, Config conf) {
             super(Opcodes.ASM9, classVisitor);
+
+            this.conf = conf;
 
             // ignore RELEASE_1
             version = 44 + Integer.parseInt(ver.name().substring(ver.name().indexOf('_') + 1));
@@ -224,7 +226,7 @@ public class Jar extends Task<Jar.Config> {
          */
         @Override
         public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-            return new Minify(super.visitMethod(access, name, descriptor, signature, exceptions));
+            return new Minify(super.visitMethod(access, name, descriptor, signature, exceptions), conf);
         }
 
         /**
@@ -238,15 +240,16 @@ public class Jar extends Task<Jar.Config> {
         }
     }
 
-    private class Minify extends MethodVisitor {
+    class Minify extends MethodVisitor {
 
-        private final Config conf = config();
+        private final Config conf;
 
         /**
          * @param methodVisitor
          */
-        public Minify(MethodVisitor methodVisitor) {
+        public Minify(MethodVisitor methodVisitor, Config conf) {
             super(Opcodes.ASM9, methodVisitor);
+            this.conf = conf;
         }
 
         /**
