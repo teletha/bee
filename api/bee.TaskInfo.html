@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta content="width=device-width, initial-scale=1" name="viewport"/>
+		<meta content="Explains how to use Bee and its API. " name="description"/>
+		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<script src="mimic.js" type="module"></script>
+		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="P">
+		<header class="Q" date="2025-03-19" ver="0.70.0">
+			<h1 class="a"><code>Bee</code></h1>
+			<nav class="b"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+						<use href="main.svg#package"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
+						<use href="main.svg#user"/>
+					</svg>
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity A svg" viewBox="0 0 24 24">
+						<use href="main.svg#activity"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github A svg" viewBox="0 0 24 24">
+						<use href="main.svg#github"/>
+					</svg>
+				</a></nav>
+			<div class="c"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+						<use href="main.svg#sun"/>
+					</svg><svg class="moon A svg" viewBox="0 0 24 24">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<nav class="R"></nav>
+		<article class="O" id="Article">
+			<section class="Y"><code class="W">bee</code>
+				<h2 class="Class T"><code class="n">TaskInfo</code></h2>
+				<div class="j"></div>
+			</section>
+			<section class="Y" id="toString()">
+				<h2 class="h"><i class="OVERRIDE PUBLIC"></i><code class="n">toString</code><code class="N">()</code><i class="q"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="f">
+					<tr class="d">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+			<section class="Y" id="find(java.lang.Class)">
+				<h2 class="h"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="n">find</code><code class="N">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>)</code><i class="q"><code>T</code></i></h2>
+				<table class="f">
+					<tr class="U">
+						<td><code>T</code><code class="extends"><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></code></td>
+						<td></td>
+					</tr>
+					<tr class="X">
+						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code></td>
+						<td></td>
+					</tr>
+					<tr class="d">
+						<td><code>T</code></td>
+						<td></td>
+					</tr>
+				</table><span class="B"><p>Find the task instance by type.</p></span></section>
+			<section class="Y" id="computeTaskName(java.lang.Class)">
+				<h2 class="h"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="n">computeTaskName</code><code class="N">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a></code><code class="parameterName">taskClass</code>)</code><i class="q"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="f">
+					<tr class="X">
+						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a></code><code class="parameterName">taskClass</code></td>
+						<td><span><p>A target task.</p></span></td>
+					</tr>
+					<tr class="d">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
+						<td><span><p>A task name.</p></span></td>
+					</tr>
+				</table><span class="B"><p>Compute human-readable task name.</p></span></section>
+			<section class="Y" id="create()">
+				<h2 class="h"><i class="PUBLIC"></i><code class="n">create</code><code class="N">()</code><i class="q"><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></i></h2>
+				<table class="f">
+					<tr class="d">
+						<td><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+		</article>
+		<aside class="S">
+			<div class="g">
+				<h5 class="m">Static Methods</h5>
+				<ul>
+					<li class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.TaskInfo.html#find(java.lang.Class)">find</a></code><code class="N">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>)</code><i class="r"><code>T</code></i></li>
+					<li class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.TaskInfo.html#computeTaskName(java.lang.Class)">computeTaskName</a></code><code class="N">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a></code><code class="parameterName">taskClass</code>)</code><i class="r"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+				</ul>
+				<h5 class="m">Methods</h5>
+				<ul>
+					<li class="k"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.TaskInfo.html#toString()">toString</a></code><code class="N">()</code><i class="r"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="k"><i class="PUBLIC"></i><code><a href="api/bee.TaskInfo.html#create()">create</a></code><code class="N">()</code><i class="r"><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></i></li>
+				</ul>
+			</div>
+		</aside>
+		<footer class="I"/>
+	</body>
+	<script src="root.js"></script>
+	<script src="main.js" type="module"></script>
+</html>

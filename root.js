@@ -56,21 +56,21 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Bun",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "CI",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Clean",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
@@ -83,6 +83,13 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Compile",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Compile.Config",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -105,12 +112,19 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Dependency",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Doc",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Doc.Listener",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -118,6 +132,27 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Eclipse",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Eclipse.EclipseApplication",
+			"packageName": "bee.task",
+			"type": "AbstractClass"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Eclipse.EclipseApplication.Locator",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Eclipse.LombokInstaller",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -147,6 +182,13 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Exe",
 			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Exe.Config",
+			"packageName": "bee.task",
 			"type": "Class"
 		},
 		{
@@ -168,6 +210,20 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "FindMain",
 			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "FindMain.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "FindMain.Search",
+			"packageName": "bee.task",
 			"type": "Class"
 		},
 		{
@@ -182,14 +238,14 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Help",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "IDE",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
@@ -210,6 +266,13 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Install",
 			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Install.TemporaryProject",
+			"packageName": "bee.task",
 			"type": "Class"
 		},
 		{
@@ -217,12 +280,33 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Intellij",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Jar",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Jar.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Jar.Minify",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Jar.Modify",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -273,7 +357,7 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "License",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
@@ -287,12 +371,33 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Maven",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Native",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Native.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Native.Item",
+			"packageName": "bee.task",
+			"type": "Record"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Native.Serialization",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -336,7 +441,7 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Prototype",
 			"packageName": "bee.task",
-			"type": "Class"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
@@ -378,19 +483,19 @@ const root = {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Task",
 			"packageName": "bee",
-			"type": "AbstractClass"
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Task.TaskRef",
+			"name": "Task.TaskReference",
 			"packageName": "bee",
 			"type": "Functional"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Task.ValuedTaskRef",
+			"name": "Task.ValuedTaskReference",
 			"packageName": "bee",
 			"type": "Functional"
 		},
@@ -404,7 +509,35 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "TaskInfo",
+			"packageName": "bee",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "TaskOperations",
+			"packageName": "bee",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Test",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Test.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Test.Junit",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -454,6 +587,13 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Wrapper",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Wrapper.Config",
 			"packageName": "bee.task",
 			"type": "Class"
 		}
