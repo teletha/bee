@@ -12,8 +12,6 @@ package bee;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -428,13 +426,7 @@ public class TaskOperations {
             LifestyleForProject.local.set(project);
             LifestyleForUI.local.set(parallels.pollFirst());
 
-            Method m = task.getClass().getDeclaredMethod("writeReplace");
-            m.setAccessible(true);
-
-            SerializedLambda s = (SerializedLambda) m.invoke(task);
-            Method method = I.type(s.getImplClass().replaceAll("/", ".")).getMethod(s.getImplMethodName());
-
-            return Bee.execute(TaskInfo.computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase());
+            return Bee.execute(TaskInfo.computeTaskName(task));
         }).to().v;
     }
 

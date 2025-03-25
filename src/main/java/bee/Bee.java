@@ -164,15 +164,6 @@ public class Bee {
      * @param tasks A command literal.
      */
     public int execute(List<String> tasks) {
-        return execute(new CommandLineTask(tasks));
-    }
-
-    /**
-     * Build project.
-     * 
-     * @param build
-     */
-    public int execute(Task build) {
         int code = 0;
         String result = "SUCCESS";
         LocalTime start = LocalTime.now();
@@ -196,7 +187,7 @@ public class Bee {
             }
 
             // build project definition
-            List<Task> tasks = buildProjectDefinition(project.getProjectDefinition());
+            tasks.addAll(0, buildProjectDefinition(project.getProjectDefinition()));
 
             // load project related classes in system class loader
             // BeeLoader.load(project.getClasses());
@@ -222,12 +213,9 @@ public class Bee {
             // load new project
             I.load(projectClass);
 
-            // compose build
-            tasks.add(build);
-
             // execute build
-            for (Task task : tasks) {
-                task.execute();
+            for (String task : tasks) {
+                execute(task);
             }
         } catch (Throwable e) {
             code = 1;
@@ -337,8 +325,8 @@ public class Bee {
     /**
      * Create project skeleton.
      */
-    private List<Task> buildProjectDefinition(File definition) throws Exception {
-        List<Task> tasks = new ArrayList();
+    private List<String> buildProjectDefinition(File definition) throws Exception {
+        List<String> tasks = new ArrayList();
 
         // create project sources if needed
         if (definition.isAbsent()) {
@@ -363,14 +351,7 @@ public class Bee {
             ui.info("Generate project definition.");
 
             // build project architecture
-            tasks.add(new Task() {
-
-                @Override
-                public void execute() {
-                    TaskOperations.require(Prototype::java);
-                    // require(IDE::execute);
-                }
-            });
+            tasks.add(TaskInfo.computeTaskName(Prototype::java));
         }
 
         // compile project sources if needed
@@ -402,31 +383,5 @@ public class Bee {
 
         // Don't call new Bee() before parsing options
         System.exit(new Bee().execute(washed));
-    }
-
-    /**
-     * 
-     */
-    private class CommandLineTask extends Task {
-
-        /** The task list. */
-        private final List<String> tasks;
-
-        /**
-         * @param tasks
-         */
-        private CommandLineTask(List<String> tasks) {
-            this.tasks = tasks;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void execute() {
-            for (String task : tasks) {
-                Bee.execute(task);
-            }
-        }
     }
 }

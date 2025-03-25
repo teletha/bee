@@ -10,12 +10,14 @@
 package bee;
 
 import java.lang.annotation.Annotation;
+import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import bee.Task.TaskReference;
 import bee.api.Command;
 import bee.util.Inputs;
 import kiss.I;
@@ -113,6 +115,26 @@ public class TaskInfo {
             return computeTaskName(taskClass.getSuperclass());
         }
         return Inputs.hyphenize(taskClass.getSimpleName());
+    }
+
+    /**
+     * Compute human-readable task name.
+     * 
+     * @param task A target task.
+     * @return A task name.
+     */
+    static final <T extends Task> String computeTaskName(TaskReference<T> task) {
+        try {
+            Method m = task.getClass().getDeclaredMethod("writeReplace");
+            m.setAccessible(true);
+
+            SerializedLambda s = (SerializedLambda) m.invoke(task);
+            Method method = I.type(s.getImplClass().replaceAll("/", ".")).getMethod(s.getImplMethodName());
+
+            return computeTaskName(method.getDeclaringClass()) + ":" + method.getName().toLowerCase();
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
