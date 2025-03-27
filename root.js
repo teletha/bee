@@ -110,6 +110,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Depend",
+			"packageName": "bee",
+			"type": "AbstractClass"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Dependency",
 			"packageName": "bee.task",
 			"type": "Interface"
@@ -405,6 +412,13 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Platform",
+			"packageName": "bee",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "PriorityClassLoader",
 			"packageName": "bee",
 			"type": "Class"
 		},
