@@ -189,9 +189,10 @@ public class Bee {
             // build project definition
             tasks.addAll(0, buildProjectDefinition(project.getProjectDefinition()));
 
-            // load project related classes in system class loader
-            // BeeLoader.load(project.getClasses());
-            BeeLoader.load(project.getProjectClasses());
+            // load project related classes
+            @SuppressWarnings("resource")
+            PriorityClassLoader loader = new PriorityClassLoader(ui).addClassPath(project.getProjectClasses());
+            Thread.currentThread().setContextClassLoader(loader);
 
             // create your project
             String projectFQCN = project.getProjectClasses()
@@ -199,7 +200,7 @@ public class Bee {
                     .path()
                     .replace('/', '.')
                     .replace(".class", "");
-            Class projectClass = Class.forName(projectFQCN);
+            Class projectClass = Class.forName(projectFQCN, false, loader);
             inject((Project) projectClass.getDeclaredConstructors()[0].newInstance());
 
             // start project build process
@@ -207,7 +208,7 @@ public class Bee {
 
             // load project related classes in system class loader
             for (Library library : project.getDependency(Scope.Compile)) {
-                BeeLoader.load(library.getLocalJar());
+                loader.addClassPath(library.getLocalJar());
             }
 
             // load new project

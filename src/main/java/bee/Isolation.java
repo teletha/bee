@@ -30,7 +30,7 @@ import kiss.I;
  * and execution of the {@link #run()} method within that context.
  */
 @SuppressWarnings("serial")
-public abstract class Depend implements Runnable, Serializable {
+public abstract class Isolation implements Runnable, Serializable {
 
     /**
      * The dedicated class loader for the specified dependencies. Marked transient as it's
@@ -42,14 +42,14 @@ public abstract class Depend implements Runnable, Serializable {
      * Sets up the dependency context with the specified libraries.
      * The constructor creates a {@link PriorityClassLoader}, adds the specified
      * dependencies and their transitive runtime dependencies to its classpath,
-     * defines the concrete subclass of {@link Depend} within this loader,
+     * defines the concrete subclass of {@link Isolation} within this loader,
      * and then executes the {@link #run()} method within the context of this loader
      * via serialization/deserialization trick.
      *
      * @param dependencies A list of dependency descriptors (e.g., "groupId:artifactId:version").
      */
-    protected Depend(String... dependencies) {
-        this.loader = new PriorityClassLoader();
+    protected Isolation(String... dependencies) {
+        this.loader = new PriorityClassLoader(I.make(UserInterface.class));
 
         for (String dependency : dependencies) {
             Library require = Library.parse(dependency);
@@ -60,8 +60,11 @@ public abstract class Depend implements Runnable, Serializable {
             }
         }
 
-        // import and define this class
+        // import and define classes related to this class
         loader.importAsPriorityClass(getClass());
+        for (Class<?> sub : getClass().getDeclaredClasses()) {
+            loader.importAsPriorityClass(sub);
+        }
 
         // serialize myself
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -121,7 +124,7 @@ public abstract class Depend implements Runnable, Serializable {
     }
 
     /**
-     * Factory method to create a {@link Depend} instance configured with the specified
+     * Factory method to create a {@link Isolation} instance configured with the specified
      * dependencies, but without any specific task defined in its {@link #run()} method.
      * This is useful when the primary goal is just to set up the classpath with the
      * given dependencies, perhaps to use the {@link #load(Class, String)} or
@@ -131,12 +134,12 @@ public abstract class Depend implements Runnable, Serializable {
      * constructor or initialization phase of a subclass.
      *
      * @param dependencies A list of dependency descriptors (e.g., "groupId:artifactId:version").
-     * @return A new {@link Depend} instance whose {@code run()} method does nothing.
+     * @return A new {@link Isolation} instance whose {@code run()} method does nothing.
      *         The primary effect is the setup of the class loader with the dependencies
      *         during the construction of this object.
      */
-    public static Depend on(String... dependencies) {
-        return new Depend(dependencies) {
+    public static Isolation with(String... dependencies) {
+        return new Isolation(dependencies) {
             @Override
             public void run() {
                 // This run method executes within the context of the PriorityClassLoader
@@ -147,7 +150,7 @@ public abstract class Depend implements Runnable, Serializable {
 
     /**
      * A custom {@link ObjectInputStream} that resolves classes using the provided
-     * {@link ClassLoader}. This is crucial for deserializing the {@link Depend}
+     * {@link ClassLoader}. This is crucial for deserializing the {@link Isolation}
      * instance within the context of the {@link PriorityClassLoader}.
      */
     private static class CustomObjectInputStream extends ObjectInputStream {

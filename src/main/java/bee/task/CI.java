@@ -18,6 +18,15 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
+import com.github.javaparser.ParserConfiguration.LanguageLevel;
+import com.github.javaparser.Position;
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.javadoc.Javadoc;
+
+import bee.Isolation;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
@@ -25,7 +34,6 @@ import bee.api.License;
 import bee.api.Scope;
 import bee.api.VCS;
 import bee.util.Inputs;
-import bee.util.Snippet;
 import kiss.I;
 import psychopath.File;
 
@@ -150,185 +158,7 @@ public interface CI extends Task {
      */
     @Command("Generate readme file.")
     default void readme() {
-        List<Snippet> snippets = project().getRoot()
-                .walkFile("**/ReadMe*Test.java")
-                .first()
-                .map(File::text)
-                .flatIterable(text -> Snippet.parse(text, "Test"))
-                .toList();
-
-        makeFile("README.md", I
-                .express("""
-                        <p align="center">
-                            <a href="https://docs.oracle.com/en/java/javase/{java}/"><img src="https://img.shields.io/badge/Java-Release%20{java}-green"/></a>
-                            <span>&nbsp;</span>
-                            <a href="https://jitpack.io/#{owner}/{repo}"><img src="https://img.shields.io/jitpack/v/{name}/{owner}/{repo}?label=Repository&color=green"></a>
-                            <span>&nbsp;</span>
-                            <a href="https://{owner}.github.io/{repo}"><img src="https://img.shields.io/website.svg?down_color=red&down_message=CLOSE&label=Official%20Site&up_color=green&up_message=OPEN&url=https%3A%2F%2F{owner}.github.io%2F{repo}"></a>
-                        </p>
-
-                        {#description}
-                        ## Summary
-                        {.}
-                        <p align="right"><a href="#top">back to top</a></p>
-                        {/description}
-
-
-                        {#snippets}
-                        ## Usage
-                        {.}
-                        <p align="right"><a href="#top">back to top</a></p>
-                        {/snippets}
-
-
-                        {#benchmark}
-                        ## Benchmark
-                        {.}
-                        <p align="right"><a href="#top">back to top</a></p>
-                        {/benchmark}
-
-
-                        ## Prerequisites
-                        {ProductName} runs on all major operating systems and requires only [Java version {java}](https://docs.oracle.com/en/java/javase/{java}/) or later to run.
-                        To check, please run `java -version` on your terminal.
-                        <p align="right"><a href="#top">back to top</a></p>
-
-                        ## Install
-                        For any code snippet below, please substitute the version given with the version of {ProductName} you wish to use.
-                        #### [Maven](https://maven.apache.org/)
-                        Add JitPack repository at the end of repositories element in your build.xml:
-                        ```xml
-                        <repository>
-                            <id>jitpack.io</id>
-                            <url>https://jitpack.io</url>
-                        </repository>
-                        ```
-                        Add it into in the dependencies element like so:
-                        ```xml
-                        <dependency>
-                            <groupId>{group}</groupId>
-                            <artifactId>{product}</artifactId>
-                            <version>{version}</version>
-                        </dependency>
-                        ```
-                        #### [Gradle](https://gradle.org/)
-                        Add JitPack repository at the end of repositories in your build.gradle:
-                        ```gradle
-                        {=% %=}
-                        repositories {
-                            maven { url "https://jitpack.io" }
-                        }
-                        ```
-                        Add it into the dependencies section like so:
-                        ```gradle
-                        dependencies {
-                        %={ }=%
-                            implementation '{group}:{product}:{version}'
-                        }
-                        ```
-                        #### [SBT](https://www.scala-sbt.org/)
-                        Add JitPack repository at the end of resolvers in your build.sbt:
-                        ```scala
-                        resolvers += "jitpack" at "https://jitpack.io"
-                        ```
-                        Add it into the libraryDependencies section like so:
-                        ```scala
-                        libraryDependencies += "{group}" % "{product}" % "{version}"
-                        ```
-                        #### [Leiningen](https://leiningen.org/)
-                        Add JitPack repository at the end of repositories in your project().clj:
-                        ```clj
-                        :repositories [["jitpack" "https://jitpack.io"]]
-                        ```
-                        Add it into the dependencies section like so:
-                        ```clj
-                        :dependencies [[{group}/{product} "{version}"]]
-                        ```
-                        #### [Bee](https://teletha.github.io/bee)
-                        Add it into your project definition class like so:
-                        ```java
-                        require("{group}", "{product}", "{version}");
-                        ```
-                        <p align="right"><a href="#top">back to top</a></p>
-
-
-                        ## Contributing
-                        Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-                        If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-                        Don't forget to give the project a star! Thanks again!
-
-                        1. Fork the Project
-                        2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-                        3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-                        4. Push to the Branch (`git push origin feature/AmazingFeature`)
-                        5. Open a Pull Request
-
-                        The overwhelming majority of changes to this project don't add new features at all. Optimizations, tests, documentation, refactorings -- these are all part of making this product meet the highest standards of code quality and usability.
-                        Contributing improvements in these areas is much easier, and much less of a hassle, than contributing code for new features.
-
-                        ### Bug Reports
-                        If you come across a bug, please file a bug report. Warning us of a bug is possibly the most valuable contribution you can make to {ProductName}.
-                        If you encounter a bug that hasn't already been filed, [please file a report](https://github.com/{owner}/{repo}/issues/new) with an [SSCCE](http://sscce.org/) demonstrating the bug.
-                        If you think something might be a bug, but you're not sure, ask on StackOverflow or on [{product}-discuss](https://github.com/{owner}/{repo}/discussions).
-                        <p align="right"><a href="#top">back to top</a></p>
-
-
-                        ## Dependency
-                        {ProductName} depends on the following products on runtime.
-                        {#dependencies}
-                        * [{.}](https://mvnrepository.com/artifact/{group}/{name}/{version})
-                        {/dependencies}
-                        {^dependencies}
-                        * No Dependency
-                        {/dependencies}
-                        <p align="right"><a href="#top">back to top</a></p>
-
-
-                        ## License
-                        {license}
-                        <p align="right"><a href="#top">back to top</a></p>
-                        """, new Object[] {
-                        project()}, (m, o, e) -> {
-                            switch (e) {
-                            case "ProductName":
-                                return Inputs.capitalize(project().getProduct());
-
-                            case "java":
-                                return Inputs.normalize(project().getJavaRequiredVersion());
-
-                            case "owner":
-                                return project().getVersionControlSystem().owner;
-
-                            case "repo":
-                                return project().getVersionControlSystem().repo;
-
-                            case "name":
-                                return project().getVersionControlSystem().name();
-
-                            case "dependencies":
-                                return new ArrayList(project().getDependency(Scope.Runtime));
-
-                            case "testDependencies":
-                                return new ArrayList(project().getDependency(Scope.Test));
-
-                            case "license":
-                                return project().license().text(false).stream().collect(Collectors.joining(Platform.EOL));
-
-                            case "snippets":
-                                return snippets.isEmpty() ? null
-                                        : snippets.stream()
-                                                .map(sn -> sn.comment + "\n```java\n" + sn.code + "\n```\n")
-                                                .collect(Collectors.joining(Platform.EOL));
-
-                            case "benchmark":
-                                File benchmark = project().getRoot().file("benchmark/README.md");
-                                return benchmark.isAbsent() ? null : benchmark.text();
-
-                            default:
-                                return null;
-                            }
-                        })
-                .replace("}}", "{"));
+        new ReadMe();
     }
 
     @Command("Generate CI/CD configuration files for JitPack.")
@@ -394,5 +224,253 @@ public interface CI extends Task {
             updated.pollLast();
         }
         return updated;
+    }
+
+    @SuppressWarnings("serial")
+    class ReadMe extends Isolation {
+
+        private ReadMe() {
+            super("com.github.javaparser : javaparser-core");
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void run() {
+            List<Snippet> snippets = project().getRoot()
+                    .walkFile("**/ReadMe*Test.java")
+                    .first()
+                    .map(File::text)
+                    .flatIterable(text -> parse(text, "Test"))
+                    .toList();
+
+            makeFile("README.md", I
+                    .express("""
+                            <p align="center">
+                                <a href="https://docs.oracle.com/en/java/javase/{java}/"><img src="https://img.shields.io/badge/Java-Release%20{java}-green"/></a>
+                                <span>&nbsp;</span>
+                                <a href="https://jitpack.io/#{owner}/{repo}"><img src="https://img.shields.io/jitpack/v/{name}/{owner}/{repo}?label=Repository&color=green"></a>
+                                <span>&nbsp;</span>
+                                <a href="https://{owner}.github.io/{repo}"><img src="https://img.shields.io/website.svg?down_color=red&down_message=CLOSE&label=Official%20Site&up_color=green&up_message=OPEN&url=https%3A%2F%2F{owner}.github.io%2F{repo}"></a>
+                            </p>
+
+                            {#description}
+                            ## Summary
+                            {.}
+                            <p align="right"><a href="#top">back to top</a></p>
+                            {/description}
+
+
+                            {#snippets}
+                            ## Usage
+                            {.}
+                            <p align="right"><a href="#top">back to top</a></p>
+                            {/snippets}
+
+
+                            {#benchmark}
+                            ## Benchmark
+                            {.}
+                            <p align="right"><a href="#top">back to top</a></p>
+                            {/benchmark}
+
+
+                            ## Prerequisites
+                            {ProductName} runs on all major operating systems and requires only [Java version {java}](https://docs.oracle.com/en/java/javase/{java}/) or later to run.
+                            To check, please run `java -version` on your terminal.
+                            <p align="right"><a href="#top">back to top</a></p>
+
+                            ## Install
+                            For any code snippet below, please substitute the version given with the version of {ProductName} you wish to use.
+                            #### [Maven](https://maven.apache.org/)
+                            Add JitPack repository at the end of repositories element in your build.xml:
+                            ```xml
+                            <repository>
+                                <id>jitpack.io</id>
+                                <url>https://jitpack.io</url>
+                            </repository>
+                            ```
+                            Add it into in the dependencies element like so:
+                            ```xml
+                            <dependency>
+                                <groupId>{group}</groupId>
+                                <artifactId>{product}</artifactId>
+                                <version>{version}</version>
+                            </dependency>
+                            ```
+                            #### [Gradle](https://gradle.org/)
+                            Add JitPack repository at the end of repositories in your build.gradle:
+                            ```gradle
+                            {=% %=}
+                            repositories {
+                                maven { url "https://jitpack.io" }
+                            }
+                            ```
+                            Add it into the dependencies section like so:
+                            ```gradle
+                            dependencies {
+                            %={ }=%
+                                implementation '{group}:{product}:{version}'
+                            }
+                            ```
+                            #### [SBT](https://www.scala-sbt.org/)
+                            Add JitPack repository at the end of resolvers in your build.sbt:
+                            ```scala
+                            resolvers += "jitpack" at "https://jitpack.io"
+                            ```
+                            Add it into the libraryDependencies section like so:
+                            ```scala
+                            libraryDependencies += "{group}" % "{product}" % "{version}"
+                            ```
+                            #### [Leiningen](https://leiningen.org/)
+                            Add JitPack repository at the end of repositories in your project().clj:
+                            ```clj
+                            :repositories [["jitpack" "https://jitpack.io"]]
+                            ```
+                            Add it into the dependencies section like so:
+                            ```clj
+                            :dependencies [[{group}/{product} "{version}"]]
+                            ```
+                            #### [Bee](https://teletha.github.io/bee)
+                            Add it into your project definition class like so:
+                            ```java
+                            require("{group}", "{product}", "{version}");
+                            ```
+                            <p align="right"><a href="#top">back to top</a></p>
+
+
+                            ## Contributing
+                            Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+                            If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+                            Don't forget to give the project a star! Thanks again!
+
+                            1. Fork the Project
+                            2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+                            3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+                            4. Push to the Branch (`git push origin feature/AmazingFeature`)
+                            5. Open a Pull Request
+
+                            The overwhelming majority of changes to this project don't add new features at all. Optimizations, tests, documentation, refactorings -- these are all part of making this product meet the highest standards of code quality and usability.
+                            Contributing improvements in these areas is much easier, and much less of a hassle, than contributing code for new features.
+
+                            ### Bug Reports
+                            If you come across a bug, please file a bug report. Warning us of a bug is possibly the most valuable contribution you can make to {ProductName}.
+                            If you encounter a bug that hasn't already been filed, [please file a report](https://github.com/{owner}/{repo}/issues/new) with an [SSCCE](http://sscce.org/) demonstrating the bug.
+                            If you think something might be a bug, but you're not sure, ask on StackOverflow or on [{product}-discuss](https://github.com/{owner}/{repo}/discussions).
+                            <p align="right"><a href="#top">back to top</a></p>
+
+
+                            ## Dependency
+                            {ProductName} depends on the following products on runtime.
+                            {#dependencies}
+                            * [{.}](https://mvnrepository.com/artifact/{group}/{name}/{version})
+                            {/dependencies}
+                            {^dependencies}
+                            * No Dependency
+                            {/dependencies}
+                            <p align="right"><a href="#top">back to top</a></p>
+
+
+                            ## License
+                            {license}
+                            <p align="right"><a href="#top">back to top</a></p>
+                            """, new Object[] {
+                            project()}, (m, o, e) -> {
+                                switch (e) {
+                                case "ProductName":
+                                    return Inputs.capitalize(project().getProduct());
+
+                                case "java":
+                                    return Inputs.normalize(project().getJavaRequiredVersion());
+
+                                case "owner":
+                                    return project().getVersionControlSystem().owner;
+
+                                case "repo":
+                                    return project().getVersionControlSystem().repo;
+
+                                case "name":
+                                    return project().getVersionControlSystem().name();
+
+                                case "dependencies":
+                                    return new ArrayList(project().getDependency(Scope.Runtime));
+
+                                case "testDependencies":
+                                    return new ArrayList(project().getDependency(Scope.Test));
+
+                                case "license":
+                                    return project().license().text(false).stream().collect(Collectors.joining(Platform.EOL));
+
+                                case "snippets":
+                                    return snippets.isEmpty() ? null
+                                            : snippets.stream()
+                                                    .map(sn -> sn.comment + "\n```java\n" + sn.code + "\n```\n")
+                                                    .collect(Collectors.joining(Platform.EOL));
+
+                                case "benchmark":
+                                    File benchmark = project().getRoot().file("benchmark/README.md");
+                                    return benchmark.isAbsent() ? null : benchmark.text();
+
+                                default:
+                                    return null;
+                                }
+                            })
+                    .replace("}}", "{"));
+        }
+
+        /**
+         * Parse source code.
+         * 
+         * @param source
+         * @param annotationFQCN
+         * @return
+         */
+        private List<Snippet> parse(String source, String annotationFQCN) {
+            List<Snippet> snippets = new ArrayList();
+
+            String[] lines = source.split("\\r?\\n");
+
+            StaticJavaParser.getParserConfiguration().setLanguageLevel(LanguageLevel.JAVA_17).setLexicalPreservationEnabled(true);
+
+            CompilationUnit root = StaticJavaParser.parse(source);
+            List<MethodDeclaration> methods = root.findAll(MethodDeclaration.class);
+
+            for (MethodDeclaration method : methods) {
+                if (method.isAnnotationPresent(annotationFQCN)) {
+                    Snippet snippet = new Snippet(lines, method);
+
+                    snippets.add(snippet);
+                }
+            }
+
+            return snippets;
+        }
+
+        private static class Snippet {
+
+            final String code;
+
+            final String comment;
+
+            Snippet(String[] lines, MethodDeclaration method) {
+                this.code = formatCode(lines, method.getBody().get());
+                this.comment = method.getJavadoc().map(Javadoc::toText).orElse("").strip();
+            }
+
+            /**
+             * @param block
+             * @return
+             */
+            String formatCode(String[] lines, BlockStmt block) {
+                Position begin = block.getBegin().get();
+                Position end = block.getEnd().get();
+                StringJoiner join = new StringJoiner("\n");
+                for (int i = begin.line; i < end.line - 1; i++) {
+                    join.add(lines[i]);
+                }
+                return join.toString().stripIndent();
+            }
+        }
     }
 }

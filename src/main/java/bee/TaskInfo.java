@@ -203,7 +203,8 @@ public class TaskInfo {
      * @return The created task instance.
      */
     Task create() {
-        return (Task) Proxy.newProxyInstance(Bee.class.getClassLoader(), new Class[] {task}, new Interceptor(task, commands.keySet()));
+        return (Task) Proxy.newProxyInstance(Thread.currentThread()
+                .getContextClassLoader(), new Class[] {task}, new Interceptor(task, commands.keySet()));
     }
 
     @SuppressWarnings("serial")

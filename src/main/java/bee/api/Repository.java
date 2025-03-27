@@ -160,7 +160,6 @@ import org.eclipse.aether.version.Version;
 import org.eclipse.aether.version.VersionConstraint;
 import org.eclipse.aether.version.VersionScheme;
 
-import bee.BeeLoader;
 import bee.BeeOption;
 import bee.Platform;
 import bee.UserInterface;
@@ -542,20 +541,6 @@ public class Repository {
 
         if (session != null) {
             session.setLocalRepositoryManager(system.newLocalRepositoryManager(session, localRepository));
-        }
-    }
-
-    /**
-     * Load the latest library and import it dynamically.
-     * 
-     * @param qualifier A colon separated values. (group:product:version)
-     */
-    public static void require(String qualifier) {
-        Library require = Library.parse(qualifier);
-        BeeLoader.load(require.getLocalJar());
-
-        for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
-            BeeLoader.load(library.getLocalJar());
         }
     }
 

@@ -29,7 +29,7 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import bee.Depend;
+import bee.Isolation;
 import bee.Fail;
 import bee.Task;
 import bee.api.Command;
@@ -117,7 +117,7 @@ public interface Doc extends Task {
         Listener listener = new Listener();
         Directory output = project().getOutput().directory("site");
 
-        new Depend("com.github.teletha : javadng") {
+        new Isolation("com.github.teletha : javadng") {
 
             @Override
             public void run() {

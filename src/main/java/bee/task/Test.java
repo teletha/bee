@@ -33,7 +33,7 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
 import bee.Bee;
-import bee.Depend;
+import bee.Isolation;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
@@ -70,7 +70,7 @@ public interface Test extends Task<Test.Config> {
         } else {
             Config conf = config();
 
-            new Depend("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
+            new Isolation("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
 
                 @Override
                 public void run() {

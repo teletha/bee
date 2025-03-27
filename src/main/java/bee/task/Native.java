@@ -17,7 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import bee.Depend;
+import bee.Isolation;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
@@ -193,7 +193,7 @@ public interface Native extends Task<Native.Config> {
     }
 
     private void buildRuntimeInfo(Config conf) {
-        new Depend("io.github.classgraph:classgraph") {
+        new Isolation("io.github.classgraph:classgraph") {
 
             @Override
             public void run() {

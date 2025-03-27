@@ -65,10 +65,10 @@ public class BeeInstaller {
                 // build launcher
                 Platform.Bee.text(String.format(Platform.isWindows() ? """
                         @echo off
-                        %s -javaagent:"%s" -cp "%s" bee.Bee %%*
+                        %s -cp "%s" bee.Bee %%*
                         """ : """
                         #!/bin/bash
-                        %s -javaagent:"%s" -cp "%s" bee.Bee "$@"
+                        %s  -cp "%s" bee.Bee "$@"
                         """, Platform.JavaHome.file("bin/java"), dest, dest));
 
                 ui.info("Build launcher [", Platform.Bee, "]");

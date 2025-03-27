@@ -62,6 +62,9 @@ public abstract class UserInterface {
     /** The predefined answers. */
     private final Deque<String> answers = new ArrayDeque(BeeOption.Input.value());
 
+    /** The debug flag. */
+    public boolean debuggable = BeeOption.Debug.value;
+
     /**
      * Talk to user with decoration like title.
      * 
@@ -86,7 +89,7 @@ public abstract class UserInterface {
      * @param messages Your message.
      */
     public final void debug(Object... messages) {
-        if (BeeOption.Debug.value()) {
+        if (debuggable) {
             talk(DEBUG, messages);
         }
     }

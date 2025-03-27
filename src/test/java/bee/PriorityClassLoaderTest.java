@@ -15,14 +15,18 @@ import org.junit.jupiter.api.Test;
 import kiss.I;
 import psychopath.Locator;
 
-class DynamicLoadTest {
+class PriorityClassLoaderTest {
+
+    private PriorityClassLoader create() {
+        return new PriorityClassLoader(UserInterface.CUI);
+    }
 
     @Test
-    void load() {
+    void load() throws ClassNotFoundException {
         String fqcn = "com.github.teletha.AB";
-
         Assertions.assertThrows(ClassNotFoundException.class, () -> I.type(fqcn));
-        BeeLoader.load(Locator.file("src/test/resources/dynamic-load.jar.file"));
-        assert I.type(fqcn) != null;
+
+        PriorityClassLoader loader = create().addClassPath(Locator.file("src/test/resources/dynamic-load.jar.file"));
+        assert Class.forName(fqcn, true, loader) != null;
     }
 }
