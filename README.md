@@ -161,7 +161,6 @@ Bee depends on the following products on runtime.
 * [maven-resolver-spi-2.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-spi/2.0.0-alpha-7)
 * [maven-resolver-util-2.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven.resolver/maven-resolver-util/2.0.0-alpha-7)
 * [maven-xml-impl-4.0.0-alpha-7](https://mvnrepository.com/artifact/org.apache.maven/maven-xml-impl/4.0.0-alpha-7)
-* [plexus-classworlds-2.8.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-classworlds/2.8.0)
 * [plexus-interpolation-1.26](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-interpolation/1.26)
 * [plexus-utils-4.0.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/4.0.0)
 * [plexus-xml-4.0.1](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-xml/4.0.1)
