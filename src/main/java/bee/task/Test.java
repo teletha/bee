@@ -11,6 +11,7 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,20 +33,21 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
 import bee.Bee;
+import bee.Depend;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
-import bee.api.Require;
 import bee.api.Scope;
 import bee.util.Java;
 import bee.util.Java.JVM;
 import kiss.I;
 import psychopath.Directory;
 
+@SuppressWarnings("serial")
 public interface Test extends Task<Test.Config> {
 
-    public static class Config {
+    public static class Config implements Serializable {
         /** The threshold time (ms) to show the prolonged test. */
         public int showProlongedTest = 1000;
 
@@ -68,8 +70,10 @@ public interface Test extends Task<Test.Config> {
         } else {
             Config conf = config();
 
-            new Require("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
-                {
+            new Depend("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
+
+                @Override
+                public void run() {
                     Java.with()
                             .java(conf.java)
                             .param(conf.params)
@@ -87,10 +91,7 @@ public interface Test extends Task<Test.Config> {
         }
     }
 
-    /**
-     * 
-     */
-    final class Junit extends JVM implements TestExecutionListener {
+    class Junit extends JVM {
 
         /** The threshold time (ns) to show the prolonged test. */
         private long showProlongedTime;

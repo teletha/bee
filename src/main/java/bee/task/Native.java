@@ -11,18 +11,19 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import bee.Depend;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Loader;
-import bee.api.Require;
 import bee.api.Scope;
 import bee.coder.FileType;
 import io.github.classgraph.ClassGraph;
@@ -35,9 +36,10 @@ import psychopath.File;
 import psychopath.Locator;
 import psychopath.Option;
 
+@SuppressWarnings("serial")
 public interface Native extends Task<Native.Config> {
 
-    public static class Config {
+    public static class Config implements Serializable {
         /** The available protocols. default is 'http,https' */
         public List<String> protocols = I.list("http", "https");
 
@@ -191,8 +193,10 @@ public interface Native extends Task<Native.Config> {
     }
 
     private void buildRuntimeInfo(Config conf) {
-        new Require("io.github.classgraph:classgraph") {
-            {
+        new Depend("io.github.classgraph:classgraph") {
+
+            @Override
+            public void run() {
                 try (ScanResult scan = new ClassGraph().enableAllInfo().overrideClasspath(project().getClasspath()).scan()) {
                     String extensions = scan.getClassesImplementing(Extensible.class)
                             .stream()

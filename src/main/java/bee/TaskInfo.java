@@ -9,14 +9,18 @@
  */
 package bee;
 
+import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import bee.Task.TaskReference;
@@ -27,15 +31,18 @@ import kiss.I;
 import kiss.Model;
 
 /**
- * 
+ * Represents information about a task, including its name, commands, and descriptions.
  */
 public class TaskInfo {
+
+    /** The common task repository. */
+    private static Map<String, TaskInfo> commons;
 
     /** The task name. */
     private final String name;
 
     /** The task definition. */
-    final Class<Task> task;
+    private final Class<Task> task;
 
     /** The default command name. */
     String defaultCommnad = "help";
@@ -46,50 +53,55 @@ public class TaskInfo {
     /** The command descriptions. */
     final Map<String, String> descriptions = new TreeMap();
 
-    /** The common task repository. */
-    static Map<String, TaskInfo> commons;
-
     /**
-     * @param name
-     * @param task
+     * Constructs a TaskInfo instance for the specified task.
+     * 
+     * @param name The name of the task.
+     * @param task The class representing the task.
      */
     TaskInfo(String name, Class<Task> task) {
-        this.name = name;
-        this.task = task;
+        try {
+            this.name = name;
+            this.task = task;
 
-        for (Entry<Method, List<Annotation>> info : Model.collectAnnotatedMethods(task).entrySet()) {
-            for (Annotation annotation : info.getValue()) {
-                if (annotation.annotationType() == Command.class) {
-                    Method method = info.getKey();
+            for (Entry<Method, List<Annotation>> info : Model.collectAnnotatedMethods(task).entrySet()) {
+                for (Annotation annotation : info.getValue()) {
+                    if (annotation.annotationType() == Command.class) {
+                        Method method = info.getKey();
 
-                    // compute command name
-                    Command command = (Command) annotation;
-                    String commnadName = Inputs.hyphenize(method.getName());
+                        // compute command name
+                        Command command = (Command) annotation;
+                        String commnadName = Inputs.hyphenize(method.getName());
 
-                    // register
-                    commands.put(commnadName, method);
+                        // register
+                        commands.put(commnadName, method);
 
-                    if (!commnadName.equals("help")) {
-                        descriptions.put(commnadName, command.value());
-                    }
+                        if (!commnadName.equals("help")) {
+                            descriptions.put(commnadName, command.value());
+                        }
 
-                    if (command.defaults()) {
-                        defaultCommnad = commnadName;
+                        if (command.defaults()) {
+                            defaultCommnad = commnadName;
+                        }
                     }
                 }
             }
-        }
 
-        // search default command
-        if (descriptions.size() == 1) {
-            defaultCommnad = descriptions.keySet().iterator().next();
-        } else if (descriptions.containsKey(name)) {
-            defaultCommnad = name;
+            // search default command
+            if (descriptions.size() == 1) {
+                defaultCommnad = descriptions.keySet().iterator().next();
+            } else if (descriptions.containsKey(name)) {
+                defaultCommnad = name;
+            }
+        } catch (Exception e) {
+            throw I.quiet(e);
         }
     }
 
     /**
-     * {@inheritDoc}
+     * Returns a string representation of this task.
+     * 
+     * @return A formatted string containing the task name and its default command description.
      */
     @Override
     public String toString() {
@@ -97,21 +109,21 @@ public class TaskInfo {
     }
 
     /**
-     * Find the task instance by type.
+     * Finds the task instance by its type.
      * 
-     * @param <T>
-     * @param support
-     * @return
+     * @param <T> The type of task.
+     * @param support The class type of the task.
+     * @return An instance of the specified task type.
      */
     public static final <T extends Task> T find(Class<T> support) {
         return (T) by(computeTaskName(support)).create();
     }
 
     /**
-     * Compute human-readable task name.
+     * Computes a human-readable task name from a class.
      * 
-     * @param taskClass A target task.
-     * @return A task name.
+     * @param taskClass The task class.
+     * @return The computed task name.
      */
     public static final String computeTaskName(Class taskClass) {
         if (taskClass.isSynthetic()) {
@@ -121,10 +133,10 @@ public class TaskInfo {
     }
 
     /**
-     * Compute human-readable task name.
+     * Computes a human-readable task name from a TaskReference.
      * 
-     * @param task A target task.
-     * @return A task name.
+     * @param task The task reference.
+     * @return The computed task name.
      */
     static final <T extends Task> String computeTaskName(TaskReference<T> task) {
         try {
@@ -141,10 +153,10 @@ public class TaskInfo {
     }
 
     /**
-     * Find task information by name.
+     * Finds task information by name.
      * 
-     * @param name A task name.
-     * @return A specified task.
+     * @param name The task name.
+     * @return The corresponding TaskInfo instance.
      */
     static final TaskInfo by(String name) {
         if (name == null) {
@@ -186,13 +198,34 @@ public class TaskInfo {
     }
 
     /**
-     * @return
+     * Creates a proxy instance of the task.
+     * 
+     * @return The created task instance.
      */
-    public Task create() {
-        return I.make(task, (object, method, args) -> {
+    Task create() {
+        return (Task) Proxy.newProxyInstance(Bee.class.getClassLoader(), new Class[] {task}, new Interceptor(task, commands.keySet()));
+    }
+
+    @SuppressWarnings("serial")
+    private static class Interceptor implements InvocationHandler, Serializable {
+
+        private final Class task;
+
+        private final transient Set<String> commands;
+
+        private Interceptor(Class task, Set<String> commands) {
+            this.task = task;
+            this.commands = commands;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public Object invoke(Object object, Method method, Object[] args) throws Throwable {
             String commnadName = Inputs.hyphenize(method.getName());
 
-            if (commands.containsKey(commnadName)) {
+            if (commands.contains(commnadName)) {
                 String taskName = Inputs.hyphenize(task.getSimpleName()) + ":" + commnadName;
                 Project project = TaskOperations.project();
                 Cache cache = project.associate(Cache.class);
@@ -211,7 +244,7 @@ public class TaskInfo {
             } else {
                 return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args);
             }
-        });
+        }
     }
 
     /**

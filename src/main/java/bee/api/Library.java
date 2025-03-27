@@ -44,7 +44,7 @@ public class Library implements Comparable<Library> {
      * @param qualified
      * @return
      */
-    static Library parse(String qualified) {
+    public static Library parse(String qualified) {
         String[] values = qualified.split(":");
         switch (values.length) {
         case 2:

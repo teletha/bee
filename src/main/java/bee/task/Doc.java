@@ -12,6 +12,7 @@ package bee.task;
 import static bee.TaskOperations.*;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.Writer;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,11 +29,11 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import bee.Depend;
 import bee.Fail;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
-import bee.api.Require;
 import bee.api.Scope;
 import bee.util.Inputs;
 import javadng.page.Javadoc;
@@ -43,6 +44,7 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
 
+@SuppressWarnings("serial")
 public interface Doc extends Task {
 
     /**
@@ -115,8 +117,10 @@ public interface Doc extends Task {
         Listener listener = new Listener();
         Directory output = project().getOutput().directory("site");
 
-        new Require("com.github.teletha : javadng") {
-            {
+        new Depend("com.github.teletha : javadng") {
+
+            @Override
+            public void run() {
                 Javadoc.with.sources(project().getSourceSet().toList())
                         .output(output)
                         .product(project().getProduct())
@@ -129,7 +133,7 @@ public interface Doc extends Task {
                         .listener(listener)
                         .useExternalJDKDoc()
                         .build();
-            }
+            };
         };
 
         if (listener.errors.isEmpty()) {
@@ -139,10 +143,7 @@ public interface Doc extends Task {
         }
     }
 
-    /**
-     * 
-     */
-    class Listener extends Writer implements DiagnosticListener<FileObject> {
+    class Listener extends Writer implements DiagnosticListener<FileObject>, Serializable {
 
         private List<String> errors = new ArrayList();
 
