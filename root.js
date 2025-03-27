@@ -40,13 +40,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "BeeLoader",
-			"packageName": "bee",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "BeeOption",
 			"packageName": "bee",
 			"type": "Class"
@@ -64,6 +57,13 @@ const root = {
 			"name": "CI",
 			"packageName": "bee.task",
 			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "CI.ReadMe",
+			"packageName": "bee.task",
+			"type": "Class"
 		},
 		{
 			"modifiers": {
@@ -106,13 +106,6 @@ const root = {
 			"name": "Config.Description",
 			"packageName": "bee.util",
 			"type": "Annotation"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Depend",
-			"packageName": "bee",
-			"type": "AbstractClass"
 		},
 		{
 			"modifiers": {
@@ -292,6 +285,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Isolation",
+			"packageName": "bee",
+			"type": "AbstractClass"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Jar",
 			"packageName": "bee.task",
 			"type": "Interface"
@@ -467,23 +467,9 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Require",
-			"packageName": "bee.api",
-			"type": "AbstractClass"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Scope",
 			"packageName": "bee.api",
 			"type": "Enum"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Snippet",
-			"packageName": "bee.util",
-			"type": "Class"
 		},
 		{
 			"modifiers": {
