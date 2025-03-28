@@ -20,6 +20,7 @@ import bee.Bee;
 import bee.BeeOption;
 import bee.Platform;
 import bee.Task;
+import bee.TaskInfo;
 import bee.api.Command;
 import kiss.I;
 import psychopath.Locator;
@@ -31,7 +32,7 @@ public interface Help extends Task {
         ui().info("The available tasks are listed below. If you want to know more about each task, please run [YourTaskName:help].");
 
         try {
-            Field field = Task.class.getDeclaredField("commons");
+            Field field = TaskInfo.class.getDeclaredField("commons");
             field.setAccessible(true);
             Map tasks = (Map) field.get(null);
             ui().info(List.copyOf(tasks.values()));
