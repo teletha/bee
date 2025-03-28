@@ -71,7 +71,7 @@ public class BeeInstaller {
                     try {
                         // delete only bee-version-yyyyMMddhhmmss.jar
                         if (jar.base().length() > 18) {
-                            jar.delete();
+                            jar.deleteOnExit();
                         }
                     } catch (Exception e) {
                         // we can't delete current processing jar file.
@@ -80,20 +80,21 @@ public class BeeInstaller {
 
                 // build jar
                 source.copyTo(dest);
-                ui.info("Build executor [", dest, "]");
+                ui.info("Install bee executor to ", dest);
 
                 // build launcher
-                String optionAOT = Runtime.version().feature() < 24 ? "" : "-XX:AOTCache=" + dest + ".aot";
+                Platform.Bee.text(String.format(Platform.isWindows()
+                        ? """
+                                @echo off
+                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee %%*
+                                """
+                        : """
+                                #!/bin/bash
+                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1  -XX:AOTCache=%s -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee "$@"
+                                """, Platform.JavaHome
+                                .file("bin/java"), dest + ".aot", dest));
 
-                Platform.Bee.text(String.format(Platform.isWindows() ? """
-                        @echo off
-                        %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 %s -cp "%s" bee.Bee %%*
-                        """ : """
-                        #!/bin/bash
-                        %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 %s -cp "%s" bee.Bee "$@"
-                        """, Platform.JavaHome.file("bin/java"), optionAOT, dest));
-
-                ui.info("Build launcher [", Platform.Bee, "]");
+                ui.info("Install bee launcher to ", Platform.Bee);
             }
         }
 

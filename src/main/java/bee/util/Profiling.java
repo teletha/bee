@@ -9,6 +9,7 @@
  */
 package bee.util;
 
+import java.lang.management.ManagementFactory;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -44,10 +45,10 @@ import bee.UserInterface;
  *     try (Profiling ignored2 = Profiling.of("Validation")) {
  *         // Code for validation...
  *         Thread.sleep(50); // Simulate work
- *     } // "Validation" scope ends here
+ * } // "Validation" scope ends here
  *
- *     // More data processing code...
- *     Thread.sleep(100); // Simulate work
+ * // More data processing code...
+ * Thread.sleep(100); // Simulate work
  * } // "Data Processing" scope ends here
  *
  * // Later, display the results
@@ -234,17 +235,20 @@ public class Profiling implements AutoCloseable {
             String name = entry.getKey();
             List<Profiling> values = entry.getValue();
             long sum = values.stream().mapToLong(v -> v.elapsed).sum() / 1000_000;
-            if (50 <= sum) {
+            if (10 <= sum) {
                 output.put(sum, name);
             }
         }
 
         float total = output.keySet().stream().mapToLong(x -> x).sum();
+        List<String> results = output.entrySet()
+                .stream()
+                .limit(10)
+                .map(entry -> "%dms (%.1f%%)\t%s".formatted(entry.getKey(), (entry.getKey() / total) * 100, entry.getValue()))
+                .toList();
 
         ui.title("Bee Profiler");
-        ui.info("Since the profile option is enabled, show top 10 measurement items taking more than 50ms.");
-        output.entrySet().stream().limit(10).forEach(entry -> {
-            ui.info("%dms (%.1f%%)\t%s".formatted(entry.getKey(), (entry.getKey() / total) * 100, entry.getValue()));
-        });
+        ui.info("Used JVM options :", ManagementFactory.getRuntimeMXBean().getInputArguments());
+        ui.info("Displays the top " + results.size() + " measured values that took more than 10 ms :", results);
     }
 }

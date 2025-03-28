@@ -202,7 +202,7 @@ public class Bee {
         String result = "SUCCESS";
         LocalTime start = LocalTime.now();
 
-        try (var x = Profiling.of("Bee")) {
+        try (var x = Profiling.of("Bee Core Process")) {
             // =====================================
             // build your project
             // =====================================
@@ -431,7 +431,7 @@ public class Bee {
         JEP483.enable(Locator.locate(Bee.class) + ".aot");
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"install"};
+        if (tasks.length == 0) tasks = new String[] {"help", "-p"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.
