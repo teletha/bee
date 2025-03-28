@@ -25,12 +25,14 @@ import java.util.jar.Manifest;
 
 import bee.Platform;
 import bee.Task;
+import bee.TaskCancel;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.util.Inputs;
 import bee.util.Process;
 import kiss.I;
+import kiss.Variable;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Folder;
@@ -57,10 +59,13 @@ public interface Exe extends Task<Exe.Config> {
             return null;
         }
 
-        require(Test::test);
-
         // search main classes
-        String main = require(FindMain::main);
+        Variable<String> main = require(FindMain::main);
+        if (main.isAbsent()) {
+            throw new TaskCancel("Main class is not found.");
+        }
+
+        require(Test::test);
 
         // search main class in MANIFEST.MF
         File file = project().getSourceSet()
@@ -73,7 +78,7 @@ public interface Exe extends Task<Exe.Config> {
             Manifest manifest = new Manifest(file.newInputStream());
             try (OutputStream out = file.newOutputStream()) {
                 manifest.getMainAttributes().putValue(Name.MANIFEST_VERSION.toString(), "1.0");
-                manifest.getMainAttributes().putValue(Name.MAIN_CLASS.toString(), main);
+                manifest.getMainAttributes().putValue(Name.MAIN_CLASS.toString(), main.v);
                 manifest.write(out);
             }
         } catch (IOException e) {

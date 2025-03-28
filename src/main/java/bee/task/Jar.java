@@ -12,6 +12,8 @@ package bee.task;
 import static bee.TaskOperations.*;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
 import java.util.jar.Attributes.Name;
 
@@ -171,15 +173,14 @@ public interface Jar extends Task<Jar.Config> {
         require(Jar::source);
 
         // create manifest
-        File manifest = Locator.temporaryFile("MANIFEST.MF").text(
-                /* Manifest contents */
-                Name.MANIFEST_VERSION + ": 1.0", // version must be first
-                Name.MAIN_CLASS + ": " + require(FindMain::main), // detect main class
-                "Launcher-Agent-Class: " + require(FindMain::agentmain), // detect agent main class
-                "Agent-Class: " + require(FindMain::agentmain), // detect agent main class
-                "Premain-Class: " + require(FindMain::premain) // detect pre main class
-        );
+        List<String> lines = new ArrayList();
+        lines.add(Name.MANIFEST_VERSION + ": 1.0");
+        require(FindMain::main).to(clazz -> lines.add(Name.MAIN_CLASS + ": " + clazz));
+        require(FindMain::agentmain).to(clazz -> lines.add("Launcher-Agent-Class: " + clazz));
+        require(FindMain::agentmain).to(clazz -> lines.add("Agent-Class: " + clazz));
+        require(FindMain::premain).to(clazz -> lines.add("Premain-Class: " + clazz));
 
+        File manifest = Locator.temporaryFile("MANIFEST.MF").text(lines);
         File output = TaskOperations.project().locateJar();
         File temp = Locator.temporaryFile();
         output.moveTo(temp);

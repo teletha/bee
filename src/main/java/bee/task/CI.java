@@ -98,7 +98,7 @@ public interface CI extends Task {
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
                           curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                          java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
+                          java -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
                         fi
 
                     - name: Deploy site
@@ -176,7 +176,7 @@ public interface CI extends Task {
                           else
                             BeeVersion=$(curl -SsL https://git.io/stable-bee)
                             curl -SsL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar
-                            java -javaagent:bee-${BeeVersion}.jar -cp bee-${BeeVersion}.jar bee.Bee install maven --skip test
+                            java -cp bee-${BeeVersion}.jar bee.Bee install maven --skip test
                           fi
 
                           # To support SNAPSHOT and Commit ID version, read the VERSION in version.txt,

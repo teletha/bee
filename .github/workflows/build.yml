@@ -10,6 +10,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
@@ -18,7 +21,7 @@ jobs:
       uses: actions/setup-java@v4.4.0
       with:
         distribution: zulu
-        java-version: 23
+        java-version: 24
 
     - name: Cache bee local repository
       uses: actions/cache@v4
@@ -34,7 +37,7 @@ jobs:
         else
           version=$(curl -SsL https://git.io/stable-bee)
           curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-          java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
+          java -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
         fi
 
     - name: Deploy site

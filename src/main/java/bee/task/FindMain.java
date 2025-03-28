@@ -26,6 +26,7 @@ import bee.api.Project;
 import kiss.I;
 import kiss.Managed;
 import kiss.Singleton;
+import kiss.Variable;
 
 public interface FindMain extends Task<FindMain.Config> {
 
@@ -35,16 +36,20 @@ public interface FindMain extends Task<FindMain.Config> {
      * @return A main class name.
      */
     @Command(value = "Find main class.", defaults = true)
-    default String main() {
+    default Variable<String> main() {
         Config config = config();
 
         if (config.main == null) {
             config.main = ui().ask("Multiple main classes were detected. Which one do you use?", I.make(Search.class).mains);
         }
 
-        ui().info("Using ", config.main, " as main class.");
+        if (config.main == null) {
+            ui().info("No main class.");
+        } else {
+            ui().info("Using ", config.main, " as main class.");
+        }
 
-        return config.main;
+        return Variable.of(config.main);
     }
 
     /**
@@ -53,16 +58,20 @@ public interface FindMain extends Task<FindMain.Config> {
      * @return A premain class name.
      */
     @Command("Find premain class.")
-    default String premain() {
+    default Variable<String> premain() {
         Config config = config();
 
         if (config.premain == null) {
             config.premain = ui().ask("Multiple premain classes were detected. Which one do you use?", I.make(Search.class).premains);
         }
 
-        ui().info("Using ", config.premain, " as premain class.");
+        if (config.premain == null) {
+            ui().info("No premain class.");
+        } else {
+            ui().info("Using ", config.premain, " as premain class.");
+        }
 
-        return config.premain;
+        return Variable.of(config.premain);
     }
 
     /**
@@ -71,16 +80,20 @@ public interface FindMain extends Task<FindMain.Config> {
      * @return A agentmain class name.
      */
     @Command("Find agentmain class.")
-    default String agentmain() {
+    default Variable<String> agentmain() {
         Config config = config();
 
         if (config.agentmain == null) {
             config.agentmain = ui().ask("Multiple agentmain classes were detected. Which one do you use?", I.make(Search.class).agentmains);
         }
 
-        ui().info("Using ", config.agentmain, " as agentmain class.");
+        if (config.agentmain == null) {
+            ui().info("No agentmain class.");
+        } else {
+            ui().info("Using ", config.agentmain, " as agentmain class.");
+        }
 
-        return config.agentmain;
+        return Variable.of(config.agentmain);
     }
 
     /**

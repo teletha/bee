@@ -17,10 +17,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import bee.Isolation;
 import bee.Fail;
+import bee.Isolation;
 import bee.Platform;
 import bee.Task;
+import bee.TaskCancel;
 import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Loader;
@@ -31,6 +32,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ScanResult;
 import kiss.Extensible;
 import kiss.I;
+import kiss.Variable;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
@@ -85,6 +87,11 @@ public interface Native extends Task<Native.Config> {
 
     @Command(value = "Build native execution file.", defaults = true)
     default File build() {
+        Variable<String> main = require(FindMain::main);
+        if (main.isAbsent()) {
+            throw new TaskCancel("Main class is not found.");
+        }
+
         Config conf = config();
         Directory graal = findGraalVM(conf);
 
@@ -95,7 +102,6 @@ public interface Native extends Task<Native.Config> {
         });
         require(Test::test);
         require(Jar::source);
-        String main = require(FindMain::main);
 
         buildRuntimeInfo(conf);
 
@@ -142,7 +148,7 @@ public interface Native extends Task<Native.Config> {
                 .to().v);
 
         // entry point
-        command.add(main);
+        command.add(main.v);
 
         if (bee.util.Process.with().run(command) == 0) {
             pack(conf.output, conf.archive, o -> o.glob("*"));
