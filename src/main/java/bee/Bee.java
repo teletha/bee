@@ -37,7 +37,25 @@ import psychopath.File;
 import psychopath.Locator;
 
 /**
- * Task based project builder for Java.
+ * Bee is a task-based build tool for Java projects.
+ * It manages project compilation, dependency resolution, task execution,
+ * and provides user interaction through a {@link UserInterface}.
+ *
+ * <p>
+ * The build process typically involves:
+ * </p>
+ * <ol>
+ * <li>Parsing command-line options ({@link BeeOption}).</li>
+ * <li>Locating or creating the project structure.</li>
+ * <li>Compiling the project definition file ({@code project.bee}).</li>
+ * <li>Loading the project definition using a dedicated class loader.</li>
+ * <li>Executing the specified tasks (e.g., "compile", "test", "jar").</li>
+ * <li>Reporting the build result and duration.</li>
+ * </ol>
+ *
+ * @see Project
+ * @see Task
+ * @see UserInterface
  */
 public class Bee {
 
@@ -95,26 +113,30 @@ public class Bee {
     private Project project;
 
     /**
-     * Create project builder in current location.
+     * Creates a project builder instance targeting the current working directory
+     * and using the default console user interface ({@link UserInterface#CUI}).
      */
     public Bee() {
         this((Directory) null, null);
     }
 
     /**
-     * Create project builder with the specified {@link UserInterface}.
-     * 
-     * @param ui A user interface.
+     * Creates a project builder instance targeting the current working directory
+     * with the specified {@link UserInterface}.
+     *
+     * @param ui The user interface to use for output and input. If null, defaults to CUI.
      */
     public Bee(UserInterface ui) {
         this(null, ui);
     }
 
     /**
-     * Create project builder in the specified location.
-     * 
-     * @param directory A project root directory.
-     * @param ui A user interface.
+     * Creates a project builder instance targeting the specified project root directory
+     * and using the specified {@link UserInterface}.
+     *
+     * @param directory The root directory of the project. If null or invalid, attempts to use
+     *            the current working directory or its parent.
+     * @param ui The user interface to use for output and input. If null, defaults to CUI.
      */
     public Bee(Directory directory, UserInterface ui) {
         // lazy loading
@@ -140,7 +162,11 @@ public class Bee {
     }
 
     /**
-     * Inject {@link Project}.
+     * Injects the specified {@link Project} instance into the Bee context.
+     * This updates the internal project reference and sets the project-specific
+     * lifestyle context (used for project-scoped dependency injection).
+     *
+     * @param project The project instance to inject.
      */
     private void inject(Project project) {
         this.project = project;
@@ -150,7 +176,11 @@ public class Bee {
     }
 
     /**
-     * Inject {@link UserInterface}.
+     * Injects the specified {@link UserInterface} instance into the Bee context.
+     * This updates the internal UI reference and sets the UI-specific
+     * lifestyle context (used for UI-scoped dependency injection).
+     *
+     * @param ui The user interface instance to inject.
      */
     private void inject(UserInterface ui) {
         this.ui = ui;
@@ -160,12 +190,15 @@ public class Bee {
     }
 
     /**
-     * Execute tasks from the given command expression.
-     * 
-     * @param tasks A command literal.
+     * Executes a sequence of tasks based on the provided list of command strings.
+     * This method orchestrates the main build lifecycle, including project definition loading,
+     * task execution, and result reporting.
+     *
+     * @param tasks A list of task command strings (e.g., "compile", "test:run", "jar").
+     * @return The process exit code (0 for success, non-zero for failure or cancellation).
      */
     public int execute(List<String> tasks) {
-        int code = 0;
+        int exitCode = 0;
         String result = "SUCCESS";
         LocalTime start = LocalTime.now();
 
@@ -187,7 +220,9 @@ public class Bee {
                 return 0;
             }
 
-            // build project definition
+            // =====================================
+            // Build Project Definition
+            // =====================================
             tasks.addAll(0, buildProjectDefinition(project.getProjectDefinition()));
 
             // load project related classes
@@ -212,15 +247,17 @@ public class Bee {
                 loader.addClassPath(library.getLocalJar());
             }
 
-            // load new project
+            // load your project
             I.load(projectClass);
 
-            // execute build
+            // =====================================
+            // Execute Tasks
+            // =====================================
             for (String task : tasks) {
                 execute(task);
             }
         } catch (Throwable e) {
-            code = 1;
+            exitCode = 1;
             if (e == Abort) {
                 result = "CANCEL";
             } else {
@@ -236,13 +273,20 @@ public class Bee {
             ui.title(String.format("Build %s \t %s \t %s", result, dateTime, duration));
             if (BeeOption.Profiling.value()) Profiling.show(ui);
         }
-        return code;
+        return exitCode;
     }
 
     /**
-     * Execute literal expression task.
-     * 
-     * @param input User task for input.
+     * Parses and executes a single task command string (e.g., "compile", "test:run").
+     * It identifies the task and command, finds the corresponding method,
+     * creates the task instance, and invokes the command method.
+     * Handles potential misspellings and checks skip options.
+     *
+     * @param input The task command string.
+     * @return The result returned by the invoked command method, or null if skipped or input is
+     *         empty.
+     * @throws Fail If the task or command cannot be found or is misspelled and not confirmed.
+     * @throws RuntimeException If any other error occurs during task execution.
      */
     static final Object execute(String input) {
         // parse command
@@ -322,7 +366,13 @@ public class Bee {
     }
 
     /**
-     * Create project skeleton.
+     * Builds the project definition file (`project.bee`) if it doesn't exist or compiles it if it's
+     * outdated. If the project is created, it prompts the user for basic project details.
+     *
+     * @param definition The file representing the project definition (`project.bee`).
+     * @return A list of tasks to be executed initially (e.g., ["prototype:java"] if a new project
+     *         was created).
+     * @throws Exception If project creation or compilation fails.
      */
     private List<String> buildProjectDefinition(File definition) throws Exception {
         List<String> tasks = new ArrayList();
@@ -368,25 +418,30 @@ public class Bee {
     }
 
     /**
-     * Launch bee at the current location with commandline user interface.
-     * 
-     * @param tasks A list of task commands
+     * The main entry point for the Bee command-line application.
+     * Parses arguments into options and tasks, initializes Bee, and executes the tasks.
+     *
+     * @param tasks Command-line arguments representing tasks and options.
      */
     public static void main(String... tasks) {
-        // At first, measure startup time!!!
+        // 1. Measure JVM startup time immediately
         Profiling.measureJVMStartup();
 
-        // Then, enable ahead-of-time cache
+        // 2. Enable Ahead-of-Time (AOT) compilation cache if available
         JEP483.enable(Locator.locate(Bee.class) + ".aot");
 
+        // 3. Default task if none provided
         if (tasks.length == 0) tasks = new String[] {"install"};
 
-        // The first priority is to parse options.
-        // When the Bee is initialized, the CUI is also initialized, so the values of user input
-        // options are not properly reflected.
+        // 4. Parse command-line arguments into options and remaining tasks
+        // Options (like --help, --root) are processed first.
         List<String> washed = BeeOption.parse(tasks);
 
-        // Don't call new Bee() before parsing options
+        // 5. Initialize Bee and execute the remaining tasks
+        // Bee constructor handles UI and project setup. execute() runs the build lifecycle.
+        // System.exit is called with the result code from execute().
+        // Do NOT create 'new Bee()' before BeeOption.parse() as constructor might initialize
+        // things prematurely based on default option values.
         System.exit(new Bee().execute(washed));
     }
 }
