@@ -12,6 +12,7 @@ package bee;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import bee.api.Library;
 import bee.api.License;
@@ -136,6 +138,8 @@ public class Bee {
         // set up
         inject(ui);
         inject(new ZeroProject());
+
+        Optional<Instant> startInstant = ProcessHandle.current().info().startInstant();
     }
 
     /**
@@ -372,6 +376,8 @@ public class Bee {
      * @param tasks A list of task commands
      */
     public static void main(String... tasks) {
+        Profiling.calculateJVMStartup();
+
         if (tasks.length == 0) tasks = new String[] {"install"};
 
         // The first priority is to parse options.
