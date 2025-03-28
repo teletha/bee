@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2025 Nameless Production Committee
+ * Copyright (C) 2025 The BEE Development Team
  *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *          http://opensource.org/licenses/mit-license.php
+ *          https://opensource.org/licenses/MIT
  */
 package bee;
 
@@ -182,15 +182,14 @@ public class TaskInfo {
         if (info == null) {
             // Search for tasks with similar names for possible misspellings.
             String recommend = Inputs.recommend(name, commons.keySet());
-            if (recommend != null && I.make(UserInterface.class).confirm("Isn't it a misspelling of task [" + recommend + "] ?")) {
-                return commons.get(recommend);
+            if (recommend == null) {
+                Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
+                for (TaskInfo i : commons.values()) {
+                    failure.solve(i);
+                }
+                throw failure;
             }
-
-            Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
-            for (TaskInfo i : commons.values()) {
-                failure.solve(i);
-            }
-            throw failure;
+            info = commons.get(recommend);
         }
 
         // API definition

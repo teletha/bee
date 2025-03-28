@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 The BEE Development Team
+ * Copyright (C) 2025 The BEE Development Team
  *
  * Licensed under the MIT License (the "License");
  * you may not use this file except in compliance with the License.
@@ -329,15 +329,14 @@ public class Bee {
         if (command == null) {
             // Search for command with similar names for possible misspellings.
             String recommend = Inputs.recommend(commandName, info.commands.keySet());
-            if (recommend != null && ui.confirm("Isn't it a misspelling of command [" + recommend + "] ?")) {
-                command = info.commands.get(recommend);
-            } else {
+            if (recommend == null) {
                 Fail failure = new Fail("Task [" + taskName + "] doesn't have the command [" + commandName + "]. Task [" + taskName + "] can use the following commands.");
                 for (Entry<String, String> entry : info.descriptions.entrySet()) {
                     failure.solve(String.format("%s:%-8s \t%s", taskName, entry.getKey(), entry.getValue()));
                 }
                 throw failure;
             }
+            command = info.commands.get(recommend);
         }
 
         String fullname = taskName + ":" + commandName;
@@ -431,7 +430,7 @@ public class Bee {
         JEP483.enable(Locator.locate(Bee.class) + ".aot");
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"help", "-p"};
+        if (tasks.length == 0) tasks = new String[] {"install"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.
