@@ -25,7 +25,7 @@ public enum StandardHeaderStyle implements HeaderStyle {
     SlashStar("/*", " * ", "", " */", null, "(\\s|\\t)*/\\*.*$", ".*\\*/(\\s|\\t)*$", false, true, false),
 
     /** The header style. */
-    Sharp("###", "# ", "", "###", "^#!.*$", "#.*$", "#.*$", false, false, false),
+    Sharp("###", "# ", "", "###", "^#.*$", "###$", "###$", false, false, false),
 
     /** The header style. */
     XML("<!--", "  ", "", "-->", "^<\\?xml.*>$", "(\\s|\\t)*<!--.*$", ".*-->(\\s|\\t)*$", true, true, false),

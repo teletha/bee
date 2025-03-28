@@ -162,6 +162,21 @@ public class HeaderTypeTest {
     }
 
     @Test
+    public void properties() {
+        source("###");
+        source("# Some");
+        source("###");
+        source("key=value");
+
+        expect("###");
+        expect("# License");
+        expect("###");
+        expect("key=value");
+
+        validateBy(StandardHeaderStyle.Sharp);
+    }
+
+    @Test
     public void html() {
         source("<!--");
         source("  Some");
