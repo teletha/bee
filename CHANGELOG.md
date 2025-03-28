@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.72.0](https://github.com/teletha/bee/compare/0.71.0...0.72.0) (2025-03-27)
+
+
+### Features
+
+* remove java-agent ([9e2235b](https://github.com/teletha/bee/commit/9e2235bd475eef8050b1bea8b73d4c2e5e5756cc))
+* support dynamic inline class loading ([9e946d1](https://github.com/teletha/bee/commit/9e946d11cd8a99d616bc2cf6f4f28de66198af61))
+
 ## [0.71.0](https://github.com/teletha/bee/compare/0.70.0...0.71.0) (2025-03-25)
 
 
