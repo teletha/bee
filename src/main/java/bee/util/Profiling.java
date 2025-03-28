@@ -171,7 +171,7 @@ public class Profiling implements AutoCloseable {
      * This method is somewhat special as it tries to measure time spent even before the
      * application's main logic (and potentially this profiler) is fully operational.
      */
-    public static void calculateJVMStartup() {
+    public static void measureJVMStartup() {
         Instant end = Instant.now();
         Optional<Instant> start = ProcessHandle.current().info().startInstant();
         if (start.isPresent()) {

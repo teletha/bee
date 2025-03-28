@@ -47,7 +47,7 @@ public class BeeInstaller {
             // This process is mainly used by Bee users while install phase.
             if (source.lastModifiedMilli() != dest.lastModifiedMilli()) {
                 // delete old jars
-                Platform.BeeHome.walkFile("bee-*.jar").to(jar -> {
+                Platform.BeeHome.walkFile("bee-*.jar", "bee-*.aot", "bee-*.aotconf").to(jar -> {
                     try {
                         // delete only bee-version-yyyyMMddhhmmss.jar
                         if (jar.base().length() > 18) {
@@ -65,11 +65,11 @@ public class BeeInstaller {
                 // build launcher
                 Platform.Bee.text(String.format(Platform.isWindows() ? """
                         @echo off
-                        %s -cp "%s" bee.Bee %%*
+                        %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -cp "%s" bee.Bee %%*
                         """ : """
                         #!/bin/bash
-                        %s  -cp "%s" bee.Bee "$@"
-                        """, Platform.JavaHome.file("bin/java"), dest, dest));
+                        %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=.%s -cp "%s" bee.Bee "$@"
+                        """, Platform.JavaHome.file("bin/java"), dest + ".aot", dest));
 
                 ui.info("Build launcher [", Platform.Bee, "]");
             }

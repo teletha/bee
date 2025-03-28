@@ -93,6 +93,7 @@ public class Project extends bee.api.Project {
         // REQUIRED
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
+        require("com.github.teletha", "auto483");
         require("org.ow2.asm", "asm");
 
         // DYNAMICALLY ON RUNTIME

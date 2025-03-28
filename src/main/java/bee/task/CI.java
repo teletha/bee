@@ -98,7 +98,7 @@ public interface CI extends Task {
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
                           curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                          java -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
+                          java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
                         fi
 
                     - name: Deploy site
