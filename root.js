@@ -159,20 +159,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "EnhancedClassWriter",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "EnhancedMethodWriter",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Ensure",
 			"packageName": "bee.util",
 			"type": "Class"
@@ -498,13 +484,6 @@ const root = {
 			"name": "Task.ValuedTaskReference",
 			"packageName": "bee",
 			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "TaskCancel",
-			"packageName": "bee",
-			"type": "Exception"
 		},
 		{
 			"modifiers": {
