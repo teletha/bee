@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.74.0](https://github.com/teletha/bee/compare/0.73.0...0.74.0) (2025-03-28)
+
+
+### Features
+
+* enable JEP438 ([31751fb](https://github.com/teletha/bee/commit/31751fb226ddb1d474ae54f82f8a875348962016))
+* enhance profiler ([2949e66](https://github.com/teletha/bee/commit/2949e666c7a6d3de8a124e24c0ace610ebf63c69))
+* installer can remove unused cache files ([dbe379f](https://github.com/teletha/bee/commit/dbe379f4d601b7d4c588b8afd9117e7343568b5a))
+* license task can specify the exclude pattern ([f1cccc8](https://github.com/teletha/bee/commit/f1cccc8eebdcf25692ec9c152916f8ccb939fa98))
+
+
+### Bug Fixes
+
+* help task is broken ([620739a](https://github.com/teletha/bee/commit/620739a181ae09e04219014f819775dc316d7b7d))
+* use JEP438 option if Java is 24 or later ([e8d2332](https://github.com/teletha/bee/commit/e8d233265fa9a46b14debf119df4cd1565fe06ce))
+
 ## [0.73.0](https://github.com/teletha/bee/compare/0.72.0...0.73.0) (2025-03-28)
 
 
