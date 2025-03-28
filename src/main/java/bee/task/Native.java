@@ -21,7 +21,6 @@ import bee.Fail;
 import bee.Isolation;
 import bee.Platform;
 import bee.Task;
-import bee.TaskCancel;
 import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Loader;
@@ -89,7 +88,7 @@ public interface Native extends Task<Native.Config> {
     default File build() {
         Variable<String> main = require(FindMain::main);
         if (main.isAbsent()) {
-            throw new TaskCancel("Main class is not found.");
+            throw new Fail("Main class is not found.");
         }
 
         Config conf = config();

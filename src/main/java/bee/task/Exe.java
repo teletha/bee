@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.jar.Attributes.Name;
 import java.util.jar.Manifest;
 
+import bee.Fail;
 import bee.Platform;
 import bee.Task;
-import bee.TaskCancel;
 import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
@@ -62,7 +62,7 @@ public interface Exe extends Task<Exe.Config> {
         // search main classes
         Variable<String> main = require(FindMain::main);
         if (main.isAbsent()) {
-            throw new TaskCancel("Main class is not found.");
+            throw new Fail("Main class is not found.");
         }
 
         require(Test::test);

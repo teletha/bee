@@ -83,13 +83,11 @@ public class Project extends bee.api.Project {
         require("org.apache.maven.resolver", "maven-resolver-impl", version);
         require("org.apache.maven.resolver", "maven-resolver-connector-basic", version);
         require("org.apache.maven.resolver", "maven-resolver-named-locks", version);
-        // require("org.apache.maven.resolver", "maven-resolver-transport-http");
 
         // LOGGER
         require("org.slf4j", "slf4j-api", "[2.0,)");
         // require("org.slf4j", "slf4j-nop");
         // require("org.slf4j", "jul-to-slf4j");
-        // require("org.slf4j", "jcl-over-slf4j"); for maven-resolver-transport-http
         require("com.github.teletha", "conjure");
 
         // REQUIRED
@@ -100,7 +98,6 @@ public class Project extends bee.api.Project {
         // DYNAMICALLY ON RUNTIME
         require("org.junit.platform", "junit-platform-engine").atProvided();
         require("org.junit.platform", "junit-platform-launcher").atProvided();
-        require("net.bytebuddy", "byte-buddy-agent").atProvided();
         require("com.github.teletha", "javadng").atProvided();
         require("org.eclipse.jgit", "org.eclipse.jgit").atProvided();
         require("org.eclipse.jdt", "ecj").atProvided();

@@ -308,9 +308,6 @@ public class Bee {
         // execute task
         try (var x = Profiling.of("Task [" + fullname + "]")) {
             return command.invoke(task);
-        } catch (TaskCancel e) {
-            ui.warn("The task [", fullname, "] was canceled beacuase ", e.getMessage());
-            return null;
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
