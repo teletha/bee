@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.73.0](https://github.com/teletha/bee/compare/0.72.0...0.73.0) (2025-03-28)
+
+
+### Features
+
+* find-main task returns optional value ([3b57f40](https://github.com/teletha/bee/commit/3b57f407a1d72f34d7da754233b107bd72b37104))
+* remove unused classes ([80e36a2](https://github.com/teletha/bee/commit/80e36a2b64e3c564644f26705efb727679d1c7f4))
+
 ## [0.72.0](https://github.com/teletha/bee/compare/0.71.0...0.72.0) (2025-03-27)
 
 
