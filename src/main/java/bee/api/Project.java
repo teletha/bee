@@ -755,7 +755,7 @@ public class Project {
         if (types.length != 0) {
             return associate((Class<C>) types[0]);
         } else {
-            throw new Error("Task [" + TaskInfo.computeTaskName(task) + "] has no configuration.");
+            throw new Error("Task [" + task.getName() + "] has no configuration.");
         }
     }
 

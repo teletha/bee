@@ -25,7 +25,7 @@ public interface Task<C> extends Extensible {
 
     @Command("Display help message for all commands of this task.")
     default void help() {
-        TaskInfo info = TaskInfo.by(TaskInfo.computeTaskName(getClass()));
+        TaskInfo info = TaskInfo.by(getClass());
 
         for (Entry<String, String> entry : info.descriptions.entrySet()) {
             // display usage description for this command

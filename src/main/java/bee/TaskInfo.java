@@ -116,7 +116,7 @@ public class TaskInfo {
      * @return An instance of the specified task type.
      */
     public static final <T extends Task> T find(Class<T> support) {
-        return (T) by(computeTaskName(support)).create();
+        return (T) by(support).create();
     }
 
     /**
@@ -125,10 +125,7 @@ public class TaskInfo {
      * @param taskClass The task class.
      * @return The computed task name.
      */
-    public static final String computeTaskName(Class taskClass) {
-        if (taskClass.isSynthetic()) {
-            return computeTaskName(taskClass.getSuperclass());
-        }
+    private static final String computeTaskName(Class taskClass) {
         return Inputs.hyphenize(taskClass.getSimpleName());
     }
 
@@ -152,6 +149,10 @@ public class TaskInfo {
         }
     }
 
+    static final TaskInfo by(Class task) {
+        return by(computeTaskName(task));
+    }
+
     /**
      * Finds task information by name.
      * 
@@ -167,7 +168,7 @@ public class TaskInfo {
             if (commons == null || !commons.containsKey(name)) {
                 commons = new TreeMap();
                 for (Class<Task> task : I.findAs(Task.class)) {
-                    String taskName = TaskInfo.computeTaskName(task);
+                    String taskName = computeTaskName(task);
                     TaskInfo info = new TaskInfo(taskName, task);
                     if (!info.descriptions.isEmpty()) {
                         commons.put(taskName, info);
