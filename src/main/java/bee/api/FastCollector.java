@@ -79,7 +79,7 @@ class FastCollector extends DependencyCollectorDelegate {
 
             process(args, dependencies, repositories, selector, manager, traverser, filter, node);
 
-            args.fork.awaitQuiescence(50, TimeUnit.SECONDS);
+            args.fork.awaitQuiescence(60, TimeUnit.SECONDS);
         }
     }
 

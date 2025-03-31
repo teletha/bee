@@ -430,7 +430,7 @@ public class Bee {
         JEP483.enable(Locator.locate(Bee.class) + ".aot");
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"ide", "-c"};
+        if (tasks.length == 0) tasks = new String[] {"dependency", "-c"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.

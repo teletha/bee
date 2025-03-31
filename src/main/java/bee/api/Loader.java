@@ -18,6 +18,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.RepositoryEvent;
@@ -79,8 +80,20 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
     public void transferInitiated(TransferEvent event) {
         boolean download = event.getRequestType() != RequestType.PUT;
         Map<String, Resource> resources = download ? downloading : uploading;
-        resources.put(event.getResource().getResourceName(), new Resource(event));
+
+        Resource resource = new Resource(event);
+        resources.put(resource.id(), resource);
+
+        if (download) {
+            System.out.println("init " + count.incrementAndGet() + "    " + downloading);
+
+            if (count.get() != downloading.size()) {
+                new Error(count.get() + "   " + downloading.size()).printStackTrace();
+            }
+        }
     }
+
+    private AtomicInteger count = new AtomicInteger();
 
     /**
      * {@inheritDoc}
@@ -100,13 +113,28 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
     private void transferProgressed(Resource resource) {
         boolean download = resource.type != RequestType.PUT;
         Map<String, Resource> resources = download ? downloading : uploading;
-        resources.put(resource.name, resource);
+        resources.put(resource.id(), resource);
 
         long now = System.nanoTime();
         if (interval < now - last) {
             last = now; // update last event time
 
             StringBuilder message = new StringBuilder();
+            if (download) {
+                int progress = downloading.size();
+                long pom = downloading.keySet().stream().filter(name -> name.endsWith(".pom")).count();
+                long xml = downloading.keySet().stream().filter(name -> name.endsWith(".xml")).count();
+                long jar = downloading.keySet().stream().filter(name -> name.endsWith(".jar")).count();
+                message.append("Downloading Stats ### Progress: ")
+                        .append(progress)
+                        .append(" POM: ")
+                        .append(pom)
+                        .append("  XML: ")
+                        .append(xml)
+                        .append("  JAR: ")
+                        .append(jar)
+                        .append(" ###");
+            }
             for (Entry<String, Resource> entry : resources.entrySet().stream().limit(5).toList()) {
                 if (!message.isEmpty()) message.append(Platform.EOL);
                 message.append(buildMessage(download ? "Downloading" : "Uploading", entry.getValue(), true));
@@ -126,9 +154,18 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
     private void transferSucceeded(Resource resource) {
         boolean download = resource.type != RequestType.PUT;
         Map<String, Resource> resources = download ? downloading : uploading;
-        resources.remove(resource.name);
+
+        resources.remove(resource.id());
 
         ui.info(buildMessage(download ? "Downloaded" : "Uploaded", resource, false));
+
+        if (download) {
+            System.out.println("success " + count.decrementAndGet() + "  " + resources);
+
+            if (count.get() != downloading.size()) {
+                new Error(count.get() + "   " + downloading.size()).printStackTrace();
+            }
+        }
     }
 
     /**
@@ -138,7 +175,17 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
     public void transferFailed(TransferEvent event) {
         boolean download = event.getRequestType() != RequestType.PUT;
         Map<String, Resource> resources = download ? downloading : uploading;
-        resources.remove(event.getResource().getResourceName());
+
+        Resource resource = new Resource(event);
+        resources.remove(resource.id());
+
+        if (download) {
+            System.out.println("fail " + count.decrementAndGet() + "  " + resources);
+
+            if (count.get() != downloading.size()) {
+                new Error(count.get() + "   " + downloading.size()).printStackTrace();
+            }
+        }
     }
 
     /**
@@ -146,6 +193,7 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
      */
     @Override
     public void transferCorrupted(TransferEvent event) {
+        System.out.println("corrupt " + count.decrementAndGet() + "  ");
         ui.error(event.getException());
     }
 
@@ -190,6 +238,10 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
         Resource(TransferEvent e) {
             this(e.getRequestType(), e.getResource().getResourceName(), e.getResource().getRepositoryId(), e.getResource()
                     .getContentLength(), e.getTransferredBytes());
+        }
+
+        private String id() {
+            return name + "@" + repository;
         }
     }
 

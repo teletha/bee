@@ -236,13 +236,8 @@ public class Repository {
         session.setOffline(BeeOption.Offline.value());
         session.setSystemProperties(System.getProperties());
         session.setConfigProperties(System.getProperties());
-        session.setConfigProperty("maven.artifact.threads", 10);
-        session.setConfigProperty("maven.metadata.threads", 10);
-        session.setConfigProperty("maven.metadataResolver.threads", 10);
+        session.setConfigProperty("maven.artifact.threads", 32);
         session.setConfigProperty("aether.dependencyCollector.impl", "fast");
-        session.setConfigProperty("aether.dependencyCollector.bf.threads", 10);
-        session.setConfigProperty("aether.artifactResolver.threads", 10);
-        session.setConfigProperty("aether.metadataResolver.threads", 10);
 
         // event listener
         Loader transfers = I.make(Loader.class);
