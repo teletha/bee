@@ -161,7 +161,7 @@ class FastTransporter implements TransporterFactory {
                     break;
 
                 default:
-                    I.make(UserInterface.class).warn("CHECKSUM Error ", headers.map());
+                    I.make(UserInterface.class).debug("CHECKSUM is not found in http headers [", task.getLocation(), "]", headers.map().entrySet());
                 }
             }
         };
