@@ -33,8 +33,8 @@ import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
 
 import bee.Bee;
-import bee.Isolation;
 import bee.Fail;
+import bee.Isolation;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
@@ -156,7 +156,7 @@ public interface Test extends Task<Test.Config> {
             }
 
             private void showHeader() {
-                ui().info(String.format("%-4s\t%-4s\t%-4s\t%-4s\t%-4s", "Run", "Fail", "Error", "Skip", "Time(sec)"));
+                ui.info(String.format("%-4s\t%-4s\t%-4s\t%-4s\t%-4s", "Run", "Fail", "Error", "Skip", "Time(sec)"));
             }
 
             /**
@@ -166,7 +166,7 @@ public interface Test extends Task<Test.Config> {
             public synchronized void testPlanExecutionFinished(TestPlan testPlan) {
                 if (shows) showHeader();
 
-                ui().info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " suites)"));
+                ui.info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " suites)"));
                 if (fails.size() != 0 || errors.size() != 0) {
                     Fail fail = new Fail("Test has failed.");
                     // The stack trace created here is useless and should be deleted. (Since it is
@@ -175,7 +175,7 @@ public interface Test extends Task<Test.Config> {
 
                     buildFailure(fail, errors);
                     buildFailure(fail, fails);
-                    ui().error(fail);
+                    ui.error(fail);
                 }
             }
 
@@ -229,9 +229,9 @@ public interface Test extends Task<Test.Config> {
                         String message = buildResult(container.runs, container.failures, container.errors, container.skips, elapsed, name(container.identifier));
 
                         if (show) {
-                            ui().info(message);
+                            ui.info(message);
                         } else {
-                            ui().trace(message);
+                            ui.trace(message);
                         }
                     } else {
                         TestSuite parent = containers.get(identifier.getParentId().get());
