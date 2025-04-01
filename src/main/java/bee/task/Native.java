@@ -189,7 +189,7 @@ public interface Native extends Task<Native.Config> {
 
             // download archive
             File temp = Locator.temporaryFile(url.substring(url.lastIndexOf('/') + 1));
-            Loader.donwload(url, temp);
+            Loader.download(url, temp);
 
             // unpack to local graal holder
             unpack(temp, dest, Option::strip);

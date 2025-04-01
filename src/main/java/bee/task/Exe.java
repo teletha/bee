@@ -12,7 +12,6 @@ package bee.task;
 import static bee.TaskOperations.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +27,7 @@ import bee.Platform;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
+import bee.api.Loader;
 import bee.api.Scope;
 import bee.util.Inputs;
 import bee.util.Process;
@@ -95,42 +95,37 @@ public interface Exe extends Task<Exe.Config> {
         // download and unzip exewrap
         ui().info("Download and extract exewrap binary.");
 
-        I.http("https://dforest.watch.impress.co.jp/library/e/exewrap/11824/exewrap1.6.5.zip", InputStream.class)
-                .map(Locator.temporaryFile("exewrap.zip")::writeFrom)
-                .map(File::unpackToTemporary)
-                .waitForTerminate()
-                .to(dir -> {
-                    Directory temporary = Locator.temporaryDirectory();
+        Directory dir = Loader.download("https://dforest.watch.impress.co.jp/library/e/exewrap/11824/exewrap1.6.5.zip").unpackToTemporary();
+        Directory temporary = Locator.temporaryDirectory();
 
-                    File exewrap = dir.file("exewrap1.6.5/x64/exewrap.exe");
-                    File exe = temporary.file(project().getProduct() + ".exe");
+        File exewrap = dir.file("exewrap1.6.5/x64/exewrap.exe");
+        File exe = temporary.file(project().getProduct() + ".exe");
 
-                    // build command line
-                    List<String> command = new ArrayList();
-                    command.add(exewrap.toString());
-                    command.add("-g");
-                    command.add("-A");
-                    command.add("x64");
-                    command.add("-t");
-                    command.add(Inputs.normalize(project().getJavaRequiredVersion()));
-                    command.add("-j");
-                    command.add(project().locateJar().toString());
-                    command.add("-e");
-                    command.add("IGNORE_UNCAUGHT_EXCEPTION");
-                    command.add("-o");
-                    command.add(exe.absolutize().toString());
-                    if (conf.icon != null && Files.isRegularFile(conf.icon) && conf.icon.toString().endsWith(".ico")) {
-                        command.add("-i");
-                        command.add(conf.icon.toString());
-                    }
+        // build command line
+        List<String> command = new ArrayList();
+        command.add(exewrap.toString());
+        command.add("-g");
+        command.add("-A");
+        command.add("x64");
+        command.add("-t");
+        command.add(Inputs.normalize(project().getJavaRequiredVersion()));
+        command.add("-j");
+        command.add(project().locateJar().toString());
+        command.add("-e");
+        command.add("IGNORE_UNCAUGHT_EXCEPTION");
+        command.add("-o");
+        command.add(exe.absolutize().toString());
+        if (conf.icon != null && Files.isRegularFile(conf.icon) && conf.icon.toString().endsWith(".ico")) {
+            command.add("-i");
+            command.add(conf.icon.toString());
+        }
 
-                    // execute exewrap
-                    Process.with().workingDirectory(exewrap.parent()).ignoreOutput().run(command);
-                    ui().info("Write " + exe.name() + ".");
+        // execute exewrap
+        Process.with().workingDirectory(exewrap.parent()).ignoreOutput().run(command);
+        ui().info("Write " + exe.name() + ".");
 
-                    // pack
-                    folder.add(exe);
-                });
+        // pack
+        folder.add(exe);
 
         folder.add(project().locateJar(), o -> o.allocateIn("lib"));
         for (Library library : project().getDependency(Scope.Runtime)) {
@@ -141,14 +136,14 @@ public interface Exe extends Task<Exe.Config> {
         if (conf.useCustomJRE) {
             Directory jre = Locator.temporaryDirectory("jre");
 
-            List<String> command = new ArrayList();
-            command.add("jlink");
-            command.add("--add-modules");
-            command.add(String.join(",", require(Dependency::module)));
-            command.add("--output");
-            command.add(jre.toString());
-            command.add("--strip-native-commands");
-            Process.with().run(command);
+            List<String> commandForJRE = new ArrayList();
+            commandForJRE.add("jlink");
+            commandForJRE.add("--add-modules");
+            commandForJRE.add(String.join(",", require(Dependency::module)));
+            commandForJRE.add("--output");
+            commandForJRE.add(jre.toString());
+            commandForJRE.add("--strip-native-commands");
+            Process.with().run(commandForJRE);
 
             // copy java.exe
             Platform.JavaHome.file("bin/java.exe").copyTo(jre.directory("bin"));

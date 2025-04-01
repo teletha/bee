@@ -283,7 +283,7 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
      */
     public static File download(String uri) {
         File temp = Locator.temporaryFile();
-        donwload(uri, temp);
+        download(uri, temp);
         return temp;
     }
 
@@ -302,7 +302,7 @@ public class Loader extends AbstractRepositoryListener implements TransferListen
      * @throws RuntimeException wrapping any exceptions that occur during download (e.g., HTTP
      *             errors, I/O errors).
      */
-    public static void donwload(String uri, File file) {
+    public static void download(String uri, File file) {
         I.http(uri, HttpResponse.class).waitForTerminate().to((WiseConsumer<HttpResponse>) res -> {
             String host = URI.create(uri).getHost();
 
