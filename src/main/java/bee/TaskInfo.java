@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import bee.Task.TaskReference;
 import bee.api.Command;
@@ -36,32 +36,31 @@ import kiss.Model;
 public class TaskInfo {
 
     /** The common task repository. */
-    private static Map<String, TaskInfo> commons;
+    private static final Map<String, TaskInfo> commons = new ConcurrentSkipListMap();
 
     /** The task name. */
     private final String name;
 
     /** The task definition. */
-    private final Class<Task> task;
+    private final Class<? extends Task> task;
 
     /** The default command name. */
     String defaultCommnad = "help";
 
     /** The actual commands. */
-    final Map<String, Method> commands = new TreeMap();
+    final Map<String, Method> commands = new ConcurrentSkipListMap();
 
     /** The command descriptions. */
-    final Map<String, String> descriptions = new TreeMap();
+    final Map<String, String> descriptions = new ConcurrentSkipListMap();
 
     /**
      * Constructs a TaskInfo instance for the specified task.
      * 
-     * @param name The name of the task.
      * @param task The class representing the task.
      */
-    TaskInfo(String name, Class<Task> task) {
+    TaskInfo(Class<? extends Task> task) {
         try {
-            this.name = name;
+            this.name = computeTaskName(task);
             this.task = task;
 
             for (Entry<Method, List<Annotation>> info : Model.collectAnnotatedMethods(task).entrySet()) {
@@ -164,15 +163,11 @@ public class TaskInfo {
             throw new Error("You must specify task name.");
         }
 
-        synchronized (Task.class) {
-            if (commons == null || !commons.containsKey(name)) {
-                commons = new TreeMap();
-                for (Class<Task> task : I.findAs(Task.class)) {
-                    String taskName = computeTaskName(task);
-                    TaskInfo info = new TaskInfo(taskName, task);
-                    if (!info.descriptions.isEmpty()) {
-                        commons.put(taskName, info);
-                    }
+        if (!commons.containsKey(name)) {
+            for (Class<Task> task : I.findAs(Task.class)) {
+                TaskInfo info = new TaskInfo(task);
+                if (!info.commands.isEmpty()) {
+                    commons.put(info.name, info);
                 }
             }
         }
@@ -203,18 +198,20 @@ public class TaskInfo {
      * @return The created task instance.
      */
     Task create() {
-        return (Task) Proxy.newProxyInstance(Thread.currentThread()
-                .getContextClassLoader(), new Class[] {task}, new Interceptor(task, commands.keySet()));
+        return I.make(task, new Interceptor(name, task, commands.keySet()));
     }
 
     @SuppressWarnings("serial")
     private static class Interceptor implements InvocationHandler, Serializable {
 
+        private final String name;
+
         private final Class task;
 
         private final transient Set<String> commands;
 
-        private Interceptor(Class task, Set<String> commands) {
+        private Interceptor(String name, Class task, Set<String> commands) {
+            this.name = name;
             this.task = task;
             this.commands = commands;
         }
@@ -243,6 +240,31 @@ public class TaskInfo {
                 }
                 return result;
             } else {
+                if (method.getDeclaringClass() == Object.class) {
+                    String name = method.getName();
+                    if (name.equals("toString")) {
+                        return "Task [" + this.name + "]";
+                    } else if (name.equals("hashCode")) {
+                        return name.hashCode();
+                    } else if (name.equals("equals")) {
+                        Object other = args[0];
+                        if (other == object) return true;
+                        if (other == null || !Proxy.isProxyClass(other.getClass())) return false;
+                        InvocationHandler otherHandler = Proxy.getInvocationHandler(other);
+                        if (otherHandler instanceof Interceptor) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+
+                    }
+                } else {
+                    return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args);
+                }
+                System.out.println(method);
+                System.out.println(MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args));
+                System.out.println("OK");
                 return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args);
             }
         }

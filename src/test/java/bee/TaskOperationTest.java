@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import psychopath.File;
 
-class TaskOperationTest extends TaskTestBase {
+class TaskOperationTest extends AbstractTaskTest {
 
     @Test
     void makeFile() {

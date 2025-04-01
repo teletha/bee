@@ -23,11 +23,11 @@ import javax.lang.model.element.TypeElement;
 
 import org.junit.jupiter.api.Test;
 
-import bee.TaskTestBase;
+import bee.AbstractTaskTest;
 import bee.sample.Interface;
 import bee.util.JavaCompiler;
 
-class AnnotationProcessorTest extends TaskTestBase {
+class AnnotationProcessorTest extends AbstractTaskTest {
 
     @Test
     void byClass() throws Exception {

@@ -15,10 +15,10 @@ import java.nio.file.Path;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import bee.TaskTestBase;
+import bee.AbstractTaskTest;
 import psychopath.File;
 
-public class CompileTest extends TaskTestBase {
+public class CompileTest extends AbstractTaskTest {
 
     @Test
     public void compileMainSource() throws Exception {

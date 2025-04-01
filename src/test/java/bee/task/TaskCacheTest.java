@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test;
 import antibug.powerassert.PowerAssertOff;
 import bee.Task;
 import bee.TaskInfo;
-import bee.TaskTestBase;
+import bee.AbstractTaskTest;
 import bee.api.Command;
 import kiss.I;
 
-class TaskCacheTest extends TaskTestBase {
+class TaskCacheTest extends AbstractTaskTest {
 
     static {
         I.load(TaskCacheTest.class);

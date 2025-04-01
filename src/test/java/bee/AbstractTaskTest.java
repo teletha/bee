@@ -11,23 +11,14 @@ package bee;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import kiss.I;
 import psychopath.File;
 
-public abstract class TaskTestBase extends TaskOperations {
+public abstract class AbstractTaskTest extends TaskOperations {
 
-    /** The base project. */
-    protected BlinkProject project;
-
-    /** The NoOP task. */
-    protected Task noop;
+    protected final BlinkProject project = new BlinkProject();
 
     @BeforeEach
     public void before() {
-        project = I.make(BlinkProject.class);
-        noop = new NoOPTask() {
-        };
-
         LifestyleForProject.local.set(project);
     }
 
@@ -39,11 +30,5 @@ public abstract class TaskTestBase extends TaskOperations {
      */
     protected final File locateFile(String path) {
         return project.getRoot().file(path);
-    }
-
-    /**
-     * No-Operation Task.
-     */
-    interface NoOPTask extends Task {
     }
 }

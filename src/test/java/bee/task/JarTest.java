@@ -12,11 +12,11 @@ package bee.task;
 import org.junit.jupiter.api.Test;
 
 import bee.TaskOperations;
-import bee.TaskTestBase;
+import bee.AbstractTaskTest;
 import psychopath.Directory;
 import psychopath.File;
 
-class JarTest extends TaskTestBase {
+class JarTest extends AbstractTaskTest {
 
     @Test
     void jarMainSource() {

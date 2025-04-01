@@ -18,7 +18,7 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.Test;
 
-import bee.TaskTestBase;
+import bee.AbstractTaskTest;
 import bee.sample.Bean;
 import bee.sample.Enum;
 import bee.sample.ExtendBean;
@@ -30,7 +30,7 @@ import kiss.I;
 import kiss.Model;
 import psychopath.File;
 
-class AnnotationValidatorTest extends TaskTestBase {
+class AnnotationValidatorTest extends AbstractTaskTest {
 
     @Test
     void classNameForClass() throws Exception {
