@@ -16,11 +16,14 @@ import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 import bee.Task.TaskReference;
@@ -29,20 +32,24 @@ import bee.api.Project;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Model;
+import psychopath.Location;
+import psychopath.Locator;
 
 /**
  * Represents information about a task, including its name, commands, and descriptions.
  */
 public class TaskInfo {
 
+    private static final Map<Class, TaskInfo> types = new ConcurrentHashMap();
+
     /** The common task repository. */
-    private static final Map<String, TaskInfo> commons = new ConcurrentSkipListMap();
+    private static final Map<String, List<TaskInfo>> names = new ConcurrentSkipListMap();
 
     /** The task name. */
-    private final String name;
+    final String name;
 
     /** The task definition. */
-    private final Class<? extends Task> task;
+    final Class<? extends Task> task;
 
     /** The default command name. */
     String defaultCommnad = "help";
@@ -148,19 +155,31 @@ public class TaskInfo {
         }
     }
 
-    static final TaskInfo by(Class task) {
-        if (Proxy.isProxyClass(task)) {
-            Set<Class> types = Model.collectTypes(task);
-            types.remove(task);
-            types.remove(Task.class);
-            types.removeIf(type -> !Task.class.isAssignableFrom(type));
+    static TaskInfo by(Class task) {
+        // validate task type
+        Objects.requireNonNull(task);
 
-            if (types.size() != 1) {
-                throw new Fail(task + " is ivalid task.");
-            }
-            task = types.iterator().next();
+        if (!Task.class.isAssignableFrom(task)) {
+            throw new Fail(task + " must implement task interface.");
         }
-        return by(computeTaskName(task));
+
+        if (Proxy.isProxyClass(task)) {
+            return by(Model.collectTypes(task)
+                    .stream()
+                    .filter(type -> type != task && type != Task.class && Task.class.isAssignableFrom(type))
+                    .findFirst()
+                    .orElseThrow(() -> new Fail(task + " must implement single task.")));
+        }
+
+        // search task by type
+        TaskInfo info = types.get(task);
+        if (info == null) {
+            register();
+            info = types.get(task);
+        }
+
+        // API definition
+        return info;
     }
 
     /**
@@ -169,38 +188,73 @@ public class TaskInfo {
      * @param name The task name.
      * @return The corresponding TaskInfo instance.
      */
-    static final TaskInfo by(String name) {
-        if (name == null) {
-            throw new Error("You must specify task name.");
+    static TaskInfo by(String name) {
+        if (name == null || name.isBlank()) {
+            throw new Fail("Specify task name.");
         }
 
-        if (!commons.containsKey(name)) {
-            for (Class<Task> task : I.findAs(Task.class)) {
-                TaskInfo info = new TaskInfo(task);
-                if (!info.commands.isEmpty()) {
-                    commons.put(info.name, info);
-                }
-            }
+        if (!names.containsKey(name)) {
+            register();
         }
 
-        // search from common tasks
-        TaskInfo info = commons.get(name);
+        // search task by name
+        List<TaskInfo> infomation = names.get(name);
 
-        if (info == null) {
+        if (infomation == null) {
             // Search for tasks with similar names for possible misspellings.
-            String recommend = Inputs.recommend(name, commons.keySet());
+            String recommend = Inputs.recommend(name, names.keySet());
             if (recommend == null) {
                 Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
-                for (TaskInfo i : commons.values()) {
-                    failure.solve(i);
+                for (List<TaskInfo> list : names.values()) {
+                    failure.solve(list.get(0));
                 }
                 throw failure;
             }
-            info = commons.get(recommend);
+            infomation = names.get(recommend);
+        }
+
+        if (infomation.size() != 1) {
+            // Since there are multiple tasks registered with this name, select them according to
+            // their priority. First, the task defined in the Project currently being processed is
+            // selected as the highest priority.
+            Project currentProject = TaskOperations.project();
+            Class currentProjectClass = currentProject.getClass();
+            for (TaskInfo info : infomation) {
+                if (info.task.getEnclosingClass() == currentProjectClass) {
+                    return info;
+                }
+            }
+
+            // Next, select a task that belongs to the same package as the current processing
+            // project.
+            Package currentProjectPackage = currentProjectClass.getPackage();
+            for (TaskInfo info : infomation) {
+                if (info.task.getPackage().equals(currentProjectPackage)) {
+                    return info;
+                }
+            }
+
+            // Finally, select a task that has the same origin as the current processing project.
+            Location currentProjectLocation = Locator.locate(currentProjectClass);
+            for (TaskInfo info : infomation) {
+                if (Locator.locate(info.task).equals(currentProjectLocation)) {
+                    return info;
+                }
+            }
         }
 
         // API definition
-        return info;
+        return infomation.getLast();
+    }
+
+    private static void register() {
+        for (Class<Task> type : I.findAs(Task.class)) {
+            TaskInfo info = new TaskInfo(type);
+            if (!info.commands.isEmpty()) {
+                types.put(type, info);
+                names.computeIfAbsent(info.name, key -> new ArrayList()).add(info);
+            }
+        }
     }
 
     /**

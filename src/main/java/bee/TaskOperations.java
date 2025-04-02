@@ -42,7 +42,7 @@ public class TaskOperations {
      * @return
      */
     public static final Project project() {
-        return I.make(Project.class);
+        return LifestyleForProject.local.get();
     }
 
     /**
@@ -51,7 +51,7 @@ public class TaskOperations {
      * @return
      */
     public static final UserInterface ui() {
-        return I.make(UserInterface.class);
+        return LifestyleForUI.local.get();
     }
 
     /**

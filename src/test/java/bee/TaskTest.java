@@ -24,26 +24,26 @@ public class TaskTest extends AbstractTaskTest {
 
     @Test
     void taskIsProxy() {
-        interface Some extends Task {
+        interface A extends Task {
             @Command("")
             default void some() {
             }
         }
 
-        Some task = TaskInfo.find(Some.class);
+        A task = TaskInfo.find(A.class);
         assert Proxy.isProxyClass(task.getClass());
     }
 
     @Test
     void proxyToString() {
-        interface Some extends Task {
+        interface A extends Task {
             @Command("")
             default void some() {
             }
         }
 
-        Some task = TaskInfo.find(Some.class);
-        assert task.toString().equals("some");
+        A task = TaskInfo.find(A.class);
+        assert task.toString().equals("Task [a]");
         assert Proxy.isProxyClass(task.getClass());
     }
 
@@ -55,4 +55,5 @@ public class TaskTest extends AbstractTaskTest {
         Empty task = TaskInfo.find(Empty.class);
         assert Proxy.isProxyClass(task.getClass());
     }
+
 }
