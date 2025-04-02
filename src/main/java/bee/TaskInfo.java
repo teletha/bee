@@ -149,6 +149,17 @@ public class TaskInfo {
     }
 
     static final TaskInfo by(Class task) {
+        if (Proxy.isProxyClass(task)) {
+            Set<Class> types = Model.collectTypes(task);
+            types.remove(task);
+            types.remove(Task.class);
+            types.removeIf(type -> !Task.class.isAssignableFrom(type));
+
+            if (types.size() != 1) {
+                throw new Fail(task + " is ivalid task.");
+            }
+            task = types.iterator().next();
+        }
         return by(computeTaskName(task));
     }
 
@@ -198,20 +209,17 @@ public class TaskInfo {
      * @return The created task instance.
      */
     Task create() {
-        return I.make(task, new Interceptor(name, task, commands.keySet()));
+        return I.make(task, new Interceptor(task, commands.keySet()));
     }
 
     @SuppressWarnings("serial")
     private static class Interceptor implements InvocationHandler, Serializable {
 
-        private final String name;
-
         private final Class task;
 
         private final transient Set<String> commands;
 
-        private Interceptor(String name, Class task, Set<String> commands) {
-            this.name = name;
+        private Interceptor(Class task, Set<String> commands) {
             this.task = task;
             this.commands = commands;
         }
@@ -243,7 +251,7 @@ public class TaskInfo {
                 if (method.getDeclaringClass() == Object.class) {
                     String name = method.getName();
                     if (name.equals("toString")) {
-                        return "Task [" + this.name + "]";
+                        return "Task [" + computeTaskName(task) + "]";
                     } else if (name.equals("hashCode")) {
                         return name.hashCode();
                     } else if (name.equals("equals")) {
@@ -256,15 +264,8 @@ public class TaskInfo {
                         } else {
                             return false;
                         }
-                    } else {
-
                     }
-                } else {
-                    return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args);
                 }
-                System.out.println(method);
-                System.out.println(MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args));
-                System.out.println("OK");
                 return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(object).invokeWithArguments(args);
             }
         }
