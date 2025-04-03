@@ -28,7 +28,7 @@ public class AutomaticProjectAware {
 
         for (Class project : I.findAs(AutoProject.class)) {
             if (method.equals(project.getEnclosingMethod())) {
-                LifestyleForProject.local.set((Project) I.make(project));
+                LifestyleForProject.local.set((bee.api.Project) I.make(project));
             }
         }
 
