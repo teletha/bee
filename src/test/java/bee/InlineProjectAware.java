@@ -12,13 +12,19 @@ package bee;
 import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 
 import kiss.Extensible;
 import kiss.I;
 
-public class AutomaticProjectAware {
+public class InlineProjectAware {
+
+    @BeforeAll
+    static void setup() {
+        I.load(InlineProjectAware.class);
+    }
 
     private UserInterface ui;
 
@@ -26,7 +32,7 @@ public class AutomaticProjectAware {
     void setup(TestInfo info) {
         Method method = info.getTestMethod().get();
 
-        for (Class project : I.findAs(AutoProject.class)) {
+        for (Class project : I.findAs(InlineProject.class)) {
             if (method.equals(project.getEnclosingMethod())) {
                 LifestyleForProject.local.set((bee.api.Project) I.make(project));
             }
@@ -46,6 +52,6 @@ public class AutomaticProjectAware {
     /**
      * Your defined project will be detected automatically.
      */
-    protected static abstract class AutoProject extends bee.api.Project implements Extensible {
+    protected static abstract class InlineProject extends bee.api.Project implements Extensible {
     }
 }

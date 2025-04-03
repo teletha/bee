@@ -229,7 +229,7 @@ public class TaskInfo {
             // project.
             Package currentProjectPackage = currentProjectClass.getPackage();
             for (TaskInfo info : infomation) {
-                if (info.task.getPackage().equals(currentProjectPackage)) {
+                if (!info.task.isMemberClass() && info.task.getPackage().equals(currentProjectPackage)) {
                     return info;
                 }
             }
@@ -237,7 +237,7 @@ public class TaskInfo {
             // Finally, select a task that has the same origin as the current processing project.
             Location currentProjectLocation = Locator.locate(currentProjectClass);
             for (TaskInfo info : infomation) {
-                if (Locator.locate(info.task).equals(currentProjectLocation)) {
+                if (!info.task.isMemberClass() && Locator.locate(info.task).equals(currentProjectLocation)) {
                     return info;
                 }
             }
@@ -247,12 +247,14 @@ public class TaskInfo {
         return infomation.getLast();
     }
 
-    private static void register() {
+    private static synchronized void register() {
         for (Class<Task> type : I.findAs(Task.class)) {
-            TaskInfo info = new TaskInfo(type);
-            if (!info.commands.isEmpty()) {
-                types.put(type, info);
-                names.computeIfAbsent(info.name, key -> new ArrayList()).add(info);
+            if (!types.containsKey(type)) {
+                TaskInfo info = new TaskInfo(type);
+                if (!info.commands.isEmpty()) {
+                    types.put(type, info);
+                    names.computeIfAbsent(info.name, key -> new ArrayList()).add(info);
+                }
             }
         }
     }
@@ -307,7 +309,7 @@ public class TaskInfo {
                     if (name.equals("toString")) {
                         return "Task [" + computeTaskName(task) + "]";
                     } else if (name.equals("hashCode")) {
-                        return name.hashCode();
+                        return System.identityHashCode(object);
                     } else if (name.equals("equals")) {
                         Object other = args[0];
                         if (other == object) return true;
