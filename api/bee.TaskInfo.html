@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="f">
-		<header class="g" date="2025-03-28" ver="0.74.0">
-			<h1 class="d"><code>Bee</code></h1>
-			<nav class="Y"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="Q">
+		<header class="R" date="2025-03-28" ver="0.74.0">
+			<h1 class="g"><code>Bee</code></h1>
+			<nav class="K"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,60 +35,69 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="l"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="h"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="h"></nav>
-		<article class="O" id="Article">
-			<section class="e"><code class="I">bee</code>
-				<h2 class="Class S"><code class="V">TaskInfo</code></h2>
-				<div class="U"></div><span class="B"><p>Represents metadata about a task, including its computed name, defining class,
+		<nav class="P"></nav>
+		<article class="S" id="Article">
+			<section class="d"><code class="f">bee</code>
+				<h2 class="Class k"><code class="V">TaskInfo</code></h2>
+				<div class="l"></div><span class="B"><p>Represents metadata about a task, including its computed name, defining class,
 available commands, and command descriptions. This class provides static methods
 to find and manage task information.</p></span></section>
-			<section class="e" id="toString()">
-				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="V">toString</code><code class="L">()</code><i class="n"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="Q">
-					<tr class="j">
+			<section class="d" id="toString()">
+				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="V">toString</code><code class="L">()</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="n">
+					<tr class="c">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td><span><p>A formatted string (e.g., &#38;quot;compile \tCompile source files&#38;quot;).</p></span></td>
 					</tr>
 				</table><span class="B"><p>Returns a simple string representation of this task, typically used for listing available
 tasks. It includes the task name and the description of its default command.</p></span></section>
-			<section class="e" id="find(java.lang.Class)">
-				<h2 class="q"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="V">find</code><code class="L">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">support</code>)</code><i class="n"><code>T</code></i></h2>
-				<table class="Q">
-					<tr class="W">
+			<section class="d" id="find(java.lang.Class)">
+				<h2 class="I"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="V">find</code><code class="L">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">support</code>)</code><i class="N"><code>T</code></i></h2>
+				<table class="n">
+					<tr class="r">
 						<td><code>T</code><code class="extends"><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></code></td>
 						<td><span><p>The type of the task.</p></span></td>
 					</tr>
-					<tr class="Z">
+					<tr class="i">
 						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">support</code></td>
 						<td><span><p>The class type of the task to find.</p></span></td>
 					</tr>
-					<tr class="j">
+					<tr class="c">
 						<td><code>T</code></td>
 						<td><span><p>An executable (potentially proxy) instance of the specified task type.</p></span></td>
 					</tr>
 				</table><span class="B"><p>Finds and returns an executable instance of the specified task type.
 This method retrieves the <code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html">TaskInfo</a></code> for the class and creates a proxy task.</p></span></section>
+			<section class="d" id="list()">
+				<h2 class="I"><i class="PUBLIC STATIC"></i><code class="V">list</code><code class="L">()</code><i class="N"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html">TaskInfo</a></code></code></code></i></h2>
+				<table class="n">
+					<tr class="c">
+						<td><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html">TaskInfo</a></code></code></code></td>
+						<td></td>
+					</tr>
+				</table><span class="B"><p>List up all tasks.</p></span></section>
 		</article>
-		<aside class="i">
-			<div class="p">
-				<h5 class="J">Static Methods</h5>
+		<aside class="T">
+			<div class="b">
+				<h5 class="j">Static Methods</h5>
 				<ul>
-					<li class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.TaskInfo.html#find(java.lang.Class)">find</a></code><code class="L">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">support</code>)</code><i class="M"><code>T</code></i></li>
+					<li class="J"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.TaskInfo.html#find(java.lang.Class)">find</a></code><code class="L">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">support</code>)</code><i class="q"><code>T</code></i></li>
+					<li class="J"><i class="PUBLIC STATIC"></i><code><a href="api/bee.TaskInfo.html#list()">list</a></code><code class="L">()</code><i class="q"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html">TaskInfo</a></code></code></code></i></li>
 				</ul>
-				<h5 class="J">Methods</h5>
+				<h5 class="j">Methods</h5>
 				<ul>
-					<li class="R"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.TaskInfo.html#toString()">toString</a></code><code class="L">()</code><i class="M"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="J"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.TaskInfo.html#toString()">toString</a></code><code class="L">()</code><i class="q"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="m"/>
+		<footer class="p"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
