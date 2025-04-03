@@ -11,8 +11,6 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Locale;
 
 import bee.Bee;
@@ -20,51 +18,46 @@ import bee.BeeOption;
 import bee.Platform;
 import bee.Task;
 import bee.TaskInfo;
+import bee.UserInterface;
 import bee.api.Command;
-import kiss.I;
 import psychopath.Locator;
 
 public interface Help extends Task {
 
     @Command(defaults = true, value = "Display all tasks.")
     default void task() {
-        ui().info("The available tasks are listed below. If you want to know more about each task, please run [YourTaskName:help].");
+        UserInterface ui = ui();
 
-        try {
-            ui().info(TaskInfo.list());
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
+        ui.info("The available tasks are listed below. If you want to know more about each task, please run [YourTaskName:help].");
+        ui.info(TaskInfo.list());
     }
 
     @Command("Display all options.")
     default void option() {
-        ui().info("The available options are listed below.");
+        UserInterface ui = ui();
 
-        try {
-            Field field = BeeOption.class.getDeclaredField("options");
-            field.setAccessible(true);
-            List options = (List) field.get(null);
-            ui().info(options);
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
+        ui.info("The available options are listed below.");
+        ui.info(BeeOption.AVAILABLES);
     }
 
     @Command("Display Bee runtime environment.")
     default void version() {
-        ui().info("Bee   \t", Bee.API.getVersion(), " [", Locator.locate(Bee.class), "]");
-        ui().info("Java  \t", System.getProperty("java.vendor"), " ", Runtime.version(), "@", System
+        UserInterface ui = ui();
+
+        ui.info("Bee   \t", Bee.API.getVersion(), " [", Locator.locate(Bee.class), "]");
+        ui.info("Java  \t", System.getProperty("java.vendor"), " ", Runtime.version(), "@", System
                 .getProperty("java.class.version"), " [", Platform.Java, "]");
-        ui().info("OS     \t", Platform.OSName, " ", Platform.OSArch, " ", Platform.OSVersion);
-        ui().info("Locale \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
-        ui().info("Charset\t", Platform.Encoding.displayName(Locale.ENGLISH));
+        ui.info("OS     \t", Platform.OSName, " ", Platform.OSArch, " ", Platform.OSVersion);
+        ui.info("Locale \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
+        ui.info("Charset\t", Platform.Encoding.displayName(Locale.ENGLISH));
     }
 
     @Command("Show welcome message.")
     default void welcome() {
-        ui().title("Welcome to Bee!");
-        ui().info("""
+        UserInterface ui = ui();
+
+        ui.title("Welcome to Bee!");
+        ui.info("""
                 Thank you for installing Bee. We're excited to have you on board!
                 Here’s what you can do next:
 

@@ -23,6 +23,7 @@ public class InlineProjectAware {
 
     @BeforeAll
     static void setup() {
+        I.load(Bee.class);
         I.load(InlineProjectAware.class);
     }
 

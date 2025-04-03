@@ -131,7 +131,7 @@ public class TaskInfo {
      */
     @Override
     public String toString() {
-        return String.format("%-8s \t%s", name, descriptions.get(defaultCommnad));
+        return String.format("%-12s \t%s", name, descriptions.get(defaultCommnad));
     }
 
     /**

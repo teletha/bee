@@ -59,7 +59,7 @@ public class BeeOption<T> {
     public static final BeeOption<Boolean> Version = new BeeOption("version", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false, 0);
 
     /** The list of builtin options. */
-    static final List<BeeOption> options = List.of(Cacheless, Debug, Input, Root, Skip, Help, Offline, Profiling, Quiet, Version);
+    public static final List<BeeOption> AVAILABLES = List.of(Cacheless, Debug, Input, Root, Skip, Help, Offline, Profiling, Quiet, Version);
 
     /** The name. */
     private final String name;
@@ -181,7 +181,7 @@ public class BeeOption<T> {
     private static int register(String name, String[] args, int index) {
         int skip = 0;
 
-        for (BeeOption o : options) {
+        for (BeeOption o : AVAILABLES) {
             if (o.name.equals(name) || o.shortName.equals(name) || o.aliases.contains(name)) {
                 if (o.paramSize == 0) {
                     o.value = true;

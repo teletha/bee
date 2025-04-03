@@ -23,6 +23,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -498,6 +499,11 @@ public abstract class UserInterface {
                     builder.append((CharSequence) message);
                 } else if (Iterable.class.isAssignableFrom(type)) {
                     buildItems(builder, (Iterable) message);
+                } else if (Map.class.isAssignableFrom(type)) {
+                    buildItems(builder, ((Map<?, ?>) message).entrySet()
+                            .stream()
+                            .map(entry -> String.format("%-12s \t%s", entry.getKey(), entry.getValue()))
+                            .toList());
                 } else {
                     builder.append(I.transform(message, String.class));
                 }

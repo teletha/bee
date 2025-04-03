@@ -13,7 +13,6 @@ import static bee.TaskOperations.*;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -25,12 +24,11 @@ public interface Task<C> extends Extensible {
 
     @Command("Display help message for all commands of this task.")
     default void help() {
+        UserInterface ui = ui();
         TaskInfo info = TaskInfo.by(getClass());
 
-        for (Entry<String, String> entry : info.descriptions.entrySet()) {
-            // display usage description for this command
-            ui().info(entry.getKey(), " - ", entry.getValue());
-        }
+        ui.info("Task [", info.name, "] has the following commands :");
+        ui.info(info.descriptions);
     }
 
     /**

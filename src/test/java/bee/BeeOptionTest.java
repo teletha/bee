@@ -22,7 +22,7 @@ class BeeOptionTest {
 
     @BeforeEach
     void clean() {
-        for (BeeOption o : BeeOption.options) {
+        for (BeeOption o : BeeOption.AVAILABLES) {
             o.value = o.defaultValue;
         }
     }
