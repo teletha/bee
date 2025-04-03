@@ -269,7 +269,11 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
+    @SuppressWarnings("unused")
     void byNameInSamePackage() {
+        class Project extends InlineProject {
+        };
+
         TaskInfo info = TaskInfo.by("by-name");
         assert info != null;
         assert info.name.equals("by-name");
@@ -281,7 +285,11 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
+    @SuppressWarnings("unused")
     void byNameInOtherPackage() {
+        class Project extends InlineProject {
+        };
+
         TaskInfo info = TaskInfo.by("by-name-external");
         assert info != null;
         assert info.name.equals("by-name-external");
