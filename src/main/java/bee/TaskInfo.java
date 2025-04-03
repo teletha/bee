@@ -147,6 +147,15 @@ public class TaskInfo {
     }
 
     /**
+     * List up all tasks.
+     * 
+     * @return
+     */
+    public static List<TaskInfo> list() {
+        return names.values().stream().map(List::getLast).toList();
+    }
+
+    /**
      * Computes a standardized, hyphenated task name from a task class name.
      * For example, {@code CompileTask.class} would likely become {@code "compile-task"}.
      *
@@ -313,7 +322,7 @@ public class TaskInfo {
      */
     private static synchronized void register() {
         for (Class<Task> type : I.findAs(Task.class)) {
-            if (!types.containsKey(type)) {
+            if (!types.containsKey(type) && type != Task.class) {
                 TaskInfo info = new TaskInfo(type);
                 if (!info.commands.isEmpty()) {
                     types.put(type, info);

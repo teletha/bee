@@ -14,7 +14,6 @@ import static bee.TaskOperations.*;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import bee.Bee;
 import bee.BeeOption;
@@ -32,10 +31,7 @@ public interface Help extends Task {
         ui().info("The available tasks are listed below. If you want to know more about each task, please run [YourTaskName:help].");
 
         try {
-            Field field = TaskInfo.class.getDeclaredField("commons");
-            field.setAccessible(true);
-            Map tasks = (Map) field.get(null);
-            ui().info(List.copyOf(tasks.values()));
+            ui().info(TaskInfo.list());
         } catch (Exception e) {
             throw I.quiet(e);
         }
