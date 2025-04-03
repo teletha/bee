@@ -9,12 +9,15 @@
  */
 package bee;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.lang.reflect.Proxy;
 
 import org.junit.jupiter.api.Test;
 
 import bee.api.Command;
 import bee.task.sample.ByNameExternal;
+import kiss.I;
 
 class TaskInfoTest extends InlineProjectAware {
 
@@ -43,7 +46,7 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
-    void defaultCommnad() {
+    void defaultCommandSingle() {
         interface A extends Task {
             @Command("")
             default void command() {
@@ -55,7 +58,7 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
-    void defaultCommnadWithSpecified() {
+    void defaultCommandSpecified() {
         interface A extends Task {
             @Command("")
             default void command1() {
@@ -71,7 +74,7 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
-    void defaultCommnadWithoutSpecified() {
+    void defaultCommandUnspecifiedMultiple() {
         interface A extends Task {
             @Command("")
             default void command1() {
@@ -87,7 +90,23 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
-    void commands() {
+    void defaultCommandSameAsTaskName() {
+        interface MyTask extends Task {
+            @Command("")
+            default void otherCommand() {
+            }
+
+            @Command("")
+            default void myTask() {
+            }
+        }
+        TaskInfo info = TaskInfo.by(MyTask.class);
+        assert info.name.equals("my-task");
+        assert info.defaultCommnad.equals("my-task");
+    }
+
+    @Test
+    void commandsDiscovery() {
         interface A extends Task {
             @Command("")
             default void command1() {
@@ -106,7 +125,7 @@ class TaskInfoTest extends InlineProjectAware {
 
     @Test
     @SuppressWarnings("unused")
-    void commandNeedAnnotaion() {
+    void commandRequiresAnnotation() {
         interface A extends Task {
             @Command("")
             default void command1() {
@@ -123,59 +142,53 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
-    @SuppressWarnings("unused")
-    void commandFromParentTask() {
-        interface A extends Task {
+    void commandFromParent() {
+        interface ParentTask extends Task {
             @Command("")
-            default void command1() {
+            default void commandParent() {
             }
-
-            default void command2() {
+        }
+        interface ChildTask extends ParentTask {
+            @Command("")
+            default void commandChild() {
             }
         }
 
-        interface B extends A {
-
-            @Command("")
-            default void command3() {
-            }
-        }
-
-        TaskInfo info = TaskInfo.by(B.class);
-        assert info.commands.containsKey("command1");
-        assert info.commands.containsKey("command2") == false;
-        assert info.commands.containsKey("command3");
+        TaskInfo info = TaskInfo.by(ChildTask.class);
+        assert info.commands.containsKey("command-parent");
+        assert info.commands.containsKey("command-child");
     }
 
     @Test
     @SuppressWarnings("unused")
-    void commandOverride() {
-        interface A extends Task {
-            @Command("")
-            default void command1() {
+    void commandOverrideWithAnnotation() {
+        interface ParentOverrideTask extends Task {
+            @Command("Parent")
+            default void commandOverridden() {
             }
 
-            default void command2() {
-            }
-        }
-
-        interface B extends A {
-            @Override
-            @Command("")
-            default void command1() {
-            }
-
-            @Override
-            @Command("")
-            default void command2() {
+            default void commandNotOverridden() {
             }
         }
+        interface ChildOverrideTask extends ParentOverrideTask {
+            @Override
+            @Command("Child")
+            default void commandOverridden() {
+            }
 
-        TaskInfo info = TaskInfo.by(B.class);
-        assert info.commands.containsKey("command1");
-        assert info.commands.containsKey("command2");
-        assert info.commands.get("command1").getDeclaringClass() == B.class;
-        assert info.commands.get("command2").getDeclaringClass() == B.class;
+            @Override
+            @Command("Child Annotated")
+            default void commandNotOverridden() {
+            } // Adding annotation in child
+        }
+
+        TaskInfo info = TaskInfo.by(ChildOverrideTask.class);
+        assert info.commands.containsKey("command-overridden");
+        assert info.commands.containsKey("command-not-overridden");
+        assert ChildOverrideTask.class == info.commands.get("command-overridden").getDeclaringClass();
+        assert ChildOverrideTask.class == info.commands.get("command-not-overridden").getDeclaringClass();
+        assert info.descriptions.get("command-overridden").equals("Child");
+        assert info.descriptions.get("command-not-overridden").equals("Child Annotated");
     }
 
     @Test
@@ -198,7 +211,7 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
-    void descriptions() {
+    void descriptionsMapping() {
         interface A extends Task {
             @Command("desc")
             default void command() {
@@ -248,6 +261,31 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
+    void byClassNotTask() {
+        class NotATask {
+        }
+
+        assertThrows(Fail.class, () -> TaskInfo.by(NotATask.class));
+    }
+
+    @SuppressWarnings("unused")
+    @Test
+    void denyClassWithProxy() {
+        interface ProxiedTask extends Task {
+            @Command("")
+            default void exec() {
+            }
+        }
+
+        // Create a dummy proxy
+        ProxiedTask proxy = I.make(ProxiedTask.class, (p, m, a) -> null);
+
+        TaskInfo info = TaskInfo.by(proxy.getClass());
+        assert info.name.equals("proxied-task");
+        assert info.task == ProxiedTask.class;
+    }
+
+    @Test
     void byNameInProject() {
         class Project extends InlineProject {
             interface ByName extends Task {
@@ -277,7 +315,7 @@ class TaskInfoTest extends InlineProjectAware {
         TaskInfo info = TaskInfo.by("by-name");
         assert info != null;
         assert info.name.equals("by-name");
-        assert info.task == bee.ByName.class;
+        assert info.task == ByName.class;
 
         ByName task = (ByName) info.create();
         assert Proxy.isProxyClass(task.getClass());
@@ -298,6 +336,31 @@ class TaskInfoTest extends InlineProjectAware {
         ByNameExternal task = (ByNameExternal) info.create();
         assert Proxy.isProxyClass(task.getClass());
         assert task.command().equals("byName in external package");
+    }
+
+    @Test
+    void byNameNotFound() {
+        assertThrows(Fail.class, () -> TaskInfo.by("non-existent-task##"));
+    }
+
+    @Test
+    void byNameNotFoundWithTypo() {
+        interface Typo extends Task {
+            @Command("")
+            default void command() {
+            }
+        }
+
+        TaskInfo info = TaskInfo.by("type");
+        assert info.name.equals("typo");
+        assert info.task == Typo.class;
+    }
+
+    @Test
+    void byNameNullOrBlank() {
+        assertThrows(Fail.class, () -> TaskInfo.by((String) null), "Specify task name.");
+        assertThrows(Fail.class, () -> TaskInfo.by(""), "Specify task name.");
+        assertThrows(Fail.class, () -> TaskInfo.by("  "), "Specify task name.");
     }
 
     @Test
@@ -358,5 +421,21 @@ class TaskInfoTest extends InlineProjectAware {
 
         Empty task = TaskInfo.find(Empty.class);
         assert Proxy.isProxyClass(task.getClass());
+    }
+
+    @Test
+    void denyConcreteTask() {
+        class Invalid implements Task {
+        }
+
+        assertThrows(Fail.class, () -> TaskInfo.find(Invalid.class));
+    }
+
+    @Test
+    void denyAbstractTask() {
+        abstract class Invalid implements Task {
+        }
+
+        assertThrows(Fail.class, () -> TaskInfo.find(Invalid.class));
     }
 }
