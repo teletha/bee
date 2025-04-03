@@ -26,9 +26,9 @@ public class AutomaticProjectAware {
     void setup(TestInfo info) {
         Method method = info.getTestMethod().get();
 
-        for (Class<AutoProject> project : I.findAs(AutoProject.class)) {
+        for (Class project : I.findAs(AutoProject.class)) {
             if (method.equals(project.getEnclosingMethod())) {
-                LifestyleForProject.local.set(I.make(project));
+                LifestyleForProject.local.set((Project) I.make(project));
             }
         }
 
@@ -46,6 +46,6 @@ public class AutomaticProjectAware {
     /**
      * Your defined project will be detected automatically.
      */
-    protected static abstract class AutoProject extends Project implements Extensible {
+    protected static abstract class AutoProject extends bee.api.Project implements Extensible {
     }
 }
