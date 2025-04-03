@@ -270,7 +270,7 @@ class TaskInfoTest extends InlineProjectAware {
 
     @SuppressWarnings("unused")
     @Test
-    void denyClassWithProxy() {
+    void byClassWithProxy() {
         interface ProxiedTask extends Task {
             @Command("")
             default void exec() {
