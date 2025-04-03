@@ -141,7 +141,7 @@ If you think something might be a bug, but you're not sure, ask on StackOverflow
 
 ## Dependency
 Bee depends on the following products on runtime.
-* [asm-9.7.1](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.7.1)
+* [asm-9.8](https://mvnrepository.com/artifact/org.ow2.asm/asm/9.8)
 * [auto483-1.0.0](https://mvnrepository.com/artifact/com.github.teletha/auto483/1.0.0)
 * [conjure-1.2.1](https://mvnrepository.com/artifact/com.github.teletha/conjure/1.2.1)
 * [javax.inject-1](https://mvnrepository.com/artifact/javax.inject/javax.inject/1)
@@ -166,7 +166,7 @@ Bee depends on the following products on runtime.
 * [plexus-utils-4.0.0](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils/4.0.0)
 * [plexus-xml-4.0.1](https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-xml/4.0.1)
 * [psychopath-2.1.0](https://mvnrepository.com/artifact/com.github.teletha/psychopath/2.1.0)
-* [sinobu-4.6.0](https://mvnrepository.com/artifact/com.github.teletha/sinobu/4.6.0)
+* [sinobu-4.6.1](https://mvnrepository.com/artifact/com.github.teletha/sinobu/4.6.1)
 * [slf4j-api-2.1.0-alpha1](https://mvnrepository.com/artifact/org.slf4j/slf4j-api/2.1.0-alpha1)
 <p align="right"><a href="#top">back to top</a></p>
 
