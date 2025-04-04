@@ -9,7 +9,7 @@
  */
 package bee;
 
-import static bee.Platform.EOL;
+import static bee.Platform.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +44,10 @@ public class Fail extends Error {
     /**
      * Write solution for this failure.
      * 
-     * @param messages
+     * @param solution
      */
-    public Fail solve(Object... messages) {
-        solutions.add(UserInterface.build(messages));
+    public Fail solve(Object solution) {
+        solutions.add(Objects.toString(solution));
 
         return this;
     }

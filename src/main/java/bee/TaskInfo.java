@@ -268,7 +268,7 @@ public class TaskInfo {
             // Search for tasks with similar names for possible misspellings.
             String recommend = Inputs.recommend(name, names.keySet());
             if (recommend == null) {
-                Fail failure = new Fail("Task [" + name + "] is not found. You can use the following tasks.");
+                Fail failure = new Fail("Task [" + name + "] is not found. Available tasks are following :");
                 for (List<TaskInfo> list : names.values()) {
                     failure.solve(list.get(0));
                 }

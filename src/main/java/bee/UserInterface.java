@@ -137,7 +137,7 @@ public abstract class UserInterface {
         if (0 < length) {
             // extract the last throwable parameter
             if (messages[length - 1] instanceof Throwable e) {
-                write(type, build(length - 1, messages));
+                write(type, buildMessage(length - 1, messages));
 
                 while (e.getCause() != null) {
                     e = e.getCause();
@@ -145,7 +145,7 @@ public abstract class UserInterface {
 
                 write(e);
             } else {
-                write(type, build(length, messages));
+                write(type, buildMessage(length, messages));
             }
         }
     }
@@ -226,7 +226,7 @@ public abstract class UserInterface {
     private <T> T ask(String question, T defaultAnswer, Predicate<T> validator) {
         StringBuilder builder = new StringBuilder();
         builder.append(question);
-        if (defaultAnswer != null) builder.append(build(" [", defaultAnswer, "]"));
+        if (defaultAnswer != null) builder.append(" [").append(defaultAnswer).append("]");
         builder.append(" : ");
 
         // Question
@@ -296,7 +296,7 @@ public abstract class UserInterface {
      */
     public <T> T ask(String question, List<T> items, Function<T, String> naming) {
         if (items == null) {
-            throw new Error(build("Question needs some items. [" + question, "]"));
+            throw new Fail("Question needs some items. [" + question + "]");
         }
 
         switch (items.size()) {
@@ -325,7 +325,7 @@ public abstract class UserInterface {
      */
     public <E extends Enum> E ask(String question, Class<E> enumeration) {
         if (enumeration == null) {
-            throw new Error(build("Question needs some items. [", question, "]"));
+            throw new Fail("Question needs some items. [" + question + "]");
         }
         return ask(question, Arrays.asList(enumeration.getEnumConstants()));
     }
@@ -463,19 +463,16 @@ public abstract class UserInterface {
      * @param messages Your messages.
      * @return A combined message.
      */
-    protected static String build(Object... messages) {
-        return build(messages.length, messages);
-    }
-
-    /**
-     * Helper method to build message.
-     * 
-     * @param messages Your messages.
-     * @return A combined message.
-     */
-    private static String build(int length, Object... messages) {
+    private String buildMessage(int length, Object... messages) {
         StringBuilder builder = new StringBuilder();
-        build(builder, length, messages);
+        for (int i = 0; i < length; i++) {
+            Object message = messages[i];
+            if (message == null) {
+                builder.append("null");
+            } else {
+                buildMessage(builder, message);
+            }
+        }
         return builder.toString();
     }
 
@@ -483,79 +480,45 @@ public abstract class UserInterface {
      * Helper method to build message.
      * 
      * @param builder A message builder.
-     * @param messages Your messages.
+     * @param value A message object.
      */
-    private static void build(StringBuilder builder, int length, Object... messages) {
-        for (int i = 0; i < length; i++) {
-            Object message = messages[i];
-            if (message == null) {
-                builder.append("null");
-            } else {
-                Class type = message.getClass();
+    protected void buildMessage(StringBuilder builder, Object value) {
+        if (value instanceof Map<?, ?> map) {
+            value = map.entrySet().stream().map(entry -> String.format("%-12s \t%s", entry.getKey(), entry.getValue())).toList();
+        }
 
-                if (type.isArray()) {
-                    buildArray(builder, type.getComponentType(), message);
-                } else if (CharSequence.class.isAssignableFrom(type)) {
-                    builder.append((CharSequence) message);
-                } else if (Iterable.class.isAssignableFrom(type)) {
-                    buildItems(builder, (Iterable) message);
-                } else if (Map.class.isAssignableFrom(type)) {
-                    buildItems(builder, ((Map<?, ?>) message).entrySet()
-                            .stream()
-                            .map(entry -> String.format("%-12s \t%s", entry.getKey(), entry.getValue()))
-                            .toList());
-                } else {
-                    builder.append(I.transform(message, String.class));
-                }
+        if (value instanceof CharSequence seq) {
+            builder.append(seq);
+        } else if (value instanceof Iterable iterable) {
+            if (builder.length() != 0) {
+                builder.append(EOL);
             }
-        }
-    }
-
-    /**
-     * Helper method to build message from various array type.
-     * 
-     * @param builder A message builder.
-     * @param type A array type.
-     * @param array A message array.
-     */
-    private static void buildArray(StringBuilder builder, Class type, Object array) {
-        if (type == int.class) {
-            builder.append(Arrays.toString((int[]) array));
-        } else if (type == long.class) {
-            builder.append(Arrays.toString((long[]) array));
-        } else if (type == float.class) {
-            builder.append(Arrays.toString((float[]) array));
-        } else if (type == double.class) {
-            builder.append(Arrays.toString((double[]) array));
-        } else if (type == boolean.class) {
-            builder.append(Arrays.toString((boolean[]) array));
-        } else if (type == char.class) {
-            builder.append(Arrays.toString((char[]) array));
-        } else if (type == byte.class) {
-            builder.append(Arrays.toString((byte[]) array));
-        } else if (type == short.class) {
-            builder.append(Arrays.toString((short[]) array));
-        } else {
-            Object[] o = (Object[]) array;
-            build(builder, o.length, o);
-        }
-    }
-
-    /**
-     * Build listup message.
-     * 
-     * @param builder A message builder.
-     * @param iterable Items.
-     */
-    private static void buildItems(StringBuilder builder, Iterable iterable) {
-        if (builder.length() != 0) {
             builder.append(EOL);
-        }
-        builder.append(EOL);
 
-        int i = 0;
-        for (Object object : iterable) {
-            builder.append("  [").append(++i).append("] ").append(object).append(EOL);
+            int i = 0;
+            for (Object object : iterable) {
+                builder.append("  [").append(++i).append("] ").append(object).append(EOL);
+            }
+        } else if (value instanceof int[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof long[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof float[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof double[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof boolean[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof char[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof byte[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof short[] array) {
+            builder.append(Arrays.toString(array));
+        } else if (value instanceof Object[] array) {
+            builder.append(Arrays.toString(array));
+        } else {
+            builder.append(I.transform(value, String.class));
         }
     }
 
