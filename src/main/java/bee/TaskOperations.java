@@ -57,12 +57,21 @@ public class TaskOperations {
     /**
      * Get the task config which is associated with the current project.
      */
-    public static <T extends Task<C>, C> void config(Class<T> task, WiseConsumer<C> config) {
+    public static final <T extends Task<C>, C> C config(Class<T> task) {
+        Type[] types = Model.collectParameters(task, Task.class);
+        if (types.length != 0) {
+            return project().associate((Class<C>) types[0]);
+        } else {
+            throw new Fail(task + " doesn't have config class.");
+        }
+    }
+
+    /**
+     * Get the task config which is associated with the current project.
+     */
+    public static final <T extends Task<C>, C> void config(Class<T> task, WiseConsumer<C> config) {
         if (config != null) {
-            Type[] types = Model.collectParameters(task, Task.class);
-            if (types.length != 0) {
-                config.accept(project().associate((Class<C>) types[0]));
-            }
+            config.accept(config(task));
         }
     }
 
