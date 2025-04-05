@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import bee.AbstractTaskTest;
+import bee.Task;
 import psychopath.File;
 
 public class CompileTest extends AbstractTaskTest {
@@ -34,8 +35,7 @@ public class CompileTest extends AbstractTaskTest {
         assert B.isAbsent();
         assert C.isAbsent();
 
-        Compile compile = new Compile() {
-        };
+        Compile compile = Task.by(Compile.class);
         compile.source();
 
         assert A.isPresent();
@@ -57,8 +57,7 @@ public class CompileTest extends AbstractTaskTest {
         assert B.isAbsent();
         assert C.isAbsent();
 
-        Compile compile = new Compile() {
-        };
+        Compile compile = Task.by(Compile.class);
         compile.test();
 
         assert A.isPresent();
@@ -80,8 +79,7 @@ public class CompileTest extends AbstractTaskTest {
         assert Files.notExists(B);
         assert Files.notExists(C);
 
-        Compile compile = new Compile() {
-        };
+        Compile compile = Task.by(Compile.class);
         compile.project();
 
         assert Files.exists(A);

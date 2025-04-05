@@ -12,14 +12,12 @@ package bee;
 import static bee.TaskOperations.*;
 
 import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
 import bee.api.Command;
 import bee.api.Project;
 import kiss.Extensible;
-import kiss.Model;
 
 /**
  * Defines the basic structure for all tasks within the Bee build system.
@@ -74,12 +72,7 @@ public interface Task<C> extends Extensible {
      *         if the task is not parameterized with a configuration class.
      */
     default C config() {
-        Type[] types = Model.collectParameters(getClass(), Task.class);
-        if (types.length == 0) {
-            return null;
-        } else {
-            return project().associate((Class<C>) types[0]);
-        }
+        return (C) TaskOperations.config(getClass());
     }
 
     /**

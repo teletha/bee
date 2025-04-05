@@ -58,6 +58,8 @@ public class TaskOperations {
      * Get the task config which is associated with the current project.
      */
     public static final <T extends Task<C>, C> C config(Class<T> task) {
+        TaskInfo.by(task);
+
         Type[] types = Model.collectParameters(task, Task.class);
         if (types.length != 0) {
             return project().associate((Class<C>) types[0]);
