@@ -371,7 +371,7 @@ class TaskInfoTest extends InlineProjectAware {
             }
         }
 
-        A task = TaskInfo.find(A.class);
+        A task = Task.by(A.class);
         assert Proxy.isProxyClass(task.getClass());
     }
 
@@ -383,7 +383,7 @@ class TaskInfoTest extends InlineProjectAware {
             }
         }
 
-        A task = TaskInfo.find(A.class);
+        A task = Task.by(A.class);
         assert task.toString().equals("Task [a]");
     }
 
@@ -395,7 +395,7 @@ class TaskInfoTest extends InlineProjectAware {
             }
         }
 
-        A task = TaskInfo.find(A.class);
+        A task = Task.by(A.class);
         assert task.hashCode() == System.identityHashCode(task);
     }
 
@@ -407,9 +407,9 @@ class TaskInfoTest extends InlineProjectAware {
             }
         }
 
-        A task = TaskInfo.find(A.class);
+        A task = Task.by(A.class);
         assert task.equals(task);
-        assert task.equals(TaskInfo.find(A.class));
+        assert task.equals(Task.by(A.class));
         assert task.equals(null) == false;
         assert task.equals(new Object()) == false;
     }
@@ -419,7 +419,7 @@ class TaskInfoTest extends InlineProjectAware {
         interface Empty extends Task {
         }
 
-        Empty task = TaskInfo.find(Empty.class);
+        Empty task = Task.by(Empty.class);
         assert Proxy.isProxyClass(task.getClass());
     }
 
@@ -428,7 +428,7 @@ class TaskInfoTest extends InlineProjectAware {
         class Invalid implements Task {
         }
 
-        assertThrows(Fail.class, () -> TaskInfo.find(Invalid.class));
+        assertThrows(Fail.class, () -> Task.by(Invalid.class));
     }
 
     @Test
@@ -436,6 +436,6 @@ class TaskInfoTest extends InlineProjectAware {
         abstract class Invalid implements Task {
         }
 
-        assertThrows(Fail.class, () -> TaskInfo.find(Invalid.class));
+        assertThrows(Fail.class, () -> Task.by(Invalid.class));
     }
 }

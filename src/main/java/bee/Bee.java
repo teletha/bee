@@ -26,7 +26,6 @@ import bee.api.License;
 import bee.api.Project;
 import bee.api.Scope;
 import bee.api.VCS;
-import bee.task.Help;
 import bee.task.Prototype;
 import bee.util.Inputs;
 import bee.util.JavaCompiler;
@@ -346,12 +345,9 @@ public class Bee {
             return null;
         }
 
-        // create task and initialize
-        Task task = info.create();
-
         // execute task
         try (var x = Profiling.of("Task [" + fullname + "]")) {
-            return command.invoke(task);
+            return command.invoke(info.create());
         } catch (Throwable e) {
             if (e instanceof InvocationTargetException) {
                 e = ((InvocationTargetException) e).getTargetException();
@@ -430,7 +426,7 @@ public class Bee {
         JEP483.enable(Locator.locate(Bee.class) + ".aot");
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"dependency:help"};
+        if (tasks.length == 0) tasks = new String[] {"help"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.

@@ -14,6 +14,7 @@ import static bee.TaskOperations.*;
 import bee.Task;
 import bee.TaskOperations;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.api.Scope;
 import bee.util.JavaCompiler;
 import kiss.Signal;
@@ -95,7 +96,7 @@ public interface Compile extends Task<Compile.Config> {
      */
     public static class Config {
 
-        /** Force to use the eclipse compiler for Java. */
+        @Comment("Force to use the eclipse compiler for Java.")
         public boolean useECJ = false;
     }
 }

@@ -26,6 +26,7 @@ import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.api.Library;
 import bee.api.Loader;
 import bee.api.Scope;
@@ -42,13 +43,13 @@ import psychopath.Locator;
 public interface Exe extends Task<Exe.Config> {
 
     public static class Config {
-        /** The location for icon of exe file. */
+        @Comment("The location for icon of exe file.")
         public Path icon;
 
-        /** The usage of custom JRE. */
-        public boolean useCustomJRE = true;
+        @Comment("The usage of custom JRE.")
+        public boolean customJRE = true;
 
-        /** The additional packing data. */
+        @Comment("The additional packing data.")
         public final Set<Location> resources = new HashSet();
     }
 
@@ -133,7 +134,7 @@ public interface Exe extends Task<Exe.Config> {
         }
 
         // Build custom JRE
-        if (conf.useCustomJRE) {
+        if (conf.customJRE) {
             Directory jre = Locator.temporaryDirectory("jre");
 
             List<String> commandForJRE = new ArrayList();

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import bee.Task;
-import bee.TaskInfo;
 import bee.api.Command;
 import kiss.I;
 
@@ -45,13 +44,13 @@ public interface IDE extends Task {
     /**
      * Find supported {@link IDESupport} and apply task.
      */
-    private void task(Consumer<IDESupport> task) {
+    private <T extends Task & IDESupport> void task(Consumer<IDESupport> task) {
         List<IDESupport> supports = new ArrayList();
 
         // search existing environment
         for (Class type : I.findAs(IDESupport.class)) {
-            if (type != IDESupport.class) {
-                IDESupport support = (IDESupport) TaskInfo.find(type);
+            if (Task.class.isAssignableFrom(type)) {
+                T support = Task.by((Class<T>) type);
                 if (support.exist(project())) {
                     task.accept(support);
                     return;

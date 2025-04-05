@@ -31,6 +31,7 @@ import org.objectweb.asm.TypePath;
 import bee.Task;
 import bee.TaskOperations;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.util.Inputs;
@@ -297,26 +298,16 @@ public interface Jar extends Task<Jar.Config> {
     }
 
     public static class Config {
-        /**
-         * Determines whether or not the class file should contain the local variable name and
-         * parameter name.
-         */
+        @Comment("Determines whether or not the class file should contain the local variable name and parameter name.")
         public boolean removeDebugInfo = false;
 
-        /**
-         * Determines whether or not the class file should contain the source file name and line
-         * number.
-         */
+        @Comment("Determines whether or not the class file should contain the source file name and line number.")
         public boolean removeTraceInfo = false;
 
-        /**
-         * Configure how to handle your resources when creating project jar.
-         */
+        @Comment("Configure how to handle your resources when creating project jar.")
         public Function<Option, Option> packing = Function.identity();
 
-        /**
-         * Configure how to handle merged resources when merging dependent jars.
-         */
+        @Comment("Configure how to handle merged resources when merging dependent jars.")
         public Function<Option, Option> merging = Function.identity();
     }
 }

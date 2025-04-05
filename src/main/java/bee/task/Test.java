@@ -38,6 +38,7 @@ import bee.Isolation;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.api.Scope;
 import bee.util.Java;
 import bee.util.Java.JVM;
@@ -48,13 +49,13 @@ import psychopath.Directory;
 public interface Test extends Task<Test.Config> {
 
     public static class Config implements Serializable {
-        /** The threshold time (ms) to show the prolonged test. */
-        public int showProlongedTest = 1000;
+        @Comment("The threshold time (ms) to show the prolonged test.")
+        public int longRun = 1000;
 
-        /** The test executing JVM. */
+        @Comment("The test executing JVM.")
         public Directory java;
 
-        /** The additional paramters for the test execution JVM. */
+        @Comment("The additional paramters for the test execution JVM.")
         public List<String> params = new ArrayList();
     }
 
@@ -85,7 +86,7 @@ public interface Test extends Task<Test.Config> {
                             .encoding(project().getEncoding())
                             .workingDirectory(project().getRoot())
                             .run(Junit.class, project()
-                                    .getTestClasses(), project().getOutput().directory("test-reports").create(), conf.showProlongedTest);
+                                    .getTestClasses(), project().getOutput().directory("test-reports").create(), conf.longRun);
                 }
             };
         }

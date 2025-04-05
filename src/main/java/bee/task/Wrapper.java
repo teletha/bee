@@ -21,6 +21,7 @@ import bee.Bee;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.util.Process;
 import kiss.I;
 import kiss.Ⅱ;
@@ -33,7 +34,7 @@ public interface Wrapper extends Task<Wrapper.Config> {
 
         private static final StringBuilder commands = new StringBuilder();
 
-        /** Specify the bee version. */
+        @Comment("Specify the bee version.")
         public String version = Bee.Tool.getVersion();
     }
 

@@ -46,6 +46,17 @@ public interface Task<C> extends Extensible {
     }
 
     /**
+     * Create your {@link Task}.
+     *
+     * @param <T> The type of the task.
+     * @param task The class type of the task to create.
+     * @return An executable (potentially proxy) instance of the specified task type.
+     */
+    static <T extends Task> T by(Class<T> task) {
+        return (T) TaskInfo.by(task).create();
+    }
+
+    /**
      * Type-safe task referenece.
      */
     public interface TaskReference<T> extends Consumer<T>, Serializable {

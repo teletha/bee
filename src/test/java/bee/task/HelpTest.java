@@ -11,14 +11,15 @@ package bee.task;
 
 import org.junit.jupiter.api.Test;
 
+import bee.Help;
 import bee.InlineProjectAware;
-import bee.TaskInfo;
+import bee.Task;
 
 class HelpTest extends InlineProjectAware {
 
     @Test
     void task() {
-        Help help = TaskInfo.find(Help.class);
+        Help help = Task.by(Help.class);
         help.task();
     }
 }

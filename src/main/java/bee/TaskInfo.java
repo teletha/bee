@@ -13,9 +13,11 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import bee.Task.TaskReference;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.api.Project;
 import bee.util.Inputs;
 import kiss.I;
@@ -40,22 +43,25 @@ import psychopath.Locator;
  * available commands, and command descriptions. This class provides static methods
  * to find and manage task information.
  */
-public class TaskInfo {
+class TaskInfo {
 
     /** Cache mapping task implementation classes to their TaskInfo. */
-    private static final Map<Class, TaskInfo> types = new ConcurrentHashMap();
+    static final Map<Class, TaskInfo> types = new ConcurrentHashMap();
 
     /**
      * Registry mapping task names to a list of TaskInfo objects (supports multiple tasks with the
      * same name).
      */
-    private static final Map<String, List<TaskInfo>> names = new ConcurrentSkipListMap();
+    static final Map<String, List<TaskInfo>> names = new ConcurrentSkipListMap();
 
     /** The computed, hyphenated task name (e.g., "compile"). */
     final String name;
 
     /** The class that defines the task logic and commands. */
     final Class<? extends Task> task;
+
+    /** The class that defines the task configuration. */
+    final Class config;
 
     /**
      * The name of the command that is executed by default if no specific command is provided.
@@ -74,6 +80,8 @@ public class TaskInfo {
      * annotation.
      */
     final Map<String, String> descriptions = new ConcurrentSkipListMap();
+
+    final Map<String, Field> configs = new ConcurrentSkipListMap();
 
     /**
      * Constructs a {@link TaskInfo} instance by introspecting the given task class.
@@ -118,9 +126,29 @@ public class TaskInfo {
             } else if (descriptions.containsKey(name)) {
                 defaultCommnad = name;
             }
+
+            Type[] params = Model.collectParameters(task, Task.class);
+            this.config = params.length == 0 ? Object.class : (Class) params[0];
+
+            for (Field field : config.getFields()) {
+                if (field.isAnnotationPresent(Comment.class)) {
+                    configs.put(field.getName(), field);
+                }
+            }
         } catch (Exception e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * Creates a proxy instance of the task represented by this {@link TaskInfo}.
+     * The proxy intercepts command method calls to add behavior like caching and UI notifications
+     * via the interceptor.
+     *
+     * @return A new proxy instance implementing the task interface.
+     */
+    Task create() {
+        return I.make(task, new Interceptor(task, commands.keySet()));
     }
 
     /**
@@ -132,27 +160,6 @@ public class TaskInfo {
     @Override
     public String toString() {
         return String.format("%-12s \t%s", name, descriptions.get(defaultCommnad));
-    }
-
-    /**
-     * Finds and returns an executable instance of the specified task type.
-     * This method retrieves the {@link TaskInfo} for the class and creates a proxy task.
-     *
-     * @param <T> The type of the task.
-     * @param support The class type of the task to find.
-     * @return An executable (potentially proxy) instance of the specified task type.
-     */
-    public static final <T extends Task> T find(Class<T> support) {
-        return (T) by(support).create();
-    }
-
-    /**
-     * List up all tasks.
-     * 
-     * @return
-     */
-    public static List<TaskInfo> list() {
-        return names.values().stream().map(List::getLast).toList();
     }
 
     /**
@@ -330,17 +337,6 @@ public class TaskInfo {
                 }
             }
         }
-    }
-
-    /**
-     * Creates a proxy instance of the task represented by this {@link TaskInfo}.
-     * The proxy intercepts command method calls to add behavior like caching and UI notifications
-     * via the interceptor.
-     *
-     * @return A new proxy instance implementing the task interface.
-     */
-    Task create() {
-        return I.make(task, new Interceptor(task, commands.keySet()));
     }
 
     /**

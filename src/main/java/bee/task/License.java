@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 
 import bee.Task;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.coder.FileType;
 import bee.coder.StandardHeaderStyle;
 import kiss.I;
@@ -67,7 +68,7 @@ public interface License extends Task<License.Config> {
     }
 
     class Config {
-        /** Specify files to be excluded from the update process. */
+        @Comment("Specify files to be excluded from the update process.")
         public Predicate<File> exclude = I::reject;
     }
 }

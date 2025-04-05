@@ -22,6 +22,7 @@ import org.objectweb.asm.Opcodes;
 
 import bee.Task;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.api.Project;
 import kiss.I;
 import kiss.Managed;
@@ -184,17 +185,13 @@ public interface FindMain extends Task<FindMain.Config> {
      */
     public static class Config {
 
-        /** In subclass, you can specify the fully qualified class name for project main class. */
+        @Comment("Specify the fully qualified class name for project main class.")
         public String main;
 
-        /**
-         * In subclass, you can specify the fully qualified class name for project premain class.
-         */
+        @Comment("Specify the fully qualified class name for project premain class.")
         public String premain;
 
-        /**
-         * In subclass, you can specify the fully qualified class name for project agentmain class.
-         */
+        @Comment("Specify the fully qualified class name for project agentmain class.")
         public String agentmain;
     }
 }

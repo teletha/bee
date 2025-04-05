@@ -23,6 +23,7 @@ import bee.Platform;
 import bee.Task;
 import bee.TaskOperations;
 import bee.api.Command;
+import bee.api.Comment;
 import bee.api.Loader;
 import bee.api.Scope;
 import bee.coder.FileType;
@@ -41,13 +42,13 @@ import psychopath.Option;
 public interface Native extends Task<Native.Config> {
 
     public static class Config implements Serializable {
-        /** The available protocols. default is 'http,https' */
+        @Comment("The available protocols.")
         public List<String> protocols = I.list("http", "https");
 
-        /** The available resources. default is {@link FileType#list()} */
+        @Comment("The available resources.")
         public List<String> resources = FileType.list().stream().map(FileType::extension).toList();
 
-        /** The additional parameters. */
+        @Comment("The additional parameters.")
         public List<String> params = new ArrayList();
 
         /** The graal kind. */

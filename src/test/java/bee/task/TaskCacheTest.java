@@ -12,9 +12,8 @@ package bee.task;
 import org.junit.jupiter.api.Test;
 
 import antibug.powerassert.PowerAssertOff;
-import bee.Task;
-import bee.TaskInfo;
 import bee.AbstractTaskTest;
+import bee.Task;
 import bee.api.Command;
 import kiss.I;
 
@@ -28,7 +27,7 @@ class TaskCacheTest extends AbstractTaskTest {
 
     @Test
     void noValue() {
-        NoValue task = TaskInfo.find(NoValue.class);
+        NoValue task = Task.by(NoValue.class);
         assert countNoValue == 0;
         task.run();
         assert countNoValue == 1;
@@ -51,7 +50,7 @@ class TaskCacheTest extends AbstractTaskTest {
 
     @Test
     void valued() {
-        Value task = TaskInfo.find(Value.class);
+        Value task = Task.by(Value.class);
         assert countValue == 0;
         assert task.run().equals("1");
         assert countValue == 1;
@@ -75,7 +74,7 @@ class TaskCacheTest extends AbstractTaskTest {
 
     @Test
     void primitiveInt() {
-        Int task = TaskInfo.find(Int.class);
+        Int task = Task.by(Int.class);
         assert countPrimitiveInt == 0;
         assert task.run() == 1;
         assert countPrimitiveInt == 1;
@@ -98,7 +97,7 @@ class TaskCacheTest extends AbstractTaskTest {
 
     @Test
     void primitiveLong() {
-        Long task = TaskInfo.find(Long.class);
+        Long task = Task.by(Long.class);
         assert countPrimitiveLong == 0;
         assert task.run() == 1;
         assert countPrimitiveLong == 1;
@@ -121,7 +120,7 @@ class TaskCacheTest extends AbstractTaskTest {
 
     @Test
     void primitiveFloat() {
-        Float task = TaskInfo.find(Float.class);
+        Float task = Task.by(Float.class);
         assert countPrimitiveFloat == 0;
         assert task.run() == 1;
         assert countPrimitiveFloat == 1;
@@ -144,7 +143,7 @@ class TaskCacheTest extends AbstractTaskTest {
 
     @Test
     void primitiveDouble() {
-        Double task = TaskInfo.find(Double.class);
+        Double task = Task.by(Double.class);
         assert countPRimitiveDouble == 0;
         assert task.run() == 1;
         assert countPRimitiveDouble == 1;
@@ -167,7 +166,7 @@ class TaskCacheTest extends AbstractTaskTest {
 
     @Test
     void primitiveBoolean() {
-        Boolean task = TaskInfo.find(Boolean.class);
+        Boolean task = Task.by(Boolean.class);
         assert countPrimitiveBoolean == 0;
         assert task.run();
         assert countPrimitiveBoolean == 1;
@@ -192,7 +191,7 @@ class TaskCacheTest extends AbstractTaskTest {
     @Test
     @PowerAssertOff
     void require() {
-        Req task = TaskInfo.find(Req.class);
+        Req task = Task.by(Req.class);
         assert countRequire == 0;
         task.run();
         assert countRequire == 1;
