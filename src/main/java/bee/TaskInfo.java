@@ -13,11 +13,14 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
-import java.lang.reflect.Field;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +30,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import bee.Task.TaskReference;
 import bee.api.Command;
@@ -40,8 +45,9 @@ import psychopath.Locator;
 
 /**
  * Represents metadata about a task, including its computed name, defining class,
- * available commands, and command descriptions. This class provides static methods
- * to find and manage task information.
+ * available commands, command descriptions, and configuration details.
+ * This class provides static methods to find and manage task information,
+ * and a method to describe the task's details to a user interface.
  */
 class TaskInfo {
 
@@ -60,7 +66,11 @@ class TaskInfo {
     /** The class that defines the task logic and commands. */
     final Class<? extends Task> task;
 
-    /** The class that defines the task configuration. */
+    /**
+     * The class that defines the configuration specific to this task.
+     * Derived from the generic type parameter of the {@link Task} interface (e.g., Task<MyConfig>).
+     * Defaults to {@link Object#getClass()} if no generic type is specified.
+     */
     final Class config;
 
     /**
@@ -71,25 +81,27 @@ class TaskInfo {
 
     /**
      * A map of command names (hyphenated) to the corresponding {@link Method} objects within the
-     * task class.
+     * task interface or its super-interfaces.
      */
     final Map<String, Method> commands = new ConcurrentSkipListMap();
 
     /**
      * A map of command names (hyphenated) to their descriptions, sourced from the {@link Command}
-     * annotation.
+     * annotation. Excludes the implicit "help" command.
      */
     final Map<String, String> descriptions = new ConcurrentSkipListMap();
 
-    final Map<String, Field> configs = new ConcurrentSkipListMap();
-
     /**
-     * Constructs a {@link TaskInfo} instance by introspecting the given task class.
+     * Constructs a {@link TaskInfo} instance by introspecting the given task interface.
      * It computes the task name, discovers methods annotated with {@link Command},
-     * populates the command and description maps, and determines the default command.
+     * populates the command and description maps, determines the default command,
+     * identifies the configuration class, and discovers configurable fields annotated with
+     * {@link Comment}.
      *
-     * @param task The class representing the task definition (must implement {@link Task}).
+     * @param task The interface representing the task definition (must implement {@link Task} and
+     *            be an interface).
      * @throws RuntimeException if introspection fails (e.g., reflection errors).
+     * @throws Fail if the provided class is not an interface implementing {@link Task}.
      */
     TaskInfo(Class<? extends Task> task) {
         try {
@@ -127,16 +139,98 @@ class TaskInfo {
                 defaultCommnad = name;
             }
 
+            // Determine configuration class from Task<C> generic parameter
             Type[] params = Model.collectParameters(task, Task.class);
             this.config = params.length == 0 ? Object.class : (Class) params[0];
-
-            for (Field field : config.getFields()) {
-                if (field.isAnnotationPresent(Comment.class)) {
-                    configs.put(field.getName(), field);
-                }
-            }
         } catch (Exception e) {
             throw I.quiet(e);
+        }
+    }
+
+    /**
+     * Describes the details of this task, including its commands and configuration options,
+     * to the provided user interface.
+     *
+     * @param ui The {@link UserInterface} to display the information on. Must not be null.
+     */
+    void describe(UserInterface ui) {
+        ui.title(String.format("  %-12s\tdefault [%s]\tclass [%s]", name.toUpperCase(), defaultCommnad, task.getName()));
+
+        // Commands Section
+        if (!descriptions.isEmpty()) {
+            ui.info("Command");
+            ui.info(descriptions);
+        } else {
+            ui.info("Command");
+            ui.info("  No explicit commands defined, only default 'help'");
+        }
+
+        // Configuration Section
+        if (config != Object.class) {
+            ui.info("Configuration");
+            ui.info(Stream.of(config.getFields()).filter(field -> field.isAnnotationPresent(Comment.class)).map(field -> {
+                try {
+                    String fieldName = field.getName();
+                    String comment = field.getAnnotation(Comment.class).value();
+                    String typeName = type(field.getGenericType());
+                    Object currentValue = field.get(TaskOperations.config(task));
+
+                    // Avoid printing synthetic class names (e.g., for lambdas used as default
+                    // values)
+                    if (currentValue != null && currentValue.getClass().isSynthetic()) {
+                        currentValue = null;
+                    }
+
+                    if (currentValue == null) {
+                        return String.format("%-12s\t%s (%s)", fieldName, comment, typeName);
+                    } else {
+                        return String.format("%-12s\t%s (%s : %s)", fieldName, comment, typeName, currentValue);
+                    }
+                } catch (Exception x) {
+                    throw I.quiet(x);
+                }
+            }).toList());
+        }
+    }
+
+    /**
+     * Converts a {@link Type} into a human-readable string representation.
+     * Handles common type structures like classes, parameterized types, arrays, etc.
+     *
+     * @param type The {@link Type} to format.
+     * @return A string representation of the type (e.g., "String", "List<Integer>", "Map<String, ?
+     *         extends Number>[]"). Returns an empty string if the input type is null.
+     */
+    private String type(Type type) {
+        if (type == null) {
+            return "";
+        } else if (type instanceof Class clazz) {
+            return clazz.getSimpleName();
+        } else if (type instanceof ParameterizedType param) {
+            // Format: RawType<Arg1, Arg2>
+            return type(param.getRawType()) + Stream.of(param.getActualTypeArguments())
+                    .map(this::type)
+                    .collect(Collectors.joining(", ", "<", ">"));
+        } else if (type instanceof TypeVariable variable) {
+            // Just the variable name (e.g., "T")
+            return variable.getName();
+        } else if (type instanceof WildcardType wild) {
+            // Format: ? extends UpperBound / ? super LowerBound
+            Type[] upper = wild.getUpperBounds();
+            Type[] lower = wild.getLowerBounds();
+            if (lower.length > 0) { // ? super Lower
+                return "?" + Stream.of(lower).map(this::type).collect(Collectors.joining(" & ", " super ", ""));
+            } else if (upper.length == 0 || upper[0] == Object.class) { // Unbounded: ?
+                return "?";
+            } else { // Bounded: ? extends Upper
+                return "?" + Stream.of(upper).map(this::type).collect(Collectors.joining(" & ", " extends ", ""));
+            }
+        } else if (type instanceof GenericArrayType array) {
+            // Format: ComponentType[]
+            return type(array.getGenericComponentType()) + "[]";
+        } else {
+            // Fallback for unknown types
+            return type.getTypeName(); // Use built-in representation
         }
     }
 
@@ -199,14 +293,16 @@ class TaskInfo {
     }
 
     /**
-     * Retrieves the {@link TaskInfo} associated with the given task class.
-     * It performs validation, handles potential proxy classes, uses an internal cache, and triggers
-     * task registration if the class info is not cached.
+     * Retrieves the {@link TaskInfo} associated with the given task interface.
+     * It performs validation (must be an interface implementing {@link Task}), handles potential
+     * proxy classes, uses an internal cache, and triggers task registration if the interface info
+     * is not cached.
      *
-     * @param task The task class (must implement {@link Task}).
+     * @param task The task interface (must implement {@link Task}).
      * @return The corresponding {@link TaskInfo}.
      * @throws NullPointerException if task is null.
-     * @throws Fail if the class is not a valid Task implementation or an unusable proxy.
+     * @throws Fail if the class is not a valid Task interface, an unusable proxy, or if info cannot
+     *             be created.
      */
     static TaskInfo by(Class task) {
         // validate task type
@@ -221,7 +317,7 @@ class TaskInfo {
                     .stream()
                     .filter(type -> type != task && type != Task.class && Task.class.isAssignableFrom(type))
                     .findFirst()
-                    .orElseThrow(() -> new Fail(task + " must implement single task.")));
+                    .orElseThrow(() -> new Fail(task + " must implement single specific task interface.")));
         }
 
         if (!task.isInterface()) {

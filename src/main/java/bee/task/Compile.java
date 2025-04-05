@@ -21,20 +21,30 @@ import kiss.Signal;
 import psychopath.Directory;
 import psychopath.Locator;
 
+/**
+ * Compiles project source code, test code, and project-specific definition code.
+ * This task also handles copying associated resource files to the output directories.
+ */
 public interface Compile extends Task<Compile.Config> {
 
     /**
-     * Compile main sources and copy other resources.
+     * Compiles main source files found in the source directory set (e.g., `src/main/java`)
+     * and copies associated resources (e.g., files in `src/main/resources`) to the main classes
+     * directory.
+     * This is the default command for the `compile` task.
      */
-    @Command(value = "Compile main sources and copy other resources.", defaults = true)
+    @Command(value = "Compile main sources and resources.", defaults = true)
     default void source() {
         compile("main", TaskOperations.project().getSourceSet(), TaskOperations.project().getClasses());
     }
 
     /**
-     * Compile test sources and copy other resources.
+     * Compiles test source files found in the test source directory set (e.g., `src/test/java`)
+     * and copies associated resources (e.g., files in `src/test/resources`) to the test classes
+     * directory.
+     * Requires the main sources to be compiled first.
      */
-    @Command("Compile test sources and copy other resources.")
+    @Command("Compile test sources and resources.")
     default void test() {
         require(Compile::source);
 
@@ -42,30 +52,41 @@ public interface Compile extends Task<Compile.Config> {
     }
 
     /**
-     * Compile project sources and copy other resources.
+     * Compiles project definition source files (e.g., `src/project/java`)
+     * and copies associated resources to the project classes directory.
+     * This is typically used for compiling the Bee Project class itself.
      */
-    @Command("Compile project sources and copy other resources.")
+    @Command("Compile project definition sources and resources.")
     default void project() {
         compile("project", TaskOperations.project().getProjectSourceSet(), TaskOperations.project().getProjectClasses());
     }
 
     /**
-     * Validate all sources which are compilable or not.
+     * Performs a validation compile run on main and test sources without producing final output,
+     * primarily to check for compilation errors. Useful for quick syntax and type checking.
+     * Temporary output directory is used and cleaned up afterwards.
      */
-    @Command(value = "Compile main sources and copy other resources.", defaults = true)
+    @Command("Validate main and test sources for compilation errors.")
     default void check() {
-        Directory dir = Locator.temporaryDirectory();
-        compile("main", TaskOperations.project().getSourceSet(), dir);
-        compile("test", TaskOperations.project().getTestSourceSet(), dir);
-        dir.deleteOnExit();
+        Directory temp = Locator.temporaryDirectory();
+        try {
+            ui().info("Checking main sources...");
+            compile("main", TaskOperations.project().getSourceSet(), temp);
+            ui().info("Checking test sources...");
+            compile("test", TaskOperations.project().getTestSourceSet(), temp);
+            ui().info("Source validation completed successfully.");
+        } finally {
+            temp.deleteOnExit(); // Ensure cleanup even if errors occur during compile
+        }
     }
 
     /**
-     * Helper method to compile sources and other resources.
-     * 
-     * @param type A source type.
-     * @param input A source locations.
-     * @param output A output location.
+     * Internal helper method to perform the compilation and resource copying process.
+     *
+     * @param type A string identifying the type of sources being processed (e.g., "main", "test").
+     *            Used for logging.
+     * @param input A signal providing the source directories to process.
+     * @param output The target directory for compiled classes and copied resources.
      */
     private void compile(String type, Signal<Directory> input, Directory output) {
         ui().info("Copying ", type, " resources to ", output);
@@ -74,7 +95,6 @@ public interface Compile extends Task<Compile.Config> {
         });
 
         ui().info("Compiling ", type, " sources to ", output);
-
         JavaCompiler.with(ui())
                 .addClassPath(output)
                 .addClassPath(TaskOperations.project().getClasses())
@@ -86,17 +106,15 @@ public interface Compile extends Task<Compile.Config> {
                 .setEncoding(TaskOperations.project().getEncoding())
                 .setEclipseCompiler(config().useECJ)
                 .compile();
-
-        // load project related classes
-        // BeeLoader.load(TaskOperations.project().getClasses());
     }
 
     /**
-     * Configuration for {@link Compile} task.
+     * Configuration settings for the {@link Compile} task.
+     * These settings can be adjusted in the project definition file.
      */
     public static class Config {
 
-        @Comment("Force to use the eclipse compiler for Java.")
+        @Comment("If true, forces the use of the Eclipse Compiler for Java (ECJ) instead of the standard JDK compiler.")
         public boolean useECJ = false;
     }
 }

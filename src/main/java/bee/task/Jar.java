@@ -33,6 +33,7 @@ import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Comment;
 import bee.api.Library;
+import bee.api.Project;
 import bee.api.Scope;
 import bee.util.Inputs;
 import kiss.I;
@@ -43,45 +44,63 @@ import psychopath.Folder;
 import psychopath.Locator;
 import psychopath.Option;
 
+/**
+ * Handles the packaging of project artifacts (classes, sources, resources, documentation) into JAR
+ * files.
+ * Provides options for creating standard JARs, source JARs, test JARs, documentation JARs,
+ * and executable "uber-jars" containing all dependencies.
+ * Also includes functionality to modify class files (e.g., version downgrade, debug info removal).
+ */
 public interface Jar extends Task<Jar.Config> {
 
     /**
-     * Package main classes and other resources.
+     * Packages the main compiled classes and resources into a standard JAR file.
+     * Also creates a separate JAR containing the main source files and resources.
+     * If configured, modifies class files (version downgrade, debug/trace info removal) before
+     * packaging.
+     * This is the default command for the `jar` task.
      */
-    @Command(value = "Package main classes and other resources.", defaults = true)
+    @Command(value = "Package main classes and resources into a JAR file. Also creates a source JAR.", defaults = true)
     default void source() {
-        require(Compile::source);
+        require(Compile::source); // Ensure main code is compiled
 
+        Project project = TaskOperations.project();
         Config conf = config();
-        Directory dir = TaskOperations.project().getClasses();
-        if (SourceVersion.latest()
-                .compareTo(TaskOperations.project().getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo) {
-            dir = modify(dir);
+        Directory classesDir = project.getClasses();
+
+        // Modify class files if Java version needs downgrade or if removal options are enabled
+        boolean requiresModification = SourceVersion.latest()
+                .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
+
+        if (requiresModification) {
+            classesDir = modify(classesDir); // Use modified classes for packaging
         }
 
-        pack("main classe", I.signal(dir), TaskOperations.project().locateJar(), conf.packing);
-        pack("main source", TaskOperations.project().getSourceSet(), TaskOperations.project().locateSourceJar(), null);
+        // Package classes and sources
+        pack("main classes", I.signal(classesDir), project.locateJar(), conf.packing);
+        pack("main sources", project.getSourceSet(), project.locateSourceJar(), null);
     }
 
     /**
-     * Modify class files.
-     * 
-     * @param dir
-     * @return
+     * Internal helper to modify class files (version downgrade, debug/trace info removal).
+     * Creates modified class files in a temporary directory.
+     *
+     * @param originalDir The directory containing the original class files.
+     * @return The temporary directory containing the modified class files.
      */
     private Directory modify(Directory dir) {
         String oldVersion = Inputs.normalize(SourceVersion.latest());
         String newVersion = Inputs.normalize(TaskOperations.project().getJavaRequiredVersion());
         if (!oldVersion.equals(newVersion)) {
-            ui().info("Downgrade class version from ", oldVersion, " to ", newVersion, ".");
+            ui().info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
         }
 
         Config conf = config();
         if (conf.removeDebugInfo) {
-            ui().info("Remove all debugger-related information (local variables and parameters) from the class file.");
+            ui().info("Removing debug information (local variables, parameters) from class files.");
         }
         if (conf.removeTraceInfo) {
-            ui().info("Remove all debugging-related information (source file name and line number) from the class file.");
+            ui().info("Removing trace information (source file name, line numbers) from class files.");
         }
 
         Directory modified = Locator.temporaryDirectory();
@@ -92,7 +111,7 @@ public interface Jar extends Task<Jar.Config> {
             if (file.extension().equals("class")) {
                 ClassReader classReader = new ClassReader(file.bytes());
                 ClassWriter writer = new ClassWriter(classReader, 0);
-                ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer, config());
+                ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer, conf);
                 classReader.accept(modification, 0);
                 modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
             } else {
@@ -104,57 +123,57 @@ public interface Jar extends Task<Jar.Config> {
     }
 
     /**
-     * Package test classes and other resources.
+     * Packages the compiled test classes and resources into a test JAR file.
+     * Also creates a separate JAR containing the test source files and resources.
      */
-    @Command("Package test classes and other resources.")
+    @Command("Package test classes and resources into a JAR file. Also creates a test source JAR.")
     default void test() {
         require(Compile::test);
 
-        File classes = TaskOperations.project()
-                .getOutput()
-                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-tests.jar");
-        File sources = TaskOperations.project()
-                .getOutput()
-                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-tests-sources.jar");
+        Project project = TaskOperations.project();
+        File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests.jar");
+        File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-tests-sources.jar");
 
-        pack("test class", I.signal(TaskOperations.project().getTestClasses()), classes, null);
-        pack("test source", TaskOperations.project().getTestSourceSet(), sources, null);
+        pack("test class", I.signal(project.getTestClasses()), classes, null);
+        pack("test source", project.getTestSourceSet(), sources, null);
     }
 
     /**
-     * Package project classes and other resources.
+     * Packages the compiled project definition classes (e.g., the Project class itself) and
+     * resources into a project JAR file.
+     * Also creates a separate JAR containing the project source files and resources.
      */
-    @Command("Package project classes and other resources.")
+    @Command("Package project definition classes and resources into a JAR file. Also creates a project source JAR.")
     default void project() {
         require(Compile::project);
 
-        File classes = TaskOperations.project()
-                .getOutput()
-                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-projects.jar");
-        File sources = TaskOperations.project()
-                .getOutput()
-                .file(TaskOperations.project().getProduct() + "-" + TaskOperations.project().getVersion() + "-projects-sources.jar");
+        Project project = TaskOperations.project();
+        File classes = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects.jar");
+        File sources = project.getOutput().file(project.getProduct() + "-" + project.getVersion() + "-projects-sources.jar");
 
-        pack("project class", I.signal(TaskOperations.project().getProjectClasses()), classes, null);
-        pack("project source", TaskOperations.project().getProjectSourceSet(), sources, null);
+        pack("project class", I.signal(project.getProjectClasses()), classes, null);
+        pack("project source", project.getProjectSourceSet(), sources, null);
     }
 
     /**
-     * Package documentations and other resources.
+     * Packages the generated Javadoc documentation into a documentation JAR file.
      */
-    @Command("Package main documentations and other resources.")
+    @Command("Package generated Javadoc into a JAR file.")
     default void document() {
         Directory output = require(Doc::javadoc);
 
-        pack("javadoc", I.signal(output), TaskOperations.project().locateJavadocJar(), null);
+        Project project = TaskOperations.project();
+        pack("javadoc", I.signal(output), project.locateJavadocJar(), null);
     }
 
     /**
-     * Packing.
-     * 
-     * @param type
-     * @param input
-     * @param output
+     * Internal helper method to pack files from input directories into an output JAR file.
+     *
+     * @param type A string describing the type of content being packed (for logging).
+     * @param input A signal providing the input directories containing files to pack.
+     * @param output The target JAR file to create.
+     * @param option A function to configure packing options (e.g., file filtering, path stripping),
+     *            can be null.
      */
     private void pack(String type, Signal<Directory> input, File output, Function<Option, Option> option) {
         input = input.skipNull();
@@ -167,9 +186,12 @@ public interface Jar extends Task<Jar.Config> {
     }
 
     /**
-     * Package main classes and other resources.
+     * Creates a single executable JAR file (uber-jar or fat-jar) containing the main classes,
+     * resources, and all runtime dependencies unpacked and merged together.
+     * Automatically detects and sets the Main-Class and agent attributes in the JAR's manifest
+     * file.
      */
-    @Command("Package all main classes and resources with dependencies.")
+    @Command("Create an executable JAR with all dependencies included (uber-jar).")
     default void merge() {
         require(Jar::source);
 
@@ -198,7 +220,8 @@ public interface Jar extends Task<Jar.Config> {
     }
 
     /**
-     * 
+     * ASM ClassVisitor implementation to modify class version and delegate to method/source
+     * visitors.
      */
     class Modify extends ClassVisitor {
 
@@ -206,13 +229,20 @@ public interface Jar extends Task<Jar.Config> {
 
         private final Config conf;
 
-        public Modify(SourceVersion ver, ClassVisitor classVisitor, Config conf) {
+        /**
+         * Creates a class modification visitor.
+         * 
+         * @param targetVersion The target Java source version.
+         * @param classVisitor The next visitor in the chain.
+         * @param conf Configuration for debug/trace info removal.
+         */
+        public Modify(SourceVersion targetVersion, ClassVisitor classVisitor, Config conf) {
             super(Opcodes.ASM9, classVisitor);
 
             this.conf = conf;
 
             // ignore RELEASE_1
-            version = 44 + Integer.parseInt(ver.name().substring(ver.name().indexOf('_') + 1));
+            version = 44 + Integer.parseInt(targetVersion.name().substring(targetVersion.name().indexOf('_') + 1));
         }
 
         /**
@@ -242,12 +272,18 @@ public interface Jar extends Task<Jar.Config> {
         }
     }
 
+    /**
+     * ASM MethodVisitor implementation to remove debug and trace information.
+     */
     class Minify extends MethodVisitor {
 
         private final Config conf;
 
         /**
-         * @param methodVisitor
+         * Creates a method visitor for minification.
+         * 
+         * @param methodVisitor The next visitor in the chain.
+         * @param conf Configuration for debug/trace info removal.
          */
         public Minify(MethodVisitor methodVisitor, Config conf) {
             super(Opcodes.ASM9, methodVisitor);
@@ -297,6 +333,9 @@ public interface Jar extends Task<Jar.Config> {
         }
     }
 
+    /**
+     * Configuration settings for the {@link Jar} task.
+     */
     public static class Config {
         @Comment("Determines whether or not the class file should contain the local variable name and parameter name.")
         public boolean removeDebugInfo = false;

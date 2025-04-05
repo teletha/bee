@@ -30,14 +30,32 @@ import bee.api.Scope;
 import bee.util.Process;
 import kiss.I;
 
+/**
+ * Provides tasks for analyzing and displaying project dependencies.
+ * This includes showing the dependency tree and analyzing required Java modules.
+ */
 public interface Dependency extends Task {
 
-    @Command(value = "Display the dependency tree.", defaults = true)
+    /**
+     * Displays the project's dependency graph in a tree format.
+     * This command visualizes the direct and transitive dependencies of the project,
+     * showing how libraries depend on each other.
+     * This is the default command for the `dependency` task.
+     */
+    @Command(value = "Display the project dependency tree.", defaults = true)
     default void tree() {
         show(0, I.make(Repository.class).buildDependencyGraph(project()));
     }
 
-    @Command("Display all dependency modules.")
+    /**
+     * Analyzes and displays the Java modules required by the project and its runtime dependencies.
+     * Uses the `jdeps` tool to analyze bytecode and also considers `require-module` entries
+     * in the `MANIFEST.MF` of dependency JARs.
+     * Requires the main sources to be compiled first.
+     *
+     * @return A list of required module names.
+     */
+    @Command("Analyze and display required Java modules using jdeps.")
     default List<String> module() {
         require(Compile::source);
 
@@ -52,15 +70,16 @@ public interface Dependency extends Task {
             try (JarFile file = new JarFile(library.getLocalJar().asJavaFile())) {
                 Manifest manifest = file.getManifest();
                 if (manifest != null) {
-                    String requires = manifest.getMainAttributes().getValue("require-module");
+                    String requires = manifest.getMainAttributes().getValue("Require-Module");
                     if (requires != null) {
                         for (String require : requires.split("[ ,]+")) {
-                            modules.add(require);
+                            modules.add(require.trim());
                         }
                     }
                 }
             } catch (Exception e) {
-                throw I.quiet(e);
+                // Ignore errors reading manifest (e.g., invalid JAR)
+                ui().debug("Could not read manifest for " + library.getLocalJar().name() + ": " + e.getMessage());
             }
         }
         modules.addAll(I.list(Process.with().read(command).split(",")));
@@ -69,10 +88,10 @@ public interface Dependency extends Task {
     }
 
     /**
-     * Write out the dependency.
-     * 
-     * @param depth
-     * @param node
+     * Recursively displays a dependency node and its children in a tree format.
+     *
+     * @param depth The current depth in the dependency tree (for indentation).
+     * @param node The dependency node to display.
      */
     private void show(int depth, DependencyNode node) {
         Artifact artifact = node.getArtifact();
