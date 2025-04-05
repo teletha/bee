@@ -21,8 +21,8 @@
 	</head>
 	<body class="H">
 		<header class="I" date="2025-03-28" ver="0.74.0">
-			<h1 class="V"><code>Bee</code></h1>
-			<nav class="W"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+			<h1 class="N"><code>Bee</code></h1>
+			<nav class="e"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,7 +35,7 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="X"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="f"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
@@ -44,11 +44,11 @@
 		</header>
 		<nav class="K"></nav>
 		<article class="J" id="Article">
-			<section class="R"><code class="p">bee</code>
-				<h2 class="Functional d"><code class="q">Task.TaskReference</code><code class="S">&#60;<code>T</code>&#62;</code></h2>
-				<div class="j">
+			<section class="j"><code class="o">bee</code>
+				<h2 class="Functional O"><code class="U">Task.TaskReference</code><code class="T">&#60;<code>T</code>&#62;</code></h2>
+				<div class="m">
 					<ul class="C D">
-						<li><code>T</code></li>
+						<li><code>T</code><span><p>The type of the <code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code> interface containing the referenced command.</p></span></li>
 					</ul>
 					<ul class="C F">
 						<li><code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Consumer.html">Consumer</a><code class="parameters"><code>T</code></code></code></li>
@@ -57,12 +57,19 @@
 					<ul class="C G">
 						<li><code><a aria-label="bee.Task.ValuedTaskReference" href="api/bee.Task.ValuedTaskReference.html">ValuedTaskReference</a><code class="parameters"><code>T</code>, <code>R</code></code></code></li>
 					</ul>
-				</div><span class="B"><p>Type-safe task referenece.</p></span></section>
+				</div><span class="B"><p>Represents a type-safe reference to a task command, typically implemented using a
+method reference (e.g., <code>MyTask::myCommand</code>).</p><p>
+ This functional interface serves as a marker and must be <code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code>
+ to allow Bee to potentially introspect the reference (e.g., using
+ <code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html#computeTaskName(bee.Task.TaskReference)">TaskInfo#computeTaskName(TaskReference)</a></code>).
+ </p>
+ It extends <code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Consumer.html">Consumer</a></code> to indicate that it accepts a task instance to operate on.
+</span></section>
 		</article>
 		<aside class="L">
-			<div class="s"></div>
+			<div class="X"></div>
 		</aside>
-		<footer class="Q"/>
+		<footer class="g"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
