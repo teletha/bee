@@ -82,6 +82,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Comment",
+			"packageName": "bee.api",
+			"type": "Annotation"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Compile",
 			"packageName": "bee.task",
 			"type": "Interface"
@@ -223,7 +230,7 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Help",
-			"packageName": "bee.task",
+			"packageName": "bee",
 			"type": "Interface"
 		},
 		{
@@ -491,13 +498,6 @@ const root = {
 			"name": "Task.ValuedTaskReference",
 			"packageName": "bee",
 			"type": "Functional"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "TaskInfo",
-			"packageName": "bee",
-			"type": "Class"
 		},
 		{
 			"modifiers": {
