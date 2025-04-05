@@ -11,9 +11,9 @@ package bee;
 
 import bee.api.Command;
 
-public interface ByName extends Task {
+public interface SameName extends Task {
     @Command("")
     default String command() {
-        return "byName in same package";
+        return "sameName in same package";
     }
 }

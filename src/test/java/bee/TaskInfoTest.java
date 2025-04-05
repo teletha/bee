@@ -16,8 +16,10 @@ import java.lang.reflect.Proxy;
 import org.junit.jupiter.api.Test;
 
 import bee.api.Command;
-import bee.task.sample.ByNameExternal;
 import kiss.I;
+import psychopath.Directory;
+import psychopath.File;
+import psychopath.Locator;
 
 class TaskInfoTest extends InlineProjectAware {
 
@@ -54,7 +56,7 @@ class TaskInfoTest extends InlineProjectAware {
         }
 
         TaskInfo info = TaskInfo.by(A.class);
-        assert info.defaultCommnad.equals("command");
+        assert info.defaultCommand.equals("command");
     }
 
     @Test
@@ -70,7 +72,7 @@ class TaskInfoTest extends InlineProjectAware {
         }
 
         TaskInfo info = TaskInfo.by(A.class);
-        assert info.defaultCommnad.equals("command2");
+        assert info.defaultCommand.equals("command2");
     }
 
     @Test
@@ -86,7 +88,7 @@ class TaskInfoTest extends InlineProjectAware {
         }
 
         TaskInfo info = TaskInfo.by(A.class);
-        assert info.defaultCommnad.equals("help");
+        assert info.defaultCommand.equals("help");
     }
 
     @Test
@@ -102,7 +104,7 @@ class TaskInfoTest extends InlineProjectAware {
         }
         TaskInfo info = TaskInfo.by(MyTask.class);
         assert info.name.equals("my-task");
-        assert info.defaultCommnad.equals("my-task");
+        assert info.defaultCommand.equals("my-task");
     }
 
     @Test
@@ -242,6 +244,52 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
+    void configClassResolution() {
+        class MyConfig {
+        }
+
+        interface ConfiguredTask extends Task<MyConfig> {
+            @Command("")
+            default void exec() {
+            }
+        }
+
+        TaskInfo info = TaskInfo.by(ConfiguredTask.class);
+        assert info.config == MyConfig.class;
+    }
+
+    @Test
+    void configClassResolutionObject() {
+        interface NonConfiguredTask extends Task {
+            @Command("")
+            default void exec() {
+            }
+        }
+
+        TaskInfo info = TaskInfo.by(NonConfiguredTask.class);
+        assert info.config == Object.class;
+    }
+
+    @Test
+    void configClassResolutionWithInheritance() {
+        class ParentConfig {
+        }
+        interface ParentTask<C> extends Task<C> {
+            @Command("")
+            default void parentExec() {
+            }
+        }
+        interface ChildTask extends ParentTask<ParentConfig> {
+            @Command("")
+            default void childExec() {
+            }
+        }
+
+        TaskInfo info = TaskInfo.by(ChildTask.class);
+        assert info.config == ParentConfig.class;
+    }
+
+    @Test
     void byClass() {
         interface ByClass extends Task {
             @Command("")
@@ -285,57 +333,136 @@ class TaskInfoTest extends InlineProjectAware {
         assert info.task == ProxiedTask.class;
     }
 
+    /**
+     * Tests the task resolution priority when a task with the same name exists
+     * both as an inner class of the current project and in the same package as the project.
+     * Expects the inner class task to be prioritized.
+     */
     @Test
-    void byNameInProject() {
+    void byNameInProjectAndSamePackage() {
         class Project extends InlineProject {
-            interface ByName extends Task {
+            interface SameName extends Task {
                 @Command("")
                 default String command() {
-                    return "byName in project";
+                    return "sameName in project";
                 }
             }
         };
 
-        TaskInfo info = TaskInfo.by("by-name");
-        assert info != null;
-        assert info.name.equals("by-name");
-        assert info.task == Project.ByName.class;
+        // Verify that a task with the same name exists directly under this package (bee.SameName).
+        Class<?> innerTaskClass = Project.SameName.class;
+        Class<?> packageTaskClass = bee.SameName.class;
+        assert innerTaskClass != packageTaskClass;
+        assert innerTaskClass.getPackage() == packageTaskClass.getPackage();
 
-        Project.ByName task = (Project.ByName) info.create();
-        assert Proxy.isProxyClass(task.getClass());
-        assert task.command().equals("byName in project");
+        // Resolve the task by name "same-name".
+        TaskInfo info = TaskInfo.by("same-name");
+
+        // Assert that the resolved task is the inner class one.
+        assert info.name.equals("same-name");
+        assert info.task == innerTaskClass; // Should prioritize the inner class task
+        assert info.task != packageTaskClass;
+
+        // Verify the created task instance executes the inner class command.
+        Project.SameName task = (Project.SameName) info.create();
+        assert task.command().equals("sameName in project");
     }
 
+    /**
+     * Tests the task resolution priority when a task with the same name exists
+     * both in the same package as the current project context (test class) and in a different
+     * package. Expects the task in the same package to be prioritized.
+     */
     @Test
-    @SuppressWarnings("unused")
-    void byNameInSamePackage() {
-        class Project extends InlineProject {
-        };
+    void byNameInSamePackageAndOtherPackage() {
+        // Identify the two tasks with the same name "same-name".
+        Class<?> samePackageTaskClass = bee.SameName.class;
+        Class<?> otherPackageTaskClass = bee.task.sample.SameName.class;
+        assert samePackageTaskClass != otherPackageTaskClass;
+        assert samePackageTaskClass.getPackage() != otherPackageTaskClass.getPackage();
 
-        TaskInfo info = TaskInfo.by("by-name");
-        assert info != null;
-        assert info.name.equals("by-name");
-        assert info.task == ByName.class;
+        // Resolve the task by name "same-name".
+        TaskInfo info = TaskInfo.by("same-name");
 
-        ByName task = (ByName) info.create();
-        assert Proxy.isProxyClass(task.getClass());
-        assert task.command().equals("byName in same package");
+        // Assert that the resolved task is the one from the same package.
+        assert info.name.equals("same-name");
+        assert info.task == samePackageTaskClass; // Should prioritize the task in the same package
+        assert info.task != otherPackageTaskClass;
+
+        // Verify the created task instance executes the same package command.
+        bee.SameName task = (bee.SameName) info.create();
+        assert task.command().equals("sameName in same package");
     }
 
+    /**
+     * Tests the task resolution priority when a task with the same name exists
+     * in one package and another instance (loaded from a different source/classloader but with the
+     * same FQCN) also exists. This simulates scenarios like having the same library loaded twice.
+     * Expects the task loaded from the "original" classpath location to be prioritized over
+     * the one loaded from the temporary source, based on `Locator.locate()` comparison.
+     */
     @Test
-    @SuppressWarnings("unused")
-    void byNameInOtherPackage() {
-        class Project extends InlineProject {
-        };
+    void byNameInOtherPackageAndOtherSource() {
+        // Identify the original task class from a specific package.
+        Class<?> originalTaskClass = bee.task.sample.SameNameExternalPackage.class;
 
-        TaskInfo info = TaskInfo.by("by-name-external");
-        assert info != null;
-        assert info.name.equals("by-name-external");
-        assert info.task == ByNameExternal.class;
+        // Define and load another version of the same class from a temporary location.
+        Class<?> loadedTaskClass = defineAndLoadFromOtherSource(originalTaskClass);
 
-        ByNameExternal task = (ByNameExternal) info.create();
-        assert Proxy.isProxyClass(task.getClass());
-        assert task.command().equals("byName in external package");
+        // Sanity checks to ensure the loading worked as expected.
+        assert originalTaskClass != loadedTaskClass;
+        assert originalTaskClass.getPackage() != loadedTaskClass.getPackage();
+        assert Locator.locate(originalTaskClass).equals(Locator.locate(loadedTaskClass)) == false;
+
+        // Resolve the task by name "same-name-external-package".
+        TaskInfo info = TaskInfo.by("same-name-external-package");
+
+        // Assert that the resolved task is the original one (from the main classpath).
+        assert info.name.equals("same-name-external-package");
+        assert info.task == originalTaskClass; // Should prioritize the original location
+        assert info.task != loadedTaskClass;
+
+        // Verify the created task instance executes the original command.
+        bee.task.sample.SameNameExternalPackage task = (bee.task.sample.SameNameExternalPackage) info.create();
+        assert task.command().equals("same name in external package");
+    }
+
+    /**
+     * Helper method to simulate loading a class from a different source (JAR/directory).
+     * Copies the bytecode of the given class to a temporary directory and loads it using a
+     * custom classloader. It also registers the loaded task class with TaskInfo.
+     *
+     * @param originalClass The original class to load from another source.
+     * @return The {@link Class} object loaded from the temporary source.
+     */
+    private Class defineAndLoadFromOtherSource(Class originalClass) {
+        // Locate the original class file.
+        File source = Locator.file("target/test-classes/" + originalClass.getName().replace('.', '/') + ".class");
+
+        // Create a temporary directory structure matching the package.
+        Directory temp = Locator.temporaryDirectory();
+        source.copyTo(temp.directory(originalClass.getPackageName().replace('.', '/')));
+
+        // Use a custom classloader to load the class from the temporary directory.
+        // PriorityClassLoader might be specific to Bee's testing setup.
+        try (PriorityClassLoader loader = new PriorityClassLoader(Null.UI)) {
+            loader.addClassPath(temp);
+            loader.highPriorityClasses.add(originalClass.getName());
+
+            Class<Task> loaded = (Class<Task>) loader.loadClass(originalClass.getName());
+            // Assert basic properties to confirm loading from a different source.
+            assert originalClass != loaded : "Loaded class should be a different object.";
+            assert originalClass.getName().equals(loaded.getName()) : "Class names should match.";
+            // Package objects will differ due to different classloaders.
+            assert originalClass.getPackage() != loaded.getPackage() : "Package objects should differ.";
+            assert originalClass.getPackage().getName().equals(loaded.getPackage().getName()) : "Package names should match.";
+            // Source locations (JAR/directory) should differ.
+            assert !Locator.locate(originalClass).equals(Locator.locate(loaded)) : "Source locations should differ.";
+
+            return loaded;
+        } catch (Exception e) {
+            throw I.quiet(e);
+        }
     }
 
     @Test
@@ -361,6 +488,31 @@ class TaskInfoTest extends InlineProjectAware {
         assertThrows(Fail.class, () -> TaskInfo.by((String) null), "Specify task name.");
         assertThrows(Fail.class, () -> TaskInfo.by(""), "Specify task name.");
         assertThrows(Fail.class, () -> TaskInfo.by("  "), "Specify task name.");
+    }
+
+    @Test
+    void computeTaskNameFromMethodReference() {
+        interface MyRefTask extends Task {
+            @Command("")
+            default void test() {
+            }
+        }
+
+        String computedName = TaskInfo.computeTaskName(MyRefTask::test);
+        assert computedName.equals("my-ref-task:test");
+    }
+
+    @Test
+    void computeTaskNameFromValuedMethodReference() {
+        interface MyValRefTask extends Task {
+            @Command("")
+            default String value() {
+                return "value";
+            }
+        }
+
+        String computedName = TaskInfo.computeTaskName(MyValRefTask::value);
+        assert computedName.equals("my-val-ref-task:value");
     }
 
     @Test
@@ -424,18 +576,18 @@ class TaskInfoTest extends InlineProjectAware {
     }
 
     @Test
-    void denyConcreteTask() {
+    void rejectConcreteTask() {
         class Invalid implements Task {
         }
 
-        assertThrows(Fail.class, () -> Task.by(Invalid.class));
+        assertThrows(Fail.class, () -> TaskInfo.by(Invalid.class));
     }
 
     @Test
-    void denyAbstractTask() {
+    void rejectAbstractTask() {
         abstract class Invalid implements Task {
         }
 
-        assertThrows(Fail.class, () -> Task.by(Invalid.class));
+        assertThrows(Fail.class, () -> TaskInfo.by(Invalid.class));
     }
 }

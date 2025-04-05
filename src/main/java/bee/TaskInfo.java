@@ -48,46 +48,55 @@ import psychopath.Locator;
  * available commands, command descriptions, and configuration details.
  * This class provides static methods to find and manage task information,
  * and a method to describe the task's details to a user interface.
+ * It acts as a central registry and factory for tasks within Bee.
  */
 class TaskInfo {
 
-    /** Cache mapping task implementation classes to their TaskInfo. */
+    /** Cache mapping task interface classes to their {@link TaskInfo}. */
     static final Map<Class, TaskInfo> types = new ConcurrentHashMap();
 
     /**
-     * Registry mapping task names to a list of TaskInfo objects (supports multiple tasks with the
-     * same name).
+     * Registry mapping task names (hyphenated) to a list of {@link TaskInfo} objects.
+     * This supports multiple task implementations potentially sharing the same base name,
+     * allowing for context-based resolution (e.g., prioritizing tasks defined in the current
+     * project).
      */
     static final Map<String, List<TaskInfo>> names = new ConcurrentSkipListMap();
 
-    /** The computed, hyphenated task name (e.g., "compile"). */
+    /** The computed, hyphenated task name (e.g., "compile"). Derived from the task class name. */
     final String name;
 
-    /** The class that defines the task logic and commands. */
+    /**
+     * The interface class that defines the task logic and commands (e.g., {@code Compile.class}).
+     */
     final Class<? extends Task> task;
 
     /**
-     * The class that defines the configuration specific to this task.
-     * Derived from the generic type parameter of the {@link Task} interface (e.g., Task<MyConfig>).
-     * Defaults to {@link Object#getClass()} if no generic type is specified.
+     * The class defining the configuration specific to this task.
+     * Derived from the generic type parameter of the {@link Task} interface (e.g.,
+     * {@code Task<MyConfig>}).
+     * Defaults to {@link Object Object.class} if no specific configuration type is specified.
      */
     final Class config;
 
     /**
-     * The name of the command that is executed by default if no specific command is provided.
-     * Defaults to "help".
+     * The name of the command executed by default when only the task name is invoked.
+     * Determined by {@link Command#defaults()}, single command presence, or matching the task name.
+     * Defaults to "help" if no other default is identified.
      */
-    String defaultCommnad = "help";
+    String defaultCommand = "help";
 
     /**
-     * A map of command names (hyphenated) to the corresponding {@link Method} objects within the
-     * task interface or its super-interfaces.
+     * A map of command names (hyphenated) to the corresponding {@link Method} objects
+     * representing the executable command within the task interface or its super-interfaces.
+     * Includes the implicit "help" command.
      */
     final Map<String, Method> commands = new ConcurrentSkipListMap();
 
     /**
-     * A map of command names (hyphenated) to their descriptions, sourced from the {@link Command}
-     * annotation. Excludes the implicit "help" command.
+     * A map of command names (hyphenated) to their user-friendly descriptions,
+     * sourced from the {@link Command#value()} annotation attribute.
+     * Excludes the implicit "help" command's description.
      */
     final Map<String, String> descriptions = new ConcurrentSkipListMap();
 
@@ -95,13 +104,14 @@ class TaskInfo {
      * Constructs a {@link TaskInfo} instance by introspecting the given task interface.
      * It computes the task name, discovers methods annotated with {@link Command},
      * populates the command and description maps, determines the default command,
-     * identifies the configuration class, and discovers configurable fields annotated with
-     * {@link Comment}.
+     * identifies the configuration class via generics, and prepares for describing
+     * configuration fields later.
      *
      * @param task The interface representing the task definition (must implement {@link Task} and
      *            be an interface).
-     * @throws RuntimeException if introspection fails (e.g., reflection errors).
-     * @throws Fail if the provided class is not an interface implementing {@link Task}.
+     * @throws RuntimeException if introspection fails due to unexpected reflection errors.
+     *             Specific validation failures (e.g., not an interface) are usually caught
+     *             by the {@code by} methods.
      */
     TaskInfo(Class<? extends Task> task) {
         try {
@@ -126,7 +136,7 @@ class TaskInfo {
                         }
 
                         if (command.defaults()) {
-                            defaultCommnad = commnadName;
+                            defaultCommand = commnadName;
                         }
                     }
                 }
@@ -134,9 +144,9 @@ class TaskInfo {
 
             // search default command
             if (descriptions.size() == 1) {
-                defaultCommnad = descriptions.keySet().iterator().next();
+                defaultCommand = descriptions.keySet().iterator().next();
             } else if (descriptions.containsKey(name)) {
-                defaultCommnad = name;
+                defaultCommand = name;
             }
 
             // Determine configuration class from Task<C> generic parameter
@@ -148,13 +158,16 @@ class TaskInfo {
     }
 
     /**
-     * Describes the details of this task, including its commands and configuration options,
-     * to the provided user interface.
+     * Describes the details of this task to the provided user interface.
+     * Displays the task name, default command, defining class, available commands with
+     * descriptions,
+     * and configurable fields (from the {@link #config} class) with their descriptions
+     * (from {@link Comment}) and current values within the current project context.
      *
      * @param ui The {@link UserInterface} to display the information on. Must not be null.
      */
     void describe(UserInterface ui) {
-        ui.title(String.format("  %-12s\tdefault [%s]\tclass [%s]", name.toUpperCase(), defaultCommnad, task.getName()));
+        ui.title(String.format("  %-12s\tdefault [%s]\tclass [%s]", name.toUpperCase(), defaultCommand, task.getName()));
 
         // Commands Section
         if (!descriptions.isEmpty()) {
@@ -195,7 +208,8 @@ class TaskInfo {
 
     /**
      * Converts a {@link Type} into a human-readable string representation.
-     * Handles common type structures like classes, parameterized types, arrays, etc.
+     * Handles common type structures like classes, parameterized types, arrays, type variables,
+     * wildcards, and generic arrays. Provides clear and concise type names suitable for display.
      *
      * @param type The {@link Type} to format.
      * @return A string representation of the type (e.g., "String", "List<Integer>", "Map<String, ?
@@ -207,53 +221,51 @@ class TaskInfo {
         } else if (type instanceof Class clazz) {
             return clazz.getSimpleName();
         } else if (type instanceof ParameterizedType param) {
-            // Format: RawType<Arg1, Arg2>
             return type(param.getRawType()) + Stream.of(param.getActualTypeArguments())
                     .map(this::type)
                     .collect(Collectors.joining(", ", "<", ">"));
         } else if (type instanceof TypeVariable variable) {
-            // Just the variable name (e.g., "T")
             return variable.getName();
         } else if (type instanceof WildcardType wild) {
-            // Format: ? extends UpperBound / ? super LowerBound
             Type[] upper = wild.getUpperBounds();
             Type[] lower = wild.getLowerBounds();
-            if (lower.length > 0) { // ? super Lower
+            if (lower.length > 0) {
                 return "?" + Stream.of(lower).map(this::type).collect(Collectors.joining(" & ", " super ", ""));
-            } else if (upper.length == 0 || upper[0] == Object.class) { // Unbounded: ?
+            } else if (upper.length == 0 || upper[0] == Object.class) {
                 return "?";
-            } else { // Bounded: ? extends Upper
+            } else {
                 return "?" + Stream.of(upper).map(this::type).collect(Collectors.joining(" & ", " extends ", ""));
             }
         } else if (type instanceof GenericArrayType array) {
-            // Format: ComponentType[]
             return type(array.getGenericComponentType()) + "[]";
         } else {
-            // Fallback for unknown types
-            return type.getTypeName(); // Use built-in representation
+            // Fallback for unknown types, using the detailed but potentially complex built-in name
+            return type.getTypeName();
         }
     }
 
     /**
-     * Creates a proxy instance of the task represented by this {@link TaskInfo}.
-     * The proxy intercepts command method calls to add behavior like caching and UI notifications
-     * via the interceptor.
+     * Creates a dynamic proxy instance of the task interface represented by this {@link TaskInfo}.
+     * The returned proxy implements the task interface ({@link #task}) and intercepts
+     * command method calls using an Interceptor. This enables features like command execution
+     * caching and user interface notifications during task execution.
      *
-     * @return A new proxy instance implementing the task interface.
+     * @return A new proxy instance implementing the task interface, ready for command execution.
      */
     Task create() {
         return I.make(task, new Interceptor(task, commands.keySet()));
     }
 
     /**
-     * Returns a simple string representation of this task, typically used for listing available
-     * tasks. It includes the task name and the description of its default command.
+     * Returns a simple string representation of this task, suitable for listings.
+     * It includes the task name (left-aligned) and the description of its default command.
+     * Example: {@code "compile      Compile Java source files"}
      *
-     * @return A formatted string (e.g., "compile \tCompile source files").
+     * @return A formatted string summarizing the task.
      */
     @Override
     public String toString() {
-        return String.format("%-12s \t%s", name, descriptions.get(defaultCommnad));
+        return String.format("%-12s \t%s", name, descriptions.get(defaultCommand));
     }
 
     /**

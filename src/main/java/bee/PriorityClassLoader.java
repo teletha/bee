@@ -33,7 +33,7 @@ public class PriorityClassLoader extends URLClassLoader {
      * Set containing the fully qualified names of classes to be loaded with high priority
      * from this classloader's paths first.
      */
-    private final Set<String> highPriorityClasses = new HashSet<>();
+    final Set<String> highPriorityClasses = new HashSet<>();
 
     /**
      * Constructs an empty PriorityClassLoader.

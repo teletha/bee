@@ -318,7 +318,7 @@ public class Bee {
         TaskInfo info = TaskInfo.by(taskName);
 
         if (commandName.isEmpty()) {
-            commandName = info.defaultCommnad;
+            commandName = info.defaultCommand;
         }
         commandName = commandName.toLowerCase();
 

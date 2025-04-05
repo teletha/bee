@@ -12,9 +12,9 @@ package bee.task.sample;
 import bee.Task;
 import bee.api.Command;
 
-public interface ByNameExternal extends Task {
+public interface SameNameExternalPackage extends Task {
     @Command("")
     default String command() {
-        return "byName in external package";
+        return "same name in external package";
     }
 }
