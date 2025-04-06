@@ -42,7 +42,6 @@ import bee.TaskOperations;
 import bee.coder.StandardHeaderStyle;
 import bee.task.AnnotationValidator;
 import bee.task.Compile;
-import bee.util.Ensure;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Model;
@@ -210,9 +209,9 @@ public class Project {
      * @param version A product version.
      */
     protected final void product(CharSequence group, CharSequence product, CharSequence version) {
-        this.productGroup = Ensure.Alphanumeric.separator("._-+").validate(group).toString();
-        this.productName = Ensure.Alphanumeric.separator("_-+").validate(product).toString();
-        this.productVersion = Ensure.Alphanumeric.separator("._-+").validate(version).toString();
+        this.productGroup = group.toString();
+        this.productName = product.toString();
+        this.productVersion = version.toString();
     }
 
     /**
