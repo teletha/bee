@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import bee.TestableProject;
-import bee.Fail;
 
 class ProjectTest {
 
@@ -21,7 +20,7 @@ class ProjectTest {
     void groupNull() {
         TestableProject project = new TestableProject();
 
-        Assertions.assertThrows(Fail.class, () -> project.product(null, "PRODUCT", "1.5"));
+        Assertions.assertThrows(NullPointerException.class, () -> project.product(null, "PRODUCT", "1.5"));
     }
 
     @Test
