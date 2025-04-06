@@ -13,7 +13,7 @@ import javax.lang.model.SourceVersion;
 
 import org.junit.jupiter.api.Test;
 
-import bee.BlinkProject;
+import bee.TestableProject;
 import bee.sample.Interface;
 import psychopath.File;
 
@@ -21,7 +21,7 @@ class JavaCompilerTest {
 
     @Test
     void outputPresent() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         File source = project.importBy(Interface.class);
         File bytecode = project.locateByteCode(Interface.class);
 
@@ -42,7 +42,7 @@ class JavaCompilerTest {
 
     @Test
     void outputAbsent() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         File source = project.importBy(Interface.class);
         File bytecode = project.locateByteCode(Interface.class);
 
@@ -66,7 +66,7 @@ class JavaCompilerTest {
 
     @Test
     void ecj() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         File source = project.importBy(Interface.class);
         File bytecode = project.locateByteCode(Interface.class);
 

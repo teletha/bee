@@ -15,13 +15,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import bee.AbstractTaskTest;
+import bee.Task;
 
 class CiTest extends AbstractTaskTest {
 
     @Test
     public void update() {
-        CI ci = new CI() {
-        };
+        CI ci = Task.by(CI.class);
 
         List<String> original = lines("ok");
         List<String> updated = ci.update(original);

@@ -21,7 +21,7 @@ import javax.tools.JavaFileObject;
 import org.junit.jupiter.api.Test;
 
 import bee.Bee;
-import bee.BlinkProject;
+import bee.TestableProject;
 import bee.Platform;
 import bee.util.JavaCompiler;
 import kiss.I;
@@ -33,7 +33,7 @@ class ProjectToBeeDefinitionTest {
     void checkFullSource() {
         License license = License.BSD;
 
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.product("GROUP", "PRODUCT", "1.0");
         project.license(license);
 
@@ -61,7 +61,7 @@ class ProjectToBeeDefinitionTest {
 
     @Test
     void names() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.product("GROUP", "PRODUCT", "1.5");
 
         Project compiled = compileProject(project);
@@ -72,7 +72,7 @@ class ProjectToBeeDefinitionTest {
 
     @Test
     void license() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.license(License.BSD);
 
         Project compiled = compileProject(project);
@@ -81,7 +81,7 @@ class ProjectToBeeDefinitionTest {
 
     @Test
     void licenseDefault() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
 
         Project compiled = compileProject(project);
         assert compiled.license() == License.MIT;
@@ -89,7 +89,7 @@ class ProjectToBeeDefinitionTest {
 
     @Test
     void versionControlSystem() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.versionControlSystem("http://github.com/owner/repo");
 
         Project compiled = compileProject(project);
@@ -98,7 +98,7 @@ class ProjectToBeeDefinitionTest {
 
     @Test
     void versionControlSystemEmpty() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.versionControlSystem("");
 
         Project compiled = compileProject(project);
@@ -111,7 +111,7 @@ class ProjectToBeeDefinitionTest {
      * @param project
      * @return
      */
-    private Project compileProject(BlinkProject project) {
+    private Project compileProject(TestableProject project) {
         List<String> lines = project.toBeeDefinition();
 
         ErrorListener listener = new ErrorListener();

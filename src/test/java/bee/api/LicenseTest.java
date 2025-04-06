@@ -14,32 +14,32 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import bee.BlinkProject;
+import bee.TestableProject;
 
 class LicenseTest {
 
     @Test
     void noSpecified() {
-        new BlinkProject();
+        new TestableProject();
 
         List<String> text = License.MIT.text(true);
-        assert text.get(0).equals("Copyright (C) " + Year.now().getValue() + " The BLINK Development Team");
+        assert text.get(0).equals("Copyright (C) " + Year.now().getValue() + " The TEST Development Team");
         assert text.get(2).equals("Licensed under the MIT License (the \"License\");");
     }
 
     @Test
     void specified() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.license(License.BSD);
 
         List<String> text = project.license().text(true);
-        assert text.get(0).equals("Copyright (C) " + Year.now().getValue() + " The BLINK Development Team");
+        assert text.get(0).equals("Copyright (C) " + Year.now().getValue() + " The TEST Development Team");
         assert text.get(2).equals("Licensed under the BSD License (the \"License\");");
     }
 
     @Test
     void durationFrom() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.license(License.MPL);
         project.licenser(2020, "The Team");
 
@@ -50,7 +50,7 @@ class LicenseTest {
 
     @Test
     void durationFromTo() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.license(License.MPL);
         project.licenser(2018, 2020, "The Team");
 
@@ -61,7 +61,7 @@ class LicenseTest {
 
     @Test
     void durationMultiple() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         project.license(License.EPL);
         project.licenser(2018, 2020, "The Team");
         project.licenser(2021, 2021, "The New Team");

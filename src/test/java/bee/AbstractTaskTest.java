@@ -15,7 +15,7 @@ import psychopath.File;
 
 public abstract class AbstractTaskTest extends TaskOperations {
 
-    protected final BlinkProject project = new BlinkProject();
+    protected final TestableProject project = new TestableProject();
 
     @BeforeEach
     public void before() {

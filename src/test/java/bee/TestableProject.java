@@ -23,7 +23,7 @@ import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
-public class BlinkProject extends Project {
+public class TestableProject extends Project {
 
     static {
         I.load(Task.class);
@@ -38,8 +38,8 @@ public class BlinkProject extends Project {
     /**
      * 
      */
-    public BlinkProject() {
-        product("blink", "Blink", "1.0");
+    public TestableProject() {
+        product("test", "test", "1.0");
         LifestyleForProject.local.set(this);
         LifestyleForUI.local.set(Null.UI);
     }
@@ -47,8 +47,8 @@ public class BlinkProject extends Project {
     /**
      * 
      */
-    public BlinkProject(UserInterface ui) {
-        product("blink", "Blink", "1.0");
+    public TestableProject(UserInterface ui) {
+        product("test", "test", "1.0");
         LifestyleForProject.local.set(this);
         LifestyleForUI.local.set(ui);
     }

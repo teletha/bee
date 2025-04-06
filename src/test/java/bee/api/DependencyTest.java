@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import antibug.CleanRoom;
-import bee.BlinkProject;
+import bee.TestableProject;
 import psychopath.Locator;
 
 class DependencyTest {
@@ -637,7 +637,7 @@ class DependencyTest {
     /**
      * 
      */
-    private class TemporaryProject extends BlinkProject {
+    private class TemporaryProject extends TestableProject {
 
         /**
          * 

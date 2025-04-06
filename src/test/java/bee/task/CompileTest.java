@@ -19,10 +19,10 @@ import bee.AbstractTaskTest;
 import bee.Task;
 import psychopath.File;
 
-public class CompileTest extends AbstractTaskTest {
+class CompileTest extends AbstractTaskTest {
 
     @Test
-    public void compileMainSource() throws Exception {
+    void compileMainSource() {
         project.source("A");
         project.source("test.B");
         project.resource("C");
@@ -44,7 +44,7 @@ public class CompileTest extends AbstractTaskTest {
     }
 
     @Test
-    public void compileTestSource() throws Exception {
+    void compileTestSource() {
         project.sourceTest("A");
         project.sourceTest("test.B");
         project.resourceTest("C");
@@ -66,7 +66,7 @@ public class CompileTest extends AbstractTaskTest {
     }
 
     @Test
-    public void compileProjectSource() throws Exception {
+    void compileProjectSource() {
         project.sourceProject("A");
         project.sourceProject("test.B");
         project.resourceProject("C");
@@ -88,7 +88,7 @@ public class CompileTest extends AbstractTaskTest {
     }
 
     @Test
-    public void compileInvalidSource() throws Exception {
+    void compileInvalidSource() {
         Assertions.assertThrows(Throwable.class, () -> {
             project.source("A", "invalid");
 

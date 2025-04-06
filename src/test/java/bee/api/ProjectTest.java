@@ -12,21 +12,21 @@ package bee.api;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import bee.BlinkProject;
+import bee.TestableProject;
 import bee.Fail;
 
 class ProjectTest {
 
     @Test
     void groupNull() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
 
         Assertions.assertThrows(Fail.class, () -> project.product(null, "PRODUCT", "1.5"));
     }
 
     @Test
     void associate() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
 
         Key key = project.associate(Key.class);
         assert key != null;
@@ -40,7 +40,7 @@ class ProjectTest {
 
     @Test
     void associateNull() {
-        BlinkProject project = new BlinkProject();
+        TestableProject project = new TestableProject();
         Assertions.assertThrows(NullPointerException.class, () -> project.associate(null));
     }
 }
