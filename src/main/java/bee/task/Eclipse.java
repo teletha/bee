@@ -20,6 +20,7 @@ import java.util.concurrent.ForkJoinPool;
 
 import bee.Bee;
 import bee.BeeInstaller;
+import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
@@ -28,15 +29,9 @@ import bee.api.Project;
 import bee.api.Repository;
 import bee.api.Scope;
 import bee.task.AnnotationProcessor.ProjectInfo;
-import bee.util.Config;
-import bee.util.Config.Description;
 import bee.util.Java;
 import bee.util.Java.JVM;
-import bee.util.Process;
 import kiss.I;
-import kiss.Managed;
-import kiss.Singleton;
-import kiss.Variable;
 import kiss.XML;
 import psychopath.Directory;
 import psychopath.File;
@@ -62,18 +57,18 @@ public interface Eclipse extends Task, IDESupport {
 
         // check lombok
         if (project().hasDependency(Bee.Lombok.getGroup(), Bee.Lombok.getProduct())) {
-            EclipseApplication eclipse = EclipseApplication.create();
+            File eclipse = locateActiveEclipse();
             Library lombok = project().getLibrary(Bee.Lombok.getGroup(), Bee.Lombok.getProduct(), Bee.Lombok.getVersion())
                     .iterator()
                     .next();
 
-            if (!eclipse.isLomboked()) {
+            if (!isLomboked(eclipse)) {
                 // install lombok
                 Java.with()
                         .classPath(I.class, Bee.class)
                         .classPath(lombok.getLocalJar())
                         .encoding(project().getEncoding())
-                        .run(LombokInstaller.class, "install", eclipse.locate().get());
+                        .run(LombokInstaller.class, "install", eclipse);
 
                 // restart eclipse
                 ui().warn("Restart your Eclipse to enable Lombok.");
@@ -371,9 +366,6 @@ public interface Eclipse extends Task, IDESupport {
         }
     }
 
-    /**
-     * 
-     */
     class LombokInstaller extends JVM {
 
         /**
@@ -389,90 +381,41 @@ public interface Eclipse extends Task, IDESupport {
     }
 
     /**
+     * Locate the active eclipse application.
      * 
+     * @return
      */
-    @Managed(value = Singleton.class)
-    abstract class EclipseApplication {
+    private File locateActiveEclipse() {
+        if (Platform.isWindows()) {
+            String result = bee.util.Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path");
 
-        /**
-         * Locate the active eclipse application.
-         * 
-         * @return
-         */
-        abstract Variable<File> locateActive();
-
-        /**
-         * Locate the eclipse application.
-         * 
-         * @return
-         */
-        final Variable<File> locate() {
-            return Variable.of(Config.user(Locator.class).locate());
-        }
-
-        /**
-         * Check whether the specified eclipse application is customized or not.
-         * 
-         * @return A result.
-         */
-        final boolean isLomboked() {
-            for (String line : locate().get().parent().file("eclipse.ini").lines().toList()) {
-                if (line.contains("lombok.jar")) {
-                    return true;
-                }
+            if (result.startsWith("Path :")) {
+                result = result.substring(6).trim();
             }
-            return false;
-        }
 
-        /**
-         * Create the platform specific {@link EclipseApplication}.
-         * 
-         * @return
-         */
-        private static EclipseApplication create() {
-            if (Platform.isWindows()) {
-                return I.make(ForWindows.class);
+            File locate = psychopath.Locator.file(result);
+
+            if (locate.isAbsent()) {
+                throw new Fail("Process is not found, activate Eclipse application.");
             } else {
-                throw new Error("Unsupported platform.");
+                return locate;
+            }
+        } else {
+            throw new Fail("Unsupported platform.");
+        }
+    }
+
+    /**
+     * Check whether the specified eclipse application is customized or not.
+     * 
+     * @return A result.
+     */
+    private boolean isLomboked(File eclipse) {
+        for (String line : eclipse.parent().file("eclipse.ini").lines().toList()) {
+            if (line.contains("lombok.jar")) {
+                return true;
             }
         }
-
-        /**
-         * @version 2017/01/10 15:49:34
-         */
-        @Description("Eclipse Location")
-        public interface Locator {
-
-            @Description("The location of eclipse application file.")
-            default File locate() {
-                return EclipseApplication.create().locateActive().get();
-            }
-        }
-
-        /**
-         * 
-         */
-        private static class ForWindows extends EclipseApplication {
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            Variable<File> locateActive() {
-                String result = Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path");
-
-                if (result.startsWith("Path :")) {
-                    result = result.substring(6).trim();
-                }
-
-                File locate = psychopath.Locator.file(result);
-
-                if (locate.isAbsent()) {
-                    return Variable.empty();
-                } else {
-                    return Variable.of(locate);
-                }
-            }
-        }
+        return false;
     }
 }
