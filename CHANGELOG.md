@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.75.0](https://github.com/teletha/bee/compare/0.74.0...0.75.0) (2025-04-06)
+
+
+### Features
+
+* add TaskOperations#config ([611b91d](https://github.com/teletha/bee/commit/611b91d88e4681fd264e376d9405daf1eadaf090))
+* custom message builder ([a14ff2f](https://github.com/teletha/bee/commit/a14ff2fc5c8e9336e1775a5d7d0819b45f757ba3))
+* drop user config ([190a970](https://github.com/teletha/bee/commit/190a970572abb2c3ee46902f0f3d521b21888566))
+* provide metadata for configuration ([0e4c80b](https://github.com/teletha/bee/commit/0e4c80b07ef705484467473d73a3e1904973a7d7))
+* TaskInfo manages all tasks by type ([5d29c64](https://github.com/teletha/bee/commit/5d29c648349779a4b0aeb6d5efdec58e7b96ee55))
+* UserInterface supports Map ([4215c03](https://github.com/teletha/bee/commit/4215c03466cec7292db0f1d4bcc53489579c2ffc))
+
+
+### Bug Fixes
+
+* accept the proxied task ([2bf8957](https://github.com/teletha/bee/commit/2bf895700c2c7278945153762754ce726aa368ee))
+* deny concrete task class ([bdb1055](https://github.com/teletha/bee/commit/bdb105500d45507f8aee131b23cc5172ff98c922))
+* exe task uses the built-in downloader ([d09d5e6](https://github.com/teletha/bee/commit/d09d5e65f5a0a7321dd4ce493a62f0d3d54fe15d))
+* help task is broken ([1a835f1](https://github.com/teletha/bee/commit/1a835f17dd8294490b7468f8a69fe9c06987dad2))
+* parallel download? ([6aacd2c](https://github.com/teletha/bee/commit/6aacd2c09f2bc199617c9086e912160f65e78d9d))
+* task priority ([0cf48e2](https://github.com/teletha/bee/commit/0cf48e20ef33b0918cee34d73e21be884532c10c))
+* test task must use the JVM userinterface ([df1e001](https://github.com/teletha/bee/commit/df1e00174db6e438be16d9557d94a69699ff2b98))
+
 ## [0.74.0](https://github.com/teletha/bee/compare/0.73.0...0.74.0) (2025-03-28)
 
 
