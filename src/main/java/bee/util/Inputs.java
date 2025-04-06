@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.lang.model.SourceVersion;
 
+import bee.TaskOperations;
 import bee.UserInterface;
 import kiss.I;
 import kiss.Observer;
@@ -25,8 +26,10 @@ import psychopath.Progress;
 
 public class Inputs {
 
-    public static Observer<Progress> observerFor(UserInterface ui, Location target, String progressMessage, String completeMessage) {
+    public static Observer<Progress> progress(Location target, String progressMessage, String completeMessage) {
         return new Observer<>() {
+
+            private final UserInterface ui = TaskOperations.ui();
 
             /** reduce log flow */
             private long latest;
@@ -36,8 +39,8 @@ public class Inputs {
              */
             @Override
             public void accept(Progress info) {
-                long now = System.nanoTime();
-                if (66000000 <= now - latest) {
+                long now = System.currentTimeMillis();
+                if (100 <= now - latest) {
                     latest = now;
                     ui.trace(progressMessage, ": ", info.completedFiles(), "/", info.totalFiles, " (", info.rateByFiles(), "%)");
                 }
@@ -65,10 +68,6 @@ public class Inputs {
                 }
             }
         };
-    }
-
-    public static String format(Object p1, String text) {
-        return String.format(text, p1);
     }
 
     /**
@@ -156,29 +155,6 @@ public class Inputs {
      */
     public static List<String> templates(String template, Object... context) {
         return I.list(template(template, context).split("\\R"));
-    }
-
-    /**
-     * Normalize user input.
-     * 
-     * @param input A user input.
-     * @param defaultValue A default value.
-     * @return A normalized input.
-     */
-    public static String normalize(CharSequence input, String defaultValue) {
-        if (input == null) {
-            input = defaultValue;
-        }
-
-        // trim whitespcae
-        input = input.toString().trim();
-
-        if (input.length() == 0) {
-            input = defaultValue;
-        }
-
-        // API definition
-        return input.toString();
     }
 
     /**

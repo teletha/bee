@@ -21,6 +21,6 @@ public interface Clean extends Task {
     default void all() {
         project().getOutput()
                 .trackDeleting("!*.jar")
-                .to(Inputs.observerFor(ui(), project().getOutput(), "Deleting output directory", "Deleted output directory"));
+                .to(Inputs.progress(project().getOutput(), "Deleting output directory", "Deleted output directory"));
     }
 }

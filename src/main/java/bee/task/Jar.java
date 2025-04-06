@@ -182,7 +182,7 @@ public interface Jar extends Task<Jar.Config> {
         Locator.folder()
                 .add(input, option.andThen(Option::strip))
                 .trackPackingTo(output)
-                .to(Inputs.observerFor(ui(), output, "Packaging " + type + " files", "Build " + type + " jar"));
+                .to(Inputs.progress(output, "Packaging " + type + " files", "Build " + type + " jar"));
     }
 
     /**
@@ -216,7 +216,7 @@ public interface Jar extends Task<Jar.Config> {
         for (Library library : TaskOperations.project().getDependency(Scope.Runtime)) {
             folder.add(library.getLocalJar().asArchive(), conf.merging);
         }
-        folder.trackPackingTo(output).to(Inputs.observerFor(ui(), output, "Merging class files", "Build merged classes jar"));
+        folder.trackPackingTo(output).to(Inputs.progress(output, "Merging class files", "Build merged classes jar"));
     }
 
     /**
