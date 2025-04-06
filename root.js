@@ -103,20 +103,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Config",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Config.Description",
-			"packageName": "bee.util",
-			"type": "Annotation"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Dependency",
 			"packageName": "bee.task",
 			"type": "Interface"
@@ -139,20 +125,6 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Eclipse",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Eclipse.EclipseApplication",
-			"packageName": "bee.task",
-			"type": "AbstractClass"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Eclipse.EclipseApplication.Locator",
 			"packageName": "bee.task",
 			"type": "Interface"
 		},
