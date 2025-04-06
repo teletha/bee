@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="V">
-		<header class="W" date="2025-03-28" ver="0.75.0">
-			<h1 class="l"><code>Bee</code></h1>
-			<nav class="n"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="P">
+		<header class="Q" date="2025-04-06" ver="0.75.0">
+			<h1 class="k"><code>Bee</code></h1>
+			<nav class="U"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,126 +35,126 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="h"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="T"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="X"></nav>
-		<article class="R" id="Article">
-			<section class="K"><code class="S">bee.task</code>
-				<h2 class="Class I"><code class="J">Jar.Modify</code></h2>
-				<div class="b">
+		<nav class="R"></nav>
+		<article class="I" id="Article">
+			<section class="s"><code class="L">bee.task</code>
+				<h2 class="Class a"><code class="X">Jar.Modify</code></h2>
+				<div class="H">
 					<ul class="C E">
 						<li><code>org.objectweb.asm.ClassVisitor</code></li>
 					</ul>
 				</div><span class="B"><p>ASM ClassVisitor implementation to modify class version and delegate to method/source
 visitors.</p></span></section>
-			<section class="K" id="Modify(javax.lang.model.SourceVersion,org.objectweb.asm.ClassVisitor,bee.task.Jar.Config)">
-				<h2 class="g"><i class="PUBLIC"></i><code class="J">Modify</code><code class="i">(<code><a aria-label="javax.lang.model.SourceVersion 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.compiler/javax/lang/model/SourceVersion.html">SourceVersion</a></code><code class="parameterName">targetVersion</code>, <code>org.objectweb.asm.ClassVisitor</code><code class="parameterName">classVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></h2>
-				<table class="s">
-					<tr class="a">
+			<section class="s" id="Modify(javax.lang.model.SourceVersion,org.objectweb.asm.ClassVisitor,bee.task.Jar.Config)">
+				<h2 class="r"><i class="PUBLIC"></i><code class="X">Modify</code><code class="o">(<code><a aria-label="javax.lang.model.SourceVersion 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.compiler/javax/lang/model/SourceVersion.html">SourceVersion</a></code><code class="parameterName">targetVersion</code>, <code>org.objectweb.asm.ClassVisitor</code><code class="parameterName">classVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></h2>
+				<table class="l">
+					<tr class="p">
 						<td><code><a aria-label="javax.lang.model.SourceVersion 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.compiler/javax/lang/model/SourceVersion.html">SourceVersion</a></code><code class="parameterName">targetVersion</code></td>
 						<td><span><p>The target Java source version.</p></span></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code>org.objectweb.asm.ClassVisitor</code><code class="parameterName">classVisitor</code></td>
 						<td><span><p>The next visitor in the chain.</p></span></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code></td>
 						<td><span><p>Configuration for debug/trace info removal.</p></span></td>
 					</tr>
 				</table><span class="B"><p>Creates a class modification visitor.</p></span></section>
-			<section class="K" id="visit(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">
-				<h2 class="g"><i class="OVERRIDE PUBLIC"></i><code class="J">visit</code><code class="i">(<code>int</code><code class="parameterName">version</code>, <code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">superName</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">interfaces</code>)</code><i class="f"><code>void</code></i></h2>
-				<table class="s">
-					<tr class="a">
+			<section class="s" id="visit(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">
+				<h2 class="r"><i class="OVERRIDE PUBLIC"></i><code class="X">visit</code><code class="o">(<code>int</code><code class="parameterName">version</code>, <code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">superName</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">interfaces</code>)</code><i class="j"><code>void</code></i></h2>
+				<table class="l">
+					<tr class="p">
 						<td><code>int</code><code class="parameterName">version</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code>int</code><code class="parameterName">access</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">superName</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">interfaces</code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
-			<section class="K" id="visitMethod(int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">
-				<h2 class="g"><i class="OVERRIDE PUBLIC"></i><code class="J">visitMethod</code><code class="i">(<code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">exceptions</code>)</code><i class="f"><code>org.objectweb.asm.MethodVisitor</code></i></h2>
-				<table class="s">
-					<tr class="a">
+			<section class="s" id="visitMethod(int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">
+				<h2 class="r"><i class="OVERRIDE PUBLIC"></i><code class="X">visitMethod</code><code class="o">(<code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">exceptions</code>)</code><i class="j"><code>org.objectweb.asm.MethodVisitor</code></i></h2>
+				<table class="l">
+					<tr class="p">
 						<td><code>int</code><code class="parameterName">access</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">exceptions</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="q">
 						<td><code>org.objectweb.asm.MethodVisitor</code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
-			<section class="K" id="visitSource(java.lang.String,java.lang.String)">
-				<h2 class="g"><i class="OVERRIDE PUBLIC"></i><code class="J">visitSource</code><code class="i">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">source</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">debug</code>)</code><i class="f"><code>void</code></i></h2>
-				<table class="s">
-					<tr class="a">
+			<section class="s" id="visitSource(java.lang.String,java.lang.String)">
+				<h2 class="r"><i class="OVERRIDE PUBLIC"></i><code class="X">visitSource</code><code class="o">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">source</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">debug</code>)</code><i class="j"><code>void</code></i></h2>
+				<table class="l">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">source</code></td>
 						<td></td>
 					</tr>
-					<tr class="a">
+					<tr class="p">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">debug</code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
 		</article>
-		<aside class="Y">
-			<div class="e">
-				<h5 class="L">Constructors</h5>
+		<aside class="S">
+			<div class="Z">
+				<h5 class="O">Constructors</h5>
 				<ul>
-					<li class="Z"><i class="PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#Modify(javax.lang.model.SourceVersion,org.objectweb.asm.ClassVisitor,bee.task.Jar.Config)">Modify</a></code><code class="i">(<code><a aria-label="javax.lang.model.SourceVersion 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.compiler/javax/lang/model/SourceVersion.html">SourceVersion</a></code><code class="parameterName">targetVersion</code>, <code>org.objectweb.asm.ClassVisitor</code><code class="parameterName">classVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></li>
+					<li class="d"><i class="PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#Modify(javax.lang.model.SourceVersion,org.objectweb.asm.ClassVisitor,bee.task.Jar.Config)">Modify</a></code><code class="o">(<code><a aria-label="javax.lang.model.SourceVersion 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.compiler/javax/lang/model/SourceVersion.html">SourceVersion</a></code><code class="parameterName">targetVersion</code>, <code>org.objectweb.asm.ClassVisitor</code><code class="parameterName">classVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></li>
 				</ul>
-				<h5 class="L">Methods</h5>
+				<h5 class="O">Methods</h5>
 				<ul>
-					<li class="Z"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#visit(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">visit</a></code><code class="i">(<code>int</code><code class="parameterName">version</code>, <code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">superName</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">interfaces</code>)</code><i class="c"><code>void</code></i></li>
-					<li class="Z"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#visitMethod(int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">visitMethod</a></code><code class="i">(<code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">exceptions</code>)</code><i class="c"><code>org.objectweb.asm.MethodVisitor</code></i></li>
-					<li class="Z"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#visitSource(java.lang.String,java.lang.String)">visitSource</a></code><code class="i">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">source</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">debug</code>)</code><i class="c"><code>void</code></i></li>
+					<li class="d"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#visit(int,int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">visit</a></code><code class="o">(<code>int</code><code class="parameterName">version</code>, <code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">superName</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">interfaces</code>)</code><i class="m"><code>void</code></i></li>
+					<li class="d"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#visitMethod(int,java.lang.String,java.lang.String,java.lang.String,java.lang.String[])">visitMethod</a></code><code class="o">(<code>int</code><code class="parameterName">access</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code array="fix"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">exceptions</code>)</code><i class="m"><code>org.objectweb.asm.MethodVisitor</code></i></li>
+					<li class="d"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Modify.html#visitSource(java.lang.String,java.lang.String)">visitSource</a></code><code class="o">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">source</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">debug</code>)</code><i class="m"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="H"/>
+		<footer class="V"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
