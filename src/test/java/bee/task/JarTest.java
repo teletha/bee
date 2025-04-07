@@ -43,29 +43,34 @@ class JarTest extends AbstractTaskTest {
 
     @Test
     void modifyClass() {
-        project.source("AA");
-        project.source("test.B");
-        project.resource("C");
-        project.resource("test/D");
+        try {
+            project.source("AA");
+            project.source("test.B");
+            project.resource("C");
+            project.resource("test/D");
 
-        File createdJar = project.locateJar();
+            File createdJar = project.locateJar();
 
-        assert createdJar.isAbsent();
+            assert createdJar.isAbsent();
 
-        TaskOperations.config(Jar.class, conf -> {
-            conf.removeTraceInfo = true;
-        });
+            TaskOperations.config(Jar.class, conf -> {
+                conf.removeTraceInfo = true;
+            });
 
-        Jar task = Task.by(Jar.class);
-        task.source();
+            Jar task = Task.by(Jar.class);
+            task.source();
 
-        assert createdJar.isPresent();
-        assert createdJar.size() != 0;
+            assert createdJar.isPresent();
+            assert createdJar.size() != 0;
 
-        Directory unpacked = createdJar.unpackToTemporary();
-        assert unpacked.file("AA.class").isPresent();
-        assert unpacked.file("test/B.class").isPresent();
-        assert unpacked.file("C").isPresent();
-        assert unpacked.file("test/D").isPresent();
+            Directory unpacked = createdJar.unpackToTemporary();
+            assert unpacked.file("AA.class").isPresent();
+            assert unpacked.file("test/B.class").isPresent();
+            assert unpacked.file("C").isPresent();
+            assert unpacked.file("test/D").isPresent();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }

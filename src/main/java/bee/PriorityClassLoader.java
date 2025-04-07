@@ -9,6 +9,7 @@
  */
 package bee;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,8 +22,15 @@ import kiss.I;
 import psychopath.Location;
 
 /**
- * A ClassLoader that prioritizes loading specified classes from its own classpath (URLs).
- * For other classes, it follows the standard parent-first delegation model.
+ * A ClassLoader that provides fine-grained control over class loading delegation.
+ * <ul>
+ * <li>Allows specifying "high-priority" classes loaded child-first from its own URLs.</li>
+ * <li>Allows specifying "isolated" package prefixes (e.g., "bee.isolated.") whose classes
+ * are always loaded by this loader, even if present in the parent. If the class
+ * bytecode is not found in this loader's URLs, it attempts to fetch the bytecode
+ * from the parent/system and define it within this loader.</li>
+ * <li>For all other classes, it follows the standard parent-first delegation model.</li>
+ * </ul>
  */
 public class PriorityClassLoader extends URLClassLoader {
 
@@ -44,20 +52,18 @@ public class PriorityClassLoader extends URLClassLoader {
     }
 
     /**
-     * Loads the class with the specified binary name.
-     * If the class name is in the {@code highPriorityClasses} set, it attempts to load
-     * the class from this loader's URLs first. Otherwise, it follows the standard
-     * parent-first delegation model.
+     * Loads the class with the specified binary name according to the priority/isolation rules.
      *
      * @param name The binary name of the class to load.
      * @param resolve If {@code true}, resolve the class after loading.
      * @return The resulting {@code Class} object.
-     * @throws ClassNotFoundException If the class could not be found.
+     * @throws ClassNotFoundException If the class could not be found according to the defined
+     *             rules.
      */
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         synchronized (getClassLoadingLock(name)) {
-            // 1. Check if class is already loaded by this loader
+            // 1. Check if class is already loaded by THIS loader instance
             Class<?> loadedClass = findLoadedClass(name);
             if (loadedClass != null) {
                 if (ui.debuggable) ui.debug("PriorityClassLoader: Returning already loaded class : " + name);
@@ -65,21 +71,26 @@ public class PriorityClassLoader extends URLClassLoader {
             }
 
             // 2. Check if it's a high-priority class
-            if (highPriorityClasses.contains(name)) {
+            if (highPriorityClasses.contains(name) || name.contains(".isolated.")) {
                 // Try loading from this classloader's URLs first (child-first for priority classes)
                 try {
                     loadedClass = findClass(name);
-                    if (resolve) {
-                        resolveClass(loadedClass);
-                    }
                     if (ui.debuggable) ui.debug("PriorityClassLoader: Loaded with high-priority from own classpath : " + name);
-                    return loadedClass;
                 } catch (ClassNotFoundException e) {
-                    ui.error("PriorityClassLoader: High-priority class not found in specified URLs : " + name, e);
-                    // DO NOT delegate to parent for high-priority class if not found locally
-                    throw I.quiet(e);
+                    // Not found in local URLs, try fetching bytecode from parent/system
+                    byte[] bytes = fetchFromParentOrSystem(name);
+                    if (bytes != null) {
+                        // Define the class on this classloader
+                        loadedClass = defineClass(name, bytes, 0, bytes.length);
+                        if (ui.debuggable) {
+                            ui.debug("PriorityClassLoader: Fetched and Loaded with high-priority from own classpath : " + name);
+                        }
+                    } else {
+                        throw new ClassNotFoundException("High-priority class is not found in own classpath or parent/system resources :" + name, e);
+                    }
                 }
-                // Other potential errors from findClass (LinkageError, etc.) will propagate.
+                if (resolve) resolveClass(loadedClass);
+                return loadedClass;
             }
 
             // 3. Not a high-priority class, follow standard delegation model (Parent-First)
@@ -146,6 +157,42 @@ public class PriorityClassLoader extends URLClassLoader {
                 // Rethrow the exception from findClass.
                 throw I.quiet(e);
             }
+        }
+    }
+
+    /**
+     * Attempts to load the bytecode for a given class name by searching the parent classloader
+     * and potentially the system resources (which usually includes the bootstrap path).
+     *
+     * @param className The binary name of the class.
+     * @return The class bytecode as a byte array, or null if not found.
+     * @throws IOException If an error occurs reading the bytecode stream.
+     */
+    private byte[] fetchFromParentOrSystem(String className) {
+        String resourceName = className.replace('.', '/') + ".class";
+        InputStream input = null;
+
+        // Try parent classloader first
+        ClassLoader parent = getParent();
+        if (parent != null) {
+            input = parent.getResourceAsStream(resourceName);
+        }
+
+        // If not found in parent, try system resources (covers bootstrap and system classpath)
+        if (input == null) {
+            input = ClassLoader.getSystemResourceAsStream(resourceName);
+        }
+
+        if (input == null) {
+            return null;
+        }
+
+        try {
+            return input.readAllBytes();
+        } catch (Exception e) {
+            throw I.quiet(e);
+        } finally {
+            I.quiet(input);
         }
     }
 

@@ -148,6 +148,18 @@ public abstract class Isolation implements Runnable, Serializable {
         };
     }
 
+    public static void with(String deps, Ref process) {
+        new Isolation(deps) {
+            @Override
+            public void run() {
+                process.run();
+            }
+        };
+    }
+
+    public static interface Ref extends Runnable, Serializable {
+    }
+
     /**
      * A custom {@link ObjectInputStream} that resolves classes using the provided
      * {@link ClassLoader}. This is crucial for deserializing the {@link Isolation}
@@ -172,10 +184,19 @@ public abstract class Isolation implements Runnable, Serializable {
          */
         @Override
         protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            String name = desc.getName();
             try {
-                return classLoader.loadClass(desc.getName());
+                if (name.startsWith("[")) {
+                    // Use Class.forName for array types, providing the target classloader
+                    return Class.forName(name, false, classLoader);
+                } else {
+                    // For non-array types, use the existing logic (e.g.,
+                    // targetClassLoader.loadClass)
+                    return classLoader.loadClass(name);
+                }
             } catch (ClassNotFoundException e) {
-                throw e;
+                // Maybe fallback to super.resolveClass() if needed, or rethrow
+                return super.resolveClass(desc); // Or handle as appropriate
             }
         }
     }

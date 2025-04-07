@@ -12,6 +12,7 @@ package bee.task;
 import static bee.TaskOperations.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -19,15 +20,11 @@ import java.util.jar.Attributes.Name;
 
 import javax.lang.model.SourceVersion;
 
-import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.TypePath;
 
+import bee.Isolation;
 import bee.Task;
 import bee.TaskOperations;
 import bee.api.Command;
@@ -35,6 +32,7 @@ import bee.api.Comment;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Scope;
+import bee.task.isolated.Modify;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
@@ -60,6 +58,7 @@ public interface Jar extends Task<Jar.Config> {
      * packaging.
      * This is the default command for the `jar` task.
      */
+    @SuppressWarnings("serial")
     @Command(value = "Package main classes and resources into a JAR file. Also creates a source JAR.", defaults = true)
     default void source() {
         require(Compile::source); // Ensure main code is compiled
@@ -73,53 +72,44 @@ public interface Jar extends Task<Jar.Config> {
                 .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
 
         if (requiresModification) {
-            classesDir = modify(classesDir); // Use modified classes for packaging
+            Directory original = classesDir;
+            Directory modified = Locator.temporaryDirectory();
+
+            Isolation.with("org.ow2.asm : asm", () -> {
+                String oldVersion = Inputs.normalize(SourceVersion.latest());
+                String newVersion = Inputs.normalize(TaskOperations.project().getJavaRequiredVersion());
+                if (!oldVersion.equals(newVersion)) {
+                    ui().info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
+                }
+
+                if (conf.removeDebugInfo) {
+                    ui().info("Removing debug information (local variables, parameters) from class files.");
+                }
+                if (conf.removeTraceInfo) {
+                    ui().info("Removing trace information (source file name, line numbers) from class files.");
+                }
+
+                original.walkFile().to(file -> {
+                    File modifiedFile = modified.file(original.relativize(file));
+
+                    if (file.extension().equals("class")) {
+                        ClassReader classReader = new ClassReader(file.bytes());
+                        ClassWriter writer = new ClassWriter(classReader, 0);
+                        ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer, conf);
+                        classReader.accept(modification, 0);
+                        modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
+                    } else {
+                        file.copyTo(modifiedFile);
+                    }
+                });
+            });
+
+            classesDir = modified;
         }
 
         // Package classes and sources
         pack("main classes", I.signal(classesDir), project.locateJar(), conf.packing);
         pack("main sources", project.getSourceSet(), project.locateSourceJar(), null);
-    }
-
-    /**
-     * Internal helper to modify class files (version downgrade, debug/trace info removal).
-     * Creates modified class files in a temporary directory.
-     *
-     * @param originalDir The directory containing the original class files.
-     * @return The temporary directory containing the modified class files.
-     */
-    private Directory modify(Directory dir) {
-        String oldVersion = Inputs.normalize(SourceVersion.latest());
-        String newVersion = Inputs.normalize(TaskOperations.project().getJavaRequiredVersion());
-        if (!oldVersion.equals(newVersion)) {
-            ui().info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
-        }
-
-        Config conf = config();
-        if (conf.removeDebugInfo) {
-            ui().info("Removing debug information (local variables, parameters) from class files.");
-        }
-        if (conf.removeTraceInfo) {
-            ui().info("Removing trace information (source file name, line numbers) from class files.");
-        }
-
-        Directory modified = Locator.temporaryDirectory();
-
-        dir.walkFile().to(file -> {
-            File modifiedFile = modified.file(dir.relativize(file));
-
-            if (file.extension().equals("class")) {
-                ClassReader classReader = new ClassReader(file.bytes());
-                ClassWriter writer = new ClassWriter(classReader, 0);
-                ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer, conf);
-                classReader.accept(modification, 0);
-                modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
-            } else {
-                file.copyTo(modifiedFile);
-            }
-        });
-
-        return modified;
     }
 
     /**
@@ -220,123 +210,10 @@ public interface Jar extends Task<Jar.Config> {
     }
 
     /**
-     * ASM ClassVisitor implementation to modify class version and delegate to method/source
-     * visitors.
-     */
-    class Modify extends ClassVisitor {
-
-        private final int version;
-
-        private final Config conf;
-
-        /**
-         * Creates a class modification visitor.
-         * 
-         * @param targetVersion The target Java source version.
-         * @param classVisitor The next visitor in the chain.
-         * @param conf Configuration for debug/trace info removal.
-         */
-        public Modify(SourceVersion targetVersion, ClassVisitor classVisitor, Config conf) {
-            super(Opcodes.ASM9, classVisitor);
-
-            this.conf = conf;
-
-            // ignore RELEASE_1
-            version = 44 + Integer.parseInt(targetVersion.name().substring(targetVersion.name().indexOf('_') + 1));
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            super.visit(this.version, access, name, signature, superName, interfaces);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
-            return new Minify(super.visitMethod(access, name, descriptor, signature, exceptions), conf);
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void visitSource(String source, String debug) {
-            if (!conf.removeTraceInfo) {
-                super.visitSource(source, debug);
-            }
-        }
-    }
-
-    /**
-     * ASM MethodVisitor implementation to remove debug and trace information.
-     */
-    class Minify extends MethodVisitor {
-
-        private final Config conf;
-
-        /**
-         * Creates a method visitor for minification.
-         * 
-         * @param methodVisitor The next visitor in the chain.
-         * @param conf Configuration for debug/trace info removal.
-         */
-        public Minify(MethodVisitor methodVisitor, Config conf) {
-            super(Opcodes.ASM9, methodVisitor);
-            this.conf = conf;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void visitParameter(String name, int access) {
-            if (!conf.removeDebugInfo) {
-                super.visitParameter(name, access);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void visitLocalVariable(String name, String descriptor, String signature, Label start, Label end, int index) {
-            if (!conf.removeDebugInfo) {
-                super.visitLocalVariable(name, descriptor, signature, start, end, index);
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible) {
-            if (!conf.removeDebugInfo) {
-                return super.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible);
-            } else {
-                return null;
-            }
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void visitLineNumber(int line, Label start) {
-            if (!conf.removeTraceInfo) {
-                super.visitLineNumber(line, start);
-            }
-        }
-    }
-
-    /**
      * Configuration settings for the {@link Jar} task.
      */
-    public static class Config {
+    @SuppressWarnings("serial")
+    public static class Config implements Serializable {
         @Comment("Determines whether or not the class file should contain the local variable name and parameter name.")
         public boolean removeDebugInfo = false;
 
@@ -344,9 +221,9 @@ public interface Jar extends Task<Jar.Config> {
         public boolean removeTraceInfo = false;
 
         @Comment("Configure how to handle your resources when creating project jar.")
-        public Function<Option, Option> packing = Function.identity();
+        public transient Function<Option, Option> packing = Function.identity();
 
         @Comment("Configure how to handle merged resources when merging dependent jars.")
-        public Function<Option, Option> merging = Function.identity();
+        public transient Function<Option, Option> merging = Function.identity();
     }
 }
