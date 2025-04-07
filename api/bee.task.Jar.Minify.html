@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="P">
-		<header class="Q" date="2025-04-06" ver="0.75.0">
-			<h1 class="k"><code>Bee</code></h1>
-			<nav class="U"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="j">
+		<header class="k" date="2025-04-06" ver="0.75.0">
+			<h1 class="P"><code>Bee</code></h1>
+			<nav class="Q"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,143 +35,143 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="T"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="r"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="R"></nav>
-		<article class="I" id="Article">
-			<section class="s"><code class="L">bee.task</code>
-				<h2 class="Class a"><code class="X">Jar.Minify</code></h2>
+		<nav class="f"></nav>
+		<article class="O" id="Article">
+			<section class="q"><code class="h">bee.task</code>
+				<h2 class="Class c"><code class="Y">Jar.Minify</code></h2>
 				<div class="H">
 					<ul class="C E">
 						<li><code>org.objectweb.asm.MethodVisitor</code></li>
 					</ul>
 				</div><span class="B"><p>ASM MethodVisitor implementation to remove debug and trace information.</p></span></section>
-			<section class="s" id="Minify(org.objectweb.asm.MethodVisitor,bee.task.Jar.Config)">
-				<h2 class="r"><i class="PUBLIC"></i><code class="X">Minify</code><code class="o">(<code>org.objectweb.asm.MethodVisitor</code><code class="parameterName">methodVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></h2>
-				<table class="l">
-					<tr class="p">
+			<section class="q" id="Minify(org.objectweb.asm.MethodVisitor,bee.task.Jar.Config)">
+				<h2 class="L"><i class="PUBLIC"></i><code class="Y">Minify</code><code class="I">(<code>org.objectweb.asm.MethodVisitor</code><code class="parameterName">methodVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></h2>
+				<table class="N">
+					<tr class="a">
 						<td><code>org.objectweb.asm.MethodVisitor</code><code class="parameterName">methodVisitor</code></td>
 						<td><span><p>The next visitor in the chain.</p></span></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code></td>
 						<td><span><p>Configuration for debug/trace info removal.</p></span></td>
 					</tr>
 				</table><span class="B"><p>Creates a method visitor for minification.</p></span></section>
-			<section class="s" id="visitParameter(java.lang.String,int)">
-				<h2 class="r"><i class="OVERRIDE PUBLIC"></i><code class="X">visitParameter</code><code class="o">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>int</code><code class="parameterName">access</code>)</code><i class="j"><code>void</code></i></h2>
-				<table class="l">
-					<tr class="p">
+			<section class="q" id="visitParameter(java.lang.String,int)">
+				<h2 class="L"><i class="OVERRIDE PUBLIC"></i><code class="Y">visitParameter</code><code class="I">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>int</code><code class="parameterName">access</code>)</code><i class="d"><code>void</code></i></h2>
+				<table class="N">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code>int</code><code class="parameterName">access</code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
-			<section class="s" id="visitLocalVariable(java.lang.String,java.lang.String,java.lang.String,org.objectweb.asm.Label,org.objectweb.asm.Label,int)">
-				<h2 class="r"><i class="OVERRIDE PUBLIC"></i><code class="X">visitLocalVariable</code><code class="o">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code>int</code><code class="parameterName">index</code>)</code><i class="j"><code>void</code></i></h2>
-				<table class="l">
-					<tr class="p">
+			<section class="q" id="visitLocalVariable(java.lang.String,java.lang.String,java.lang.String,org.objectweb.asm.Label,org.objectweb.asm.Label,int)">
+				<h2 class="L"><i class="OVERRIDE PUBLIC"></i><code class="Y">visitLocalVariable</code><code class="I">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code>int</code><code class="parameterName">index</code>)</code><i class="d"><code>void</code></i></h2>
+				<table class="N">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code>org.objectweb.asm.Label</code><code class="parameterName">start</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code>org.objectweb.asm.Label</code><code class="parameterName">end</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code>int</code><code class="parameterName">index</code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
-			<section class="s" id="visitLocalVariableAnnotation(int,org.objectweb.asm.TypePath,org.objectweb.asm.Label[],org.objectweb.asm.Label[],int[],java.lang.String,boolean)">
-				<h2 class="r"><i class="OVERRIDE PUBLIC"></i><code class="X">visitLocalVariableAnnotation</code><code class="o">(<code>int</code><code class="parameterName">typeRef</code>, <code>org.objectweb.asm.TypePath</code><code class="parameterName">typePath</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code array="fix">int</code><code class="parameterName">index</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code>boolean</code><code class="parameterName">visible</code>)</code><i class="j"><code>org.objectweb.asm.AnnotationVisitor</code></i></h2>
-				<table class="l">
-					<tr class="p">
+			<section class="q" id="visitLocalVariableAnnotation(int,org.objectweb.asm.TypePath,org.objectweb.asm.Label[],org.objectweb.asm.Label[],int[],java.lang.String,boolean)">
+				<h2 class="L"><i class="OVERRIDE PUBLIC"></i><code class="Y">visitLocalVariableAnnotation</code><code class="I">(<code>int</code><code class="parameterName">typeRef</code>, <code>org.objectweb.asm.TypePath</code><code class="parameterName">typePath</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code array="fix">int</code><code class="parameterName">index</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code>boolean</code><code class="parameterName">visible</code>)</code><i class="d"><code>org.objectweb.asm.AnnotationVisitor</code></i></h2>
+				<table class="N">
+					<tr class="a">
 						<td><code>int</code><code class="parameterName">typeRef</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code>org.objectweb.asm.TypePath</code><code class="parameterName">typePath</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code array="fix">org.objectweb.asm.Label</code><code class="parameterName">start</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code array="fix">org.objectweb.asm.Label</code><code class="parameterName">end</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code array="fix">int</code><code class="parameterName">index</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code>boolean</code><code class="parameterName">visible</code></td>
 						<td></td>
 					</tr>
-					<tr class="q">
+					<tr class="Z">
 						<td><code>org.objectweb.asm.AnnotationVisitor</code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
-			<section class="s" id="visitLineNumber(int,org.objectweb.asm.Label)">
-				<h2 class="r"><i class="OVERRIDE PUBLIC"></i><code class="X">visitLineNumber</code><code class="o">(<code>int</code><code class="parameterName">line</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>)</code><i class="j"><code>void</code></i></h2>
-				<table class="l">
-					<tr class="p">
+			<section class="q" id="visitLineNumber(int,org.objectweb.asm.Label)">
+				<h2 class="L"><i class="OVERRIDE PUBLIC"></i><code class="Y">visitLineNumber</code><code class="I">(<code>int</code><code class="parameterName">line</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>)</code><i class="d"><code>void</code></i></h2>
+				<table class="N">
+					<tr class="a">
 						<td><code>int</code><code class="parameterName">line</code></td>
 						<td></td>
 					</tr>
-					<tr class="p">
+					<tr class="a">
 						<td><code>org.objectweb.asm.Label</code><code class="parameterName">start</code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
 		</article>
-		<aside class="S">
-			<div class="Z">
-				<h5 class="O">Constructors</h5>
+		<aside class="U">
+			<div class="J">
+				<h5 class="p">Constructors</h5>
 				<ul>
-					<li class="d"><i class="PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#Minify(org.objectweb.asm.MethodVisitor,bee.task.Jar.Config)">Minify</a></code><code class="o">(<code>org.objectweb.asm.MethodVisitor</code><code class="parameterName">methodVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></li>
+					<li class="S"><i class="PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#Minify(org.objectweb.asm.MethodVisitor,bee.task.Jar.Config)">Minify</a></code><code class="I">(<code>org.objectweb.asm.MethodVisitor</code><code class="parameterName">methodVisitor</code>, <code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code><code class="parameterName">conf</code>)</code></li>
 				</ul>
-				<h5 class="O">Methods</h5>
+				<h5 class="p">Methods</h5>
 				<ul>
-					<li class="d"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitParameter(java.lang.String,int)">visitParameter</a></code><code class="o">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>int</code><code class="parameterName">access</code>)</code><i class="m"><code>void</code></i></li>
-					<li class="d"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitLocalVariable(java.lang.String,java.lang.String,java.lang.String,org.objectweb.asm.Label,org.objectweb.asm.Label,int)">visitLocalVariable</a></code><code class="o">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code>int</code><code class="parameterName">index</code>)</code><i class="m"><code>void</code></i></li>
-					<li class="d"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitLocalVariableAnnotation(int,org.objectweb.asm.TypePath,org.objectweb.asm.Label[],org.objectweb.asm.Label[],int[],java.lang.String,boolean)">visitLocalVariableAnnotation</a></code><code class="o">(<code>int</code><code class="parameterName">typeRef</code>, <code>org.objectweb.asm.TypePath</code><code class="parameterName">typePath</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code array="fix">int</code><code class="parameterName">index</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code>boolean</code><code class="parameterName">visible</code>)</code><i class="m"><code>org.objectweb.asm.AnnotationVisitor</code></i></li>
-					<li class="d"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitLineNumber(int,org.objectweb.asm.Label)">visitLineNumber</a></code><code class="o">(<code>int</code><code class="parameterName">line</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>)</code><i class="m"><code>void</code></i></li>
+					<li class="S"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitParameter(java.lang.String,int)">visitParameter</a></code><code class="I">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>int</code><code class="parameterName">access</code>)</code><i class="V"><code>void</code></i></li>
+					<li class="S"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitLocalVariable(java.lang.String,java.lang.String,java.lang.String,org.objectweb.asm.Label,org.objectweb.asm.Label,int)">visitLocalVariable</a></code><code class="I">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">signature</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code>int</code><code class="parameterName">index</code>)</code><i class="V"><code>void</code></i></li>
+					<li class="S"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitLocalVariableAnnotation(int,org.objectweb.asm.TypePath,org.objectweb.asm.Label[],org.objectweb.asm.Label[],int[],java.lang.String,boolean)">visitLocalVariableAnnotation</a></code><code class="I">(<code>int</code><code class="parameterName">typeRef</code>, <code>org.objectweb.asm.TypePath</code><code class="parameterName">typePath</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">start</code>, <code array="fix">org.objectweb.asm.Label</code><code class="parameterName">end</code>, <code array="fix">int</code><code class="parameterName">index</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">descriptor</code>, <code>boolean</code><code class="parameterName">visible</code>)</code><i class="V"><code>org.objectweb.asm.AnnotationVisitor</code></i></li>
+					<li class="S"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.task.Jar.Minify.html#visitLineNumber(int,org.objectweb.asm.Label)">visitLineNumber</a></code><code class="I">(<code>int</code><code class="parameterName">line</code>, <code>org.objectweb.asm.Label</code><code class="parameterName">start</code>)</code><i class="V"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="V"/>
+		<footer class="W"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>

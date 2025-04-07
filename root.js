@@ -138,13 +138,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Ensure",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Exe",
 			"packageName": "bee.task",
 			"type": "Interface"
