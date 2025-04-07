@@ -6,6 +6,7 @@ const root = {
 		"bee.api",
 		"bee.coder",
 		"bee.task",
+		"bee.task.isolated",
 		"bee.util"
 	],
 	"types": [
@@ -243,6 +244,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Isolation.Ref",
+			"packageName": "bee",
+			"type": "Functional"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Jar",
 			"packageName": "bee.task",
 			"type": "Interface"
@@ -251,20 +259,6 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Jar.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Jar.Minify",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Jar.Modify",
 			"packageName": "bee.task",
 			"type": "Class"
 		},
@@ -337,6 +331,20 @@ const root = {
 			"name": "Maven",
 			"packageName": "bee.task",
 			"type": "Interface"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Minify",
+			"packageName": "bee.task.isolated",
+			"type": "Class"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Modify",
+			"packageName": "bee.task.isolated",
+			"type": "Class"
 		},
 		{
 			"modifiers": {
