@@ -87,38 +87,6 @@ bee install
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.ow2.asm</groupId>
-			<artifactId>asm</artifactId>
-			<version>9.8</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-codec</groupId>
-					<artifactId>commons-codec</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.sisu</groupId>
-					<artifactId>org.eclipse.sisu.plexus</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-component-annotations</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.maven</groupId>
-					<artifactId>plexus-utils</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.eclipse.sisu</groupId>
-					<artifactId>org.eclipse.sisu.inject</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.codehaus.plexus</groupId>
-					<artifactId>plexus-classworlds</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>auto483</artifactId>
 			<version>1.0.0</version>
