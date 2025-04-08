@@ -96,7 +96,6 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "auto483");
 
         // DYNAMICALLY ON RUNTIME
-        require("org.ow2.asm", "asm").atProvided();
         require("org.junit.platform", "junit-platform-engine").atProvided();
         require("org.junit.platform", "junit-platform-launcher").atProvided();
         require("com.github.teletha", "javadng").atProvided();

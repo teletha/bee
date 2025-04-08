@@ -11,23 +11,32 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.lang.classfile.ClassElement;
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassFile.DebugElementsOption;
+import java.lang.classfile.ClassFile.LineNumbersOption;
+import java.lang.classfile.ClassFileVersion;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.attribute.SourceFileAttribute;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.jar.Attributes.Name;
 
 import javax.lang.model.SourceVersion;
 
-import bee.Isolation;
 import bee.Task;
 import bee.TaskOperations;
+import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Comment;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.task.isolated.ClassManipulation;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
@@ -40,9 +49,15 @@ import psychopath.Option;
 /**
  * Handles the packaging of project artifacts (classes, sources, resources, documentation) into JAR
  * files.
+ * <p>
  * Provides options for creating standard JARs, source JARs, test JARs, documentation JARs,
  * and executable "uber-jars" containing all dependencies.
- * Also includes functionality to modify class files (e.g., version downgrade, debug info removal).
+ * <p>
+ * Includes functionality to modify class files before packaging using the Java Class-File API (Java
+ * 24+).
+ * Modifications can include downgrading the class file version and removing debug or trace
+ * information
+ * based on the {@link Config} settings.
  */
 public interface Jar extends Task<Jar.Config> {
 
@@ -53,8 +68,7 @@ public interface Jar extends Task<Jar.Config> {
      * packaging.
      * This is the default command for the `jar` task.
      */
-    @SuppressWarnings("serial")
-    @Command(value = "Package main classes and resources into a JAR file. Also creates a source JAR.", defaults = true)
+    @Command(value = "Package main classes and resources into a JAR file.", defaults = true)
     default void source() {
         require(Compile::source); // Ensure main code is compiled
 
@@ -67,12 +81,54 @@ public interface Jar extends Task<Jar.Config> {
                 .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
 
         if (requiresModify) {
-            classesDir = new Isolation<Directory>("org.ow2.asm : asm") {
-                @Override
-                protected Directory bridge() {
-                    return ClassManipulation.modify();
+            UserInterface ui = ui();
+            Directory modified = Locator.temporaryDirectory();
+            Set<ClassFile.Option> options = new HashSet();
+
+            int requiredVersion;
+            String oldVersion = Inputs.normalize(SourceVersion.latest());
+            String newVersion = Inputs.normalize(project.getJavaRequiredVersion());
+            if (oldVersion.equals(newVersion)) {
+                requiredVersion = 0;
+            } else {
+                ui.info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
+                requiredVersion = 44 + Integer.parseInt(newVersion);
+            }
+
+            if (conf.removeDebugInfo) {
+                ui.info("Removing debug information (local variables, parameters) from class files.");
+                options.add(DebugElementsOption.DROP_DEBUG);
+            }
+
+            if (conf.removeTraceInfo) {
+                ui.info("Removing trace information (source file name, line numbers) from class files.");
+                options.add(LineNumbersOption.DROP_LINE_NUMBERS);
+            }
+
+            project.getClasses().walkFile().to(file -> {
+                File modifiedFile = modified.file(project.getClasses().relativize(file));
+
+                if (file.extension().equals("class")) {
+                    ClassFile classFile = ClassFile.of(options.toArray(ClassFile.Option[]::new));
+                    ClassModel classModel = classFile.parse(file.bytes());
+
+                    modifiedFile.writeFrom(new ByteArrayInputStream(classFile.build(classModel.thisClass().asSymbol(), builder -> {
+                        for (ClassElement e : classModel) {
+                            if (conf.removeTraceInfo && e instanceof SourceFileAttribute) {
+                                // skip
+                            } else if (requiredVersion != 0 && e instanceof ClassFileVersion) {
+                                builder.withVersion(requiredVersion, 0);
+                            } else {
+                                builder.with(e);
+                            }
+                        }
+                    })));
+                } else {
+                    file.copyTo(modifiedFile);
                 }
-            }.result();
+            });
+
+            classesDir = modified;
         }
 
         // Package classes and sources
@@ -83,8 +139,9 @@ public interface Jar extends Task<Jar.Config> {
     /**
      * Packages the compiled test classes and resources into a test JAR file.
      * Also creates a separate JAR containing the test source files and resources.
+     * Class file modification is typically not applied to test classes.
      */
-    @Command("Package test classes and resources into a JAR file. Also creates a test source JAR.")
+    @Command("Package test classes and resources into a JAR file.")
     default void test() {
         require(Compile::test);
 
@@ -100,8 +157,9 @@ public interface Jar extends Task<Jar.Config> {
      * Packages the compiled project definition classes (e.g., the Project class itself) and
      * resources into a project JAR file.
      * Also creates a separate JAR containing the project source files and resources.
+     * Class file modification is typically not applied to project classes.
      */
-    @Command("Package project definition classes and resources into a JAR file. Also creates a project source JAR.")
+    @Command("Package project definition classes and resources into a JAR file.")
     default void project() {
         require(Compile::project);
 
