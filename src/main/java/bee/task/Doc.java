@@ -29,8 +29,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import bee.Isolation;
 import bee.Fail;
+import bee.Isolation;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
@@ -120,7 +120,7 @@ public interface Doc extends Task {
         new Isolation("com.github.teletha : javadng") {
 
             @Override
-            public void run() {
+            public void isolate() {
                 Javadoc.with.sources(project().getSourceSet().toList())
                         .output(output)
                         .product(project().getProduct())

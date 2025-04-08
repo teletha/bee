@@ -11,7 +11,6 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,10 +18,6 @@ import java.util.function.Function;
 import java.util.jar.Attributes.Name;
 
 import javax.lang.model.SourceVersion;
-
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
 
 import bee.Isolation;
 import bee.Task;
@@ -32,7 +27,7 @@ import bee.api.Comment;
 import bee.api.Library;
 import bee.api.Project;
 import bee.api.Scope;
-import bee.task.isolated.Modify;
+import bee.task.isolated.ClassManipulation;
 import bee.util.Inputs;
 import kiss.I;
 import kiss.Signal;
@@ -63,48 +58,21 @@ public interface Jar extends Task<Jar.Config> {
     default void source() {
         require(Compile::source); // Ensure main code is compiled
 
-        Project project = TaskOperations.project();
         Config conf = config();
+        Project project = TaskOperations.project();
         Directory classesDir = project.getClasses();
 
         // Modify class files if Java version needs downgrade or if removal options are enabled
-        boolean requiresModification = SourceVersion.latest()
+        boolean requiresModify = SourceVersion.latest()
                 .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
 
-        if (requiresModification) {
-            Directory original = classesDir;
-            Directory modified = Locator.temporaryDirectory();
-
-            Isolation.with("org.ow2.asm : asm", () -> {
-                String oldVersion = Inputs.normalize(SourceVersion.latest());
-                String newVersion = Inputs.normalize(TaskOperations.project().getJavaRequiredVersion());
-                if (!oldVersion.equals(newVersion)) {
-                    ui().info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
+        if (requiresModify) {
+            classesDir = new Isolation<Directory>("org.ow2.asm : asm") {
+                @Override
+                protected Directory bridge() {
+                    return ClassManipulation.modify();
                 }
-
-                if (conf.removeDebugInfo) {
-                    ui().info("Removing debug information (local variables, parameters) from class files.");
-                }
-                if (conf.removeTraceInfo) {
-                    ui().info("Removing trace information (source file name, line numbers) from class files.");
-                }
-
-                original.walkFile().to(file -> {
-                    File modifiedFile = modified.file(original.relativize(file));
-
-                    if (file.extension().equals("class")) {
-                        ClassReader classReader = new ClassReader(file.bytes());
-                        ClassWriter writer = new ClassWriter(classReader, 0);
-                        ClassVisitor modification = new Modify(TaskOperations.project().getJavaRequiredVersion(), writer, conf);
-                        classReader.accept(modification, 0);
-                        modifiedFile.writeFrom(new ByteArrayInputStream(writer.toByteArray()));
-                    } else {
-                        file.copyTo(modifiedFile);
-                    }
-                });
-            });
-
-            classesDir = modified;
+            }.result();
         }
 
         // Package classes and sources

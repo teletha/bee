@@ -11,21 +11,17 @@ package bee;
 
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.lang.annotation.Repeatable;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -122,7 +118,7 @@ class TaskInfo {
             this.name = computeTaskName(task);
             this.task = task;
 
-            for (Entry<Method, List<Annotation>> info : collectAnnotatedMethods(task).entrySet()) {
+            for (Entry<Method, List<Annotation>> info : Model.collectAnnotatedMethods(task).entrySet()) {
                 for (Annotation annotation : info.getValue()) {
                     if (annotation.annotationType() == Command.class) {
                         Method method = info.getKey();
@@ -449,81 +445,6 @@ class TaskInfo {
                 }
             }
         }
-    }
-
-    /**
-     * Collect all annotated methods and their annotations.
-     * 
-     * @param clazz A target class.
-     * @return A table of method and annotations.
-     */
-    public static Map<Method, List<Annotation>> collectAnnotatedMethods(Class clazz) {
-        Map<Method, List<Annotation>> table = new HashMap();
-
-        for (Class type : Model.collectTypes(clazz)) {
-            if (type != Object.class) {
-                for (Method method : type.getMethods()) {
-                    // exclude the method which is created by compiler
-                    // exclude the private method which is not declared in the specified class
-                    if (!method.isBridge() && !method
-                            .isSynthetic() && (((method.getModifiers() & Modifier.PRIVATE) == 0) || method.getDeclaringClass() == clazz)) {
-                        Annotation[] annotations = method.getAnnotations();
-
-                        if (annotations.length != 0) {
-                            List<Annotation> list = new ArrayList();
-
-                            // disclose container annotation
-                            for (Annotation annotation : annotations) {
-                                try {
-                                    Class annotationType = annotation.annotationType();
-                                    Method value = annotationType.getMethod("value");
-                                    Class returnType = value.getReturnType();
-
-                                    if (returnType.isArray()) {
-                                        Class<?> componentType = returnType.getComponentType();
-                                        Repeatable repeatable = componentType.getAnnotation(Repeatable.class);
-
-                                        if (repeatable != null && repeatable.value() == annotationType) {
-                                            value.setAccessible(true);
-
-                                            Collections.addAll(list, (Annotation[]) value.invoke(annotation));
-                                            continue;
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    // do nothing
-                                }
-                                list.add(annotation);
-                            }
-
-                            // check method overriding
-                            for (Method candidate : table.keySet()) {
-                                if (candidate.getName().equals(method.getName()) && Arrays
-                                        .deepEquals(candidate.getParameterTypes(), method.getParameterTypes())) {
-                                    method = candidate; // detect overriding
-                                    break;
-                                }
-                            }
-
-                            add: for (Annotation annotation : list) {
-                                Class annotationType = annotation.annotationType();
-                                List<Annotation> items = table.computeIfAbsent(method, m -> new ArrayList());
-
-                                if (!annotationType.isAnnotationPresent(Repeatable.class)) {
-                                    for (Annotation item : items) {
-                                        if (item.annotationType() == annotationType) {
-                                            continue add;
-                                        }
-                                    }
-                                }
-                                items.add(annotation);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return table;
     }
 
     /**

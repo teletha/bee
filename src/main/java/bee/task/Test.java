@@ -74,7 +74,7 @@ public interface Test extends Task<Test.Config> {
             new Isolation("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
 
                 @Override
-                public void run() {
+                public void isolate() {
                     Java.with()
                             .java(conf.java)
                             .param(conf.params)

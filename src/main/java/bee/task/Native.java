@@ -202,7 +202,7 @@ public interface Native extends Task<Native.Config> {
         new Isolation("io.github.classgraph:classgraph") {
 
             @Override
-            public void run() {
+            public void isolate() {
                 try (ScanResult scan = new ClassGraph().enableAllInfo().overrideClasspath(project().getClasspath()).scan()) {
                     String extensions = scan.getClassesImplementing(Extensible.class)
                             .stream()

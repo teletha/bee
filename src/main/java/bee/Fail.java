@@ -41,6 +41,12 @@ public class Fail extends Error {
         setStackTrace(new StackTraceElement[0]);
     }
 
+    public Fail reason(Throwable reason) {
+        addSuppressed(reason);
+
+        return this;
+    }
+
     /**
      * Write solution for this failure.
      * 

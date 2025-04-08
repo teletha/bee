@@ -41,8 +41,8 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import bee.BeeOption;
-import bee.Isolation;
 import bee.Fail;
+import bee.Isolation;
 import bee.Platform;
 import bee.UserInterface;
 import bee.api.Library;
@@ -584,7 +584,7 @@ public class JavaCompiler {
         // =============================================
         Variable<javax.tools.JavaCompiler> compiler = Variable.of(Javac);
         if (useECJ) {
-            Isolation depend = Isolation.with("org.eclipse.jdt : ecj");
+            Isolation<?> depend = Isolation.with("org.eclipse.jdt : ecj");
             compiler.set(depend.create(javax.tools.JavaCompiler.class, "org.eclipse.jdt.internal.compiler.tool.EclipseCompiler"));
 
             // All local variable names (including unused ones) are kept in the class file

@@ -162,7 +162,7 @@ public interface CI extends Task {
         new Isolation("com.github.javaparser : javaparser-core") {
 
             @Override
-            public void run() {
+            public void isolate() {
                 List<Snippet> snippets = project().getRoot()
                         .walkFile("**/ReadMe*Test.java")
                         .first()

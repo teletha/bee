@@ -24,29 +24,52 @@ import bee.api.Scope;
 import kiss.I;
 
 /**
- * Provides a mechanism to execute code within a context where specified dependencies
- * are loaded by a dedicated {@link PriorityClassLoader}. This class handles the
- * setup of the class loader, serialization/deserialization to switch context,
- * and execution of the {@link #run()} method within that context.
+ * Provides a mechanism to execute code within an isolated context defined by a specific set of
+ * library dependencies.
+ * <p>
+ * This class achieves isolation by creating a dedicated {@link PriorityClassLoader} loaded with the
+ * specified dependencies and their transitive runtime dependencies. It then uses a
+ * serialization-deserialization trick within its constructor to switch the execution context
+ * to this isolated classloader for the {@link #isolate()} or {@link #bridge()} method.
+ * </p>
+ * <p>
+ * Subclasses should override either {@link #isolate()} for procedures that do not return a value,
+ * or {@link #bridge()} for functions that return a value of type {@code V}. The constructor
+ * automatically detects which method is overridden (preferring {@code isolate()} if both are
+ * somehow
+ * overridden) and executes it within the isolated context.
+ * </p>
+ * <p>
+ * Use the {@link #load(Class, String)} and {@link #create(Class, String)} methods within
+ * your overridden {@code isolate()} or {@code bridge()} method to interact with classes loaded
+ * from the specified dependencies.
+ * </p>
+ *
+ * @param <V> The type of the value returned by the {@link #bridge()} method. Use {@link Void} if
+ *            no return value is needed (and override {@link #isolate()} instead).
  */
 @SuppressWarnings("serial")
-public abstract class Isolation implements Runnable, Serializable {
+public abstract class Isolation<V> implements Serializable {
 
     /**
-     * The dedicated class loader for the specified dependencies. Marked transient as it's
-     * context-specific.
+     * The dedicated class loader for the specified dependencies. It is marked {@code transient}
+     * because a ClassLoader itself is generally not serializable and is specific to the
+     * execution context where it was created. The deserialized copy running in the isolated
+     * context will have its own reference implicitly managed.
      */
     private final transient PriorityClassLoader loader;
 
+    /** Holds the result returned by the {@link #bridge()} method, if it was executed. */
+    private V result;
+
     /**
-     * Sets up the dependency context with the specified libraries.
-     * The constructor creates a {@link PriorityClassLoader}, adds the specified
-     * dependencies and their transitive runtime dependencies to its classpath,
-     * defines the concrete subclass of {@link Isolation} within this loader,
-     * and then executes the {@link #run()} method within the context of this loader
-     * via serialization/deserialization trick.
-     *
-     * @param dependencies A list of dependency descriptors (e.g., "groupId:artifactId:version").
+     * Sets up the dependency context and executes the isolated code.
+     * All operations involving dependency classes (loading, instantiation, method calls) should
+     * occur within the overridden {@code isolate()} or {@code bridge()} method to ensure they
+     * happen in the isolated context.
+     * 
+     * @param dependencies A list of dependency descriptors (e.g., "groupId:artifactId:version")
+     *            required for the isolated execution context.
      */
     protected Isolation(String... dependencies) {
         this.loader = new PriorityClassLoader(I.make(UserInterface.class));
@@ -60,7 +83,7 @@ public abstract class Isolation implements Runnable, Serializable {
             }
         }
 
-        // import and define classes related to this class
+        // import this class and its inner classes into the isolated loader
         loader.importAsPriorityClass(getClass());
         for (Class<?> sub : getClass().getDeclaredClasses()) {
             loader.importAsPriorityClass(sub);
@@ -71,35 +94,86 @@ public abstract class Isolation implements Runnable, Serializable {
         try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
             out.writeObject(this);
         } catch (Exception e) {
-            throw I.quiet(e);
+            throw new Fail("Failed to serialize Isolation task for context switch.").reason(e);
         }
 
         // copy object by deserialize
         try (ObjectInputStream in = new CustomObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()), loader)) {
-            Runnable runnable = (Runnable) in.readObject();
-            runnable.run();
+            Isolation<V> isolation = (Isolation) in.readObject();
+
+            try {
+                // check whether this class overrides isolate method or not
+                getClass().getDeclaredMethod("isolate");
+
+                isolation.isolate();
+            } catch (NoSuchMethodException e) {
+                result = isolation.bridge();
+            }
         } catch (Exception e) {
-            throw I.quiet(e);
+            throw new Fail("Failed to switch context or execute isolated code.").reason(e);
         }
+    }
+
+    /**
+     * This method is intended to be overridden by subclasses to perform actions
+     * within the isolated classloader context that do not produce a return value.
+     * <p>
+     * The code inside this method will execute with the dependencies specified in the
+     * constructor loaded preferentially by the isolated classloader. Use
+     * {@link #load(Class, String)} and {@link #create(Class, String)} to interact
+     * with classes from these dependencies.
+     * </p>
+     * <p>
+     * If this method is overridden, the {@link #bridge()} method will typically not be executed.
+     * </p>
+     * <p>
+     * The default implementation does nothing.
+     * </p>
+     */
+    protected void isolate() {
+        // Default implementation does nothing. Subclasses override for side effects.
+    }
+
+    /**
+     * This method is intended to be overridden by subclasses to perform actions
+     * within the isolated classloader context that produce a return value of type {@code V}.
+     * <p>
+     * The code inside this method will execute with the dependencies specified in the
+     * constructor loaded preferentially by the isolated classloader. Use
+     * {@link #load(Class, String)} and {@link #create(Class, String)} to interact
+     * with classes from these dependencies.
+     * </p>
+     * <p>
+     * If the {@link #isolate()} method is overridden by the subclass, this {@code bridge()}
+     * method will typically not be executed. The result of executing this method is stored
+     * and can be retrieved using {@link #result()}.
+     * </p>
+     * <p>
+     * The default implementation returns {@code null}.
+     * </p>
+     *
+     * @return The computed result of type {@code V}.
+     */
+    protected V bridge() {
+        return null; // subclasses override to return a value
     }
 
     /**
      * Loads a class by its fully qualified name using the internal {@link PriorityClassLoader}
      * associated with this dependency context. This ensures the class is loaded from the
-     * specified dependencies if available.
+     * specified dependencies if available, respecting the classloader's priority rules.
      *
      * @param <T> The expected type of the class.
-     * @param type A {@link Class} object representing the expected type {@code T}, used for type
-     *            safety.
+     * @param type A {@link Class} object representing the expected type {@code T}, used only
+     *            for compile-time type checking and casting convenience of the return value.
      * @param fqcn The fully qualified class name (e.g., "com.example.MyClass").
      * @return The loaded {@link Class} object, cast to {@code Class<T>}.
      * @throws RuntimeException wrapping a {@link ClassNotFoundException} if the class cannot be
-     *             found by the internal class loader.
+     *             found by the internal class loader or its parent delegation chain.
      */
-    public <T> Class<T> load(Class<T> type, String fqcn) {
+    public final <T> Class<T> load(Class<T> type, String fqcn) {
         try {
-            // The type parameter is mainly for compile-time type checking and casting convenience.
-            // The actual loading is done using the fqcn string.
+            // Use the isolated loader to find the class.
             return (Class<T>) loader.loadClass(fqcn);
         } catch (ClassNotFoundException e) {
             throw I.quiet(e);
@@ -108,66 +182,76 @@ public abstract class Isolation implements Runnable, Serializable {
 
     /**
      * Loads a class by its fully qualified name using the internal {@link PriorityClassLoader}
-     * and then creates a new instance of it using {@link I#make(Class)}.
+     * and then creates a new instance of it using {@link I#make(Class)} (Kiss DI).
      * This is useful for instantiating classes from the dependency context, potentially
      * utilizing dependency injection if configured via {@code kiss.I}.
      *
      * @param <T> The expected type of the instance.
-     * @param type A {@link Class} object representing the expected type {@code T}.
+     * @param type A {@link Class} object representing the expected type {@code T}. This is used
+     *            both for loading the correct class via {@link #load(Class, String)} and for
+     *            type safety of the returned instance.
      * @param fqcn The fully qualified class name of the class to load and instantiate.
      * @return A new instance of the loaded class, cast to {@code T}.
      * @throws RuntimeException wrapping errors that might occur during class loading
-     *             ({@link ClassNotFoundException}) or instantiation.
+     *             ({@link ClassNotFoundException}) or instantiation (via {@code I.make}).
      */
-    public <T> T create(Class<T> type, String fqcn) {
+    public final <T> T create(Class<T> type, String fqcn) {
         return I.make(load(type, fqcn));
     }
 
     /**
-     * Factory method to create a {@link Isolation} instance configured with the specified
-     * dependencies, but without any specific task defined in its {@link #run()} method.
-     * This is useful when the primary goal is just to set up the classpath with the
-     * given dependencies, perhaps to use the {@link #load(Class, String)} or
-     * {@link #create(Class, String)} methods afterwards on the returned instance (though
-     * the instance itself won't be easily accessible after construction due to the
-     * serialization trick). Typically used when the action is performed *within* the
-     * constructor or initialization phase of a subclass.
+     * Returns the result computed and returned by the {@link #bridge()} method, if it was executed.
+     * If the {@link #isolate()} method was executed instead (because it was overridden), this
+     * method will return the initial value of the result field (typically {@code null}).
+     *
+     * @return The result from the {@link #bridge()} execution, or {@code null}.
+     */
+    public final V result() {
+        return result;
+    }
+
+    /**
+     * Factory method to create an {@link Isolation} instance configured with the specified
+     * dependencies, designed for cases where no return value is needed (i.e., side effects only).
+     * The returned instance overrides {@link #isolate()} with an empty implementation.
+     * A subclass would typically be created to override {@code isolate} with actual logic.
+     * This factory might be less useful now compared to directly creating a subclass that
+     * overrides {@code isolate}.
      *
      * @param dependencies A list of dependency descriptors (e.g., "groupId:artifactId:version").
-     * @return A new {@link Isolation} instance whose {@code run()} method does nothing.
+     * @return A new {@link Isolation} instance whose {@code isolate()} method does nothing.
      *         The primary effect is the setup of the class loader with the dependencies
      *         during the construction of this object.
      */
-    public static Isolation with(String... dependencies) {
-        return new Isolation(dependencies) {
+    public static Isolation<Void> with(String... dependencies) {
+        return new Isolation<Void>(dependencies) {
             @Override
-            public void run() {
-                // This run method executes within the context of the PriorityClassLoader
-                // but performs no actions by default for Depend.on().
+            protected void isolate() {
+                // This isolate method executes within the context of the PriorityClassLoader
+                // but performs no actions by default. A subclass should override this.
             }
         };
-    }
-
-    public static void with(String deps, Ref process) {
-        new Isolation(deps) {
-            @Override
-            public void run() {
-                process.run();
-            }
-        };
-    }
-
-    public static interface Ref extends Runnable, Serializable {
     }
 
     /**
      * A custom {@link ObjectInputStream} that resolves classes using the provided
      * {@link ClassLoader}. This is crucial for deserializing the {@link Isolation}
-     * instance within the context of the {@link PriorityClassLoader}.
+     * instance within the context of the {@link PriorityClassLoader}, ensuring that the
+     * deserialized object's class (and the classes of its fields) are loaded by the
+     * correct, isolated classloader.
      */
     private static class CustomObjectInputStream extends ObjectInputStream {
+
+        /** The isolated classloader to use for resolving classes during deserialization. */
         private final ClassLoader classLoader;
 
+        /**
+         * Constructs the custom input stream.
+         * 
+         * @param in The underlying input stream (e.g., from serialized bytes).
+         * @param classLoader The classloader to use for resolving classes.
+         * @throws IOException If an I/O error occurs creating the stream.
+         */
         private CustomObjectInputStream(InputStream in, ClassLoader classLoader) throws IOException {
             super(in);
             this.classLoader = classLoader;
@@ -175,28 +259,27 @@ public abstract class Isolation implements Runnable, Serializable {
 
         /**
          * Resolves the class described by {@code desc} using the specific class loader
-         * provided during construction.
+         * provided during construction. Handles both regular classes and array types.
          *
          * @param desc The description of the class to resolve.
          * @return The resolved {@link Class}.
          * @throws IOException If an I/O error occurs.
-         * @throws ClassNotFoundException If the class cannot be found by the specified loader.
+         * @throws ClassNotFoundException If the class (or its component type for arrays)
+         *             cannot be found by the specified loader.
          */
         @Override
         protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
             String name = desc.getName();
             try {
-                if (name.startsWith("[")) {
-                    // Use Class.forName for array types, providing the target classloader
-                    return Class.forName(name, false, classLoader);
-                } else {
-                    // For non-array types, use the existing logic (e.g.,
-                    // targetClassLoader.loadClass)
-                    return classLoader.loadClass(name);
-                }
+                // Use Class.forName with the specified loader, which handles primitive types
+                // and array types correctly according to Javadoc.
+                return Class.forName(name, false, classLoader);
             } catch (ClassNotFoundException e) {
-                // Maybe fallback to super.resolveClass() if needed, or rethrow
-                return super.resolveClass(desc); // Or handle as appropriate
+                // If the isolated loader can't find it, maybe it's a system class?
+                // Falling back to super.resolveClass() might find it via the default mechanism,
+                // which could be necessary for core Java classes or classes shared via parent
+                // loader. Be cautious if true isolation is required.
+                return super.resolveClass(desc);
             }
         }
     }

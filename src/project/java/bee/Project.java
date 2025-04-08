@@ -65,7 +65,7 @@ public class Project extends bee.api.Project {
                 ```
                 """);
 
-        require(SourceVersion.latest(), SourceVersion.RELEASE_21);
+        require(SourceVersion.latest(), SourceVersion.RELEASE_24);
 
         // MAVEN REPOSITORY
         // Since 4.0.0-beta, Maven has become a super heavyweight library, with dependencies
@@ -94,9 +94,9 @@ public class Project extends bee.api.Project {
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
         require("com.github.teletha", "auto483");
-        require("org.ow2.asm", "asm").atProvided();
 
         // DYNAMICALLY ON RUNTIME
+        require("org.ow2.asm", "asm").atProvided();
         require("org.junit.platform", "junit-platform-engine").atProvided();
         require("org.junit.platform", "junit-platform-launcher").atProvided();
         require("com.github.teletha", "javadng").atProvided();
