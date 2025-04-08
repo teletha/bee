@@ -11,32 +11,58 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
-import java.io.IOException;
+import java.lang.classfile.AccessFlags;
+import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassModel;
+import java.lang.classfile.MethodModel;
+import java.lang.reflect.AccessFlag;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-
 import bee.Task;
+import bee.TaskOperations;
 import bee.api.Command;
 import bee.api.Comment;
-import bee.api.Project;
 import kiss.I;
 import kiss.Managed;
 import kiss.Singleton;
 import kiss.Variable;
 
+/**
+ * Provides tasks to find special entry point classes within the project:
+ * <ul>
+ * <li>{@code main}: Classes containing a standard {@code public static void main(String[] args)}
+ * method.</li>
+ * <li>{@code premain}: Classes containing a Java Agent {@code premain} method.</li>
+ * <li>{@code agentmain}: Classes containing a Java Agent {@code agentmain} method (for dynamic
+ * attachment).</li>
+ * </ul>
+ * This task scans the project's compiled classes and allows configuration or user interaction
+ * to select the desired entry point if multiple candidates are found or if none are explicitly
+ * configured.
+ */
 public interface FindMain extends Task<FindMain.Config> {
 
     /**
-     * Find main class.
-     * 
-     * @return A main class name.
+     * Finds or determines the main class for the project.
+     * <p>
+     * It follows these steps:
+     * <ol>
+     * <li>Checks if a main class is already specified in the {@link Config#main} setting.</li>
+     * <li>If not configured, it uses the {@link Search} service to find all classes containing a
+     * valid {@code public static void main(String[] args)} method.</li>
+     * <li>If exactly one main class is found, it's used automatically.</li>
+     * <li>If multiple main classes are found, it prompts the user (via {@code ui().ask()}) to
+     * select one.</li>
+     * <li>If no main class is found or configured, it reports that none exists.</li>
+     * <li>The determined main class name (or null if none) is stored back into {@link Config#main}
+     * for subsequent uses and returned as a {@link Variable}.</li>
+     * </ol>
+     *
+     * @return A {@link Variable} containing the fully qualified name of the main class, or an empty
+     *         Variable if none is found or selected.
      */
-    @Command(value = "Find main class.", defaults = true)
+    @Command(value = "Find main class for the project.", defaults = true)
     default Variable<String> main() {
         Config config = config();
 
@@ -45,7 +71,7 @@ public interface FindMain extends Task<FindMain.Config> {
         }
 
         if (config.main == null) {
-            ui().info("No main class.");
+            ui().info("No main class found or configured.");
         } else {
             ui().info("Using ", config.main, " as main class.");
         }
@@ -54,11 +80,22 @@ public interface FindMain extends Task<FindMain.Config> {
     }
 
     /**
-     * Find premain class.
-     * 
-     * @return A premain class name.
+     * Finds or determines the premain class for the project (Java Agent).
+     * <p>
+     * Similar logic to {@link #main()}: checks configuration first, then searches using
+     * {@link Search},
+     * asks the user if multiple candidates exist, reports the outcome, stores the result in
+     * {@link Config#premain}, and returns it as a {@link Variable}.
+     * </p>
+     * It looks for classes containing a method with the signature
+     * {@code public static void premain(String agentArgs)}
+     * or
+     * {@code public static void premain(String agentArgs, java.lang.instrument.Instrumentation inst)}.
+     *
+     * @return A {@link Variable} containing the fully qualified name of the premain class, or an
+     *         empty Variable if none is found or selected.
      */
-    @Command("Find premain class.")
+    @Command("Find premain class for Java Agent.")
     default Variable<String> premain() {
         Config config = config();
 
@@ -67,7 +104,7 @@ public interface FindMain extends Task<FindMain.Config> {
         }
 
         if (config.premain == null) {
-            ui().info("No premain class.");
+            ui().info("No premain class found or configured.");
         } else {
             ui().info("Using ", config.premain, " as premain class.");
         }
@@ -76,11 +113,22 @@ public interface FindMain extends Task<FindMain.Config> {
     }
 
     /**
-     * Find agentmain class.
-     * 
-     * @return A agentmain class name.
+     * Finds or determines the agentmain class for the project (Java Agent for dynamic attach).
+     * <p>
+     * Similar logic to {@link #main()}: checks configuration first, then searches using
+     * {@link Search},
+     * asks the user if multiple candidates exist, reports the outcome, stores the result in
+     * {@link Config#agentmain}, and returns it as a {@link Variable}.
+     * </p>
+     * It looks for classes containing a method with the signature
+     * {@code public static void agentmain(String agentArgs)}
+     * or
+     * {@code public static void agentmain(String agentArgs, java.lang.instrument.Instrumentation inst)}.
+     *
+     * @return A {@link Variable} containing the fully qualified name of the agentmain class, or an
+     *         empty Variable if none is found or selected.
      */
-    @Command("Find agentmain class.")
+    @Command("Find agentmain class for Java Agent (attach API).")
     default Variable<String> agentmain() {
         Config config = config();
 
@@ -89,7 +137,7 @@ public interface FindMain extends Task<FindMain.Config> {
         }
 
         if (config.agentmain == null) {
-            ui().info("No agentmain class.");
+            ui().info("No agentmain class found or configured.");
         } else {
             ui().info("Using ", config.agentmain, " as agentmain class.");
         }
@@ -98,99 +146,89 @@ public interface FindMain extends Task<FindMain.Config> {
     }
 
     /**
-     * 
+     * Internal singleton service responsible for scanning project classes
+     * to find potential main, premain, and agentmain classes.
+     * <p>
+     * This class is managed by Kiss DI as a singleton. Upon first instantiation,
+     * its constructor walks through all compiled class files of the current project,
+     * parses them using the Class-File API, and checks methods for the specific
+     * signatures and modifiers required for each entry point type. The fully qualified
+     * names of the classes containing these methods are stored in lists.
+     * </p>
      */
     @Managed(value = Singleton.class)
-    class Search extends ClassVisitor {
+    class Search {
 
-        /** The main classes. */
-        private List<String> mains = new ArrayList();
+        /** A list of fully qualified names of classes containing a valid main method. */
+        private final List<String> mains = new ArrayList<>();
 
-        /** The premain classes. */
-        private List<String> premains = new ArrayList();
+        /** A list of fully qualified names of classes containing a valid premain method. */
+        private final List<String> premains = new ArrayList<>();
 
-        /** The agentmain classes. */
-        private List<String> agentmains = new ArrayList();
-
-        /** The current processing internal class name. */
-        private String internalClassName;
+        /** A list of fully qualified names of classes containing a valid agentmain method. */
+        private final List<String> agentmains = new ArrayList<>();
 
         /**
-        
+         * Private constructor to enforce singleton pattern via Kiss DI.
+         * Initializes the service by scanning project classes.
          */
         private Search() {
-            super(Opcodes.ASM9);
+            TaskOperations.project().getClasses().walkFile("**.class").to(file -> {
+                ClassModel model = ClassFile.of().parse(file.bytes());
 
-            I.make(Project.class).getClasses().walkFile("**.class").to(file -> {
-                try {
-                    ClassReader reader = new ClassReader(file.newInputStream());
-                    reader.accept(this, ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES);
-                } catch (IOException e) {
-                    throw I.quiet(e);
+                for (MethodModel method : model.methods()) {
+                    AccessFlags flags = method.flags();
+                    if (flags.has(AccessFlag.PUBLIC) && flags.has(AccessFlag.STATIC)) {
+                        String name = method.methodName().stringValue();
+                        String desc = method.methodTypeSymbol().descriptorString();
+
+                        if (name.equals("main")) {
+                            if (desc.equals("([Ljava/lang/String;)V")) {
+                                mains.add(model.thisClass().asInternalName().replace('/', '.'));
+                            }
+                        } else if (name.equals("premain")) {
+                            if (desc.equals("(Ljava/lang/String;)V") || desc
+                                    .equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
+                                premains.add(model.thisClass().asInternalName().replace('/', '.'));
+                            }
+                        } else if (name.equals("agentmain")) {
+                            if (desc.equals("(Ljava/lang/String;)V") || desc
+                                    .equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
+                                agentmains.add(model.thisClass().asInternalName().replace('/', '.'));
+                            }
+                        }
+                    }
                 }
             });
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
-            this.internalClassName = name;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-            // method name is "main"
-            if (name.equals("main")) {
-                // method has String[] parameter and returns void
-                if (desc.equals("([Ljava/lang/String;)V")) {
-                    // method is public and static
-                    if ((Opcodes.ACC_STATIC & access) != 0 && (Opcodes.ACC_PUBLIC & access) != 0) {
-                        mains.add(internalClassName.replace('/', '.'));
-                    }
-                }
-            }
-
-            // method name is "premain"
-            if (name.equals("premain")) {
-                // method has String[] parameter and returns void
-                if (desc.equals("(Ljava/lang/String;)V") || desc.equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
-                    // method is public and static
-                    if ((Opcodes.ACC_STATIC & access) != 0 && (Opcodes.ACC_PUBLIC & access) != 0) {
-                        premains.add(internalClassName.replace('/', '.'));
-                    }
-                }
-            }
-
-            // method name is "agentmain"
-            if (name.equals("agentmain")) {
-                // method has String[] parameter and returns void
-                if (desc.equals("(Ljava/lang/String;)V") || desc.equals("(Ljava/lang/String;Ljava/lang/instrument/Instrumentation;)V")) {
-                    // method is public and static
-                    if ((Opcodes.ACC_STATIC & access) != 0 && (Opcodes.ACC_PUBLIC & access) != 0) {
-                        agentmains.add(internalClassName.replace('/', '.'));
-                    }
-                }
-            }
-            return null;
         }
     }
 
     /**
-     * User configuration.
+     * Configuration class for the {@link FindMain} task, allowing users to explicitly
+     * specify the fully qualified names of the main, premain, and agentmain classes.
+     * If a value is set here, the automatic search might be skipped for that specific entry point.
      */
     public static class Config {
 
+        /**
+         * Specifies the fully qualified class name (e.g., {@code com.example.MyApp})
+         * to be used as the main entry point for the application.
+         */
         @Comment("Specify the fully qualified class name for project main class.")
         public String main;
 
+        /**
+         * Specifies the fully qualified class name to be used as the
+         * {@code Premain-Class} attribute in the JAR manifest for Java Agents loaded at startup.
+         */
         @Comment("Specify the fully qualified class name for project premain class.")
         public String premain;
 
+        /**
+         * Specifies the fully qualified class name to be used as the
+         * {@code Agent-Class} attribute in the JAR manifest for Java Agents attached to a running
+         * JVM.
+         */
         @Comment("Specify the fully qualified class name for project agentmain class.")
         public String agentmain;
     }
