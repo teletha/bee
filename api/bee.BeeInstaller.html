@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="p">
-		<header class="N" date="2025-04-06" ver="0.75.0">
-			<h1 class="O"><code>Bee</code></h1>
-			<nav class="L"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="a">
+		<header class="R" date="2025-04-06" ver="0.75.0">
+			<h1 class="L"><code>Bee</code></h1>
+			<nav class="Q"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,37 +35,37 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="P"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="S"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="I"></nav>
-		<article class="T" id="Article">
-			<section class="Z"><code class="l">bee</code>
-				<h2 class="Class e"><code class="m">BeeInstaller</code></h2>
-				<div class="f"></div><span class="B"><p>Handles the installation process for the Bee build tool.
+		<nav class="c"></nav>
+		<article class="b" id="Article">
+			<section class="K"><code class="H">bee</code>
+				<h2 class="Class m"><code class="M">BeeInstaller</code></h2>
+				<div class="l"></div><span class="B"><p>Handles the installation process for the Bee build tool.
 This includes installing the Bee executable JAR, creating launcher scripts,
 installing the Bee API into the local repository, and displaying a welcome message.</p></span></section>
-			<section class="Z" id="BeeInstaller()">
-				<h2 class="Y"><i class="PUBLIC"></i><code class="m">BeeInstaller</code><code class="n">()</code></h2>
+			<section class="K" id="BeeInstaller()">
+				<h2 class="i"><i class="PUBLIC"></i><code class="M">BeeInstaller</code><code class="q">()</code></h2>
 			</section>
-			<section class="Z" id="main(java.lang.String...)">
-				<h2 class="Y"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="m">main</code><code class="n">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="k"><code>void</code></i></h2>
+			<section class="K" id="main(java.lang.String...)">
+				<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="M">main</code><code class="q">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="e"><code>void</code></i></h2>
 				<table class="j">
-					<tr class="s">
+					<tr class="n">
 						<td><code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code></td>
 						<td><span><p>Command line arguments (not used).</p></span></td>
 					</tr>
 				</table><span class="B"><p>The main entry point for launching the Bee installation process.
 Loads the Bee core and then calls <code><a aria-label="bee.BeeInstaller" href="api/bee.BeeInstaller.html#install(boolean,boolean,boolean)">#install(boolean, boolean, boolean)</a></code>
 with default options (install launcher, install API, show welcome message).</p></span></section>
-			<section class="Z" id="install(boolean,boolean,boolean)">
-				<h2 class="Y"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="m">install</code><code class="n">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="k"><code>void</code></i></h2>
+			<section class="K" id="install(boolean,boolean,boolean)">
+				<h2 class="i"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="M">install</code><code class="q">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="e"><code>void</code></i></h2>
 				<table class="j">
-					<tr class="s">
+					<tr class="n">
 						<td><code>boolean</code><code class="parameterName">installLauncher</code></td>
 						<td><span><p>If <code>true</code>, installs the Bee executable JAR (with version and
 timestamp) into the Bee home directory (<code><a aria-label="bee.Platform" href="api/bee.Platform.html#BeeHome">Platform#BeeHome</a></code>) and creates or
@@ -73,33 +73,33 @@ updates the native launcher script (<code>bee</code> or <code>bee.bat</code>). O
 timestamped JARs are removed. Installation only proceeds if the source JAR is
 newer than the potentially existing destination JAR.</p></span></td>
 					</tr>
-					<tr class="s">
+					<tr class="n">
 						<td><code>boolean</code><code class="parameterName">installAPI</code></td>
 						<td><span><p>If <code>true</code>, installs the Bee API library (extracted from the source
 JAR) into the local Maven repository. Installation only proceeds if the API JAR in
 the repository is older than the source JAR.</p></span></td>
 					</tr>
-					<tr class="s">
+					<tr class="n">
 						<td><code>boolean</code><code class="parameterName">showWelcome</code></td>
 						<td><span><p>If <code>true</code>, executes the <code>bee help:welcome</code> command to display
 a welcome message to the user after installation steps.</p></span></td>
 					</tr>
 				</table><span class="B"><p>Installs Bee components into the user&#39;s system based on the provided flags.</p></span></section>
 		</article>
-		<aside class="g">
-			<div class="h">
-				<h5 class="J">Constructors</h5>
+		<aside class="P">
+			<div class="r">
+				<h5 class="s">Constructors</h5>
 				<ul>
-					<li class="R"><i class="PUBLIC"></i><code><a href="api/bee.BeeInstaller.html#BeeInstaller()">BeeInstaller</a></code><code class="n">()</code></li>
+					<li class="p"><i class="PUBLIC"></i><code><a href="api/bee.BeeInstaller.html#BeeInstaller()">BeeInstaller</a></code><code class="q">()</code></li>
 				</ul>
-				<h5 class="J">Static Methods</h5>
+				<h5 class="s">Static Methods</h5>
 				<ul>
-					<li class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeInstaller.html#main(java.lang.String...)">main</a></code><code class="n">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="S"><code>void</code></i></li>
-					<li class="R"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeInstaller.html#install(boolean,boolean,boolean)">install</a></code><code class="n">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="S"><code>void</code></i></li>
+					<li class="p"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeInstaller.html#main(java.lang.String...)">main</a></code><code class="q">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="X"><code>void</code></i></li>
+					<li class="p"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeInstaller.html#install(boolean,boolean,boolean)">install</a></code><code class="q">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="X"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="c"/>
+		<footer class="Z"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>

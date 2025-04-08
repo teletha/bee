@@ -6,7 +6,6 @@ const root = {
 		"bee.api",
 		"bee.coder",
 		"bee.task",
-		"bee.task.isolated",
 		"bee.util"
 	],
 	"types": [
@@ -58,13 +57,6 @@ const root = {
 			"name": "CI",
 			"packageName": "bee.task",
 			"type": "Interface"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "ClassManipulation",
-			"packageName": "bee.task.isolated",
-			"type": "Class"
 		},
 		{
 			"modifiers": {
