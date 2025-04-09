@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.76.0](https://github.com/teletha/bee/compare/0.75.0...0.76.0) (2025-04-09)
+
+
+### Features
+
+* drop Ensure ([48af674](https://github.com/teletha/bee/commit/48af6741fdfff55f2d7095d8a6661891eae73955))
+* find-main task uses ClassFile API ([a70de15](https://github.com/teletha/bee/commit/a70de15757fc755e21c58448119af1eafcec7b31))
+* Isolation can return value ([0c4631c](https://github.com/teletha/bee/commit/0c4631cbde74727a940611bf0ca416435e8a80fa))
+* use ClassFile API instead of ASM ([d29195a](https://github.com/teletha/bee/commit/d29195a560966422056f73c9588f44e3fa77d43e))
+
+
+### Bug Fixes
+
+* ClassFile API requires the completed classpaths ([074a8be](https://github.com/teletha/bee/commit/074a8be56c09a73e5f08082dd8ac9e7507c17b4f))
+
 ## [0.75.0](https://github.com/teletha/bee/compare/0.74.0...0.75.0) (2025-04-06)
 
 
