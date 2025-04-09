@@ -15,9 +15,11 @@ import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.lang.classfile.ClassElement;
 import java.lang.classfile.ClassFile;
+import java.lang.classfile.ClassFile.ClassHierarchyResolverOption;
 import java.lang.classfile.ClassFile.DebugElementsOption;
 import java.lang.classfile.ClassFile.LineNumbersOption;
 import java.lang.classfile.ClassFileVersion;
+import java.lang.classfile.ClassHierarchyResolver;
 import java.lang.classfile.ClassModel;
 import java.lang.classfile.attribute.SourceFileAttribute;
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ import java.util.jar.Attributes.Name;
 
 import javax.lang.model.SourceVersion;
 
+import bee.PriorityClassLoader;
 import bee.Task;
 import bee.TaskOperations;
 import bee.UserInterface;
@@ -73,66 +76,82 @@ public interface Jar extends Task<Jar.Config> {
         require(Compile::source); // Ensure main code is compiled
 
         Config conf = config();
+        UserInterface ui = ui();
         Project project = TaskOperations.project();
-        Directory classesDir = project.getClasses();
+        Directory classes = project.getClasses();
 
         // Modify class files if Java version needs downgrade or if removal options are enabled
-        boolean requiresModify = SourceVersion.latest()
+        boolean needToModify = SourceVersion.latest()
                 .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
 
-        if (requiresModify) {
-            UserInterface ui = ui();
-            Directory modified = Locator.temporaryDirectory();
+        if (needToModify) {
             Set<ClassFile.Option> options = new HashSet();
+            Directory modified = Locator.temporaryDirectory();
 
-            int requiredVersion;
-            String oldVersion = Inputs.normalize(SourceVersion.latest());
-            String newVersion = Inputs.normalize(project.getJavaRequiredVersion());
-            if (oldVersion.equals(newVersion)) {
-                requiredVersion = 0;
-            } else {
-                ui.info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
-                requiredVersion = 44 + Integer.parseInt(newVersion);
-            }
-
-            if (conf.removeDebugInfo) {
-                ui.info("Removing debug information (local variables, parameters) from class files.");
-                options.add(DebugElementsOption.DROP_DEBUG);
-            }
-
-            if (conf.removeTraceInfo) {
-                ui.info("Removing trace information (source file name, line numbers) from class files.");
-                options.add(LineNumbersOption.DROP_LINE_NUMBERS);
-            }
-
-            project.getClasses().walkFile().to(file -> {
-                File modifiedFile = modified.file(project.getClasses().relativize(file));
-
-                if (file.extension().equals("class")) {
-                    ClassFile classFile = ClassFile.of(options.toArray(ClassFile.Option[]::new));
-                    ClassModel classModel = classFile.parse(file.bytes());
-
-                    modifiedFile.writeFrom(new ByteArrayInputStream(classFile.build(classModel.thisClass().asSymbol(), builder -> {
-                        for (ClassElement e : classModel) {
-                            if (conf.removeTraceInfo && e instanceof SourceFileAttribute) {
-                                // skip
-                            } else if (requiredVersion != 0 && e instanceof ClassFileVersion) {
-                                builder.withVersion(requiredVersion, 0);
-                            } else {
-                                builder.with(e);
-                            }
-                        }
-                    })));
-                } else {
-                    file.copyTo(modifiedFile);
+            // special classloader for ClassHierarchyResolver
+            try (PriorityClassLoader loader = new PriorityClassLoader(ui)) {
+                loader.addClassPath(project.getClasses());
+                for (Library library : project.getDependency(Scope.Compile)) {
+                    loader.addClassPath(library.getLocalJar());
                 }
-            });
+                options.add(ClassHierarchyResolverOption.of(ClassHierarchyResolver.ofClassLoading(loader)));
 
-            classesDir = modified;
+                // modify version
+                int requiredVersion;
+                String oldVersion = Inputs.normalize(SourceVersion.latest());
+                String newVersion = Inputs.normalize(project.getJavaRequiredVersion());
+                if (oldVersion.equals(newVersion)) {
+                    requiredVersion = 0;
+                } else {
+                    ui.info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
+                    requiredVersion = 44 + Integer.parseInt(newVersion);
+                }
+
+                // remove debug info
+                if (conf.removeDebugInfo) {
+                    ui.info("Removing debug information (local variables, parameters) from class files.");
+                    options.add(DebugElementsOption.DROP_DEBUG);
+                }
+
+                // remove trace info
+                if (conf.removeTraceInfo) {
+                    ui.info("Removing trace information (source file name, line numbers) from class files.");
+                    options.add(LineNumbersOption.DROP_LINE_NUMBERS);
+                }
+
+                // transform code
+                ClassFile classFile = ClassFile.of(options.toArray(ClassFile.Option[]::new));
+
+                project.getClasses().walkFile().to(file -> {
+                    File modifiedFile = modified.file(project.getClasses().relativize(file));
+
+                    if (file.extension().equals("class")) {
+                        ClassModel classModel = classFile.parse(file.bytes());
+                        byte[] trasnformed = classFile.build(classModel.thisClass().asSymbol(), builder -> {
+                            for (ClassElement e : classModel) {
+                                if (conf.removeTraceInfo && e instanceof SourceFileAttribute) {
+                                    // skip
+                                } else if (requiredVersion != 0 && e instanceof ClassFileVersion) {
+                                    builder.withVersion(requiredVersion, 0);
+                                } else {
+                                    builder.with(e);
+                                }
+                            }
+                        });
+                        modifiedFile.writeFrom(new ByteArrayInputStream(trasnformed));
+                    } else {
+                        file.copyTo(modifiedFile);
+                    }
+                });
+
+                classes = modified;
+            } catch (Throwable e) {
+                throw I.quiet(e);
+            }
         }
 
         // Package classes and sources
-        pack("main classes", I.signal(classesDir), project.locateJar(), conf.packing);
+        pack("main classes", I.signal(classes), project.locateJar(), conf.packing);
         pack("main sources", project.getSourceSet(), project.locateSourceJar(), null);
     }
 

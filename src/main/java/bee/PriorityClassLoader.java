@@ -11,7 +11,6 @@ package bee;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -205,13 +204,7 @@ public class PriorityClassLoader extends URLClassLoader {
      * @throws RuntimeException If the location cannot be converted to a valid URL.
      */
     public final PriorityClassLoader addClassPath(Location location) {
-        try {
-            // Assuming location.asJavaPath() returns a java.nio.file.Path
-            // addURL is inherited from URLClassLoader
-            addURL(location.asJavaPath().toUri().toURL());
-        } catch (MalformedURLException e) {
-            throw I.quiet(e);
-        }
+        addURL(location.asURL());
         return this;
     }
 
