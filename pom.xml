@@ -5,28 +5,25 @@
 	<version>0.76.0</version>
 	<packaging>jar</packaging>
 	<name>bee</name>
-	<description>Bee is an open source build automation tool that focuses on conventions, type safety and performance.
-Project and build task definitions are written in Java, ensuring flexible extensibility for programmers.
+	<description>Bee is a modern, open-source build automation tool focused on conventions, type safety, and performance.
 
-#### Minimize settings
-Use default values to minimize the number of items that need to be set as much as possible. Also, all settings are type-safe and completion, so you don&#39;t have to search for minor settings in the documentation.
+Tired of complex configurations and slow build times? Bee leverages the power and familiarity of Java to define projects and build tasks, offering a flexible and highly extensible experience for developers.
 
-#### Fast execution
-All tasks are executed in parallel, and all output is cached and reused.
+## ✨ Features
 
-#### Repository oriented
-It recognizes source code and package repositories and automates the entire lifecycle from development to release.
+*   **☕ Java-Defined Tasks:** Write your build logic directly in Java. Enjoy type safety, easy refactoring, powerful IDE support (completion, navigation), and seamless integration with your existing Java codebase.
+*   **✅ Convention over Configuration:** Sensible defaults minimize the need for boilerplate configuration. Focus on your code, not the build tool setup. All settings are type-safe with IDE completion, eliminating guesswork and trips to the documentation for minor details.
+*   **🚀 Fast Execution:** Achieve significantly faster build times. Bee executes tasks in parallel whenever possible and utilizes intelligent caching to reuse outputs from previous runs, avoiding redundant work.
+*   **🔗 Integrated Lifecycle:** Bee understands source code and package repositories (like Maven/Gradle repositories). It automates the entire development lifecycle, from compiling and testing locally to packaging, publishing, and releasing your artifacts.
 
+## 📦 Installation
+Get started with Bee quickly using our installation scripts. Open your terminal and run the appropriate command:
 
-## Install by script
-Open your terminal and execute the following command to install bee.
-
-#### In Linux / MacOS
+**Linux / macOS**
 ```bash
 curl -Ls https://git.io/install-bee | bash
-```
 
-#### In Windows
+**Windows (Command Prompt or PowerShell)**
 ```cmd
 curl -Ls https://git.io/install-bee -o install.bat &#38;&#38; install
 ```
@@ -35,18 +32,324 @@ After installation is complete, verify that the tool was installed successfully 
 ```
 bee -v
 ```
+This should display the installed Bee version.
 
-## Basic Usage
-Once installed, you can start using Bee by running the following commands:
 
-#### Setup with your IDE
-```
-bee ide
-```
-#### Install library into local repository
-```
-bee install
-```</description>
+## 🚀 Available Tasks
+Here is a list of the built-in tasks available in Bee. You can get more detailed help for each task, including its specific commands and configuration options, by running `bee [TaskName] help` (e.g., `bee compile help`).
+
+---
+
+#### BUN
+*Installs and manages the Bun runtime.*
+
+**Commands:**
+
+| Command   | Description                 | Default |
+| :-------- | :-------------------------- | :------: |
+| `dev`     | Launch development server.  |         |
+| `install` | Install bun.                |    ✅    |
+
+---
+
+#### CI
+*Sets up Continuous Integration configurations.*
+
+**Commands:**
+
+| Command     | Description                                         | Default |
+| :---------- | :-------------------------------------------------- | :------: |
+| `github`    | Generate CI/CD configuration files for GitHub.    |         |
+| `gitignore` | Generate `.gitignore` file.                         |         |
+| `jitpack`   | Generate CI/CD configuration files for JitPack.   |         |
+| `license`   | Generate license file.                            |         |
+| `readme`    | Generate readme file.                             |         |
+| `setup`     | Setup general CI/CD configurations.               |    ✅    |
+
+---
+
+#### CLEAN
+*Cleans build output files.*
+
+**Commands:**
+
+| Command | Description             | Default |
+| :------ | :---------------------- | :------: |
+| `all`   | Clean output directory. |    ✅    |
+
+---
+
+#### COMPILE
+*Compiles source code.*
+
+**Commands:**
+
+| Command   | Description                                        | Default |
+| :-------- | :------------------------------------------------- | :------: |
+| `check`   | Validate main and test sources for compilation errors. |         |
+| `project` | Compile project definition sources and resources.  |         |
+| `source`  | Compile main sources and resources.                |    ✅    |
+| `test`    | Compile test sources and resources.                |         |
+
+**Configuration:**
+
+| Option   | Description                                              | Type      | Default |
+| :------- | :------------------------------------------------------- | :-------- | :------ |
+| `useECJ` | Force use of the Eclipse Compiler for Java (ECJ).        | `boolean` | `false` |
+
+---
+
+#### DEPENDENCY
+*Manages project dependencies.*
+
+**Commands:**
+
+| Command  | Description                                         | Default |
+| :------- | :-------------------------------------------------- | :------: |
+| `module` | Analyze and display required Java modules using jdeps. |         |
+| `tree`   | Display the project dependency tree.                |    ✅    |
+
+---
+
+#### DOC
+*Generates project documentation.*
+
+**Commands:**
+
+| Command   | Description                           | Default |
+| :-------- | :------------------------------------ | :------: |
+| `javadoc` | Generate project Javadoc.             |    ✅    |
+| `site`    | Generate project site (including docs). |         |
+
+---
+
+#### ECLIPSE
+*Manages Eclipse IDE project files.*
+
+**Commands:**
+
+| Command      | Description                                                              | Default |
+| :----------- | :----------------------------------------------------------------------- | :------: |
+| `create`     | Generate configuration files for Eclipse.                                |    ✅    |
+| `delete`     | Delete configuration files for Eclipse.                                  |         |
+| `live`       | Rewrite sibling Eclipse projects to use the current project directly.    |         |
+| `repository` | Rewrite sibling Eclipse projects to use the current project in repository. |         |
+
+---
+
+#### EXE
+*Creates a Windows executable launcher.*
+
+**Commands:**
+
+| Command | Description                                             | Default |
+| :------ | :------------------------------------------------------ | :------: |
+| `build` | Generate windows exe file which executes the main class. |    ✅    |
+
+**Configuration:**
+
+| Option      | Description                        | Type             | Default    |
+| :---------- | :--------------------------------- | :--------------- | :--------- |
+| `icon`      | Location for the `.exe` file icon. | `Path`           | *(none)*   |
+| `customJRE` | Embed a custom JRE.                | `boolean`        | `true`     |
+| `resources` | Additional files/dirs to package.  | `Set&#60;Location&#62;`  | `[]`       |
+
+---
+
+#### FIND-MAIN
+*Finds main and agent entry point classes.*
+
+**Commands:**
+
+| Command     | Description                                        | Default |
+| :---------- | :------------------------------------------------- | :------: |
+| `agentmain` | Find `agentmain` class for Java Agent (attach API). |         |
+| `main`      | Find `main` class for the project.                 |    ✅    |
+| `premain`   | Find `premain` class for Java Agent (startup).     |         |
+
+**Configuration:**
+
+| Option      | Description                   | Type     | Default |
+| :---------- | :---------------------------- | :------- | :------ |
+| `main`      | Specify the main class FQCN.  | `String` | *(auto-detected)* |
+| `premain`   | Specify the premain class FQCN. | `String` | *(none)* |
+| `agentmain` | Specify the agentmain class FQCN.| `String` | *(none)* |
+
+---
+
+#### HELP
+*Displays help information about Bee.*
+
+**Commands:**
+
+| Command   | Description                                         | Default |
+| :-------- | :-------------------------------------------------- | :------: |
+| `option`  | Display all available command-line options.         |         |
+| `task`    | Display all available tasks (this list).            |    ✅    |
+| `version` | Display version information for Bee, Java, and OS.  |         |
+| `welcome` | Display the Bee welcome message.                    |         |
+
+---
+
+#### IDE
+*Manages general IDE project files.*
+
+**Commands:**
+
+| Command  | Description                       | Default |
+| :------- | :-------------------------------- | :------: |
+| `create` | Generate configuration files.     |    ✅    |
+| `delete` | Delete configuration files.       |         |
+
+---
+
+#### INSTALL
+*Installs project artifacts into the local repository.*
+
+**Commands:**
+
+| Command   | Description                                    | Default |
+| :-------- | :--------------------------------------------- | :------: |
+| `jar`     | Install JAR file only into the local repository. |         |
+| `project` | Install project into the local repository.     |    ✅    |
+
+---
+
+#### INTELLIJ
+*Manages IntelliJ IDEA project files.*
+
+**Commands:**
+
+| Command  | Description                                | Default |
+| :------- | :----------------------------------------- | :------: |
+| `create` | Generate configuration files for IntelliJ IDEA. |    ✅    |
+| `delete` | Delete configuration files for IntelliJ IDEA. |         |
+
+---
+
+#### JAR
+*Packages project artifacts into JAR files.*
+
+**Commands:**
+
+| Command    | Description                                                     | Default |
+| :--------- | :-------------------------------------------------------------- | :------: |
+| `document` | Package generated Javadoc into a JAR file.                      |         |
+| `merge`    | Create an executable JAR with all dependencies included (uber-jar). |         |
+| `project`  | Package project definition classes and resources into a JAR file. |         |
+| `source`   | Package main classes and resources into a JAR file.             |    ✅    |
+| `test`     | Package test classes and resources into a JAR file.             |         |
+
+**Configuration:**
+
+| Option            | Description                                   | Type       | Default    |
+| :---------------- | :-------------------------------------------- | :--------- | :--------- |
+| `removeDebugInfo` | Remove debug info (vars, params).             | `boolean`  | `false`    |
+| `removeTraceInfo` | Remove trace info (source, lines).            | `boolean`  | `false`    |
+| `packing`         | Configure resource handling in the main JAR.  | `Function` | *(identity)* |
+| `merging`         | Configure resource handling when merging deps. | `Function` | *(identity)* |
+
+---
+
+#### LICENSE
+*Manages license headers in source files.*
+
+**Commands:**
+
+| Command  | Description                     | Default |
+| :------- | :------------------------------ | :------: |
+| `update` | Write license header comment.   |    ✅    |
+
+**Configuration:**
+
+| Option    | Description                        | Type               | Default    |
+| :-------- | :--------------------------------- | :----------------- | :--------- |
+| `exclude` | Specify files to exclude from updates. | `Predicate&#60;File&#62;` | *(none)*   |
+
+---
+
+#### MAVEN
+*Provides Maven integration.*
+
+**Commands:**
+
+| Command | Description        | Default |
+| :------ | :----------------- | :------: |
+| `pom`   | Generate pom file. |    ✅    |
+
+---
+
+#### NATIVE
+*Builds native executables using GraalVM Native Image.*
+
+**Commands:**
+
+| Command | Description                   | Default |
+| :------ | :---------------------------- | :------: |
+| `build` | Build native execution file.  |    ✅    |
+| `run`   | Run the native executable.    |         |
+
+**Configuration:**
+
+| Option      | Description                                | Type           | Default       |
+| :---------- | :----------------------------------------- | :------------- | :------------ |
+| `protocols` | Network protocols to include.              | `List&#60;String&#62;` | `[http, https]` |
+| `resources` | Resource file patterns to include.         | `List&#60;String&#62;` | `[...]`       |
+| `params`    | Additional parameters for Native Image builder. | `List&#60;String&#62;` | `[]`          |
+
+---
+
+#### PROTOTYPE
+*Generates project skeletons.*
+
+**Commands:**
+
+| Command | Description                         | Default |
+| :------ | :---------------------------------- | :------: |
+| `java`  | Generate standard Java project skeleton. |    ✅    |
+
+---
+
+#### TEST
+*Compiles and runs project tests.*
+
+**Commands:**
+
+| Command | Description         | Default |
+| :------ | :------------------ | :------: |
+| `test`  | Test product codes. |    ✅    |
+
+**Configuration:**
+
+| Option    | Description                                     | Type           | Default |
+| :-------- | :---------------------------------------------- | :------------- | :------ |
+| `longRun` | Threshold (ms) to report long-running tests.    | `int`          | `1000`  |
+| `java`    | Specify the JVM used for test execution.        | `Directory`    | *(system default)* |
+| `params`  | Additional JVM parameters for test execution.   | `List&#60;String&#62;` | `[]`    |
+
+---
+
+#### WRAPPER
+*Manages the Bee wrapper installation for the project.*
+
+**Commands:**
+
+| Command  | Description                                           | Default |
+| :------- | :---------------------------------------------------- | :------: |
+| `clean`  | Clean local bee environment installed by the wrapper. |         |
+| `latest` | Set up wrapper to use the latest Bee release.         |         |
+| `local`  | Set up wrapper to use a locally installed Bee version.  |         |
+| `select` | Set up wrapper using a user-selected Bee version.     |         |
+| `stable` | Set up wrapper to use the latest stable Bee release.  |    ✅    |
+| `use`    | Set up wrapper to use a specific Bee version.         |         |
+
+**Configuration:**
+
+| Option    | Description                  | Type     | Default |
+| :-------- | :--------------------------- | :------- | :------ |
+| `version` | Specify the Bee version for the wrapper. | `String` | *(latest stable)* |
+
+---</description>
 	<licenses>
 		<license>
 			<name>MIT License</name>
