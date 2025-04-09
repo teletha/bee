@@ -38,6 +38,7 @@ public class Project extends bee.api.Project {
                 **Linux / macOS**
                 ```bash
                 curl -Ls https://git.io/install-bee | bash
+                ```
 
                 **Windows (Command Prompt or PowerShell)**
                 ```cmd
@@ -54,24 +55,16 @@ public class Project extends bee.api.Project {
                 ## 🚀 Available Tasks
                 Here is a list of the built-in tasks available in Bee. You can get more detailed help for each task, including its specific commands and configuration options, by running `bee [TaskName] help` (e.g., `bee compile help`).
 
-                ---
-
-                #### BUN
-                *Installs and manages the Bun runtime.*
-
-                **Commands:**
+                ### BUN
+                Installs and manages the Bun runtime.
 
                 | Command   | Description                 | Default |
                 | :-------- | :-------------------------- | :------: |
                 | `dev`     | Launch development server.  |         |
                 | `install` | Install bun.                |    ✅    |
 
-                ---
-
-                #### CI
-                *Sets up Continuous Integration configurations.*
-
-                **Commands:**
+                ### CI
+                Sets up Continuous Integration configurations.
 
                 | Command     | Description                                         | Default |
                 | :---------- | :-------------------------------------------------- | :------: |
@@ -82,23 +75,15 @@ public class Project extends bee.api.Project {
                 | `readme`    | Generate readme file.                             |         |
                 | `setup`     | Setup general CI/CD configurations.               |    ✅    |
 
-                ---
-
-                #### CLEAN
-                *Cleans build output files.*
-
-                **Commands:**
+                ### CLEAN
+                Cleans build output files.
 
                 | Command | Description             | Default |
                 | :------ | :---------------------- | :------: |
                 | `all`   | Clean output directory. |    ✅    |
 
-                ---
-
-                #### COMPILE
-                *Compiles source code.*
-
-                **Commands:**
+                ### COMPILE
+                Compiles source code.
 
                 | Command   | Description                                        | Default |
                 | :-------- | :------------------------------------------------- | :------: |
@@ -107,42 +92,30 @@ public class Project extends bee.api.Project {
                 | `source`  | Compile main sources and resources.                |    ✅    |
                 | `test`    | Compile test sources and resources.                |         |
 
-                **Configuration:**
+                Configuration
 
                 | Option   | Description                                              | Type      | Default |
                 | :------- | :------------------------------------------------------- | :-------- | :------ |
                 | `useECJ` | Force use of the Eclipse Compiler for Java (ECJ).        | `boolean` | `false` |
 
-                ---
-
-                #### DEPENDENCY
-                *Manages project dependencies.*
-
-                **Commands:**
+                ### DEPENDENCY
+                Manages project dependencies.
 
                 | Command  | Description                                         | Default |
                 | :------- | :-------------------------------------------------- | :------: |
                 | `module` | Analyze and display required Java modules using jdeps. |         |
                 | `tree`   | Display the project dependency tree.                |    ✅    |
 
-                ---
-
-                #### DOC
-                *Generates project documentation.*
-
-                **Commands:**
+                ### DOC
+                Generates project documentation.
 
                 | Command   | Description                           | Default |
                 | :-------- | :------------------------------------ | :------: |
                 | `javadoc` | Generate project Javadoc.             |    ✅    |
                 | `site`    | Generate project site (including docs). |         |
 
-                ---
-
-                #### ECLIPSE
-                *Manages Eclipse IDE project files.*
-
-                **Commands:**
+                ### ECLIPSE
+                Manages Eclipse IDE project files.
 
                 | Command      | Description                                                              | Default |
                 | :----------- | :----------------------------------------------------------------------- | :------: |
@@ -151,18 +124,14 @@ public class Project extends bee.api.Project {
                 | `live`       | Rewrite sibling Eclipse projects to use the current project directly.    |         |
                 | `repository` | Rewrite sibling Eclipse projects to use the current project in repository. |         |
 
-                ---
-
-                #### EXE
-                *Creates a Windows executable launcher.*
-
-                **Commands:**
+                ### EXE
+                Creates a Windows executable launcher.
 
                 | Command | Description                                             | Default |
                 | :------ | :------------------------------------------------------ | :------: |
                 | `build` | Generate windows exe file which executes the main class. |    ✅    |
 
-                **Configuration:**
+                Configuration
 
                 | Option      | Description                        | Type             | Default    |
                 | :---------- | :--------------------------------- | :--------------- | :--------- |
@@ -170,12 +139,8 @@ public class Project extends bee.api.Project {
                 | `customJRE` | Embed a custom JRE.                | `boolean`        | `true`     |
                 | `resources` | Additional files/dirs to package.  | `Set<Location>`  | `[]`       |
 
-                ---
-
-                #### FIND-MAIN
-                *Finds main and agent entry point classes.*
-
-                **Commands:**
+                ### FIND-MAIN
+                Finds main and agent entry point classes.
 
                 | Command     | Description                                        | Default |
                 | :---------- | :------------------------------------------------- | :------: |
@@ -183,7 +148,7 @@ public class Project extends bee.api.Project {
                 | `main`      | Find `main` class for the project.                 |    ✅    |
                 | `premain`   | Find `premain` class for Java Agent (startup).     |         |
 
-                **Configuration:**
+                Configuration
 
                 | Option      | Description                   | Type     | Default |
                 | :---------- | :---------------------------- | :------- | :------ |
@@ -191,12 +156,8 @@ public class Project extends bee.api.Project {
                 | `premain`   | Specify the premain class FQCN. | `String` | *(none)* |
                 | `agentmain` | Specify the agentmain class FQCN.| `String` | *(none)* |
 
-                ---
-
-                #### HELP
-                *Displays help information about Bee.*
-
-                **Commands:**
+                ### HELP
+                Displays help information about Bee.
 
                 | Command   | Description                                         | Default |
                 | :-------- | :-------------------------------------------------- | :------: |
@@ -205,48 +166,32 @@ public class Project extends bee.api.Project {
                 | `version` | Display version information for Bee, Java, and OS.  |         |
                 | `welcome` | Display the Bee welcome message.                    |         |
 
-                ---
-
-                #### IDE
-                *Manages general IDE project files.*
-
-                **Commands:**
+                ### IDE
+                Manages general IDE project files.
 
                 | Command  | Description                       | Default |
                 | :------- | :-------------------------------- | :------: |
                 | `create` | Generate configuration files.     |    ✅    |
                 | `delete` | Delete configuration files.       |         |
 
-                ---
-
-                #### INSTALL
-                *Installs project artifacts into the local repository.*
-
-                **Commands:**
+                ### INSTALL
+                Installs project artifacts into the local repository.
 
                 | Command   | Description                                    | Default |
                 | :-------- | :--------------------------------------------- | :------: |
                 | `jar`     | Install JAR file only into the local repository. |         |
                 | `project` | Install project into the local repository.     |    ✅    |
 
-                ---
-
-                #### INTELLIJ
-                *Manages IntelliJ IDEA project files.*
-
-                **Commands:**
+                ### INTELLIJ
+                Manages IntelliJ IDEA project files.
 
                 | Command  | Description                                | Default |
                 | :------- | :----------------------------------------- | :------: |
                 | `create` | Generate configuration files for IntelliJ IDEA. |    ✅    |
                 | `delete` | Delete configuration files for IntelliJ IDEA. |         |
 
-                ---
-
-                #### JAR
-                *Packages project artifacts into JAR files.*
-
-                **Commands:**
+                ### JAR
+                Packages project artifacts into JAR files.
 
                 | Command    | Description                                                     | Default |
                 | :--------- | :-------------------------------------------------------------- | :------: |
@@ -256,7 +201,7 @@ public class Project extends bee.api.Project {
                 | `source`   | Package main classes and resources into a JAR file.             |    ✅    |
                 | `test`     | Package test classes and resources into a JAR file.             |         |
 
-                **Configuration:**
+                Configuration
 
                 | Option            | Description                                   | Type       | Default    |
                 | :---------------- | :-------------------------------------------- | :--------- | :--------- |
@@ -265,47 +210,35 @@ public class Project extends bee.api.Project {
                 | `packing`         | Configure resource handling in the main JAR.  | `Function` | *(identity)* |
                 | `merging`         | Configure resource handling when merging deps. | `Function` | *(identity)* |
 
-                ---
-
-                #### LICENSE
-                *Manages license headers in source files.*
-
-                **Commands:**
+                ### LICENSE
+                Manages license headers in source files.
 
                 | Command  | Description                     | Default |
                 | :------- | :------------------------------ | :------: |
                 | `update` | Write license header comment.   |    ✅    |
 
-                **Configuration:**
+                Configuration
 
                 | Option    | Description                        | Type               | Default    |
                 | :-------- | :--------------------------------- | :----------------- | :--------- |
                 | `exclude` | Specify files to exclude from updates. | `Predicate<File>` | *(none)*   |
 
-                ---
-
-                #### MAVEN
-                *Provides Maven integration.*
-
-                **Commands:**
+                ### MAVEN
+                Provides Maven integration.
 
                 | Command | Description        | Default |
                 | :------ | :----------------- | :------: |
                 | `pom`   | Generate pom file. |    ✅    |
 
-                ---
-
-                #### NATIVE
-                *Builds native executables using GraalVM Native Image.*
-
-                **Commands:**
+                ### NATIVE
+                Builds native executables using GraalVM Native Image.
 
                 | Command | Description                   | Default |
                 | :------ | :---------------------------- | :------: |
                 | `build` | Build native execution file.  |    ✅    |
                 | `run`   | Run the native executable.    |         |
 
-                **Configuration:**
+                Configuration
 
                 | Option      | Description                                | Type           | Default       |
                 | :---------- | :----------------------------------------- | :------------- | :------------ |
@@ -313,29 +246,21 @@ public class Project extends bee.api.Project {
                 | `resources` | Resource file patterns to include.         | `List<String>` | `[...]`       |
                 | `params`    | Additional parameters for Native Image builder. | `List<String>` | `[]`          |
 
-                ---
-
-                #### PROTOTYPE
-                *Generates project skeletons.*
-
-                **Commands:**
+                ### PROTOTYPE
+                Generates project skeletons.
 
                 | Command | Description                         | Default |
                 | :------ | :---------------------------------- | :------: |
                 | `java`  | Generate standard Java project skeleton. |    ✅    |
 
-                ---
-
-                #### TEST
-                *Compiles and runs project tests.*
-
-                **Commands:**
+                ### TEST
+                Compiles and runs project tests.
 
                 | Command | Description         | Default |
                 | :------ | :------------------ | :------: |
                 | `test`  | Test product codes. |    ✅    |
 
-                **Configuration:**
+                Configuration
 
                 | Option    | Description                                     | Type           | Default |
                 | :-------- | :---------------------------------------------- | :------------- | :------ |
@@ -343,12 +268,8 @@ public class Project extends bee.api.Project {
                 | `java`    | Specify the JVM used for test execution.        | `Directory`    | *(system default)* |
                 | `params`  | Additional JVM parameters for test execution.   | `List<String>` | `[]`    |
 
-                ---
-
-                #### WRAPPER
-                *Manages the Bee wrapper installation for the project.*
-
-                **Commands:**
+                ### WRAPPER
+                Manages the Bee wrapper installation for the project.
 
                 | Command  | Description                                           | Default |
                 | :------- | :---------------------------------------------------- | :------: |
@@ -359,14 +280,12 @@ public class Project extends bee.api.Project {
                 | `stable` | Set up wrapper to use the latest stable Bee release.  |    ✅    |
                 | `use`    | Set up wrapper to use a specific Bee version.         |         |
 
-                **Configuration:**
+                Configuration
 
                 | Option    | Description                  | Type     | Default |
                 | :-------- | :--------------------------- | :------- | :------ |
                 | `version` | Specify the Bee version for the wrapper. | `String` | *(latest stable)* |
-
-                ---
-                                """);
+                """);
 
         require(SourceVersion.latest(), SourceVersion.RELEASE_24);
 
