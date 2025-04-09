@@ -12,11 +12,21 @@ Bee is a modern, open-source build automation tool focused on conventions, type 
 Tired of complex configurations and slow build times? Bee leverages the power and familiarity of Java to define projects and build tasks, offering a flexible and highly extensible experience for developers.
 
 ## ✨ Features
+#### ☕ Java-Defined Tasks
+Write your build logic directly in Java. Enjoy type safety, easy refactoring, powerful IDE support (completion, navigation), and seamless integration with your existing Java codebase. Forget complex DSLs or XML – stick with the language you know best.
 
-*   **☕ Java-Defined Tasks:** Write your build logic directly in Java. Enjoy type safety, easy refactoring, powerful IDE support (completion, navigation), and seamless integration with your existing Java codebase.
-*   **✅ Convention over Configuration:** Sensible defaults minimize the need for boilerplate configuration. Focus on your code, not the build tool setup. All settings are type-safe with IDE completion, eliminating guesswork and trips to the documentation for minor details.
-*   **🚀 Fast Execution:** Achieve significantly faster build times. Bee executes tasks in parallel whenever possible and utilizes intelligent caching to reuse outputs from previous runs, avoiding redundant work.
-*   **🔗 Integrated Lifecycle:** Bee understands source code and package repositories (like Maven/Gradle repositories). It automates the entire development lifecycle, from compiling and testing locally to packaging, publishing, and releasing your artifacts.
+#### 🧩 Flexible Task System
+Easily extend Bee with your own custom tasks or modify existing ones. Simply create an interface extending `bee.Task` within your project folder to add new tasks, defining commands with annotations – Bee discovers them automatically without complex descriptors. Furthermore, you can easily customize the behavior of built-in tasks by implementing their corresponding task interface in your project and overriding the command methods you wish to change. Bee prioritizes your custom implementations, giving you full control over the build process.
+
+#### ✅ Convention over Configuration
+Sensible defaults minimize the need for boilerplate configuration. Focus on your code, not the build tool setup. All settings are type-safe with IDE completion, eliminating guesswork and trips to the documentation for minor details.
+
+#### 🚀 Fast Execution
+Achieve significantly faster build times. Bee executes tasks in parallel whenever possible and utilizes intelligent caching to reuse outputs from previous runs, avoiding redundant work. Only build what's necessary, when it's necessary.
+
+#### 🔗 Integrated Lifecycle
+Bee understands source code and package repositories (like Maven/Gradle repositories). It automates the entire development lifecycle, from compiling and testing locally to packaging, publishing, and releasing your artifacts with straightforward commands.
+
 
 ## 📦 Installation
 Get started with Bee quickly using our installation scripts. Open your terminal and run the appropriate command:
@@ -39,7 +49,7 @@ This should display the installed Bee version.
 
 
 ## 🚀 Available Tasks
-Here is a list of the built-in tasks available in Bee. You can get more detailed help for each task, including its specific commands and configuration options, by running `bee [TaskName] help` (e.g., `bee compile help`).
+Here is a list of the built-in tasks available in Bee. You can get more detailed help for each task, including its specific commands and configuration options, by running `bee [TaskName]:help` (e.g., `bee compile:help`).
 
 ### BUN
 Installs and manages the Bun runtime.
