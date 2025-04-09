@@ -64,7 +64,7 @@ public abstract class UserInterface {
     private final Deque<String> answers = new ArrayDeque(BeeOption.Input.value());
 
     /** The debug flag. */
-    public boolean debuggable = BeeOption.Debug.value;
+    private final boolean debuggable = BeeOption.Debug.value;
 
     /**
      * Talk to user with decoration like title.
@@ -176,7 +176,7 @@ public abstract class UserInterface {
      * @param question Your question message.
      * @return An answer.
      */
-    public String ask(String question) {
+    public final String ask(String question) {
         return ask(question, (String) null);
     }
 
@@ -189,7 +189,7 @@ public abstract class UserInterface {
      * @param validator Input validator.
      * @return An answer.
      */
-    public String ask(String question, Predicate<String> validator) {
+    public final String ask(String question, Predicate<String> validator) {
         return ask(question, (String) null, validator);
     }
 
@@ -205,7 +205,7 @@ public abstract class UserInterface {
      * @param defaultAnswer A default anwser.
      * @return An answer.
      */
-    public <T> T ask(String question, T defaultAnswer) {
+    public final <T> T ask(String question, T defaultAnswer) {
         return ask(question, defaultAnswer, null);
     }
 
@@ -223,7 +223,7 @@ public abstract class UserInterface {
      * @return An answer.
      */
     @SuppressWarnings("resource")
-    private <T> T ask(String question, T defaultAnswer, Predicate<T> validator) {
+    protected <T> T ask(String question, T defaultAnswer, Predicate<T> validator) {
         StringBuilder builder = new StringBuilder();
         builder.append(question);
         if (defaultAnswer != null) builder.append(" [").append(defaultAnswer).append("]");
@@ -278,10 +278,26 @@ public abstract class UserInterface {
      * UserInterface can display a list of items and user can select it with simple action.
      * 
      * @param question Your question message.
+     * @param enumeration A list of selectable items.
+     * @return A selected item.
+     */
+    public final <E extends Enum> E ask(String question, Class<E> enumeration) {
+        if (enumeration == null) {
+            throw new Fail("Question needs some items. [" + question + "]");
+        }
+        return ask(question, Arrays.asList(enumeration.getEnumConstants()));
+    }
+
+    /**
+     * Ask user about your question and return his/her selected item.
+     * <p>
+     * UserInterface can display a list of items and user can select it with simple action.
+     * 
+     * @param question Your question message.
      * @param items A list of selectable items.
      * @return A selected item.
      */
-    public <T> T ask(String question, List<T> items) {
+    public final <T> T ask(String question, List<T> items) {
         return ask(question, items, (Function<T, String>) null);
     }
 
@@ -315,22 +331,6 @@ public abstract class UserInterface {
     }
 
     /**
-     * Ask user about your question and return his/her selected item.
-     * <p>
-     * UserInterface can display a list of items and user can select it with simple action.
-     * 
-     * @param question Your question message.
-     * @param enumeration A list of selectable items.
-     * @return A selected item.
-     */
-    public <E extends Enum> E ask(String question, Class<E> enumeration) {
-        if (enumeration == null) {
-            throw new Fail("Question needs some items. [" + question + "]");
-        }
-        return ask(question, Arrays.asList(enumeration.getEnumConstants()));
-    }
-
-    /**
      * <p>
      * Ask user about your question and return his/her specified location.
      * </p>
@@ -341,7 +341,7 @@ public abstract class UserInterface {
      * @param question Your question message.
      * @return A specified location.
      */
-    public Path file(String question) {
+    public final Path file(String question) {
         return file(question, null);
     }
 
@@ -387,7 +387,7 @@ public abstract class UserInterface {
      * @param question Your question message.
      * @return A specified location.
      */
-    public Path directory(String question) {
+    public final Path directory(String question) {
         return directory(question, null);
     }
 
@@ -748,7 +748,7 @@ public abstract class UserInterface {
                 if (blank) {
                     standardOutput.print(Platform.EOL);
                 }
-                standardOutput.println(stain("◆ " + command.replace(":", " : ") + " ◆", "75"));
+                standardOutput.println(stain("◆◇◆◇◆   " + command.replace(":", " : ") + "   ◆◇◆◇◆", "75"));
             }
         }
 

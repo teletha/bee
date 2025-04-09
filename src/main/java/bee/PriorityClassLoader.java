@@ -65,7 +65,7 @@ public class PriorityClassLoader extends URLClassLoader {
             // 1. Check if class is already loaded by THIS loader instance
             Class<?> loadedClass = findLoadedClass(name);
             if (loadedClass != null) {
-                if (ui.debuggable) ui.debug("PriorityClassLoader: Returning already loaded class : " + name);
+                ui.debug("PriorityClassLoader: Returning already loaded class : ", name);
                 return loadedClass;
             }
 
@@ -74,15 +74,15 @@ public class PriorityClassLoader extends URLClassLoader {
                 // Try loading from this classloader's URLs first (child-first for priority classes)
                 try {
                     loadedClass = findClass(name);
-                    if (ui.debuggable) ui.debug("PriorityClassLoader: Loaded with high-priority from own classpath : " + name);
+                    ui.debug("PriorityClassLoader: Loaded with high-priority from own classpath : ", name);
                 } catch (ClassNotFoundException e) {
                     // Not found in local URLs, try fetching bytecode from parent/system
                     byte[] bytes = fetchFromParentOrSystem(name);
                     if (bytes != null) {
                         // Define the class on this classloader
                         loadedClass = defineClass(name, bytes, 0, bytes.length);
-                        if (ui.debuggable) {
-                            ui.debug("PriorityClassLoader: Fetched and Loaded with high-priority from own classpath : " + name);
+                        {
+                            ui.debug("PriorityClassLoader: Fetched and Loaded with high-priority from own classpath : ", name);
                         }
                     } else {
                         throw new ClassNotFoundException("High-priority class is not found in own classpath or parent/system resources :" + name, e);
@@ -98,7 +98,7 @@ public class PriorityClassLoader extends URLClassLoader {
                 if (parent != null) {
                     // Delegate loading to the parent class loader.
                     loadedClass = parent.loadClass(name);
-                    if (ui.debuggable) ui.debug("PriorityClassLoader: Loaded by parent loader : " + name);
+                    ui.debug("PriorityClassLoader: Loaded by parent loader : ", name);
                     // Parent found it, return. Resolution is handled by parent's logic.
                     // If parent.loadClass throws ClassNotFoundException or NoClassDefFoundError,
                     // we'll catch it below.
@@ -107,7 +107,7 @@ public class PriorityClassLoader extends URLClassLoader {
                     // No explicit parent, try the bootstrap class loader (findSystemClass)
                     loadedClass = findSystemClass(name); // Delegates to bootstrap
                     if (loadedClass != null) {
-                        if (ui.debuggable) ui.debug("PriorityClassLoader: Loaded by bootstrap loader : " + name);
+                        ui.debug("PriorityClassLoader: Loaded by bootstrap loader : ", name);
                         return loadedClass;
                     }
                 }
@@ -115,7 +115,7 @@ public class PriorityClassLoader extends URLClassLoader {
                 // This error means the parent (or its delegation chain, including bootstrap) didn't
                 // find the class definition. This is an expected path for classes that should be
                 // loaded by *this* loader's URLs.
-                if (ui.debuggable) ui.debug("PriorityClassLoader: Class definition is not found in parent/bootstrap loader : " + name);
+                ui.debug("PriorityClassLoader: Class definition is not found in parent/bootstrap loader : ", name);
             } catch (NoClassDefFoundError e) {
                 // *** LESSON LEARNED / IMPORTANT CAVEAT ***
                 // This error (NoClassDefFoundError) typically occurs when the parent/bootstrap
@@ -140,14 +140,14 @@ public class PriorityClassLoader extends URLClassLoader {
                 if (resolve) {
                     resolveClass(loadedClass);
                 }
-                if (ui.debuggable) ui.debug("PriorityClassLoader: Loaded from own path : " + name);
+                ui.debug("PriorityClassLoader: Loaded from own path : ", name);
                 return loadedClass;
             } catch (ClassNotFoundException e) {
                 // If findClass also throws CNFE, then the class is truly not found, either because
                 // the class file is missing from URLs, or findClass itself triggered another
                 // NCDFE/CNFE for a dependency.
-                if (ui.debuggable) {
-                    ui.debug("PriorityClassLoader: [" + name + "] ClassNotFoundException during findClass() after parent/bootstrap failed or NCDFE. Class not found anywhere. Classpath for this loader is:");
+                {
+                    ui.debug("PriorityClassLoader: [", name, "] ClassNotFoundException during findClass() after parent/bootstrap failed or NCDFE. Class not found anywhere. Classpath for this loader is:");
                     ui.debug(List.of(getURLs()));
                     ui.debug("System classpath is:");
                     ui.debug(List.of(System.getProperty("java.class.path").split(";")));
@@ -227,8 +227,8 @@ public class PriorityClassLoader extends URLClassLoader {
         // Check if the class is already loaded by *this* specific loader instance.
         if (findLoadedClass(className) != null) {
             highPriorityClasses.add(className);
-            if (ui.debuggable) {
-                ui.debug("PriorityClassLoader: Class was already loaded by this specific loader instance. Marking as high-priority. : " + className);
+            {
+                ui.debug("PriorityClassLoader: Class was already loaded by this specific loader instance. Marking as high-priority. : ", className);
             }
             return this;
         }
@@ -245,13 +245,13 @@ public class PriorityClassLoader extends URLClassLoader {
 
             byte[] code = input.readAllBytes();
             defineClass(className, code, 0, code.length);
-            if (ui.debuggable) ui.debug("PriorityClassLoader: [" + className + "] defined as high-priority class.");
+            ui.debug("PriorityClassLoader: [" + className + "] defined as high-priority class.");
         } catch (LinkageError e) {
             // LinkageError (e.g., duplicate class definition) can happen if the same class
             // was already loaded by a different loader (e.g., the parent).
-            ui.warn("PriorityClassLoader: LinkageError defining [" + className + "]. It might have been already loaded by another loader (e.g., parent). Still marked as high-priority.", e);
+            ui.warn("PriorityClassLoader: LinkageError defining [", className, "]. It might have been already loaded by another loader (e.g., parent). Still marked as high-priority.", e);
         } catch (Exception e) {
-            if (ui.debuggable) ui.debug("PriorityClassLoader:  Failed to import as priority class : " + className, e);
+            ui.debug("PriorityClassLoader:  Failed to import as priority class : ", className, e);
             throw I.quiet(e);
         }
         return this;

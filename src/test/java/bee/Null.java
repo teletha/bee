@@ -10,7 +10,7 @@
 package bee;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.function.Predicate;
 
 import bee.api.Command;
 
@@ -49,24 +49,8 @@ public class Null {
          * {@inheritDoc}
          */
         @Override
-        public String ask(String question) {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public <T> T ask(String question, T defaultAnswer) {
-            return null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public <T> T ask(String question, List<T> items) {
-            return null;
+        protected <T> T ask(String question, T defaultAnswer, Predicate<T> validator) {
+            return defaultAnswer;
         }
 
         /**

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -430,27 +431,7 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            public String ask(String question) {
-                // If this exception will be thrown, it is bug of this program. So we must rethrow
-                // the wrapped error in here.
-                throw new Error();
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public <T> T ask(String question, T defaultAnswer) {
-                // If this exception will be thrown, it is bug of this program. So we must rethrow
-                // the wrapped error in here.
-                throw new Error();
-            }
-
-            /**
-             * {@inheritDoc}
-             */
-            @Override
-            public <T> T ask(String question, List<T> items) {
+            protected <T> T ask(String question, T defaultAnswer, Predicate<T> validator) {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
                 throw new Error();

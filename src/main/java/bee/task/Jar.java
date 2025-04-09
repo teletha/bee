@@ -126,6 +126,8 @@ public interface Jar extends Task<Jar.Config> {
                     File modifiedFile = modified.file(project.getClasses().relativize(file));
 
                     if (file.extension().equals("class")) {
+                        ui.trace("Transforming class file : ", file.base());
+
                         ClassModel classModel = classFile.parse(file.bytes());
                         byte[] trasnformed = classFile.build(classModel.thisClass().asSymbol(), builder -> {
                             for (ClassElement e : classModel) {
