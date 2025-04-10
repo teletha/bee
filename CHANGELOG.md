@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.76.1](https://github.com/teletha/bee/compare/0.76.0...0.76.1) (2025-04-10)
+
+
+### Bug Fixes
+
+* profilier ([04f1cb5](https://github.com/teletha/bee/commit/04f1cb5e4a5383624d86dc6a2c24811cd4c5141a))
+
 ## [0.76.0](https://github.com/teletha/bee/compare/0.75.0...0.76.0) (2025-04-09)
 
 
