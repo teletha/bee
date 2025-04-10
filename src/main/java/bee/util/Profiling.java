@@ -24,210 +24,180 @@ import java.util.stream.Collectors;
 import bee.UserInterface;
 
 /**
- * A simple built-in profiler for measuring the execution time of code blocks.
+ * A thread-safe profiler for measuring the self-time execution of named code blocks,
+ * designed to work with nested scopes and parallel execution environments, potentially
+ * leveraging {@link InheritableThreadLocal} for parent scope tracking across threads
+ * (especially effective with virtual threads).
  *
  * <p>
- * This profiler uses a static collection to store timing records globally. It supports
- * nested profiling scopes using a try-with-resources pattern. The time reported for
- * a scope represents the "self-time" – the time spent directly within that scope,
- * excluding time spent in nested (child) scopes.
+ * Use this profiler with a try-with-resources statement:
  * </p>
- *
+ * <pre>{@code try (Profiling ignored = Profiling.of("Your Scope Name")) { ... }}</pre>
  * <p>
- * Usage Example:
- * </p>
- * <pre>{@code
- * // Start profiling the "Data Processing" task
- * try (Profiling ignored = Profiling.of("Data Processing")) {
- *     // Code for data processing...
- *
- *     // Start profiling a sub-task "Validation"
- *     try (Profiling ignored2 = Profiling.of("Validation")) {
- *         // Code for validation...
- *         Thread.sleep(50); // Simulate work
- * } // "Validation" scope ends here
- *
- * // More data processing code...
- * Thread.sleep(100); // Simulate work
- * } // "Data Processing" scope ends here
- *
- * // Later, display the results
- * Profiling.show(ui); // Assuming 'ui' is a UserInterface instance
- * }</pre>
- *
- * <p>
- * In the example above, the time reported for "Data Processing" will be approximately 100ms,
- * as the 50ms spent in "Validation" is excluded from its parent's self-time. The time
- * for "Validation" will be approximately 50ms.
- * </p>
- *
- * <p>
- * Note: This profiler is designed for single-threaded usage scenarios or scenarios
- * where nesting occurs strictly within the same thread. The global state might lead
- * to incorrect nesting if {@code Profiling.of()} and {@code close()} calls are interleaved
- * across different threads without proper external synchronization. The collection of
- * results (`records`) is thread-safe.
+ * Results are collected globally and can be displayed using {@link #show(UserInterface)}.
+ * The reported time represents the "self-time" – time spent directly within a scope,
+ * excluding time spent in nested child scopes started on the same logical thread
+ * (as tracked by {@code InheritableThreadLocal}).
  * </p>
  */
 public class Profiling implements AutoCloseable {
 
-    /** Stores all profiling records generated during execution. Thread-safe for additions. */
-    private static final Queue<Profiling> records = new ConcurrentLinkedQueue();
+    /** Global, thread-safe storage for all completed profiling records. */
+    private static final Queue<Profiling> records = new ConcurrentLinkedQueue<>();
 
-    /** Tracks the currently active profiling scope. Used for handling nesting. */
-    private static Profiling current = new Profiling(null, null);
+    /**
+     * Thread-local (inheritable) storage for the currently active profiling scope.
+     * This attempts to track parent scopes even when tasks are delegated to child threads
+     * (like virtual threads).
+     */
+    private static final InheritableThreadLocal<Profiling> current = new InheritableThreadLocal<>();
 
-    /** The descriptive name of this profiling scope. */
+    /** The descriptive name of this profiling scope (e.g., "Task [compile:source]"). */
     private final String name;
 
-    /** The parent profiling scope, used to restore state when this scope closes. */
-    private Profiling previous;
+    /** The parent scope as determined by the InheritableThreadLocal when this scope started. */
+    private final Profiling parent;
 
-    /**
-     * The system time (nanoseconds) when this scope was initially started. (Seems unused for
-     * elapsed calculation)
-     */
+    /** The system time (nanoseconds) when this scope was first started/resumed. */
     private long start;
 
-    /**
-     * The system time (nanoseconds) when this scope was finally stopped. (Seems unused for elapsed
-     * calculation)
-     */
+    /** The system time (nanoseconds) when this scope was finally closed. */
     private long end;
 
-    /** The system time (nanoseconds) when this scope was last started or resumed. */
-    private long latest;
+    /** The system time (nanoseconds) when this scope was last resumed. */
+    private long latestResume;
 
-    /** The total accumulated time (nanoseconds) spent *directly* within this scope (self-time). */
+    /** The total accumulated self-time (nanoseconds) spent directly within this scope. */
     private long elapsed;
 
     /**
-     * Private constructor to create a new profiling scope.
+     * Private constructor. Initializes the scope name and parent link.
+     * Timing starts upon the first call to {@link #resume()}.
      *
-     * @param name The name for this scope.
-     * @param previous The scope that was active before this one started.
+     * @param name The name of the scope (null allowed only for internal root).
+     * @param parent The parent scope from the current thread context.
      */
-    private Profiling(String name, Profiling previous) {
+    private Profiling(String name, Profiling parent) {
         this.name = name;
-        this.previous = previous;
+        this.parent = parent;
     }
 
     /**
-     * Records the current system time as the start or resumption point for this scope.
-     * If this is the first time {@code start()} is called for this instance, it sets the initial
-     * {@code start} time.
-     * It always updates the {@code latest} time marker.
+     * Resumes or starts the timer for this scope. Called when the scope becomes active.
      */
-    private void start() {
+    private void resume() {
         long now = System.nanoTime();
 
+        // First time this scope instance is started
         if (start == 0) {
             start = now;
         }
-        latest = now;
+        latestResume = now; // Mark the latest resume time
     }
 
     /**
-     * Records the current system time as the end point for the current time slice
-     * and adds the duration of this slice to the total {@code elapsed} time for this scope.
-     * Also sets the absolute {@code end} time.
+     * Pauses the timer for this scope. Called when a nested scope starts or this scope closes.
+     * Accumulates the elapsed time since the last resume.
      */
-    private void stop() {
-        end = System.nanoTime();
-        // Add time elapsed since the last 'start()' or 'resume()' call
-        if (latest != 0) { // Ensure start() was called
-            elapsed += end - latest;
-
-            // Reset latest to prevent double counting if stop() is called multiple times
-            latest = 0;
+    private void pause() {
+        end = System.nanoTime(); // Mark the potential end time
+        if (latestResume != 0) { // Check if it was actually running
+            elapsed += end - latestResume;
+            latestResume = 0; // Mark as paused
         }
     }
 
     /**
-     * Stops the timer for the current scope and restores the previous scope as the active one.
-     * This method is automatically called when using try-with-resources.
-     * When the previous scope is restored, its timer is resumed.
+     * Stops the timer, records the profiling data (if named), restores the parent scope
+     * for the current thread, and resumes the parent's timer.
+     * Automatically called by the try-with-resources statement.
      */
     @Override
     public void close() {
-        stop();
+        pause(); // Finalize timing for this scope
 
-        // Restore the previous scope as the current one
-        // This ensures that the parent's timer resumes correctly after a nested scope finishes.
-        current = this.previous;
-
-        // If there was a parent scope, resume its timer
-        if (current != null && current.name != null) {
-            current.start(); // Resume parent's timer
+        // Add the completed record to the global queue if it's a named scope
+        if (this.name != null) {
+            records.add(this);
         }
-        this.previous = null; // Help GC
+
+        // Restore the parent scope in the thread-local variable
+        current.set(this.parent);
+
+        // Resume the parent's timer if it exists and is a named scope
+        if (this.parent != null && this.parent.name != null) {
+            this.parent.resume();
+        }
     }
 
     /**
-     * Calculates the approximate JVM startup time until this method is called.
-     * It creates a special "JVM startup" profiling record.
-     * This relies on {@link ProcessHandle#info()} which might not be available or accurate on all
-     * platforms/JVMs.
-     * 
-     * This method is somewhat special as it tries to measure time spent even before the
-     * application's main logic (and potentially this profiler) is fully operational.
+     * Records the approximate JVM startup time as a special profiling entry.
      */
     public static void measureJVMStartup() {
-        Instant end = Instant.now();
-        Optional<Instant> start = ProcessHandle.current().info().startInstant();
-        if (start.isPresent()) {
-            Profiling profiling = new Profiling("JVM startup", null);
-            profiling.elapsed = (end.toEpochMilli() - start.get().toEpochMilli()) * 1000 * 1000;
-            records.add(profiling);
+        Instant endTime = Instant.now();
+        Optional<Instant> startTimeOpt = ProcessHandle.current().info().startInstant();
+        if (startTimeOpt.isPresent()) {
+            Instant startTime = startTimeOpt.get();
+            Profiling startupRecord = new Profiling("JVM startup", null);
+            startupRecord.elapsed = (endTime.toEpochMilli() - startTime.toEpochMilli()) * 1_000_000L;
+            startupRecord.start = startTime.toEpochMilli() * 1_000_000L;
+            startupRecord.end = endTime.toEpochMilli() * 1_000_000L;
+            records.add(startupRecord);
         }
     }
 
     /**
-     * Starts a new profiling scope with the given name.
+     * Starts a new profiling scope with the given name for the current thread.
      *
      * <p>
-     * This method should be used with try-with-resources:
+     * This method MUST be used within a try-with-resources statement:
      * </p>
-     * <pre>{@code try (Profiling p = Profiling.of("My Task")) { ... } }</pre>
+     * <pre>{@code try (Profiling p = Profiling.of("Scope Name")) { ... }}</pre>
      *
-     * <p>
-     * When a new scope is started:
-     * </p>
-     * <ol>
-     * <li>The currently active scope (if any) is paused.</li>
-     * <li>A new {@link Profiling} instance is created and added to the global records.</li>
-     * <li>The new instance becomes the {@code current} active scope.</li>
-     * <li>The timer for the new scope is started.</li>
-     * </ol>
-     *
-     * @param name The name of the scope to profile.
-     * @return An {@link AutoCloseable} instance representing the new scope. Its {@link #close()}
-     *         method
-     *         must be called (typically via try-with-resources) to stop the timer and restore the
-     *         previous scope.
+     * @param name The descriptive name for this profiling scope (e.g., "Compile", "Network IO").
+     *            Must not be null.
+     * @return An {@link AutoCloseable} {@code Profiling} instance representing the new active scope
+     *         for this thread.
+     * @throws NullPointerException if the name is null.
      */
     public static Profiling of(String name) {
-        // Pause the timer of the currently active scope before starting a new nested scope
-        if (current != null) {
-            current.stop();
+        Profiling parent = current.get();
+
+        // Pause the parent scope's timer if it's a real scope
+        if (parent != null && parent.name != null) {
+            parent.pause();
         }
 
-        records.add(current = new Profiling(name, current));
-        current.start();
-        return current;
+        // Create the new scope, linking it to the parent from this thread
+        Profiling child = new Profiling(name, parent);
+
+        // Set the new scope as current for this thread *before* resuming
+        current.set(child);
+
+        // Start the timer for the new scope *after* it's set as current
+        child.resume();
+
+        // Don't add to 'records' here; added when closed.
+        return child;
     }
 
     /**
-     * Aggregates the collected profiling data, formats it, and displays the top results
-     * (longest durations first) using the provided {@link UserInterface}.
+     * Aggregates profiling results from all threads, formats them, and displays a summary.
      * <p>
-     * Only durations of 100ms or more are included. Up to the top 10 entries are shown.
-     * The output format includes the duration (e.g., "1.234s") and the scope name.
+     * Shows the top 10 scopes ranked by total self-time (minimum 1ms displayed), sorted
+     * descendingly.
+     * Percentages indicate contribution relative to the total time of the *displayed* top scopes.
+     * Includes JVM input arguments for context. Cleans up the current thread's profiler state.
      * </p>
      *
-     * @param ui The {@link UserInterface} used for outputting the results.
+     * @param ui The {@link UserInterface} used for displaying the results.
      */
     public static void show(UserInterface ui) {
+        // for (Profiling p : records) {
+        // System.out.println(p.name + " start: " + p.start + " end: " + p.end + " elapsed: " +
+        // p.elapsed);
+        // }
+
         Map<String, List<Profiling>> grouped = records.stream().collect(Collectors.groupingBy(v -> v.name));
         TreeMap<Long, String> output = new TreeMap(Comparator.reverseOrder());
 
@@ -244,7 +214,7 @@ public class Profiling implements AutoCloseable {
         List<String> results = output.entrySet()
                 .stream()
                 .limit(10)
-                .map(entry -> "%dms (%.1f%%)\t%s".formatted(entry.getKey(), (entry.getKey() / total) * 100, entry.getValue()))
+                .map(entry -> "%dms (%.1f%%)  \t%s".formatted(entry.getKey(), (entry.getKey() / total) * 100, entry.getValue()))
                 .toList();
 
         ui.title("Bee Profiler");
