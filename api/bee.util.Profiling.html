@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="r">
-		<header class="m" date="2025-04-09" ver="0.76.0">
-			<h1 class="Q"><code>Bee</code></h1>
-			<nav class="M"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="n">
+		<header class="e" date="2025-04-09" ver="0.76.0">
+			<h1 class="f"><code>Bee</code></h1>
+			<nav class="T"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="J"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="P"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="k"></nav>
-		<article class="n" id="Article">
-			<section class="g"><code class="Z">bee.util</code>
-				<h2 class="Class e"><code class="l">Profiling</code></h2>
-				<div class="Y">
+		<nav class="o"></nav>
+		<article class="j" id="Article">
+			<section class="Q"><code class="K">bee.util</code>
+				<h2 class="Class Y"><code class="r">Profiling</code></h2>
+				<div class="H">
 					<ul class="C F">
 						<li><code><a aria-label="java.lang.AutoCloseable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/AutoCloseable.html">AutoCloseable</a></code></li>
 					</ul>
@@ -61,21 +61,21 @@ leveraging <code><a aria-label="java.lang.InheritableThreadLocal 🚀" href="htt
  excluding time spent in nested child scopes started on the same logical thread
  (as tracked by <code>InheritableThreadLocal</code>).
  </p></span></section>
-			<section class="g" id="close()">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="l">close</code><code class="P">()</code><i class="p"><code>void</code></i></h2><span class="B"><p>Stops the timer, records the profiling data (if named), restores the parent scope
+			<section class="Q" id="close()">
+				<h2 class="J"><i class="OVERRIDE PUBLIC"></i><code class="r">close</code><code class="Z">()</code><i class="b"><code>void</code></i></h2><span class="B"><p>Stops the timer, records the profiling data (if named), restores the parent scope
 for the current thread, and resumes the parent&#39;s timer.
 Automatically called by the try-with-resources statement.</p></span></section>
-			<section class="g" id="measureJVMStartup()">
-				<h2 class="I"><i class="STATIC PUBLIC"></i><code class="l">measureJVMStartup</code><code class="P">()</code><i class="p"><code>void</code></i></h2><span class="B"><p>Records the approximate JVM startup time as a special profiling entry.</p></span></section>
-			<section class="g" id="of(java.lang.String)">
-				<h2 class="I"><i class="STATIC PUBLIC"></i><code class="l">of</code><code class="P">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="p"><code><a aria-label="bee.util.Profiling" href="api/bee.util.Profiling.html">Profiling</a></code></i></h2>
-				<table class="b">
-					<tr class="h">
+			<section class="Q" id="measureJVMStartup()">
+				<h2 class="J"><i class="STATIC PUBLIC"></i><code class="r">measureJVMStartup</code><code class="Z">()</code><i class="b"><code>void</code></i></h2><span class="B"><p>Records the approximate JVM startup time as a special profiling entry.</p></span></section>
+			<section class="Q" id="of(java.lang.String)">
+				<h2 class="J"><i class="STATIC PUBLIC"></i><code class="r">of</code><code class="Z">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="b"><code><a aria-label="bee.util.Profiling" href="api/bee.util.Profiling.html">Profiling</a></code></i></h2>
+				<table class="d">
+					<tr class="k">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td><span><p>The descriptive name for this profiling scope (e.g., &#38;quot;Compile&#38;quot;, &#38;quot;Network IO&#38;quot;).
 Must not be null.</p></span></td>
 					</tr>
-					<tr class="N">
+					<tr class="W">
 						<td><code><a aria-label="bee.util.Profiling" href="api/bee.util.Profiling.html">Profiling</a></code></td>
 						<td><span><p>An <code><a aria-label="java.lang.AutoCloseable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/AutoCloseable.html">AutoCloseable</a></code><code>Profiling</code> instance representing the new active scope
 for this thread.</p></span></td>
@@ -83,10 +83,10 @@ for this thread.</p></span></td>
 				</table><span class="B"><p>Starts a new profiling scope with the given name for the current thread.</p><p>
  This method MUST be used within a try-with-resources statement:
  </p><pre><code>try (Profiling p = Profiling.of(&#34;Scope Name&#34;)) { ... }</code></pre></span></section>
-			<section class="g" id="show(bee.UserInterface)">
-				<h2 class="I"><i class="STATIC PUBLIC"></i><code class="l">show</code><code class="P">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code><i class="p"><code>void</code></i></h2>
-				<table class="b">
-					<tr class="h">
+			<section class="Q" id="show(bee.UserInterface)">
+				<h2 class="J"><i class="STATIC PUBLIC"></i><code class="r">show</code><code class="Z">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code><i class="b"><code>void</code></i></h2>
+				<table class="d">
+					<tr class="k">
 						<td><code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code></td>
 						<td><span><p>The <code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code> used for displaying the results.</p></span></td>
 					</tr>
@@ -97,21 +97,21 @@ for this thread.</p></span></td>
  Includes JVM input arguments for context. Cleans up the current thread&#39;s profiler state.
  </p></span></section>
 		</article>
-		<aside class="L">
-			<div class="R">
-				<h5 class="K">Static Methods</h5>
+		<aside class="U">
+			<div class="i">
+				<h5 class="m">Static Methods</h5>
 				<ul>
-					<li class="o"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Profiling.html#measureJVMStartup()">measureJVMStartup</a></code><code class="P">()</code><i class="i"><code>void</code></i></li>
-					<li class="o"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Profiling.html#of(java.lang.String)">of</a></code><code class="P">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="i"><code><a aria-label="bee.util.Profiling" href="api/bee.util.Profiling.html">Profiling</a></code></i></li>
-					<li class="o"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Profiling.html#show(bee.UserInterface)">show</a></code><code class="P">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code><i class="i"><code>void</code></i></li>
+					<li class="l"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Profiling.html#measureJVMStartup()">measureJVMStartup</a></code><code class="Z">()</code><i class="g"><code>void</code></i></li>
+					<li class="l"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Profiling.html#of(java.lang.String)">of</a></code><code class="Z">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="g"><code><a aria-label="bee.util.Profiling" href="api/bee.util.Profiling.html">Profiling</a></code></i></li>
+					<li class="l"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Profiling.html#show(bee.UserInterface)">show</a></code><code class="Z">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code><i class="g"><code>void</code></i></li>
 				</ul>
-				<h5 class="K">Methods</h5>
+				<h5 class="m">Methods</h5>
 				<ul>
-					<li class="o"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.util.Profiling.html#close()">close</a></code><code class="P">()</code><i class="i"><code>void</code></i></li>
+					<li class="l"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.util.Profiling.html#close()">close</a></code><code class="Z">()</code><i class="g"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="j"/>
+		<footer class="X"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
