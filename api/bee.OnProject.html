@@ -44,19 +44,43 @@
 		</header>
 		<nav class="k"></nav>
 		<article class="n" id="Article">
-			<section class="g"><code class="Z">bee.task</code>
-				<h2 class="Class e"><code class="l">FindMain.Search</code></h2>
-				<div class="Y"></div><span class="B"><p>Internal singleton service responsible for scanning project classes
-to find potential main, premain, and agentmain classes.</p><p>
- This class is managed by Kiss DI as a singleton. Upon first instantiation,
- its constructor walks through all compiled class files of the current project,
- parses them using the Class-File API, and checks methods for the specific
- signatures and modifiers required for each entry point type. The fully qualified
- names of the classes containing these methods are stored in lists.
- </p></span></section>
+			<section class="g"><code class="Z">bee</code>
+				<h2 class="Class e"><code class="l">OnProject</code><code class="P">&#60;<code>T</code>&#62;</code></h2>
+				<div class="Y">
+					<ul class="C D">
+						<li><code>T</code></li>
+					</ul>
+					<ul class="C F">
+						<li><code><a aria-label="java.util.concurrent.Callable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/concurrent/Callable.html">Callable</a><code class="parameters"><code>T</code></code></code></li>
+						<li><code>kiss.Extensible</code></li>
+						<li><code>kiss.Lifestyle<code class="parameters"><code>T</code></code></code></li>
+						<li><code><a aria-label="java.util.function.Supplier 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Supplier.html">Supplier</a><code class="parameters"><code>T</code></code></code></li>
+						<li><code>kiss.Wise</code></li>
+						<li><code>kiss.WiseSupplier<code class="parameters"><code>T</code></code></code></li>
+					</ul>
+				</div>
+			</section>
+			<section class="g" id="call()">
+				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="l">call</code><code class="P">()</code><i class="p"><code>T</code></i></h2>
+				<table class="b">
+					<tr class="N">
+						<td><code>T</code></td>
+						<td></td>
+					</tr>
+					<tr class="q">
+						<td><code><a aria-label="java.lang.Exception 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Exception.html">Exception</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
 		</article>
 		<aside class="L">
-			<div class="R"></div>
+			<div class="R">
+				<h5 class="K">Methods</h5>
+				<ul>
+					<li class="o"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.OnProject.html#call()">call</a></code><code class="P">()</code><i class="i"><code>T</code></i></li>
+				</ul>
+			</div>
 		</aside>
 		<footer class="j"/>
 	</body>
