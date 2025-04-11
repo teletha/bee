@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.77.0](https://github.com/teletha/bee/compare/0.76.0...0.77.0) (2025-04-11)
+
+
+### Features
+
+* OnProject lifestyle ([d79abca](https://github.com/teletha/bee/commit/d79abca3e1c5957cc325e4935f5e76dea3ccd850))
+
+
+### Bug Fixes
+
+* profilier ([04f1cb5](https://github.com/teletha/bee/commit/04f1cb5e4a5383624d86dc6a2c24811cd4c5141a))
+
 ## [0.76.0](https://github.com/teletha/bee/compare/0.75.0...0.76.0) (2025-04-09)
 
 
