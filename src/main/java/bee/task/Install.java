@@ -23,8 +23,7 @@ public interface Install extends Task {
 
     @Command(defaults = true, value = "Install project into the local repository.")
     default void project() {
-        require(Test::test);
-        require(Jar::document, Jar::source);
+        require(Test::test, Jar::document, Jar::source);
 
         I.make(Repository.class).install(TaskOperations.project());
     }

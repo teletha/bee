@@ -28,8 +28,7 @@ public interface Install extends bee.task.Install {
                     .glob("!licenses/**", "!META-INF/*", "!META-INF/licenses/**", "!META-INF/maven/**", "!META-INF/sisu/**", "!META-INF/versions/**");
         });
 
-        require(Test::test);
-        require(Jar::document, Jar::merge);
+        require(Test::test, Jar::document, Jar::merge);
 
         I.make(Repository.class).install(TaskOperations.project());
 

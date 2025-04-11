@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -503,22 +503,21 @@ class TaskInfo {
             if (commands.contains(commnadName)) {
                 String taskName = Inputs.hyphenize(task.getSimpleName()) + ":" + commnadName;
                 Project project = TaskOperations.project();
-                Cache cache = project.associate(Cache.class);
-                Object result = cache.get(taskName);
+                UserInterface ui = TaskOperations.ui();
 
-                // Check cache first. Using containsKey allows caching null results.
-                // [[ get(taskName) == null ]] is ambiguous.
-                if (!cache.containsKey(taskName)) {
-                    UserInterface ui = TaskOperations.ui();
+                return project.associate(Cache.class).computeIfAbsent(taskName, key -> I.Jobs.submit(() -> {
+                    ForProject.local.set(project);
+                    ForUI.local.set(ui);
+
                     try {
-                        ui.startCommand(taskName, null);
-                        result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
-                        cache.put(taskName, result);
+                        ui.startCommand(key, null);
+                        return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
+                    } catch (Throwable e) {
+                        throw I.quiet(e);
                     } finally {
-                        ui.endCommand(taskName, null);
+                        ui.endCommand(key, null);
                     }
-                }
-                return result;
+                })).get();
             } else {
                 // =====================================================
                 // Handle Object methods
@@ -550,7 +549,7 @@ class TaskInfo {
      * of the same command within a single build lifecycle for that project.
      */
     @SuppressWarnings("serial")
-    private static class Cache extends HashMap<String, Object> {
+    private static class Cache extends ConcurrentHashMap<String, Future> {
         // No additional logic needed, inherits HashMap behavior.
         // Association with Project handles the scoping.
     }
