@@ -33,7 +33,7 @@ import kiss.I;
  * <li>Initializes the Bee environment by loading necessary classes ({@link BeforeAll}).</li>
  * <li>Detects if the currently executing test method has an inner class definition
  * extending {@link InlineProject}. If found, it instantiates this project and sets it
- * as the current project context via {@link LifestyleForProject}. If not found,
+ * as the current project context via {@link ForProject}. If not found,
  * a default anonymous {@link InlineProject} is used ({@link BeforeEach}).</li>
  * <li>Temporarily replaces the current {@link UserInterface} with {@link Null#UI}
  * before each test to suppress UI output during tests ({@link BeforeEach}).</li>
@@ -68,7 +68,7 @@ public class InlineProjectAware {
      * <p>
      * It attempts to find an {@link InlineProject} subclass defined within the currently
      * executing test method. If found, an instance of that project is created and set as the
-     * active project using {@link LifestyleForProject}. Otherwise, a default, empty
+     * active project using {@link ForProject}. Otherwise, a default, empty
      * {@link InlineProject} is set.
      * <p>
      * It also replaces the current {@link UserInterface} with {@link Null#UI} to prevent
@@ -98,11 +98,11 @@ public class InlineProjectAware {
         }
 
         // Set the determined project (either specific or default) as the current project context.
-        LifestyleForProject.local.set(inlineProject);
+        ForProject.local.set(inlineProject);
 
         // Switch the UserInterface to Null.UI for the duration of the test.
-        ui = LifestyleForUI.local.get(); // Save the original UI.
-        LifestyleForUI.local.set(Null.UI); // Set the null UI.
+        ui = ForUI.local.get(); // Save the original UI.
+        ForUI.local.set(Null.UI); // Set the null UI.
     }
 
     /**
@@ -112,7 +112,7 @@ public class InlineProjectAware {
     @AfterEach
     void clean() {
         // Restore the original UserInterface.
-        LifestyleForUI.local.set(ui);
+        ForUI.local.set(ui);
         // Project context cleanup might happen automatically depending on LifestyleForProject's
         // scope, but explicitly setting it to null could also be done if needed:
         // LifestyleForProject.local.set(null);

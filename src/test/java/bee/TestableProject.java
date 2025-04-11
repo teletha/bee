@@ -40,8 +40,8 @@ public class TestableProject extends Project {
      */
     public TestableProject() {
         product("test", "test", "1.0");
-        LifestyleForProject.local.set(this);
-        LifestyleForUI.local.set(Null.UI);
+        ForProject.local.set(this);
+        ForUI.local.set(Null.UI);
     }
 
     /**
@@ -49,8 +49,8 @@ public class TestableProject extends Project {
      */
     public TestableProject(UserInterface ui) {
         product("test", "test", "1.0");
-        LifestyleForProject.local.set(this);
-        LifestyleForUI.local.set(ui);
+        ForProject.local.set(this);
+        ForUI.local.set(ui);
     }
 
     /**
@@ -69,7 +69,7 @@ public class TestableProject extends Project {
      * </p>
      */
     public final void showTrace() {
-        LifestyleForUI.local.set(UserInterface.CUI);
+        ForUI.local.set(UserInterface.CUI);
     }
 
     /**

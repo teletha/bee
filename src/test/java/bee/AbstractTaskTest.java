@@ -19,7 +19,7 @@ public abstract class AbstractTaskTest extends TaskOperations {
 
     @BeforeEach
     public void before() {
-        LifestyleForProject.local.set(project);
+        ForProject.local.set(project);
     }
 
     /**

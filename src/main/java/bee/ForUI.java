@@ -14,7 +14,7 @@ import kiss.Managed;
 import kiss.Singleton;
 
 @Managed(Singleton.class)
-class LifestyleForUI implements Lifestyle<UserInterface> {
+class ForUI implements Lifestyle<UserInterface> {
 
     /** The actual store. */
     static final ThreadLocal<UserInterface> local = InheritableThreadLocal.withInitial(() -> UserInterface.CUI);

@@ -171,7 +171,7 @@ public class Bee {
         this.project = project;
 
         // inject project
-        LifestyleForProject.local.set(project);
+        ForProject.local.set(project);
     }
 
     /**
@@ -185,7 +185,7 @@ public class Bee {
         this.ui = ui;
 
         // inject user interface
-        LifestyleForUI.local.set(ui);
+        ForUI.local.set(ui);
     }
 
     /**
@@ -426,7 +426,7 @@ public class Bee {
         JEP483.enable(Locator.locate(Bee.class) + ".aot");
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"install", "-p"};
+        if (tasks.length == 0) tasks = new String[] {"install"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.

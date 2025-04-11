@@ -520,29 +520,24 @@ class TaskInfo {
                 }
                 return result;
             } else {
-                // Handle standard Object methods
-                if (method.getDeclaringClass() == Object.class) {
-                    String name = method.getName();
-                    if (name.equals("toString")) {
-                        return "Task [" + computeTaskName(task) + "]";
-                    } else if (name.equals("hashCode")) {
-                        return System.identityHashCode(proxy);
-                    } else if (name.equals("equals")) {
-                        Object other = args[0];
-                        if (other == proxy) return true;
-                        if (other == null || !Proxy.isProxyClass(other.getClass())) return false;
-                        InvocationHandler otherHandler = Proxy.getInvocationHandler(other);
-                        if (otherHandler instanceof Interceptor) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    }
+                // =====================================================
+                // Handle Object methods
+                // =====================================================
+                return switch (method.getName()) {
+                case "toString" -> "Task [" + computeTaskName(task) + "]";
+                case "hashCode" -> System.identityHashCode(proxy);
+                case "equals" -> {
+                    Object other = args[0];
+                    if (other == null || !Proxy.isProxyClass(other.getClass())) yield false;
+                    yield Proxy.getInvocationHandler(other) instanceof Interceptor interceptor && interceptor.task == task;
                 }
 
+                // =====================================================
                 // Handle other interface methods (e.g., default methods)
+                // =====================================================
                 // Use MethodHandles to invoke potentially default methods on the proxy itself
-                return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
+                default -> MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
+                };
             }
         }
     }

@@ -42,7 +42,7 @@ public class TaskOperations {
      * @return
      */
     public static final Project project() {
-        return LifestyleForProject.local.get();
+        return ForProject.local.get();
     }
 
     /**
@@ -51,7 +51,7 @@ public class TaskOperations {
      * @return
      */
     public static final UserInterface ui() {
-        return LifestyleForUI.local.get();
+        return ForUI.local.get();
     }
 
     /**
@@ -434,8 +434,8 @@ public class TaskOperations {
         Project project = project();
 
         return I.signal(tasks).joinAll(task -> {
-            LifestyleForProject.local.set(project);
-            LifestyleForUI.local.set(parallels.pollFirst());
+            ForProject.local.set(project);
+            ForUI.local.set(parallels.pollFirst());
 
             return Bee.execute(TaskInfo.computeTaskName(task));
         }).to().v;
