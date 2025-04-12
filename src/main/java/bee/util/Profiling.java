@@ -193,11 +193,6 @@ public class Profiling implements AutoCloseable {
      * @param ui The {@link UserInterface} used for displaying the results.
      */
     public static void show(UserInterface ui) {
-        // for (Profiling p : records) {
-        // System.out.println(p.name + " start: " + p.start + " end: " + p.end + " elapsed: " +
-        // p.elapsed);
-        // }
-
         Map<String, List<Profiling>> grouped = records.stream().collect(Collectors.groupingBy(v -> v.name));
         TreeMap<Long, String> output = new TreeMap(Comparator.reverseOrder());
 

@@ -61,6 +61,9 @@ public interface Test extends Task<Test.Config> {
 
     @Command("Test product codes.")
     default void test() {
+        if (true) {
+            throw new Fail("FAST FAIL");
+        }
         require(Compile::test);
 
         if (project().getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {

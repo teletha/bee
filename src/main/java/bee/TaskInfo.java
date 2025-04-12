@@ -499,11 +499,18 @@ class TaskInfo {
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             String commnadName = Inputs.hyphenize(method.getName());
 
-            // Check if the invoked method is a registered command
             if (commands.contains(commnadName)) {
+                // ===============================================================
+                // Handle Task commands
+                // ===============================================================
                 String taskName = Inputs.hyphenize(task.getSimpleName()) + ":" + commnadName;
                 Project project = TaskOperations.project();
                 UserInterface ui = TaskOperations.ui();
+                TaskFlow flow = project.associate(TaskFlow.class);
+
+                if (flow.isFailed()) {
+                    throw new Skip(taskName);
+                }
 
                 return project.associate(Cache.class).computeIfAbsent(taskName, key -> I.Jobs.submit(() -> {
                     ForProject.local.set(project);
@@ -512,6 +519,8 @@ class TaskInfo {
                     try {
                         ui.startCommand(key, null);
                         return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
+                    } catch (Skip skip) {
+                        throw skip;
                     } catch (Throwable e) {
                         throw I.quiet(e);
                     } finally {
@@ -519,9 +528,9 @@ class TaskInfo {
                     }
                 })).get();
             } else {
-                // =====================================================
+                // ===============================================================
                 // Handle Object methods
-                // =====================================================
+                // ===============================================================
                 return switch (method.getName()) {
                 case "toString" -> "Task [" + computeTaskName(task) + "]";
                 case "hashCode" -> System.identityHashCode(proxy);
@@ -531,9 +540,9 @@ class TaskInfo {
                     yield Proxy.getInvocationHandler(other) instanceof Interceptor interceptor && interceptor.task == task;
                 }
 
-                // =====================================================
+                // ===============================================================
                 // Handle other interface methods (e.g., default methods)
-                // =====================================================
+                // ===============================================================
                 // Use MethodHandles to invoke potentially default methods on the proxy itself
                 default -> MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
                 };

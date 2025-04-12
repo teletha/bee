@@ -14,4 +14,20 @@ import kiss.Managed;
 @Managed(OnProject.class)
 class TaskFlow {
 
+    private final Fail failure = new Fail("");
+
+    /**
+     * @param e
+     */
+    void fail(Throwable e) {
+        failure.reason(e);
+    }
+
+    /**
+     * @return
+     */
+    boolean isFailed() {
+        return failure.getSuppressed().length != 0;
+    }
+
 }

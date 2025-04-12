@@ -11,6 +11,7 @@ package bee;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -19,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 
 import auto483.JEP483;
 import bee.api.Library;
@@ -74,6 +76,11 @@ public class Bee {
                 version = name.substring(start, end);
             }
         }
+
+        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+            System.out.println("Error in " + thread);
+            strip(throwable).printStackTrace();
+        });
     }
 
     private static final String version;
@@ -256,6 +263,8 @@ public class Bee {
                 execute(task);
             }
         } catch (Throwable e) {
+            System.out.println("END OF BEE " + Thread.currentThread());
+            strip(e).printStackTrace();
             exitCode = 1;
             if (e == Abort) {
                 result = "CANCEL";
@@ -410,6 +419,15 @@ public class Bee {
         }
 
         return tasks;
+    }
+
+    private static Throwable strip(Throwable e) {
+        if (e instanceof ExecutionException || e instanceof UndeclaredThrowableException || e instanceof InvocationTargetException) {
+            System.out.println("Strip " + e);
+            return strip(e.getCause());
+        } else {
+            return e;
+        }
     }
 
     /**

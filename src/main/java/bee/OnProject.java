@@ -9,17 +9,24 @@
  */
 package bee;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import bee.api.Project;
+import kiss.I;
 import kiss.Lifestyle;
 
 public class OnProject<T> implements Lifestyle<T> {
 
-    private final Class<T> type;
+    private static final Map<Project, Object> ASSOCIATION = new ConcurrentHashMap();
+
+    private final Lifestyle<T> type;
 
     /**
      * @param type
      */
     private OnProject(Class<T> type) {
-        this.type = type;
+        this.type = I.prototype(type);
     }
 
     /**
@@ -27,6 +34,6 @@ public class OnProject<T> implements Lifestyle<T> {
      */
     @Override
     public T call() throws Exception {
-        return ForProject.local.get().associate(type);
+        return (T) ASSOCIATION.computeIfAbsent(ForProject.local.get(), key -> type.get());
     }
 }
