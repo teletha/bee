@@ -519,8 +519,6 @@ class TaskInfo {
                     try {
                         ui.startCommand(key, null);
                         return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
-                    } catch (Skip skip) {
-                        throw skip;
                     } catch (Throwable e) {
                         throw I.quiet(e);
                     } finally {

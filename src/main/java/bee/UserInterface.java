@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -139,9 +140,9 @@ public abstract class UserInterface {
             if (messages[length - 1] instanceof Throwable e) {
                 write(type, buildMessage(length - 1, messages));
 
-                while (e.getCause() != null) {
-                    e = e.getCause();
-                }
+                // while (e.getCause() != null) {
+                // e = e.getCause();
+                // }
 
                 write(e);
             } else {
@@ -691,7 +692,42 @@ public abstract class UserInterface {
                 showCommandName();
                 first = false;
             }
-            error.printStackTrace(standardOutput);
+
+            int count = 1;
+            while (error != null) {
+                writeStackTrace(count++, error);
+                error = error.getCause();
+            }
+            standardOutput.flush();
+        }
+
+        private void writeStackTrace(int counter, Throwable error) {
+            standardOutput.append(toCircledNumber(counter))
+                    .append("  Caused by ")
+                    .append(stain(error.getClass().getCanonicalName(), "208"))
+                    .append(" : ")
+                    .append(Objects.requireNonNullElse(error.getMessage(), ""))
+                    .append(Platform.EOL);
+
+            StackTraceElement[] elements = error.getStackTrace();
+            for (int i = 0; i < elements.length; i++) {
+                StackTraceElement e = elements[i];
+                String fqcn = e.getClassName();
+                String file = e.getFileName();
+                standardOutput.append("\t%3d.  ".formatted(elements.length - i)).append(fqcn).append(".").append(e.getMethodName());
+                if (file != null) {
+                    standardOutput.append(" (").append(e.getFileName()).append(":").append(String.valueOf(e.getLineNumber())).append(")");
+                }
+                standardOutput.append(Platform.EOL);
+            }
+        }
+
+        private static String toCircledNumber(int number) {
+            if (number >= 1 && number <= 20) {
+                return String.valueOf((char) ('\u2460' + number - 1));
+            } else {
+                return "(" + number + ")";
+            }
         }
 
         /**

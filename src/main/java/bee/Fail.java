@@ -38,7 +38,7 @@ public class Fail extends Error {
         this.reason = Objects.requireNonNull(reason);
         this.solutions = new ArrayList(solutions == null ? List.of() : solutions);
 
-        setStackTrace(new StackTraceElement[0]);
+        // setStackTrace(new StackTraceElement[0]);
     }
 
     public Fail reason(Throwable reason) {

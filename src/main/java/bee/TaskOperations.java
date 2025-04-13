@@ -433,7 +433,7 @@ public class TaskOperations {
         // cache the current project
         Project project = project();
 
-        return I.signal(tasks).joinFlawless(task -> {
+        return I.signal(tasks).joinAllOrNone(task -> {
             ForProject.local.set(project);
             ForUI.local.set(parallels.pollFirst());
 

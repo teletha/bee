@@ -78,8 +78,7 @@ public class Bee {
         }
 
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            System.out.println("Error in " + thread);
-            strip(throwable).printStackTrace();
+            I.make(UserInterface.class).info("Uncaught error in " + thread, throwable);
         });
     }
 
@@ -263,8 +262,7 @@ public class Bee {
                 execute(task);
             }
         } catch (Throwable e) {
-            System.out.println("END OF BEE " + Thread.currentThread());
-            strip(e).printStackTrace();
+            ui.info("END OF BEE " + Thread.currentThread() + "   ", e);
             exitCode = 1;
             if (e == Abort) {
                 result = "CANCEL";
@@ -423,7 +421,6 @@ public class Bee {
 
     private static Throwable strip(Throwable e) {
         if (e instanceof ExecutionException || e instanceof UndeclaredThrowableException || e instanceof InvocationTargetException) {
-            System.out.println("Strip " + e);
             return strip(e.getCause());
         } else {
             return e;
