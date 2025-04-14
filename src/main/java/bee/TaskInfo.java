@@ -508,18 +508,18 @@ class TaskInfo {
                 UserInterface ui = TaskOperations.ui();
                 TaskFlow flow = project.associate(TaskFlow.class);
 
-                if (flow.isFailed()) {
-                    throw new Skip(taskName);
-                }
-
                 return project.associate(Cache.class).computeIfAbsent(taskName, key -> I.Jobs.submit(() -> {
                     ForProject.local.set(project);
                     ForUI.local.set(ui);
 
                     try {
+                        flow.stepInto(key);
                         ui.startCommand(key, null);
-                        return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
+                        Object result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
+                        flow.status(key, Status.SUCCESS);
+                        return result;
                     } catch (Throwable e) {
+                        flow.status(key, Status.FAILURE);
                         throw I.quiet(e);
                     } finally {
                         ui.endCommand(key, null);

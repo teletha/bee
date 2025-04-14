@@ -16,10 +16,12 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import bee.Task.TaskReference;
 import bee.Task.ValuedTaskReference;
@@ -436,8 +438,23 @@ public class TaskOperations {
         return I.signal(tasks).joinAllOrNone(task -> {
             ForProject.local.set(project);
             ForUI.local.set(parallels.pollFirst());
+            String name = TaskInfo.computeTaskName(task);
 
-            return Bee.execute(TaskInfo.computeTaskName(task));
+            try {
+                return Bee.execute(name);
+            } catch (Throwable e) {
+                Throwable root = Fail.root(e);
+                if (root instanceof InterruptedException) {
+                    I.make(TaskFlow.class).abort(name);
+                    throw new Fail("[" + name + "] is aborted.").reason(e);
+                }
+
+                String parent = TaskFlow.current.get();
+                List<String> children = Stream.of(tasks).map(TaskInfo::computeTaskName).toList();
+
+                throw new Fail("[" + parent + "] attempts to execute " + children + " concurrently, but [" + name + "] failed, so all tasks are aborted.")
+                        .reasonByRoot(e);
+            }
         }).to().v;
     }
 

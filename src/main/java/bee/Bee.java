@@ -9,9 +9,7 @@
  */
 package bee;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -20,7 +18,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
 
 import auto483.JEP483;
 import bee.api.Library;
@@ -76,10 +73,6 @@ public class Bee {
                 version = name.substring(start, end);
             }
         }
-
-        Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
-            I.make(UserInterface.class).info("Uncaught error in " + thread, throwable);
-        });
     }
 
     private static final String version;
@@ -204,7 +197,7 @@ public class Bee {
      */
     public int execute(List<String> tasks) {
         int exitCode = 0;
-        String result = "SUCCESS";
+        Status result = Status.SUCCESS;
         LocalTime start = LocalTime.now();
 
         try (var x = Profiling.of("Bee Core Process")) {
@@ -265,12 +258,15 @@ public class Bee {
             ui.info("END OF BEE " + Thread.currentThread() + "   ", e);
             exitCode = 1;
             if (e == Abort) {
-                result = "CANCEL";
+                result = Status.ABORT;
             } else {
-                result = "FAILURE";
+                result = Status.FAILURE;
                 ui.info("");
                 ui.error(e);
             }
+
+            TaskFlow flow = I.make(TaskFlow.class);
+            ui.info(flow.visualizeTaskTree());
         } finally {
             LocalTime end = LocalTime.now();
 
@@ -356,9 +352,6 @@ public class Bee {
         try (var x = Profiling.of("Task [" + fullname + "]")) {
             return command.invoke(info.create());
         } catch (Throwable e) {
-            if (e instanceof InvocationTargetException) {
-                e = ((InvocationTargetException) e).getTargetException();
-            }
             throw I.quiet(e);
         } finally {
             if (ui instanceof TaskOperations.ParallelInterface parallel) {
@@ -417,14 +410,6 @@ public class Bee {
         }
 
         return tasks;
-    }
-
-    private static Throwable strip(Throwable e) {
-        if (e instanceof ExecutionException || e instanceof UndeclaredThrowableException || e instanceof InvocationTargetException) {
-            return strip(e.getCause());
-        } else {
-            return e;
-        }
     }
 
     /**

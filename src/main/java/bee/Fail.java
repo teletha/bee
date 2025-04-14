@@ -9,8 +9,6 @@
  */
 package bee;
 
-import static bee.Platform.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -42,9 +40,23 @@ public class Fail extends Error {
     }
 
     public Fail reason(Throwable reason) {
-        addSuppressed(reason);
+        initCause(reason);
 
         return this;
+    }
+
+    public Throwable reasonByRoot(Throwable reason) {
+        while (reason.getCause() != null) {
+            reason = reason.getCause();
+        }
+        return reason(reason);
+    }
+
+    public static Throwable root(Throwable error) {
+        while (error.getCause() != null) {
+            error = error.getCause();
+        }
+        return error;
     }
 
     /**
@@ -63,17 +75,15 @@ public class Fail extends Error {
      */
     @Override
     public String getMessage() {
-        StringBuilder builder = new StringBuilder().append(reason).append(EOL);
+        StringBuilder builder = new StringBuilder().append(reason);
 
         int size = solutions.size();
 
-        if (size == 0) {
-            builder.append("No solution.");
-        } else {
+        if (size != 0) {
             for (String solution : solutions) {
+                builder.append(Platform.EOL);
                 builder.append(Platform.EOL).append("  -").append(solution);
             }
-            builder.append(Platform.EOL);
         }
         return builder.toString();
     }
