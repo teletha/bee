@@ -425,6 +425,13 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
+			"name": "Skip",
+			"packageName": "bee",
+			"type": "Exception"
+		},
+		{
+			"modifiers": {
+				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "StandardHeaderStyle",
 			"packageName": "bee.coder",
 			"type": "Enum"
