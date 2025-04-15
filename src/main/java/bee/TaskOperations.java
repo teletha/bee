@@ -19,7 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -424,49 +424,50 @@ public class TaskOperations {
      * @param tasks
      */
     private static Object requireParallel(TaskReference<Task>[] tasks) {
-        ConcurrentLinkedDeque<ParallelInterface> parallels = new ConcurrentLinkedDeque();
+        LinkedList<ParallelInterface> parallels = new LinkedList();
         ParallelInterface parallel = null;
 
         for (int i = 0; i < tasks.length; i++) {
-            parallels.offerFirst(parallel = new ParallelInterface(ui(), parallel));
+            parallels.addFirst(parallel = new ParallelInterface(ui(), parallel));
         }
         parallels.peekFirst().start();
 
         // cache the current project
         Project project = project();
 
+        AtomicInteger index = new AtomicInteger();
         return I.signal(tasks).joinAllOrNone(task -> {
-            ForProject.local.set(project);
-            ForUI.local.set(parallels.pollFirst());
             String name = TaskInfo.computeTaskName(task);
+            ParallelInterface ui = parallels.get(index.getAndIncrement());
+
+            ForProject.local.set(project);
+            ForUI.local.set(ui);
 
             try {
                 return Bee.execute(name);
             } catch (Throwable e) {
-                Throwable root = Fail.root(e);
-                if (root instanceof InterruptedException) {
-                    I.make(TaskFlow.class).abort(name);
-                    throw new Fail("[" + name + "] is aborted.").reason(e);
-                }
-
-                String parent = TaskFlow.current.get();
                 List<String> children = Stream.of(tasks).map(TaskInfo::computeTaskName).toList();
+                String message = "[" + TaskInfo.current
+                        .get() + "] invoked sub tasks concurrently " + children + ". But the task [" + name + "] was failed, so Bee aborts all other tasks.";
 
-                throw new Fail("[" + parent + "] attempts to execute " + children + " concurrently, but [" + name + "] failed, so all tasks are aborted.")
-                        .reasonByRoot(e);
+                ui.warn(message);
+                parallels.forEach(ParallelInterface::stop);
+
+                throw new Fail(message).reason(e);
+            } finally {
+                ui.finish();
             }
         }).to().v;
     }
 
-    /**
-     * 
-     */
-    static class ParallelInterface extends UserInterface {
+    private static class ParallelInterface extends UserInterface {
 
         /** The message mode. */
         // buffering(0) → buffered(2)
         // ↓
         // processing(1)
+        //
+        // aborted(3)
         private int mode = 0;
 
         /** The message buffer. */
@@ -522,7 +523,7 @@ public class TaskOperations {
          * {@inheritDoc}
          */
         @Override
-        protected void write(Throwable error) {
+        protected synchronized void write(Throwable error) {
             switch (mode) {
             case 0:
                 messages.add(() -> ui.write(error));
@@ -569,7 +570,7 @@ public class TaskOperations {
         /**
          * Invoke when the task was finished.
          */
-        synchronized void finish() {
+        private synchronized void finish() {
             switch (mode) {
             case 0: // buffering
                 mode = 2;
@@ -607,6 +608,14 @@ public class TaskOperations {
                 break;
             }
         }
-    }
 
+        /**
+         * Stop this user interface.
+         */
+        private void stop() {
+            mode = 3;
+            messages.clear();
+            messages = null;
+        }
+    }
 }

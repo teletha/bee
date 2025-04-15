@@ -197,7 +197,7 @@ public class Bee {
      */
     public int execute(List<String> tasks) {
         int exitCode = 0;
-        Status result = Status.SUCCESS;
+        String result = "SUCCESS";
         LocalTime start = LocalTime.now();
 
         try (var x = Profiling.of("Bee Core Process")) {
@@ -255,18 +255,14 @@ public class Bee {
                 execute(task);
             }
         } catch (Throwable e) {
-            ui.info("END OF BEE " + Thread.currentThread() + "   ", e);
             exitCode = 1;
             if (e == Abort) {
-                result = Status.ABORT;
+                result = "ABORT";
             } else {
-                result = Status.FAILURE;
+                result = "FAILURE";
                 ui.info("");
-                ui.error(e);
+                ui.error(Fail.strip(e));
             }
-
-            TaskFlow flow = I.make(TaskFlow.class);
-            ui.info(flow.visualizeTaskTree());
         } finally {
             LocalTime end = LocalTime.now();
 
@@ -302,8 +298,6 @@ public class Bee {
         if (input.length() == 0) {
             return null;
         }
-
-        UserInterface ui = TaskOperations.ui();
 
         // analyze task name
         String taskName = "";
@@ -353,10 +347,6 @@ public class Bee {
             return command.invoke(info.create());
         } catch (Throwable e) {
             throw I.quiet(e);
-        } finally {
-            if (ui instanceof TaskOperations.ParallelInterface parallel) {
-                parallel.finish();
-            }
         }
     }
 

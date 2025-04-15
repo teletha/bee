@@ -9,9 +9,12 @@
  */
 package bee;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("serial")
 public class Fail extends Error {
@@ -40,23 +43,9 @@ public class Fail extends Error {
     }
 
     public Fail reason(Throwable reason) {
-        initCause(reason);
+        initCause(strip(reason));
 
         return this;
-    }
-
-    public Throwable reasonByRoot(Throwable reason) {
-        while (reason.getCause() != null) {
-            reason = reason.getCause();
-        }
-        return reason(reason);
-    }
-
-    public static Throwable root(Throwable error) {
-        while (error.getCause() != null) {
-            error = error.getCause();
-        }
-        return error;
     }
 
     /**
@@ -94,5 +83,12 @@ public class Fail extends Error {
     @Override
     public String toString() {
         return getMessage();
+    }
+
+    public static Throwable strip(Throwable error) {
+        while (error instanceof ExecutionException || error instanceof UndeclaredThrowableException || error instanceof InvocationTargetException) {
+            error = error.getCause();
+        }
+        return error;
     }
 }

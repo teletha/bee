@@ -52,6 +52,9 @@ import psychopath.Locator;
  */
 class TaskInfo {
 
+    /** The current processing task name holder. */
+    static final InheritableThreadLocal<String> current = new InheritableThreadLocal();
+
     /** Cache mapping task interface classes to their {@link TaskInfo}. */
     static final Map<Class, TaskInfo> types = new ConcurrentHashMap();
 
@@ -506,21 +509,18 @@ class TaskInfo {
                 String taskName = Inputs.hyphenize(task.getSimpleName()) + ":" + commnadName;
                 Project project = TaskOperations.project();
                 UserInterface ui = TaskOperations.ui();
-                TaskFlow flow = project.associate(TaskFlow.class);
 
                 return project.associate(Cache.class).computeIfAbsent(taskName, key -> I.Jobs.submit(() -> {
                     ForProject.local.set(project);
                     ForUI.local.set(ui);
+                    current.set(taskName);
 
                     try {
-                        flow.stepInto(key);
                         ui.startCommand(key, null);
                         Object result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
-                        flow.status(key, Status.SUCCESS);
                         return result;
                     } catch (Throwable e) {
-                        flow.status(key, Status.FAILURE);
-                        throw I.quiet(e);
+                        throw new Fail("Task [" + taskName + "] was failed.").reason(e);
                     } finally {
                         ui.endCommand(key, null);
                     }
