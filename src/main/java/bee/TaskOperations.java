@@ -448,9 +448,8 @@ public class TaskOperations {
             } catch (Throwable e) {
                 List<String> children = Stream.of(tasks).map(TaskInfo::computeTaskName).toList();
                 String message = "[" + TaskInfo.current
-                        .get() + "] invoked sub tasks concurrently " + children + ". But the task [" + name + "] was failed, so Bee aborts all other tasks.";
+                        .get() + "] invoked sub tasks " + children + " in parallel. But the task [" + name + "] has failed, so Bee aborts all other tasks.";
 
-                ui.warn(message);
                 parallels.forEach(ParallelInterface::stop);
 
                 throw new Fail(message).reason(e);

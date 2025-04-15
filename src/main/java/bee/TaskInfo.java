@@ -520,7 +520,9 @@ class TaskInfo {
                         Object result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
                         return result;
                     } catch (Throwable e) {
-                        throw new Fail("Task [" + taskName + "] was failed.").reason(e);
+                        String message = "Task [" + taskName + "] has failed.";
+                        ui.error(message);
+                        throw new Fail(message).reason(e);
                     } finally {
                         ui.endCommand(key, null);
                     }

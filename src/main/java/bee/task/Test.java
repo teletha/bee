@@ -63,10 +63,6 @@ public interface Test extends Task<Test.Config> {
     default void test() {
         require(Compile::test);
 
-        if (true) {
-            throw new Fail("FAST FAIL");
-        }
-
         if (project().getTestClasses().walkFile("**Test.class").first().to().isAbsent()) {
             ui().info("No test will be performed because the test files don't exist in the following directories.");
             ui().info(List.of(project().getTestClasses()));
@@ -79,6 +75,8 @@ public interface Test extends Task<Test.Config> {
 
                 @Override
                 public void isolate() {
+                    ui().trace("Lunching the isolated JVM for test environment");
+
                     Java.with()
                             .java(conf.java)
                             .param(conf.params)
@@ -106,6 +104,8 @@ public interface Test extends Task<Test.Config> {
          */
         @Override
         public void process() throws Exception {
+            ui.info("Lunched the isolated JVM for test environment");
+
             // disable logging for Junit
             Logger global = Logger.getLogger("");
             for (Handler handler : global.getHandlers()) {

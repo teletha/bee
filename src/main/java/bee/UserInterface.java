@@ -709,16 +709,22 @@ public abstract class UserInterface {
                     .append(Objects.requireNonNullElse(error.getMessage(), ""))
                     .append(Platform.EOL);
 
-            StackTraceElement[] elements = error.getStackTrace();
-            for (int i = 0; i < elements.length; i++) {
-                StackTraceElement e = elements[i];
-                String fqcn = e.getClassName();
-                String file = e.getFileName();
-                standardOutput.append("\t%3d.  ".formatted(elements.length - i)).append(fqcn).append(".").append(e.getMethodName());
-                if (file != null) {
-                    standardOutput.append(" (").append(e.getFileName()).append(":").append(String.valueOf(e.getLineNumber())).append(")");
+            if (BeeOption.Debug.value || error.getCause() == null) {
+                StackTraceElement[] elements = error.getStackTrace();
+                for (int i = 0; i < elements.length; i++) {
+                    StackTraceElement e = elements[i];
+                    String fqcn = e.getClassName();
+                    String file = e.getFileName();
+                    standardOutput.append("\t%3d.  ".formatted(elements.length - i)).append(fqcn).append(".").append(e.getMethodName());
+                    if (file != null) {
+                        standardOutput.append(" (")
+                                .append(e.getFileName())
+                                .append(":")
+                                .append(String.valueOf(e.getLineNumber()))
+                                .append(")");
+                    }
+                    standardOutput.append(Platform.EOL);
                 }
-                standardOutput.append(Platform.EOL);
             }
         }
 

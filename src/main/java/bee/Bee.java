@@ -260,8 +260,7 @@ public class Bee {
                 result = "ABORT";
             } else {
                 result = "FAILURE";
-                ui.info("");
-                ui.error(Fail.strip(e));
+                ui.error("Building ", project.getProduct(), " ", project.getVersion(), " has failed.", Fail.strip(e));
             }
         } finally {
             LocalTime end = LocalTime.now();
