@@ -75,7 +75,7 @@ public interface Test extends Task<Test.Config> {
 
                 @Override
                 public void isolate() {
-                    ui().trace("Lunching the isolated JVM for test environment");
+                    ui().progress("Lunching the isolated JVM...");
 
                     Java.with()
                             .java(conf.java)
@@ -104,8 +104,6 @@ public interface Test extends Task<Test.Config> {
          */
         @Override
         public void process() throws Exception {
-            ui.info("Lunched the isolated JVM for test environment");
-
             // disable logging for Junit
             Logger global = Logger.getLogger("");
             for (Handler handler : global.getHandlers()) {

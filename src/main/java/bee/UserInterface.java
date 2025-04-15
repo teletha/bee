@@ -25,11 +25,13 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import bee.api.Command;
 import kiss.Decoder;
+import kiss.Disposable;
 import kiss.I;
 import kiss.Managed;
 import kiss.Singleton;
@@ -61,6 +63,9 @@ public abstract class UserInterface {
     /** Message type magic number. */
     protected static final int TITLE = 5;
 
+    /** Message type magic number. */
+    protected static final int PROGRESS = 6;
+
     /** The predefined answers. */
     private final Deque<String> answers = new ArrayDeque(BeeOption.Input.value());
 
@@ -74,6 +79,15 @@ public abstract class UserInterface {
      */
     public final void title(CharSequence title) {
         write(TITLE, String.valueOf(title));
+    }
+
+    /**
+     * Talk to user as progress message.
+     * 
+     * @param message Your message.
+     */
+    public final void progress(CharSequence message) {
+        write(PROGRESS, String.valueOf(message));
     }
 
     /**
@@ -601,6 +615,9 @@ public abstract class UserInterface {
         /** The view state. */
         private int erasableLine;
 
+        /** The progress message. */
+        private Disposable progress;
+
         /**
          * Build with standard output and error.
          */
@@ -648,6 +665,11 @@ public abstract class UserInterface {
          */
         @Override
         protected synchronized void write(int type, String message) {
+            if (type != TRACE && progress != null) {
+                progress.dispose();
+                progress = null;
+            }
+
             switch (type) {
             case TITLE:
                 blank = false;
@@ -655,6 +677,16 @@ public abstract class UserInterface {
                 write(stain(message, "Build SUCCESS", "76", "Build FAILURE", "1"), true);
                 write("------------------------------------------------------------", true);
                 return;
+
+            case PROGRESS:
+                if (!disableTrace) {
+                    progress = I.schedule(0, 1000, TimeUnit.MILLISECONDS, true).to(count -> {
+                        long minutes = (count - 1) / 60;
+                        long sec = (count - 1) % 60;
+                        write(TRACE, message + "  (" + String.format("%02d:%02d", minutes, sec) + ")");
+                    });
+                }
+                break;
 
             case TRACE:
                 if (!disableTrace) {
