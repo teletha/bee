@@ -33,6 +33,10 @@ public class BeeOption<T> {
     /** Predefine the user input. */
     public static final BeeOption<List<String>> Input = new BeeOption("input", "Predefine the user input.", List.of(), 16);
 
+    // /** Instructs the system to write out the build log to the specified file. */
+    // public static final BeeOption<File> Log = new BeeOption("log-file", "Write out build log to
+    // the specified file.", null, 1);
+
     /** Instructs the system not to connect to an external network at build time. */
     public static final BeeOption<Boolean> Offline = new BeeOption("offline", "Don't connect to external network.", false, 0);
 
@@ -59,7 +63,8 @@ public class BeeOption<T> {
     public static final BeeOption<Boolean> Version = new BeeOption("version", "Show infomation for the current execution environment. Synonymous with the task [help:version].", false, 0);
 
     /** The list of builtin options. */
-    public static final List<BeeOption> AVAILABLES = List.of(Cacheless, Debug, Input, Root, Skip, Help, Offline, Profiling, Quiet, Version);
+    public static final List<BeeOption> AVAILABLES = List
+            .of(Cacheless, Debug, Help, Input, Offline, Profiling, Quiet, Root, Skip, Unwrap, Version);
 
     /** The name. */
     private final String name;

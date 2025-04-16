@@ -84,7 +84,7 @@ public interface Jar extends Task<Jar.Config> {
         boolean needToModify = SourceVersion.latest()
                 .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
 
-        if (needToModify) {
+        if (needToModify && false) {
             Set<ClassFile.Option> options = new HashSet();
             Directory modified = Locator.temporaryDirectory();
 
@@ -155,6 +155,8 @@ public interface Jar extends Task<Jar.Config> {
         // Package classes and sources
         pack("main classes", I.signal(classes), project.locateJar(), conf.packing);
         pack("main sources", project.getSourceSet(), project.locateSourceJar(), null);
+
+        System.out.println("FINISH jar:source");
     }
 
     /**

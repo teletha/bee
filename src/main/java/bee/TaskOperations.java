@@ -440,8 +440,9 @@ public class TaskOperations {
 
             ForProject.local.set(project);
             ForUI.local.set(ui);
-
+            String main = TaskInfo.current.get();
             try {
+                System.out.println("stop " + main);
                 return Bee.execute(name);
             } catch (Throwable e) {
                 parallels.forEach(ParallelInterface::stop);
@@ -451,8 +452,9 @@ public class TaskOperations {
                         .toList() + " in parallel. But the task [" + name + "] has failed, so Bee aborts all other tasks.").reason(e);
             } finally {
                 ui.finish();
+                System.out.println("resume " + main);
             }
-        }).to().v;
+        }).waitForTerminate().to().v;
     }
 
     private static class ParallelInterface extends UserInterface {

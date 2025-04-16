@@ -49,6 +49,8 @@ public interface Compile extends Task<Compile.Config> {
         require(Compile::source);
 
         compile("test", TaskOperations.project().getTestSourceSet(), TaskOperations.project().getTestClasses());
+
+        System.out.println("FINIT compile:source");
     }
 
     /**

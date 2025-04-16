@@ -516,15 +516,16 @@ class TaskInfo {
                     current.set(taskName);
 
                     try {
+                        System.out.println("start " + taskName);
                         ui.startCommand(key);
-                        Object result = MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
-                        return result;
+                        return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
                     } catch (Throwable e) {
                         String message = "Task [" + taskName + "] has failed.";
                         ui.error(message);
                         throw new Fail(message).reason(e);
                     } finally {
                         ui.endCommand(key);
+                        System.out.println("end " + taskName);
                     }
                 })).get();
             } else {

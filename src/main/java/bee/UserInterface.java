@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,6 +72,21 @@ public abstract class UserInterface {
     /** The debug flag. */
     private final boolean debuggable = BeeOption.Debug.value;
 
+    // /** The log file. */
+    // private final BufferedWriter log = BeeOption.Log.value == null ? null
+    // : BeeOption.Log.value.newBufferedWriter(StandardOpenOption.CREATE,
+    // StandardOpenOption.APPEND);
+    //
+    // private void log(CharSequence message) {
+    // if (log != null) {
+    // try {
+    // log.append(message);
+    // } catch (IOException e) {
+    // throw I.quiet(e);
+    // }
+    // }
+    // }
+
     /**
      * Talk to user with decoration like title.
      * 
@@ -86,7 +102,9 @@ public abstract class UserInterface {
      * @param message Your message.
      */
     public final void progress(CharSequence message) {
-        write(PROGRESS, String.valueOf(message));
+        if (!BeeOption.Quiet.value) {
+            write(PROGRESS, String.valueOf(message));
+        }
     }
 
     /**
@@ -1081,6 +1099,42 @@ public abstract class UserInterface {
                 // Javac requires a fully qualified method call, so I had no choice.
                 CommandLineUserInterface.this.write(String.valueOf(x), true);
             }
+        }
+    }
+
+    private static class Tee extends PrintStream {
+        private final PrintStream second;
+
+        public Tee(OutputStream main, PrintStream second) {
+            super(main, true);
+            this.second = second;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(int b) {
+            super.write(b);
+            second.write(b);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void write(byte[] buf, int off, int len) {
+            super.write(buf, off, len);
+            second.write(buf, off, len);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void flush() {
+            super.flush();
+            second.flush();
         }
     }
 }
