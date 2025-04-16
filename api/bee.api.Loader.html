@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="o">
-		<header class="U" date="2025-04-09" ver="0.76.0">
-			<h1 class="V"><code>Bee</code></h1>
-			<nav class="O"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="r">
+		<header class="i" date="2025-04-09" ver="0.76.0">
+			<h1 class="b"><code>Bee</code></h1>
+			<nav class="h"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="W"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="N"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="k"></nav>
-		<article class="l" id="Article">
-			<section class="N"><code class="H">bee.api</code>
-				<h2 class="Class X"><code class="J">Loader</code></h2>
-				<div class="b">
+		<nav class="c"></nav>
+		<article class="X" id="Article">
+			<section class="U"><code class="T">bee.api</code>
+				<h2 class="Class K"><code class="L">Loader</code></h2>
+				<div class="o">
 					<ul class="C E">
 						<li><code>org.eclipse.aether.AbstractRepositoryListener</code></li>
 					</ul>
@@ -58,20 +58,20 @@
 This class listens to Maven repository events (via AbstractRepositoryListener)
 and transfer events (via TransferListener) to provide real-time feedback
 on artifact resolution and deployment, as well as handling direct downloads via HTTP.</p></span></section>
-			<section class="N" id="artifactInstalled(org.eclipse.aether.RepositoryEvent)">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="J">artifactInstalled</code><code class="n">(<code>org.eclipse.aether.RepositoryEvent</code><code class="parameterName">event</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="artifactInstalled(org.eclipse.aether.RepositoryEvent)">
+				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="L">artifactInstalled</code><code class="l">(<code>org.eclipse.aether.RepositoryEvent</code><code class="parameterName">event</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code>org.eclipse.aether.RepositoryEvent</code><code class="parameterName">event</code></td>
 						<td></td>
 					</tr>
 				</table><span class="B"><p>
  Logs information about an artifact being installed into the local repository.
  </p></span></section>
-			<section class="N" id="transferInitiated(org.eclipse.aether.transfer.TransferEvent)">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="J">transferInitiated</code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="transferInitiated(org.eclipse.aether.transfer.TransferEvent)">
+				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="L">transferInitiated</code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code></td>
 						<td></td>
 					</tr>
@@ -79,14 +79,14 @@ on artifact resolution and deployment, as well as handling direct downloads via 
  Called when a transfer is initiated (e.g., a download or upload is requested).
  Registers the transfer item with the appropriate manager.
  </p></span></section>
-			<section class="N" id="transferStarted(org.eclipse.aether.transfer.TransferEvent)">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="J">transferStarted</code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="transferStarted(org.eclipse.aether.transfer.TransferEvent)">
+				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="L">transferStarted</code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code></td>
 						<td></td>
 					</tr>
-					<tr class="j">
+					<tr class="S">
 						<td><code>org.eclipse.aether.transfer.TransferCancelledException</code></td>
 						<td></td>
 					</tr>
@@ -94,10 +94,10 @@ on artifact resolution and deployment, as well as handling direct downloads via 
  Called when the transfer actually starts after initiation. Currently, no specific action is
  taken here.
  </p></span></section>
-			<section class="N" id="transferProgressed(org.eclipse.aether.transfer.TransferEvent)">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="J">transferProgressed</code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="transferProgressed(org.eclipse.aether.transfer.TransferEvent)">
+				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="L">transferProgressed</code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code></td>
 						<td></td>
 					</tr>
@@ -105,10 +105,10 @@ on artifact resolution and deployment, as well as handling direct downloads via 
  Called periodically as data is transferred. Updates the progress display in the UI,
  throttled by the defined interval.
  </p></span></section>
-			<section class="N" id="transferSucceeded(org.eclipse.aether.transfer.TransferEvent)">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="J">transferSucceeded</code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="transferSucceeded(org.eclipse.aether.transfer.TransferEvent)">
+				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="L">transferSucceeded</code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code></td>
 						<td></td>
 					</tr>
@@ -116,10 +116,10 @@ on artifact resolution and deployment, as well as handling direct downloads via 
  Called when a transfer completes successfully. Logs the completion message
  and removes the item from the corresponding manager.
  </p></span></section>
-			<section class="N" id="transferFailed(org.eclipse.aether.transfer.TransferEvent)">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="J">transferFailed</code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="transferFailed(org.eclipse.aether.transfer.TransferEvent)">
+				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="L">transferFailed</code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code></td>
 						<td></td>
 					</tr>
@@ -127,10 +127,10 @@ on artifact resolution and deployment, as well as handling direct downloads via 
  Called when a transfer fails (e.g., network error, file not found), excluding corruption.
  Removes the item from the manager and logs an error.
  </p></span></section>
-			<section class="N" id="transferCorrupted(org.eclipse.aether.transfer.TransferEvent)">
-				<h2 class="I"><i class="OVERRIDE PUBLIC"></i><code class="J">transferCorrupted</code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="transferCorrupted(org.eclipse.aether.transfer.TransferEvent)">
+				<h2 class="q"><i class="OVERRIDE PUBLIC"></i><code class="L">transferCorrupted</code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code></td>
 						<td></td>
 					</tr>
@@ -138,28 +138,28 @@ on artifact resolution and deployment, as well as handling direct downloads via 
  Called when a transfer fails specifically due to data corruption (e.g., checksum mismatch).
  Removes the item from the manager and logs a corruption error.
  </p></span></section>
-			<section class="N" id="download(java.lang.String)">
-				<h2 class="I"><i class="STATIC PUBLIC"></i><code class="J">download</code><code class="n">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>)</code><i class="d"><code>psychopath.File</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="download(java.lang.String)">
+				<h2 class="q"><i class="STATIC PUBLIC"></i><code class="L">download</code><code class="l">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>)</code><i class="Y"><code>psychopath.File</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code></td>
 						<td><span><p>The string representation of the URI to download from.</p></span></td>
 					</tr>
-					<tr class="m">
+					<tr class="H">
 						<td><code>psychopath.File</code></td>
 						<td><span><p>A File object representing the downloaded content in a temporary location.</p></span></td>
 					</tr>
 				</table><span class="B"><p>Downloads a file from the specified URI to a temporary file location.
 This method blocks until the download is complete or fails.
 Progress is reported using the singleton <code><a aria-label="bee.api.Loader" href="api/bee.api.Loader.html">Loader</a></code> instance.</p></span></section>
-			<section class="N" id="download(java.lang.String,psychopath.File)">
-				<h2 class="I"><i class="STATIC PUBLIC"></i><code class="J">download</code><code class="n">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>, <code>psychopath.File</code><code class="parameterName">file</code>)</code><i class="d"><code>void</code></i></h2>
-				<table class="Z">
-					<tr class="K">
+			<section class="U" id="download(java.lang.String,psychopath.File)">
+				<h2 class="q"><i class="STATIC PUBLIC"></i><code class="L">download</code><code class="l">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>, <code>psychopath.File</code><code class="parameterName">file</code>)</code><i class="Y"><code>void</code></i></h2>
+				<table class="g">
+					<tr class="Z">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code></td>
 						<td><span><p>The string representation of the URI to download from.</p></span></td>
 					</tr>
-					<tr class="K">
+					<tr class="Z">
 						<td><code>psychopath.File</code><code class="parameterName">file</code></td>
 						<td><span><p>The destination File to save the downloaded content to.</p></span></td>
 					</tr>
@@ -171,26 +171,26 @@ Progress is reported using the singleton <code><a aria-label="bee.api.Loader" hr
  for compatibility with existing code that might call it.
  </p></span></section>
 		</article>
-		<aside class="p">
-			<div class="r">
-				<h5 class="e">Static Methods</h5>
+		<aside class="d">
+			<div class="m">
+				<h5 class="s">Static Methods</h5>
 				<ul>
-					<li class="s"><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.Loader.html#download(java.lang.String)">download</a></code><code class="n">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>)</code><i class="a"><code>psychopath.File</code></i></li>
-					<li class="s"><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.Loader.html#download(java.lang.String,psychopath.File)">download</a></code><code class="n">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>, <code>psychopath.File</code><code class="parameterName">file</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.Loader.html#download(java.lang.String)">download</a></code><code class="l">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>)</code><i class="a"><code>psychopath.File</code></i></li>
+					<li class="V"><i class="STATIC PUBLIC"></i><code><a href="api/bee.api.Loader.html#download(java.lang.String,psychopath.File)">download</a></code><code class="l">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">uri</code>, <code>psychopath.File</code><code class="parameterName">file</code>)</code><i class="a"><code>void</code></i></li>
 				</ul>
-				<h5 class="e">Methods</h5>
+				<h5 class="s">Methods</h5>
 				<ul>
-					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#artifactInstalled(org.eclipse.aether.RepositoryEvent)">artifactInstalled</a></code><code class="n">(<code>org.eclipse.aether.RepositoryEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
-					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferInitiated(org.eclipse.aether.transfer.TransferEvent)">transferInitiated</a></code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
-					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferStarted(org.eclipse.aether.transfer.TransferEvent)">transferStarted</a></code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
-					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferProgressed(org.eclipse.aether.transfer.TransferEvent)">transferProgressed</a></code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
-					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferSucceeded(org.eclipse.aether.transfer.TransferEvent)">transferSucceeded</a></code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
-					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferFailed(org.eclipse.aether.transfer.TransferEvent)">transferFailed</a></code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
-					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferCorrupted(org.eclipse.aether.transfer.TransferEvent)">transferCorrupted</a></code><code class="n">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#artifactInstalled(org.eclipse.aether.RepositoryEvent)">artifactInstalled</a></code><code class="l">(<code>org.eclipse.aether.RepositoryEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferInitiated(org.eclipse.aether.transfer.TransferEvent)">transferInitiated</a></code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferStarted(org.eclipse.aether.transfer.TransferEvent)">transferStarted</a></code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferProgressed(org.eclipse.aether.transfer.TransferEvent)">transferProgressed</a></code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferSucceeded(org.eclipse.aether.transfer.TransferEvent)">transferSucceeded</a></code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferFailed(org.eclipse.aether.transfer.TransferEvent)">transferFailed</a></code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
+					<li class="V"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.api.Loader.html#transferCorrupted(org.eclipse.aether.transfer.TransferEvent)">transferCorrupted</a></code><code class="l">(<code>org.eclipse.aether.transfer.TransferEvent</code><code class="parameterName">event</code>)</code><i class="a"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="g"/>
+		<footer class="I"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
