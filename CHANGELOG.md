@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.77.0](https://github.com/teletha/bee/compare/0.76.0...0.77.0) (2025-04-16)
+
+
+### Features
+
+* add UserInterface#progress ([0e1f3f6](https://github.com/teletha/bee/commit/0e1f3f642f0ba2221d33c618311897035f8003a9))
+* drop OnProject and Skip ([b4a2956](https://github.com/teletha/bee/commit/b4a29562790e4fc7397aaf1a2e1d713150bd1a49))
+* enhance javadoc error handling ([f837ac1](https://github.com/teletha/bee/commit/f837ac12e15bc49339f5cc1e42fdec68e20e0125))
+* enhance the failed task handling ([6807cd2](https://github.com/teletha/bee/commit/6807cd27f71781d2d442131d5428fcd013ccd4f2))
+* execute task async ([2625e96](https://github.com/teletha/bee/commit/2625e96e2a8e7b068bee056c65773c75ca9ebed7))
+* OnProject lifestyle ([d79abca](https://github.com/teletha/bee/commit/d79abca3e1c5957cc325e4935f5e76dea3ccd850))
+
+
+### Bug Fixes
+
+* profilier ([04f1cb5](https://github.com/teletha/bee/commit/04f1cb5e4a5383624d86dc6a2c24811cd4c5141a))
+
 ## [0.76.0](https://github.com/teletha/bee/compare/0.75.0...0.76.0) (2025-04-09)
 
 
