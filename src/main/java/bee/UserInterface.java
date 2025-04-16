@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import bee.api.Command;
 import kiss.Decoder;
 import kiss.Disposable;
 import kiss.I;
@@ -569,17 +568,15 @@ public abstract class UserInterface {
      * Display message about command starts.
      * 
      * @param name A command name.
-     * @param command A coommand info.
      */
-    protected abstract void startCommand(String name, Command command);
+    protected abstract void startCommand(String name);
 
     /**
      * Display message about command ends.
      * 
      * @param name A command name.
-     * @param command A coommand info.
      */
-    protected abstract void endCommand(String name, Command command);
+    protected abstract void endCommand(String name);
 
     /**
      * Default implementation.
@@ -644,7 +641,7 @@ public abstract class UserInterface {
          * {@inheritDoc}
          */
         @Override
-        protected void startCommand(String name, Command command) {
+        protected void startCommand(String name) {
             first = true;
             commands.add(name);
         }
@@ -653,7 +650,7 @@ public abstract class UserInterface {
          * {@inheritDoc}
          */
         @Override
-        protected void endCommand(String name, Command command) {
+        protected void endCommand(String name) {
             if (first) {
                 showCommandName();
             }

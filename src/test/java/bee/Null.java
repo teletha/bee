@@ -12,8 +12,6 @@ package bee;
 import java.io.InputStream;
 import java.util.function.Predicate;
 
-import bee.api.Command;
-
 /**
  * <p>
  * Null object pattern for tests.
@@ -73,14 +71,14 @@ public class Null {
          * {@inheritDoc}
          */
         @Override
-        public void startCommand(String name, Command command) {
+        public void startCommand(String name) {
         }
 
         /**
          * {@inheritDoc}
          */
         @Override
-        public void endCommand(String name, Command command) {
+        public void endCommand(String name) {
         }
     }
 }

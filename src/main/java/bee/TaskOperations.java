@@ -16,7 +16,6 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,7 +24,6 @@ import java.util.stream.Stream;
 
 import bee.Task.TaskReference;
 import bee.Task.ValuedTaskReference;
-import bee.api.Command;
 import bee.api.Project;
 import kiss.I;
 import kiss.Model;
@@ -446,13 +444,11 @@ public class TaskOperations {
             try {
                 return Bee.execute(name);
             } catch (Throwable e) {
-                List<String> children = Stream.of(tasks).map(TaskInfo::computeTaskName).toList();
-                String message = "[" + TaskInfo.current
-                        .get() + "] invoked sub tasks " + children + " in parallel. But the task [" + name + "] has failed, so Bee aborts all other tasks.";
-
                 parallels.forEach(ParallelInterface::stop);
 
-                throw new Fail(message).reason(e);
+                throw new Fail("[" + TaskInfo.current.get() + "] invoked sub tasks " + Stream.of(tasks)
+                        .map(TaskInfo::computeTaskName)
+                        .toList() + " in parallel. But the task [" + name + "] has failed, so Bee aborts all other tasks.").reason(e);
             } finally {
                 ui.finish();
             }
@@ -538,14 +534,14 @@ public class TaskOperations {
          * {@inheritDoc}
          */
         @Override
-        protected synchronized void startCommand(String name, Command command) {
+        protected synchronized void startCommand(String name) {
             switch (mode) {
             case 0:
-                messages.add(() -> ui.startCommand(name, command));
+                messages.add(() -> ui.startCommand(name));
                 break;
 
             case 1:
-                ui.startCommand(name, command);
+                ui.startCommand(name);
                 break;
             }
         }
@@ -554,14 +550,14 @@ public class TaskOperations {
          * {@inheritDoc}
          */
         @Override
-        protected synchronized void endCommand(String name, Command command) {
+        protected synchronized void endCommand(String name) {
             switch (mode) {
             case 0:
-                messages.add(() -> ui.endCommand(name, command));
+                messages.add(() -> ui.endCommand(name));
                 break;
 
             case 1:
-                ui.endCommand(name, command);
+                ui.endCommand(name);
                 break;
             }
         }
@@ -609,7 +605,7 @@ public class TaskOperations {
         }
 
         /**
-         * Stop this user interface.
+         * Stop this user interface forcely.
          */
         private void stop() {
             mode = 3;

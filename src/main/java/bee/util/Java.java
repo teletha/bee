@@ -48,7 +48,6 @@ import javax.management.remote.JMXServiceURL;
 
 import bee.Bee;
 import bee.UserInterface;
-import bee.api.Command;
 import bee.api.Library;
 import kiss.I;
 import psychopath.Directory;
@@ -461,7 +460,7 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            public void startCommand(String name, Command command) {
+            public void startCommand(String name) {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
                 throw new Error();
@@ -471,7 +470,7 @@ public class Java {
              * {@inheritDoc}
              */
             @Override
-            public void endCommand(String name, Command command) {
+            public void endCommand(String name) {
                 // If this exception will be thrown, it is bug of this program. So we must rethrow
                 // the wrapped error in here.
                 throw new Error();
