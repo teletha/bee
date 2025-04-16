@@ -112,7 +112,7 @@ public interface Compile extends Task<Compile.Config> {
      * Configuration settings for the {@link Compile} task.
      * These settings can be adjusted in the project definition file.
      */
-    public static class Config {
+    class Config {
 
         @Comment("If true, forces the use of the Eclipse Compiler for Java (ECJ) instead of the standard JDK compiler.")
         public boolean useECJ = false;

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticListener;
@@ -31,6 +32,7 @@ import javax.tools.ToolProvider;
 
 import bee.Fail;
 import bee.Isolation;
+import bee.Platform;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Library;
@@ -60,13 +62,15 @@ public interface Doc extends Task {
         options.add(Inputs.normalize(project().getJavaSourceVersion()));
         options.add("-Xdoclint:none");
         options.add("-Xmaxwarns");
-        options.add("1");
+        options.add("20");
         options.add("-Xmaxerrs");
-        options.add("1");
+        options.add("20");
 
         // format
         options.add("-html5");
         options.add("-javafx");
+        options.add("-locale");
+        options.add("en");
 
         // external links
         options.add("-link");
@@ -96,7 +100,7 @@ public interface Doc extends Task {
             if (task.call() && listener.errors.isEmpty()) {
                 ui().info("Build javadoc to " + output);
             } else {
-                throw new Fail("Fail building Javadoc.", listener.errors);
+                throw new Fail("Failed building Javadoc.", listener.errors);
             }
         } catch (Exception e) {
             throw I.quiet(e);
@@ -139,13 +143,15 @@ public interface Doc extends Task {
         if (listener.errors.isEmpty()) {
             ui().info("Build site resources to " + output);
         } else {
-            throw new Fail("Fail building document site.", listener.errors);
+            throw new Fail("Failed building document site.", listener.errors);
         }
     }
 
     class Listener extends Writer implements DiagnosticListener<FileObject>, Serializable {
 
         private List<String> errors = new ArrayList();
+
+        private final String root = project().getRoot().asJavaFile().getAbsolutePath() + java.io.File.separator;
 
         /**
          * {@inheritDoc}
@@ -160,21 +166,56 @@ public interface Doc extends Task {
             switch (e.getKind()) {
             case ERROR:
                 errors.add(message);
-                ui().error(message);
+                ui().error(message, " at ", readLocation(e), readContent(e));
+                break;
+
+            case WARNING:
+            case MANDATORY_WARNING:
+                ui().warn(message, " at ", readLocation(e), readContent(e));
                 break;
 
             case NOTE:
                 ui().trace(message);
                 break;
 
-            case WARNING:
-            case MANDATORY_WARNING:
-                ui().warn(message);
-                break;
-
             case OTHER:
                 ui().debug(message);
                 break;
+            }
+        }
+
+        /**
+         * Retrieve the reported location.
+         * 
+         * @param diagnostic
+         * @return
+         */
+        private String readLocation(Diagnostic<? extends FileObject> diagnostic) {
+            return simplify(diagnostic.getSource().getName()) + ":" + diagnostic.getLineNumber();
+        }
+
+        /**
+         * Retrieve the reported contents.
+         * 
+         * @param diagnostic
+         * @return
+         */
+        private String readContent(Diagnostic<? extends FileObject> diagnostic) {
+            try {
+                String content = diagnostic.getSource()
+                        .getCharContent(true)
+                        .subSequence((int) diagnostic.getStartPosition(), (int) diagnostic.getEndPosition())
+                        .toString();
+
+                if (!content.contains(Platform.EOL)) {
+                    return "  >>>  " + content;
+                } else {
+                    return Platform.EOL + Stream.of(content.split(Platform.EOL))
+                            .map(line -> line.replaceFirst("^\\s+\\*\\s", ""))
+                            .collect(Collectors.joining(Platform.EOL));
+                }
+            } catch (IOException e) {
+                throw I.quiet(e);
             }
         }
 
@@ -185,7 +226,7 @@ public interface Doc extends Task {
         public void write(char[] cbuf, int off, int len) throws IOException {
             String message = new String(cbuf, off, len).trim();
             if (message.length() != 0) {
-                ui().trace(message);
+                ui().trace(simplify(message));
             }
         }
 
@@ -201,6 +242,16 @@ public interface Doc extends Task {
          */
         @Override
         public void close() throws IOException {
+        }
+
+        /**
+         * Minify the source path.
+         * 
+         * @param message
+         * @return
+         */
+        private String simplify(String message) {
+            return message.replace(root, "").replace('\\', '/');
         }
     }
 }
