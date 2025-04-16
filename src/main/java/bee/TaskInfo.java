@@ -516,7 +516,6 @@ class TaskInfo {
                     current.set(taskName);
 
                     try {
-                        System.out.println("start " + taskName);
                         ui.startCommand(key);
                         return MethodHandles.lookup().unreflectSpecial(method, task).bindTo(proxy).invokeWithArguments(args);
                     } catch (Throwable e) {
@@ -525,7 +524,6 @@ class TaskInfo {
                         throw new Fail(message).reason(e);
                     } finally {
                         ui.endCommand(key);
-                        System.out.println("end " + taskName);
                     }
                 })).get();
             } else {
