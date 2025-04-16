@@ -84,7 +84,7 @@ public interface Jar extends Task<Jar.Config> {
         boolean needToModify = SourceVersion.latest()
                 .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
 
-        if (needToModify && false) {
+        if (needToModify) {
             Set<ClassFile.Option> options = new HashSet();
             Directory modified = Locator.temporaryDirectory();
 
@@ -121,7 +121,6 @@ public interface Jar extends Task<Jar.Config> {
 
                 // transform code
                 ClassFile classFile = ClassFile.of(options.toArray(ClassFile.Option[]::new));
-
                 project.getClasses().walkFile().to(file -> {
                     File modifiedFile = modified.file(project.getClasses().relativize(file));
 
@@ -145,7 +144,6 @@ public interface Jar extends Task<Jar.Config> {
                         file.copyTo(modifiedFile);
                     }
                 });
-
                 classes = modified;
             } catch (Throwable e) {
                 throw I.quiet(e);
@@ -155,8 +153,6 @@ public interface Jar extends Task<Jar.Config> {
         // Package classes and sources
         pack("main classes", I.signal(classes), project.locateJar(), conf.packing);
         pack("main sources", project.getSourceSet(), project.locateSourceJar(), null);
-
-        System.out.println("FINISH jar:source");
     }
 
     /**
