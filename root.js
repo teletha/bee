@@ -355,13 +355,6 @@ const root = {
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "OnProject",
-			"packageName": "bee",
-			"type": "Class"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "Platform",
 			"packageName": "bee",
 			"type": "Class"
@@ -421,13 +414,6 @@ const root = {
 			"name": "Scope",
 			"packageName": "bee.api",
 			"type": "Enum"
-		},
-		{
-			"modifiers": {
-				"#": "java.util.Collections$UnmodifiableSet",},
-			"name": "Skip",
-			"packageName": "bee",
-			"type": "Exception"
 		},
 		{
 			"modifiers": {
