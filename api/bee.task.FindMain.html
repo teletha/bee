@@ -7,91 +7,135 @@
 		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
 		<link href="https://fonts.googleapis.com" rel="preconnect"/>
 		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
-		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" rel="preload"/>
-		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" rel="preload"/>
-		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" rel="preload"/>
-		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
 		<title>Bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="N">
-		<header class="J" date="2025-04-23" ver="0.77.1">
-			<h1 class="H"><code>Bee</code></h1>
-			<nav class="I"><a href="api/" id="API"><svg class="package svg O" viewBox="0 0 24 24">
+	<body class="M">
+		<header class="N" date="2025-04-23" ver="0.77.1">
+			<h1 class="V"><code>Bee</code></h1>
+			<nav class="Z"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user svg O" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
 					</svg>
-				</a><a href="doc/changelog.html" id="Activity"><svg class="activity svg O" viewBox="0 0 24 24">
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity A svg" viewBox="0 0 24 24">
 						<use href="main.svg#activity"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github svg O" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="G"><a aria-label="Change color scheme" id="theme"><svg class="sun svg O" viewBox="0 0 24 24">
+			<div class="a"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
-					</svg><svg class="moon svg O" viewBox="0 0 24 24">
+					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="F"></nav>
-		<article class="K" id="Article">
-			<section class="Q"><code class="d">bee.task</code>
-				<h2 class="Interface e"><code class="g">FindMain</code></h2>
-				<div class="o">
-					<ul class="a X">
+		<nav class="P"></nav>
+		<article class="O" id="Article">
+			<section class="K"><code class="n">bee.task</code>
+				<h2 class="Interface o"><code class="J">FindMain</code></h2>
+				<div class="U">
+					<ul class="C F">
 						<li><code>kiss.Extensible</code></li>
 						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a><code class="parameters"><code><a aria-label="bee.task.FindMain.Config" href="api/bee.task.FindMain.Config.html">Config</a></code></code></code></li>
 					</ul>
-				</div>
-			</section>
-			<section class="Q" id="main()">
-				<h2 class="f"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="g">main</code><code class="R">()</code><i class="h"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-				<table class="i">
-					<tr class="m">
+				</div><span class="B"><p>Provides tasks to find special entry point classes within the project:</p><ul>
+						<li><code>main</code>: Classes containing a standard <code>public static void main(String[] args)</code>
+ method.</li>
+						<li><code>premain</code>: Classes containing a Java Agent <code>premain</code> method.</li>
+						<li><code>agentmain</code>: Classes containing a Java Agent <code>agentmain</code> method (for dynamic
+ attachment).</li>
+					</ul>
+ This task scans the project&apos;s compiled classes and allows configuration or user interaction
+ to select the desired entry point if multiple candidates are found or if none are explicitly
+ configured.
+</span></section>
+			<section class="K" id="main()">
+				<h2 class="s"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="J">main</code><code class="T">()</code><i class="i"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+				<table class="m">
+					<tr class="H">
 						<td><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
-						<td></td>
+						<td><span><p>A Variable containing the fully qualified name of the main class, or an empty
+Variable if none is found or selected.</p></span></td>
 					</tr>
-				</table>
-			</section>
-			<section class="Q" id="premain()">
-				<h2 class="f"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="g">premain</code><code class="R">()</code><i class="h"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-				<table class="i">
-					<tr class="m">
+				</table><span class="B"><p>Finds or determines the main class for the project.</p><p>
+ It follows these steps:
+ 
+						<ol>
+							<li>Checks if a main class is already specified in the <code><a aria-label="bee.task.FindMain.Config" href="api/bee.task.FindMain.Config.html#main">Config#main</a></code> setting.</li>
+							<li>If not configured, it uses the <code><a aria-label="bee.task.FindMain.Search" href="api/bee.task.FindMain.Search.html">Search</a></code> service to find all classes containing a
+ valid <code>public static void main(String[] args)</code> method.</li>
+							<li>If exactly one main class is found, it&apos;s used automatically.</li>
+							<li>If multiple main classes are found, it prompts the user (via <code>ui().ask()</code>) to
+ select one.</li>
+							<li>If no main class is found or configured, it reports that none exists.</li>
+							<li>The determined main class name (or null if none) is stored back into <code><a aria-label="bee.task.FindMain.Config" href="api/bee.task.FindMain.Config.html#main">Config#main</a></code>
+ for subsequent uses and returned as a Variable.</li>
+						</ol>
+					</p>
+				</span></section>
+			<section class="K" id="premain()">
+				<h2 class="s"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="J">premain</code><code class="T">()</code><i class="i"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+				<table class="m">
+					<tr class="H">
 						<td><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
-						<td></td>
+						<td><span><p>A Variable containing the fully qualified name of the premain class, or an
+empty Variable if none is found or selected.</p></span></td>
 					</tr>
-				</table>
-			</section>
-			<section class="Q" id="agentmain()">
-				<h2 class="f"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="g">agentmain</code><code class="R">()</code><i class="h"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-				<table class="i">
-					<tr class="m">
+				</table><span class="B"><p>Finds or determines the premain class for the project (Java Agent).</p><p>
+ Similar logic to <code><a aria-label="bee.task.FindMain" href="api/bee.task.FindMain.html#main()">#main()</a></code>: checks configuration first, then searches using
+ <code><a aria-label="bee.task.FindMain.Search" href="api/bee.task.FindMain.Search.html">Search</a></code>,
+ asks the user if multiple candidates exist, reports the outcome, stores the result in
+ <code><a aria-label="bee.task.FindMain.Config" href="api/bee.task.FindMain.Config.html#premain">Config#premain</a></code>, and returns it as a Variable.
+ </p>
+ It looks for classes containing a method with the signature
+ <code>public static void premain(String agentArgs)</code>
+ or
+ <code>public static void premain(String agentArgs, java.lang.instrument.Instrumentation inst)</code>.
+</span></section>
+			<section class="K" id="agentmain()">
+				<h2 class="s"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="J">agentmain</code><code class="T">()</code><i class="i"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+				<table class="m">
+					<tr class="H">
 						<td><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
-						<td></td>
+						<td><span><p>A Variable containing the fully qualified name of the agentmain class, or an
+empty Variable if none is found or selected.</p></span></td>
 					</tr>
-				</table>
-			</section>
+				</table><span class="B"><p>Finds or determines the agentmain class for the project (Java Agent for dynamic attach).</p><p>
+ Similar logic to <code><a aria-label="bee.task.FindMain" href="api/bee.task.FindMain.html#main()">#main()</a></code>: checks configuration first, then searches using
+ <code><a aria-label="bee.task.FindMain.Search" href="api/bee.task.FindMain.Search.html">Search</a></code>,
+ asks the user if multiple candidates exist, reports the outcome, stores the result in
+ <code><a aria-label="bee.task.FindMain.Config" href="api/bee.task.FindMain.Config.html#agentmain">Config#agentmain</a></code>, and returns it as a Variable.
+ </p>
+ It looks for classes containing a method with the signature
+ <code>public static void agentmain(String agentArgs)</code>
+ or
+ <code>public static void agentmain(String agentArgs, java.lang.instrument.Instrumentation inst)</code>.
+</span></section>
 		</article>
-		<aside class="L">
-			<div class="c">
-				<h5 class="p">Methods</h5>
+		<aside class="Q">
+			<div class="h">
+				<h5 class="b">Methods</h5>
 				<ul>
-					<li class="q"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.FindMain.html#main()">main</a></code><code class="R">()</code><i class="r"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
-					<li class="q"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.FindMain.html#premain()">premain</a></code><code class="R">()</code><i class="r"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
-					<li class="q"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.FindMain.html#agentmain()">agentmain</a></code><code class="R">()</code><i class="r"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.FindMain.html#main()">main</a></code><code class="T">()</code><i class="f"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.FindMain.html#premain()">premain</a></code><code class="T">()</code><i class="f"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.FindMain.html#agentmain()">agentmain</a></code><code class="T">()</code><i class="f"><code>kiss.Variable<code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="M"/>
+		<footer class="p"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>

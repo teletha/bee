@@ -7,77 +7,85 @@
 		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
 		<link href="https://fonts.googleapis.com" rel="preconnect"/>
 		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
-		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" rel="preload"/>
-		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Inter" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" rel="preload"/>
-		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Material+Icons" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
-		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" rel="preload"/>
-		<link href="https://fonts.googleapis.com/css2?display=swap&#38;family=Vollkorn" media="print" onload="this.media=&#39;all&#39;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
 		<title>Bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="N">
-		<header class="J" date="2025-04-23" ver="0.77.1">
-			<h1 class="H"><code>Bee</code></h1>
-			<nav class="I"><a href="api/" id="API"><svg class="package svg O" viewBox="0 0 24 24">
+	<body class="M">
+		<header class="N" date="2025-04-23" ver="0.77.1">
+			<h1 class="V"><code>Bee</code></h1>
+			<nav class="Z"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user svg O" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
 					</svg>
-				</a><a href="doc/changelog.html" id="Activity"><svg class="activity svg O" viewBox="0 0 24 24">
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity A svg" viewBox="0 0 24 24">
 						<use href="main.svg#activity"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github svg O" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github A svg" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="G"><a aria-label="Change color scheme" id="theme"><svg class="sun svg O" viewBox="0 0 24 24">
+			<div class="a"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
-					</svg><svg class="moon svg O" viewBox="0 0 24 24">
+					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="F"></nav>
-		<article class="K" id="Article">
-			<section class="Q"><code class="d">bee</code>
-				<h2 class="Functional e"><code class="g">Task.ValuedTaskReference</code><code class="R">&#60;<code>T</code>, <code>R</code>&#62;</code></h2>
-				<div class="o">
-					<ul class="X Y">
-						<li><code>T</code></li>
-						<li><code>R</code></li>
+		<nav class="P"></nav>
+		<article class="O" id="Article">
+			<section class="K"><code class="n">bee</code>
+				<h2 class="Functional o"><code class="J">Task.ValuedTaskReference</code><code class="T">&lt;<code>T</code>, <code>R</code>&gt;</code></h2>
+				<div class="U">
+					<ul class="C D">
+						<li><code>T</code><span><p>The type of the <code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code> interface containing the referenced command.</p></span></li>
+						<li><code>R</code><span><p>The type of the value returned by the referenced command.</p></span></li>
 					</ul>
-					<ul class="a X">
+					<ul class="C F">
 						<li><code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Consumer.html">Consumer</a><code class="parameters"><code>T</code></code></code></li>
 						<li><code><a aria-label="java.util.function.Function 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Function.html">Function</a><code class="parameters"><code>T</code>, <code>R</code></code></code></li>
 						<li><code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code></li>
 						<li><code><a aria-label="bee.Task.TaskReference" href="api/bee.Task.TaskReference.html">TaskReference</a><code class="parameters"><code>T</code></code></code></li>
 					</ul>
-				</div>
-			</section>
-			<section class="Q" id="accept(java.lang.Object)">
-				<h2 class="f"><i class="DEFAULT"><i class="OVERRIDE PUBLIC"></i></i><code class="g">accept</code><code class="R">(<code>T</code><code class="parameterName">task</code>)</code><i class="h"><code>void</code></i></h2>
-				<table class="i">
-					<tr class="l">
+				</div><span class="B"><p>Represents a type-safe reference to a task command that returns a value,
+typically implemented using a method reference (e.g., <code>MyTask::getBuildResult</code>).</p><p>
+ This functional interface serves as a marker and must be <code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code>.
+ </p>
+ It extends <code><a aria-label="java.util.function.Function 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Function.html">Function</a></code> to indicate that it accepts a task instance and produces a
+ result. It also extends <code><a aria-label="bee.TaskReference" href="api/bee.TaskReference.html">TaskReference</a></code> for consistency.
+</span></section>
+			<section class="K" id="accept(java.lang.Object)">
+				<h2 class="s"><i class="DEFAULT"><i class="OVERRIDE PUBLIC"></i></i><code class="J">accept</code><code class="T">(<code>T</code><code class="parameterName">task</code>)</code><i class="i"><code>void</code></i></h2>
+				<table class="m">
+					<tr class="g">
 						<td><code>T</code><code class="parameterName">task</code></td>
-						<td></td>
+						<td><span><p>The task instance on which to execute the command.</p></span></td>
 					</tr>
-				</table>
-			</section>
+				</table><span class="B"><p>
+ Provides a default implementation for the <code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Consumer.html#accept(java.lang.Object)">Consumer#accept(Object)</a></code> method
+ inherited via <code><a aria-label="bee.TaskReference" href="api/bee.TaskReference.html">TaskReference</a></code>. It simply calls the <code><a aria-label="java.util.function.Function 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Function.html#apply(java.lang.Object)">Function#apply(Object)</a></code>
+ method, effectively executing the valued task command but discarding its return value.
+ </p></span></section>
 		</article>
-		<aside class="L">
-			<div class="c">
-				<h5 class="p">Methods</h5>
+		<aside class="Q">
+			<div class="h">
+				<h5 class="b">Methods</h5>
 				<ul>
-					<li class="q"><i class="DEFAULT"><i class="OVERRIDE PUBLIC"></i></i><code><a href="api/bee.Task.ValuedTaskReference.html#accept(java.lang.Object)">accept</a></code><code class="R">(<code>T</code><code class="parameterName">task</code>)</code><i class="r"><code>void</code></i></li>
+					<li class="L"><i class="DEFAULT"><i class="OVERRIDE PUBLIC"></i></i><code><a href="api/bee.Task.ValuedTaskReference.html#accept(java.lang.Object)">accept</a></code><code class="T">(<code>T</code><code class="parameterName">task</code>)</code><i class="f"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="M"/>
+		<footer class="p"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
