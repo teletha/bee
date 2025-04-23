@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.77.1](https://github.com/teletha/bee/compare/0.77.0...0.77.1) (2025-04-23)
+
+
+### Bug Fixes
+
+* update sinobu ([f9370b5](https://github.com/teletha/bee/commit/f9370b58c1ae6e1ca51bfe793b80fc3cb9910c31))
+
 ## [0.77.0](https://github.com/teletha/bee/compare/0.76.0...0.77.0) (2025-04-16)
 
 
