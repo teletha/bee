@@ -19,57 +19,51 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="g">
-		<header class="M" date="2025-04-16" ver="0.77.0">
-			<h1 class="N"><code>Bee</code></h1>
-			<nav class="O"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="N">
+		<header class="J" date="2025-04-16" ver="0.77.0">
+			<h1 class="H"><code>Bee</code></h1>
+			<nav class="I"><a href="api/" id="API"><svg class="package svg O" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user svg O" viewBox="0 0 24 24">
 						<use href="main.svg#user"/>
 					</svg>
-				</a><a href="doc/changelog.html" id="Activity"><svg class="activity A svg" viewBox="0 0 24 24">
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity svg O" viewBox="0 0 24 24">
 						<use href="main.svg#activity"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github A svg" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github svg O" viewBox="0 0 24 24">
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="P"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="G"><a aria-label="Change color scheme" id="theme"><svg class="sun svg O" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
-					</svg><svg class="moon A svg" viewBox="0 0 24 24">
+					</svg><svg class="moon svg O" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="c"></nav>
-		<article class="h" id="Article">
-			<section class="k"><code class="q">bee</code>
-				<h2 class="Functional U"><code class="T">Task.TaskReference</code><code class="V">&#60;<code>T</code>&#62;</code></h2>
-				<div class="H">
-					<ul class="C D">
-						<li><code>T</code><span><p>The type of the <code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code> interface containing the referenced command.</p></span></li>
+		<nav class="F"></nav>
+		<article class="K" id="Article">
+			<section class="Q"><code class="d">bee</code>
+				<h2 class="Functional e"><code class="g">Task.TaskReference</code><code class="R">&#60;<code>T</code>&#62;</code></h2>
+				<div class="o">
+					<ul class="X Y">
+						<li><code>T</code></li>
 					</ul>
-					<ul class="C F">
+					<ul class="a X">
 						<li><code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Consumer.html">Consumer</a><code class="parameters"><code>T</code></code></code></li>
 						<li><code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code></li>
 					</ul>
-					<ul class="C G">
+					<ul class="b X">
 						<li><code><a aria-label="bee.Task.ValuedTaskReference" href="api/bee.Task.ValuedTaskReference.html">ValuedTaskReference</a><code class="parameters"><code>T</code>, <code>R</code></code></code></li>
 					</ul>
-				</div><span class="B"><p>Represents a type-safe reference to a task command, typically implemented using a
-method reference (e.g., <code>MyTask::myCommand</code>).</p><p>
- This functional interface serves as a marker and must be <code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/io/Serializable.html">Serializable</a></code>
- to allow Bee to potentially introspect the reference (e.g., using
- <code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html#computeTaskName(bee.Task.TaskReference)">TaskInfo#computeTaskName(TaskReference)</a></code>).
- </p>
- It extends <code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/function/Consumer.html">Consumer</a></code> to indicate that it accepts a task instance to operate on.
-</span></section>
+				</div>
+			</section>
 		</article>
-		<aside class="Y">
-			<div class="f"></div>
+		<aside class="L">
+			<div class="c"></div>
 		</aside>
-		<footer class="j"/>
+		<footer class="M"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
