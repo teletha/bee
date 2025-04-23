@@ -20,7 +20,7 @@ Easily add custom tasks or modify existing ones. Simply create/implement a Java 
 Sensible defaults minimize the need for boilerplate configuration. Focus on your code, not the build tool setup. All settings are type-safe with IDE completion, eliminating guesswork and trips to the documentation for minor details.
 
 #### 🚀 Fast Execution
-Achieve significantly faster build times. Bee executes tasks in parallel whenever possible and utilizes intelligent caching to reuse outputs from previous runs, avoiding redundant work. Only build what&#39;s necessary, when it&#39;s necessary.
+Achieve significantly faster build times. Bee executes tasks in parallel whenever possible and utilizes intelligent caching to reuse outputs from previous runs, avoiding redundant work. Only build what&apos;s necessary, when it&apos;s necessary.
 
 #### 🔗 Integrated Lifecycle
 Bee understands source code and package repositories (like Maven/Gradle repositories). It automates the entire development lifecycle, from compiling and testing locally to packaging, publishing, and releasing your artifacts with straightforward commands.
@@ -36,7 +36,7 @@ curl -Ls https://git.io/install-bee | bash
 
 **Windows (Command Prompt or PowerShell)**
 ```cmd
-curl -Ls https://git.io/install-bee -o install.bat &#38;&#38; install
+curl -Ls https://git.io/install-bee -o install.bat &amp;&amp; install
 ```
 
 After installation is complete, verify that the tool was installed successfully by running:
@@ -131,7 +131,7 @@ Configuration
 | :---------- | :--------------------------------- | :--------------- | :--------- |
 | `icon`      | Location for the `.exe` file icon. | `Path`           | *(none)*   |
 | `customJRE` | Embed a custom JRE.                | `boolean`        | `true`     |
-| `resources` | Additional files/dirs to package.  | `Set&#60;Location&#62;`  | `[]`       |
+| `resources` | Additional files/dirs to package.  | `Set&lt;Location&gt;`  | `[]`       |
 
 ### FIND-MAIN
 Finds main and agent entry point classes.
@@ -215,7 +215,7 @@ Configuration
 
 | Option    | Description                        | Type               | Default    |
 | :-------- | :--------------------------------- | :----------------- | :--------- |
-| `exclude` | Specify files to exclude from updates. | `Predicate&#60;File&#62;` | *(none)*   |
+| `exclude` | Specify files to exclude from updates. | `Predicate&lt;File&gt;` | *(none)*   |
 
 ### MAVEN
 Provides Maven integration.
@@ -236,9 +236,9 @@ Configuration
 
 | Option      | Description                                | Type           | Default       |
 | :---------- | :----------------------------------------- | :------------- | :------------ |
-| `protocols` | Network protocols to include.              | `List&#60;String&#62;` | `[http, https]` |
-| `resources` | Resource file patterns to include.         | `List&#60;String&#62;` | `[...]`       |
-| `params`    | Additional parameters for Native Image builder. | `List&#60;String&#62;` | `[]`          |
+| `protocols` | Network protocols to include.              | `List&lt;String&gt;` | `[http, https]` |
+| `resources` | Resource file patterns to include.         | `List&lt;String&gt;` | `[...]`       |
+| `params`    | Additional parameters for Native Image builder. | `List&lt;String&gt;` | `[]`          |
 
 ### PROTOTYPE
 Generates project skeletons.
@@ -260,7 +260,7 @@ Configuration
 | :-------- | :---------------------------------------------- | :------------- | :------ |
 | `longRun` | Threshold (ms) to report long-running tests.    | `int`          | `1000`  |
 | `java`    | Specify the JVM used for test execution.        | `Directory`    | *(system default)* |
-| `params`  | Additional JVM parameters for test execution.   | `List&#60;String&#62;` | `[]`    |
+| `params`  | Additional JVM parameters for test execution.   | `List&lt;String&gt;` | `[]`    |
 
 ### WRAPPER
 Manages the Bee wrapper installation for the project.
