@@ -293,15 +293,15 @@ const root = {
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "License",
-			"packageName": "bee.task",
-			"type": "Interface"
+			"packageName": "bee.api",
+			"type": "Class"
 		},
 		{
 			"modifiers": {
 				"#": "java.util.Collections$UnmodifiableSet",},
 			"name": "License",
-			"packageName": "bee.api",
-			"type": "Class"
+			"packageName": "bee.task",
+			"type": "Interface"
 		},
 		{
 			"modifiers": {
