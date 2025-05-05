@@ -73,6 +73,8 @@ public interface CI extends Task {
                     runs-on: ubuntu-latest
                     permissions:
                       contents: write
+                      id-token: write
+                      issues: write
                       pull-requests: write
                     steps:
                     - name: Check out repository
