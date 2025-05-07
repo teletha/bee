@@ -55,7 +55,6 @@ public class Project extends bee.api.Project {
         require("org.junit.platform", "junit-platform-engine").atProvided();
         require("org.junit.platform", "junit-platform-launcher").atProvided();
         require("com.github.teletha", "javadng").atProvided();
-        require("org.eclipse.jgit", "org.eclipse.jgit").atProvided();
         require("org.eclipse.jdt", "ecj").atProvided();
         require("io.github.classgraph", "classgraph").atProvided();
         // require("org.graalvm.polyglot", "polyglot").atProvided();
