@@ -16,7 +16,6 @@ import java.lang.reflect.Method;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ForkJoinPool;
 
 import bee.Bee;
 import bee.BeeInstaller;
@@ -173,18 +172,14 @@ public interface Eclipse extends Task, IDESupport {
                     .effect(this::assignVisibleForTest);
         });
 
-        // library
-        Set<Library> libraries = project().getDependency(Scope.Compile, Scope.Annotation);
-        libraries.remove(project().asLibrary());
+        Set<Library> compileLike = project().getDependency(Scope.Compile, Scope.Annotation);
+        compileLike.add(project().asLibrary());
 
-        // test library
-        Set<Library> tests = project().getDependency(Scope.Test);
-        tests.removeAll(libraries);
-        tests.remove(project().asLibrary());
+        Set<Library> testOnly = project().getDependency(Scope.Test);
+        testOnly.remove(project().asLibrary());
+        testOnly.removeIf(testLib -> compileLike.stream().anyMatch(compileLib -> testLib.isSame(compileLib)));
 
-        ForkJoinPool fork = new ForkJoinPool(24);
-
-        I.signal(tests).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar()), fork).to(x -> {
+        I.signal(testOnly).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar())).to(x -> {
             File jar = x.ⅰ;
             File source = x.ⅱ;
 
@@ -199,7 +194,7 @@ public interface Eclipse extends Task, IDESupport {
 
         boolean isModuledProject = project().getSources().existFile("*/module-info.java");
 
-        I.signal(libraries).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar()), fork).to(x -> {
+        I.signal(compileLike).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar())).to(x -> {
             File jar = x.ⅰ;
             File source = x.ⅱ;
 
