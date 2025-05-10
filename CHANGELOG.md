@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.77.2](https://github.com/teletha/bee/compare/0.77.1...0.77.2) (2025-05-10)
+
+
+### Bug Fixes
+
+* update github action ([8afc40d](https://github.com/teletha/bee/commit/8afc40d1ddab0daddb80d1660aa38cbb6924e038))
+
 ## [0.77.1](https://github.com/teletha/bee/compare/0.77.0...0.77.1) (2025-04-23)
 
 
