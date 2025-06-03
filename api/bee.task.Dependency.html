@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="s">
-		<header class="d" date="2025-04-23" ver="0.77.1">
-			<h1 class="e"><code>Bee</code></h1>
-			<nav class="N"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="m">
+		<header class="W" date="2025-04-23" ver="0.77.1">
+			<h1 class="J"><code>Bee</code></h1>
+			<nav class="H"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
@@ -35,7 +35,7 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="S"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="K"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon A svg" viewBox="0 0 24 24">
 						<use href="main.svg#moon"/>
@@ -43,25 +43,25 @@
 				</a></div>
 		</header>
 		<nav class="g"></nav>
-		<article class="Q" id="Article">
-			<section class="Y"><code class="n">bee.task</code>
-				<h2 class="Interface R"><code class="o">Dependency</code></h2>
-				<div class="c">
+		<article class="k" id="Article">
+			<section class="j"><code class="N">bee.task</code>
+				<h2 class="Interface Y"><code class="M">Dependency</code></h2>
+				<div class="X">
 					<ul class="C F">
 						<li><code>kiss.Extensible</code></li>
 						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></li>
 					</ul>
 				</div><span class="B"><p>Provides tasks for analyzing and displaying project dependencies.
 This includes showing the dependency tree and analyzing required Java modules.</p></span></section>
-			<section class="Y" id="tree()">
-				<h2 class="q"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="o">tree</code><code class="r">()</code><i class="m"><code>void</code></i></h2><span class="B"><p>Displays the project&apos;s dependency graph in a tree format.
+			<section class="j" id="tree()">
+				<h2 class="V"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="M">tree</code><code class="I">()</code><i class="s"><code>void</code></i></h2><span class="B"><p>Displays the project&apos;s dependency graph in a tree format.
 This command visualizes the direct and transitive dependencies of the project,
 showing how libraries depend on each other.
 This is the default command for the <code>dependency</code> task.</p></span></section>
-			<section class="Y" id="module()">
-				<h2 class="q"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="o">module</code><code class="r">()</code><i class="m"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-				<table class="k">
-					<tr class="f">
+			<section class="j" id="module()">
+				<h2 class="V"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="M">module</code><code class="I">()</code><i class="s"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+				<table class="a">
+					<tr class="T">
 						<td><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
 						<td><span><p>A list of required module names.</p></span></td>
 					</tr>
@@ -70,16 +70,16 @@ Uses the <code>jdeps</code> tool to analyze bytecode and also considers <code>re
 in the <code>MANIFEST.MF</code> of dependency JARs.
 Requires the main sources to be compiled first.</p></span></section>
 		</article>
-		<aside class="J">
-			<div class="T">
-				<h5 class="I">Methods</h5>
+		<aside class="n">
+			<div class="h">
+				<h5 class="o">Methods</h5>
 				<ul>
-					<li class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#tree()">tree</a></code><code class="r">()</code><i class="b"><code>void</code></i></li>
-					<li class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#module()">module</a></code><code class="r">()</code><i class="b"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					<li class="r"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#tree()">tree</a></code><code class="I">()</code><i class="p"><code>void</code></i></li>
+					<li class="r"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#module()">module</a></code><code class="I">()</code><i class="p"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="h"/>
+		<footer class="Z"/>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
