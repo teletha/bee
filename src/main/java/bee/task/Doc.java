@@ -38,8 +38,7 @@ import bee.api.Command;
 import bee.api.Library;
 import bee.api.Scope;
 import bee.util.Inputs;
-import javadng.page.Javadoc;
-import javadng.repository.CodeRepository;
+import evergarden.Violet;
 import jdk.javadoc.doclet.Doclet;
 import kiss.I;
 import psychopath.Directory;
@@ -121,22 +120,20 @@ public interface Doc extends Task {
         Listener listener = new Listener();
         Directory output = project().getOutput().directory("site");
 
-        new Isolation("com.github.teletha : javadng") {
+        new Isolation("com.github.teletha : evergarden") {
 
             @Override
             public void isolate() {
-                Javadoc.with.sources(project().getSourceSet().toList())
-                        .output(output)
-                        .product(project().getProduct())
-                        .project(project().getGroup())
-                        .version(project().getVersion())
+                Violet.with.address(output)
+                        .title(project().getProduct())
+                        .sources(project().getSourceSet().toList())
+                        .documents(project().getTestSourceSet().toList())
                         .encoding(project().getEncoding())
-                        .sample(project().getTestSourceSet().toList())
                         .classpath(I.signal(project().getDependency(Scope.values())).map(Library::getLocalJar).toList())
-                        .repository(CodeRepository.of(project().getVersionControlSystem().toString()))
+                        .host(project().getVersionControlSystem().toString())
                         .listener(listener)
                         .useExternalJDKDoc()
-                        .build();
+                        .write();
             };
         };
 
