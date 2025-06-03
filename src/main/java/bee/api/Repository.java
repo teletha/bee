@@ -327,7 +327,7 @@ public class Repository {
                     Library lib = new Library(dependency.getArtifact());
                     Library old = checkDupilication(set, lib);
                     if (old != null) {
-                        if (lib.version.compareToIgnoreCase(old.version) > 0) {
+                        if (lib.version.compareTo(old.version) > 0) {
                             set.remove(old);
                             set.add(lib);
                         }
@@ -363,7 +363,7 @@ public class Repository {
                     .getArtifact()
                     .getVersion();
         } catch (Exception e) {
-            return library.version;
+            return library.version.toString();
         }
     }
 
@@ -398,7 +398,7 @@ public class Repository {
         }
 
         if (!library.classfier.isEmpty()) {
-            return resolveSource(new Library(library.group, library.name, library.version));
+            return resolveSource(new Library(library.group, library.name, library.version.toString()));
         }
         return resolved;
     }
@@ -423,7 +423,7 @@ public class Repository {
         }
 
         if (!library.classfier.isEmpty()) {
-            return resolveSource(new Library(library.group, library.name, library.version));
+            return resolveSource(new Library(library.group, library.name, library.version.toString()));
         }
         return resolved;
     }

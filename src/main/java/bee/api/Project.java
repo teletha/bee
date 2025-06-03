@@ -859,7 +859,8 @@ public class Project {
             dependency.child("groupId").text(library.group);
             dependency.child("artifactId").text(library.name);
             dependency.child("version")
-                    .text(library.version.equals("LATEST") ? I.make(Repository.class).resolveLatestVersion(library) : library.version);
+                    .text(library.version.toString().equals("LATEST") ? I.make(Repository.class).resolveLatestVersion(library)
+                            : library.version.toString());
             dependency.child("scope").text(library.scope == Scope.Annotation ? "provided" : library.scope.toString());
 
             if (library.isJavaTools()) {
@@ -1000,7 +1001,7 @@ public class Project {
 
         xml.child("groupId").text(library.getGroup());
         xml.child("artifactId").text(library.getName());
-        xml.child("version").text(library.version);
+        xml.child("version").text(library.version.toString());
     }
 
     /**

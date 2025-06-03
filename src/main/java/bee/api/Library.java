@@ -11,6 +11,7 @@ package bee.api;
 
 import java.util.Objects;
 
+import org.apache.maven.artifact.versioning.ComparableVersion;
 import org.apache.maven.repository.internal.ArtifactDescriptorUtils;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -30,7 +31,7 @@ public class Library implements Comparable<Library> {
     public final String classfier;
 
     /** The version identifier. */
-    public final String version;
+    public final ComparableVersion version;
 
     /** The scope. */
     public Scope scope = Scope.Compile;
@@ -86,7 +87,7 @@ public class Library implements Comparable<Library> {
         this.group = artifact.getGroupId();
         this.name = artifact.getArtifactId();
         this.classfier = artifact.getClassifier();
-        this.version = artifact.isSnapshot() ? artifact.getBaseVersion() : artifact.getVersion();
+        this.version = new ComparableVersion(artifact.isSnapshot() ? artifact.getBaseVersion() : artifact.getVersion());
     }
 
     /**
@@ -295,7 +296,7 @@ public class Library implements Comparable<Library> {
      * @return The version property.
      */
     public String getVersion() {
-        return version;
+        return version.toString();
     }
 
     /**
