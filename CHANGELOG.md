@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.78.0](https://github.com/teletha/bee/compare/0.77.2...0.78.0) (2025-06-03)
+
+
+### Features
+
+* doc:site task uses evergarden instead of javadng ([a280bfb](https://github.com/teletha/bee/commit/a280bfba586d1152b646b2d9236fcb976ceda5bc))
+
 ## [0.77.2](https://github.com/teletha/bee/compare/0.77.1...0.77.2) (2025-06-03)
 
 
