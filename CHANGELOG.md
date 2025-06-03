@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.77.2](https://github.com/teletha/bee/compare/0.77.1...0.77.2) (2025-06-03)
+
+
+### Bug Fixes
+
+* remove jgit ([a4a84ca](https://github.com/teletha/bee/commit/a4a84caabef8f604991a2b9c09e61074a0e55f8d))
+* update github action ([8afc40d](https://github.com/teletha/bee/commit/8afc40d1ddab0daddb80d1660aa38cbb6924e038))
+* use the higher version on conflict ([d064537](https://github.com/teletha/bee/commit/d0645377f2711de9d650d6f6fc3ec493d99fa122))
+
 ## [0.77.1](https://github.com/teletha/bee/compare/0.77.0...0.77.1) (2025-04-23)
 
 
