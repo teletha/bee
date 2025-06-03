@@ -448,8 +448,8 @@ Configuration
 		</dependency>
 		<dependency>
 			<groupId>com.github.teletha</groupId>
-			<artifactId>javadng</artifactId>
-			<version>2.5.0</version>
+			<artifactId>evergarden</artifactId>
+			<version>1.0.1</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
