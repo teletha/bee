@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<meta content="width=device-width, initial-scale=1" name="viewport"/>
-		<meta content="Explains how to use Bee and its API. " name="description"/>
+		<meta content="Explains how to use bee and its API. " name="description"/>
 		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
 		<link href="https://fonts.googleapis.com" rel="preconnect"/>
 		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -13,48 +13,48 @@
 		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
 		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
 		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
-		<title>Bee API</title>
+		<title>bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="P">
-		<header class="Q" date="2025-06-03" ver="0.78.0">
-			<h1 class="O"><code>Bee</code></h1>
-			<nav class="b"><a href="api/" id="API"><svg class="package A svg" viewBox="0 0 24 24">
+	<body class="x">
+		<header class="c" date="2025-06-03">
+			<h1 class="d"><a href="index.html"><code>bee</code></a></h1>
+			<nav class="e"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user A svg" viewBox="0 0 24 24">
-						<use href="main.svg#user"/>
-					</svg>
-				</a><a href="doc/changelog.html" id="Activity"><svg class="activity A svg" viewBox="0 0 24 24">
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
 						<use href="main.svg#activity"/>
 					</svg>
-				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github A svg" viewBox="0 0 24 24">
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user">
+						<use href="main.svg#user"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github">
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="c"><a aria-label="Change color scheme" id="theme"><svg class="sun A svg" viewBox="0 0 24 24">
+			<div class="f"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
-					</svg><svg class="moon A svg" viewBox="0 0 24 24">
+					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="S"></nav>
-		<article class="R" id="Article">
-			<section class="W"><code class="m">bee</code>
-				<h2 class="Interface Z"><code class="n">Task</code><code class="U">&lt;<code>C</code>&gt;</code></h2>
-				<div class="f">
-					<ul class="C D">
+		<nav class="z"></nav>
+		<article class="y" id="Article">
+			<section class="v"><code class="i">bee</code>
+				<h2 class="Interface u"><code class="AB">Task</code><code class="LB">&lt;<code>C</code>&gt;</code></h2>
+				<div class="HB">
+					<ul class="E F">
 						<li><code>C</code><span><p>The type of the configuration class specific to this task. If no specific
-configuration is needed, this can be omitted or <code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Object.html">Object</a></code> can be used.</p></span></li>
+configuration is needed, this can be omitted or <code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html">Object</a></code> can be used.</p></span></li>
 					</ul>
-					<ul class="C F">
+					<ul class="E H">
 						<li><code>kiss.Extensible</code></li>
 					</ul>
-					<ul class="C G">
+					<ul class="E I">
 						<li><code><a aria-label="bee.task.Bun" href="api/bee.task.Bun.html">Bun</a></code></li>
 						<li><code><a aria-label="bee.task.CI" href="api/bee.task.CI.html">CI</a></code></li>
 						<li><code><a aria-label="bee.task.Clean" href="api/bee.task.Clean.html">Clean</a></code></li>
@@ -76,7 +76,7 @@ configuration is needed, this can be omitted or <code><a aria-label="java.lang.O
 						<li><code><a aria-label="bee.task.Test" href="api/bee.task.Test.html">Test</a></code></li>
 						<li><code><a aria-label="bee.task.Wrapper" href="api/bee.task.Wrapper.html">Wrapper</a></code></li>
 					</ul>
-				</div><span class="B"><p>Defines the basic structure for all tasks within the Bee build system.</p><p>
+				</div><span class="A"><p>Defines the basic structure for all tasks within the Bee build system.</p><p>
  Tasks are defined as interfaces extending this <code>Task</code> interface.
  They declare their available operations as methods annotated with <code><a aria-label="bee.api.Command" href="api/bee.api.Command.html">Command</a></code>.
  </p><p>
@@ -86,22 +86,22 @@ configuration is needed, this can be omitted or <code><a aria-label="java.lang.O
  Use the static factory method <code><a aria-label="bee.Task" href="api/bee.Task.html#by(java.lang.Class)">#by(Class)</a></code> to obtain an executable instance
  of a task interface.
  </p></span></section>
-			<section class="W" id="help()">
-				<h2 class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="n">help</code><code class="U">()</code><i class="e"><code>void</code></i></h2><span class="B"><p>Displays a detailed help message for this task, including descriptions of all
+			<section class="v" id="help()">
+				<h2 class="EB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="AB">help</code><code class="LB">()</code><i class="q"><code>void</code></i></h2><span class="A"><p>Displays a detailed help message for this task, including descriptions of all
 available commands and configuration options. This command is available by default
 for all tasks.</p><p>
  Implementation relies on <code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html#describe(UserInterface)">TaskInfo#describe(UserInterface)</a></code> to gather and format
  the task&apos;s metadata.
  </p></span></section>
-			<section class="W" id="config()">
-				<h2 class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="n">config</code><code class="U">()</code><i class="e"><code>C</code></i></h2>
-				<table class="Y">
-					<tr class="d">
+			<section class="v" id="config()">
+				<h2 class="EB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="AB">config</code><code class="LB">()</code><i class="q"><code>C</code></i></h2>
+				<table class="p">
+					<tr class="W">
 						<td><code>C</code></td>
 						<td><span><p>The project-specific configuration instance of type <code>C</code>, or <code>null</code>
 if the task is not parameterized with a configuration class.</p></span></td>
 					</tr>
-				</table><span class="B"><p>Retrieves the configuration object associated with the current project for this specific
+				</table><span class="A"><p>Retrieves the configuration object associated with the current project for this specific
 task.</p><p>
  The configuration class is determined by reflecting on the generic type parameter <code>C</code>
  of this <code>Task</code> interface implementation. The actual configuration instance is managed
@@ -110,43 +110,45 @@ task.</p><p>
  If the task interface is not parameterized (i.e., <code>C</code> is effectively <code>Object</code>),
  this method returns <code>null</code>.
  </p></span></section>
-			<section class="W" id="by(java.lang.Class)">
-				<h2 class="l"><i class="STATIC PUBLIC"></i><code class="n">by</code><code class="U">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="e"><code>T</code></i></h2>
-				<table class="Y">
-					<tr class="i">
+			<section class="v" id="by(java.lang.Class)">
+				<h2 class="EB"><i class="PUBLIC STATIC"></i><code class="AB">by</code><code class="LB">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="q"><code>T</code></i></h2>
+				<table class="p">
+					<tr class="j">
 						<td><code>T</code><code class="extends"><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></code></td>
 						<td><span><p>The specific type of the task interface.</p></span></td>
 					</tr>
-					<tr class="V">
-						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code></td>
-						<td><span><p>The <code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a></code> object representing the task interface (e.g.,
+					<tr class="T">
+						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code></td>
+						<td><span><p>The <code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a></code> object representing the task interface (e.g.,
 <code>Compile.class</code>).
 Must be an interface extending <code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code>.</p></span></td>
 					</tr>
-					<tr class="d">
+					<tr class="W">
 						<td><code>T</code></td>
 						<td><span><p>An executable proxy instance implementing the requested task interface <code>T</code>.</p></span></td>
 					</tr>
-				</table><span class="B"><p>Static factory method to obtain an executable instance of a specified task interface.</p><p>
+				</table><span class="A"><p>Static factory method to obtain an executable instance of a specified task interface.</p><p>
  This method uses <code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html">TaskInfo</a></code> to find the metadata for the given task interface
  and creates a dynamic proxy instance that handles command execution, caching, and
  UI interactions.
  </p></span></section>
 		</article>
-		<aside class="T">
-			<div class="q">
-				<h5 class="h">Static Methods</h5>
+		<aside class="s">
+			<div class="IB">
+				<h5 class="r">Static Methods</h5>
 				<ul>
-					<li class="k"><i class="STATIC PUBLIC"></i><code><a href="api/bee.Task.html#by(java.lang.Class)">by</a></code><code class="U">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/19/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="o"><code>T</code></i></li>
+					<li class="w"><i class="PUBLIC STATIC"></i><code><a href="api/bee.Task.html#by(java.lang.Class)">by</a></code><code class="LB">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="m"><code>T</code></i></li>
 				</ul>
-				<h5 class="h">Methods</h5>
+				<h5 class="r">Methods</h5>
 				<ul>
-					<li class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#help()">help</a></code><code class="U">()</code><i class="o"><code>void</code></i></li>
-					<li class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#config()">config</a></code><code class="U">()</code><i class="o"><code>C</code></i></li>
+					<li class="w"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#help()">help</a></code><code class="LB">()</code><i class="m"><code>void</code></i></li>
+					<li class="w"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#config()">config</a></code><code class="LB">()</code><i class="m"><code>C</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="p"/>
+		<footer class="S">
+			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
+		</footer>
 	</body>
 	<script src="root.js"></script>
 	<script src="main.js" type="module"></script>
