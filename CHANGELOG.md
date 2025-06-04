@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.78.1](https://github.com/teletha/bee/compare/0.78.0...0.78.1) (2025-06-04)
+
+
+### Bug Fixes
+
+* github action permits write-all ([8a5a2ca](https://github.com/teletha/bee/commit/8a5a2ca259de985e4c9783ac832e3069ad59f83a))
+
 ## [0.78.0](https://github.com/teletha/bee/compare/0.77.2...0.78.0) (2025-06-03)
 
 
