@@ -24,6 +24,9 @@ public class BeeOption<T> {
     /** Instructs the system to output all debug log at build time. */
     public static final BeeOption<Boolean> Debug = new BeeOption("debug", "Output all debug log.", false, 0);
 
+    /** Instructs the system to embed the project into bee runtime. */
+    public static final BeeOption<Boolean> Embed = new BeeOption("embed", "Embed the project into Bee runtime.", false, 0);
+
     /**
      * Instructs the system to display information related to the current execution environment.
      * Synonymous with the task [help:task help:option].
@@ -64,7 +67,7 @@ public class BeeOption<T> {
 
     /** The list of builtin options. */
     public static final List<BeeOption> AVAILABLES = List
-            .of(Cacheless, Debug, Help, Input, Offline, Profiling, Quiet, Root, Skip, Unwrap, Version);
+            .of(Cacheless, Embed, Debug, Help, Input, Offline, Profiling, Quiet, Root, Skip, Unwrap, Version);
 
     /** The name. */
     private final String name;

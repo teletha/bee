@@ -245,6 +245,10 @@ public class Bee {
                 loader.addClassPath(library.getLocalJar());
             }
 
+            if (BeeOption.Embed.value()) {
+                loader.addClassPath(project.getClasses());
+            }
+
             // load your project
             I.load(projectClass);
 
