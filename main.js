@@ -276,7 +276,7 @@ class APITree extends $ {
 	 * Initialize by user configuration.
 	 */
 	constructor(items) {
-		super("<o-tree>")
+		super("<o-tree data-hide='true'>")
 
 		this.moduleFilter = new Select({ placeholder: "Select Module", model: root.modules })
 		this.packageFilter = new Select({ placeholder: "Select Package", model: root.packages })
@@ -317,7 +317,7 @@ class APITree extends $ {
 
 $("body>nav")
 	.append(new APITree(root))
-	.make("div").id("DocNavi")
+	.make("div").id("DocNavi").data("hide",true)
 	.make("div", root.docs, (doc, div) => {
 		div.add("doc").id(doc.path)
 			.make("a").href(doc.path).text(doc.title).parent()

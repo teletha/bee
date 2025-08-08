@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<meta content="width=device-width, initial-scale=1" name="viewport"/>
-		<meta content="Explains how to use bee and its API. " name="description"/>
+		<meta content="Explains how to use Bee and its API. Bee is an open source build automation tool that focuses on conventions, type safety and performance. Project and build task definitions are written in Java, ensuring flexible extensibility for programmers." name="description"/>
 		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
 		<link href="https://fonts.googleapis.com" rel="preconnect"/>
 		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -13,16 +13,16 @@
 		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
 		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
 		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
-		<title>bee API</title>
+		<title>Bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="x">
-		<header class="c" date="2025-06-03">
-			<h1 class="d"><a href="index.html"><code>bee</code></a></h1>
-			<nav class="e"><a href="api/main.html" id="API"><svg class="package">
+	<body class="DB">
+		<header class="N" date="2025-06-03">
+			<h1 class="O"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="P"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,25 +35,46 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="f"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="Q"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="z"></nav>
-		<article class="y" id="Article">
-			<div class="v">
+		<nav class="q"></nav>
+		<article class="s" id="Article">
+			<div class="n">
 				<section class="A">
-					<h2>bee API Overview</h2>
+					<h2>Bee API Overview</h2>
 					<p>This page provides a concise overview of the available APIs, including their purpose, key functionalities, and usage patterns. It serves as a starting point for developers to understand how to integrate and interact with the system effectively.</p>
 					<section class="A">
 						<h4>🛠️ Interface</h4>
 						<table>
 							<tr>
-								<td><code><a href="api/bee.api.VCS.Account.html">VCS.Account</a></code></td>
-								<td>Repository related model.</td>
+								<td><code><a href="api/bee.Help.html">Help</a></code></td>
+								<td>Provides help and information about Bee tasks, options, and environment.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.util.Java.Transporter.html">Java.Transporter</a></code></td>
+								<td>Transporter between parent process and sub process.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.coder.HeaderStyle.html">HeaderStyle</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.coder.FileType.html">FileType</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Maven.html">Maven</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Dependency.html">Dependency</a></code></td>
+								<td>Provides tasks for analyzing and displaying project dependencies.
+This includes showing the dependency tree and analyzing required Java modules.</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.task.IDESupport.html">IDESupport</a></code></td>
@@ -65,15 +86,55 @@
 This task also handles copying associated resource files to the output directories.</td>
 							</tr>
 							<tr>
+								<td><code><a href="api/bee.task.Intellij.html">Intellij</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.FindMain.html">FindMain</a></code></td>
+								<td>Provides tasks to find special entry point classes within the project:</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Bun.html">Bun</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
 								<td><code><a href="api/bee.task.Install.html">Install</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.task.Maven.html">Maven</a></code></td>
+								<td><code><a href="api/bee.task.Test.html">Test</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.IDE.html">IDE</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.CI.html">CI</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.License.html">License</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Clean.html">Clean</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.task.Eclipse.html">Eclipse</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Doc.html">Doc</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Native.html">Native</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Wrapper.html">Wrapper</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -82,20 +143,7 @@ This task also handles copying associated resource files to the output directori
 files.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.task.IDE.html">IDE</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Dependency.html">Dependency</a></code></td>
-								<td>Provides tasks for analyzing and displaying project dependencies.
-This includes showing the dependency tree and analyzing required Java modules.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Clean.html">Clean</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Test.html">Test</a></code></td>
+								<td><code><a href="api/bee.task.Exe.html">Exe</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -103,60 +151,12 @@ This includes showing the dependency tree and analyzing required Java modules.</
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.task.License.html">License</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Bun.html">Bun</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Wrapper.html">Wrapper</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.FindMain.html">FindMain</a></code></td>
-								<td>Provides tasks to find special entry point classes within the project:</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Native.html">Native</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Exe.html">Exe</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Intellij.html">Intellij</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.CI.html">CI</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Doc.html">Doc</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.util.Java.Transporter.html">Java.Transporter</a></code></td>
-								<td>Transporter between parent process and sub process.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.Help.html">Help</a></code></td>
-								<td>Provides help and information about Bee tasks, options, and environment.</td>
-							</tr>
-							<tr>
 								<td><code><a href="api/bee.Task.html">Task</a></code></td>
 								<td>Defines the basic structure for all tasks within the Bee build system.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.coder.FileType.html">FileType</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.coder.HeaderStyle.html">HeaderStyle</a></code></td>
-								<td>no description</td>
+								<td><code><a href="api/bee.api.VCS.Account.html">VCS.Account</a></code></td>
+								<td>Repository related model.</td>
 							</tr>
 						</table>
 					</section>
@@ -179,48 +179,38 @@ method reference (e.g., MyTask::myCommand).</td>
 						<h4>🛠️ Class</h4>
 						<table>
 							<tr>
-								<td><code><a href="api/bee.BeeInstaller.html">BeeInstaller</a></code></td>
-								<td>Handles the installation process for the Bee build tool.
-This includes installing the Bee executable JAR, creating launcher scripts,
-installing the Bee API into the local repository, and displaying a welcome message.</td>
+								<td><code><a href="api/bee.Platform.html">Platform</a></code></td>
+								<td>Define platform specific default configurations.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.api.Library.html">Library</a></code></td>
+								<td><code><a href="api/bee.BeeOption.html">BeeOption</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.api.VCS.Release.html">VCS.Release</a></code></td>
-								<td>Repository related model.</td>
+								<td><code><a href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></td>
+								<td>A ClassLoader that provides fine-grained control over class loading delegation.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.api.VCS.Commit.html">VCS.Commit</a></code></td>
-								<td>Repository related model.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.api.VCS.Content.html">VCS.Content</a></code></td>
-								<td>Repository related model.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.api.Loader.html">Loader</a></code></td>
-								<td>Manages data transfers (downloading and uploading) and reports progress to the user interface.
-This class listens to Maven repository events (via AbstractRepositoryListener)
-and transfer events (via TransferListener) to provide real-time feedback
-on artifact resolution and deployment, as well as handling direct downloads via HTTP.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.api.ProjectSpecific.html">ProjectSpecific</a></code></td>
+								<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.api.License.html">License</a></code></td>
+								<td><code><a href="api/bee.util.Profiling.html">Profiling</a></code></td>
+								<td>A thread-safe profiler for measuring the self-time execution of named code blocks,
+designed to work with nested scopes and parallel execution environments, potentially
+leveraging InheritableThreadLocal for parent scope tracking across threads
+(especially effective with virtual threads).</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.util.Java.html">Java</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.api.Repository.html">Repository</a></code></td>
+								<td><code><a href="api/bee.util.JavaCompiler.html">JavaCompiler</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.api.Project.html">Project</a></code></td>
+								<td><code><a href="api/bee.util.Inputs.html">Inputs</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -229,35 +219,7 @@ on artifact resolution and deployment, as well as handling direct downloads via 
 These settings can be adjusted in the project definition file.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.task.Install.TemporaryProject.html">Install.TemporaryProject</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Eclipse.LombokInstaller.html">Eclipse.LombokInstaller</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Jar.Config.html">Jar.Config</a></code></td>
-								<td>Configuration settings for the Jar task.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Test.Junit.html">Test.Junit</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Test.Config.html">Test.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.License.Config.html">License.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
 								<td><code><a href="api/bee.task.AnnotationProcessor.html">AnnotationProcessor</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Wrapper.Config.html">Wrapper.Config</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -272,6 +234,30 @@ If a value is set here, the automatic search might be skipped for that specific 
 to find potential main, premain, and agentmain classes.</td>
 							</tr>
 							<tr>
+								<td><code><a href="api/bee.task.Install.TemporaryProject.html">Install.TemporaryProject</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Test.Junit.html">Test.Junit</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Test.Config.html">Test.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.License.Config.html">License.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Eclipse.LombokInstaller.html">Eclipse.LombokInstaller</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Doc.Listener.html">Doc.Listener</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
 								<td><code><a href="api/bee.task.Native.Serialization.html">Native.Serialization</a></code></td>
 								<td>no description</td>
 							</tr>
@@ -280,15 +266,15 @@ to find potential main, premain, and agentmain classes.</td>
 								<td>no description</td>
 							</tr>
 							<tr>
+								<td><code><a href="api/bee.task.Wrapper.Config.html">Wrapper.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Jar.Config.html">Jar.Config</a></code></td>
+								<td>Configuration settings for the Jar task.</td>
+							</tr>
+							<tr>
 								<td><code><a href="api/bee.task.Exe.Config.html">Exe.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Doc.Listener.html">Doc.Listener</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.BeeOption.html">BeeOption</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -298,39 +284,53 @@ It manages project compilation, dependency resolution, task execution,
 and provides user interaction through a UserInterface.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.Platform.html">Platform</a></code></td>
-								<td>Define platform specific default configurations.</td>
-							</tr>
-							<tr>
 								<td><code><a href="api/bee.TaskOperations.html">TaskOperations</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></td>
-								<td>A ClassLoader that provides fine-grained control over class loading delegation.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
+								<td><code><a href="api/bee.api.Project.html">Project</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.util.JavaCompiler.html">JavaCompiler</a></code></td>
+								<td><code><a href="api/bee.api.ProjectSpecific.html">ProjectSpecific</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.util.Java.html">Java</a></code></td>
+								<td><code><a href="api/bee.api.License.html">License</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.util.Profiling.html">Profiling</a></code></td>
-								<td>A thread-safe profiler for measuring the self-time execution of named code blocks,
-designed to work with nested scopes and parallel execution environments, potentially
-leveraging InheritableThreadLocal for parent scope tracking across threads
-(especially effective with virtual threads).</td>
+								<td><code><a href="api/bee.api.Loader.html">Loader</a></code></td>
+								<td>Manages data transfers (downloading and uploading) and reports progress to the user interface.
+This class listens to Maven repository events (via AbstractRepositoryListener)
+and transfer events (via TransferListener) to provide real-time feedback
+on artifact resolution and deployment, as well as handling direct downloads via HTTP.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.util.Inputs.html">Inputs</a></code></td>
+								<td><code><a href="api/bee.api.VCS.Release.html">VCS.Release</a></code></td>
+								<td>Repository related model.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.VCS.Commit.html">VCS.Commit</a></code></td>
+								<td>Repository related model.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.VCS.Content.html">VCS.Content</a></code></td>
+								<td>Repository related model.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.Library.html">Library</a></code></td>
 								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.Repository.html">Repository</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.BeeInstaller.html">BeeInstaller</a></code></td>
+								<td>Handles the installation process for the Bee build tool.
+This includes installing the Bee executable JAR, creating launcher scripts,
+installing the Bee API into the local repository, and displaying a welcome message.</td>
 							</tr>
 						</table>
 					</section>
@@ -338,11 +338,11 @@ leveraging InheritableThreadLocal for parent scope tracking across threads
 						<h4>🛠️ Enum</h4>
 						<table>
 							<tr>
-								<td><code><a href="api/bee.api.Scope.html">Scope</a></code></td>
+								<td><code><a href="api/bee.coder.StandardHeaderStyle.html">StandardHeaderStyle</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.coder.StandardHeaderStyle.html">StandardHeaderStyle</a></code></td>
+								<td><code><a href="api/bee.api.Scope.html">Scope</a></code></td>
 								<td>no description</td>
 							</tr>
 						</table>
@@ -372,8 +372,8 @@ leveraging InheritableThreadLocal for parent scope tracking across threads
 				</section>
 			</div>
 		</article>
-		<aside class="s"></aside>
-		<footer class="S">
+		<aside class="g"></aside>
+		<footer class="x">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>

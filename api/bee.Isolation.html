@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8"/>
 		<meta content="width=device-width, initial-scale=1" name="viewport"/>
-		<meta content="Explains how to use bee and its API. " name="description"/>
+		<meta content="Explains how to use Bee and its API. Bee is an open source build automation tool that focuses on conventions, type safety and performance. Project and build task definitions are written in Java, ensuring flexible extensibility for programmers." name="description"/>
 		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
 		<link href="https://fonts.googleapis.com" rel="preconnect"/>
 		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -13,16 +13,16 @@
 		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
 		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
 		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
-		<title>bee API</title>
+		<title>Bee API</title>
 		<base href="../"/>
 		<script src="mimic.js" type="module"></script>
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="x">
-		<header class="c" date="2025-06-03">
-			<h1 class="d"><a href="index.html"><code>bee</code></a></h1>
-			<nav class="e"><a href="api/main.html" id="API"><svg class="package">
+	<body class="DB">
+		<header class="N" date="2025-06-03">
+			<h1 class="O"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="P"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="f"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="Q"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="z"></nav>
-		<article class="y" id="Article">
-			<section class="v"><code class="i">bee</code>
-				<h2 class="AbstractClass u"><code class="AB">Isolation</code><code class="LB">&lt;<code>V</code>&gt;</code></h2>
-				<div class="HB">
+		<nav class="q"></nav>
+		<article class="s" id="Article">
+			<section class="n"><code class="y">bee</code>
+				<h2 class="AbstractClass o"><code class="k">Isolation</code><code class="v">&lt;<code>V</code>&gt;</code></h2>
+				<div class="r">
 					<ul class="E F">
 						<li><code>V</code><span><p>The type of the value returned by the <code><a aria-label="bee.Isolation" href="api/bee.Isolation.html#bridge()">#bridge()</a></code> method. Use <code><a aria-label="java.lang.Void 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Void.html">Void</a></code> if
 no return value is needed (and override <code><a aria-label="bee.Isolation" href="api/bee.Isolation.html#isolate()">#isolate()</a></code> instead).</p></span></li>
@@ -71,10 +71,10 @@ library dependencies.</p><p>
  your overridden <code>isolate()</code> or <code>bridge()</code> method to interact with classes loaded
  from the specified dependencies.
  </p></span></section>
-			<section class="v" id="Isolation(java.lang.String...)">
-				<h2 class="EB"><i class="PROTECTED"></i><code class="AB">Isolation</code><code class="LB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code></h2>
+			<section class="n" id="Isolation(java.lang.String...)">
+				<h2 class="m"><i class="PROTECTED"></i><code class="k">Isolation</code><code class="v">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code></h2>
 				<table class="p">
-					<tr class="T">
+					<tr class="h">
 						<td><code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code></td>
 						<td><span><p>A list of dependency descriptors (e.g., &quot;groupId:artifactId:version&quot;)
 required for the isolated execution context.</p></span></td>
@@ -83,8 +83,8 @@ required for the isolated execution context.</p></span></td>
 All operations involving dependency classes (loading, instantiation, method calls) should
 occur within the overridden <code>isolate()</code> or <code>bridge()</code> method to ensure they
 happen in the isolated context.</p></span></section>
-			<section class="v" id="isolate()">
-				<h2 class="EB"><i class="PROTECTED"></i><code class="AB">isolate</code><code class="LB">()</code><i class="q"><code>void</code></i></h2><span class="A"><p>This method is intended to be overridden by subclasses to perform actions
+			<section class="n" id="isolate()">
+				<h2 class="m"><i class="PROTECTED"></i><code class="k">isolate</code><code class="v">()</code><i class="JB"><code>void</code></i></h2><span class="A"><p>This method is intended to be overridden by subclasses to perform actions
 within the isolated classloader context that do not produce a return value.</p><p>
  The code inside this method will execute with the dependencies specified in the
  constructor loaded preferentially by the isolated classloader. Use
@@ -95,10 +95,10 @@ within the isolated classloader context that do not produce a return value.</p><
  </p><p>
  The default implementation does nothing.
  </p></span></section>
-			<section class="v" id="bridge()">
-				<h2 class="EB"><i class="PROTECTED"></i><code class="AB">bridge</code><code class="LB">()</code><i class="q"><code>V</code></i></h2>
+			<section class="n" id="bridge()">
+				<h2 class="m"><i class="PROTECTED"></i><code class="k">bridge</code><code class="v">()</code><i class="JB"><code>V</code></i></h2>
 				<table class="p">
-					<tr class="W">
+					<tr class="IB">
 						<td><code>V</code></td>
 						<td><span><p>The computed result of type <code>V</code>.</p></span></td>
 					</tr>
@@ -115,47 +115,47 @@ within the isolated classloader context that produce a return value of type <cod
  </p><p>
  The default implementation returns <code>null</code>.
  </p></span></section>
-			<section class="v" id="load(java.lang.Class,java.lang.String)">
-				<h2 class="EB"><i class="FINAL"><i class="PUBLIC"></i></i><code class="AB">load</code><code class="LB">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="q"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code></i></h2>
+			<section class="n" id="load(java.lang.Class,java.lang.String)">
+				<h2 class="m"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">load</code><code class="v">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="JB"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code></i></h2>
 				<table class="p">
-					<tr class="j">
+					<tr class="T">
 						<td><code>T</code></td>
 						<td><span><p>The expected type of the class.</p></span></td>
 					</tr>
-					<tr class="T">
+					<tr class="h">
 						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code></td>
 						<td><span><p>A <code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a></code> object representing the expected type <code>T</code>, used only
 for compile-time type checking and casting convenience of the return value.</p></span></td>
 					</tr>
-					<tr class="T">
+					<tr class="h">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code></td>
 						<td><span><p>The fully qualified class name (e.g., &quot;com.example.MyClass&quot;).</p></span></td>
 					</tr>
-					<tr class="W">
+					<tr class="IB">
 						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code></td>
 						<td><span><p>The loaded <code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a></code> object, cast to <code>Class&lt;T&gt;</code>.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Loads a class by its fully qualified name using the internal <code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code>
 associated with this dependency context. This ensures the class is loaded from the
 specified dependencies if available, respecting the classloader&apos;s priority rules.</p></span></section>
-			<section class="v" id="create(java.lang.Class,java.lang.String)">
-				<h2 class="EB"><i class="FINAL"><i class="PUBLIC"></i></i><code class="AB">create</code><code class="LB">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="q"><code>T</code></i></h2>
+			<section class="n" id="create(java.lang.Class,java.lang.String)">
+				<h2 class="m"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">create</code><code class="v">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="JB"><code>T</code></i></h2>
 				<table class="p">
-					<tr class="j">
+					<tr class="T">
 						<td><code>T</code></td>
 						<td><span><p>The expected type of the instance.</p></span></td>
 					</tr>
-					<tr class="T">
+					<tr class="h">
 						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code></td>
 						<td><span><p>A <code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a></code> object representing the expected type <code>T</code>. This is used
 both for loading the correct class via <code><a aria-label="bee.Isolation" href="api/bee.Isolation.html#load(java.lang.Class,java.lang.String)">#load(Class, String)</a></code> and for
 type safety of the returned instance.</p></span></td>
 					</tr>
-					<tr class="T">
+					<tr class="h">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code></td>
 						<td><span><p>The fully qualified class name of the class to load and instantiate.</p></span></td>
 					</tr>
-					<tr class="W">
+					<tr class="IB">
 						<td><code>T</code></td>
 						<td><span><p>A new instance of the loaded class, cast to <code>T</code>.</p></span></td>
 					</tr>
@@ -163,24 +163,24 @@ type safety of the returned instance.</p></span></td>
 and then creates a new instance of it using I#make(Class) (Kiss DI).
 This is useful for instantiating classes from the dependency context, potentially
 utilizing dependency injection if configured via <code>kiss.I</code>.</p></span></section>
-			<section class="v" id="result()">
-				<h2 class="EB"><i class="FINAL"><i class="PUBLIC"></i></i><code class="AB">result</code><code class="LB">()</code><i class="q"><code>V</code></i></h2>
+			<section class="n" id="result()">
+				<h2 class="m"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">result</code><code class="v">()</code><i class="JB"><code>V</code></i></h2>
 				<table class="p">
-					<tr class="W">
+					<tr class="IB">
 						<td><code>V</code></td>
 						<td><span><p>The result from the <code><a aria-label="bee.Isolation" href="api/bee.Isolation.html#bridge()">#bridge()</a></code> execution, or <code>null</code>.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Returns the result computed and returned by the <code><a aria-label="bee.Isolation" href="api/bee.Isolation.html#bridge()">#bridge()</a></code> method, if it was executed.
 If the <code><a aria-label="bee.Isolation" href="api/bee.Isolation.html#isolate()">#isolate()</a></code> method was executed instead (because it was overridden), this
 method will return the initial value of the result field (typically <code>null</code>).</p></span></section>
-			<section class="v" id="with(java.lang.String...)">
-				<h2 class="EB"><i class="PUBLIC STATIC"></i><code class="AB">with</code><code class="LB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code><i class="q"><code><a aria-label="bee.Isolation" href="api/bee.Isolation.html">Isolation</a><code class="parameters"><code><a aria-label="java.lang.Void 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Void.html">Void</a></code></code></code></i></h2>
+			<section class="n" id="with(java.lang.String...)">
+				<h2 class="m"><i class="STATIC PUBLIC"></i><code class="k">with</code><code class="v">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code><i class="JB"><code><a aria-label="bee.Isolation" href="api/bee.Isolation.html">Isolation</a><code class="parameters"><code><a aria-label="java.lang.Void 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Void.html">Void</a></code></code></code></i></h2>
 				<table class="p">
-					<tr class="T">
+					<tr class="h">
 						<td><code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code></td>
 						<td><span><p>A list of dependency descriptors (e.g., &quot;groupId:artifactId:version&quot;).</p></span></td>
 					</tr>
-					<tr class="W">
+					<tr class="IB">
 						<td><code><a aria-label="bee.Isolation" href="api/bee.Isolation.html">Isolation</a><code class="parameters"><code><a aria-label="java.lang.Void 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Void.html">Void</a></code></code></code></td>
 						<td><span><p>A new <code><a aria-label="bee.Isolation" href="api/bee.Isolation.html">Isolation</a></code> instance whose <code>isolate()</code> method does nothing.
 The primary effect is the setup of the class loader with the dependencies
@@ -193,27 +193,27 @@ A subclass would typically be created to override <code>isolate</code> with actu
 This factory might be less useful now compared to directly creating a subclass that
 overrides <code>isolate</code>.</p></span></section>
 		</article>
-		<aside class="s">
-			<div class="IB">
-				<h5 class="r">Constructors</h5>
+		<aside class="g">
+			<div class="BB">
+				<h5 class="i">Constructors</h5>
 				<ul>
-					<li class="w"><i class="PROTECTED"></i><code><a href="api/bee.Isolation.html#Isolation(java.lang.String...)">Isolation</a></code><code class="LB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code></li>
+					<li class="a"><i class="PROTECTED"></i><code><a href="api/bee.Isolation.html#Isolation(java.lang.String...)">Isolation</a></code><code class="v">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code></li>
 				</ul>
-				<h5 class="r">Static Methods</h5>
+				<h5 class="i">Static Methods</h5>
 				<ul>
-					<li class="w"><i class="PUBLIC STATIC"></i><code><a href="api/bee.Isolation.html#with(java.lang.String...)">with</a></code><code class="LB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code><i class="m"><code><a aria-label="bee.Isolation" href="api/bee.Isolation.html">Isolation</a><code class="parameters"><code><a aria-label="java.lang.Void 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Void.html">Void</a></code></code></code></i></li>
+					<li class="a"><i class="STATIC PUBLIC"></i><code><a href="api/bee.Isolation.html#with(java.lang.String...)">with</a></code><code class="v">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">dependencies</code>)</code><i class="W"><code><a aria-label="bee.Isolation" href="api/bee.Isolation.html">Isolation</a><code class="parameters"><code><a aria-label="java.lang.Void 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Void.html">Void</a></code></code></code></i></li>
 				</ul>
-				<h5 class="r">Methods</h5>
+				<h5 class="i">Methods</h5>
 				<ul>
-					<li class="w"><i class="PROTECTED"></i><code><a href="api/bee.Isolation.html#isolate()">isolate</a></code><code class="LB">()</code><i class="m"><code>void</code></i></li>
-					<li class="w"><i class="PROTECTED"></i><code><a href="api/bee.Isolation.html#bridge()">bridge</a></code><code class="LB">()</code><i class="m"><code>V</code></i></li>
-					<li class="w"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Isolation.html#load(java.lang.Class,java.lang.String)">load</a></code><code class="LB">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="m"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code></i></li>
-					<li class="w"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Isolation.html#create(java.lang.Class,java.lang.String)">create</a></code><code class="LB">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="m"><code>T</code></i></li>
-					<li class="w"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Isolation.html#result()">result</a></code><code class="LB">()</code><i class="m"><code>V</code></i></li>
+					<li class="a"><i class="PROTECTED"></i><code><a href="api/bee.Isolation.html#isolate()">isolate</a></code><code class="v">()</code><i class="W"><code>void</code></i></li>
+					<li class="a"><i class="PROTECTED"></i><code><a href="api/bee.Isolation.html#bridge()">bridge</a></code><code class="v">()</code><i class="W"><code>V</code></i></li>
+					<li class="a"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Isolation.html#load(java.lang.Class,java.lang.String)">load</a></code><code class="v">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="W"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code></i></li>
+					<li class="a"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Isolation.html#create(java.lang.Class,java.lang.String)">create</a></code><code class="v">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">type</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fqcn</code>)</code><i class="W"><code>T</code></i></li>
+					<li class="a"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Isolation.html#result()">result</a></code><code class="v">()</code><i class="W"><code>V</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="S">
+		<footer class="x">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
