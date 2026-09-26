@@ -407,6 +407,11 @@ public interface CI extends Task {
                         jdk:
                           - openjdk%s
 
+                        before_install:
+                          - sdk install java %s-open
+                          - sdk use java %s-open
+                          - export PATH="$HOME/.sdkman/candidates/java/%s-open/bin:$PATH"
+
                         install: |
                           if [ -e "bee" ]; then
                             source bee install maven --skip test
@@ -425,7 +430,7 @@ public interface CI extends Task {
                           # But, I found that I could build without any problem if I sent the following Maven log-like
                           # string to standard output. NO WAY!
                           echo "[INFO] Installing /home/jitpack/build/pom.xml to /home/jitpack/.m2/repository/${GROUP//./\\/}/${ARTIFACT}/${ProductVersion}/${ARTIFACT}-${ProductVersion}.pom"
-                        """, javaVersion, javaVersion, javaVersion));
+                        """, javaVersion, javaVersion, javaVersion, javaVersion, javaVersion, javaVersion));
     }
 
     @Command("Generate .gitignore file.")
