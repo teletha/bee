@@ -403,7 +403,7 @@ Bee depends on the following products on runtime.
 
 
 ## License
-Copyright (C) 2025 The BEE Development Team
+Copyright (C) 2026 The BEE Development Team
 
 MIT License
 
