@@ -178,6 +178,7 @@ public interface Eclipse extends Task, IDESupport {
         Set<Library> testOnly = project().getDependency(Scope.Test);
         testOnly.remove(project().asLibrary());
         testOnly.removeIf(testLib -> compileLike.stream().anyMatch(compileLib -> testLib.isSame(compileLib)));
+        compileLike.remove(project().asLibrary());
 
         I.signal(testOnly).joinAll(lib -> I.pair(lib.getLocalJar(), lib.getLocalSourceJar())).to(x -> {
             File jar = x.ⅰ;
