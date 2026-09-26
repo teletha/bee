@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="DB">
-		<header class="N" date="2025-06-03">
-			<h1 class="O"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="P"><a href="api/main.html" id="API"><svg class="package">
+	<body class="z">
+		<header class="K" date="2025-06-03">
+			<h1 class="L"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="M"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,16 +35,16 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="Q"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="N"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="q"></nav>
-		<article class="s" id="Article">
-			<div class="n">
+		<nav class="i"></nav>
+		<article class="X" id="Article">
+			<div class="b">
 				<section class="A">
 					<h2>Bee API Overview</h2>
 					<p>This page provides a concise overview of the available APIs, including their purpose, key functionalities, and usage patterns. It serves as a starting point for developers to understand how to integrate and interact with the system effectively.</p>
@@ -52,12 +52,12 @@
 						<h4>🛠️ Interface</h4>
 						<table>
 							<tr>
-								<td><code><a href="api/bee.Help.html">Help</a></code></td>
-								<td>Provides help and information about Bee tasks, options, and environment.</td>
+								<td><code><a href="api/bee.Task.html">Task</a></code></td>
+								<td>Defines the basic structure for all tasks within the Bee build system.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.util.Java.Transporter.html">Java.Transporter</a></code></td>
-								<td>Transporter between parent process and sub process.</td>
+								<td><code><a href="api/bee.Help.html">Help</a></code></td>
+								<td>Provides help and information about Bee tasks, options, and environment.</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.coder.HeaderStyle.html">HeaderStyle</a></code></td>
@@ -66,6 +66,14 @@
 							<tr>
 								<td><code><a href="api/bee.coder.FileType.html">FileType</a></code></td>
 								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.VCS.Account.html">VCS.Account</a></code></td>
+								<td>Repository related model.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.util.Java.Transporter.html">Java.Transporter</a></code></td>
+								<td>Transporter between parent process and sub process.</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.task.Maven.html">Maven</a></code></td>
@@ -77,7 +85,7 @@
 This includes showing the dependency tree and analyzing required Java modules.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.task.IDESupport.html">IDESupport</a></code></td>
+								<td><code><a href="api/bee.task.Wrapper.html">Wrapper</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -86,12 +94,16 @@ This includes showing the dependency tree and analyzing required Java modules.</
 This task also handles copying associated resource files to the output directories.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.task.Intellij.html">Intellij</a></code></td>
+								<td><code><a href="api/bee.task.Eclipse.html">Eclipse</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.task.FindMain.html">FindMain</a></code></td>
-								<td>Provides tasks to find special entry point classes within the project:</td>
+								<td><code><a href="api/bee.task.Exe.html">Exe</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Doc.html">Doc</a></code></td>
+								<td>no description</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.task.Bun.html">Bun</a></code></td>
@@ -102,7 +114,32 @@ This task also handles copying associated resource files to the output directori
 								<td>no description</td>
 							</tr>
 							<tr>
+								<td><code><a href="api/bee.task.Clean.html">Clean</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Jar.html">Jar</a></code></td>
+								<td>Handles the packaging of project artifacts (classes, sources, resources, documentation) into JAR
+files.</td>
+							</tr>
+							<tr>
 								<td><code><a href="api/bee.task.Test.html">Test</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Native.html">Native</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Prototype.html">Prototype</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.FindMain.html">FindMain</a></code></td>
+								<td>Provides tasks to find special entry point classes within the project:</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Intellij.html">Intellij</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -114,49 +151,12 @@ This task also handles copying associated resource files to the output directori
 								<td>no description</td>
 							</tr>
 							<tr>
+								<td><code><a href="api/bee.task.IDESupport.html">IDESupport</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
 								<td><code><a href="api/bee.task.License.html">License</a></code></td>
 								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Clean.html">Clean</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Eclipse.html">Eclipse</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Doc.html">Doc</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Native.html">Native</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Wrapper.html">Wrapper</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Jar.html">Jar</a></code></td>
-								<td>Handles the packaging of project artifacts (classes, sources, resources, documentation) into JAR
-files.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Exe.html">Exe</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Prototype.html">Prototype</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.Task.html">Task</a></code></td>
-								<td>Defines the basic structure for all tasks within the Bee build system.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.api.VCS.Account.html">VCS.Account</a></code></td>
-								<td>Repository related model.</td>
 							</tr>
 						</table>
 					</section>
@@ -179,124 +179,25 @@ method reference (e.g., MyTask::myCommand).</td>
 						<h4>🛠️ Class</h4>
 						<table>
 							<tr>
-								<td><code><a href="api/bee.Platform.html">Platform</a></code></td>
-								<td>Define platform specific default configurations.</td>
+								<td><code><a href="api/bee.BeeInstaller.html">BeeInstaller</a></code></td>
+								<td>Handles the installation process for the Bee build tool.
+This includes installing the Bee executable JAR, creating launcher scripts,
+installing the Bee API into the local repository, and displaying a welcome message.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.BeeOption.html">BeeOption</a></code></td>
-								<td>no description</td>
+								<td><code><a href="api/bee.Platform.html">Platform</a></code></td>
+								<td>Define platform specific default configurations.</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></td>
 								<td>A ClassLoader that provides fine-grained control over class loading delegation.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
+								<td><code><a href="api/bee.BeeOption.html">BeeOption</a></code></td>
 								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.util.Profiling.html">Profiling</a></code></td>
-								<td>A thread-safe profiler for measuring the self-time execution of named code blocks,
-designed to work with nested scopes and parallel execution environments, potentially
-leveraging InheritableThreadLocal for parent scope tracking across threads
-(especially effective with virtual threads).</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.util.Java.html">Java</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.util.JavaCompiler.html">JavaCompiler</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.util.Inputs.html">Inputs</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Compile.Config.html">Compile.Config</a></code></td>
-								<td>Configuration settings for the Compile task.
-These settings can be adjusted in the project definition file.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.AnnotationProcessor.html">AnnotationProcessor</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.FindMain.Config.html">FindMain.Config</a></code></td>
-								<td>Configuration class for the FindMain task, allowing users to explicitly
-specify the fully qualified names of the main, premain, and agentmain classes.
-If a value is set here, the automatic search might be skipped for that specific entry point.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.FindMain.Search.html">FindMain.Search</a></code></td>
-								<td>Internal singleton service responsible for scanning project classes
-to find potential main, premain, and agentmain classes.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Install.TemporaryProject.html">Install.TemporaryProject</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Test.Junit.html">Test.Junit</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Test.Config.html">Test.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.License.Config.html">License.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Eclipse.LombokInstaller.html">Eclipse.LombokInstaller</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Doc.Listener.html">Doc.Listener</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Native.Serialization.html">Native.Serialization</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Native.Config.html">Native.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Wrapper.Config.html">Wrapper.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Jar.Config.html">Jar.Config</a></code></td>
-								<td>Configuration settings for the Jar task.</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.task.Exe.Config.html">Exe.Config</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.Bee.html">Bee</a></code></td>
-								<td>Bee is a task-based build tool for Java projects.
-It manages project compilation, dependency resolution, task execution,
-and provides user interaction through a UserInterface.</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.TaskOperations.html">TaskOperations</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.api.Project.html">Project</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.api.ProjectSpecific.html">ProjectSpecific</a></code></td>
-								<td>no description</td>
-							</tr>
-							<tr>
-								<td><code><a href="api/bee.api.License.html">License</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -305,6 +206,18 @@ and provides user interaction through a UserInterface.</td>
 This class listens to Maven repository events (via AbstractRepositoryListener)
 and transfer events (via TransferListener) to provide real-time feedback
 on artifact resolution and deployment, as well as handling direct downloads via HTTP.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.Project.html">Project</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.Library.html">Library</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.api.ProjectSpecific.html">ProjectSpecific</a></code></td>
+								<td>no description</td>
 							</tr>
 							<tr>
 								<td><code><a href="api/bee.api.VCS.Release.html">VCS.Release</a></code></td>
@@ -319,7 +232,7 @@ on artifact resolution and deployment, as well as handling direct downloads via 
 								<td>Repository related model.</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.api.Library.html">Library</a></code></td>
+								<td><code><a href="api/bee.api.License.html">License</a></code></td>
 								<td>no description</td>
 							</tr>
 							<tr>
@@ -327,10 +240,97 @@ on artifact resolution and deployment, as well as handling direct downloads via 
 								<td>no description</td>
 							</tr>
 							<tr>
-								<td><code><a href="api/bee.BeeInstaller.html">BeeInstaller</a></code></td>
-								<td>Handles the installation process for the Bee build tool.
-This includes installing the Bee executable JAR, creating launcher scripts,
-installing the Bee API into the local repository, and displaying a welcome message.</td>
+								<td><code><a href="api/bee.util.JavaCompiler.html">JavaCompiler</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.util.Process.html">Process</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.util.Profiling.html">Profiling</a></code></td>
+								<td>A thread-safe profiler for measuring the self-time execution of named code blocks,
+designed to work with nested scopes and parallel execution environments, potentially
+leveraging InheritableThreadLocal for parent scope tracking across threads
+(especially effective with virtual threads).</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.util.Inputs.html">Inputs</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.util.Java.html">Java</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Wrapper.Config.html">Wrapper.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Compile.Config.html">Compile.Config</a></code></td>
+								<td>Configuration settings for the Compile task.
+These settings can be adjusted in the project definition file.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Eclipse.LombokInstaller.html">Eclipse.LombokInstaller</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Exe.Config.html">Exe.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Doc.Listener.html">Doc.Listener</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Install.TemporaryProject.html">Install.TemporaryProject</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.AnnotationProcessor.html">AnnotationProcessor</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Jar.Config.html">Jar.Config</a></code></td>
+								<td>Configuration settings for the Jar task.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Test.Junit.html">Test.Junit</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Test.Config.html">Test.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Native.Serialization.html">Native.Serialization</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.Native.Config.html">Native.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.FindMain.Config.html">FindMain.Config</a></code></td>
+								<td>Configuration class for the FindMain task, allowing users to explicitly
+specify the fully qualified names of the main, premain, and agentmain classes.
+If a value is set here, the automatic search might be skipped for that specific entry point.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.FindMain.Search.html">FindMain.Search</a></code></td>
+								<td>Internal singleton service responsible for scanning project classes
+to find potential main, premain, and agentmain classes.</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.task.License.Config.html">License.Config</a></code></td>
+								<td>no description</td>
+							</tr>
+							<tr>
+								<td><code><a href="api/bee.Bee.html">Bee</a></code></td>
+								<td>Bee is a task-based build tool for Java projects.
+It manages project compilation, dependency resolution, task execution,
+and provides user interaction through a UserInterface.</td>
 							</tr>
 						</table>
 					</section>
@@ -372,8 +372,8 @@ installing the Bee API into the local repository, and displaying a welcome messa
 				</section>
 			</div>
 		</article>
-		<aside class="g"></aside>
-		<footer class="x">
+		<aside class="t"></aside>
+		<footer class="q">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>

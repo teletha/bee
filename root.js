@@ -3,21 +3,36 @@ const root = {
 	"modules": [],
 	"packages": [
 		"bee",
-		"bee.util",
 		"bee.coder",
-		"bee.task",
-		"bee.api"
+		"bee.api",
+		"bee.util",
+		"bee.task"
 	],
 	"types": [
 		{
-			"name": "Isolation",
+			"name": "UserInterface",
 			"packageName": "bee",
 			"type": "AbstractClass"
 		},
 		{
-			"name": "Help",
+			"name": "BeeInstaller",
+			"packageName": "bee",
+			"type": "Class"
+		},
+		{
+			"name": "Task",
 			"packageName": "bee",
 			"type": "Interface"
+		},
+		{
+			"name": "Task.ValuedTaskReference",
+			"packageName": "bee",
+			"type": "Functional"
+		},
+		{
+			"name": "Task.TaskReference",
+			"packageName": "bee",
+			"type": "Functional"
 		},
 		{
 			"name": "Platform",
@@ -25,53 +40,13 @@ const root = {
 			"type": "Class"
 		},
 		{
-			"name": "BeeOption",
+			"name": "Help",
 			"packageName": "bee",
-			"type": "Class"
-		},
-		{
-			"name": "UserInterface",
-			"packageName": "bee",
-			"type": "AbstractClass"
+			"type": "Interface"
 		},
 		{
 			"name": "PriorityClassLoader",
 			"packageName": "bee",
-			"type": "Class"
-		},
-		{
-			"name": "Process",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"name": "Profiling",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"name": "Java",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"name": "Java.Transporter",
-			"packageName": "bee.util",
-			"type": "Interface"
-		},
-		{
-			"name": "Java.JVM",
-			"packageName": "bee.util",
-			"type": "AbstractClass"
-		},
-		{
-			"name": "JavaCompiler",
-			"packageName": "bee.util",
-			"type": "Class"
-		},
-		{
-			"name": "Inputs",
-			"packageName": "bee.util",
 			"type": "Class"
 		},
 		{
@@ -90,207 +65,12 @@ const root = {
 			"type": "Interface"
 		},
 		{
-			"name": "Maven",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Dependency",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "IDESupport",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Compile",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Compile.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "AnnotationProcessor",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Intellij",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "FindMain",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "FindMain.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "FindMain.Search",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Bun",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Install",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Install.TemporaryProject",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Test",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Test.Junit",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Test.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "IDE",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "CI",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "License",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "License.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Clean",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Eclipse",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Eclipse.LombokInstaller",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Doc",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Doc.Listener",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Native",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Native.Item",
-			"packageName": "bee.task",
-			"type": "Record"
-		},
-		{
-			"name": "Native.Serialization",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Native.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "AnnotationValidator",
-			"packageName": "bee.task",
-			"type": "AbstractClass"
-		},
-		{
-			"name": "Wrapper",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Wrapper.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Jar",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Jar.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Exe",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Exe.Config",
-			"packageName": "bee.task",
-			"type": "Class"
-		},
-		{
-			"name": "Prototype",
-			"packageName": "bee.task",
-			"type": "Interface"
-		},
-		{
-			"name": "Task",
+			"name": "Fail",
 			"packageName": "bee",
-			"type": "Interface"
+			"type": "Exception"
 		},
 		{
-			"name": "Task.ValuedTaskReference",
-			"packageName": "bee",
-			"type": "Functional"
-		},
-		{
-			"name": "Task.TaskReference",
-			"packageName": "bee",
-			"type": "Functional"
-		},
-		{
-			"name": "Bee",
+			"name": "BeeOption",
 			"packageName": "bee",
 			"type": "Class"
 		},
@@ -300,9 +80,14 @@ const root = {
 			"type": "Class"
 		},
 		{
-			"name": "Command",
+			"name": "Scope",
 			"packageName": "bee.api",
-			"type": "Annotation"
+			"type": "Enum"
+		},
+		{
+			"name": "Loader",
+			"packageName": "bee.api",
+			"type": "Class"
 		},
 		{
 			"name": "Project",
@@ -310,9 +95,14 @@ const root = {
 			"type": "Class"
 		},
 		{
-			"name": "ProjectSpecific",
+			"name": "Library",
 			"packageName": "bee.api",
 			"type": "Class"
+		},
+		{
+			"name": "Command",
+			"packageName": "bee.api",
+			"type": "Annotation"
 		},
 		{
 			"name": "Comment",
@@ -320,17 +110,7 @@ const root = {
 			"type": "Annotation"
 		},
 		{
-			"name": "License",
-			"packageName": "bee.api",
-			"type": "Class"
-		},
-		{
-			"name": "Scope",
-			"packageName": "bee.api",
-			"type": "Enum"
-		},
-		{
-			"name": "Loader",
+			"name": "ProjectSpecific",
 			"packageName": "bee.api",
 			"type": "Class"
 		},
@@ -360,7 +140,7 @@ const root = {
 			"type": "Interface"
 		},
 		{
-			"name": "Library",
+			"name": "License",
 			"packageName": "bee.api",
 			"type": "Class"
 		},
@@ -370,14 +150,234 @@ const root = {
 			"type": "Class"
 		},
 		{
-			"name": "BeeInstaller",
+			"name": "Isolation",
 			"packageName": "bee",
+			"type": "AbstractClass"
+		},
+		{
+			"name": "JavaCompiler",
+			"packageName": "bee.util",
 			"type": "Class"
 		},
 		{
-			"name": "Fail",
+			"name": "Process",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "Profiling",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "Inputs",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "Java",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "Java.Transporter",
+			"packageName": "bee.util",
+			"type": "Interface"
+		},
+		{
+			"name": "Java.JVM",
+			"packageName": "bee.util",
+			"type": "AbstractClass"
+		},
+		{
+			"name": "Maven",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Dependency",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Wrapper",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Wrapper.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Compile",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Compile.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Eclipse",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Eclipse.LombokInstaller",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Exe",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Exe.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Doc",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Doc.Listener",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Bun",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "AnnotationValidator",
+			"packageName": "bee.task",
+			"type": "AbstractClass"
+		},
+		{
+			"name": "Install",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Install.TemporaryProject",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Clean",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "AnnotationProcessor",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Jar",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Jar.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Test",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Test.Junit",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Test.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Native",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Native.Item",
+			"packageName": "bee.task",
+			"type": "Record"
+		},
+		{
+			"name": "Native.Serialization",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Native.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Prototype",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "FindMain",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "FindMain.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "FindMain.Search",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Intellij",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "IDE",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "CI",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "IDESupport",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "License",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "License.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Bee",
 			"packageName": "bee",
-			"type": "Exception"
+			"type": "Class"
 		}
 	]
 }
