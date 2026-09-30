@@ -98,7 +98,7 @@ public interface CI extends Task {
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
                           curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                          java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license ci:release
+                          java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
                         fi
 
                     - name: Deploy site
@@ -610,12 +610,10 @@ public interface CI extends Task {
                         applyMavenCentralRules: true
                 """;
 
-        makeFile(".github/workflows/release.yml", String
-                .format(release, javaVersion, product, layout, product, product, product, product));
+        makeFile(".github/workflows/release.yml", String.format(release, javaVersion, product, layout, product, product, product, product));
 
         makeFile("jreleaser.yml", String
-                .format(jreleaser, product, project().getVersion(), vcs.uri(), vcs.owner, vcs.repo,
-                        product, product, product, group));
+                .format(jreleaser, product, project().getVersion(), vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
     }
 
     @Command("Generate .gitignore file.")
