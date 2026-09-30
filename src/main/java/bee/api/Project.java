@@ -93,6 +93,9 @@ public class Project {
     /** The license related info. */
     final List<String> licensedBy = new ArrayList();
 
+    /** The declared developers. */
+    final List<Contributor> developers = new ArrayList();
+
     /** The encoding. */
     private Charset encoding = StandardCharsets.UTF_8;
 
@@ -277,6 +280,43 @@ public class Project {
         this.licensedFrom.add(licensedFrom <= 0 ? Year.now().getValue() : licensedFrom);
         this.licensedTo.add(licensedTo <= 0 ? Year.now().getValue() : licensedTo);
         this.licensedBy.add(Objects.requireNonNullElse(licensedBy, ""));
+    }
+
+    /**
+     * Add a product developer. The developer name is required because Maven Central rejects a
+     * POM file which has no developer information.
+     *
+     * @param name The developer name.
+     */
+    protected final void developer(String name) {
+        developer(name, null, null);
+    }
+
+    /**
+     * Add a product developer. The developer name is required because Maven Central rejects a
+     * POM file which has no developer information.
+     *
+     * @param name The developer name.
+     * @param email The developer mail address.
+     */
+    protected final void developer(String name, String email) {
+        developer(name, email, null);
+    }
+
+    /**
+     * Add a product developer. The developer name is required because Maven Central rejects a
+     * POM file which has no developer information.
+     *
+     * @param name The developer name.
+     * @param email The developer mail address.
+     * @param url The developer url.
+     */
+    protected final void developer(String name, String email, String url) {
+        Contributor developer = new Contributor();
+        developer.setName(Objects.requireNonNullElse(name, ""));
+        developer.setEmail(Objects.requireNonNullElse(email, ""));
+        developer.setUrl(Objects.requireNonNullElse(url, ""));
+        developers.add(developer);
     }
 
     /**
@@ -906,14 +946,28 @@ public class Project {
             issue.child("system").text(vcs.name());
             issue.child("url").text(vcs.issue());
 
-            XML contributors = pom.child("developers");
+            // Maven Central requires developer information. Use the developers declared in the
+            // project definition, and fall back to the repository contributors only when nothing
+            // is declared so that the POM stays reproducible in offline environments.
+            List<Contributor> authors = new ArrayList();
+            for (Contributor contributor : this.developers.isEmpty() ? vcs.contributors() : this.developers) {
+                if (contributor.getName() != null && !contributor.getName().isBlank()) {
+                    authors.add(contributor);
+                }
+            }
 
-            for (Contributor contributor : vcs.contributors()) {
-                if (contributor.getName() != null) {
+            if (!authors.isEmpty()) {
+                XML contributors = pom.child("developers");
+
+                for (Contributor contributor : authors) {
                     XML xml = contributors.child("developer");
                     xml.child("name").text(contributor.getName());
-                    xml.child("email").text(contributor.getEmail());
-                    xml.child("url").text(contributor.getUrl());
+                    if (contributor.getEmail() != null && !contributor.getEmail().isBlank()) {
+                        xml.child("email").text(contributor.getEmail());
+                    }
+                    if (contributor.getUrl() != null && !contributor.getUrl().isBlank()) {
+                        xml.child("url").text(contributor.getUrl());
+                    }
                 }
             }
         }

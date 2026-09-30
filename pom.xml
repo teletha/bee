@@ -60,14 +60,15 @@ Installs and manages the Bun runtime.
 ### CI
 Sets up Continuous Integration configurations.
 
-| Command     | Description                                         | Default |
-| :---------- | :-------------------------------------------------- | :------: |
-| `github`    | Generate CI/CD configuration files for GitHub.    |         |
-| `gitignore` | Generate `.gitignore` file.                         |         |
-| `jitpack`   | Generate CI/CD configuration files for JitPack.   |         |
-| `license`   | Generate license file.                            |         |
-| `readme`    | Generate readme file.                             |         |
-| `setup`     | Setup general CI/CD configurations.               |    ✅    |
+| Command     | Description                                           | Default |
+| :---------- | :---------------------------------------------------- | :------: |
+| `github`    | Generate CI/CD configuration files for GitHub.        |         |
+| `gitignore` | Generate `.gitignore` file.                           |         |
+| `jitpack`   | Generate CI/CD configuration files for JitPack.       |         |
+| `license`   | Generate license file.                                |         |
+| `readme`    | Generate readme file.                                 |         |
+| `release`   | Generate CI/CD configuration files for Maven Central. |         |
+| `setup`     | Setup general CI/CD configurations.                   |    ✅    |
 
 ### CLEAN
 Cleans build output files.
@@ -875,6 +876,23 @@ Configuration
 			<url>https://jitpack.io/</url>
 		</repository>
 	</repositories>
+	<url>https://github.com/teletha/bee</url>
+	<scm>
+		<url>https://github.com/teletha/bee</url>
+		<connection>scm:git:https://github.com/teletha/bee.git</connection>
+		<developerConnection>scm:git:https://github.com/teletha/bee.git</developerConnection>
+	</scm>
+	<issueManagement>
+		<system>github</system>
+		<url>https://github.com/teletha/bee/issues</url>
+	</issueManagement>
+	<developers>
+		<developer>
+			<name>Teletha</name>
+			<email>Teletha@users.noreply.github.com</email>
+			<url>https://github.com/teletha</url>
+		</developer>
+	</developers>
 	<build>
 		<plugins>
 			<plugin>

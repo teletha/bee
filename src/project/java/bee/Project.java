@@ -21,6 +21,16 @@ public class Project extends bee.api.Project {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
         license(MIT);
 
+        // PUBLISHING
+        // Maven Central rejects a POM file which has no url, scm or developers element.
+        // These values must be declared here instead of being detected from the local
+        // repository, because the detection depends on the runtime environment and the
+        // contributor lookup requires an authenticated GitHub API request.
+        versionControlSystem("https://github.com/teletha/bee");
+        // The published POM must not expose a personal mail address, so use the noreply
+        // address which GitHub reserves for this account.
+        developer("Teletha", "Teletha@users.noreply.github.com", "https://github.com/teletha");
+
         require(SourceVersion.latest(), SourceVersion.RELEASE_24);
 
         // MAVEN REPOSITORY
@@ -134,14 +144,15 @@ public class Project extends bee.api.Project {
                 ### CI
                 Sets up Continuous Integration configurations.
 
-                | Command     | Description                                         | Default |
-                | :---------- | :-------------------------------------------------- | :------: |
-                | `github`    | Generate CI/CD configuration files for GitHub.    |         |
-                | `gitignore` | Generate `.gitignore` file.                         |         |
-                | `jitpack`   | Generate CI/CD configuration files for JitPack.   |         |
-                | `license`   | Generate license file.                            |         |
-                | `readme`    | Generate readme file.                             |         |
-                | `setup`     | Setup general CI/CD configurations.               |    ✅    |
+                | Command     | Description                                           | Default |
+                | :---------- | :---------------------------------------------------- | :------: |
+                | `github`    | Generate CI/CD configuration files for GitHub.        |         |
+                | `gitignore` | Generate `.gitignore` file.                           |         |
+                | `jitpack`   | Generate CI/CD configuration files for JitPack.       |         |
+                | `license`   | Generate license file.                                |         |
+                | `readme`    | Generate readme file.                                 |         |
+                | `release`   | Generate CI/CD configuration files for Maven Central. |         |
+                | `setup`     | Setup general CI/CD configurations.                   |    ✅    |
 
                 ### CLEAN
                 Cleans build output files.

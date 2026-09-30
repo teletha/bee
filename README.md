@@ -62,14 +62,15 @@ Installs and manages the Bun runtime.
 ### CI
 Sets up Continuous Integration configurations.
 
-| Command     | Description                                         | Default |
-| :---------- | :-------------------------------------------------- | :------: |
-| `github`    | Generate CI/CD configuration files for GitHub.    |         |
-| `gitignore` | Generate `.gitignore` file.                         |         |
-| `jitpack`   | Generate CI/CD configuration files for JitPack.   |         |
-| `license`   | Generate license file.                            |         |
-| `readme`    | Generate readme file.                             |         |
-| `setup`     | Setup general CI/CD configurations.               |    ✅    |
+| Command     | Description                                           | Default |
+| :---------- | :---------------------------------------------------- | :------: |
+| `github`    | Generate CI/CD configuration files for GitHub.        |         |
+| `gitignore` | Generate `.gitignore` file.                           |         |
+| `jitpack`   | Generate CI/CD configuration files for JitPack.       |         |
+| `license`   | Generate license file.                                |         |
+| `readme`    | Generate readme file.                                 |         |
+| `release`   | Generate CI/CD configuration files for Maven Central. |         |
+| `setup`     | Setup general CI/CD configurations.                   |    ✅    |
 
 ### CLEAN
 Cleans build output files.

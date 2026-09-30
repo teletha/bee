@@ -56,7 +56,7 @@ public interface CI extends Task {
 
     @Command("Generate CI/CD configuration files for GitHub.")
     default void github() {
-        require(CI::gitignore, CI::jitpack);
+        require(CI::gitignore, CI::jitpack, CI::release);
 
         String build = """
                 name: Build and Deploy
@@ -92,11 +92,11 @@ public interface CI extends Task {
                     - name: Build artifact and site
                       run: |
                         if [ -e "bee" ]; then
-                          source bee install doc:site maven:pom ci:readme ci:license
+                          source bee install doc:site maven:pom ci:readme ci:license ci:release
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
                           curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
-                          java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
+                          java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license ci:release
                         fi
 
                     - name: Deploy site
@@ -431,6 +431,189 @@ public interface CI extends Task {
                           # string to standard output. NO WAY!
                           echo "[INFO] Installing /home/jitpack/build/pom.xml to /home/jitpack/.m2/repository/${GROUP//./\\/}/${ARTIFACT}/${ProductVersion}/${ARTIFACT}-${ProductVersion}.pom"
                         """, javaVersion, javaVersion, javaVersion, javaVersion, javaVersion, javaVersion));
+    }
+
+    @Command("Generate CI/CD configuration files for Maven Central.")
+    default void release() {
+        VCS vcs = project().getVersionControlSystem();
+
+        if (vcs == null) {
+            ui().info("No version control system.");
+            return;
+        }
+
+        String javaVersion = Inputs.normalize(project().getJavaSourceVersion());
+        String product = project().getProduct();
+        String group = project().getGroup();
+        // A Maven repository layout separates the group with slashes, where a Central Portal
+        // namespace separates it with dots.
+        String layout = group.replace('.', '/') + "/" + product;
+
+        String release = """
+                name: Release
+
+                # release-please updates version.txt in its release PR. When that PR is merged it
+                # creates the tag and the GitHub Release, so this workflow publishes the exact
+                # merged commit to Maven Central. Maven Central does not accept an unmerged
+                # release PR, and it rejects a version which has already been published, therefore
+                # this workflow must never be triggered by the release PR itself.
+                on:
+                  release:
+                    types: [published]
+                  push:
+                    tags:
+                      - '[0-9]+.[0-9]+.[0-9]+'
+                  workflow_dispatch:
+
+                jobs:
+                  deploy:
+                    runs-on: ubuntu-latest
+                    permissions:
+                      contents: write
+                    steps:
+                    - name: Check publishing secrets
+                      env:
+                        MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+                        MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+                        MAVEN_CENTRAL_GPG_PRIVATE_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PRIVATE_KEY }}
+                        MAVEN_CENTRAL_GPG_PUBLIC_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PUBLIC_KEY }}
+                        MAVEN_CENTRAL_GPG_PASSPHRASE: ${{ secrets.MAVEN_CENTRAL_GPG_PASSPHRASE }}
+                      run: |
+                        # A missing secret surfaces as an obscure JReleaser or HTTP error much
+                        # later, so report every missing name at once and fail before building.
+                        missing=()
+                        for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_TOKEN MAVEN_CENTRAL_GPG_PRIVATE_KEY MAVEN_CENTRAL_GPG_PUBLIC_KEY MAVEN_CENTRAL_GPG_PASSPHRASE; do
+                          if [ -z "${!name}" ]; then
+                            missing+=("${name}")
+                          fi
+                        done
+
+                        if [ ${#missing[@]} -gt 0 ]; then
+                          echo "::error::Not registered as a GitHub Actions secret: ${missing[*]}"
+                          echo "Register them in the repository settings, Secrets and variables > Actions."
+                          exit 1
+                        fi
+
+                    - name: Check out repository
+                      uses: actions/checkout@v4
+                      with:
+                        # JReleaser resolves the tag and the changelog from the git history.
+                        fetch-depth: 0
+
+                    - name: Set up JDK
+                      uses: actions/setup-java@v4.4.0
+                      with:
+                        distribution: zulu
+                        java-version: %s
+
+                    - name: Cache bee local repository
+                      uses: actions/cache@v4
+                      with:
+                        path: ${{ env.JAVA_HOME }}/lib/bee/repository
+                        key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
+                        restore-keys: ${{ runner.os }}-bee
+
+                    - name: Read product version
+                      id: version
+                      run: |
+                        # release-please owns version.txt, so it is the single source of truth here.
+                        value=$(cat version.txt | xargs)
+                        echo "value=${value}" >> "$GITHUB_OUTPUT"
+                        echo "Releasing %s ${value}"
+
+                    - name: Build artifacts
+                      run: |
+                        if [ -e "bee" ]; then
+                          source bee install
+                        else
+                          version=$(curl -SsL https://git.io/stable-bee)
+                          curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                          java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install
+                        fi
+
+                    - name: Stage artifacts in Maven repository layout
+                      env:
+                        PRODUCT_VERSION: ${{ steps.version.outputs.value }}
+                      run: |
+                        # Maven Central requires a jar, a sources jar, a javadoc jar and a POM file
+                        # arranged under the group path. JReleaser signs, checksums and bundles
+                        # whatever it finds in this directory.
+                        directory=target/staging-deploy/%s/${PRODUCT_VERSION}
+                        mkdir -p ${directory}
+                        cp target/%s-${PRODUCT_VERSION}.jar ${directory}/
+                        cp target/%s-${PRODUCT_VERSION}-sources.jar ${directory}/
+                        cp target/%s-${PRODUCT_VERSION}-javadoc.jar ${directory}/
+                        cp pom.xml ${directory}/%s-${PRODUCT_VERSION}.pom
+                        ls -l ${directory}
+
+                    - name: Publish to Maven Central
+                      uses: jreleaser/release-action@v2
+                      env:
+                        # Keep JReleaser in sync with the version release-please wrote into version.txt.
+                        JRELEASER_PROJECT_VERSION: ${{ steps.version.outputs.value }}
+                        JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                        JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PRIVATE_KEY }}
+                        JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PUBLIC_KEY }}
+                        JRELEASER_GPG_PASSPHRASE: ${{ secrets.MAVEN_CENTRAL_GPG_PASSPHRASE }}
+                        JRELEASER_MAVENCENTRAL_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+                        JRELEASER_MAVENCENTRAL_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
+                      with:
+                        version: 1.26.0
+                        arguments: release --verbose
+                """;
+
+        // In a format string, a double brace denotes a single brace, so {{projectVersion}} is
+        // rendered as {projectVersion}, which is a JReleaser expression and not a placeholder.
+        String jreleaser = """
+                project:
+                  name: %s
+                  # Overridden by JRELEASER_PROJECT_VERSION in the release workflow, so that this
+                  # file does not have to be regenerated every time release-please bumps version.txt.
+                  version: '%s'
+                  links:
+                    homepage: %s
+                release:
+                  github:
+                    owner: %s
+                    name: %s
+                    tagName: '{{projectVersion}}'
+                    # The tag and the GitHub Release are created by release-please when its release
+                    # PR is merged. JReleaser must not create them a second time.
+                    skipTag: true
+                    skipRelease: true
+                    changelog:
+                      formatted: ALWAYS
+                files:
+                  globs:
+                    - pattern: target/%s-{{projectVersion}}.jar
+                    - pattern: target/%s-{{projectVersion}}-sources.jar
+                    - pattern: target/%s-{{projectVersion}}-javadoc.jar
+                signing:
+                  pgp:
+                    active: RELEASE
+                    armored: true
+                    # The key material is injected through JRELEASER_GPG_SECRET_KEY,
+                    # JRELEASER_GPG_PUBLIC_KEY and JRELEASER_GPG_PASSPHRASE.
+                deploy:
+                  maven:
+                    mavenCentral:
+                      central:
+                        active: RELEASE
+                        url: https://central.sonatype.com/api/v1/publisher
+                        # The directory prepared by the release workflow, in Maven repository layout.
+                        stagingRepositories:
+                          - target/staging-deploy
+                        # The registered namespace of the Sonatype Central Portal account.
+                        namespace: %s
+                        applyMavenCentralRules: true
+                """;
+
+        makeFile(".github/workflows/release.yml", String
+                .format(release, javaVersion, product, layout, product, product, product, product));
+
+        makeFile("jreleaser.yml", String
+                .format(jreleaser, product, project().getVersion(), vcs.uri(), vcs.owner, vcs.repo,
+                        product, product, product, group));
     }
 
     @Command("Generate .gitignore file.")
