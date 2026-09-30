@@ -71,7 +71,9 @@ public interface CI extends Task {
                 jobs:
                   build:
                     runs-on: ubuntu-latest
-                    permissions: write-all
+                    permissions:
+                      contents: write
+                      pull-requests: write
                     steps:
                     - name: Check out repository
                       uses: actions/checkout@v4
