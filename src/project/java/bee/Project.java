@@ -20,16 +20,8 @@ public class Project extends bee.api.Project {
     {
         product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
         license(MIT);
-
-        // PUBLISHING
-        // Maven Central rejects a POM file which has no url, scm or developers element.
-        // These values must be declared here instead of being detected from the local
-        // repository, because the detection depends on the runtime environment and the
-        // contributor lookup requires an authenticated GitHub API request.
         versionControlSystem("https://github.com/teletha/bee");
-        // The published POM must not expose a personal mail address, so use the noreply
-        // address which GitHub reserves for this account.
-        developer("Teletha", "Teletha@users.noreply.github.com", "https://github.com/teletha");
+        // developer("Teletha", "Teletha@users.noreply.github.com", "https://github.com/teletha");
 
         require(SourceVersion.latest(), SourceVersion.RELEASE_24);
 
