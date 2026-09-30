@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.79.0](https://github.com/teletha/bee/compare/0.78.0...0.79.0) (2026-09-30)
+
+
+### Features
+
+* provide the embeddable project option ([73f6164](https://github.com/teletha/bee/commit/73f6164e0e1eb2dd60dfa0a69a3dde19eaeb1725))
+* publish artifacts to Maven Central ([611f09c](https://github.com/teletha/bee/commit/611f09ce96bc25628025374da4c1b885dfb0e361))
+
+
+### Bug Fixes
+
+* github action permits write-all ([8a5a2ca](https://github.com/teletha/bee/commit/8a5a2ca259de985e4c9783ac832e3069ad59f83a))
+* keep the narrowed github action permissions in the CI template ([13f823a](https://github.com/teletha/bee/commit/13f823ad8f2a10973f1ac4140d4527ffed31e8bc))
+* remove the self-project dependency ([ee0b046](https://github.com/teletha/bee/commit/ee0b0464900f86216fe3c3957865cc32d9b53c1a))
+* update jitpack script ([d1f6511](https://github.com/teletha/bee/commit/d1f65116d066cd0a818bb11502d50ba0d556b111))
+
 ## [0.78.0](https://github.com/teletha/bee/compare/0.77.2...0.78.0) (2025-06-03)
 
 
