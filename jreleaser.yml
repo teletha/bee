@@ -2,7 +2,7 @@ project:
   name: bee
   # Overridden by JRELEASER_PROJECT_VERSION in the release workflow, so that this
   # file does not have to be regenerated every time release-please bumps version.txt.
-  version: '0.78.0'
+  version: '0.79.0'
   links:
     homepage: https://github.com/teletha/bee
 release:

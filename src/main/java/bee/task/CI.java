@@ -68,24 +68,34 @@ public interface CI extends Task {
                     branches: [master, main]
                   workflow_dispatch:
 
+                # enable pipeline error in shell
+                defaults:
+                  run:
+                    shell: bash
+
+                concurrency:
+                  group: ${{ github.workflow }}-${{ github.ref }}
+                  cancel-in-progress: true
+
                 jobs:
                   build:
                     runs-on: ubuntu-latest
+                    timeout-minutes: 10
                     permissions:
                       contents: write
                       pull-requests: write
                     steps:
                     - name: Check out repository
-                      uses: actions/checkout@v4
+                      uses: actions/checkout@v7
 
                     - name: Set up JDK
-                      uses: actions/setup-java@v4.4.0
+                      uses: actions/setup-java@v6
                       with:
                         distribution: zulu
                         java-version: %s
 
                     - name: Cache bee local repository
-                      uses: actions/cache@v4
+                      uses: actions/cache@v6
                       with:
                         path: ${{ env.JAVA_HOME }}/lib/bee/repository
                         key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
@@ -101,13 +111,19 @@ public interface CI extends Task {
                           java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install doc:site maven:pom ci:readme ci:license
                         fi
 
+                    # The steps below write to the repository. A pull request from a fork runs with a
+                    # read-only GITHUB_TOKEN, so a push there ends in a permission error, and a pull
+                    # request from a branch of this repository would only rewrite its merge candidate,
+                    # which is never merged. Therefore these steps run on pushes only.
                     - name: Deploy site
-                      uses: peaceiris/actions-gh-pages@v3
+                      if: github.event_name != 'pull_request'
+                      uses: peaceiris/actions-gh-pages@v4
                       with:
                         github_token: ${{ secrets.GITHUB_TOKEN }}
                         publish_dir: target/site
 
                     - name: Request Releasing
+                      if: github.event_name != 'pull_request'
                       uses: googleapis/release-please-action@v3.7.13
                       with:
                         release-type: simple
@@ -115,7 +131,8 @@ public interface CI extends Task {
                         include-v-in-tag: false
 
                     - name: Auto commit
-                      uses: stefanzweifel/git-auto-commit-action@v5
+                      if: github.event_name != 'pull_request'
+                      uses: stefanzweifel/git-auto-commit-action@v7
                       with:
                         commit_message: update repository info
                 """;
@@ -125,8 +142,7 @@ public interface CI extends Task {
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
         makeFile("version.txt", List.of(project().getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
-        makeFile(".github/workflows/build.yml", String
-                .format(build, version, project().getProduct(), project().getVersionControlSystem().domain()));
+        makeFile(".github/workflows/build.yml", String.format(build, version, project().getProduct()));
         license();
         readme();
 
@@ -459,19 +475,35 @@ public interface CI extends Task {
                 # merged commit to Maven Central. Maven Central does not accept an unmerged
                 # release PR, and it rejects a version which has already been published, therefore
                 # this workflow must never be triggered by the release PR itself.
+                #
+                # Publishing is triggered by the release alone, because release-please pushes the tag
+                # and publishes the Release in the same operation, so a push tag trigger would run
+                # this job a second time for the very same version and be rejected by Maven Central.
                 on:
                   release:
                     types: [published]
-                  push:
-                    tags:
-                      - '[0-9]+.[0-9]+.[0-9]+'
                   workflow_dispatch:
+
+                # The shell declares bash so that pipefail is enabled, which makes the pipeline in
+                # the version reading step below fail when a component of it fails.
+                defaults:
+                  run:
+                    shell: bash
+
+                # A publish must never be cancelled halfway, and a re-dispatched run must wait for
+                # the running one rather than deploying the same version at the same time.
+                concurrency:
+                  group: release-${{ github.ref }}
+                  cancel-in-progress: false
 
                 jobs:
                   deploy:
                     runs-on: ubuntu-latest
+                    timeout-minutes: 20
                     permissions:
-                      contents: write
+                      # JReleaser only reads the repository to build the changelog, because the tag
+                      # and the GitHub Release are already created by release-please.
+                      contents: read
                     steps:
                     - name: Check publishing secrets
                       env:
@@ -497,19 +529,19 @@ public interface CI extends Task {
                         fi
 
                     - name: Check out repository
-                      uses: actions/checkout@v4
+                      uses: actions/checkout@v7
                       with:
                         # JReleaser resolves the tag and the changelog from the git history.
                         fetch-depth: 0
 
                     - name: Set up JDK
-                      uses: actions/setup-java@v4.4.0
+                      uses: actions/setup-java@v6
                       with:
                         distribution: zulu
                         java-version: %s
 
                     - name: Cache bee local repository
-                      uses: actions/cache@v4
+                      uses: actions/cache@v6
                       with:
                         path: ${{ env.JAVA_HOME }}/lib/bee/repository
                         key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
@@ -648,6 +680,9 @@ public interface CI extends Task {
         while (updated.peekLast().isBlank()) {
             updated.pollLast();
         }
+        // The file writer only separates the lines it is given, so an empty last line is what makes
+        // the file end with a line separator.
+        updated.add("");
         return updated;
     }
 }

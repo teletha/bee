@@ -13,6 +13,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -149,7 +150,11 @@ public class TaskOperations {
      * @param content A file content.
      */
     public static final File makeFile(File file, String content) {
-        return makeFile(file, Arrays.asList(content.split("\\R")));
+        // A split with a negative limit keeps the trailing empty strings, so a content which ends
+        // with a line separator keeps its last line, and the file writer joins the lines with a
+        // separator in between. Without this, a content ending with a separator loses that trailing
+        // separator and the file ends without a newline.
+        return makeFile(file, Arrays.asList(content.split("\\R", -1)));
     }
 
     /**
@@ -183,9 +188,38 @@ public class TaskOperations {
             file.text(x -> x.replaceAll("\\R", "\n"));
         }
 
+        // A file writer separates the lines it is given but does not terminate the last one, so
+        // generated files would end without a line separator unless it is appended here.
+        if (!endsWithNewLine(file)) {
+            try (BufferedWriter writer = file.newBufferedWriter(StandardOpenOption.APPEND)) {
+                writer.newLine();
+            } catch (IOException e) {
+                throw I.quiet(e);
+            }
+        }
+
         ui().info("Make file [", file.absolutize(), "]");
 
         return file;
+    }
+
+    /**
+     * Check whether a file is empty or its last character is a line separator.
+     *
+     * @param file A file path to check.
+     * @return {@code true} if the file has no content or ends with a line separator.
+     */
+    private static final boolean endsWithNewLine(File file) {
+        try (InputStream input = file.newInputStream()) {
+            long size = file.size();
+            if (size == 0) {
+                return true;
+            }
+            input.skip(size - 1);
+            return input.read() == '\n';
+        } catch (IOException e) {
+            throw I.quiet(e);
+        }
     }
 
     /**
