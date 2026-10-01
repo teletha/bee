@@ -26,7 +26,7 @@ class TaskOperationTest extends AbstractTaskTest {
         makeFile(file, "text");
 
         assert file.isPresent();
-        assert file.text().equals("text");
+        assert file.text().equals("text" + Platform.EOL);
     }
 
     @Test
@@ -40,7 +40,7 @@ class TaskOperationTest extends AbstractTaskTest {
                 """);
 
         assert file.isPresent();
-        assert file.text().equals("A" + Platform.EOL + "B");
+        assert file.text().equals("A" + Platform.EOL + "B" + Platform.EOL);
     }
 
     @Test
@@ -54,7 +54,7 @@ class TaskOperationTest extends AbstractTaskTest {
                 """);
 
         assert file.isPresent();
-        assert file.text().equals("A" + Platform.EOL + "B");
+        assert file.text().equals("A" + Platform.EOL + "B" + Platform.EOL);
     }
 
     @Test
@@ -65,7 +65,7 @@ class TaskOperationTest extends AbstractTaskTest {
         makeFile(file, List.of("A", "B"));
 
         assert file.isPresent();
-        assert file.text().equals("A" + Platform.EOL + "B");
+        assert file.text().equals("A" + Platform.EOL + "B" + Platform.EOL);
     }
 
     @Test
@@ -76,7 +76,7 @@ class TaskOperationTest extends AbstractTaskTest {
         makeFile("file", List.of("A", "B"));
 
         assert file.isPresent();
-        assert file.text().equals("A" + Platform.EOL + "B");
+        assert file.text().equals("A" + Platform.EOL + "B" + Platform.EOL);
     }
 
     @Test
