@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.79.1](https://github.com/teletha/bee/compare/0.79.0...0.79.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* update ci ([cca1190](https://github.com/teletha/bee/commit/cca1190b6e96e5116355204009c48a3bd640df4e))
+* update license ([b053590](https://github.com/teletha/bee/commit/b0535909744976da858ab7b2166c7bd65f23488d))
+
 ## [0.79.0](https://github.com/teletha/bee/compare/0.78.0...0.79.0) (2026-09-30)
 
 
