@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta content="width=device-width, initial-scale=1" name="viewport"/>
+		<meta content="Explains how to use Bee and its API. Bee is an open source build automation tool that focuses on conventions, type safety and performance. Project and build task definitions are written in Java, ensuring flexible extensibility for programmers." name="description"/>
+		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<script src="mimic.js" type="module"></script>
+		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="w">
+		<header class="O" date="2026-09-30">
+			<h1 class="P"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="Q"><a href="api/main.html" id="API"><svg class="package">
+						<use href="main.svg#package"/>
+					</svg>
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
+						<use href="main.svg#activity"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user">
+						<use href="main.svg#user"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github">
+						<use href="main.svg#github"/>
+					</svg>
+				</a></nav>
+			<div class="R"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+						<use href="main.svg#sun"/>
+					</svg><svg class="moon">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<nav class="x"></nav>
+		<article class="e" id="Article">
+			<section class="K"><code class="M">bee.util</code>
+				<h2 class="Class l"><code class="o">GithubAPI</code></h2>
+				<div class="h"></div><span class="A"><p>A minimal client for the <a href="https://docs.github.com/rest">GitHub REST API</a>.</p><p>
+ Authentication is performed with the
+ <a href="https://docs.github.com/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow">OAuth
+ 2.0 Device Flow</a>, so no client secret is required and the user only needs a browser to
+ authorize this tool. The issued access token is cached in the user&apos;s home directory and reused on
+ the following invocations. Set the <code>GH_TOKEN</code> or <code>GITHUB_TOKEN</code> environment variable
+ to bypass the interactive authorization (which is convenient in CI).
+ </p></span></section>
+			<section class="K" id="createRepository(java.lang.String,boolean)">
+				<h2 class="Z"><i class="STATIC PUBLIC"></i><code class="o">createRepository</code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>boolean</code><code class="parameterName">privateRepository</code>)</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="r">
+					<tr class="s">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
+						<td><span><p>A name of the repository to create.</p></span></td>
+					</tr>
+					<tr class="s">
+						<td><code>boolean</code><code class="parameterName">privateRepository</code></td>
+						<td><span><p>Whether the repository is private or public.</p></span></td>
+					</tr>
+					<tr class="c">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
+						<td><span><p>A URL to clone the created repository.</p></span></td>
+					</tr>
+				</table><span class="A"><p>Create a repository with the specified name for the authenticated user.</p></span></section>
+			<section class="K" id="configure(java.lang.String,bee.util.GithubAPI.Settings)">
+				<h2 class="Z"><i class="STATIC PUBLIC"></i><code class="o">configure</code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="bee.util.GithubAPI.Settings" href="api/bee.util.GithubAPI.Settings.html">Settings</a></code><code class="parameterName">settings</code>)</code><i class="N"><code>void</code></i></h2>
+				<table class="r">
+					<tr class="s">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
+						<td><span><p>A repository name.</p></span></td>
+					</tr>
+					<tr class="s">
+						<td><code><a aria-label="bee.util.GithubAPI.Settings" href="api/bee.util.GithubAPI.Settings.html">Settings</a></code><code class="parameterName">settings</code></td>
+						<td><span><p>Repository settings to apply.</p></span></td>
+					</tr>
+				</table><span class="A"><p>Apply the specified settings to the repository for the authenticated user.</p></span></section>
+			<section class="K" id="repositoryUrl(java.lang.String)">
+				<h2 class="Z"><i class="STATIC PUBLIC"></i><code class="o">repositoryUrl</code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="r">
+					<tr class="s">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
+						<td><span><p>A repository name.</p></span></td>
+					</tr>
+					<tr class="c">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
+						<td><span><p>A URL to clone the repository.</p></span></td>
+					</tr>
+				</table><span class="A"><p>Resolve the clone URL of the specified repository for the authenticated user.</p></span></section>
+			<section class="K" id="connect(java.lang.String,psychopath.Directory)">
+				<h2 class="Z"><i class="STATIC PUBLIC"></i><code class="o">connect</code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>, <code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="N"><code>void</code></i></h2>
+				<table class="r">
+					<tr class="s">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code></td>
+						<td><span><p>A remote repository URL.</p></span></td>
+					</tr>
+					<tr class="s">
+						<td><code>psychopath.Directory</code><code class="parameterName">directory</code></td>
+						<td><span><p>A local directory to connect.</p></span></td>
+					</tr>
+				</table><span class="A"><p>Connect the specified local directory with the remote repository. When the remote has commits,
+this checks out its default branch. Existing local files are kept, so a project which already
+contains Bee files can be attached to the remote safely.</p></span></section>
+		</article>
+		<aside class="y">
+			<div class="L">
+				<h5 class="U">Static Methods</h5>
+				<ul>
+					<li class="m"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.GithubAPI.html#createRepository(java.lang.String,boolean)">createRepository</a></code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>boolean</code><code class="parameterName">privateRepository</code>)</code><i class="d"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="m"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.GithubAPI.html#configure(java.lang.String,bee.util.GithubAPI.Settings)">configure</a></code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code><a aria-label="bee.util.GithubAPI.Settings" href="api/bee.util.GithubAPI.Settings.html">Settings</a></code><code class="parameterName">settings</code>)</code><i class="d"><code>void</code></i></li>
+					<li class="m"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.GithubAPI.html#repositoryUrl(java.lang.String)">repositoryUrl</a></code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="d"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="m"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.GithubAPI.html#connect(java.lang.String,psychopath.Directory)">connect</a></code><code class="GB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>, <code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="d"><code>void</code></i></li>
+				</ul>
+			</div>
+		</aside>
+		<footer class="a">
+			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
+		</footer>
+	</body>
+	<script src="root.js"></script>
+	<script src="main.js" type="module"></script>
+</html>

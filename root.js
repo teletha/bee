@@ -165,6 +165,16 @@ const root = {
 			"type": "Class"
 		},
 		{
+			"name": "GithubAPI",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "GithubAPI.Settings",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
 			"name": "Profiling",
 			"packageName": "bee.util",
 			"type": "Class"
@@ -251,6 +261,11 @@ const root = {
 		},
 		{
 			"name": "Bun",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Github",
 			"packageName": "bee.task",
 			"type": "Interface"
 		},
