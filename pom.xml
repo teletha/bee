@@ -290,7 +290,7 @@ Configuration
 		<dependency>
 			<groupId>com.github.teletha</groupId>
 			<artifactId>antibug</artifactId>
-			<version>1.14.0</version>
+			<version>1.16.1</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
