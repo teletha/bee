@@ -124,11 +124,29 @@ public interface CI extends Task {
 
                     - name: Request Releasing
                       if: github.event_name != 'pull_request'
+                      id: release
                       uses: googleapis/release-please-action@v3.7.13
                       with:
                         release-type: simple
                         package-name: %s
                         include-v-in-tag: false
+
+                    # The Release which the step above publishes is an event raised by the built-in
+                    # GITHUB_TOKEN, and such an event never starts a workflow run. This starts the
+                    # publish workflow from here instead, because a repository dispatch is one of
+                    # the only two events which the GITHUB_TOKEN may still raise a run with.
+                    # The version which was just released is given to the run through the payload.
+                    # Reading it from the checked out revision instead would read the version of
+                    # whatever the default branch holds when the run starts, and a manual run has
+                    # no payload and falls back to that revision with version.txt.
+                    - name: Notify the release workflow
+                      if: github.event_name != 'pull_request' && steps.release.outputs.release_created == 'true'
+                      env:
+                        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                      run: |
+                        gh api --method POST "repos/$GITHUB_REPOSITORY/dispatches" \\
+                          -f event_type=release \\
+                          -f "client_payload[version]=${{ steps.release.outputs.version }}"
 
                     - name: Auto commit
                       if: github.event_name != 'pull_request'
@@ -467,6 +485,11 @@ public interface CI extends Task {
         // namespace separates it with dots.
         String layout = group.replace('.', '/') + "/" + product;
 
+        // The tag which release-please writes, without the repository at hand. It follows the tag
+        // format of the publishing workflows, hence no v prefix and the same shape as version.txt.
+        String version = project().getVersion();
+        String tag = version.matches("\\d+(\\.\\d+)*(-[0-9A-Za-z.-]+)?") ? version : "v" + version;
+
         String release = """
                 name: Release
 
@@ -476,13 +499,26 @@ public interface CI extends Task {
                 # release PR, and it rejects a version which has already been published, therefore
                 # this workflow must never be triggered by the release PR itself.
                 #
-                # Publishing is triggered by the release alone, because release-please pushes the tag
-                # and publishes the Release in the same operation, so a push tag trigger would run
-                # this job a second time for the very same version and be rejected by Maven Central.
+                # Publishing is triggered from the build workflow with a repository dispatch which
+                # carries the released version, and not by the release event nor by a tag push.
+                # release-please raises those with the built-in GITHUB_TOKEN, and an event of that
+                # token never starts a workflow run, so neither would ever reach this file. A
+                # repository dispatch is one of the only two events the GITHUB_TOKEN may still
+                # raise a run with, and is the whole reason for the payload below.
+                #
+                # The payload is an output of the dispatch step of the build workflow. That step
+                # reads the version from the client payload, and this is where it arrives. A manual
+                # run carries nothing, and then version.txt on the checked out revision is the
+                # source of truth, which release-please keeps in sync with the release.
                 on:
-                  release:
-                    types: [published]
+                  repository_dispatch:
+                    types: [release]
                   workflow_dispatch:
+                    inputs:
+                      version:
+                        description: The released version, such as %s. The version of the selected branch is used when this is empty, so a discrepancy quietly publishes the wrong artifacts. Leave it empty only when the branch already carries the version to publish.
+                        type: string
+                        required: false
 
                 # The shell declares bash so that pipefail is enabled, which makes the pipeline in
                 # the version reading step below fail when a component of it fails.
@@ -490,10 +526,12 @@ public interface CI extends Task {
                   run:
                     shell: bash
 
-                # A publish must never be cancelled halfway, and a re-dispatched run must wait for
-                # the running one rather than deploying the same version at the same time.
+                # A publish must never be cancelled halfway, and a re-dispatch must wait for the
+                # running one rather than deploying the same version at the same time. The version
+                # is part of the group, because a manual run of another version is not the same
+                # deploy, and github.ref is the branch there rather than the tag.
                 concurrency:
-                  group: release-${{ github.ref }}
+                  group: release-${{ github.event.client_payload.version || inputs.version || github.ref }}
                   cancel-in-progress: false
 
                 jobs:
@@ -528,9 +566,33 @@ public interface CI extends Task {
                           exit 1
                         fi
 
+                    # The payload is restated as an environment variable rather than referenced in
+                    # every step, because a step which runs in a container is not given the event
+                    # payload, and an expression which reads an absent field and one which reads a
+                    # field of a string can each fail the whole job before any step begins.
+                    - name: Resolve the release tag
+                      id: release
+                      env:
+                        DISPATCH_VERSION: ${{ github.event.client_payload.version }}
+                        MANUAL_VERSION: ${{ inputs.version }}
+                      run: |
+                        value="${DISPATCH_VERSION:-${MANUAL_VERSION}}"
+                        if [ -z "${value}" ]; then
+                          # The simple releaser tags without a v prefix, so this matches version.txt.
+                          value=$(cat version.txt | xargs)
+                          echo "::warning::No version was dispatched, publishing ${value} from version.txt of the selected branch. Pass the version input to publish another one."
+                        fi
+                        echo "version=${value}" >> "$GITHUB_OUTPUT"
+                        echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+                        echo "Releasing %s ${value}"
+
                     - name: Check out repository
                       uses: actions/checkout@v7
                       with:
+                        # The released tag which the step above resolved, so the build does not
+                        # depend on the default branch still pointing at the release when this run
+                        # starts. A manual run of another version is checked out the same way.
+                        ref: ${{ steps.release.outputs.tag }}
                         # JReleaser resolves the tag and the changelog from the git history.
                         fetch-depth: 0
 
@@ -547,14 +609,6 @@ public interface CI extends Task {
                         key: ${{ runner.os }}-bee-${{ hashFiles('**/pom.xml') }}
                         restore-keys: ${{ runner.os }}-bee
 
-                    - name: Read product version
-                      id: version
-                      run: |
-                        # release-please owns version.txt, so it is the single source of truth here.
-                        value=$(cat version.txt | xargs)
-                        echo "value=${value}" >> "$GITHUB_OUTPUT"
-                        echo "Releasing %s ${value}"
-
                     - name: Build artifacts
                       run: |
                         if [ -e "bee" ]; then
@@ -567,7 +621,7 @@ public interface CI extends Task {
 
                     - name: Stage artifacts in Maven repository layout
                       env:
-                        PRODUCT_VERSION: ${{ steps.version.outputs.value }}
+                        PRODUCT_VERSION: ${{ steps.release.outputs.version }}
                       run: |
                         # Maven Central requires a jar, a sources jar, a javadoc jar and a POM file
                         # arranged under the group path. JReleaser signs, checksums and bundles
@@ -584,7 +638,7 @@ public interface CI extends Task {
                       uses: jreleaser/release-action@v2
                       env:
                         # Keep JReleaser in sync with the version release-please wrote into version.txt.
-                        JRELEASER_PROJECT_VERSION: ${{ steps.version.outputs.value }}
+                        JRELEASER_PROJECT_VERSION: ${{ steps.release.outputs.version }}
                         JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                         JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PRIVATE_KEY }}
                         JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PUBLIC_KEY }}
@@ -642,7 +696,11 @@ public interface CI extends Task {
                         applyMavenCentralRules: true
                 """;
 
-        makeFile(".github/workflows/release.yml", String.format(release, javaVersion, product, layout, product, product, product, product));
+        // The arguments follow the order in which the placeholders appear in the template above:
+        // the description names the version, the version step names the product, the JDK step takes
+        // the java version, the staging path takes the repository layout and the rest the product.
+        makeFile(".github/workflows/release.yml",
+                String.format(release, version, product, javaVersion, layout, product, product, product, product));
 
         makeFile("jreleaser.yml", String
                 .format(jreleaser, product, project().getVersion(), vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
