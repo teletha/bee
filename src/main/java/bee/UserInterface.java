@@ -66,6 +66,15 @@ public abstract class UserInterface {
     /** Message type magic number. */
     protected static final int PROGRESS = 6;
 
+    /** Message type magic number. */
+    protected static final int SPINNER = 7;
+
+    /** The frames of the spinner. */
+    protected static final String[] SPINNER_FRAMES = {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
+
+    /** The interval (ms) between the spinner frames. */
+    protected static final long SPINNER_INTERVAL = 100;
+
     /** The predefined answers. */
     private final Deque<String> answers = new ArrayDeque(BeeOption.Input.value());
 
@@ -104,6 +113,18 @@ public abstract class UserInterface {
     public final void progress(CharSequence message) {
         if (!BeeOption.Quiet.value) {
             write(PROGRESS, String.valueOf(message));
+        }
+    }
+
+    /**
+     * Talk to user as an animated spinner. The animation continues until the next non-trace message
+     * is written.
+     * 
+     * @param message Your message.
+     */
+    public final void spinner(CharSequence message) {
+        if (!BeeOption.Quiet.value) {
+            write(SPINNER, String.valueOf(message));
         }
     }
 
@@ -618,6 +639,13 @@ public abstract class UserInterface {
         /** The original standard input. */
         private final InputStream standardInput;
 
+        /**
+         * The spinner frames. Falls back to ASCII when the console can not encode the unicode
+         * frames.
+         */
+        private static final String[] FRAMES = System.out.charset().newEncoder().canEncode(SPINNER_FRAMES[0]) ? SPINNER_FRAMES
+                : new String[] {"|", "/", "-", "\\"};
+
         /** The task state. */
         private boolean first = false;
 
@@ -632,6 +660,9 @@ public abstract class UserInterface {
 
         /** The progress message. */
         private Disposable progress;
+
+        /** The spinner. */
+        private Disposable spinner;
 
         /**
          * Build with standard output and error.
@@ -680,9 +711,15 @@ public abstract class UserInterface {
          */
         @Override
         protected synchronized void write(int type, String message) {
-            if (type != TRACE && progress != null) {
-                progress.dispose();
-                progress = null;
+            if (type != TRACE) {
+                if (progress != null) {
+                    progress.dispose();
+                    progress = null;
+                }
+                if (spinner != null) {
+                    spinner.dispose();
+                    spinner = null;
+                }
             }
 
             switch (type) {
@@ -699,6 +736,14 @@ public abstract class UserInterface {
                         long minutes = (count - 1) / 60;
                         long sec = (count - 1) % 60;
                         write(TRACE, message + "  (" + String.format("%02d:%02d", minutes, sec) + ")");
+                    });
+                }
+                break;
+
+            case SPINNER:
+                if (!disableTrace) {
+                    spinner = I.schedule(0, SPINNER_INTERVAL, TimeUnit.MILLISECONDS, true).to(count -> {
+                        write(TRACE, FRAMES[(int) ((count - 1) % FRAMES.length)] + " " + message);
                     });
                 }
                 break;
