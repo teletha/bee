@@ -44,30 +44,35 @@
 		</header>
 		<nav class="e"></nav>
 		<article class="a" id="Article">
-			<section class="KB"><code class="r">bee</code>
-				<h2 class="Functional FB"><code class="w">Task.TaskReference</code><code class="W">&lt;<code>T</code>&gt;</code></h2>
+			<section class="KB"><code class="r">bee.task</code>
+				<h2 class="Interface FB"><code class="w">Deploy</code></h2>
 				<div class="LB">
-					<ul class="E F">
-						<li><code>T</code><span><p>The type of the <code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code> interface containing the referenced command.</p></span></li>
-					</ul>
 					<ul class="E H">
-						<li><code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/function/Consumer.html">Consumer</a><code class="parameters"><code>T</code></code></code></li>
-						<li><code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/io/Serializable.html">Serializable</a></code></li>
+						<li><code>kiss.Extensible</code></li>
+						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></li>
 					</ul>
-					<ul class="E I">
-						<li><code><a aria-label="bee.Task.ValuedTaskReference" href="api/bee.Task.ValuedTaskReference.html">ValuedTaskReference</a><code class="parameters"><code>T</code>, <code>R</code></code></code></li>
-					</ul>
-				</div><span class="A"><p>Represents a type-safe reference to a task command, typically implemented using a
-method reference (e.g., <code>MyTask::myCommand</code>).</p><p>
- This functional interface serves as a marker and must be <code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/io/Serializable.html">Serializable</a></code>
- to allow Bee to potentially introspect the reference (e.g., using
- <code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html#computeTaskName(bee.Task.TaskReference)">TaskInfo#computeTaskName(TaskReference)</a></code>).
- </p>
- It extends <code><a aria-label="java.util.function.Consumer 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/function/Consumer.html">Consumer</a></code> to indicate that it accepts a task instance to operate on.
-</span></section>
+				</div>
+			</section>
+			<section class="KB" id="POLL_INTERVAL">
+				<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="w">POLL_INTERVAL</code><i class="Y"><code class="return">long</code></i></h2><span class="A"><p>The interval (ms) between the JitPack API polls.</p></span></section>
+			<section class="KB" id="TIMEOUT">
+				<h2 class="k"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="w">TIMEOUT</code><i class="Y"><code class="return">long</code></i></h2><span class="A"><p>The maximum time (ms) to wait for the JitPack build.</p></span></section>
+			<section class="KB" id="check()">
+				<h2 class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="w">check</code><code class="W">()</code><i class="Y"><code>void</code></i></h2>
+			</section>
 		</article>
 		<aside class="f">
-			<div class="JB"></div>
+			<div class="JB">
+				<h5 class="s">Static Fields</h5>
+				<ul>
+					<li class="L"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.task.Deploy.html#POLL_INTERVAL">POLL_INTERVAL</a></code><i class="M"><code class="return">long</code></i></li>
+					<li class="L"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.task.Deploy.html#TIMEOUT">TIMEOUT</a></code><i class="M"><code class="return">long</code></i></li>
+				</ul>
+				<h5 class="s">Methods</h5>
+				<ul>
+					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Deploy.html#check()">check</a></code><code class="W">()</code><i class="M"><code>void</code></i></li>
+				</ul>
+			</div>
 		</aside>
 		<footer class="d">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>

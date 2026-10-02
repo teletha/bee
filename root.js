@@ -220,6 +220,11 @@ const root = {
 			"type": "Class"
 		},
 		{
+			"name": "Deploy",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
 			"name": "Compile",
 			"packageName": "bee.task",
 			"type": "Interface"
