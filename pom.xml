@@ -913,7 +913,7 @@ Configuration
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.5.2</version>
 				<configuration>
-					<argLine>-ea --enable-native-access=ALL-UNNAMED -Dfile.encoding=UTF-8</argLine>
+					<argLine>-ea   -Dfile.encoding=UTF-8</argLine>
 					<reportFormat>plain</reportFormat>
 					<consoleOutputReporter>
 						<disable>true</disable>
