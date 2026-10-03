@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="b">
-		<header class="c" date="2026-09-30">
+	<body class="V">
+		<header class="W" date="2026-09-30">
 			<h1 class="t"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="Z"><a href="api/main.html" id="API"><svg class="package">
+			<nav class="r"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="DB"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="f"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="e"></nav>
-		<article class="a" id="Article">
-			<section class="KB"><code class="r">bee.task</code>
-				<h2 class="Interface FB"><code class="w">Jar</code></h2>
-				<div class="LB">
+		<nav class="Z"></nav>
+		<article class="X" id="Article">
+			<section class="N"><code class="y">bee.task</code>
+				<h2 class="Interface FB"><code class="LB">Jar</code></h2>
+				<div class="BB">
 					<ul class="E H">
 						<li><code>kiss.Extensible</code></li>
 						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a><code class="parameters"><code><a aria-label="bee.task.Jar.Config" href="api/bee.task.Jar.Config.html">Config</a></code></code></code></li>
@@ -65,42 +65,42 @@ files.</p><p>
 </p>
 					</p>
 				</span></section>
-			<section class="KB" id="source()">
-				<h2 class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="w">source</code><code class="W">()</code><i class="Y"><code>void</code></i></h2><span class="A"><p>Packages the main compiled classes and resources into a standard JAR file.
+			<section class="N" id="source()">
+				<h2 class="b"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="LB">source</code><code class="z">()</code><i class="O"><code>void</code></i></h2><span class="A"><p>Packages the main compiled classes and resources into a standard JAR file.
 Also creates a separate JAR containing the main source files and resources.
 If configured, modifies class files (version downgrade, debug/trace info removal) before
 packaging.
 This is the default command for the <code>jar</code> task.</p></span></section>
-			<section class="KB" id="test()">
-				<h2 class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="w">test</code><code class="W">()</code><i class="Y"><code>void</code></i></h2><span class="A"><p>Packages the compiled test classes and resources into a test JAR file.
+			<section class="N" id="test()">
+				<h2 class="b"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="LB">test</code><code class="z">()</code><i class="O"><code>void</code></i></h2><span class="A"><p>Packages the compiled test classes and resources into a test JAR file.
 Also creates a separate JAR containing the test source files and resources.
 Class file modification is typically not applied to test classes.</p></span></section>
-			<section class="KB" id="project()">
-				<h2 class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="w">project</code><code class="W">()</code><i class="Y"><code>void</code></i></h2><span class="A"><p>Packages the compiled project definition classes (e.g., the Project class itself) and
+			<section class="N" id="project()">
+				<h2 class="b"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="LB">project</code><code class="z">()</code><i class="O"><code>void</code></i></h2><span class="A"><p>Packages the compiled project definition classes (e.g., the Project class itself) and
 resources into a project JAR file.
 Also creates a separate JAR containing the project source files and resources.
 Class file modification is typically not applied to project classes.</p></span></section>
-			<section class="KB" id="document()">
-				<h2 class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="w">document</code><code class="W">()</code><i class="Y"><code>void</code></i></h2><span class="A"><p>Packages the generated Javadoc documentation into a documentation JAR file.</p></span></section>
-			<section class="KB" id="merge()">
-				<h2 class="k"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="w">merge</code><code class="W">()</code><i class="Y"><code>void</code></i></h2><span class="A"><p>Creates a single executable JAR file (uber-jar or fat-jar) containing the main classes,
+			<section class="N" id="document()">
+				<h2 class="b"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="LB">document</code><code class="z">()</code><i class="O"><code>void</code></i></h2><span class="A"><p>Packages the generated Javadoc documentation into a documentation JAR file.</p></span></section>
+			<section class="N" id="merge()">
+				<h2 class="b"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="LB">merge</code><code class="z">()</code><i class="O"><code>void</code></i></h2><span class="A"><p>Creates a single executable JAR file (uber-jar or fat-jar) containing the main classes,
 resources, and all runtime dependencies unpacked and merged together.
 Automatically detects and sets the Main-Class and agent attributes in the JAR&apos;s manifest
 file.</p></span></section>
 		</article>
-		<aside class="f">
+		<aside class="a">
 			<div class="JB">
-				<h5 class="s">Methods</h5>
+				<h5 class="AB">Methods</h5>
 				<ul>
-					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#source()">source</a></code><code class="W">()</code><i class="M"><code>void</code></i></li>
-					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#test()">test</a></code><code class="W">()</code><i class="M"><code>void</code></i></li>
-					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#project()">project</a></code><code class="W">()</code><i class="M"><code>void</code></i></li>
-					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#document()">document</a></code><code class="W">()</code><i class="M"><code>void</code></i></li>
-					<li class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#merge()">merge</a></code><code class="W">()</code><i class="M"><code>void</code></i></li>
+					<li class="w"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#source()">source</a></code><code class="z">()</code><i class="M"><code>void</code></i></li>
+					<li class="w"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#test()">test</a></code><code class="z">()</code><i class="M"><code>void</code></i></li>
+					<li class="w"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#project()">project</a></code><code class="z">()</code><i class="M"><code>void</code></i></li>
+					<li class="w"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#document()">document</a></code><code class="z">()</code><i class="M"><code>void</code></i></li>
+					<li class="w"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Jar.html#merge()">merge</a></code><code class="z">()</code><i class="M"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="d">
+		<footer class="Y">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
