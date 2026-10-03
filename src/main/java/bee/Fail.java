@@ -117,10 +117,83 @@ public class Fail extends RuntimeException {
         if (!solutions.isEmpty()) {
             for (String solution : solutions) {
                 builder.append(Platform.EOL);
-                builder.append(Platform.EOL).append("\t-").append(solution);
+                builder.append(Platform.EOL);
+                appendWrapped(builder, "\t-", solution);
             }
         }
         return builder.toString();
+    }
+
+    /**
+     * Append the text with the hanging indent so that long lines wrap readably.
+     * 
+     * @param builder A message builder.
+     * @param indent An indent used for the first line.
+     * @param text A text.
+     */
+    private static void appendWrapped(StringBuilder builder, String indent, String text) {
+        int width = Fail.width;
+
+        if (text == null || width <= 0 || indent.length() + text.length() <= width) {
+            builder.append(indent).append(text == null ? "" : text);
+            return;
+        }
+
+        String continuation = " ".repeat(indent.length());
+        int available = Math.max(1, width - indent.length());
+        int start = 0;
+        boolean first = true;
+
+        while (start < text.length()) {
+            int end = Math.min(text.length(), start + available);
+
+            if (end < text.length()) {
+                // Prefer to break at the last white space so words are not split.
+                int space = text.lastIndexOf(' ', end);
+                if (space > start) {
+                    end = space;
+                }
+            }
+
+            builder.append(first ? indent : Platform.EOL)
+                    .append(first ? "" : continuation)
+                    .append(text, start, end);
+            first = false;
+
+            // Skip the white space consumed by the break.
+            while (end < text.length() && text.charAt(end) == ' ') {
+                end++;
+            }
+            start = end;
+        }
+    }
+
+    /**
+     * The terminal width used to wrap the solutions.
+     */
+    private static final int width = resolveWidth();
+
+    /**
+     * Resolve the terminal width from the system property, the environment variable or the default
+     * value.
+     * 
+     * @return A terminal width.
+     */
+    private static int resolveWidth() {
+        for (String name : new String[] {"bee.width", "COLUMNS"}) {
+            String value = name.startsWith("bee.") ? System.getProperty(name) : System.getenv(name);
+            if (value != null) {
+                try {
+                    int width = Integer.parseInt(value.trim());
+                    if (0 < width) {
+                        return width;
+                    }
+                } catch (NumberFormatException e) {
+                    // ignore and try the next source
+                }
+            }
+        }
+        return 80;
     }
 
     /**

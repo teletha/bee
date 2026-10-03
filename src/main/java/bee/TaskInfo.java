@@ -175,7 +175,10 @@ class TaskInfo {
         // Commands Section
         if (!descriptions.isEmpty()) {
             ui.info("Command");
-            ui.info(descriptions);
+            int width = descriptions.keySet().stream().mapToInt(TaskInfo::displayWidth).max().orElse(0);
+            ui.info(descriptions.entrySet().stream().map(entry -> {
+                return String.format("%-" + width + "s \t%s", entry.getKey(), entry.getValue());
+            }).toList());
         } else {
             ui.info("Command");
             ui.info("  No explicit commands defined, only default 'help'");
@@ -269,6 +272,27 @@ class TaskInfo {
     @Override
     public String toString() {
         return String.format("%-12s \t%s", name, descriptions.get(defaultCommand));
+    }
+
+    /**
+     * Calculate the display width of the text. Full-width characters occupy two columns.
+     * 
+     * @param text A text.
+     * @return A display width.
+     */
+    private static int displayWidth(String text) {
+        int width = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if (c < 0x1100) {
+                width += 1;
+            } else if (c <= 0x115f || (c >= 0x2e80 && c <= 0xa4cf) || (c >= 0xac00 && c <= 0xd7a3) || (c >= 0xf900 && c <= 0xfaff) || (c >= 0xfe30 && c <= 0xfe4f) || (c >= 0xff00 && c <= 0xff60) || (c >= 0xffe0 && c <= 0xffe6) || (c >= 0x20000 && c <= 0x3fffd)) {
+                width += 2;
+            } else {
+                width += 1;
+            }
+        }
+        return width;
     }
 
     /**

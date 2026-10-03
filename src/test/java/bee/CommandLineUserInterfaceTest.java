@@ -9,6 +9,8 @@
  */
 package bee;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,12 @@ import antibug.CommandLineUser;
 import bee.UserInterface.CommandLineUserInterface;
 
 class CommandLineUserInterfaceTest {
+
+    /** The escape sequence which terminals send when the user presses the down arrow key. */
+    private static final String DOWN = "\u001b[B";
+
+    /** The escape sequence which terminals send when the user presses the up arrow key. */
+    private static final String UP = "\u001b[A";
 
     private final CommandLineUser user = new CommandLineUser(true);
 
@@ -98,6 +106,7 @@ class CommandLineUserInterfaceTest {
         assert ui.ask("question", def).equals(def);
     }
 
+    @Test
     void select() {
         List<String> items = new ArrayList();
         items.add("one");
@@ -112,5 +121,83 @@ class CommandLineUserInterfaceTest {
 
         user.willInput("3");
         assert ui.ask("question", items).equals("three");
+    }
+
+    @Test
+    void selectByEnterKey() {
+        UserInterface ui = tui();
+
+        user.willInput("");
+
+        assert ui.ask("question", List.of("one", "two", "three")).equals("one");
+    }
+
+    @Test
+    void selectByArrowKey() {
+        UserInterface ui = tui();
+
+        user.willInput(DOWN, "");
+        assert ui.ask("question", List.of("one", "two", "three")).equals("two");
+
+        user.willInput(DOWN, DOWN, UP, "");
+        assert ui.ask("question", List.of("one", "two", "three")).equals("two");
+
+        // The cursor does not go out of the items.
+        user.willInput(UP, UP, UP, "");
+        assert ui.ask("question", List.of("one", "two", "three")).equals("one");
+
+        user.willInput(DOWN, DOWN, DOWN, DOWN, "");
+        assert ui.ask("question", List.of("one", "two", "three")).equals("three");
+    }
+
+    @Test
+    void selectByNumber() {
+        UserInterface ui = tui();
+
+        user.willInput("3");
+        assert ui.ask("question", List.of("one", "two", "three")).equals("three");
+    }
+
+    @Test
+    void selectByInvalidInput() {
+        UserInterface ui = tui();
+
+        user.willInput("woo hoo", "9", DOWN, "");
+        assert ui.ask("question", List.of("one", "two", "three")).equals("two");
+
+        assert user.receive("Invalid input, please retry.");
+    }
+
+    /**
+     * Build an interactive user interface. The test environment has no terminal, so we have to
+     * enable the interactive selector explicitly.
+     *
+     * @return An interactive user interface.
+     */
+    private UserInterface tui() {
+        return new InteractiveUserInterface(user.output, user.error, user.input);
+    }
+
+    /**
+     * The command line user interface which is always able to use the interactive selector.
+     */
+    private static class InteractiveUserInterface extends CommandLineUserInterface {
+
+        /**
+         * @param output A standard output.
+         * @param error A standard error.
+         * @param input A standard input.
+         */
+        InteractiveUserInterface(PrintStream output, PrintStream error, InputStream input) {
+            super(output, error, input);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected boolean selectorAvailable() {
+            return true;
+        }
     }
 }
