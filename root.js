@@ -155,6 +155,11 @@ const root = {
 			"type": "AbstractClass"
 		},
 		{
+			"name": "Terminal",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
 			"name": "JavaCompiler",
 			"packageName": "bee.util",
 			"type": "Class"
