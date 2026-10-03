@@ -51,7 +51,7 @@ public class Project extends bee.api.Project {
         // REQUIRED
         require("com.github.teletha", "sinobu");
         require("com.github.teletha", "psychopath");
-        require("com.github.teletha", "auto483");
+        require("io.github.teletha", "auto483");
 
         // DYNAMICALLY ON RUNTIME
         require("org.junit.platform", "junit-platform-engine").atProvided();

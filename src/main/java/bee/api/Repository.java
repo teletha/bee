@@ -197,6 +197,9 @@ public class Repository {
     /** The current processing project. */
     private final Project project;
 
+    /** The resolved artifact files, keyed by the artifact file itself. */
+    private final Map<java.io.File, Boolean> resolvedFiles = new HashMap();
+
     /** The root repository system. */
     private final RepositorySystem system;
 
@@ -263,10 +266,51 @@ public class Repository {
             }
             request.setRootArtifact(project.asLibrary().artifact);
 
-            return system.resolveDependencies(session, new DependencyRequest(request, null)).getRoot();
+            DependencyNode root = system.resolveDependencies(session, new DependencyRequest(request, null)).getRoot();
+            registerResolvedFiles(root);
+            return root;
         } catch (DependencyResolutionException e) {
             throw I.quiet(e);
         }
+    }
+
+    /**
+     * Register every resolved artifact file in the specified dependency tree so that the set of
+     * resolved files can be inspected later.
+     * 
+     * @param node A dependency node.
+     */
+    private void registerResolvedFiles(DependencyNode node) {
+        Artifact artifact = node.getArtifact();
+        if (artifact != null && artifact.getFile() != null) {
+            resolvedFiles.put(artifact.getFile(), Boolean.TRUE);
+        }
+        for (DependencyNode child : node.getChildren()) {
+            registerResolvedFiles(child);
+        }
+    }
+
+    /**
+     * Get the resolved artifact files. The set is populated by {@link #buildDependencyGraph(Project)}
+     * and related resolution methods.
+     * 
+     * @return A set of resolved artifact files.
+     */
+    public Set<java.io.File> getResolvedFiles() {
+        return Collections.unmodifiableSet(resolvedFiles.keySet());
+    }
+
+    /**
+     * Sum the size of every resolved artifact file, counting each file only once.
+     * 
+     * @return A total size in bytes.
+     */
+    public long getResolvedSize() {
+        long total = 0;
+        for (java.io.File file : resolvedFiles.keySet()) {
+            total += file.length();
+        }
+        return total;
     }
 
     /**

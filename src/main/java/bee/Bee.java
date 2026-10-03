@@ -414,7 +414,7 @@ public class Bee {
      */
     public static void main(String... tasks) {
         // Restart this process with the selected JDK when it differs from the running one, so that
-        // the compilation, the test and the native build all use the selected JDK.
+        // the compilation, the test and the native build all use the selected JDK.^
         if (reexec(tasks)) {
             return;
         }
@@ -422,15 +422,16 @@ public class Bee {
         // 1. Measure JVM startup time immediately
         Profiling.measureJVMStartup();
 
-        // 2. Enable Ahead-of-Time (AOT) compilation cache if available. The cache is specific to the
-        // JDK which created it, so the file name contains the JDK feature version. JEP 483 can not
-        // create a cache from a directory classpath, so this only applies when running from a jar.
+        // 2. Enable Ahead-of-Time (AOT) compilation cache if available. The cache is specific to
+        // the JDK which created it, so the file name contains the JDK feature version. JEP 483 can
+        // not create a cache from a directory classpath, so this only applies when running from a
+        // jar.
         if (Locator.locate(Bee.class).isFile()) {
             JEP483.enable(aot(Runtime.version().feature()));
         }
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"jdk"};
+        if (tasks.length == 0) tasks = new String[] {"dependency"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.
@@ -503,7 +504,8 @@ public class Bee {
     }
 
     /**
-     * Build the AOT cache file name for the specified JDK feature version. The AOT cache is specific
+     * Build the AOT cache file name for the specified JDK feature version. The AOT cache is
+     * specific
      * to the JDK which created it, so the feature version is included in the file name.
      * 
      * @param feature A JDK feature version.

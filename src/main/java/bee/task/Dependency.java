@@ -45,7 +45,15 @@ public interface Dependency extends Task {
      */
     @Command(value = "Display the project dependency tree.", defaults = true)
     default void tree() {
-        show(0, I.make(Repository.class).buildDependencyGraph(project()));
+        Repository repository = I.make(Repository.class);
+        DependencyNode root = repository.buildDependencyGraph(project());
+
+        show(0, root);
+
+        Set<java.io.File> files = repository.getResolvedFiles();
+        if (!files.isEmpty()) {
+            ui().info("\t".repeat(0) + "Total  :  " + files.size() + " artifacts  (" + Inputs.formatAsSize(repository.getResolvedSize()) + ")");
+        }
     }
 
     /**
