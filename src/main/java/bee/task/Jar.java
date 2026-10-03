@@ -233,6 +233,7 @@ public interface Jar extends Task<Jar.Config> {
         // create manifest
         List<String> lines = new ArrayList();
         lines.add(Name.MANIFEST_VERSION + ": 1.0");
+        lines.add("Enable-Native-Access: ALL-UNNAMED");
         require(FindMain::main).to(clazz -> lines.add(Name.MAIN_CLASS + ": " + clazz));
         require(FindMain::agentmain).to(clazz -> lines.add("Launcher-Agent-Class: " + clazz));
         require(FindMain::agentmain).to(clazz -> lines.add("Agent-Class: " + clazz));
