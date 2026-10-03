@@ -240,6 +240,11 @@ const root = {
 			"type": "Class"
 		},
 		{
+			"name": "JDK",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
 			"name": "Eclipse",
 			"packageName": "bee.task",
 			"type": "Interface"

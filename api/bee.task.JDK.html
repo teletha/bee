@@ -45,25 +45,29 @@
 		<nav class="U"></nav>
 		<article class="S" id="Article">
 			<section class="p"><code class="DB">bee.task</code>
-				<h2 class="Class m"><code class="c">Wrapper.Config</code></h2>
-				<div class="BB"></div>
-			</section>
-			<section class="p" id="version">
-				<h2 class="AB"><i class="PUBLIC"></i><code class="c">version</code><i class="W"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-			</section>
-			<section class="p" id="Config()">
-				<h2 class="AB"><i class="PUBLIC"></i><code class="c">Config</code><code class="k">()</code></h2>
-			</section>
+				<h2 class="Interface m"><code class="c">JDK</code></h2>
+				<div class="BB">
+					<ul class="E H">
+						<li><code>kiss.Extensible</code></li>
+						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></li>
+					</ul>
+				</div><span class="A"><p>Manages the JDK used by Bee. The JDKs are downloaded from Adoptium (Temurin) and installed under
+the Bee home directory, so the JDK can be switched without touching the environment path.</p></span></section>
+			<section class="p" id="AVAILABLE">
+				<h2 class="AB"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="c">AVAILABLE</code><i class="W"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The endpoint which lists the available releases.</p></span></section>
+			<section class="p" id="select()">
+				<h2 class="AB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="c">select</code><code class="k">()</code><i class="W"><code>void</code></i></h2><span class="A"><p>Select the JDK used by Bee. All the versions available on Adoptium are listed, and the selected
+one is downloaded, installed and configured as the JDK used by Bee.</p></span></section>
 		</article>
 		<aside class="V">
 			<div class="j">
-				<h5 class="a">Constructors</h5>
+				<h5 class="a">Static Fields</h5>
 				<ul>
-					<li class="K"><i class="PUBLIC"></i><code><a href="api/bee.task.Wrapper.Config.html#Config()">Config</a></code><code class="k">()</code></li>
+					<li class="K"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.task.JDK.html#AVAILABLE">AVAILABLE</a></code><i class="HB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 				</ul>
-				<h5 class="a">Fields</h5>
+				<h5 class="a">Methods</h5>
 				<ul>
-					<li class="K"><i class="PUBLIC"></i><code><a href="api/bee.task.Wrapper.Config.html#version">version</a></code><i class="HB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="K"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.JDK.html#select()">select</a></code><code class="k">()</code><i class="HB"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
