@@ -115,8 +115,23 @@ public final class Platform {
         Java = javaExe;
         JavaHome = javaExe.parent().parent();
         Bee = beeExe;
-        BeeHome = JavaHome.directory("lib/bee");
+        BeeHome = locateBeeHome();
         BeeLocalRepository = searchLocalRepository();
+    }
+
+    /**
+     * Locate the Bee home directory. It is independent from the JDK installation so that Bee can
+     * install its executor and caches without writing into the JDK directory. The location can be
+     * overridden by the {@code BEE_HOME} environment variable.
+     * 
+     * @return The Bee home directory.
+     */
+    private static Directory locateBeeHome() {
+        String home = I.env("BEE_HOME");
+        if (home != null && !home.isBlank()) {
+            return Locator.directory(home).absolutize();
+        }
+        return Locator.directory(System.getProperty("user.home")).directory(".bee");
     }
 
     /**
@@ -148,7 +163,10 @@ public final class Platform {
                 }
             }
         }
-        return BeeHome.directory("repository");
+        // Prefer the standard Maven local repository when it exists so that artifacts are shared
+        // with Maven, otherwise use Bee's own repository under the Bee home.
+        Directory maven = Locator.directory(System.getProperty("user.home")).directory(".m2/repository");
+        return maven.isPresent() ? maven : BeeHome.directory("repository");
     }
 
     /**

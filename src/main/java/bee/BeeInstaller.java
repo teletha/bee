@@ -63,7 +63,7 @@ public class BeeInstaller {
             File dest = Platform.BeeHome
                     .file("bee-" + Bee.Tool.getVersion() + "-" + DATETIME.format(source.lastModifiedDateTime()) + ".jar");
             // The current bee.jar is newer.
-            // We should copy it to JDK directory.
+            // We should copy it to the Bee home directory.
             // This process is mainly used by Bee users while install phase.
             if (source.lastModifiedMilli() != dest.lastModifiedMilli()) {
                 // delete old jars
