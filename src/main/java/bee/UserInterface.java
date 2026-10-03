@@ -1046,6 +1046,7 @@ public abstract class UserInterface {
         private int browse(Terminal terminal, String question, List<String> names) {
             int cursor = 0;
             StringBuilder input = new StringBuilder();
+            String notice = null;
 
             showList(question, names, cursor);
 
@@ -1057,42 +1058,54 @@ public abstract class UserInterface {
                     return cursor + 1;
                 }
 
+                if (key == 3 || key == 4) { // Ctrl+C (ETX) or Ctrl+D (EOT)
+                    standardOutput.println();
+                    throw bee.Bee.Abort;
+                }
+
                 if (key == KEY_UP) {
                     if (cursor > 0) {
                         showItem(names, cursor--, false);
                         showItem(names, cursor, true);
                     }
+                    notice = null;
                 } else if (key == KEY_DOWN) {
                     if (cursor < names.size() - 1) {
                         showItem(names, cursor++, false);
                         showItem(names, cursor, true);
                     }
+                    notice = null;
                 } else if (key == '\r' || key == '\n') {
-                    standardOutput.println();
                     String text = input.toString().trim();
 
                     if (text.isEmpty()) { // the user pushed the enter key.
+                        standardOutput.println();
                         return cursor + 1;
                     }
 
                     int number = number(text, names.size());
 
                     if (number != -1) { // the user inputted a number.
+                        standardOutput.println();
                         return number;
                     }
 
-                    warn("Invalid input, please retry.");
+                    // Show the error on the hint line so that no extra line breaks the layout.
+                    notice = "Invalid input, please retry.";
                     input.setLength(0);
-                    showHint(input);
                 } else if (key == '\b' || key == 127) { // backspace
                     if (input.length() > 0) {
                         input.setLength(input.length() - 1);
-                        showHint(input);
                     }
+                    notice = null;
                 } else if ('0' <= key && key <= '9') {
                     input.append((char) key);
-                    showHint(input);
+                    notice = null;
+                } else {
+                    continue;
                 }
+
+                showHint(input, notice);
             }
         }
 
@@ -1179,13 +1192,19 @@ public abstract class UserInterface {
          * 
          * @param input A current input.
          */
-        private synchronized void showHint(StringBuilder input) {
+        private synchronized void showHint(StringBuilder input, String notice) {
             standardOutput.print(PREFIX + "1A"); // move to the hint line
             standardOutput.print("\r" + PREFIX + "2K"); // go to the head and erase the line
-            standardOutput.print("  " + ARROW + " to move, Enter to select, or input a number.");
-            if (input.length() > 0) {
-                standardOutput.print("  [" + stain(input.toString(), "76") + "]");
+
+            if (notice != null) {
+                standardOutput.print(stain(notice, "227"));
+            } else {
+                standardOutput.print("  " + ARROW + " to move, Enter to select, or input a number.");
+                if (input.length() > 0) {
+                    standardOutput.print("  [" + stain(input.toString(), "76") + "]");
+                }
             }
+
             standardOutput.print(PREFIX + "1B"); // move back below the list
             standardOutput.print("\r");
             standardOutput.flush();

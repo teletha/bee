@@ -83,16 +83,21 @@ public class BeeInstaller {
                 ui.info("Install bee executor to ", dest);
 
                 // build launcher
+                // The AOT cache is specific to the JDK which created it, so the file name contains the
+                // JDK feature version. A missing cache is created automatically on startup, and the aot
+                // log is disabled so that a missing cache does not print an error.
+                String aot = dest + "." + Runtime.version().feature() + ".aot";
+
                 Platform.Bee.text(String.format(Platform.isWindows()
                         ? """
                                 @echo off
-                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee %%*
+                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee %%*
                                 """
                         : """
                                 #!/bin/bash
-                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1  -XX:AOTCache=%s -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee "$@"
+                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1  -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee "$@"
                                 """, Platform.JavaHome
-                                .file("bin/java"), dest + ".aot", dest));
+                                .file("bin/java"), aot, dest));
 
                 ui.info("Install bee launcher to ", Platform.Bee);
             }

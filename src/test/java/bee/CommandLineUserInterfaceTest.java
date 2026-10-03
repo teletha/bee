@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import antibug.CommandLineUser;
@@ -161,6 +162,13 @@ class CommandLineUserInterfaceTest {
         assert select("9" + ENTER + DOWN + ENTER, "one", "two", "three").equals("two");
 
         assert user.receive("Invalid input, please retry.");
+    }
+
+    @Test
+    void selectByCtrlC() {
+        Throwable error = Assertions.assertThrows(Throwable.class, () -> select("\u0003", "one", "two", "three"));
+
+        assert error == Bee.Abort;
     }
 
     /**
