@@ -11,22 +11,29 @@ package bee;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import antibug.CommandLineUser;
 import bee.UserInterface.CommandLineUserInterface;
+import bee.util.Terminal;
 
 class CommandLineUserInterfaceTest {
+
+    /** The escape sequence which terminals send when the user presses the up arrow key. */
+    private static final String UP = "\u001b[A";
 
     /** The escape sequence which terminals send when the user presses the down arrow key. */
     private static final String DOWN = "\u001b[B";
 
-    /** The escape sequence which terminals send when the user presses the up arrow key. */
-    private static final String UP = "\u001b[A";
+    /** The enter key. */
+    private static final String ENTER = "\r";
 
     private final CommandLineUser user = new CommandLineUser(true);
 
@@ -107,12 +114,13 @@ class CommandLineUserInterfaceTest {
     }
 
     @Test
-    void select() {
+    void selectByNumberWithoutTerminal() {
         List<String> items = new ArrayList();
         items.add("one");
         items.add("two");
         items.add("three");
 
+        // The test environment has no terminal, so the numbered input is used.
         user.willInput("1");
         assert ui.ask("question", items).equals("one");
 
@@ -125,57 +133,45 @@ class CommandLineUserInterfaceTest {
 
     @Test
     void selectByEnterKey() {
-        UserInterface ui = tui();
-
-        user.willInput("");
-
-        assert ui.ask("question", List.of("one", "two", "three")).equals("one");
+        assert select(ENTER, "one", "two", "three").equals("one");
     }
 
     @Test
     void selectByArrowKey() {
-        UserInterface ui = tui();
+        assert select(DOWN + ENTER, "one", "two", "three").equals("two");
 
-        user.willInput(DOWN, "");
-        assert ui.ask("question", List.of("one", "two", "three")).equals("two");
-
-        user.willInput(DOWN, DOWN, UP, "");
-        assert ui.ask("question", List.of("one", "two", "three")).equals("two");
+        assert select(DOWN + DOWN + UP + ENTER, "one", "two", "three").equals("two");
 
         // The cursor does not go out of the items.
-        user.willInput(UP, UP, UP, "");
-        assert ui.ask("question", List.of("one", "two", "three")).equals("one");
+        assert select(UP + UP + UP + ENTER, "one", "two", "three").equals("one");
 
-        user.willInput(DOWN, DOWN, DOWN, DOWN, "");
-        assert ui.ask("question", List.of("one", "two", "three")).equals("three");
+        assert select(DOWN + DOWN + DOWN + DOWN + ENTER, "one", "two", "three").equals("three");
     }
 
     @Test
     void selectByNumber() {
-        UserInterface ui = tui();
+        assert select("3" + ENTER, "one", "two", "three").equals("three");
 
-        user.willInput("3");
-        assert ui.ask("question", List.of("one", "two", "three")).equals("three");
+        // The backspace removes the last character.
+        assert select("13" + "\u007f" + ENTER, "one", "two", "three").equals("one");
     }
 
     @Test
     void selectByInvalidInput() {
-        UserInterface ui = tui();
-
-        user.willInput("woo hoo", "9", DOWN, "");
-        assert ui.ask("question", List.of("one", "two", "three")).equals("two");
+        assert select("9" + ENTER + DOWN + ENTER, "one", "two", "three").equals("two");
 
         assert user.receive("Invalid input, please retry.");
     }
 
     /**
-     * Build an interactive user interface. The test environment has no terminal, so we have to
-     * enable the interactive selector explicitly.
-     *
-     * @return An interactive user interface.
+     * Select an item using the scripted terminal input.
+     * 
+     * @param script A sequence of the key strokes.
+     * @param items A list of the selectable items.
+     * @return A selected item.
      */
-    private UserInterface tui() {
-        return new InteractiveUserInterface(user.output, user.error, user.input);
+    private String select(String script, String... items) {
+        return new InteractiveUserInterface(user.output, user.error, user.input, new FakeTerminal(script)).ask("question", List.of(items));
     }
 
     /**
@@ -183,13 +179,18 @@ class CommandLineUserInterfaceTest {
      */
     private static class InteractiveUserInterface extends CommandLineUserInterface {
 
+        /** The simulated terminal. */
+        private final Terminal terminal;
+
         /**
          * @param output A standard output.
          * @param error A standard error.
          * @param input A standard input.
+         * @param terminal A simulated terminal.
          */
-        InteractiveUserInterface(PrintStream output, PrintStream error, InputStream input) {
+        InteractiveUserInterface(PrintStream output, PrintStream error, InputStream input, Terminal terminal) {
             super(output, error, input);
+            this.terminal = terminal;
         }
 
         /**
@@ -198,6 +199,56 @@ class CommandLineUserInterfaceTest {
         @Override
         protected boolean selectorAvailable() {
             return true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        protected Terminal terminal() {
+            return terminal;
+        }
+    }
+
+    /**
+     * The terminal which reads the scripted key strokes instead of the real console.
+     */
+    private static class FakeTerminal extends Terminal {
+
+        /** The scripted bytes. */
+        private final Deque<Integer> keys = new ArrayDeque();
+
+        /**
+         * @param script A sequence of the key strokes.
+         */
+        FakeTerminal(String script) {
+            for (byte b : script.getBytes(StandardCharsets.UTF_8)) {
+                keys.add(b & 0xFF);
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public boolean isEnabled() {
+            return true;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public int read() {
+            return keys.isEmpty() ? -1 : keys.poll();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public void close() {
+            // do nothing
         }
     }
 }

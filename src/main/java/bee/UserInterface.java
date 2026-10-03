@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import bee.util.Terminal;
 import kiss.Decoder;
 import kiss.Disposable;
 import kiss.I;
@@ -713,7 +714,10 @@ public abstract class UserInterface {
                 : new String[] {"|", "/", "-", "\\"};
 
         /** The cursor marker of the interactive selector. Falls back to ASCII. */
-        private static final String MARKER = glyph("\u276f ", "> ");
+        private static final String MARKER = glyph("\u25b6 ", "> ");
+
+        /** The blank which keeps the unselected items aligned with the marker. */
+        private static final String MARKER_BLANK = MARKER.replaceAll(".", " ");
 
         /** The arrow key mark of the interactive selector. Falls back to ASCII. */
         private static final String ARROW = glyph("\u2193/\u2191", "DOWN/UP");
@@ -726,22 +730,6 @@ public abstract class UserInterface {
 
         /** Whether the terminal supports the OSC8 hyper links or not. */
         private static final boolean hyperlink = isHyperlinkSupported();
-
-        /** The escape sequence which terminals send when the user presses the up arrow key. */
-        private static final String UP = "\u001b[A";
-
-        /** The escape sequence which terminals in the application cursor key mode send when the
-         * user presses the up arrow key.
-         */
-        private static final String UP_APPLICATION = "\u001bOA";
-
-        /** The escape sequence which terminals send when the user presses the down arrow key. */
-        private static final String DOWN = "\u001b[B";
-
-        /** The escape sequence which terminals in the application cursor key mode send when the
-         * user presses the down arrow key.
-         */
-        private static final String DOWN_APPLICATION = "\u001bOB";
 
         /** The task state. */
         private boolean first = false;
@@ -1000,7 +988,11 @@ public abstract class UserInterface {
         @Override
         protected int select(String question, List<String> names) {
             if (selectorAvailable()) {
-                return browse(question, names);
+                try (Terminal terminal = terminal()) {
+                    if (terminal.isEnabled()) {
+                        return browse(terminal, question, names);
+                    }
+                }
             }
             return super.select(question, names);
         }
@@ -1026,98 +1018,196 @@ public abstract class UserInterface {
         }
 
         /**
+         * Open the terminal. A user interface which can simulate the terminal can override this
+         * method.
+         * 
+         * @return A terminal.
+         */
+        protected Terminal terminal() {
+            return Terminal.raw();
+        }
+
+        /**
          * <p>
          * Show an interactive item selector and return the index of the selected item.
          * </p>
          * <p>
-         * The user moves the cursor by the arrow keys and decides the item by the enter key. As
-         * this program can not switch the terminal to the raw mode, the terminal delivers an arrow
-         * key to this program when the user pushes the enter key. To keep the compatible with the
-         * other user interfaces, the user can also input the number of the item.
+         * The user moves the cursor by the arrow keys and decides the item by the enter key. The
+         * terminal is switched to the raw mode, so the arrow key is delivered immediately. To keep
+         * the compatibility with the other user interfaces, the user can also input the number of
+         * the item.
          * </p>
          * 
+         * @param terminal A terminal on the raw mode.
          * @param question Your question message.
          * @param names A list of displayable item names.
          * @return A 1-based index of the selected item.
          */
-        private int browse(String question, List<String> names) {
+        private int browse(Terminal terminal, String question, List<String> names) {
             int cursor = 0;
+            StringBuilder input = new StringBuilder();
+
+            showList(question, names, cursor);
 
             while (true) {
-                showSelector(question, names, cursor);
+                int key = readKey(terminal);
 
-                String input = read();
-
-                if (input == null) { // the input is closed, choose the current item.
+                if (key == -1) { // the input is closed, choose the current item.
+                    standardOutput.println();
                     return cursor + 1;
                 }
 
-                int movement = movement(input);
+                if (key == KEY_UP) {
+                    if (cursor > 0) {
+                        showItem(names, cursor--, false);
+                        showItem(names, cursor, true);
+                    }
+                } else if (key == KEY_DOWN) {
+                    if (cursor < names.size() - 1) {
+                        showItem(names, cursor++, false);
+                        showItem(names, cursor, true);
+                    }
+                } else if (key == '\r' || key == '\n') {
+                    standardOutput.println();
+                    String text = input.toString().trim();
 
-                if (movement != 0) {
-                    cursor = Math.max(0, Math.min(names.size() - 1, cursor + movement));
+                    if (text.isEmpty()) { // the user pushed the enter key.
+                        return cursor + 1;
+                    }
 
-                    continue;
+                    int number = number(text, names.size());
+
+                    if (number != -1) { // the user inputted a number.
+                        return number;
+                    }
+
+                    warn("Invalid input, please retry.");
+                    input.setLength(0);
+                    showHint(input);
+                } else if (key == '\b' || key == 127) { // backspace
+                    if (input.length() > 0) {
+                        input.setLength(input.length() - 1);
+                        showHint(input);
+                    }
+                } else if ('0' <= key && key <= '9') {
+                    input.append((char) key);
+                    showHint(input);
                 }
-
-                input = input.trim();
-
-                if (input.isEmpty()) { // the user pushed the enter key.
-                    return cursor + 1;
-                }
-
-                int number = number(input, names.size());
-
-                if (number != -1) { // the user inputted a number.
-                    return number;
-                }
-
-                warn("Invalid input, please retry.");
             }
         }
 
+        /** The pseudo key code of the up arrow. */
+        private static final int KEY_UP = -2;
+
+        /** The pseudo key code of the down arrow. */
+        private static final int KEY_DOWN = -3;
+
         /**
-         * Show the interactive item selector. The previous frame is erased automatically.
+         * Read one key from the terminal. The arrow key is delivered as a sequence of the escape
+         * character, the bracket and the letter.
+         * 
+         * @param terminal A terminal on the raw mode.
+         * @return A read key, <code>-1</code> on EOF, {@link #KEY_UP} or {@link #KEY_DOWN} for the
+         *         arrow keys.
+         */
+        private static int readKey(Terminal terminal) {
+            int first = terminal.read();
+
+            if (first != '\u001b') {
+                return first;
+            }
+
+            // The escape sequence may be delivered in a few bytes.
+            int second = terminal.read();
+
+            if (second == '[' || second == 'O') {
+                int third = terminal.read();
+
+                if (third == 'A') {
+                    return KEY_UP;
+                }
+                if (third == 'B') {
+                    return KEY_DOWN;
+                }
+            }
+
+            // Not a cursor movement, ignore the sequence.
+            return 0;
+        }
+
+        /**
+         * Show the numbered item list.
          * 
          * @param question Your question message.
          * @param names A list of displayable item names.
          * @param cursor A current cursor position.
          */
-        private synchronized void showSelector(String question, List<String> names, int cursor) {
+        private synchronized void showList(String question, List<String> names, int cursor) {
             stopDynamicMessages(); // the animated message breaks the selector.
 
-            StringBuilder builder = new StringBuilder();
-            builder.append(stain(question, "76"));
+            write(stain(question, "76"), true);
 
             for (int i = 0; i < names.size(); i++) {
-                builder.append(EOL);
-                builder.append(i == cursor ? "  " + stain(MARKER, "76") + names.get(i) : "    " + names.get(i));
+                standardOutput.println(item(names, i, i == cursor));
             }
 
-            builder.append(EOL).append("  ").append(ARROW).append(" to move, Enter to select, or input a number.");
-
-            String frame = builder.toString();
-            write(frame, true);
-            erasableLine = lines(frame);
-
+            // The hint line is always placed below the list. The cursor stays below the hint.
+            standardOutput.println("  " + ARROW + " to move, Enter to select, or input a number.");
             standardOutput.flush();
         }
 
         /**
-         * Parse a cursor movement from the user input.
+         * Rewrite the single item line. The cursor is expected to be below the list.
          * 
-         * @param input A user input.
-         * @return <code>-1</code> for backward, <code>1</code> for forward, otherwise
-         *         <code>0</code>.
+         * @param names A list of displayable item names.
+         * @param index An index of the item to rewrite.
+         * @param marked Whether the item is selected by the cursor or not.
          */
-        private static int movement(String input) {
-            if (input.contains(UP) || input.contains(UP_APPLICATION)) {
-                return -1;
+        private synchronized void showItem(List<String> names, int index, boolean marked) {
+            int above = names.size() - index + 1; // the items below and the hint line
+
+            standardOutput.print(PREFIX + above + "A"); // move to the item line
+            standardOutput.print("\r" + PREFIX + "2K"); // go to the head and erase the line
+            standardOutput.print(item(names, index, marked));
+            standardOutput.print(PREFIX + above + "B"); // move back below the list
+            standardOutput.print("\r");
+            standardOutput.flush();
+        }
+
+        /**
+         * Rewrite the hint line with the current input.
+         * 
+         * @param input A current input.
+         */
+        private synchronized void showHint(StringBuilder input) {
+            standardOutput.print(PREFIX + "1A"); // move to the hint line
+            standardOutput.print("\r" + PREFIX + "2K"); // go to the head and erase the line
+            standardOutput.print("  " + ARROW + " to move, Enter to select, or input a number.");
+            if (input.length() > 0) {
+                standardOutput.print("  [" + stain(input.toString(), "76") + "]");
             }
-            if (input.contains(DOWN) || input.contains(DOWN_APPLICATION)) {
-                return 1;
+            standardOutput.print(PREFIX + "1B"); // move back below the list
+            standardOutput.print("\r");
+            standardOutput.flush();
+        }
+
+        /**
+         * Build the single item line.
+         * 
+         * @param names A list of displayable item names.
+         * @param index An index of the item.
+         * @param marked Whether the item is selected by the cursor or not.
+         * @return A line.
+         */
+        private static String item(List<String> names, int index, boolean marked) {
+            int width = String.valueOf(names.size()).length();
+            String number = String.format("%" + width + "d", index + 1);
+
+            // Keep the marker column on every line so the items stay aligned.
+            if (marked) {
+                return "  " + stain(MARKER + "[" + number + "] " + names.get(index), "76");
             }
-            return 0;
+            return "  " + MARKER_BLANK + "[" + number + "] " + names.get(index);
         }
 
         /**
