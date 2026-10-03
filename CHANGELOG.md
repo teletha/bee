@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.80.0](https://github.com/teletha/bee/compare/0.79.1...0.80.0) (2026-10-03)
+
+
+### Features
+
+* check jitpack deployment ([e656055](https://github.com/teletha/bee/commit/e6560550596fe30575b59db2e09c21874c6f7f86))
+* decouple bee home and local repository from java home ([6d27253](https://github.com/teletha/bee/commit/6d272530d90aaaa2b4504541eaeb46db10dae07b))
+* interactive item selector and richer CUI rendering ([e967315](https://github.com/teletha/bee/commit/e967315ad57ca1ef9ef03dbaf6974b5ff3f7174b))
+* select and re-execute with the JDK, with JDK-specific AOT cache ([1911345](https://github.com/teletha/bee/commit/19113454509a84d03bb6ee36202639001b4103d5))
+* support github api ([1983ee9](https://github.com/teletha/bee/commit/1983ee9cb9fb40aff56cb07589020dab2ac0bc27))
+* support spinner in user interface ([4267069](https://github.com/teletha/bee/commit/4267069fe2b16269e80661f4a2ba39c7587cc4f6))
+
+
+### Bug Fixes
+
+* enable arrow key navigation in the item selector ([2cefcb0](https://github.com/teletha/bee/commit/2cefcb0650f3eb0fa6b633047a8a6f9dda428ded))
+
 ## [0.79.1](https://github.com/teletha/bee/compare/0.79.0...0.79.1) (2026-10-01)
 
 
