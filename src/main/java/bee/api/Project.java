@@ -1001,7 +1001,7 @@ public class Project {
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-surefire-plugin : 3.5.2");
             p.child("configuration", conf -> {
-                conf.child("argLine").text("-ea   -Dfile.encoding=UTF-8");
+                conf.child("argLine").text("-ea --enable-native-access=ALL-UNNAMED -Dfile.encoding=UTF-8");
                 conf.child("reportFormat").text("plain");
                 conf.child("consoleOutputReporter", rep -> {
                     rep.child("disable").text("true");

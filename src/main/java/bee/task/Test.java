@@ -70,6 +70,7 @@ public interface Test extends Task<Test.Config> {
             ui().info(project().getTestSourceSet().toList());
         } else {
             Config conf = config();
+            List<String> params = nativeAccess(conf.params);
 
             new Isolation("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
 
@@ -79,7 +80,7 @@ public interface Test extends Task<Test.Config> {
 
                     Java.with()
                             .java(conf.java)
-                            .param(conf.params)
+                            .param(params)
                             .classPath(project().getClasses())
                             .classPath(project().getTestClasses())
                             .classPath(project().getDependency(Scope.Test, Scope.Compile))
@@ -92,6 +93,21 @@ public interface Test extends Task<Test.Config> {
                 }
             };
         }
+    }
+
+    /**
+     * Add the native access flag so that the FFM API (used by the interactive terminal) does not emit
+     * a restricted method warning in the forked test JVM.
+     * 
+     * @param params User specified JVM parameters.
+     * @return JVM parameters with the native access flag.
+     */
+    private List<String> nativeAccess(List<String> params) {
+        List<String> all = new ArrayList(params);
+        if (!all.contains("--enable-native-access=ALL-UNNAMED")) {
+            all.add("--enable-native-access=ALL-UNNAMED");
+        }
+        return all;
     }
 
     class Junit extends JVM {
