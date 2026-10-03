@@ -27,6 +27,7 @@ import bee.api.Command;
 import bee.api.Library;
 import bee.api.Repository;
 import bee.api.Scope;
+import bee.util.Inputs;
 import bee.util.Process;
 import kiss.I;
 
@@ -101,6 +102,13 @@ public interface Dependency extends Task {
                 .append("  :  ");
         if (artifact.getClassifier().length() != 0) name.append(artifact.getClassifier()).append("  :  ");
         name.append(artifact.getVersion());
+
+        // Append the size of the resolved artifact file. The root project artifact is not resolved
+        // to a file, so its size is omitted.
+        java.io.File file = artifact.getFile();
+        if (file != null) {
+            name.append("  :  ").append(Inputs.formatAsSize(file.length()));
+        }
 
         ui().info(name);
 
