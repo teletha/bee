@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="n">
-		<header class="T" date="2026-09-30">
-			<h1 class="U"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="V"><a href="api/main.html" id="API"><svg class="package">
+	<body class="M">
+		<header class="N" date="2026-09-30">
+			<h1 class="o"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="e"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="W"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="AB"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="q"></nav>
-		<article class="o" id="Article">
-			<section class="LB"><code class="y">bee.task</code>
-				<h2 class="Interface EB"><code class="b">Dependency</code></h2>
-				<div class="v">
+		<nav class="Q"></nav>
+		<article class="O" id="Article">
+			<section class="LB"><code class="v">bee.task</code>
+				<h2 class="Interface KB"><code class="S">Dependency</code></h2>
+				<div class="DB">
 					<ul class="E H">
 						<li><code>kiss.Extensible</code></li>
 						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></li>
@@ -54,14 +54,14 @@
 				</div><span class="A"><p>Provides tasks for analyzing and displaying project dependencies.
 This includes showing the dependency tree and analyzing required Java modules.</p></span></section>
 			<section class="LB" id="tree()">
-				<h2 class="M"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="b">tree</code><code class="k">()</code><i class="m"><code>void</code></i></h2><span class="A"><p>Displays the project&apos;s dependency graph in a tree format.
+				<h2 class="V"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="S">tree</code><code class="f">()</code><i class="g"><code>void</code></i></h2><span class="A"><p>Displays the project&apos;s dependency graph in a tree format.
 This command visualizes the direct and transitive dependencies of the project,
 showing how libraries depend on each other.
 This is the default command for the <code>dependency</code> task.</p></span></section>
 			<section class="LB" id="module()">
-				<h2 class="M"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="b">module</code><code class="k">()</code><i class="m"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-				<table class="h">
-					<tr class="HB">
+				<h2 class="V"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="S">module</code><code class="f">()</code><i class="g"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+				<table class="a">
+					<tr class="JB">
 						<td><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
 						<td><span><p>A list of required module names.</p></span></td>
 					</tr>
@@ -70,16 +70,16 @@ Uses the <code>jdeps</code> tool to analyze bytecode and also considers <code>re
 in the <code>MANIFEST.MF</code> of dependency JARs.
 Requires the main sources to be compiled first.</p></span></section>
 		</article>
-		<aside class="P">
-			<div class="J">
-				<h5 class="R">Methods</h5>
+		<aside class="R">
+			<div class="i">
+				<h5 class="k">Methods</h5>
 				<ul>
-					<li class="IB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#tree()">tree</a></code><code class="k">()</code><i class="w"><code>void</code></i></li>
-					<li class="IB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#module()">module</a></code><code class="k">()</code><i class="w"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					<li class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#tree()">tree</a></code><code class="f">()</code><i class="y"><code>void</code></i></li>
+					<li class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Dependency.html#module()">module</a></code><code class="f">()</code><i class="y"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="p">
+		<footer class="P">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
