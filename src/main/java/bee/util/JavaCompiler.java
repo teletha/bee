@@ -45,6 +45,7 @@ import bee.Fail;
 import bee.Isolation;
 import bee.Platform;
 import bee.UserInterface;
+import bee.api.JavaVersion;
 import bee.api.Library;
 import kiss.I;
 import kiss.Signal;
@@ -87,7 +88,7 @@ public class JavaCompiler {
     private Directory output;
 
     /** The release version. */
-    private SourceVersion releaseVersion = SourceVersion.latest();
+    private JavaVersion releaseVersion = JavaVersion.current();
 
     /** The source encoding. */
     private Charset encoding = Platform.Encoding;
@@ -437,9 +438,21 @@ public class JavaCompiler {
      * 
      * @param releaseVersion
      */
-    public JavaCompiler setVersion(SourceVersion releaseVersion) {
+    public JavaCompiler setVersion(JavaVersion releaseVersion) {
         if (releaseVersion != null) {
             this.releaseVersion = releaseVersion;
+        }
+        return this;
+    }
+
+    /**
+     * Set release version from {@link SourceVersion}.
+     * 
+     * @param releaseVersion
+     */
+    public JavaCompiler setVersion(SourceVersion releaseVersion) {
+        if (releaseVersion != null) {
+            this.releaseVersion = JavaVersion.of(Inputs.feature(releaseVersion));
         }
         return this;
     }
@@ -540,7 +553,7 @@ public class JavaCompiler {
         // Release Version
         // =============================================
         options.add("--release");
-        options.add(normalize(releaseVersion));
+        options.add(String.valueOf(releaseVersion.feature));
 
         // =============================================
         // Java Class Paths

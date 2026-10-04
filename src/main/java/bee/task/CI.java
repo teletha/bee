@@ -155,7 +155,7 @@ public interface CI extends Task {
                         commit_message: update repository info
                 """;
 
-        String version = Inputs.normalize(project().getJavaSourceVersion());
+        String version = String.valueOf(project().getJavaSourceVersion().feature);
 
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
@@ -341,7 +341,7 @@ public interface CI extends Task {
                                         return Inputs.capitalize(project().getProduct());
 
                                     case "java":
-                                        return Inputs.normalize(project().getJavaRequiredVersion());
+                                        return String.valueOf(project().getJavaRequiredVersion().feature);
 
                                     case "owner":
                                         return project().getVersionControlSystem().owner;
@@ -436,7 +436,7 @@ public interface CI extends Task {
 
     @Command("Generate CI/CD configuration files for JitPack.")
     default void jitpack() {
-        String javaVersion = Inputs.normalize(project().getJavaSourceVersion());
+        String javaVersion = String.valueOf(project().getJavaSourceVersion().feature);
 
         makeFile("jitpack.yml", String
                 .format("""
@@ -478,7 +478,7 @@ public interface CI extends Task {
             return;
         }
 
-        String javaVersion = Inputs.normalize(project().getJavaSourceVersion());
+        String javaVersion = String.valueOf(project().getJavaSourceVersion().feature);
         String product = project().getProduct();
         String group = project().getGroup();
         // A Maven repository layout separates the group with slashes, where a Central Portal

@@ -286,7 +286,7 @@ public interface Eclipse extends Task, IDESupport {
             return null;
         }
 
-        int required = project().getJavaRequiredVersion().runtimeVersion().feature();
+        int required = project().getJavaRequiredVersion().feature;
         Directory jdk = resolveJDK(required);
         if (jdk == null) {
             try {

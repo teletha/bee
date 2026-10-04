@@ -56,7 +56,7 @@ public interface Native extends Task<Native.Config> {
                 : "graal";
 
         /** The graal version. */
-        private int version = project().getJavaRequiredVersion().runtimeVersion().feature();
+        private int version = project().getJavaRequiredVersion().feature;
 
         /** The platform type. */
         private String target = detectOS() + "-" + detectArch();

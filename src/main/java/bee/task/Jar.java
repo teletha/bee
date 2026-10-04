@@ -81,8 +81,8 @@ public interface Jar extends Task<Jar.Config> {
         Directory classes = project.getClasses();
 
         // Modify class files if Java version needs downgrade or if removal options are enabled
-        boolean needToModify = SourceVersion.latest()
-                .compareTo(project.getJavaRequiredVersion()) > 0 || conf.removeTraceInfo || conf.removeDebugInfo;
+        boolean needToModify = SourceVersion.latest().runtimeVersion()
+                .feature() > project.getJavaRequiredVersion().feature || conf.removeTraceInfo || conf.removeDebugInfo;
 
         if (needToModify) {
             Set<ClassFile.Option> options = new HashSet();
@@ -98,13 +98,13 @@ public interface Jar extends Task<Jar.Config> {
 
                 // modify version
                 int requiredVersion;
-                String oldVersion = Inputs.normalize(SourceVersion.latest());
-                String newVersion = Inputs.normalize(project.getJavaRequiredVersion());
-                if (oldVersion.equals(newVersion)) {
+                int oldFeature = SourceVersion.latest().runtimeVersion().feature();
+                int newFeature = project.getJavaRequiredVersion().feature;
+                if (oldFeature == newFeature) {
                     requiredVersion = 0;
                 } else {
-                    ui.info("Downgrading class version from Java ", oldVersion, " to Java ", newVersion, ".");
-                    requiredVersion = 44 + Integer.parseInt(newVersion);
+                    ui.info("Downgrading class version from Java ", oldFeature, " to Java ", newFeature, ".");
+                    requiredVersion = 44 + newFeature;
                 }
 
                 // remove debug info

@@ -196,6 +196,44 @@ public class Inputs {
     }
 
     /**
+     * Resolve the feature version of the specified {@link SourceVersion}.
+     * 
+     * @param version A target version.
+     * @return A feature version.
+     */
+    public static int feature(SourceVersion version) {
+        if (version == null) {
+            version = SourceVersion.latest();
+        }
+
+        switch (version) {
+        case RELEASE_0:
+            return 1;
+
+        case RELEASE_1:
+            return 2;
+
+        case RELEASE_2:
+            return 3;
+
+        case RELEASE_3:
+            return 4;
+
+        case RELEASE_4:
+            return 5;
+
+        case RELEASE_5:
+            return 6;
+
+        case RELEASE_6:
+            return 7;
+
+        default:
+            return Integer.parseInt(version.name().substring(8));
+        }
+    }
+
+    /**
      * Capitalize user input.
      * 
      * @param input A user input.

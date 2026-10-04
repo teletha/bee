@@ -109,7 +109,7 @@ public interface Exe extends Task<Exe.Config> {
         command.add("-A");
         command.add("x64");
         command.add("-t");
-        command.add(Inputs.normalize(project().getJavaRequiredVersion()));
+        command.add(String.valueOf(project().getJavaRequiredVersion().feature));
         command.add("-j");
         command.add(project().locateJar().toString());
         command.add("-e");

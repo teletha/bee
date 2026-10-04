@@ -100,10 +100,10 @@ public class Project {
     private Charset encoding = StandardCharsets.UTF_8;
 
     /** The requirement of Java version. */
-    private SourceVersion sourceFileVersion;
+    private JavaVersion sourceFileVersion;
 
     /** The requirement of Java version. */
-    private SourceVersion requiredJavaVersion;
+    private JavaVersion requiredJavaVersion;
 
     /** The input base directory. */
     private Directory input;
@@ -451,8 +451,8 @@ public class Project {
      * 
      * @return A Java version requirement.
      */
-    public SourceVersion getJavaSourceVersion() {
-        return sourceFileVersion == null ? SourceVersion.latest() : sourceFileVersion;
+    public JavaVersion getJavaSourceVersion() {
+        return sourceFileVersion == null ? JavaVersion.current() : sourceFileVersion;
     }
 
     /**
@@ -460,8 +460,8 @@ public class Project {
      * 
      * @return A Java version requirement.
      */
-    public SourceVersion getJavaRequiredVersion() {
-        return requiredJavaVersion == null ? SourceVersion.latest() : requiredJavaVersion;
+    public JavaVersion getJavaRequiredVersion() {
+        return requiredJavaVersion == null ? JavaVersion.current() : requiredJavaVersion;
     }
 
     /**
@@ -470,8 +470,18 @@ public class Project {
      * @param version
      */
     @SuppressWarnings("unused")
-    private void setJavaVersion(SourceVersion version) {
+    private void setJavaVersion(JavaVersion version) {
         this.requiredJavaVersion = version;
+    }
+
+    /**
+     * Internal setter for property access.
+     * 
+     * @param version
+     */
+    @SuppressWarnings("unused")
+    private void setJavaVersion(String version) {
+        this.requiredJavaVersion = JavaVersion.parse(version);
     }
 
     /**
@@ -479,7 +489,7 @@ public class Project {
      * 
      * @param version A Java version to require.
      */
-    protected final void require(SourceVersion version) {
+    protected final void require(JavaVersion version) {
         this.requiredJavaVersion = version;
     }
 
@@ -489,9 +499,28 @@ public class Project {
      * @param sourceVersion A Java source version to require.
      * @param requiredJavaVersion A Java target version to require.
      */
-    protected final void require(SourceVersion sourceVersion, SourceVersion requiredJavaVersion) {
+    protected final void require(JavaVersion sourceVersion, JavaVersion requiredJavaVersion) {
         this.sourceFileVersion = sourceVersion;
         this.requiredJavaVersion = requiredJavaVersion;
+    }
+
+    /**
+     * Declare Java version requirement from {@link SourceVersion}.
+     * 
+     * @param version A Java version to require.
+     */
+    protected final void require(SourceVersion version) {
+        require(JavaVersion.of(Inputs.feature(version)));
+    }
+
+    /**
+     * Declare Java version requirement from {@link SourceVersion}.
+     * 
+     * @param sourceVersion A Java source version to require.
+     * @param requiredJavaVersion A Java target version to require.
+     */
+    protected final void require(SourceVersion sourceVersion, SourceVersion requiredJavaVersion) {
+        require(JavaVersion.of(Inputs.feature(sourceVersion)), JavaVersion.of(Inputs.feature(requiredJavaVersion)));
     }
 
     /**
@@ -981,7 +1010,7 @@ public class Project {
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.14.0");
             p.child("configuration", conf -> {
-                conf.child("release").text(Inputs.normalize(getJavaSourceVersion()));
+                conf.child("release").text(String.valueOf(getJavaSourceVersion().feature));
                 conf.child("encoding").text(getEncoding().displayName());
 
                 boolean ecj = TaskOperations.config(Compile.class).useECJ;
