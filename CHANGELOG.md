@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.80.1](https://github.com/teletha/bee/compare/0.80.0...0.80.1) (2026-10-04)
+
+
+### Bug Fixes
+
+* ci process ([dcce183](https://github.com/teletha/bee/commit/dcce18384ece57b1525eedb1a53d71589ece4d24))
+
 ## [0.80.0](https://github.com/teletha/bee/compare/0.79.1...0.80.0) (2026-10-04)
 
 
