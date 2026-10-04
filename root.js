@@ -95,11 +95,6 @@ const root = {
 			"type": "Class"
 		},
 		{
-			"name": "JavaVersion",
-			"packageName": "bee.api",
-			"type": "Enum"
-		},
-		{
 			"name": "Library",
 			"packageName": "bee.api",
 			"type": "Class"
