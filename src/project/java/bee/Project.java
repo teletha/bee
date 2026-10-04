@@ -11,7 +11,8 @@ package bee;
 
 import static bee.api.License.*;
 
-import bee.api.JavaVersion;
+import javax.lang.model.SourceVersion;
+
 import bee.task.FindMain;
 
 public class Project extends bee.api.Project {
@@ -22,7 +23,7 @@ public class Project extends bee.api.Project {
         versionControlSystem("https://github.com/teletha/bee");
         // developer("Teletha", "Teletha@users.noreply.github.com", "https://github.com/teletha");
 
-        require(JavaVersion.current(), JavaVersion.JAVA_24);
+        require(SourceVersion.latest(), SourceVersion.RELEASE_24);
 
         // MAVEN REPOSITORY
         // Since 4.0.0-beta, Maven has become a super heavyweight library, with dependencies
