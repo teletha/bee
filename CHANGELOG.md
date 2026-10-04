@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.80.0](https://github.com/teletha/bee/compare/0.79.1...0.80.0) (2026-10-04)
+
+
+### Features
+
+* check jitpack deployment ([e656055](https://github.com/teletha/bee/commit/e6560550596fe30575b59db2e09c21874c6f7f86))
+* decouple bee home and local repository from java home ([6d27253](https://github.com/teletha/bee/commit/6d272530d90aaaa2b4504541eaeb46db10dae07b))
+* interactive item selector and richer CUI rendering ([e967315](https://github.com/teletha/bee/commit/e967315ad57ca1ef9ef03dbaf6974b5ff3f7174b))
+* introduce JavaVersion enum generated from the Adoptium API ([bcc7b01](https://github.com/teletha/bee/commit/bcc7b0190370c7e80791a002e1b86d52dcf15ee5))
+* make help:version the default task ([adaa084](https://github.com/teletha/bee/commit/adaa0846aaf7df256b52389f5f62d07bbf7e22b8))
+* restrict JavaVersion to Java 11+ and support Early Access ([2d6bd54](https://github.com/teletha/bee/commit/2d6bd54298f5f27d9065098eb69b81c4dea449d6))
+* select and re-execute with the JDK, with JDK-specific AOT cache ([1911345](https://github.com/teletha/bee/commit/19113454509a84d03bb6ee36202639001b4103d5))
+* show artifact size in the dependency tree ([18a2a3a](https://github.com/teletha/bee/commit/18a2a3ae4c92a272a367bc2381711ddd8b79329c))
+* show total artifact count and size in the dependency tree ([33065bf](https://github.com/teletha/bee/commit/33065bf5fc730f8a93320cac76bffbd4c1841b69))
+* support github api ([1983ee9](https://github.com/teletha/bee/commit/1983ee9cb9fb40aff56cb07589020dab2ac0bc27))
+* support spinner in user interface ([4267069](https://github.com/teletha/bee/commit/4267069fe2b16269e80661f4a2ba39c7587cc4f6))
+
+
+### Bug Fixes
+
+* enable arrow key navigation in the item selector ([2cefcb0](https://github.com/teletha/bee/commit/2cefcb0650f3eb0fa6b633047a8a6f9dda428ded))
+
 ## [0.79.1](https://github.com/teletha/bee/compare/0.79.0...0.79.1) (2026-10-01)
 
 
