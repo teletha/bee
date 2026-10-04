@@ -431,7 +431,7 @@ public class Bee {
         }
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"help:version"};
+        if (tasks.length == 0) tasks = new String[] {"eclipse"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.

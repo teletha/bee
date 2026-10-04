@@ -12,7 +12,10 @@ package bee.task;
 import static bee.TaskOperations.*;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -35,8 +38,27 @@ import kiss.XML;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Location;
+import psychopath.Locator;
 
 public interface Eclipse extends Task, IDESupport {
+
+    /** The default JRE container which uses the workspace default JRE. */
+    String DEFAULT_JRE_CONTAINER = "org.eclipse.jdt.launching.JRE_CONTAINER";
+
+    /** The prefix of the Eclipse JRE container path which identifies a specific JRE. */
+    String JRE_CONTAINER = DEFAULT_JRE_CONTAINER + "/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/";
+
+    /** The standard VM type identifier of Eclipse. */
+    String VM_TYPE = "org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType";
+
+    /** The workspace preference file which stores the installed JREs. */
+    String INSTALLED_JRE = ".metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.launching.prefs";
+
+    /** The preference key of the installed JREs. */
+    String PREF_INSTALLED_JRE = "org.eclipse.jdt.launching.PREF_VM_XML";
+
+    /** The preference key of the recent workspaces. */
+    String PREF_RECENT_WORKSPACES = "RECENT_WORKSPACES";
 
     /**
      * {@inheritDoc}
@@ -44,7 +66,7 @@ public interface Eclipse extends Task, IDESupport {
     @Override
     @Command(value = "Generate configuration files for Eclipse.", defaults = true)
     default void create() {
-        createClasspath(project().getRoot().file(".classpath"));
+        createClasspath(project().getRoot().file(".classpath"), registerInstalledJRE());
         createProject(project().getRoot().file(".project"));
 
         Set<Location> processors = project().getAnnotationProcessors();
@@ -146,7 +168,7 @@ public interface Eclipse extends Task, IDESupport {
      * 
      * @param file
      */
-    private void createClasspath(File file) {
+    private void createClasspath(File file, String installedJRE) {
         XML doc = I.xml("classpath");
 
         // tests
@@ -224,10 +246,211 @@ public interface Eclipse extends Task, IDESupport {
 
         // Eclipse configurations
         doc.child("classpathentry").attr("kind", "output").attr("path", relative(project().getClasses()));
-        doc.child("classpathentry").attr("kind", "con").attr("path", "org.eclipse.jdt.launching.JRE_CONTAINER");
+        doc.child("classpathentry").attr("kind", "con").attr("path", jreContainer(installedJRE));
 
         // write file
         makeFile(file, doc);
+    }
+
+    /**
+     * Resolve the JRE container. When the JDK currently used by Bee is registered in the active
+     * Eclipse workspace, the container refers to it by name so that the project uses exactly that
+     * JDK. Otherwise the default JRE container is emitted as-is, so Bee never forces a JRE
+     * configuration which could break the Eclipse environment.
+     * 
+     * @param installedJRE The name of the JRE registered in Eclipse, or <code>null</code>.
+     * @return An Eclipse JRE container path.
+     */
+    private String jreContainer(String installedJRE) {
+        if (installedJRE != null) {
+            return JRE_CONTAINER + installedJRE;
+        }
+        return DEFAULT_JRE_CONTAINER;
+    }
+
+    /**
+     * Register the JDK currently used by Bee in the installed JREs of the active Eclipse workspace
+     * so
+     * that the generated projects can use it. The operation is skipped when Eclipse is not active
+     * or
+     * its workspace can not be located.
+     * 
+     * @return The name of the installed JRE, or <code>null</code> when it is not registered.
+     */
+    private String registerInstalledJRE() {
+        File eclipse;
+        try {
+            eclipse = locateActiveEclipse();
+        } catch (Exception e) {
+            // Eclipse is not active, so there is no workspace to update.
+            return null;
+        }
+
+        int required = project().getJavaRequiredVersion().runtimeVersion().feature();
+        Directory jdk = resolveJDK(required);
+        if (jdk == null) {
+            try {
+                jdk = JDK.install(required);
+            } catch (Exception e) {
+                ui().warn("Failed to install the JDK [", required, "] required by the project.");
+                return null;
+            }
+        }
+
+        try {
+            Directory workspace = locateWorkspace(eclipse);
+            if (workspace == null) {
+                return null;
+            }
+
+            File file = workspace.file(INSTALLED_JRE);
+            Properties properties = new Properties();
+            if (file.isPresent()) {
+                try (InputStream in = file.newInputStream()) {
+                    properties.load(in);
+                }
+            }
+
+            String xml = properties.getProperty(PREF_INSTALLED_JRE);
+            XML root = xml == null || !xml.strip().startsWith("<") ? I.xml("vmSettings") : I.xml(xml);
+            XML type = null;
+            for (XML candidate : root.find("vmType")) {
+                if (VM_TYPE.equals(candidate.attr("id"))) {
+                    type = candidate;
+                    break;
+                }
+            }
+            if (type == null) {
+                type = root.child("vmType").attr("id", VM_TYPE);
+            }
+
+            String home = jdk.absolutize().asJavaPath().toString();
+            String name = null;
+            for (XML vm : type.find("vm")) {
+                if (samePath(vm.attr("path"), home)) {
+                    name = vm.attr("name");
+                    break;
+                }
+            }
+            if (name != null && !name.isBlank()) {
+                return name;
+            }
+
+            // The JDK is not registered yet, so add it to the installed JREs.
+            name = uniqueName(type, jdk.base());
+            type.child("vm").attr("id", System.currentTimeMillis()).attr("name", name).attr("path", home);
+            properties.setProperty(PREF_INSTALLED_JRE, root.toString());
+            properties.putIfAbsent("eclipse.preferences.version", "1");
+
+            file.parent().create();
+            try (OutputStream out = file.newOutputStream()) {
+                properties.store(out, "Bee");
+            }
+
+            ui().info("Register the JDK [", name, "] in the installed JREs of Eclipse.");
+            ui().warn("Restart Eclipse to use the JDK [", name, "].");
+            return name;
+        } catch (Exception e) {
+            ui().warn("Failed to register the JDK in the installed JREs of Eclipse.");
+            return null;
+        }
+    }
+
+    /**
+     * Resolve the JDK whose feature version matches the Java version required by the project. The JDK
+     * currently used by Bee has the highest priority, then the JDKs installed under the Bee home.
+     * 
+     * @param feature The required Java feature version.
+     * @return A JDK, or <code>null</code> when no matching JDK is installed.
+     */
+    private Directory resolveJDK(int feature) {
+        if (Platform.feature(Platform.JavaHome) == feature) {
+            return Platform.JavaHome;
+        }
+
+        for (Directory candidate : Platform.BeeHome.directory("jdk").walkDirectory("*").toList()) {
+            if (Platform.feature(candidate) == feature && candidate.file(Platform.isWindows() ? "bin/javac.exe" : "bin/javac")
+                    .isPresent()) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Locate the workspace of the active Eclipse from its recent workspaces.
+     * 
+     * @param eclipse An Eclipse executable.
+     * @return The active workspace, or <code>null</code> when it can not be located.
+     */
+    private Directory locateWorkspace(File eclipse) {
+        File preference = eclipse.parent().file("configuration/.settings/org.eclipse.ui.ide.prefs");
+        if (preference.isAbsent()) {
+            return null;
+        }
+
+        Properties properties = new Properties();
+        try (InputStream in = preference.newInputStream()) {
+            properties.load(in);
+        } catch (IOException e) {
+            return null;
+        }
+
+        String recent = properties.getProperty(PREF_RECENT_WORKSPACES);
+        if (recent != null) {
+            for (String path : recent.split("\\R")) {
+                path = path.strip();
+                if (!path.isEmpty()) {
+                    Directory workspace = Locator.directory(path);
+                    if (workspace.directory(".metadata").isPresent()) {
+                        return workspace;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Test whether the two paths point to the same location.
+     * 
+     * @param one A path.
+     * @param other Another path.
+     * @return A result.
+     */
+    private boolean samePath(String one, String other) {
+        return one != null && other != null && Locator.directory(one)
+                .absolutize()
+                .path()
+                .equalsIgnoreCase(Locator.directory(other).absolutize().path());
+    }
+
+    /**
+     * Resolve an unused JRE name.
+     * 
+     * @param type A VM type.
+     * @param name A preferred name.
+     * @return A unique name.
+     */
+    private String uniqueName(XML type, String name) {
+        if (name == null || name.isBlank()) {
+            name = "Bee";
+        }
+
+        Set<String> names = new HashSet();
+        for (XML vm : type.find("vm")) {
+            names.add(vm.attr("name"));
+        }
+
+        if (!names.contains(name)) {
+            return name;
+        }
+        for (int i = 2;; i++) {
+            String candidate = name + " (" + i + ")";
+            if (!names.contains(candidate)) {
+                return candidate;
+            }
+        }
     }
 
     /**
@@ -382,23 +605,20 @@ public interface Eclipse extends Task, IDESupport {
      * @return
      */
     private File locateActiveEclipse() {
-        if (Platform.isWindows()) {
-            String result = bee.util.Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path");
-
-            if (result.startsWith("Path :")) {
-                result = result.substring(6).trim();
-            }
-
-            File locate = psychopath.Locator.file(result);
-
-            if (locate.isAbsent()) {
-                throw new Fail("Process is not found, activate Eclipse application.");
-            } else {
-                return locate;
-            }
-        } else {
+        if (!Platform.isWindows()) {
             throw new Fail("Unsupported platform.");
         }
+
+        for (String line : bee.util.Process.readWith("PowerShell", "Get-Process Eclipse | Format-List Path").lines().toList()) {
+            line = line.strip();
+            if (line.startsWith("Path :")) {
+                File locate = psychopath.Locator.file(line.substring(6).strip());
+                if (locate.isPresent()) {
+                    return locate;
+                }
+            }
+        }
+        throw new Fail("Process is not found, activate Eclipse application.");
     }
 
     /**

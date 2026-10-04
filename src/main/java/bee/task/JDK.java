@@ -11,6 +11,7 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,11 +50,14 @@ public interface JDK extends Task {
             throw new Fail("Failed to access the Adoptium API.").reason(Fail.strip(e));
         }
 
-        List<Integer> releases = info.find(int.class, "available_releases", "*");
+        List<Integer> releases = info.find(int.class, "available_releases", "*")
+                .stream()
+                .sorted(Comparator.reverseOrder())
+                .toList();
         List<Integer> lts = info.find(int.class, "available_lts_releases", "*");
         Map<Integer, String> dates = releaseDates(releases);
         String selected = Platform.config("java");
-        int width = String.valueOf(releases.get(releases.size() - 1)).length();
+        int width = String.valueOf(releases.get(0)).length();
 
         int version = ui().ask("Select the JDK version to use.", releases, v -> {
             Directory jdk = locate(v);
@@ -68,9 +72,26 @@ public interface JDK extends Task {
             return label.stripTrailing();
         });
 
+        Directory dest = install(version);
+
+        if (!Platform.canRun(dest)) {
+            ui().warn("The JDK [", dest, "] may be too old to run Bee.");
+        }
+
+        Platform.config("java", dest.absolutize().path());
+        ui().info("Bee will use the JDK [", version, "] from the next invocation.");
+    }
+
+    /**
+     * Ensure the specified JDK version is installed under the Bee home. The JDK is downloaded from
+     * Adoptium (Temurin) when it is missing.
+     * 
+     * @param version A JDK version.
+     * @return The installation directory.
+     */
+    static Directory install(int version) {
         Directory dest = locate(version);
 
-        // download and install when the selected version is not installed yet
         if (dest.isAbsent()) {
             String url = "https://api.adoptium.net/v3/binary/latest/" + version + "/ga/" + os() + "/" + arch()
                     + "/jdk/hotspot/normal/eclipse";
@@ -81,13 +102,7 @@ public interface JDK extends Task {
             unpack(archive, dest, Option::strip);
             ui().info("Installed the JDK [", version, "] at ", dest);
         }
-
-        if (!Platform.canRun(dest)) {
-            ui().warn("The JDK [", dest, "] may be too old to run Bee.");
-        }
-
-        Platform.config("java", dest.absolutize().path());
-        ui().info("Bee will use the JDK [", version, "] from the next invocation.");
+        return dest;
     }
 
     /**
@@ -152,7 +167,7 @@ public interface JDK extends Task {
      * @param version A JDK version.
      * @return An installation directory.
      */
-    private Directory locate(int version) {
+    private static Directory locate(int version) {
         return Platform.BeeHome.directory("jdk").directory("temurin-" + version);
     }
 
@@ -161,7 +176,7 @@ public interface JDK extends Task {
      * 
      * @return An OS name.
      */
-    private String os() {
+    private static String os() {
         return Platform.isWindows() ? "windows" : Platform.isMac() ? "mac" : "linux";
     }
 
@@ -170,7 +185,7 @@ public interface JDK extends Task {
      * 
      * @return An architecture name.
      */
-    private String arch() {
+    private static String arch() {
         String arch = Platform.OSArch;
         return arch.contains("aarch64") || arch.contains("arm") ? "aarch64" : "x64";
     }
