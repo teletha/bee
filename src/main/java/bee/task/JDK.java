@@ -11,15 +11,15 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
 import bee.api.Command;
+import bee.api.JavaVersion;
 import bee.api.Loader;
 import kiss.I;
 import kiss.JSON;
@@ -30,7 +30,8 @@ import psychopath.Option;
 
 /**
  * Manages the JDK used by Bee. The JDKs are downloaded from Adoptium (Temurin) and installed under
- * the Bee home directory, so the JDK can be switched without touching the environment path.
+ * the Bee home directory, so the JDK can be switched without touching the environment path. Early
+ * Access builds are supported for versions which have not been released yet.
  */
 public interface JDK extends Task {
 
@@ -50,21 +51,30 @@ public interface JDK extends Task {
             throw new Fail("Failed to access the Adoptium API.").reason(Fail.strip(e));
         }
 
-        List<Integer> releases = info.find(int.class, "available_releases", "*")
-                .stream()
-                .sorted(Comparator.reverseOrder())
-                .toList();
+        List<Integer> released = info.find(int.class, "available_releases", "*");
         List<Integer> lts = info.find(int.class, "available_lts_releases", "*");
-        Map<Integer, String> dates = releaseDates(releases);
+        int tip = info.get(int.class, "tip_version");
+
+        // List the released versions and the unreleased tip version as Early Access.
+        List<Integer> releases = new ArrayList(released);
+        if (!released.contains(tip)) {
+            releases.add(tip);
+        }
+        releases.sort(Comparator.reverseOrder());
+
         String selected = Platform.config("java");
         int width = String.valueOf(releases.get(0)).length();
 
         int version = ui().ask("Select the JDK version to use.", releases, v -> {
-            Directory jdk = locate(v);
-            String label = "Java " + padRight(String.valueOf(v), width) + " - " + padRight(date(dates.get(v)), 10) + " " + padRight(lts
-                    .contains(v) ? "LTS" : "", 3);
+            boolean earlyAccess = !released.contains(v);
+            JavaVersion java = JavaVersion.of(v);
+            Directory jdk = locate(v, earlyAccess);
+            String label = "Java " + padRight(String.valueOf(v), width) + " - " + padRight(java != null ? java
+                    .getReleaseDate() : date(v, earlyAccess), 10) + " " + padRight(java != null && java.lts ? "LTS" : "", 3) + padRight(earlyAccess
+                            ? "EA"
+                            : "", 2);
 
-            if (selected != null && jdk.absolutize().path().equalsIgnoreCase(selected)) {
+            if (jdk.absolutize().path().equalsIgnoreCase(selected)) {
                 label += " [selected]";
             } else if (jdk.isPresent()) {
                 label += " [installed]";
@@ -72,7 +82,8 @@ public interface JDK extends Task {
             return label.stripTrailing();
         });
 
-        Directory dest = install(version);
+        boolean earlyAccess = !released.contains(version);
+        Directory dest = install(version, earlyAccess);
 
         if (!Platform.canRun(dest)) {
             ui().warn("The JDK [", dest, "] may be too old to run Bee.");
@@ -90,14 +101,28 @@ public interface JDK extends Task {
      * @return The installation directory.
      */
     static Directory install(int version) {
-        Directory dest = locate(version);
+        JavaVersion java = JavaVersion.of(version);
+        return install(version, java != null && java.earlyAccess);
+    }
+
+    /**
+     * Ensure the specified JDK version is installed under the Bee home. The JDK is downloaded from
+     * Adoptium (Temurin) when it is missing.
+     * 
+     * @param version A JDK version.
+     * @param earlyAccess Whether to use an Early Access build or not.
+     * @return The installation directory.
+     */
+    static Directory install(int version, boolean earlyAccess) {
+        Directory dest = locate(version, earlyAccess);
 
         if (dest.isAbsent()) {
-            String url = "https://api.adoptium.net/v3/binary/latest/" + version + "/ga/" + os() + "/" + arch()
+            String type = earlyAccess ? "ea" : "ga";
+            String url = "https://api.adoptium.net/v3/binary/latest/" + version + "/" + type + "/" + os() + "/" + arch()
                     + "/jdk/hotspot/normal/eclipse";
             File archive = Locator.temporaryFile(url.substring(url.lastIndexOf('/') + 1));
 
-            ui().info("Downloading the JDK [", version, "] from Adoptium.");
+            ui().info("Downloading the ", earlyAccess ? "Early Access " : "", "JDK [", version, "] from Adoptium.");
             Loader.download(url, archive);
             unpack(archive, dest, Option::strip);
             ui().info("Installed the JDK [", version, "] at ", dest);
@@ -117,47 +142,32 @@ public interface JDK extends Task {
     }
 
     /**
-     * Format the specified date as <code>yyyy/MM/dd</code>.
-     * 
-     * @param date A date in the ISO format, or <code>null</code>.
-     * @return A formatted date.
-     */
-    private String date(String date) {
-        return date == null ? "" : date.replace('-', '/');
-    }
-
-    /**
-     * Resolve the initial GA release date of each version.
-     * 
-     * @param releases A list of versions.
-     * @return A map from version to release date.
-     */
-    private Map<Integer, String> releaseDates(List<Integer> releases) {
-        Map<Integer, String> dates = new HashMap();
-
-        I.signal(releases)
-                .flatMap(version -> I.http(releaseUrl(version), JSON.class).map(json -> I.pair(version, json)))
-                .waitForTerminate()
-                .skipError()
-                .to(pair -> {
-                    String timestamp = pair.ⅱ.get("0").text("timestamp");
-                    if (timestamp != null && 10 <= timestamp.length()) {
-                        dates.put(pair.ⅰ, timestamp.substring(0, 10));
-                    }
-                });
-
-        return dates;
-    }
-
-    /**
-     * Build the URL of the initial GA release of the specified version.
+     * Resolve the release date of the specified version from the Adoptium API. This is used only when
+     * the version is not declared by {@link JavaVersion}.
      * 
      * @param version A JDK version.
+     * @param earlyAccess Whether to use an Early Access build or not.
+     * @return A release date, or an empty text.
+     */
+    private String date(int version, boolean earlyAccess) {
+        try {
+            String timestamp = I.json(releaseUrl(version, earlyAccess)).get("0").text("timestamp");
+            return timestamp != null && 10 <= timestamp.length() ? timestamp.substring(0, 10).replace('-', '/') : "";
+        } catch (Throwable e) {
+            return "";
+        }
+    }
+
+    /**
+     * Build the URL of the Adoptium release list of the specified version.
+     * 
+     * @param version A JDK version.
+     * @param earlyAccess Whether to use an Early Access build or not.
      * @return A release API URL.
      */
-    private String releaseUrl(int version) {
-        return "https://api.adoptium.net/v3/assets/feature_releases/" + version + "/ga?architecture=" + arch()
-                + "&heap_size=normal&image_type=jdk&jvm_impl=hotspot&os=" + os()
+    private String releaseUrl(int version, boolean earlyAccess) {
+        return "https://api.adoptium.net/v3/assets/feature_releases/" + version + "/" + (earlyAccess ? "ea" : "ga")
+                + "?architecture=" + arch() + "&heap_size=normal&image_type=jdk&jvm_impl=hotspot&os=" + os()
                 + "&page=0&page_size=1&project=jdk&vendor=eclipse&sort_order=ASC";
     }
 
@@ -165,10 +175,11 @@ public interface JDK extends Task {
      * Locate the installation directory of the specified version.
      * 
      * @param version A JDK version.
+     * @param earlyAccess Whether to use an Early Access build or not.
      * @return An installation directory.
      */
-    private static Directory locate(int version) {
-        return Platform.BeeHome.directory("jdk").directory("temurin-" + version);
+    private static Directory locate(int version, boolean earlyAccess) {
+        return Platform.BeeHome.directory("jdk").directory("temurin-" + version + (earlyAccess ? "-ea" : ""));
     }
 
     /**

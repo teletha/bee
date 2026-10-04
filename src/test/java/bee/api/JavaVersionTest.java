@@ -15,13 +15,19 @@ class JavaVersionTest {
 
     @Test
     void feature() {
-        assert JavaVersion.JAVA_8.feature == 8;
+        assert JavaVersion.JAVA_11.feature == 11;
         assert JavaVersion.JAVA_21.feature == 21;
     }
 
     @Test
+    void onlyJava11AndLater() {
+        for (JavaVersion version : JavaVersion.values()) {
+            assert 11 <= version.feature : version;
+        }
+    }
+
+    @Test
     void lts() {
-        assert JavaVersion.JAVA_8.lts;
         assert JavaVersion.JAVA_11.lts;
         assert JavaVersion.JAVA_17.lts;
         assert JavaVersion.JAVA_21.lts;
@@ -33,22 +39,34 @@ class JavaVersionTest {
     @Test
     void release() {
         assert JavaVersion.JAVA_21.release != null;
-        assert JavaVersion.JAVA_8.release.isBefore(JavaVersion.JAVA_21.release);
+        assert JavaVersion.JAVA_11.release.isBefore(JavaVersion.JAVA_25.release);
         assert JavaVersion.JAVA_21.getReleaseDate().matches("\\d{4}/\\d{2}/\\d{2}");
+    }
+
+    @Test
+    void earlyAccess() {
+        assert JavaVersion.latest().earlyAccess;
+        assert JavaVersion.latest().getReleaseType().equals("ea");
+        for (JavaVersion version : JavaVersion.values()) {
+            if (!version.earlyAccess) {
+                assert version.getReleaseType().equals("ga");
+            }
+        }
+        assert 0 < JavaVersion.earlyAccess().length;
     }
 
     @Test
     void of() {
         assert JavaVersion.of(21) == JavaVersion.JAVA_21;
-        assert JavaVersion.of(8) == JavaVersion.JAVA_8;
+        assert JavaVersion.of(11) == JavaVersion.JAVA_11;
         assert JavaVersion.of(-1) == null;
     }
 
     @Test
     void parse() {
         assert JavaVersion.parse("21") == JavaVersion.JAVA_21;
-        assert JavaVersion.parse("1.8") == JavaVersion.JAVA_8;
         assert JavaVersion.parse("Java 17") == JavaVersion.JAVA_17;
+        assert JavaVersion.parse("28-ea") == JavaVersion.JAVA_28;
         assert JavaVersion.parse(null) == null;
         assert JavaVersion.parse("abc") == null;
     }
@@ -67,7 +85,6 @@ class JavaVersionTest {
 
     @Test
     void ltsList() {
-        assert JavaVersion.lts().length == 5;
         for (JavaVersion version : JavaVersion.lts()) {
             assert version.lts;
         }
