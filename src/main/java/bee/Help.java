@@ -54,12 +54,13 @@ public interface Help extends Task {
     default void version() {
         UserInterface ui = ui();
 
-        ui.info("Bee   \t", Bee.API.getVersion(), " [", Locator.locate(Bee.class), "]");
-        ui.info("Java  \t", System.getProperty("java.vendor"), " ", Runtime.version(), "@", System
+        ui.info("Bee        \t", Bee.API.getVersion(), " [", Locator.locate(Bee.class), "]");
+        ui.info("Java       \t", System.getProperty("java.vendor"), " ", Runtime.version(), "@", System
                 .getProperty("java.class.version"), " [", Platform.Java, "]");
-        ui.info("OS     \t", Platform.OSName, " ", Platform.OSArch, " ", Platform.OSVersion);
-        ui.info("Locale \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
-        ui.info("Charset\t", Platform.Encoding.displayName(Locale.ENGLISH));
+        ui.info("OS         \t", Platform.OSName, " ", Platform.OSArch, " ", Platform.OSVersion);
+        ui.info("Locale     \t", Locale.getDefault().getDisplayName(Locale.ENGLISH));
+        ui.info("Charset    \t", Platform.Encoding.displayName(Locale.ENGLISH));
+        ui.info("Repository \t", Platform.BeeLocalRepository, " ", Platform.BeeLocalRepositorySource);
     }
 
     /**

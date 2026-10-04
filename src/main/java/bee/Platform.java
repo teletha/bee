@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import kiss.I;
+import kiss.Ⅱ;
 import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
@@ -55,6 +56,9 @@ public final class Platform {
 
     /** The local repository. */
     public static final Directory BeeLocalRepository;
+
+    /** The source which the local repository is resolved from. */
+    public static final String BeeLocalRepositorySource;
 
     /** The user configuration file. */
     public static final File Config;
@@ -124,7 +128,10 @@ public final class Platform {
         JavaHome = javaHome;
         Java = javaHome.file(isWindows ? "bin/javac.exe" : "bin/javac");
         Bee = beeExe != null ? beeExe : javaHome.file(isWindows ? "bin/bee.bat" : "bin/bee");
-        BeeLocalRepository = searchLocalRepository();
+
+        Ⅱ<Directory, String> repository = searchLocalRepository();
+        BeeLocalRepository = repository.ⅰ;
+        BeeLocalRepositorySource = repository.ⅱ;
     }
 
     /**
@@ -143,8 +150,10 @@ public final class Platform {
     }
 
     /**
-     * Resolve the JDK selected by the user. The {@code BEE_JAVA} environment variable has the highest
-     * priority, then the {@code java} entry in the Bee configuration file. The value can be either a
+     * Resolve the JDK selected by the user. The {@code BEE_JAVA} environment variable has the
+     * highest
+     * priority, then the {@code java} entry in the Bee configuration file. The value can be either
+     * a
      * path to a JDK or a version (e.g. {@code 21}) of an installed JDK.
      * 
      * @return The selected JDK, or <code>null</code> when nothing is configured.
@@ -173,7 +182,8 @@ public final class Platform {
     }
 
     /**
-     * Test whether the specified JDK can run this Bee. An old JDK can not load the Bee classes, so it
+     * Test whether the specified JDK can run this Bee. An old JDK can not load the Bee classes, so
+     * it
      * is ignored when resolving the selected JDK.
      * 
      * @param jdk A JDK home directory.
@@ -305,13 +315,23 @@ public final class Platform {
     }
 
     /**
-     * Search maven home directory.
+     * Search the Maven local repository and resolve which source it is determined from. The
+     * returned pair is the repository and the description of its source, which is one of the
+     * following.
+     * <ul>
+     * <li><code>from Maven [&lt;settings.xml&gt;]</code> - the localRepository in the Maven
+     * settings.xml</li>
+     * <li><code>from Maven [default]</code> - the default Maven local repository
+     * (.m2/repository)</li>
+     * <li><code>from Bee [default]</code> - the Bee local repository (.bee/repository)</li>
+     * <li><code>from JitPack [default]</code> - the Maven local repository on JitPack</li>
+     * </ul>
      * 
-     * @return
+     * @return The local repository and the source it is determined from.
      */
-    private static Directory searchLocalRepository() {
+    private static Ⅱ<Directory, String> searchLocalRepository() {
         if (isJitPack) {
-            return Locator.directory(System.getenv("HOME")).directory(".m2/repository");
+            return I.pair(Locator.directory(System.getenv("HOME")).directory(".m2/repository"), "from JitPack [default]");
         }
 
         for (Entry<String, String> entry : System.getenv().entrySet()) {
@@ -326,7 +346,7 @@ public final class Platform {
                         if (conf.isPresent()) {
                             String location = I.xml(conf.asJavaPath()).find("localRepository").text();
                             if (location.length() != 0) {
-                                return Locator.directory(location);
+                                return I.pair(Locator.directory(location), "from Maven [" + conf + "]");
                             }
                         }
                     }
@@ -336,7 +356,10 @@ public final class Platform {
         // Prefer the standard Maven local repository when it exists so that artifacts are shared
         // with Maven, otherwise use Bee's own repository under the Bee home.
         Directory maven = Locator.directory(System.getProperty("user.home")).directory(".m2/repository");
-        return maven.isPresent() ? maven : BeeHome.directory("repository");
+        if (maven.isPresent()) {
+            return I.pair(maven, "from Maven [default]");
+        }
+        return I.pair(BeeHome.directory("repository"), "from Bee [default]");
     }
 
     /**
