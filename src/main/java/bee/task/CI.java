@@ -635,6 +635,8 @@ public interface CI extends Task {
                   # Overridden by JRELEASER_PROJECT_VERSION in the release workflow, so that this
                   # file does not have to be regenerated every time the release task bumps version.txt.
                   version: '%s'
+                  java:
+                    groupId: %s
                   links:
                     homepage: %s
                 release:
@@ -681,7 +683,7 @@ public interface CI extends Task {
                 String.format(release, version, product, javaVersion, layout, product, product, product, product));
 
         makeFile("jreleaser.yml", String
-                .format(jreleaser, product, project().getVersion(), vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
+                .format(jreleaser, product, project().getVersion(), group, vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
     }
 
     @Command("Generate .gitignore file.")

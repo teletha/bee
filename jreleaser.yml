@@ -3,6 +3,8 @@ project:
   # Overridden by JRELEASER_PROJECT_VERSION in the release workflow, so that this
   # file does not have to be regenerated every time the release task bumps version.txt.
   version: '0.79.0'
+  java:
+    groupId: com.github.teletha
   links:
     homepage: https://github.com/teletha/bee
 release:
