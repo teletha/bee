@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="EB">
-		<header class="a" date="2026-10-05">
-			<h1 class="b"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="c"><a href="api/main.html" id="API"><svg class="package">
+	<body class="x">
+		<header class="N" date="2026-10-05">
+			<h1 class="O"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="P"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,55 +35,55 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="d"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="Q"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="T"></nav>
-		<article class="FB" id="Article">
-			<section class="Y"><code class="w">bee.task</code>
-				<h2 class="Interface HB"><code class="AB">Compile</code></h2>
-				<div class="m">
+		<nav class="W"></nav>
+		<article class="J" id="Article">
+			<section class="u"><code class="DB">bee.task</code>
+				<h2 class="Interface q"><code class="j">Compile</code></h2>
+				<div class="b">
 					<ul class="E H">
 						<li><code>kiss.Extensible</code></li>
 						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a><code class="parameters"><code><a aria-label="bee.task.Compile.Config" href="api/bee.task.Compile.Config.html">Config</a></code></code></code></li>
 					</ul>
 				</div><span class="A"><p>Compiles project source code, test code, and project-specific definition code.
 This task also handles copying associated resource files to the output directories.</p></span></section>
-			<section class="Y" id="source()">
-				<h2 class="P"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="AB">source</code><code class="Q">()</code><i class="Z"><code>void</code></i></h2><span class="A"><p>Compiles main source files found in the source directory set (e.g., <code>src/main/java</code>)
+			<section class="u" id="source()">
+				<h2 class="JB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="j">source</code><code class="h">()</code><i class="f"><code>void</code></i></h2><span class="A"><p>Compiles main source files found in the source directory set (e.g., <code>src/main/java</code>)
 and copies associated resources (e.g., files in <code>src/main/resources</code>) to the main classes
 directory.
 This is the default command for the <code>compile</code> task.</p></span></section>
-			<section class="Y" id="test()">
-				<h2 class="P"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="AB">test</code><code class="Q">()</code><i class="Z"><code>void</code></i></h2><span class="A"><p>Compiles test source files found in the test source directory set (e.g., <code>src/test/java</code>)
+			<section class="u" id="test()">
+				<h2 class="JB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="j">test</code><code class="h">()</code><i class="f"><code>void</code></i></h2><span class="A"><p>Compiles test source files found in the test source directory set (e.g., <code>src/test/java</code>)
 and copies associated resources (e.g., files in <code>src/test/resources</code>) to the test classes
 directory.
 Requires the main sources to be compiled first.</p></span></section>
-			<section class="Y" id="project()">
-				<h2 class="P"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="AB">project</code><code class="Q">()</code><i class="Z"><code>void</code></i></h2><span class="A"><p>Compiles project definition source files (e.g., <code>src/project/java</code>)
+			<section class="u" id="project()">
+				<h2 class="JB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="j">project</code><code class="h">()</code><i class="f"><code>void</code></i></h2><span class="A"><p>Compiles project definition source files (e.g., <code>src/project/java</code>)
 and copies associated resources to the project classes directory.
 This is typically used for compiling the Bee Project class itself.</p></span></section>
-			<section class="Y" id="check()">
-				<h2 class="P"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="AB">check</code><code class="Q">()</code><i class="Z"><code>void</code></i></h2><span class="A"><p>Performs a validation compile run on main and test sources without producing final output,
+			<section class="u" id="check()">
+				<h2 class="JB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="j">check</code><code class="h">()</code><i class="f"><code>void</code></i></h2><span class="A"><p>Performs a validation compile run on main and test sources without producing final output,
 primarily to check for compilation errors. Useful for quick syntax and type checking.
 Temporary output directory is used and cleaned up afterwards.</p></span></section>
 		</article>
-		<aside class="GB">
-			<div class="f">
-				<h5 class="IB">Methods</h5>
+		<aside class="z">
+			<div class="o">
+				<h5 class="k">Methods</h5>
 				<ul>
-					<li class="U"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#source()">source</a></code><code class="Q">()</code><i class="JB"><code>void</code></i></li>
-					<li class="U"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#test()">test</a></code><code class="Q">()</code><i class="JB"><code>void</code></i></li>
-					<li class="U"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#project()">project</a></code><code class="Q">()</code><i class="JB"><code>void</code></i></li>
-					<li class="U"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#check()">check</a></code><code class="Q">()</code><i class="JB"><code>void</code></i></li>
+					<li class="FB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#source()">source</a></code><code class="h">()</code><i class="AB"><code>void</code></i></li>
+					<li class="FB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#test()">test</a></code><code class="h">()</code><i class="AB"><code>void</code></i></li>
+					<li class="FB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#project()">project</a></code><code class="h">()</code><i class="AB"><code>void</code></i></li>
+					<li class="FB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.Compile.html#check()">check</a></code><code class="h">()</code><i class="AB"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="g">
+		<footer class="y">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
