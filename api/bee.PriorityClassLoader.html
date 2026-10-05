@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="x">
-		<header class="N" date="2026-10-05">
-			<h1 class="O"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="P"><a href="api/main.html" id="API"><svg class="package">
+	<body class="BB">
+		<header class="J" date="2026-10-05">
+			<h1 class="K"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="L"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="Q"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="M"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="W"></nav>
-		<article class="J" id="Article">
-			<section class="u"><code class="DB">bee</code>
-				<h2 class="Class q"><code class="j">PriorityClassLoader</code></h2>
-				<div class="b">
+		<nav class="t"></nav>
+		<article class="i" id="Article">
+			<section class="GB"><code class="q">bee</code>
+				<h2 class="Class IB"><code class="DB">PriorityClassLoader</code></h2>
+				<div class="y">
 					<ul class="E G">
 						<li><code><a aria-label="java.net.URLClassLoader 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/net/URLClassLoader.html">URLClassLoader</a></code></li>
 						<li><code><a aria-label="java.security.SecureClassLoader 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/security/SecureClassLoader.html">SecureClassLoader</a></code></li>
@@ -64,55 +64,55 @@
  from the parent/system and define it within this loader.</li>
 						<li>For all other classes, it follows the standard parent-first delegation model.</li>
 					</ul></span></section>
-			<section class="u" id="PriorityClassLoader(bee.UserInterface)">
-				<h2 class="JB"><i class="PUBLIC"></i><code class="j">PriorityClassLoader</code><code class="h">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code></h2>
-				<table class="s">
-					<tr class="CB">
+			<section class="GB" id="PriorityClassLoader(bee.UserInterface)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="DB">PriorityClassLoader</code><code class="W">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code></h2>
+				<table class="LB">
+					<tr class="JB">
 						<td><code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code></td>
 						<td></td>
 					</tr>
 				</table><span class="A"><p>Constructs an empty PriorityClassLoader.</p></span></section>
-			<section class="u" id="loadClass(java.lang.String,boolean)">
-				<h2 class="JB"><i class="OVERRIDE PROTECTED"></i><code class="j">loadClass</code><code class="h">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>boolean</code><code class="parameterName">resolve</code>)</code><i class="f"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code></i></h2>
-				<table class="s">
-					<tr class="CB">
+			<section class="GB" id="loadClass(java.lang.String,boolean)">
+				<h2 class="T"><i class="OVERRIDE PROTECTED"></i><code class="DB">loadClass</code><code class="W">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>boolean</code><code class="parameterName">resolve</code>)</code><i class="m"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code></i></h2>
+				<table class="LB">
+					<tr class="JB">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td><span><p>The binary name of the class to load.</p></span></td>
 					</tr>
-					<tr class="CB">
+					<tr class="JB">
 						<td><code>boolean</code><code class="parameterName">resolve</code></td>
 						<td><span><p>If <code>true</code>, resolve the class after loading.</p></span></td>
 					</tr>
-					<tr class="L">
+					<tr class="V">
 						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code></td>
 						<td><span><p>The resulting <code>Class</code> object.</p></span></td>
 					</tr>
-					<tr class="p">
+					<tr class="o">
 						<td><code><a aria-label="java.lang.ClassNotFoundException 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/ClassNotFoundException.html">ClassNotFoundException</a></code></td>
 						<td></td>
 					</tr>
 				</table><span class="A"><p>Loads the class with the specified binary name according to the priority/isolation rules.</p></span></section>
-			<section class="u" id="addClassPath(psychopath.Location)">
-				<h2 class="JB"><i class="FINAL"><i class="PUBLIC"></i></i><code class="j">addClassPath</code><code class="h">(<code>psychopath.Location</code><code class="parameterName">location</code>)</code><i class="f"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></h2>
-				<table class="s">
-					<tr class="CB">
+			<section class="GB" id="addClassPath(psychopath.Location)">
+				<h2 class="T"><i class="FINAL"><i class="PUBLIC"></i></i><code class="DB">addClassPath</code><code class="W">(<code>psychopath.Location</code><code class="parameterName">location</code>)</code><i class="m"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></h2>
+				<table class="LB">
+					<tr class="JB">
 						<td><code>psychopath.Location</code><code class="parameterName">location</code></td>
 						<td><span><p>The location to be added (your custom type).</p></span></td>
 					</tr>
-					<tr class="L">
+					<tr class="V">
 						<td><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></td>
 						<td><span><p>This <code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code> instance for method chaining.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Adds the specified location (JAR file or class directory) to the classpath.
 Uses the custom <code>Location</code> type.</p></span></section>
-			<section class="u" id="importAsPriorityClass(java.lang.Class)">
-				<h2 class="JB"><i class="FINAL"><i class="PUBLIC"></i></i><code class="j">importAsPriorityClass</code><code class="h">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code><code class="parameterName">target</code>)</code><i class="f"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></h2>
-				<table class="s">
-					<tr class="CB">
+			<section class="GB" id="importAsPriorityClass(java.lang.Class)">
+				<h2 class="T"><i class="FINAL"><i class="PUBLIC"></i></i><code class="DB">importAsPriorityClass</code><code class="W">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code><code class="parameterName">target</code>)</code><i class="m"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></h2>
+				<table class="LB">
+					<tr class="JB">
 						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code><code class="parameterName">target</code></td>
 						<td><span><p>The target class to be defined with high priority.</p></span></td>
 					</tr>
-					<tr class="L">
+					<tr class="V">
 						<td><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></td>
 						<td><span><p>This <code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code> instance for method chaining.</p></span></td>
 					</tr>
@@ -123,21 +123,21 @@ Uses the custom <code>Location</code> type.</p></span></section>
 </p>
 				</span></section>
 		</article>
-		<aside class="z">
-			<div class="o">
+		<aside class="CB">
+			<div class="c">
 				<h5 class="k">Constructors</h5>
 				<ul>
-					<li class="FB"><i class="PUBLIC"></i><code><a href="api/bee.PriorityClassLoader.html#PriorityClassLoader(bee.UserInterface)">PriorityClassLoader</a></code><code class="h">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code></li>
+					<li class="HB"><i class="PUBLIC"></i><code><a href="api/bee.PriorityClassLoader.html#PriorityClassLoader(bee.UserInterface)">PriorityClassLoader</a></code><code class="W">(<code><a aria-label="bee.UserInterface" href="api/bee.UserInterface.html">UserInterface</a></code><code class="parameterName">ui</code>)</code></li>
 				</ul>
 				<h5 class="k">Methods</h5>
 				<ul>
-					<li class="FB"><i class="OVERRIDE PROTECTED"></i><code><a href="api/bee.PriorityClassLoader.html#loadClass(java.lang.String,boolean)">loadClass</a></code><code class="h">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>boolean</code><code class="parameterName">resolve</code>)</code><i class="AB"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code></i></li>
-					<li class="FB"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.PriorityClassLoader.html#addClassPath(psychopath.Location)">addClassPath</a></code><code class="h">(<code>psychopath.Location</code><code class="parameterName">location</code>)</code><i class="AB"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></li>
-					<li class="FB"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.PriorityClassLoader.html#importAsPriorityClass(java.lang.Class)">importAsPriorityClass</a></code><code class="h">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code><code class="parameterName">target</code>)</code><i class="AB"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></li>
+					<li class="HB"><i class="OVERRIDE PROTECTED"></i><code><a href="api/bee.PriorityClassLoader.html#loadClass(java.lang.String,boolean)">loadClass</a></code><code class="W">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>, <code>boolean</code><code class="parameterName">resolve</code>)</code><i class="j"><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code></i></li>
+					<li class="HB"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.PriorityClassLoader.html#addClassPath(psychopath.Location)">addClassPath</a></code><code class="W">(<code>psychopath.Location</code><code class="parameterName">location</code>)</code><i class="j"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></li>
+					<li class="HB"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.PriorityClassLoader.html#importAsPriorityClass(java.lang.Class)">importAsPriorityClass</a></code><code class="W">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>?</code></code></code><code class="parameterName">target</code>)</code><i class="j"><code><a aria-label="bee.PriorityClassLoader" href="api/bee.PriorityClassLoader.html">PriorityClassLoader</a></code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="y">
+		<footer class="N">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
