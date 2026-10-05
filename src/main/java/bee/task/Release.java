@@ -200,7 +200,7 @@ public interface Release extends Task<Release.Config> {
 
         if (conf.push) {
             git.push(branch);
-            ui().info("Pushed the release commit for [", next, "].");
+            ui().info("Pushed the release commit.");
         }
 
         // 7. Dispatch the release workflow and watch it.
@@ -208,9 +208,9 @@ public interface Release extends Task<Release.Config> {
 
         // 8. Verify the outcome.
         if (GithubAPI.hasRelease(vcs.owner + "/" + vcs.repo, next.toString())) {
-            ui().info("Released the version [", next, "].");
+            ui().info("Released [", next, "].");
         } else {
-            ui().warn("The GitHub Release of [", next, "] is not created yet. Run [release:publish ", next, "] to retry.");
+            ui().warn("The GitHub Release of [", next, "] was not created. Run [release:publish] to retry.");
         }
     }
 
@@ -241,11 +241,10 @@ public interface Release extends Task<Release.Config> {
         String repository = vcs.owner + "/" + vcs.repo;
 
         String nonce = String.valueOf(System.currentTimeMillis());
-        ui().info("Dispatch the release workflow for the version [", version, "].");
         GithubAPI.dispatch(repository, EVENT, new kiss.JSON().set("version", version).set("nonce", nonce));
 
         if (!watch) {
-            ui().info("Dispatched. Watch the run on GitHub.");
+            ui().info("Dispatched the release workflow [", version, "]. Watch the run on GitHub.");
             return;
         }
 
@@ -254,7 +253,7 @@ public interface Release extends Task<Release.Config> {
             ui().warn("The release workflow run could not be found. Check the Actions page.");
             return;
         }
-        ui().info("Watching the release workflow : ", run.html_url);
+        ui().info("Watching : ", run.html_url);
 
         watch(repository, run);
     }
@@ -268,7 +267,7 @@ public interface Release extends Task<Release.Config> {
      */
     private GithubAPI.Run waitForRun(String repository, String nonce) {
         long start = System.currentTimeMillis();
-        ui().spinner("Waiting for the release workflow to start...");
+        ui().spinner("Waiting for the workflow to start...");
 
         while (System.currentTimeMillis() - start < DISCOVER_TIMEOUT) {
             for (GithubAPI.Run run : GithubAPI.runs(repository, RUN_EVENT)) {
@@ -312,7 +311,6 @@ public interface Release extends Task<Release.Config> {
 
         switch (String.valueOf(run.conclusion)) {
         case "success":
-            ui().info("The release workflow succeeded : ", run.html_url);
             return;
 
         case "cancelled":
