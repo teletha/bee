@@ -55,4 +55,27 @@ class GitTest {
         assert since.get(0).type.equals("fix");
         assert since.get(0).bump() == Bump.PATCH;
     }
+
+    @Test
+    void latestVersionTagIgnoresGitSortOrder() {
+        Assumptions.assumeTrue(Git.isAvailable(), "git is not available");
+
+        Directory directory = Locator.temporaryDirectory();
+        Git git = Git.at(directory);
+
+        git.init();
+        git.run("config", "user.email", "test@example.com");
+        git.run("config", "user.name", "Test");
+        directory.file("a.txt").text("hello");
+        git.add("a.txt").commit("feat: a");
+
+        // The repository has mixed tag conventions, and the git refname sort returns the v
+        // prefixed tag first, so the highest version must be selected here.
+        git.tag("v0.64.0");
+        git.tag("v0.59.0");
+        git.tag("0.65.0");
+        git.tag("0.79.1");
+
+        assert git.latestVersionTag().equals("0.79.1");
+    }
 }

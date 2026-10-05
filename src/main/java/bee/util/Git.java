@@ -173,12 +173,19 @@ public class Git {
      * @return The latest version tag, or <code>null</code> when there is none.
      */
     public String latestVersionTag() {
+        String latest = null;
+        SemanticVersion latestVersion = null;
+
         for (String tag : tags()) {
             if (SemanticVersion.isVersion(tag)) {
-                return tag;
+                SemanticVersion version = new SemanticVersion(tag);
+                if (latestVersion == null || latestVersion.compareTo(version) < 0) {
+                    latestVersion = version;
+                    latest = tag;
+                }
             }
         }
-        return null;
+        return latest;
     }
 
     /**
