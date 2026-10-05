@@ -121,6 +121,21 @@ public class Git {
     }
 
     /**
+     * Execute the specified git command silently and fail when it exits abnormally. Use this for a
+     * command whose progress output is noise for the user.
+     * 
+     * @param command A command line after git.
+     * @return Fluent API.
+     */
+    private Git execSilently(String... command) {
+        int exit = exit(command);
+        if (exit != 0) {
+            throw new Fail("The git command " + Arrays.toString(command) + " failed with the exit code [" + exit + "].");
+        }
+        return this;
+    }
+
+    /**
      * Resolve the current branch.
      * 
      * @return A branch name.
@@ -332,7 +347,7 @@ public class Git {
      * @return Fluent API.
      */
     public Git fetch() {
-        return exec("fetch", "--tags", "--force");
+        return execSilently("fetch", "--tags", "--force");
     }
 
     /**

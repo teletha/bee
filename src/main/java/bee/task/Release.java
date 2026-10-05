@@ -53,6 +53,9 @@ public interface Release extends Task<Release.Config> {
     /** The GitHub Actions event name of the dispatched run. */
     String RUN_EVENT = "repository_dispatch";
 
+    /** The maximum number of the commits to show in the release plan. */
+    int MAX_COMMITS = 20;
+
     /** The interval (ms) between the workflow run polls. */
     long POLL_INTERVAL = 1000;
 
@@ -148,8 +151,11 @@ public interface Release extends Task<Release.Config> {
         ui().info("  Previous   \t", previous == null ? "(none)" : previous);
         ui().info("  Current    \t", current);
         ui().info("  Commits    \t", commits.size());
-        for (ConventionalCommit commit : commits) {
-            ui().info("    ", commit);
+        for (int i = 0; i < commits.size() && i < MAX_COMMITS; i++) {
+            ui().info("    ", commits.get(i));
+        }
+        if (commits.size() > MAX_COMMITS) {
+            ui().info("    ... and ", commits.size() - MAX_COMMITS, " more commits.");
         }
 
         // 4. Determine the version which the commits suggest.
