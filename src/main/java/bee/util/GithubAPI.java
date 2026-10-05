@@ -328,7 +328,8 @@ public class GithubAPI {
      */
     public static List<Run> runs(String repository, String event) {
         String token = token(TaskOperations.ui());
-        JSON response = invoke(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/actions/runs?event=" + event + "&per_page=30"))
+        JSON response = invoke(HttpRequest
+                .newBuilder(URI.create("https://api.github.com/repos/" + repository + "/actions/runs?event=" + event + "&per_page=30"))
                 .header("Accept", "application/vnd.github+json")
                 .header("Authorization", "Bearer " + token)
                 .header("X-GitHub-Api-Version", API_VERSION)
@@ -346,7 +347,8 @@ public class GithubAPI {
      */
     public static List<Job> jobs(String repository, long runId) {
         String token = token(TaskOperations.ui());
-        JSON response = invoke(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/actions/runs/" + runId + "/jobs"))
+        JSON response = invoke(HttpRequest
+                .newBuilder(URI.create("https://api.github.com/repos/" + repository + "/actions/runs/" + runId + "/jobs"))
                 .header("Accept", "application/vnd.github+json")
                 .header("Authorization", "Bearer " + token)
                 .header("X-GitHub-Api-Version", API_VERSION)
@@ -361,18 +363,23 @@ public class GithubAPI {
      *
      * @param repository The owner/name of the repository.
      * @param runId A run identifier.
-     * @return The directory which contains the log files, or <code>null</code> when it is not ready.
+     * @return The directory which contains the log files, or <code>null</code> when it is not
+     *         ready.
      */
     public static psychopath.Directory logs(String repository, long runId) {
         String token = token(TaskOperations.ui());
         String endpoint = "https://api.github.com/repos/" + repository + "/actions/runs/" + runId + "/logs";
 
         try {
-            HttpResponse<InputStream> response = I.http(HttpRequest.newBuilder(URI.create(endpoint))
-                    .header("Accept", "application/vnd.github+json")
-                    .header("Authorization", "Bearer " + token)
-                    .header("X-GitHub-Api-Version", API_VERSION)
-                    .GET(), HttpResponse.class).waitForTerminate().to().acquire();
+            HttpResponse<InputStream> response = I
+                    .http(HttpRequest.newBuilder(URI.create(endpoint))
+                            .header("Accept", "application/vnd.github+json")
+                            .header("Authorization", "Bearer " + token)
+                            .header("X-GitHub-Api-Version", API_VERSION)
+                            .GET(), HttpResponse.class)
+                    .waitForTerminate()
+                    .to()
+                    .acquire();
 
             if (response.statusCode() != 200) {
                 I.quiet(response.body());
@@ -398,7 +405,8 @@ public class GithubAPI {
     public static boolean hasRelease(String repository, String tag) {
         String token = token(TaskOperations.ui());
         try {
-            JSON response = invoke(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/releases/tags/" + tag))
+            JSON response = invoke(HttpRequest
+                    .newBuilder(URI.create("https://api.github.com/repos/" + repository + "/releases/tags/" + tag))
                     .header("Accept", "application/vnd.github+json")
                     .header("Authorization", "Bearer " + token)
                     .header("X-GitHub-Api-Version", API_VERSION)
@@ -411,7 +419,8 @@ public class GithubAPI {
     }
 
     /**
-     * Connect the specified local directory with the remote repository. When the remote has commits,
+     * Connect the specified local directory with the remote repository. When the remote has
+     * commits,
      * this checks out its default branch. Existing local files are kept, so a project which already
      * contains Bee files can be attached to the remote safely.
      *
@@ -513,11 +522,15 @@ public class GithubAPI {
      */
     private static boolean verify(String token) {
         try {
-            HttpResponse response = I.http(HttpRequest.newBuilder(URI.create(USER_ENDPOINT))
-                    .header("Accept", "application/vnd.github+json")
-                    .header("Authorization", "Bearer " + token)
-                    .header("X-GitHub-Api-Version", API_VERSION)
-                    .GET(), HttpResponse.class).waitForTerminate().to().acquire();
+            HttpResponse response = I
+                    .http(HttpRequest.newBuilder(URI.create(USER_ENDPOINT))
+                            .header("Accept", "application/vnd.github+json")
+                            .header("Authorization", "Bearer " + token)
+                            .header("X-GitHub-Api-Version", API_VERSION)
+                            .GET(), HttpResponse.class)
+                    .waitForTerminate()
+                    .to()
+                    .acquire();
 
             try {
                 String scopes = response.headers().firstValue("x-oauth-scopes").orElse("");
@@ -665,7 +678,8 @@ public class GithubAPI {
     }
 
     /**
-     * Send the specified request and wait for the response. This is used for requests whose response
+     * Send the specified request and wait for the response. This is used for requests whose
+     * response
      * body is empty (e.g. 204 No Content).
      *
      * @param request A request builder.

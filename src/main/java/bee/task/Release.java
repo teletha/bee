@@ -346,7 +346,7 @@ public interface Release extends Task<Release.Config> {
                     .append("]");
 
             for (GithubAPI.Step step : job.steps) {
-                builder.append(Platform.EOL).append("    ").append(mark(step)).append(" ").append(step.name);
+                builder.append(Platform.EOL).append("  ").append(mark(step)).append(" ").append(step.name);
             }
         }
         return builder.toString();
