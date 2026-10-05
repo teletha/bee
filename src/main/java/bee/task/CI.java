@@ -655,6 +655,10 @@ public interface CI extends Task {
                     owner: %s
                     name: %s
                     tagName: '{{projectVersion}}'
+                    # The release title. The JReleaser default is "Release {{tagName}}", which
+                    # reads as "Release 0.81.1". Use the product name and the version instead,
+                    # such as "bee 0.81.1".
+                    releaseName: '{{projectName}} {{projectVersion}}'
                     # The tag is created by the release task, so JReleaser creates only the GitHub
                     # Release. The changelog is generated from the conventional commits. An existing
                     # release is updated, so a failed release can be retried.
