@@ -180,6 +180,11 @@ const root = {
 			"type": "Class"
 		},
 		{
+			"name": "GithubAPI.Step",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
 			"name": "GithubAPI.Job",
 			"packageName": "bee.util",
 			"type": "Class"
