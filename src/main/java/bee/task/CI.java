@@ -624,7 +624,7 @@ public interface CI extends Task {
                         JRELEASER_MAVENCENTRAL_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
                       with:
                         version: 1.26.0
-                        arguments: release --verbose
+                        arguments: release --debug
                 """;
 
         // In a format string, a double brace denotes a single brace, so {{projectVersion}} is
