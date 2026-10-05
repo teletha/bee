@@ -44,8 +44,11 @@ public interface Release extends Task<Release.Config> {
     /** The option label of the abort. */
     String ABORT = "Abort";
 
-    /** The repository dispatch event which starts the release workflow. */
+    /** The repository dispatch event type which starts the release workflow. */
     String EVENT = "release";
+
+    /** The GitHub Actions event name of the dispatched run. */
+    String RUN_EVENT = "repository_dispatch";
 
     /** The interval (ms) between the workflow run polls. */
     long POLL_INTERVAL = 3000;
@@ -254,7 +257,7 @@ public interface Release extends Task<Release.Config> {
         ui().spinner("Waiting for the release workflow to start...");
 
         while (System.currentTimeMillis() - start < DISCOVER_TIMEOUT) {
-            for (GithubAPI.Run run : GithubAPI.runs(repository, EVENT)) {
+            for (GithubAPI.Run run : GithubAPI.runs(repository, RUN_EVENT)) {
                 if (run.name != null && run.name.contains(nonce)) {
                     return run;
                 }
@@ -274,7 +277,7 @@ public interface Release extends Task<Release.Config> {
         while (!"completed".equals(run.status)) {
             sleep(POLL_INTERVAL);
 
-            for (GithubAPI.Run current : GithubAPI.runs(repository, EVENT)) {
+            for (GithubAPI.Run current : GithubAPI.runs(repository, RUN_EVENT)) {
                 if (current.id == run.id) {
                     run = current;
                     break;

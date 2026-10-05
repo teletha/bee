@@ -17,8 +17,8 @@ on:
         required: true
 
 # The run name carries the dispatch nonce so that the release task can find the run
-# which it started.
-run-name: Release ${{ github.event.client_payload.version || inputs.version }} [${{ github.event.client_payload.nonce || 'manual' }}]
+# which it started. A manual run has no client payload, so it is named differently.
+run-name: Release ${{ github.event.client_payload.version }}${{ github.event.client_payload.nonce }}${{ inputs.version }}
 
 # The shell declares bash so that pipefail is enabled, which makes the pipeline in
 # the version reading step below fail when a component of it fails.
