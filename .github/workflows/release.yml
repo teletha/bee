@@ -39,6 +39,7 @@ jobs:
       contents: write
     steps:
     - name: Check publishing secrets
+      id: secrets
       env:
         MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
         MAVEN_CENTRAL_TOKEN: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
@@ -46,8 +47,8 @@ jobs:
         MAVEN_CENTRAL_GPG_PUBLIC_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PUBLIC_KEY }}
         MAVEN_CENTRAL_GPG_PASSPHRASE: ${{ secrets.MAVEN_CENTRAL_GPG_PASSPHRASE }}
       run: |
-        # A missing secret surfaces as an obscure JReleaser or HTTP error much
-        # later, so report every missing name at once and fail before building.
+        # A missing secret must not fail the whole release. The GitHub Release is
+        # still created, and only the Maven Central deploy is skipped.
         missing=()
         for name in MAVEN_CENTRAL_USERNAME MAVEN_CENTRAL_TOKEN MAVEN_CENTRAL_GPG_PRIVATE_KEY MAVEN_CENTRAL_GPG_PUBLIC_KEY MAVEN_CENTRAL_GPG_PASSPHRASE; do
           if [ -z "${!name}" ]; then
@@ -56,9 +57,10 @@ jobs:
         done
 
         if [ ${#missing[@]} -gt 0 ]; then
-          echo "::error::Not registered as a GitHub Actions secret: ${missing[*]}"
-          echo "Register them in the repository settings, Secrets and variables > Actions."
-          exit 1
+          echo "::warning::Not registered as a GitHub Actions secret: ${missing[*]}. The Maven Central deploy is skipped."
+          echo "publish=false" >> "$GITHUB_OUTPUT"
+        else
+          echo "publish=true" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Resolve the release tag
@@ -128,7 +130,14 @@ jobs:
         cp pom.xml ${directory}/bee-${PRODUCT_VERSION}.pom
         ls -l ${directory}
 
-    - name: Publish to Maven Central
+    - name: Skip the Maven Central deploy
+      if: steps.secrets.outputs.publish != 'true'
+      run: |
+        # Disable the signing and the Central deploy so that JReleaser only creates
+        # the GitHub Release. Both settings use the same RELEASE value.
+        sed -i 's/active: RELEASE/active: NEVER/g' jreleaser.yml
+
+    - name: Release with JReleaser
       uses: jreleaser/release-action@v2
       env:
         # Keep JReleaser in sync with the version which the release task wrote into version.txt.
