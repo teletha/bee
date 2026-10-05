@@ -666,6 +666,8 @@ public interface CI extends Task {
                       # Merge commits and commits which do not follow the conventional format are
                       # not shown.
                       skipMergeCommits: true
+                      contributors:
+                        enabled: false
                       hide:
                         uncategorized: true
                         categories: [merge]
