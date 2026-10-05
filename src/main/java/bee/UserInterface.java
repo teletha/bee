@@ -22,7 +22,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
@@ -742,8 +741,7 @@ public abstract class UserInterface {
          * The spinner frames. Falls back to ASCII when the console can not encode the unicode
          * frames.
          */
-        private static final String[] FRAMES = canEncode(SPINNER_FRAMES[0]) ? SPINNER_FRAMES
-                : new String[] {"|", "/", "-", "\\"};
+        private static final String[] FRAMES = canEncode(SPINNER_FRAMES[0]) ? SPINNER_FRAMES : new String[] {"|", "/", "-", "\\"};
 
         /** The cursor marker of the interactive selector. Falls back to ASCII. */
         private static final String MARKER = glyph("\u25b6 ", "> ");
@@ -871,11 +869,11 @@ public abstract class UserInterface {
                 break;
 
             case WARNING:
-                write(stain(mark("! ", "[WARN] "), "227").concat(message), true);
+                write(stain("[WARN] ", "227").concat(message), true);
                 break;
 
             case ERROR:
-                write(stain(mark("\u2716 ", "[ERROR] "), "1").concat(message), true);
+                write(stain("[ERROR] ", "1").concat(message), true);
                 break;
 
             default:
@@ -905,22 +903,37 @@ public abstract class UserInterface {
         }
 
         private void writeStackTrace(int counter, Throwable error) {
-            standardOutput.append(stain(toCircledNumber(counter), "240"))
-                    .append(stain("  Caused by ", "240"))
+            standardOutput.append(stain(toCircledNumber(counter), "245"))
+                    .append(stain("  Caused by ", "245"))
                     .append(stain(error.getClass().getCanonicalName(), "208"))
-                    .append(" : ")
-                    .append(Objects.requireNonNullElse(error.getMessage(), ""))
-                    .append(Platform.EOL);
+                    .append(" : ");
+
+            if (error instanceof Fail fail) {
+                standardOutput.append(fail.reason).append(EOL);
+                if (!fail.solutions.isEmpty()) {
+                    standardOutput.append(stain("\tHow to fix", "10")).append(EOL);
+                    for (String solution : fail.solutions) {
+                        standardOutput.append("\t🛠️  ").append(solution).append(EOL);
+                    }
+                }
+            } else {
+                standardOutput.append(Objects.requireNonNullElse(error.getMessage(), "")).append(Platform.EOL);
+            }
 
             if (BeeOption.Debug.value || error.getCause() == null) {
+                standardOutput.append(EOL).append("\t").append(stain("StackTrace", "9")).append(EOL);
                 StackTraceElement[] elements = error.getStackTrace();
                 for (int i = 0; i < elements.length; i++) {
                     StackTraceElement e = elements[i];
                     String fqcn = e.getClassName();
                     String file = e.getFileName();
-                    standardOutput.append(stain("\t%3d.  ".formatted(elements.length - i), "240")).append(fqcn).append(".").append(e.getMethodName());
+                    standardOutput.append(stain("\t%3d.  ".formatted(elements.length - i), "245"))
+                            .append(fqcn)
+                            .append(".")
+                            .append(e.getMethodName());
                     if (file != null) {
-                        // Omit the O in "fqcn" so the link text stays aligned with the normal style.
+                        // Omit the O in "fqcn" so the link text stays aligned with the normal
+                        // style.
                         String location = file + ":" + e.getLineNumber();
                         standardOutput.append(" (").append(link(e, location)).append(")");
                     }
@@ -938,7 +951,8 @@ public abstract class UserInterface {
          */
         private static String link(StackTraceElement element, String location) {
             if (hyperlink) {
-                return "\u001b]8;;" + element.getClassName().replace('.', '/') + ".java#" + element.getLineNumber() + "\u001b\\" + location + "\u001b]8;;\u001b\\";
+                return "\u001b]8;;" + element.getClassName().replace('.', '/') + ".java#" + element
+                        .getLineNumber() + "\u001b\\" + location + "\u001b]8;;\u001b\\";
             }
             return location;
         }
@@ -1335,17 +1349,6 @@ public abstract class UserInterface {
          */
         private static String glyph(String unicode, String ascii) {
             return canEncode(unicode) ? unicode : ascii;
-        }
-
-        /**
-         * Select a unicode mark or its ASCII fallback depending on the console charset.
-         * 
-         * @param mark A preferred mark.
-         * @param original An original marker used by the old format.
-         * @return A displayable mark.
-         */
-        private static String mark(String mark, String original) {
-            return canEncode(mark) ? mark : original;
         }
 
         /**

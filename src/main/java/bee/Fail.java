@@ -49,14 +49,14 @@ public class Fail extends RuntimeException {
      * The mandatory, human-readable reason explaining the cause of the failure.
      * This field should clearly describe the problem encountered.
      */
-    private final String reason;
+    public final String reason;
 
     /**
      * An optional list of messages suggesting potential solutions or next steps
      * to resolve the failure. This list can be modified after creation using the
      * {@link #solve(Object)} method.
      */
-    private final List<String> solutions;
+    public final List<String> solutions;
 
     /**
      * Constructs a new {@code Fail} exception with the specified reason message.
@@ -117,8 +117,7 @@ public class Fail extends RuntimeException {
         if (!solutions.isEmpty()) {
             for (String solution : solutions) {
                 builder.append(Platform.EOL);
-                builder.append(Platform.EOL);
-                appendWrapped(builder, "\t-", solution);
+                appendWrapped(builder, "\t🛠️  ", solution);
             }
         }
         return builder.toString();
@@ -155,9 +154,7 @@ public class Fail extends RuntimeException {
                 }
             }
 
-            builder.append(first ? indent : Platform.EOL)
-                    .append(first ? "" : continuation)
-                    .append(text, start, end);
+            builder.append(first ? indent : Platform.EOL).append(first ? "" : continuation).append(text, start, end);
             first = false;
 
             // Skip the white space consumed by the break.
