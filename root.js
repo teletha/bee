@@ -170,12 +170,22 @@ const root = {
 			"type": "Class"
 		},
 		{
+			"name": "Git",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
 			"name": "GithubAPI",
 			"packageName": "bee.util",
 			"type": "Class"
 		},
 		{
 			"name": "GithubAPI.Settings",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "ConventionalCommit",
 			"packageName": "bee.util",
 			"type": "Class"
 		},
@@ -203,6 +213,16 @@ const root = {
 			"name": "Java.JVM",
 			"packageName": "bee.util",
 			"type": "AbstractClass"
+		},
+		{
+			"name": "SemanticVersion",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "SemanticVersion.Bump",
+			"packageName": "bee.util",
+			"type": "Enum"
 		},
 		{
 			"name": "Maven",
@@ -351,6 +371,16 @@ const root = {
 		},
 		{
 			"name": "Native.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
+			"name": "Release",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Release.Config",
 			"packageName": "bee.task",
 			"type": "Class"
 		},

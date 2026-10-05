@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta content="width=device-width, initial-scale=1" name="viewport"/>
+		<meta content="Explains how to use Bee and its API. Bee is an open source build automation tool that focuses on conventions, type safety and performance. Project and build task definitions are written in Java, ensuring flexible extensibility for programmers." name="description"/>
+		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<script src="mimic.js" type="module"></script>
+		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="W">
+		<header class="X" date="2026-09-30">
+			<h1 class="e"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="f"><a href="api/main.html" id="API"><svg class="package">
+						<use href="main.svg#package"/>
+					</svg>
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
+						<use href="main.svg#activity"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user">
+						<use href="main.svg#user"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github">
+						<use href="main.svg#github"/>
+					</svg>
+				</a></nav>
+			<div class="c"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+						<use href="main.svg#sun"/>
+					</svg><svg class="moon">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<nav class="a"></nav>
+		<article class="Y" id="Article">
+			<section class="w"><code class="AB">bee.util</code>
+				<h2 class="Class h"><code class="k">ConventionalCommit</code></h2>
+				<div class="g"></div><span class="A"><p>A <a href="https://www.conventionalcommits.org/">Conventional Commit</a> parsed from a git log.</p></span></section>
+			<section class="w" id="hash">
+				<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">hash</code><i class="n"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The full commit hash.</p></span></section>
+			<section class="w" id="type">
+				<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">type</code><i class="n"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The commit type such as <code>feat</code>, or <code>null</code> when the commit is not conventional.</p></span></section>
+			<section class="w" id="scope">
+				<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">scope</code><i class="n"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The optional scope.</p></span></section>
+			<section class="w" id="subject">
+				<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">subject</code><i class="n"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The subject.</p></span></section>
+			<section class="w" id="breaking">
+				<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="k">breaking</code><i class="n"><code class="return">boolean</code></i></h2><span class="A"><p>Whether the commit contains a breaking change.</p></span></section>
+			<section class="w" id="ConventionalCommit(java.lang.String,java.lang.String,java.lang.String)">
+				<h2 class="S"><i class="PUBLIC"></i><code class="k">ConventionalCommit</code><code class="j">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">hash</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">subject</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">body</code>)</code></h2>
+				<table class="o">
+					<tr class="T">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">hash</code></td>
+						<td><span><p>A full commit hash.</p></span></td>
+					</tr>
+					<tr class="T">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">subject</code></td>
+						<td><span><p>A commit subject.</p></span></td>
+					</tr>
+					<tr class="T">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">body</code></td>
+						<td><span><p>A commit body.</p></span></td>
+					</tr>
+				</table><span class="A"><p>Parse a conventional commit.</p></span></section>
+			<section class="w" id="bump()">
+				<h2 class="S"><i class="PUBLIC"></i><code class="k">bump</code><code class="j">()</code><i class="n"><code><a aria-label="bee.util.SemanticVersion.Bump" href="api/bee.util.SemanticVersion.Bump.html">Bump</a></code></i></h2>
+				<table class="o">
+					<tr class="M">
+						<td><code><a aria-label="bee.util.SemanticVersion.Bump" href="api/bee.util.SemanticVersion.Bump.html">Bump</a></code></td>
+						<td><span><p>A bump.</p></span></td>
+					</tr>
+				</table><span class="A"><p>Resolve the version bump of this commit.</p></span></section>
+			<section class="w" id="toString()">
+				<h2 class="S"><i class="OVERRIDE PUBLIC"></i><code class="k">toString</code><code class="j">()</code><i class="n"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="o">
+					<tr class="M">
+						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
+		</article>
+		<aside class="b">
+			<div class="O">
+				<h5 class="p">Constructors</h5>
+				<ul>
+					<li class="x"><i class="PUBLIC"></i><code><a href="api/bee.util.ConventionalCommit.html#ConventionalCommit(java.lang.String,java.lang.String,java.lang.String)">ConventionalCommit</a></code><code class="j">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">hash</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">subject</code>, <code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">body</code>)</code></li>
+				</ul>
+				<h5 class="p">Fields</h5>
+				<ul>
+					<li class="x"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.util.ConventionalCommit.html#hash">hash</a></code><i class="EB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="x"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.util.ConventionalCommit.html#type">type</a></code><i class="EB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="x"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.util.ConventionalCommit.html#scope">scope</a></code><i class="EB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="x"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.util.ConventionalCommit.html#subject">subject</a></code><i class="EB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="x"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.util.ConventionalCommit.html#breaking">breaking</a></code><i class="EB"><code class="return">boolean</code></i></li>
+				</ul>
+				<h5 class="p">Methods</h5>
+				<ul>
+					<li class="x"><i class="PUBLIC"></i><code><a href="api/bee.util.ConventionalCommit.html#bump()">bump</a></code><code class="j">()</code><i class="EB"><code><a aria-label="bee.util.SemanticVersion.Bump" href="api/bee.util.SemanticVersion.Bump.html">Bump</a></code></i></li>
+					<li class="x"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.util.ConventionalCommit.html#toString()">toString</a></code><code class="j">()</code><i class="EB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+				</ul>
+			</div>
+		</aside>
+		<footer class="Z">
+			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
+		</footer>
+	</body>
+	<script src="root.js"></script>
+	<script src="main.js" type="module"></script>
+</html>
