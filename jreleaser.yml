@@ -1,7 +1,7 @@
 project:
   name: bee
   # Overridden by JRELEASER_PROJECT_VERSION in the release workflow, so that this
-  # file does not have to be regenerated every time release-please bumps version.txt.
+  # file does not have to be regenerated every time the release task bumps version.txt.
   version: '0.79.0'
   links:
     homepage: https://github.com/teletha/bee
@@ -10,12 +10,13 @@ release:
     owner: teletha
     name: bee
     tagName: '{{projectVersion}}'
-    # The tag and the GitHub Release are created by release-please when its release
-    # PR is merged. JReleaser must not create them a second time.
+    # The tag is created by the release task, so JReleaser creates only the GitHub
+    # Release. The changelog is generated from the conventional commits.
     skipTag: true
-    skipRelease: true
+    skipRelease: false
     changelog:
       formatted: ALWAYS
+      preset: conventional-commits
 files:
   globs:
     - pattern: target/bee-{{projectVersion}}.jar

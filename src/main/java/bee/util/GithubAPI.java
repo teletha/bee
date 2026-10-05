@@ -246,57 +246,37 @@ public class GithubAPI {
     public static void connect(String url, Directory directory) {
         UserInterface ui = TaskOperations.ui();
 
-        if (!Process.isAvailable("git")) {
+        if (!Git.isAvailable()) {
             throw new Fail("The git command is not found.").solve("Install Git and make it available on your PATH.");
         }
 
+        Git git = Git.at(directory);
+
         // initialize the local repository
         if (!directory.directory(".git").isPresent()) {
-            Process.with().workingDirectory(directory).run("git", "init");
+            git.init();
         }
 
         // configure the origin remote
-        if (Process.with().workingDirectory(directory).ignoreOutput().run("git", "remote", "get-url", "origin") == 0) {
-            String current = Process.with().workingDirectory(directory).ignoreOutput().read("git", "remote", "get-url", "origin");
-
-            if (!url.equals(current)) {
-                Process.with().workingDirectory(directory).run("git", "remote", "set-url", "origin", url);
+        if (git.hasRemote("origin")) {
+            if (!url.equals(git.remoteUrl("origin"))) {
+                git.setRemote(url);
             }
         } else {
-            Process.with().workingDirectory(directory).run("git", "remote", "add", "origin", url);
+            git.addRemote(url);
         }
 
         // track the remote default branch if it already has commits
-        Process.with().workingDirectory(directory).run("git", "fetch", "origin");
+        git.fetch("origin");
 
-        String branch = remoteBranch(directory);
-        if (branch != null && Process.with().workingDirectory(directory).ignoreOutput().run("git", "rev-parse", "--verify", "HEAD") != 0) {
-            if (Process.with().workingDirectory(directory).run("git", "checkout", branch) != 0) {
+        String branch = git.remoteDefaultBranch("origin");
+        if (branch != null && !git.hasCommit()) {
+            if (git.run("checkout", branch) != 0) {
                 ui.warn("Failed to check out the branch [", branch, "]. Local files may conflict with the remote.");
             }
         }
 
         ui.info("Configured the repository : ", url);
-    }
-
-    /**
-     * Resolve the default branch of the origin remote.
-     *
-     * @param directory A local repository.
-     * @return A default branch name or null when the remote is empty.
-     */
-    private static String remoteBranch(Directory directory) {
-        String output = Process.with().workingDirectory(directory).ignoreOutput().read("git", "ls-remote", "--symref", "origin", "HEAD");
-        String prefix = "ref: refs/heads/";
-
-        for (String line : output.split("\\R")) {
-            if (line.startsWith(prefix)) {
-                String rest = line.substring(prefix.length());
-                int tab = rest.indexOf('\t');
-                return (tab == -1 ? rest : rest.substring(0, tab)).trim();
-            }
-        }
-        return null;
     }
 
     /**
