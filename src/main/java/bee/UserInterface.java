@@ -160,6 +160,19 @@ public abstract class UserInterface {
     }
 
     /**
+     * Colorize the text with the ANSI 256 color if the user interface supports it. The default
+     * implementation returns the text as is, so a caller can request a color uniformly without
+     * knowing whether the current user interface can render it.
+     * 
+     * @param text A text.
+     * @param colorCode An ANSI 256 color code.
+     * @return A colorized text.
+     */
+    public String color(Object text, String colorCode) {
+        return String.valueOf(text);
+    }
+
+    /**
      * Talk to user.
      * 
      * @param messages Your message.
@@ -1281,6 +1294,14 @@ public abstract class UserInterface {
         }
 
         /**
+         * {@inheritDoc}
+         */
+        @Override
+        public String color(Object text, String colorCode) {
+            return stain(String.valueOf(text), colorCode);
+        }
+
+        /**
          * Colorize the text.
          * 
          * @param code
@@ -1374,7 +1395,8 @@ public abstract class UserInterface {
 
         /**
          * Calculate the display width of the text. Full-width characters, including CJK and emoji,
-         * occupy two columns while combining marks occupy none.
+         * occupy two columns while combining marks occupy none. The ANSI escape sequences are
+         * ignored because they do not occupy any column.
          * 
          * @param text A text.
          * @return A display width.
@@ -1382,9 +1404,56 @@ public abstract class UserInterface {
         private static int displayWidth(CharSequence text) {
             int width = 0;
             for (int i = 0; i < text.length(); i++) {
-                width += charWidth(text.charAt(i));
+                char c = text.charAt(i);
+
+                if (c == '\u001b') {
+                    i += skipEscape(text, i);
+                } else {
+                    width += charWidth(c);
+                }
             }
             return width;
+        }
+
+        /**
+         * Calculate the length of the ANSI escape sequence which starts at the specified index. The
+         * index points to the escape character. Both the CSI (ESC [) and the OSC (ESC ]) sequences
+         * are recognized.
+         * 
+         * @param text A text.
+         * @param start An index of the escape character.
+         * @return The number of the characters which follow the escape character.
+         */
+        private static int skipEscape(CharSequence text, int start) {
+            int length = text.length();
+            int i = start + 1;
+
+            if (i < length && text.charAt(i) == '[') {
+                // The CSI sequence ends with a byte in the range 0x40-0x7e.
+                for (i++; i < length; i++) {
+                    char c = text.charAt(i);
+                    if ('@' <= c && c <= '~') {
+                        return i - start;
+                    }
+                }
+                return length - 1 - start;
+            }
+
+            if (i < length && text.charAt(i) == ']') {
+                // The OSC sequence ends with the bell or the string terminator (ESC \).
+                for (i++; i < length; i++) {
+                    char c = text.charAt(i);
+                    if (c == '\u0007') {
+                        return i - start;
+                    }
+                    if (c == '\u001b' && i + 1 < length && text.charAt(i + 1) == '\\') {
+                        return i + 1 - start;
+                    }
+                }
+                return length - 1 - start;
+            }
+
+            return 0;
         }
 
         /**

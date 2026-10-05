@@ -298,7 +298,7 @@ public interface Release extends Task<Release.Config> {
 
         // Show the final states, then the outcome. The spinner marker is replaced with a check mark
         // because no animation runs here.
-        ui().info(describe(repository, run).replace(UserInterface.SPINNER_MARKER, "✅"));
+        ui().info(describe(repository, run).replace(UserInterface.SPINNER_MARKER, ui().color("\u2713", "76")));
 
         if (config().showLog && !"success".equals(String.valueOf(run.conclusion))) {
             showLog(repository, run);
@@ -360,9 +360,9 @@ public interface Release extends Task<Release.Config> {
      */
     private String mark(GithubAPI.Step step) {
         if ("completed".equals(step.status)) {
-            return "success".equals(step.conclusion) ? "✅" : "❌";
+            return "success".equals(step.conclusion) ? ui().color("\u2713", "76") + " " : ui().color("\u2717", "1") + " ";
         }
-        return "in_progress".equals(step.status) ? UserInterface.SPINNER_MARKER + " " : "⬜";
+        return "in_progress".equals(step.status) ? UserInterface.SPINNER_MARKER + " " : ui().color("\u25e6", "240") + " ";
     }
 
     /**

@@ -536,6 +536,14 @@ public class TaskOperations {
          * {@inheritDoc}
          */
         @Override
+        public String color(Object text, String colorCode) {
+            return ui.color(text, colorCode);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         protected synchronized void write(int type, String message) {
             switch (mode) {
             case 0:
