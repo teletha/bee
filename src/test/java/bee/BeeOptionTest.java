@@ -17,6 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 
+import bee.api.Command;
+import bee.api.Comment;
+
 @Execution(ExecutionMode.SAME_THREAD)
 class BeeOptionTest {
 
@@ -25,6 +28,7 @@ class BeeOptionTest {
         for (BeeOption o : BeeOption.AVAILABLES) {
             o.value = o.defaultValue;
         }
+        BeeOption.settings.clear();
     }
 
     @Test
@@ -216,5 +220,58 @@ class BeeOptionTest {
         assert washed.size() == 1;
         assert washed.get(0) == "task";
         assert BeeOption.Root.value.path().equals("test");
+    }
+
+    @Test
+    void taskSetting() {
+        List<String> washed = BeeOption.parse("release", "@version=0.80.0", "@push=false", "doc:site");
+        assert washed.size() == 2;
+        assert washed.get(0).equals("release");
+        assert washed.get(1).equals("doc:site");
+        assert BeeOption.settings.get("version").equals("0.80.0");
+        assert BeeOption.settings.get("push").equals("false");
+    }
+
+    interface Individual extends Task<Individual.IndividualConfig> {
+
+        class IndividualConfig {
+            @Comment("age")
+            public int age;
+
+            @Comment("name")
+            public String name;
+        }
+
+        @Command("run")
+        default void run() {
+        }
+    }
+
+    @Test
+    void applyTaskSetting() {
+        BeeOption.parse("@age=30", "@name=bob");
+
+        Individual.IndividualConfig config = new Individual.IndividualConfig();
+        BeeOption.configure(config);
+        assert config.age == 30;
+        assert config.name.equals("bob");
+    }
+
+    @Test
+    void applyQualifiedTaskSetting() {
+        BeeOption.parse("@individual.age=7");
+
+        Individual.IndividualConfig config = new Individual.IndividualConfig();
+        BeeOption.configure(config);
+        assert config.age == 7;
+    }
+
+    @Test
+    void ignoreOtherTaskSetting() {
+        BeeOption.parse("@other.age=99");
+
+        Individual.IndividualConfig config = new Individual.IndividualConfig();
+        BeeOption.configure(config);
+        assert config.age == 0;
     }
 }

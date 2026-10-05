@@ -9,9 +9,14 @@
  */
 package bee;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
+import bee.util.Inputs;
 import kiss.I;
 import psychopath.Directory;
 import psychopath.Locator;
@@ -137,11 +142,19 @@ public class BeeOption<T> {
      */
     static List<String> parse(String... args) {
         List<String> washed = new ArrayList();
+        settings.clear();
 
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
 
-            if (arg.charAt(0) == '-') {
+            if (arg.charAt(0) == '@') {
+                // Task configuration such as @version=0.80.0. It is attached to the task which
+                // precedes it, and is applied to the task configuration later.
+                int equal = arg.indexOf('=');
+                String key = (equal == -1 ? arg.substring(1) : arg.substring(1, equal)).trim();
+                String value = equal == -1 ? "true" : arg.substring(equal + 1);
+                settings.put(key, value);
+            } else if (arg.charAt(0) == '-') {
                 arg = arg.substring(1);
 
                 if (arg.charAt(0) == 'D') {
@@ -176,6 +189,51 @@ public class BeeOption<T> {
         }
 
         return washed;
+    }
+
+    /** The task settings which are declared with the @ prefix. */
+    static final Map<String, String> settings = new ConcurrentHashMap();
+
+    /**
+     * Apply the task settings which are declared with the @ prefix to the configuration of the
+     * specified task. A setting key may be a plain field name or a task-qualified name such as
+     * {@code release.version}. A plain key is applied to every task which has a matching field.
+     * 
+     * @param config A task configuration.
+     */
+    public static void configure(Object config) {
+        if (config == null || settings.isEmpty()) {
+            return;
+        }
+
+        // Resolve the task name from the config type. The config is usually an inner class of the
+        // task interface, so its enclosing class name identifies the task.
+        Class<?> owner = config.getClass().getEnclosingClass();
+        String task = owner == null ? null : Inputs.hyphenize(owner.getSimpleName());
+
+        for (Entry<String, String> setting : settings.entrySet()) {
+            String key = setting.getKey();
+            String field = key;
+
+            // A task-qualified key such as release.version only applies to that task.
+            int dot = key.indexOf('.');
+            if (dot != -1) {
+                String qualifier = key.substring(0, dot).toLowerCase();
+                field = key.substring(dot + 1);
+                if (task == null || !task.startsWith(qualifier)) {
+                    continue;
+                }
+            }
+
+            try {
+                Field target = config.getClass().getField(field);
+                target.set(config, I.transform(setting.getValue(), target.getType()));
+            } catch (NoSuchFieldException e) {
+                // The setting does not belong to this task configuration.
+            } catch (Exception e) {
+                throw I.quiet(e);
+            }
+        }
     }
 
     /**

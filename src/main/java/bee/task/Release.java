@@ -198,14 +198,13 @@ public interface Release extends Task<Release.Config> {
     }
 
     /**
-     * Dispatch the release workflow for the specified version and watch the run. This does not change
-     * the repository, so it can be used to finish a release whose workflow failed.
-     * 
-     * @param version A released version.
+     * Dispatch the release workflow for the current version and watch the run. This does not change
+     * the repository, so it can be used to finish a release whose workflow failed. The version can
+     * be overridden with a task setting such as {@code bee release:publish @version=0.80.0}.
      */
-    @Command("Dispatch the release workflow for an already released version and watch it.")
-    default void publish(String version) {
-        publishVersion(version);
+    @Command("Dispatch the release workflow for the current version and watch it.")
+    default void publish() {
+        publishVersion(config().version);
     }
 
     /**

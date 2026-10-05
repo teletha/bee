@@ -72,7 +72,9 @@ public interface Task<C> extends Extensible {
      *         if the task is not parameterized with a configuration class.
      */
     default C config() {
-        return (C) TaskOperations.config(getClass());
+        C config = (C) TaskOperations.config(getClass());
+        BeeOption.configure(config);
+        return config;
     }
 
     /**
