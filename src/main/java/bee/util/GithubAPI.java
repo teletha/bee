@@ -246,14 +246,17 @@ public class GithubAPI {
      */
     public static void dispatch(String repository, String eventType, JSON payload) {
         String token = token(TaskOperations.ui());
-        JSON body = new JSON().set("event_type", eventType).set("client_payload", payload);
+
+        // The payload must be a JSON object, so nest it as a raw JSON value rather than letting the
+        // serializer treat it as a string.
+        String body = "{\"event_type\":\"" + eventType + "\",\"client_payload\":" + payload + "}";
 
         request(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/dispatches"))
                 .header("Accept", "application/vnd.github+json")
                 .header("Authorization", "Bearer " + token)
                 .header("X-GitHub-Api-Version", API_VERSION)
                 .header("Content-Type", "application/json")
-                .POST(BodyPublishers.ofString(body.toString(), StandardCharsets.UTF_8)));
+                .POST(BodyPublishers.ofString(body, StandardCharsets.UTF_8)));
     }
 
     /**
