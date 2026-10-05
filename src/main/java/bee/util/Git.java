@@ -325,12 +325,13 @@ public class Git {
     }
 
     /**
-     * Fetch the tags and prune the deleted branches from the origin.
+     * Fetch the tags from the origin. The branches are not pruned because a release does not need
+     * it.
      * 
      * @return Fluent API.
      */
     public Git fetch() {
-        return exec("fetch", "--tags", "--prune");
+        return exec("fetch", "--tags");
     }
 
     /**
