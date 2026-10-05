@@ -53,7 +53,7 @@ public interface Release extends Task<Release.Config> {
     String RUN_EVENT = "repository_dispatch";
 
     /** The interval (ms) between the workflow run polls. */
-    long POLL_INTERVAL = 3000;
+    long POLL_INTERVAL = 1000;
 
     /** The maximum time (ms) to wait for the workflow run to be discovered. */
     long DISCOVER_TIMEOUT = 60 * 1000;
@@ -118,7 +118,8 @@ public interface Release extends Task<Release.Config> {
         }
         git.fetch();
         if (!git.isSynced()) {
-            throw new Fail("The local branch [" + branch + "] is not synchronized with the remote.").solve("Push or pull before releasing.");
+            throw new Fail("The local branch [" + branch + "] is not synchronized with the remote.")
+                    .solve("Push or pull before releasing.");
         }
 
         // The latest tag whose GitHub Release is missing means that a previous release did not
@@ -323,17 +324,24 @@ public interface Release extends Task<Release.Config> {
      * @return A description.
      */
     private String describe(String repository, GithubAPI.Run run) {
-        StringBuilder builder = new StringBuilder();
-        for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
-            if (builder.length() != 0) {
-                builder.append(Platform.EOL);
-            }
-            builder.append("  ").append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]");
+        StringBuilder builder = new StringBuilder("  ").append(run.name).append(" [").append(run.conclusion == null ? run.status : run.conclusion).append("]");
 
-            if (job.steps != null) {
-                for (GithubAPI.Step step : job.steps) {
-                    builder.append(Platform.EOL).append("    ").append(mark(step)).append(" ").append(step.name);
+        for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
+            if (job.steps == null || job.steps.isEmpty()) {
+                builder.append(Platform.EOL).append("  ").append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]");
+                continue;
+            }
+
+            int done = 0;
+            for (GithubAPI.Step step : job.steps) {
+                if ("completed".equals(step.status)) {
+                    done++;
                 }
+            }
+            builder.append(Platform.EOL).append("  ").append(job.name).append("  ").append(done).append("/").append(job.steps.size());
+
+            for (GithubAPI.Step step : job.steps) {
+                builder.append(Platform.EOL).append("    ").append(mark(step)).append(" ").append(step.name);
             }
         }
         return builder.toString();
@@ -347,9 +355,9 @@ public interface Release extends Task<Release.Config> {
      */
     private String mark(GithubAPI.Step step) {
         if ("completed".equals(step.status)) {
-            return "success".equals(step.conclusion) ? "[x]" : "[!]";
+            return "success".equals(step.conclusion) ? "✅" : "❌";
         }
-        return "in_progress".equals(step.status) ? "[>]" : "[ ]";
+        return "in_progress".equals(step.status) ? "🔄" : "⬜";
     }
 
     /**
