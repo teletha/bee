@@ -362,7 +362,7 @@ public interface Release extends Task<Release.Config> {
         if ("completed".equals(step.status)) {
             return "success".equals(step.conclusion) ? "✅" : "❌";
         }
-        return "in_progress".equals(step.status) ? UserInterface.SPINNER_MARKER : "⬜";
+        return "in_progress".equals(step.status) ? UserInterface.SPINNER_MARKER + " " : "⬜";
     }
 
     /**
