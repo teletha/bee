@@ -11,7 +11,10 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import bee.Fail;
 import bee.Task;
@@ -32,6 +35,12 @@ import psychopath.File;
  * starts the release workflow, which creates the GitHub Release and publishes the artifacts.
  */
 public interface Release extends Task<Release.Config> {
+
+    /** The option label of the arbitrary version input. */
+    String CUSTOM = "Custom version ...";
+
+    /** The option label of the abort. */
+    String ABORT = "Abort";
 
     /**
      * The configuration of the release task.
@@ -98,9 +107,21 @@ public interface Release extends Task<Release.Config> {
         String previous = git.latestVersionTag();
         List<ConventionalCommit> commits = git.conventionalCommits(previous);
 
-        // 3. Compute the next version.
+        // 3. Show the context.
+        ui().info("Release plan");
+        ui().info("  Repository \t", vcs.uri());
+        ui().info("  Branch     \t", branch);
+        ui().info("  Previous   \t", previous == null ? "(none)" : previous);
+        ui().info("  Current    \t", current);
+        ui().info("  Commits    \t", commits.size());
+        for (ConventionalCommit commit : commits) {
+            ui().info("    ", commit);
+        }
+
+        // 4. Determine the version which the commits suggest.
         Bump bump = determineBump(current, commits);
 
+        // 5. Resolve the version to release. The suggestion can be overridden by the user.
         SemanticVersion next;
         if (conf.version != null && !conf.version.isBlank()) {
             if (conf.version.indexOf('-') != -1 || conf.version.indexOf('+') != -1) {
@@ -110,16 +131,14 @@ public interface Release extends Task<Release.Config> {
         } else if (conf.releaseAs != null && !conf.releaseAs.isBlank()) {
             bump = parseBump(conf.releaseAs);
             next = current.bump(bump);
-        } else if (bump == Bump.NONE) {
-            String choice = ui().ask("No releasable commit was found. Select the release type.", List.of("major", "minor", "patch", "abort"));
-            if (choice.equals("abort")) {
+        } else if (conf.dryRun) {
+            next = current.bump(bump == Bump.NONE ? Bump.PATCH : bump);
+        } else {
+            next = selectVersion(current, bump);
+            if (next == null) {
                 ui().info("Aborted.");
                 return;
             }
-            bump = parseBump(choice);
-            next = current.bump(bump);
-        } else {
-            next = current.bump(bump);
         }
 
         if (next.compareTo(current) <= 0) {
@@ -129,32 +148,19 @@ public interface Release extends Task<Release.Config> {
             throw new Fail("The tag [" + next + "] already exists.");
         }
 
-        // 4. Show the plan and confirm.
-        ui().info("Release plan");
-        ui().info("  Repository \t", vcs.uri());
-        ui().info("  Branch     \t", branch);
-        ui().info("  Previous   \t", previous == null ? "(none)" : previous);
-        ui().info("  Current    \t", current);
-        ui().info("  Next       \t", next, " (", bump.name().toLowerCase(), ")");
-        ui().info("  Commits    \t", commits.size());
-        for (ConventionalCommit commit : commits) {
-            ui().info("    ", commit);
-        }
-
         if (conf.dryRun) {
+            ui().info("Next       \t", next);
             ui().info("Dry run, so nothing is changed.");
             return;
         }
-        if (!ui().confirm("Release the version [" + next + "] ?")) {
-            ui().info("Aborted.");
-            return;
-        }
 
-        // 5. Update the version, commit and tag.
+        ui().info("Releasing the version \t", next);
+
+        // 6. Update the version, commit and tag.
         makeFile(versionFile, List.of(next.toString()));
         git.add("version.txt").commit("chore(release): " + next).tag(next.toString());
 
-        // 6. Push the branch and the tag.
+        // 7. Push the branch and the tag.
         if (conf.push) {
             git.push(branch).push(next.toString());
             ui().info("Pushed the release commit and the tag [", next, "].");
@@ -180,6 +186,77 @@ public interface Release extends Task<Release.Config> {
             bump = Bump.MINOR;
         }
         return bump;
+    }
+
+    /**
+     * Ask the user to select the version to release. The patch, minor and major bumps are offered
+     * together with an arbitrary input and an abort.
+     * 
+     * @param current The current version.
+     * @param suggested The bump which the commits suggest.
+     * @return The selected version, or <code>null</code> to abort.
+     */
+    default SemanticVersion selectVersion(SemanticVersion current, Bump suggested) {
+        SemanticVersion patch = current.bump(Bump.PATCH);
+        SemanticVersion minor = current.bump(Bump.MINOR);
+        SemanticVersion major = current.bump(Bump.MAJOR);
+        SemanticVersion recommended = current.bump(suggested);
+
+        Map<String, SemanticVersion> options = new LinkedHashMap();
+        options.put(label(patch, "patch", patch.equals(recommended)), patch);
+        options.put(label(minor, "minor", minor.equals(recommended)), minor);
+        options.put(label(major, "major", major.equals(recommended)), major);
+        options.put(CUSTOM, null);
+        options.put(ABORT, null);
+
+        String selected = ui().ask("Select the version to release.", new ArrayList<>(options.keySet()));
+        if (selected.equals(ABORT)) {
+            return null;
+        }
+        if (selected.equals(CUSTOM)) {
+            return askVersion(current, suggested == Bump.NONE ? patch : recommended);
+        }
+        return options.get(selected);
+    }
+
+    /**
+     * Build an option label.
+     * 
+     * @param version A version.
+     * @param type A release type.
+     * @param suggested Whether the version is suggested by the commits.
+     * @return A label.
+     */
+    private String label(SemanticVersion version, String type, boolean suggested) {
+        return version + "  (" + type + ")" + (suggested ? "  [suggested]" : "");
+    }
+
+    /**
+     * Ask the user to input an arbitrary version.
+     * 
+     * @param current The current version.
+     * @param defaults A default version.
+     * @return An input version.
+     */
+    private SemanticVersion askVersion(SemanticVersion current, SemanticVersion defaults) {
+        while (true) {
+            String input = ui().ask("Input the version.", defaults.toString());
+
+            if (input.indexOf('-') != -1 || input.indexOf('+') != -1) {
+                ui().warn("A pre-release version is not supported.");
+                continue;
+            }
+            try {
+                SemanticVersion version = new SemanticVersion(input);
+                if (version.compareTo(current) <= 0) {
+                    ui().warn("The version must be greater than the current version [", current, "].");
+                    continue;
+                }
+                return version;
+            } catch (Exception e) {
+                ui().warn("Invalid version : ", input);
+            }
+        }
     }
 
     /**
