@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8"/>
+		<meta content="width=device-width, initial-scale=1" name="viewport"/>
+		<meta content="Explains how to use Bee and its API. Bee is an open source build automation tool that focuses on conventions, type safety and performance. Project and build task definitions are written in Java, ensuring flexible extensibility for programmers." name="description"/>
+		<link href="https://cdn.jsdelivr.net" rel="preconnect"/>
+		<link href="https://fonts.googleapis.com" rel="preconnect"/>
+		<link crossorigin="null" href="https://fonts.gstatic.com" rel="preconnect"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Material+Icons" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<link as="style" fetchpriority="high" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" rel="preload"/>
+		<link href="https://fonts.googleapis.com/css2?display=swap&amp;family=Vollkorn" media="print" onload="this.media=&apos;all&apos;" rel="stylesheet"/>
+		<title>Bee API</title>
+		<base href="../"/>
+		<script src="mimic.js" type="module"></script>
+		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
+		<link href="main.css" rel="stylesheet"/>
+	</head>
+	<body class="j">
+		<header class="X" date="2026-09-30">
+			<h1 class="J"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="Y"><a href="api/main.html" id="API"><svg class="package">
+						<use href="main.svg#package"/>
+					</svg>
+				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
+						<use href="main.svg#activity"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee/discussions" id="Community" target="_blank"><svg class="user">
+						<use href="main.svg#user"/>
+					</svg>
+				</a><a href="https://github.com/teletha/bee" id="Repository" target="_blank"><svg class="github">
+						<use href="main.svg#github"/>
+					</svg>
+				</a></nav>
+			<div class="Z"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+						<use href="main.svg#sun"/>
+					</svg><svg class="moon">
+						<use href="main.svg#moon"/>
+					</svg>
+				</a></div>
+		</header>
+		<nav class="l"></nav>
+		<article class="S" id="Article">
+			<section class="R"><code class="e">bee.util</code>
+				<h2 class="Class KB"><code class="b">GithubAPI.Run</code></h2>
+				<div class="u"></div><span class="A"><p>Represents a workflow run.</p></span></section>
+			<section class="R" id="id">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">id</code><i class="f"><code class="return">long</code></i></h2><span class="A"><p>The run identifier.</p></span></section>
+			<section class="R" id="name">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">name</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The display name of the run.</p></span></section>
+			<section class="R" id="status">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">status</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The run status such as queued, in_progress or completed.</p></span></section>
+			<section class="R" id="conclusion">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">conclusion</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The run conclusion such as success or failure, or null while it is running.</p></span></section>
+			<section class="R" id="html_url">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">html_url</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The URL of the run.</p></span></section>
+			<section class="R" id="head_branch">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">head_branch</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The branch of the run.</p></span></section>
+			<section class="R" id="Run()">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">Run</code><code class="T">()</code></h2>
+			</section>
+		</article>
+		<aside class="m">
+			<div class="JB">
+				<h5 class="N">Constructors</h5>
+				<ul>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Run.html#Run()">Run</a></code><code class="T">()</code></li>
+				</ul>
+				<h5 class="N">Fields</h5>
+				<ul>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Run.html#id">id</a></code><i class="z"><code class="return">long</code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Run.html#name">name</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Run.html#status">status</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Run.html#conclusion">conclusion</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Run.html#html_url">html_url</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Run.html#head_branch">head_branch</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+				</ul>
+			</div>
+		</aside>
+		<footer class="k">
+			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
+		</footer>
+	</body>
+	<script src="root.js"></script>
+	<script src="main.js" type="module"></script>
+</html>

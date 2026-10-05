@@ -45,33 +45,32 @@
 		<nav class="l"></nav>
 		<article class="S" id="Article">
 			<section class="R"><code class="e">bee.util</code>
-				<h2 class="Class KB"><code class="b">GithubAPI.Settings</code></h2>
-				<div class="u"></div><span class="A"><p>The repository settings which can be applied by <code><a aria-label="bee.util.GithubAPI" href="api/bee.util.GithubAPI.html#configure(java.lang.String,bee.util.GithubAPI.Settings)">#configure(String, Settings)</a></code>. Add new
-settings as fields and handle them in <code><a aria-label="bee.util.GithubAPI" href="api/bee.util.GithubAPI.html#configure(java.lang.String,bee.util.GithubAPI.Settings)">#configure(String, Settings)</a></code>.</p></span></section>
-			<section class="R" id="canApprovePullRequestReviews">
-				<h2 class="h"><i class="PUBLIC"></i><code class="b">canApprovePullRequestReviews</code><i class="f"><code class="return">boolean</code></i></h2><span class="A"><p>Whether GitHub Actions can submit approving pull request reviews.</p></span></section>
-			<section class="R" id="allowMergeCommit">
-				<h2 class="h"><i class="PUBLIC"></i><code class="b">allowMergeCommit</code><i class="f"><code class="return">boolean</code></i></h2><span class="A"><p>Whether merge commits are allowed on pull requests.</p></span></section>
-			<section class="R" id="deleteBranchOnMerge">
-				<h2 class="h"><i class="PUBLIC"></i><code class="b">deleteBranchOnMerge</code><i class="f"><code class="return">boolean</code></i></h2><span class="A"><p>Whether head branches are deleted automatically after a pull request is merged.</p></span></section>
-			<section class="R" id="hasDiscussions">
-				<h2 class="h"><i class="PUBLIC"></i><code class="b">hasDiscussions</code><i class="f"><code class="return">boolean</code></i></h2><span class="A"><p>Whether GitHub Discussions is enabled.</p></span></section>
-			<section class="R" id="Settings()">
-				<h2 class="h"><i class="PUBLIC"></i><code class="b">Settings</code><code class="T">()</code></h2>
+				<h2 class="Class KB"><code class="b">GithubAPI.Job</code></h2>
+				<div class="u"></div><span class="A"><p>Represents a workflow job.</p></span></section>
+			<section class="R" id="id">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">id</code><i class="f"><code class="return">long</code></i></h2><span class="A"><p>The job identifier.</p></span></section>
+			<section class="R" id="name">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">name</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The job name.</p></span></section>
+			<section class="R" id="status">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">status</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The job status such as queued, in_progress or completed.</p></span></section>
+			<section class="R" id="conclusion">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">conclusion</code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The job conclusion such as success or failure.</p></span></section>
+			<section class="R" id="Job()">
+				<h2 class="h"><i class="PUBLIC"></i><code class="b">Job</code><code class="T">()</code></h2>
 			</section>
 		</article>
 		<aside class="m">
 			<div class="JB">
 				<h5 class="N">Constructors</h5>
 				<ul>
-					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Settings.html#Settings()">Settings</a></code><code class="T">()</code></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Job.html#Job()">Job</a></code><code class="T">()</code></li>
 				</ul>
 				<h5 class="N">Fields</h5>
 				<ul>
-					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Settings.html#canApprovePullRequestReviews">canApprovePullRequestReviews</a></code><i class="z"><code class="return">boolean</code></i></li>
-					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Settings.html#allowMergeCommit">allowMergeCommit</a></code><i class="z"><code class="return">boolean</code></i></li>
-					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Settings.html#deleteBranchOnMerge">deleteBranchOnMerge</a></code><i class="z"><code class="return">boolean</code></i></li>
-					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Settings.html#hasDiscussions">hasDiscussions</a></code><i class="z"><code class="return">boolean</code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Job.html#id">id</a></code><i class="z"><code class="return">long</code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Job.html#name">name</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Job.html#status">status</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="g"><i class="PUBLIC"></i><code><a href="api/bee.util.GithubAPI.Job.html#conclusion">conclusion</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 				</ul>
 			</div>
 		</aside>
