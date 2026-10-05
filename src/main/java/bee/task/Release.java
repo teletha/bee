@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import bee.Fail;
+import bee.Platform;
 import bee.Task;
 import bee.api.Command;
 import bee.api.Comment;
@@ -280,7 +281,8 @@ public interface Release extends Task<Release.Config> {
      */
     private void watch(String repository, GithubAPI.Run run) {
         while (!"completed".equals(run.status)) {
-            // The spinner overwrites the previous message in place, so the polling is visible.
+            // The spinner overwrites the previous message in place. A multi-line message shows the
+            // whole step list with the current position marked.
             ui().spinner(describe(repository, run));
             sleep(POLL_INTERVAL);
 
@@ -292,10 +294,10 @@ public interface Release extends Task<Release.Config> {
             }
         }
 
-        // Show the final job states before the outcome.
+        // Show the final states, then the outcome.
         ui().info(describe(repository, run));
 
-        if (config().showLog) {
+        if (config().showLog && !"success".equals(String.valueOf(run.conclusion))) {
             showLog(repository, run);
         }
 
@@ -313,7 +315,8 @@ public interface Release extends Task<Release.Config> {
     }
 
     /**
-     * Describe the current jobs of the specified run.
+     * Describe the jobs and the steps of the specified run. The step which is currently running is
+     * marked, so the whole list shows the progress at a glance.
      * 
      * @param repository The owner/name of the repository.
      * @param run A workflow run.
@@ -322,19 +325,31 @@ public interface Release extends Task<Release.Config> {
     private String describe(String repository, GithubAPI.Run run) {
         StringBuilder builder = new StringBuilder();
         for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
+            if (builder.length() != 0) {
+                builder.append(Platform.EOL);
+            }
             builder.append("  ").append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]");
 
-            // Show the step which is currently running, so the progress is meaningful.
             if (job.steps != null) {
                 for (GithubAPI.Step step : job.steps) {
-                    if ("in_progress".equals(step.status)) {
-                        builder.append(" : ").append(step.name);
-                    }
+                    builder.append(Platform.EOL).append("    ").append(mark(step)).append(" ").append(step.name);
                 }
             }
-            builder.append("  ");
         }
-        return builder.toString().stripTrailing();
+        return builder.toString();
+    }
+
+    /**
+     * Build the marker of the specified step.
+     * 
+     * @param step A step.
+     * @return A marker.
+     */
+    private String mark(GithubAPI.Step step) {
+        if ("completed".equals(step.status)) {
+            return "success".equals(step.conclusion) ? "[x]" : "[!]";
+        }
+        return "in_progress".equals(step.status) ? "[>]" : "[ ]";
     }
 
     /**
