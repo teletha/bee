@@ -11,6 +11,7 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -319,9 +320,19 @@ public interface Release extends Task<Release.Config> {
      * @return A description.
      */
     private String describe(String repository, GithubAPI.Run run) {
-        StringBuilder builder = new StringBuilder("  ");
+        StringBuilder builder = new StringBuilder();
         for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
-            builder.append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]  ");
+            builder.append("  ").append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]");
+
+            // Show the step which is currently running, so the progress is meaningful.
+            if (job.steps != null) {
+                for (GithubAPI.Step step : job.steps) {
+                    if ("in_progress".equals(step.status)) {
+                        builder.append(" : ").append(step.name);
+                    }
+                }
+            }
+            builder.append("  ");
         }
         return builder.toString().stripTrailing();
     }
@@ -333,11 +344,14 @@ public interface Release extends Task<Release.Config> {
      * @param run A workflow run.
      */
     private void showLog(String repository, GithubAPI.Run run) {
-        File logs = GithubAPI.logs(repository, run.id);
+        psychopath.Directory logs = GithubAPI.logs(repository, run.id);
         if (logs != null && logs.isPresent()) {
             ui().info("Release workflow log");
-            for (String line : logs.lines().toList()) {
-                ui().info(line);
+            // The log files are UTF-8, so read them explicitly to avoid the platform charset.
+            for (psychopath.File file : logs.walkFile("*.txt").toList()) {
+                for (String line : file.lines(StandardCharsets.UTF_8).toList()) {
+                    ui().info(line);
+                }
             }
         }
     }

@@ -299,6 +299,24 @@ public class GithubAPI {
 
         /** The job conclusion such as success or failure. */
         public String conclusion;
+
+        /** The steps of the job. */
+        public List<Step> steps;
+    }
+
+    /**
+     * Represents a step of a workflow job.
+     */
+    public static class Step {
+
+        /** The step name. */
+        public String name;
+
+        /** The step status such as queued, in_progress or completed. */
+        public String status;
+
+        /** The step conclusion such as success or failure. */
+        public String conclusion;
     }
 
     /**
@@ -338,13 +356,14 @@ public class GithubAPI {
     }
 
     /**
-     * Download the log archive of the specified run. The archive contains one log file per job.
+     * Download and unpack the log archive of the specified run. The archive contains one log file
+     * per job.
      *
      * @param repository The owner/name of the repository.
      * @param runId A run identifier.
-     * @return The location of the downloaded log archive, or <code>null</code> when it is not ready.
+     * @return The directory which contains the log files, or <code>null</code> when it is not ready.
      */
-    public static psychopath.File logs(String repository, long runId) {
+    public static psychopath.Directory logs(String repository, long runId) {
         String token = token(TaskOperations.ui());
         String endpoint = "https://api.github.com/repos/" + repository + "/actions/runs/" + runId + "/logs";
 
@@ -363,7 +382,7 @@ public class GithubAPI {
             try (InputStream in = response.body(); OutputStream out = archive.newOutputStream()) {
                 in.transferTo(out);
             }
-            return archive;
+            return archive.unpackToTemporary();
         } catch (Throwable e) {
             return null;
         }
