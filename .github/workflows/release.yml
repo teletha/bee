@@ -169,3 +169,11 @@ jobs:
         # The version is given as a property because the container which runs JReleaser does not
         # always receive the action environment variables, and the config file carries a stale one.
         arguments: release --debug --set-property=project.version=${{ steps.release.outputs.version }}
+
+    - name: Trigger the JitPack build
+      env:
+        PRODUCT_VERSION: ${{ steps.release.outputs.version }}
+      run: |
+        # JitPack builds the tagged revision on demand. Trigger it now so the
+        # artifact is ready before someone requests it. Do not wait for the outcome.
+        curl -sS "https://jitpack.io/api/builds/com.github.teletha/bee/${PRODUCT_VERSION}" > /dev/null || true
