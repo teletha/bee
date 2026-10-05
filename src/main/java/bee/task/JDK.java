@@ -66,8 +66,6 @@ public interface JDK extends Task {
 
             if (selected != null && jdk.absolutize().path().equalsIgnoreCase(selected)) {
                 label += " [selected]";
-            } else if (jdk.isPresent()) {
-                label += " [installed]";
             }
             return label.stripTrailing();
         });
