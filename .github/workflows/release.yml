@@ -76,7 +76,7 @@ jobs:
       run: |
         value="${DISPATCH_VERSION:-${MANUAL_VERSION}}"
         if [ -z "${value}" ]; then
-          value=$(cat version.txt | xargs)
+          value=$(tr -d '\r' < version.txt | xargs)
           echo "::warning::No version was given, using ${value} from version.txt."
         fi
         echo "version=${value}" >> "$GITHUB_OUTPUT"

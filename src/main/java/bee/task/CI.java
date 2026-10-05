@@ -431,8 +431,9 @@ public interface CI extends Task {
                           fi
 
                           # To support SNAPSHOT and Commit ID version, read the VERSION in version.txt,
-                          # not the VERSION in the environment variable.
-                          ProductVersion=$(cat version.txt | xargs)
+                          # not the VERSION in the environment variable. The carriage return is removed
+                          # because a version.txt written on Windows may end with a CRLF.
+                          ProductVersion=$(tr -d '\\r' < version.txt | xargs)
 
                           # Until the end of 2024, Jitpack would recognize it as an Artifact if I put the appropriate
                           # Jar files, etc. in the right place. However, since 2025, Jitpack no longer recognizes them.
@@ -541,7 +542,7 @@ public interface CI extends Task {
                       run: |
                         value="${DISPATCH_VERSION:-${MANUAL_VERSION}}"
                         if [ -z "${value}" ]; then
-                          value=$(cat version.txt | xargs)
+                          value=$(tr -d '\\r' < version.txt | xargs)
                           echo "::warning::No version was given, using ${value} from version.txt."
                         fi
                         echo "version=${value}" >> "$GITHUB_OUTPUT"
