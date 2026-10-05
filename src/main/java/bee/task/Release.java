@@ -81,6 +81,10 @@ public interface Release extends Task<Release.Config> {
         @Comment("Watch the release workflow until it completes.")
         public boolean watch = true;
 
+        /** Whether the workflow log is shown after the run completes. */
+        @Comment("Show the workflow log after the run completes.")
+        public boolean showLog = true;
+
         /** The branch to release from. The current branch is used when it is empty. */
         @Comment("The branch to release from. The current branch is used when it is empty.")
         public String branch;
@@ -275,6 +279,8 @@ public interface Release extends Task<Release.Config> {
      */
     private void watch(String repository, GithubAPI.Run run) {
         while (!"completed".equals(run.status)) {
+            // The spinner overwrites the previous message in place, so the polling is visible.
+            ui().spinner(describe(repository, run));
             sleep(POLL_INTERVAL);
 
             for (GithubAPI.Run current : GithubAPI.runs(repository, RUN_EVENT)) {
@@ -283,52 +289,55 @@ public interface Release extends Task<Release.Config> {
                     break;
                 }
             }
-            if (!"completed".equals(run.status)) {
-                progress(repository, run);
-            }
+        }
+
+        // Show the final job states before the outcome.
+        ui().info(describe(repository, run));
+
+        if (config().showLog) {
+            showLog(repository, run);
         }
 
         switch (String.valueOf(run.conclusion)) {
         case "success":
-            ui().info("The release workflow succeeded.");
+            ui().info("The release workflow succeeded : ", run.html_url);
             return;
 
         case "cancelled":
             throw new Fail("The release workflow was cancelled : " + run.html_url);
 
         default:
-            Fail failure = new Fail("The release workflow failed : " + run.html_url).solve("Run [release:publish] to retry.");
-            showFailureLog(repository, run);
-            throw failure;
+            throw new Fail("The release workflow failed : " + run.html_url).solve("Run [release:publish] to retry.");
         }
     }
 
     /**
-     * Report the current jobs of the specified run.
+     * Describe the current jobs of the specified run.
      * 
      * @param repository The owner/name of the repository.
      * @param run A workflow run.
+     * @return A description.
      */
-    private void progress(String repository, GithubAPI.Run run) {
+    private String describe(String repository, GithubAPI.Run run) {
         StringBuilder builder = new StringBuilder("  ");
         for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
-            builder.append(job.name).append(" [").append(job.status).append("]  ");
+            builder.append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]  ");
         }
-        ui().trace(builder.toString());
+        return builder.toString().stripTrailing();
     }
 
     /**
-     * Show the job logs of the failed run.
+     * Show the job logs of the specified run.
      * 
      * @param repository The owner/name of the repository.
      * @param run A workflow run.
      */
-    private void showFailureLog(String repository, GithubAPI.Run run) {
+    private void showLog(String repository, GithubAPI.Run run) {
         File logs = GithubAPI.logs(repository, run.id);
         if (logs != null && logs.isPresent()) {
-            ui().error("Release workflow log");
+            ui().info("Release workflow log");
             for (String line : logs.lines().toList()) {
-                ui().error(line);
+                ui().info(line);
             }
         }
     }
