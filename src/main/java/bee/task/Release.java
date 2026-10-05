@@ -24,6 +24,7 @@ import bee.api.Project;
 import bee.api.VCS;
 import bee.util.ConventionalCommit;
 import bee.util.Git;
+import bee.util.GithubAPI;
 import bee.util.SemanticVersion;
 import bee.util.SemanticVersion.Bump;
 import psychopath.Directory;
@@ -31,8 +32,9 @@ import psychopath.File;
 
 /**
  * Releases the project. The next version is computed from the conventional commits since the latest
- * tag, the version file is updated and committed, and the version is tagged and pushed. The tag push
- * starts the release workflow, which creates the GitHub Release and publishes the artifacts.
+ * tag, the version file is updated and pushed, and then the release workflow is dispatched to build
+ * the tagged artifacts, create the GitHub Release and publish them. The tag is created by the
+ * workflow, once the build has succeeded, so a successful release always has its tag.
  */
 public interface Release extends Task<Release.Config> {
 
@@ -41,6 +43,15 @@ public interface Release extends Task<Release.Config> {
 
     /** The option label of the abort. */
     String ABORT = "Abort";
+
+    /** The repository dispatch event which starts the release workflow. */
+    String EVENT = "release";
+
+    /** The interval (ms) between the workflow run polls. */
+    long POLL_INTERVAL = 3000;
+
+    /** The maximum time (ms) to wait for the workflow run to be discovered. */
+    long DISCOVER_TIMEOUT = 60 * 1000;
 
     /**
      * The configuration of the release task.
@@ -59,9 +70,13 @@ public interface Release extends Task<Release.Config> {
         @Comment("Set the next version explicitly instead of computing it.")
         public String version;
 
-        /** Whether the release commit and the tag are pushed to the remote. */
-        @Comment("Push the release commit and the tag to the remote.")
+        /** Whether the release commit is pushed to the remote. */
+        @Comment("Push the release commit to the remote.")
         public boolean push = true;
+
+        /** Whether the release workflow is watched until it completes. */
+        @Comment("Watch the release workflow until it completes.")
+        public boolean watch = true;
 
         /** The branch to release from. The current branch is used when it is empty. */
         @Comment("The branch to release from. The current branch is used when it is empty.")
@@ -71,7 +86,7 @@ public interface Release extends Task<Release.Config> {
     /**
      * Release the project.
      */
-    @Command(defaults = true, value = "Release the project by bumping the version and creating the tag.")
+    @Command(defaults = true, value = "Release the project by bumping the version and dispatching the release workflow.")
     default void release() {
         Project project = project();
         Directory root = project.getRoot();
@@ -95,6 +110,14 @@ public interface Release extends Task<Release.Config> {
         git.fetch();
         if (!git.isSynced()) {
             throw new Fail("The local branch [" + branch + "] is not synchronized with the remote.").solve("Push or pull before releasing.");
+        }
+
+        // The latest tag whose GitHub Release is missing means that a previous release did not
+        // finish, so a new one must not start before it is recovered.
+        String unfinished = git.latestVersionTag();
+        if (unfinished != null && !GithubAPI.hasRelease(vcs.owner + "/" + vcs.repo, unfinished)) {
+            throw new Fail("The previous release [" + unfinished + "] has a tag but no GitHub Release.")
+                    .solve("Run [release:publish " + unfinished + "] to finish it before releasing again.");
         }
 
         File versionFile = root.file("version.txt");
@@ -154,19 +177,172 @@ public interface Release extends Task<Release.Config> {
             return;
         }
 
-        ui().info("Releasing the version \t", next);
-
-        // 6. Update the version, commit and tag.
+        // 6. Update the version and push the release commit. The tag is created by the workflow.
         makeFile(versionFile, List.of(next.toString()));
-        git.add("version.txt").commit("chore(release): " + next).tag(next.toString());
+        git.add("version.txt").commit("chore(release): " + next);
 
-        // 7. Push the branch and the tag.
         if (conf.push) {
-            git.push(branch).push(next.toString());
-            ui().info("Pushed the release commit and the tag [", next, "].");
+            git.push(branch);
+            ui().info("Pushed the release commit for [", next, "].");
         }
 
-        ui().info("Released the version [", next, "].");
+        // 7. Dispatch the release workflow and watch it.
+        publishVersion(next.toString());
+
+        // 8. Verify the outcome.
+        if (GithubAPI.hasRelease(vcs.owner + "/" + vcs.repo, next.toString())) {
+            ui().info("Released the version [", next, "].");
+        } else {
+            ui().warn("The GitHub Release of [", next, "] is not created yet. Run [release:publish ", next, "] to retry.");
+        }
+    }
+
+    /**
+     * Dispatch the release workflow for the specified version and watch the run. This does not change
+     * the repository, so it can be used to finish a release whose workflow failed.
+     * 
+     * @param version A released version.
+     */
+    @Command("Dispatch the release workflow for an already released version and watch it.")
+    default void publish(String version) {
+        publishVersion(version);
+    }
+
+    /**
+     * Dispatch the release workflow for the specified version and watch it.
+     * 
+     * @param version A released version.
+     */
+    private void publishVersion(String version) {
+        boolean watch = config().watch;
+        VCS vcs = project().getVersionControlSystem();
+        if (vcs == null || !vcs.name().equals("github")) {
+            throw new Fail("The release requires a GitHub repository.");
+        }
+        if (version == null || version.isBlank()) {
+            version = project().getVersion();
+        }
+        String repository = vcs.owner + "/" + vcs.repo;
+
+        String nonce = String.valueOf(System.currentTimeMillis());
+        ui().info("Dispatch the release workflow for the version [", version, "].");
+        GithubAPI.dispatch(repository, EVENT, new kiss.JSON().set("version", version).set("nonce", nonce));
+
+        if (!watch) {
+            ui().info("Dispatched. Watch the run on GitHub.");
+            return;
+        }
+
+        GithubAPI.Run run = waitForRun(repository, nonce);
+        if (run == null) {
+            ui().warn("The release workflow run could not be found. Check the Actions page.");
+            return;
+        }
+        ui().info("Watching the release workflow : ", run.html_url);
+
+        watch(repository, run);
+    }
+
+    /**
+     * Wait until the release workflow run which carries the specified nonce appears.
+     * 
+     * @param repository The owner/name of the repository.
+     * @param nonce A dispatch nonce.
+     * @return The run, or <code>null</code> when it is not found in time.
+     */
+    private GithubAPI.Run waitForRun(String repository, String nonce) {
+        long start = System.currentTimeMillis();
+        ui().spinner("Waiting for the release workflow to start...");
+
+        while (System.currentTimeMillis() - start < DISCOVER_TIMEOUT) {
+            for (GithubAPI.Run run : GithubAPI.runs(repository, EVENT)) {
+                if (run.name != null && run.name.contains(nonce)) {
+                    return run;
+                }
+            }
+            sleep(POLL_INTERVAL);
+        }
+        return null;
+    }
+
+    /**
+     * Poll the specified run and report its progress and outcome.
+     * 
+     * @param repository The owner/name of the repository.
+     * @param run A workflow run.
+     */
+    private void watch(String repository, GithubAPI.Run run) {
+        while (!"completed".equals(run.status)) {
+            sleep(POLL_INTERVAL);
+
+            for (GithubAPI.Run current : GithubAPI.runs(repository, EVENT)) {
+                if (current.id == run.id) {
+                    run = current;
+                    break;
+                }
+            }
+            if (!"completed".equals(run.status)) {
+                progress(repository, run);
+            }
+        }
+
+        switch (String.valueOf(run.conclusion)) {
+        case "success":
+            ui().info("The release workflow succeeded.");
+            return;
+
+        case "cancelled":
+            throw new Fail("The release workflow was cancelled : " + run.html_url);
+
+        default:
+            Fail failure = new Fail("The release workflow failed : " + run.html_url).solve("Run [release:publish] to retry.");
+            showFailureLog(repository, run);
+            throw failure;
+        }
+    }
+
+    /**
+     * Report the current jobs of the specified run.
+     * 
+     * @param repository The owner/name of the repository.
+     * @param run A workflow run.
+     */
+    private void progress(String repository, GithubAPI.Run run) {
+        StringBuilder builder = new StringBuilder("  ");
+        for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
+            builder.append(job.name).append(" [").append(job.status).append("]  ");
+        }
+        ui().trace(builder.toString());
+    }
+
+    /**
+     * Show the job logs of the failed run.
+     * 
+     * @param repository The owner/name of the repository.
+     * @param run A workflow run.
+     */
+    private void showFailureLog(String repository, GithubAPI.Run run) {
+        File logs = GithubAPI.logs(repository, run.id);
+        if (logs != null && logs.isPresent()) {
+            ui().error("Release workflow log");
+            for (String line : logs.lines().toList()) {
+                ui().error(line);
+            }
+        }
+    }
+
+    /**
+     * Sleep the current thread for the specified milliseconds.
+     * 
+     * @param millis A sleep time.
+     */
+    private void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new Fail("Interrupted while watching the release workflow.").reason(e);
+        }
     }
 
     /**

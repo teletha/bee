@@ -12,6 +12,8 @@ package bee.util;
 import java.awt.Desktop;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpRetryException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -51,8 +53,8 @@ public class GithubAPI {
      */
     private static final String CLIENT_ID = "Ov23ligQPbmLMpfxYjUI";
 
-    /** The scope required to create public and private repositories. */
-    private static final String SCOPE = "repo";
+    /** The scope required to create repositories and to dispatch workflows. */
+    private static final String SCOPE = "repo workflow";
 
     /** The endpoint used to start the Device Flow. */
     private static final String DEVICE_CODE_ENDPOINT = "https://github.com/login/device/code";
@@ -233,6 +235,157 @@ public class GithubAPI {
             throw new Fail("Failed to resolve the authenticated GitHub user.");
         }
         return login;
+    }
+
+    /**
+     * Dispatch a repository event to start a workflow run.
+     *
+     * @param repository The owner/name of the repository.
+     * @param eventType The event type of the dispatch.
+     * @param payload The client payload which is delivered to the workflow.
+     */
+    public static void dispatch(String repository, String eventType, JSON payload) {
+        String token = token(TaskOperations.ui());
+        JSON body = new JSON().set("event_type", eventType).set("client_payload", payload);
+
+        request(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/dispatches"))
+                .header("Accept", "application/vnd.github+json")
+                .header("Authorization", "Bearer " + token)
+                .header("X-GitHub-Api-Version", API_VERSION)
+                .header("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString(body.toString(), StandardCharsets.UTF_8)));
+    }
+
+    /**
+     * Represents a workflow run.
+     */
+    public static class Run {
+
+        /** The run identifier. */
+        public long id;
+
+        /** The display name of the run. */
+        public String name;
+
+        /** The run status such as queued, in_progress or completed. */
+        public String status;
+
+        /** The run conclusion such as success or failure, or null while it is running. */
+        public String conclusion;
+
+        /** The URL of the run. */
+        public String html_url;
+
+        /** The branch of the run. */
+        public String head_branch;
+    }
+
+    /**
+     * Represents a workflow job.
+     */
+    public static class Job {
+
+        /** The job identifier. */
+        public long id;
+
+        /** The job name. */
+        public String name;
+
+        /** The job status such as queued, in_progress or completed. */
+        public String status;
+
+        /** The job conclusion such as success or failure. */
+        public String conclusion;
+    }
+
+    /**
+     * List the recent runs of the repository. The most recent run comes first.
+     *
+     * @param repository The owner/name of the repository.
+     * @param event The event which started the runs.
+     * @return A list of runs.
+     */
+    public static List<Run> runs(String repository, String event) {
+        String token = token(TaskOperations.ui());
+        JSON response = invoke(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/actions/runs?event=" + event + "&per_page=30"))
+                .header("Accept", "application/vnd.github+json")
+                .header("Authorization", "Bearer " + token)
+                .header("X-GitHub-Api-Version", API_VERSION)
+                .GET());
+
+        return response.find(Run.class, "workflow_runs", "*");
+    }
+
+    /**
+     * Resolve the jobs of the specified run.
+     *
+     * @param repository The owner/name of the repository.
+     * @param runId A run identifier.
+     * @return A list of jobs.
+     */
+    public static List<Job> jobs(String repository, long runId) {
+        String token = token(TaskOperations.ui());
+        JSON response = invoke(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/actions/runs/" + runId + "/jobs"))
+                .header("Accept", "application/vnd.github+json")
+                .header("Authorization", "Bearer " + token)
+                .header("X-GitHub-Api-Version", API_VERSION)
+                .GET());
+
+        return response.find(Job.class, "jobs", "*");
+    }
+
+    /**
+     * Download the log archive of the specified run. The archive contains one log file per job.
+     *
+     * @param repository The owner/name of the repository.
+     * @param runId A run identifier.
+     * @return The location of the downloaded log archive, or <code>null</code> when it is not ready.
+     */
+    public static psychopath.File logs(String repository, long runId) {
+        String token = token(TaskOperations.ui());
+        String endpoint = "https://api.github.com/repos/" + repository + "/actions/runs/" + runId + "/logs";
+
+        try {
+            HttpResponse<InputStream> response = I.http(HttpRequest.newBuilder(URI.create(endpoint))
+                    .header("Accept", "application/vnd.github+json")
+                    .header("Authorization", "Bearer " + token)
+                    .header("X-GitHub-Api-Version", API_VERSION)
+                    .GET(), HttpResponse.class).waitForTerminate().to().acquire();
+
+            if (response.statusCode() != 200) {
+                I.quiet(response.body());
+                return null;
+            }
+            psychopath.File archive = Locator.temporaryFile("logs.zip");
+            try (InputStream in = response.body(); OutputStream out = archive.newOutputStream()) {
+                in.transferTo(out);
+            }
+            return archive;
+        } catch (Throwable e) {
+            return null;
+        }
+    }
+
+    /**
+     * Test whether the GitHub Release of the specified tag exists.
+     *
+     * @param repository The owner/name of the repository.
+     * @param tag A tag name.
+     * @return A result.
+     */
+    public static boolean hasRelease(String repository, String tag) {
+        String token = token(TaskOperations.ui());
+        try {
+            JSON response = invoke(HttpRequest.newBuilder(URI.create("https://api.github.com/repos/" + repository + "/releases/tags/" + tag))
+                    .header("Accept", "application/vnd.github+json")
+                    .header("Authorization", "Bearer " + token)
+                    .header("X-GitHub-Api-Version", API_VERSION)
+                    .GET());
+
+            return response.text("tag_name") != null;
+        } catch (Throwable e) {
+            return false;
+        }
     }
 
     /**

@@ -1,19 +1,24 @@
 name: Release
 
-# The release task bumps the version, commits it and pushes the version tag. This
-# workflow runs for that tag, builds the tagged revision, lets JReleaser create the
-# GitHub Release with the changelog generated from the conventional commits, and
-# publishes the artifacts to Maven Central. A manual run may publish a version which
-# already carries a tag.
+# The release task bumps the version and pushes the release commit, then dispatches
+# this workflow with the version. This workflow builds the release revision, creates
+# the version tag once the build has succeeded, lets JReleaser create the GitHub
+# Release with the changelog generated from the conventional commits, and publishes
+# the artifacts to Maven Central. The tag is created here, after the build, so a
+# successful release always has its tag and a failed one does not leave the tag.
 on:
-  push:
-    tags: ['*']
+  repository_dispatch:
+    types: [release]
   workflow_dispatch:
     inputs:
       version:
-        description: The released version, such as 0.79.0. The version tag of the selected branch is used when this is empty.
+        description: The released version, such as 0.80.1.
         type: string
-        required: false
+        required: true
+
+# The run name carries the dispatch nonce so that the release task can find the run
+# which it started.
+run-name: Release ${{ github.event.client_payload.version || inputs.version }} [${{ github.event.client_payload.nonce || 'manual' }}]
 
 # The shell declares bash so that pipefail is enabled, which makes the pipeline in
 # the version reading step below fail when a component of it fails.
@@ -26,7 +31,7 @@ defaults:
 # is part of the group, because a manual run of another version is not the same
 # deploy.
 concurrency:
-  group: release-${{ inputs.version || github.ref }}
+  group: release-${{ github.event.client_payload.version || inputs.version }}
   cancel-in-progress: false
 
 jobs:
@@ -63,33 +68,24 @@ jobs:
           echo "publish=true" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Resolve the release tag
+    - name: Resolve the release version
       id: release
       env:
-        EVENT_NAME: ${{ github.event_name }}
-        TAG_NAME: ${{ github.ref_name }}
+        DISPATCH_VERSION: ${{ github.event.client_payload.version }}
         MANUAL_VERSION: ${{ inputs.version }}
       run: |
-        value="${MANUAL_VERSION}"
-        if [ -z "${value}" ] && [ "${EVENT_NAME}" = "push" ]; then
-          value="${TAG_NAME}"
-        fi
+        value="${DISPATCH_VERSION:-${MANUAL_VERSION}}"
         if [ -z "${value}" ]; then
           value=$(cat version.txt | xargs)
-          echo "::warning::No version was given, publishing ${value} from version.txt of the selected branch. Pass the version input to publish another one."
+          echo "::warning::No version was given, using ${value} from version.txt."
         fi
         echo "version=${value}" >> "$GITHUB_OUTPUT"
-        echo "tag=${value}" >> "$GITHUB_OUTPUT"
         echo "Releasing bee ${value}"
 
     - name: Check out repository
       uses: actions/checkout@v7
       with:
-        # The released tag which the step above resolved, so the build does not
-        # depend on the default branch still pointing at the release when this run
-        # starts. A manual run of another version is checked out the same way.
-        ref: ${{ steps.release.outputs.tag }}
-        # JReleaser resolves the tag and the changelog from the git history.
+        # The release commit on the default branch, so the tag is created on it.
         fetch-depth: 0
 
     - name: Set up JDK
@@ -136,6 +132,19 @@ jobs:
         # Disable the signing and the Central deploy so that JReleaser only creates
         # the GitHub Release. Both settings use the same RELEASE value.
         sed -i 's/active: RELEASE/active: NEVER/g' jreleaser.yml
+
+    - name: Create the version tag
+      env:
+        PRODUCT_VERSION: ${{ steps.release.outputs.version }}
+      run: |
+        # The tag is created only after the build has succeeded, so a failed release
+        # does not leave a tag. JReleaser then creates the GitHub Release for it.
+        if git rev-parse -q --verify "refs/tags/${PRODUCT_VERSION}" >/dev/null; then
+          echo "The tag ${PRODUCT_VERSION} already exists."
+        else
+          git tag "${PRODUCT_VERSION}"
+          git push origin "${PRODUCT_VERSION}"
+        fi
 
     - name: Release with JReleaser
       uses: jreleaser/release-action@v2
