@@ -663,6 +663,12 @@ public interface CI extends Task {
                     changelog:
                       formatted: ALWAYS
                       preset: conventional-commits
+                      # Merge commits and commits which do not follow the conventional format are
+                      # not shown.
+                      skipMergeCommits: true
+                      hide:
+                        uncategorized: true
+                        categories: [merge]
                 files:
                   globs:
                     - pattern: target/%s-{{projectVersion}}.jar
