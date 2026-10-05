@@ -284,22 +284,29 @@ public class Process {
             }
 
             java.lang.Process process = builder.start();
-            Appendable output = new StringBuilder();
-            ProcessReader reader = null;
 
-            if (userOutput) {
-                try {
-                    output = I.make(UserInterface.class).getInterface();
-                } catch (Exception e) {
-                    // ignore
+            if (!userOutput) {
+                // Read the output in this thread so that it is captured fully before the result is
+                // used, without racing a reader thread.
+                byte[] bytes = process.getInputStream().readAllBytes();
+                exit = process.waitFor();
+
+                if (sync) {
+                    process.destroy();
                 }
+                return new String(bytes, encoding).trim();
             }
 
-            if (showOutput) {
-                reader = new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), output);
+            Appendable output = new StringBuilder();
+            try {
+                output = I.make(UserInterface.class).getInterface();
+            } catch (Exception e) {
+                // ignore
             }
 
-            if (sync || !userOutput) {
+            ProcessReader reader = showOutput ? new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), output) : null;
+
+            if (sync) {
                 exit = process.waitFor();
             }
 
@@ -308,7 +315,7 @@ public class Process {
             }
 
             // The reader thread may not have drained the output by the time the process exits, so
-            // wait for it before the captured output is used.
+            // wait for it before this method returns.
             if (reader != null) {
                 try {
                     reader.join();
@@ -316,7 +323,7 @@ public class Process {
                     Thread.currentThread().interrupt();
                 }
             }
-            return userOutput ? null : output.toString().trim();
+            return null;
         } catch (Throwable e) {
             throw new Error("Command " + command + " is failed.", e);
         }

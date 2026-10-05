@@ -153,13 +153,13 @@ public class Git {
     }
 
     /**
-     * List the tags in the descending version order.
+     * List the tags.
      * 
      * @return A list of tags.
      */
     public List<String> tags() {
         List<String> tags = new ArrayList();
-        for (String tag : read("tag", "--sort=-v:refname").split("\\R")) {
+        for (String tag : read("tag").split("\\R")) {
             if (!tag.isBlank()) {
                 tags.add(tag.trim());
             }
