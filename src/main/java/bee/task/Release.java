@@ -20,6 +20,7 @@ import java.util.Map;
 import bee.Fail;
 import bee.Platform;
 import bee.Task;
+import bee.UserInterface;
 import bee.api.Command;
 import bee.api.Comment;
 import bee.api.Project;
@@ -295,8 +296,9 @@ public interface Release extends Task<Release.Config> {
             }
         }
 
-        // Show the final states, then the outcome.
-        ui().info(describe(repository, run));
+        // Show the final states, then the outcome. The spinner marker is replaced with a check mark
+        // because no animation runs here.
+        ui().info(describe(repository, run).replace(UserInterface.SPINNER_MARKER, "✅"));
 
         if (config().showLog && !"success".equals(String.valueOf(run.conclusion))) {
             showLog(repository, run);
@@ -324,11 +326,11 @@ public interface Release extends Task<Release.Config> {
      * @return A description.
      */
     private String describe(String repository, GithubAPI.Run run) {
-        StringBuilder builder = new StringBuilder("  ").append(run.name).append(" [").append(run.conclusion == null ? run.status : run.conclusion).append("]");
+        StringBuilder builder = new StringBuilder();
 
         for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
             if (job.steps == null || job.steps.isEmpty()) {
-                builder.append(Platform.EOL).append("  ").append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]");
+                builder.append("  ").append(job.name).append(" [").append(job.conclusion == null ? job.status : job.conclusion).append("]");
                 continue;
             }
 
@@ -338,7 +340,10 @@ public interface Release extends Task<Release.Config> {
                     done++;
                 }
             }
-            builder.append(Platform.EOL).append("  ").append(job.name).append("  ").append(done).append("/").append(job.steps.size());
+            builder.append(run.name)
+                    .append(" [")
+                    .append(run.conclusion == null ? done + "/" + job.steps.size() : run.conclusion)
+                    .append("]");
 
             for (GithubAPI.Step step : job.steps) {
                 builder.append(Platform.EOL).append("    ").append(mark(step)).append(" ").append(step.name);
@@ -357,7 +362,7 @@ public interface Release extends Task<Release.Config> {
         if ("completed".equals(step.status)) {
             return "success".equals(step.conclusion) ? "✅" : "❌";
         }
-        return "in_progress".equals(step.status) ? "🔄" : "⬜";
+        return "in_progress".equals(step.status) ? UserInterface.SPINNER_MARKER : "⬜";
     }
 
     /**

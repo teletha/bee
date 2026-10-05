@@ -72,8 +72,27 @@ public abstract class UserInterface {
     /** The frames of the spinner. */
     protected static final String[] SPINNER_FRAMES = {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
 
+    /**
+     * The marker which a spinner message may contain to place the animated frame at an arbitrary
+     * position. Every occurrence is replaced by the current frame, so a message can animate more
+     * than one position. It uses a control character which does not appear in ordinary text.
+     */
+    public static final String SPINNER_MARKER = "\u0001\u0001";
+
     /** The interval (ms) between the spinner frames. */
     protected static final long SPINNER_INTERVAL = 100;
+
+    /**
+     * Replace every spinner marker with the specified frame. A message without a marker is prefixed
+     * with the frame, which keeps the previous behavior.
+     * 
+     * @param message A spinner message.
+     * @param frame A spinner frame.
+     * @return A message with the frame placed.
+     */
+    protected static final String spin(String message, String frame) {
+        return message.contains(SPINNER_MARKER) ? message.replace(SPINNER_MARKER, frame) : frame + " " + message;
+    }
 
     /**
      * The for command line user interface.
@@ -822,7 +841,7 @@ public abstract class UserInterface {
             case SPINNER:
                 if (!disableTrace) {
                     spinner = I.schedule(0, SPINNER_INTERVAL, TimeUnit.MILLISECONDS, true).to(count -> {
-                        write(TRACE, FRAMES[(int) ((count - 1) % FRAMES.length)] + " " + message);
+                        write(TRACE, spin(message, FRAMES[(int) ((count - 1) % FRAMES.length)]));
                     });
                 }
                 break;
