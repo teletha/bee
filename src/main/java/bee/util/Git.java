@@ -326,12 +326,13 @@ public class Git {
 
     /**
      * Fetch the tags from the origin. The branches are not pruned because a release does not need
-     * it.
+     * it. The tags are forced because a release may move an existing tag, which a plain fetch
+     * rejects as clobbering.
      * 
      * @return Fluent API.
      */
     public Git fetch() {
-        return exec("fetch", "--tags");
+        return exec("fetch", "--tags", "--force");
     }
 
     /**
