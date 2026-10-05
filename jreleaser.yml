@@ -1,8 +1,8 @@
 project:
   name: bee
-  # Overridden by JRELEASER_PROJECT_VERSION in the release workflow, so that this
-  # file does not have to be regenerated every time the release task bumps version.txt.
-  version: '0.79.0'
+  # Rewritten by the release workflow to the released version, so the committed default is only a
+  # placeholder.
+  version: '0.0.0'
   java:
     groupId: com.github.teletha
   links:

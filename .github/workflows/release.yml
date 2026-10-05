@@ -126,6 +126,15 @@ jobs:
         cp pom.xml ${directory}/bee-${PRODUCT_VERSION}.pom
         ls -l ${directory}
 
+    - name: Apply the release version to the jreleaser config
+      env:
+        PRODUCT_VERSION: ${{ steps.release.outputs.version }}
+      run: |
+        # Rewrite the version which the config carries, so JReleaser cannot fall back to the
+        # stale value from the committed file.
+        sed -i "s/^  version: .*/  version: '${PRODUCT_VERSION}'/" jreleaser.yml
+        grep -n "version:" jreleaser.yml
+
     - name: Skip the Maven Central deploy
       if: steps.secrets.outputs.publish != 'true'
       run: |

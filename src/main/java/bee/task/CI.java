@@ -591,6 +591,15 @@ public interface CI extends Task {
                         cp pom.xml ${directory}/%s-${PRODUCT_VERSION}.pom
                         ls -l ${directory}
 
+                    - name: Apply the release version to the jreleaser config
+                      env:
+                        PRODUCT_VERSION: ${{ steps.release.outputs.version }}
+                      run: |
+                        # Rewrite the version which the config carries, so JReleaser cannot fall
+                        # back to the stale value from the committed file.
+                        sed -i "s/^  version: .*/  version: '${PRODUCT_VERSION}'/" jreleaser.yml
+                        grep -n "version:" jreleaser.yml
+
                     - name: Skip the Maven Central deploy
                       if: steps.secrets.outputs.publish != 'true'
                       run: |
@@ -633,9 +642,9 @@ public interface CI extends Task {
         String jreleaser = """
                 project:
                   name: %s
-                  # Overridden by JRELEASER_PROJECT_VERSION in the release workflow, so that this
-                  # file does not have to be regenerated every time the release task bumps version.txt.
-                  version: '%s'
+                  # Rewritten by the release workflow to the released version, so the committed
+                  # default is only a placeholder.
+                  version: '0.0.0'
                   java:
                     groupId: %s
                   links:
@@ -686,7 +695,7 @@ public interface CI extends Task {
                 String.format(release, version, product, javaVersion, layout, product, product, product, product));
 
         makeFile("jreleaser.yml", String
-                .format(jreleaser, product, project().getVersion(), group, vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
+                .format(jreleaser, product, group, vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
     }
 
     @Command("Generate .gitignore file.")
