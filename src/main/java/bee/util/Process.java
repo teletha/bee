@@ -285,6 +285,7 @@ public class Process {
 
             java.lang.Process process = builder.start();
             Appendable output = new StringBuilder();
+            ProcessReader reader = null;
 
             if (userOutput) {
                 try {
@@ -295,7 +296,7 @@ public class Process {
             }
 
             if (showOutput) {
-                new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), output);
+                reader = new ProcessReader(new InputStreamReader(process.getInputStream(), encoding), output);
             }
 
             if (sync || !userOutput) {
@@ -304,6 +305,16 @@ public class Process {
 
             if (sync) {
                 process.destroy();
+            }
+
+            // The reader thread may not have drained the output by the time the process exits, so
+            // wait for it before the captured output is used.
+            if (reader != null) {
+                try {
+                    reader.join();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
             return userOutput ? null : output.toString().trim();
         } catch (Throwable e) {
