@@ -16,6 +16,7 @@ release:
     # Release. The changelog is generated from the conventional commits.
     skipTag: true
     skipRelease: false
+    overwrite: true
     changelog:
       formatted: ALWAYS
       preset: conventional-commits

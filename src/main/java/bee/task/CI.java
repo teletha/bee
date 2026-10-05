@@ -614,8 +614,6 @@ public interface CI extends Task {
                     - name: Release with JReleaser
                       uses: jreleaser/release-action@v2
                       env:
-                        # Keep JReleaser in sync with the version which the release task wrote into version.txt.
-                        JRELEASER_PROJECT_VERSION: ${{ steps.release.outputs.version }}
                         JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                         JRELEASER_GPG_SECRET_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PRIVATE_KEY }}
                         JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.MAVEN_CENTRAL_GPG_PUBLIC_KEY }}
@@ -624,7 +622,10 @@ public interface CI extends Task {
                         JRELEASER_MAVENCENTRAL_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_TOKEN }}
                       with:
                         version: 1.26.0
-                        arguments: release --debug
+                        # The version is given as a property because the container which runs JReleaser
+                        # does not always receive the action environment variables, and the config file
+                        # carries a stale one.
+                        arguments: release --debug --set-property=project.version=${{ steps.release.outputs.version }}
                 """;
 
         // In a format string, a double brace denotes a single brace, so {{projectVersion}} is
@@ -645,9 +646,11 @@ public interface CI extends Task {
                     name: %s
                     tagName: '{{projectVersion}}'
                     # The tag is created by the release task, so JReleaser creates only the GitHub
-                    # Release. The changelog is generated from the conventional commits.
+                    # Release. The changelog is generated from the conventional commits. An existing
+                    # release is updated, so a failed release can be retried.
                     skipTag: true
                     skipRelease: false
+                    overwrite: true
                     changelog:
                       formatted: ALWAYS
                       preset: conventional-commits
