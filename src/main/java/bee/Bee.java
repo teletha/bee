@@ -104,6 +104,12 @@ public class Bee {
     /** The project build process is aborted by user. */
     public static final RuntimeException Abort = new RuntimeException();
 
+    /**
+     * Whether the build has finished. It lets the shutdown hook tell a normal exit from an
+     * interruption (Ctrl+C), because it is set right before the exit on the normal path only.
+     */
+    private static volatile boolean finished;
+
     /** The user interface. */
     private UserInterface ui;
 
@@ -431,18 +437,30 @@ public class Bee {
         }
 
         // 3. Default task if none provided
-        if (tasks.length == 0) tasks = new String[] {"eclipse"};
+        if (tasks.length == 0) tasks = new String[] {"install"};
 
         // 4. Parse command-line arguments into options and remaining tasks
         // Options (like --help, --root) are processed first.
         List<String> washed = BeeOption.parse(tasks);
+
+        // Report an interruption (Ctrl+C) as a clean abort. The flag is set once the build has
+        // finished, so the hook stays silent on a normal or a failing exit. The launcher
+        // suppresses the console's own "Terminate batch job" prompt, hence this message.
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (!finished) {
+                System.out.println();
+                System.out.println("Aborted.");
+            }
+        }));
 
         // 5. Initialize Bee and execute the remaining tasks
         // Bee constructor handles UI and project setup. execute() runs the build lifecycle.
         // System.exit is called with the result code from execute().
         // Do NOT create 'new Bee()' before BeeOption.parse() as constructor might initialize
         // things prematurely based on default option values.
-        System.exit(new Bee().execute(washed));
+        int exitCode = new Bee().execute(washed);
+        finished = true;
+        System.exit(exitCode);
     }
 
     /**

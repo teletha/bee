@@ -88,10 +88,18 @@ public class BeeInstaller {
                 // log is disabled so that a missing cache does not print an error.
                 String aot = dest + "." + Runtime.version().feature() + ".aot";
 
+                // On Windows the java call is followed by "& call :exitWithErrorLevel" on the same
+                // line. The trailing call moves cmd.exe past the interruption which Ctrl+C sets, so
+                // it does not ask "Terminate batch job (Y/N)?", and the label exits with the real
+                // code. This is the same pattern which the Gradle wrapper uses.
                 Platform.Bee.text(String.format(Platform.isWindows()
                         ? """
                                 @echo off
-                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee %%*
+                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee %%* & call :exitWithErrorLevel
+
+                                :exitWithErrorLevel
+                                @rem Use "%%COMSPEC%%" /c exit to allow operators to work properly in scripts
+                                "%%COMSPEC%%" /c exit %%ERRORLEVEL%%
                                 """
                         : """
                                 #!/bin/bash

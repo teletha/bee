@@ -134,7 +134,11 @@ public interface Wrapper extends Task<Wrapper.Config> {
                                 curl -#L -o !bee! --create-dirs https://jitpack.io/com/github/teletha/bee/%version%/bee-%version%.jar
                             )
                         )
-                        java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=bee.aot -XX:+IgnoreUnrecognizedVMOptions -cp %bee% bee.Bee %*
+                        java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=bee.aot -XX:+IgnoreUnrecognizedVMOptions -cp %bee% bee.Bee %* & call :exitWithErrorLevel
+
+                        :exitWithErrorLevel
+                        @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
+                        "%COMSPEC%" /c exit %ERRORLEVEL%
                         """, context);
 
         String sh = I

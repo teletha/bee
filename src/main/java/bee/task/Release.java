@@ -253,9 +253,7 @@ public interface Release extends Task<Release.Config> {
             ui().warn("The release workflow run could not be found. Check the Actions page.");
             return;
         }
-        ui().info("Watching : ", run.html_url);
-
-        watch(repository, run);
+        watch(repository, run, nonce);
     }
 
     /**
@@ -285,12 +283,16 @@ public interface Release extends Task<Release.Config> {
      * 
      * @param repository The owner/name of the repository.
      * @param run A workflow run.
+     * @param nonce The dispatch nonce which the run name carries for discovery. It is removed from
+     *        the displayed name, because it is an internal marker and not part of the version.
      */
-    private void watch(String repository, GithubAPI.Run run) {
+    private void watch(String repository, GithubAPI.Run run, String nonce) {
+        ui().info("Watching the release workflow : ", run.html_url);
+
         while (!"completed".equals(run.status)) {
             // The spinner overwrites the previous message in place. A multi-line message shows the
             // whole step list with the current position marked.
-            ui().spinner(describe(repository, run));
+            ui().spinner(describe(repository, run, nonce));
             sleep(POLL_INTERVAL);
 
             for (GithubAPI.Run current : GithubAPI.runs(repository, RUN_EVENT)) {
@@ -303,7 +305,7 @@ public interface Release extends Task<Release.Config> {
 
         // Show the final states, then the outcome. The spinner marker is replaced with a check mark
         // because no animation runs here.
-        ui().info(describe(repository, run).replace(UserInterface.SPINNER_MARKER, ui().color("\u2713", "76")));
+        ui().info(describe(repository, run, nonce).replace(UserInterface.SPINNER_MARKER, ui().color("\u2713", "76")));
 
         if (config().showLog && !"success".equals(String.valueOf(run.conclusion))) {
             showLog(repository, run);
@@ -327,9 +329,14 @@ public interface Release extends Task<Release.Config> {
      * 
      * @param repository The owner/name of the repository.
      * @param run A workflow run.
+     * @param nonce The dispatch nonce which the run name carries for discovery. It is removed from
+     *        the displayed name, because it is an internal marker and not part of the version.
      * @return A description.
      */
-    private String describe(String repository, GithubAPI.Run run) {
+    private String describe(String repository, GithubAPI.Run run, String nonce) {
+        // The run name is "Release <version><nonce>" for a dispatch, so dropping the nonce shows the
+        // version alone without changing how the run is discovered.
+        String name = run.name == null || nonce == null ? run.name : run.name.replace(nonce, "");
         StringBuilder builder = new StringBuilder();
 
         for (GithubAPI.Job job : GithubAPI.jobs(repository, run.id)) {
@@ -344,7 +351,7 @@ public interface Release extends Task<Release.Config> {
                     done++;
                 }
             }
-            builder.append(run.name)
+            builder.append(name)
                     .append(" [")
                     .append(run.conclusion == null ? done + "/" + job.steps.size() : run.conclusion)
                     .append("]");
@@ -365,8 +372,11 @@ public interface Release extends Task<Release.Config> {
     private String mark(GithubAPI.Step step) {
         if ("completed".equals(step.status)) {
             return "success".equals(step.conclusion) ? ui().color("\u2713", "76") + " " : ui().color("\u2717", "1") + " ";
+        } else if ("in_progress".equals(step.status)) {
+            return UserInterface.SPINNER_MARKER + " ";
+        } else {
+            return ui().color("\u25e6", "240") + " ";
         }
-        return "in_progress".equals(step.status) ? UserInterface.SPINNER_MARKER + " " : ui().color("\u25e6", "240") + " ";
     }
 
     /**
