@@ -68,6 +68,9 @@ public abstract class UserInterface {
     /** Message type magic number. */
     protected static final int SPINNER = 7;
 
+    /** Message type magic number. A prompt which keeps the cursor on the same line. */
+    protected static final int PROMPT = 8;
+
     /** The frames of the spinner. */
     protected static final String[] SPINNER_FRAMES = {"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"};
 
@@ -247,22 +250,45 @@ public abstract class UserInterface {
     }
 
     /**
-     * Ask user about your question and return his/her answer.
+     * Ask user about your question and return his/her answer. The answer is one of yes or no, and
+     * the enter key selects the safe default, which is no. An invalid answer is asked again with a
+     * short prompt.
      * 
      * @param question Your question message.
-     * @return An answer.
+     * @return <code>true</code> for yes.
      */
     public boolean confirm(String question) {
-        String answer = ask(Platform.EOL + question + " (y/n)").toLowerCase();
+        String text = question.strip();
+        String prompt = (text.endsWith("?") ? text : text + "?") + " [y/N] : ";
 
-        if (answer.equals("y") || answer.equals("ye") || answer.equals("yes")) {
-            return true;
-        } else if (answer.equals("n") || answer.equals("no")) {
-            return false;
-        } else {
-            info("Type 'y' or 'n'.");
+        while (true) {
+            // Question
+            write(PROMPT, prompt);
 
-            return confirm(question);
+            // Answer
+            String answer = answers.pollFirst();
+            if (answer != null) {
+                info(Platform.EOL, "Use the prepared answers. [", answer, "]");
+            } else {
+                answer = read();
+            }
+
+            switch (answer == null ? "" : answer.trim().toLowerCase()) {
+            case "":
+            case "n":
+            case "no":
+                // The enter key selects the safe default.
+                return false;
+
+            case "y":
+            case "ye":
+            case "yes":
+                return true;
+
+            default:
+                info("Please answer y or n.");
+                prompt = "[y/N] : ";
+            }
         }
     }
 
@@ -325,7 +351,7 @@ public abstract class UserInterface {
         builder.append(" : ");
 
         // Question
-        write(INFO, builder.toString());
+        write(PROMPT, builder.toString());
 
         try {
             // Answer
@@ -333,7 +359,8 @@ public abstract class UserInterface {
             if (answer == null) {
                 answer = read();
             } else {
-                info("Use the prepared answers. [", answer, "]");
+                // The prompt stays on the current line, so break the line before the notice.
+                info(Platform.EOL, "Use the prepared answers. [", answer, "]");
             }
 
             // Remove whitespaces.
@@ -874,6 +901,13 @@ public abstract class UserInterface {
 
             case ERROR:
                 write(stain("[ERROR] ", "1").concat(message), true);
+                break;
+
+            case PROMPT:
+                // The prompt keeps the cursor on the same line so the user can type the answer
+                // right after it. It is flushed explicitly because print does not flush.
+                write(stain(message, "215"), false);
+                standardOutput.flush();
                 break;
 
             default:
