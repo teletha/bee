@@ -449,7 +449,7 @@ public class Bee {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             if (!finished) {
                 System.out.println();
-                System.out.println("Aborted.");
+                System.out.println("You aborted the build process.");
             }
         }));
 
