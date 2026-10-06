@@ -64,7 +64,7 @@ public final class Platform {
     public static final File Config;
 
     /** The minimum Java feature version required to run this Bee. */
-    private static final int RequiredJava;
+    public static final int RequiredJava;
 
     /** The platform type. */
     private static final boolean isWindows = OSName.toLowerCase().contains("win");

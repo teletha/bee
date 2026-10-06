@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import bee.api.Project;
 import bee.api.Repository;
 import kiss.I;
+import psychopath.Directory;
 import psychopath.File;
 import psychopath.Locator;
 
@@ -55,13 +56,10 @@ public class BeeInstaller {
      */
     public static final void install(boolean installLauncher, boolean installAPI, boolean showWelcome) {
         UserInterface ui = I.make(UserInterface.class);
-        Project project = I.make(Project.class);
-
-        File source = Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(Bee.class).asFile();
+        File source = source();
+        File dest = executorJar(source);
 
         if (installLauncher) {
-            File dest = Platform.BeeHome
-                    .file("bee-" + Bee.Tool.getVersion() + "-" + DATETIME.format(source.lastModifiedDateTime()) + ".jar");
             // The current bee.jar is newer.
             // We should copy it to the Bee home directory.
             // This process is mainly used by Bee users while install phase.
@@ -83,30 +81,7 @@ public class BeeInstaller {
                 ui.info("Install bee executor to ", dest);
 
                 // build launcher
-                // The AOT cache is specific to the JDK which created it, so the file name contains the
-                // JDK feature version. A missing cache is created automatically on startup, and the aot
-                // log is disabled so that a missing cache does not print an error.
-                String aot = dest + "." + Runtime.version().feature() + ".aot";
-
-                // On Windows the java call is followed by "& call :exitWithErrorLevel" on the same
-                // line. The trailing call moves cmd.exe past the interruption which Ctrl+C sets, so
-                // it does not ask "Terminate batch job (Y/N)?", and the label exits with the real
-                // code. This is the same pattern which the Gradle wrapper uses.
-                Platform.Bee.text(String.format(Platform.isWindows()
-                        ? """
-                                @echo off
-                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee %%* & call :exitWithErrorLevel
-
-                                :exitWithErrorLevel
-                                @rem Use "%%COMSPEC%%" /c exit to allow operators to work properly in scripts
-                                "%%COMSPEC%%" /c exit %%ERRORLEVEL%%
-                                """
-                        : """
-                                #!/bin/bash
-                                %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1  -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions -cp "%s" bee.Bee "$@"
-                                """, Platform.JavaHome
-                                .file("bin/java"), aot, dest));
-
+                writeLauncher(dest, Platform.JavaHome);
                 ui.info("Install bee launcher to ", Platform.Bee);
             }
         }
@@ -125,5 +100,81 @@ public class BeeInstaller {
         if (showWelcome) {
             Bee.execute("help:welcome");
         }
+    }
+
+    /**
+     * Resolve the jar which provides the executor to install. While Bee builds itself, the freshly
+     * built jar is the source, otherwise the running jar is.
+     * 
+     * @return A source jar.
+     */
+    private static File source() {
+        Project project = I.make(Project.class);
+        return Bee.Tool.equals(project) ? project.locateJar() : Locator.locate(Bee.class).asFile();
+    }
+
+    /**
+     * Resolve the executor jar which the launcher starts.
+     * 
+     * @return The installed executor jar.
+     */
+    public static File executorJar() {
+        return executorJar(source());
+    }
+
+    /**
+     * Resolve the installed executor jar path for the specified source jar.
+     * 
+     * @param source A source jar.
+     * @return The installed executor jar.
+     */
+    private static File executorJar(File source) {
+        return Platform.BeeHome
+                .file("bee-" + Bee.Tool.getVersion() + "-" + DATETIME.format(source.lastModifiedDateTime()) + ".jar");
+    }
+
+    /**
+     * Write the launcher which starts the specified executor jar with the specified JDK. The JDK is
+     * resolved to its real directory and hardcoded, so the launcher never depends on the mutable
+     * "selected" link.
+     * 
+     * @param jar The executor jar.
+     * @param javaHome The JDK used by the launcher.
+     */
+    public static void writeLauncher(File jar, Directory javaHome) {
+        Directory home;
+        try {
+            home = Locator.directory(javaHome.asJavaPath().toRealPath());
+        } catch (Exception e) {
+            home = javaHome;
+        }
+        File java = home.file(Platform.isWindows() ? "bin/java.exe" : "bin/java");
+
+        // The AOT cache is specific to the JDK which created it, so the file name contains the JDK
+        // feature version. A missing cache is created automatically on startup, and the aot log is
+        // disabled so that a missing cache does not print an error.
+        int feature = Platform.feature(home);
+        if (feature < 0) {
+            feature = Runtime.version().feature();
+        }
+        String aot = jar + "." + feature + ".aot";
+
+        // On Windows the java call is followed by "& call :exitWithErrorLevel" on the same line. The
+        // trailing call moves cmd.exe past the interruption which Ctrl+C sets, so it does not ask
+        // "Terminate batch job (Y/N)?", and the label exits with the real code. This is the same
+        // pattern which the Gradle wrapper uses.
+        Platform.Bee.text(String.format(Platform.isWindows()
+                ? """
+                        @echo off
+                        %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions --enable-native-access=ALL-UNNAMED -cp "%s" bee.Bee %%* & call :exitWithErrorLevel
+
+                        :exitWithErrorLevel
+                        @rem Use "%%COMSPEC%%" /c exit to allow operators to work properly in scripts
+                        "%%COMSPEC%%" /c exit %%ERRORLEVEL%%
+                        """
+                : """
+                        #!/bin/bash
+                        %s -XX:+TieredCompilation -XX:TieredStopAtLevel=1  -XX:AOTCache=%s -Xlog:aot*=off -XX:+IgnoreUnrecognizedVMOptions --enable-native-access=ALL-UNNAMED -cp "%s" bee.Bee "$@"
+                        """, java, aot, jar));
     }
 }

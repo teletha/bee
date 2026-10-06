@@ -504,6 +504,10 @@ public class Bee {
                 command.add("-Xlog:aot*=off");
             }
 
+            // Grant native access so that the FFM API (used by the interactive terminal) does not
+            // emit a restricted method warning.
+            command.add("--enable-native-access=ALL-UNNAMED");
+
             command.add("-cp");
             command.add(System.getProperty("java.class.path"));
             command.add(Bee.class.getName());
