@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="q">
-		<header class="l" date="2026-10-06">
-			<h1 class="m"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="Q"><a href="api/main.html" id="API"><svg class="package">
+	<body class="j">
+		<header class="Q" date="2026-10-06">
+			<h1 class="R"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="S"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="N"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="M"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="s"></nav>
-		<article class="r" id="Article">
-			<section class="d"><code class="FB">bee</code>
-				<h2 class="Interface z"><code class="S">Task</code><code class="b">&lt;<code>C</code>&gt;</code></h2>
-				<div class="BB">
+		<nav class="m"></nav>
+		<article class="k" id="Article">
+			<section class="t"><code class="Y">bee</code>
+				<h2 class="Interface EB"><code class="z">Task</code><code class="V">&lt;<code>C</code>&gt;</code></h2>
+				<div class="AB">
 					<ul class="E F">
 						<li><code>C</code><span><p>The type of the configuration class specific to this task. If no specific
 configuration is needed, this can be omitted or <code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html">Object</a></code> can be used.</p></span></li>
@@ -90,17 +90,17 @@ configuration is needed, this can be omitted or <code><a aria-label="java.lang.O
  Use the static factory method <code><a aria-label="bee.Task" href="api/bee.Task.html#by(java.lang.Class)">#by(Class)</a></code> to obtain an executable instance
  of a task interface.
  </p></span></section>
-			<section class="d" id="help()">
-				<h2 class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="S">help</code><code class="b">()</code><i class="Z"><code>void</code></i></h2><span class="A"><p>Displays a detailed help message for this task, including descriptions of all
+			<section class="t" id="help()">
+				<h2 class="U"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="z">help</code><code class="V">()</code><i class="s"><code>void</code></i></h2><span class="A"><p>Displays a detailed help message for this task, including descriptions of all
 available commands and configuration options. This command is available by default
 for all tasks.</p><p>
  Implementation relies on <code><a aria-label="bee.TaskInfo" href="api/bee.TaskInfo.html#describe(UserInterface)">TaskInfo#describe(UserInterface)</a></code> to gather and format
  the task&apos;s metadata.
  </p></span></section>
-			<section class="d" id="config()">
-				<h2 class="L"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="S">config</code><code class="b">()</code><i class="Z"><code>C</code></i></h2>
-				<table class="JB">
-					<tr class="R">
+			<section class="t" id="config()">
+				<h2 class="U"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="z">config</code><code class="V">()</code><i class="s"><code>C</code></i></h2>
+				<table class="c">
+					<tr class="x">
 						<td><code>C</code></td>
 						<td><span><p>The project-specific configuration instance of type <code>C</code>, or <code>null</code>
 if the task is not parameterized with a configuration class.</p></span></td>
@@ -114,20 +114,20 @@ task.</p><p>
  If the task interface is not parameterized (i.e., <code>C</code> is effectively <code>Object</code>),
  this method returns <code>null</code>.
  </p></span></section>
-			<section class="d" id="by(java.lang.Class)">
-				<h2 class="L"><i class="STATIC PUBLIC"></i><code class="S">by</code><code class="b">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="Z"><code>T</code></i></h2>
-				<table class="JB">
-					<tr class="w">
+			<section class="t" id="by(java.lang.Class)">
+				<h2 class="U"><i class="STATIC PUBLIC"></i><code class="z">by</code><code class="V">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="s"><code>T</code></i></h2>
+				<table class="c">
+					<tr class="DB">
 						<td><code>T</code><code class="extends"><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></code></td>
 						<td><span><p>The specific type of the task interface.</p></span></td>
 					</tr>
-					<tr class="k">
+					<tr class="P">
 						<td><code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code></td>
 						<td><span><p>The <code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a></code> object representing the task interface (e.g.,
 <code>Compile.class</code>).
 Must be an interface extending <code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code>.</p></span></td>
 					</tr>
-					<tr class="R">
+					<tr class="x">
 						<td><code>T</code></td>
 						<td><span><p>An executable proxy instance implementing the requested task interface <code>T</code>.</p></span></td>
 					</tr>
@@ -137,20 +137,20 @@ Must be an interface extending <code><a aria-label="bee.Task" href="api/bee.Task
  UI interactions.
  </p></span></section>
 		</article>
-		<aside class="t">
-			<div class="e">
-				<h5 class="DB">Static Methods</h5>
+		<aside class="n">
+			<div class="v">
+				<h5 class="p">Static Methods</h5>
 				<ul>
-					<li class="HB"><i class="STATIC PUBLIC"></i><code><a href="api/bee.Task.html#by(java.lang.Class)">by</a></code><code class="b">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="CB"><code>T</code></i></li>
+					<li class="LB"><i class="STATIC PUBLIC"></i><code><a href="api/bee.Task.html#by(java.lang.Class)">by</a></code><code class="V">(<code><a aria-label="java.lang.Class 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Class.html">Class</a><code class="parameters"><code>T</code></code></code><code class="parameterName">task</code>)</code><i class="q"><code>T</code></i></li>
 				</ul>
-				<h5 class="DB">Methods</h5>
+				<h5 class="p">Methods</h5>
 				<ul>
-					<li class="HB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#help()">help</a></code><code class="b">()</code><i class="CB"><code>void</code></i></li>
-					<li class="HB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#config()">config</a></code><code class="b">()</code><i class="CB"><code>C</code></i></li>
+					<li class="LB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#help()">help</a></code><code class="V">()</code><i class="q"><code>void</code></i></li>
+					<li class="LB"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.Task.html#config()">config</a></code><code class="V">()</code><i class="q"><code>C</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="Y">
+		<footer class="l">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
