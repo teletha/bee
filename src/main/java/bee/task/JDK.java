@@ -92,7 +92,92 @@ public interface JDK extends Task {
             version = Platform.RequiredJava;
         }
 
-        boolean earlyAccess = version == tip;
+        use(version, version == tip);
+    }
+
+    /**
+     * Select, install and use the latest general availability JDK. The tip version points to the
+     * early access build, so it is excluded because it is not a stable release. When the latest
+     * version is already selected nothing changes, and when another version is selected the user
+     * is asked before the update.
+     */
+    @Command("Select, install and use the latest JDK.")
+    default void update() {
+        int latest = Math.max(latestVersion(), Platform.RequiredJava);
+        int current = selectedVersion();
+
+        if (current == latest) {
+            ui().info("The latest JDK [", latest, "] is already selected.");
+            return;
+        }
+        if (current > latest) {
+            ui().info("Java [", current, "] is newer than the latest general availability [", latest, "].");
+            return;
+        }
+
+        String question = current < 0 ? "Java [" + latest + "] is available. Install"
+                : "Java [" + latest + "] is available. Update from [" + current + "]";
+        if (!ui().confirm(question)) {
+            ui().info("Keeping the current JDK.");
+            return;
+        }
+
+        use(latest, false);
+    }
+
+    /**
+     * Resolve the latest general availability JDK version. The tip version points to the early
+     * access build, so it is not included.
+     * 
+     * @return A JDK version.
+     */
+    private int latestVersion() {
+        try {
+            JSON info = I.json(AVAILABLE);
+
+            // The available releases list the general availability versions, so the maximum is the
+            // latest one which is not an early access build.
+            List<Integer> releases = new ArrayList<>(info.find(int.class, "available_releases", "*"));
+            return releases.stream().mapToInt(Integer::intValue).max().orElse(Platform.RequiredJava);
+        } catch (Throwable e) {
+            throw new Fail("Failed to access the Adoptium API.").reason(Fail.strip(e));
+        }
+    }
+
+    /**
+     * Resolve the major version of the selected JDK.
+     * 
+     * @return A major version, or a negative value when no JDK is selected.
+     */
+    private int selectedVersion() {
+        File release = selectedDirectory().file("release");
+
+        if (release.isAbsent()) {
+            return -1;
+        }
+
+        for (String line : release.text().split("\\R")) {
+            if (line.startsWith("JAVA_VERSION=")) {
+                String value = line.substring("JAVA_VERSION=".length()).replace("\"", "").trim();
+                int dot = value.indexOf('.');
+                try {
+                    return Integer.parseInt(dot < 0 ? value : value.substring(0, dot));
+                } catch (NumberFormatException e) {
+                    return -1;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Install the specified JDK, link it as the selected one and configure Bee to use it from the
+     * next invocation.
+     * 
+     * @param version A JDK version.
+     * @param earlyAccess Whether the version is an early access build.
+     */
+    private void use(int version, boolean earlyAccess) {
         Directory installed = install(version, earlyAccess);
         Directory dest = linkSelected(installed);
 
