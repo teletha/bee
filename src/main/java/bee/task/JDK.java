@@ -221,8 +221,8 @@ public interface JDK extends Task {
             }
             dest.create();
 
-            String url = "https://api.adoptium.net/v3/binary/latest/" + version + "/" + (earlyAccess ? "ea" : "ga") + "/" + os() + "/" + arch()
-                    + "/jdk/hotspot/normal/eclipse";
+            String url = "https://api.adoptium.net/v3/binary/latest/" + version + "/" + (earlyAccess ? "ea"
+                    : "ga") + "/" + os() + "/" + arch() + "/jdk/hotspot/normal/eclipse";
             File archive = Locator.temporaryFile(url.substring(url.lastIndexOf('/') + 1));
 
             ui().info("Downloading the JDK [", version, earlyAccess ? " EarlyAccess" : "", "] from Adoptium.");
@@ -275,7 +275,7 @@ public interface JDK extends Task {
             } else {
                 Files.createSymbolicLink(link.asJavaPath(), target.asJavaPath());
             }
-            ui().info("Linked the selected JDK [", link, "] to ", target);
+            ui().debug("Linked the selected JDK [", link, "] to ", target);
         } catch (Throwable e) {
             throw new Fail("Failed to link the selected JDK [" + link + "] to [" + target + "].").reason(Fail.strip(e));
         }
@@ -291,8 +291,8 @@ public interface JDK extends Task {
     private static void unlink(Directory link) {
         try {
             if (Platform.isWindows()) {
-                // The system command removes a junction without touching the target contents, and it
-                // does nothing when the link is absent.
+                // The system command removes a junction without touching the target contents, and
+                // it does nothing when the link is absent.
                 Process.with().ignoreOutput().run("cmd", "/c", "rmdir", nativePath(link));
             } else {
                 Files.deleteIfExists(link.asJavaPath());
@@ -399,10 +399,8 @@ public interface JDK extends Task {
      * @return A release API URL.
      */
     private String releaseUrl(int version, boolean earlyAccess) {
-        return "https://api.adoptium.net/v3/assets/feature_releases/" + version + "/" + (earlyAccess ? "ea" : "ga")
-                + "?architecture=" + arch()
-                + "&heap_size=normal&image_type=jdk&jvm_impl=hotspot&os=" + os()
-                + "&page=0&page_size=1&project=jdk&vendor=eclipse&sort_order=ASC";
+        return "https://api.adoptium.net/v3/assets/feature_releases/" + version + "/" + (earlyAccess ? "ea"
+                : "ga") + "?architecture=" + arch() + "&heap_size=normal&image_type=jdk&jvm_impl=hotspot&os=" + os() + "&page=0&page_size=1&project=jdk&vendor=eclipse&sort_order=ASC";
     }
 
     /**
