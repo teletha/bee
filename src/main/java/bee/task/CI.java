@@ -425,9 +425,8 @@ public interface CI extends Task {
                           if [ -e "bee" ]; then
                             source bee install maven --skip test
                           else
-                            # git.io is a deprecated read-only archive, so resolve the stable version from the
-                            # raw file and fail loudly when a download does not succeed.
-                            BeeVersion=$(curl -fsSL https://raw.githubusercontent.com/teletha/bee/master/tool/stable-bee) || exit 1
+                            # Resolve the stable version and fail loudly when a download does not succeed.
+                            BeeVersion=$(curl -fsSL https://git.io/stable-bee) || exit 1
                             curl -fsSL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar || exit 1
                             java -cp bee-${BeeVersion}.jar bee.Bee install maven --skip test
                           fi
