@@ -425,9 +425,11 @@ public interface CI extends Task {
                           if [ -e "bee" ]; then
                             source bee install maven --skip test
                           else
-                            # Resolve the stable version and fail loudly when a download does not succeed.
+                            # Resolve the stable version and obtain a valid bee jar. The GitHub release is
+                            # tried first because JitPack can serve a redirect page instead of its own jar.
                             BeeVersion=$(curl -fsSL https://git.io/stable-bee) || exit 1
-                            curl -fsSL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar || exit 1
+                            curl -fsSL -o bee-${BeeVersion}.jar https://github.com/teletha/bee/releases/download/${BeeVersion}/bee-${BeeVersion}.jar || curl -fsSL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar || exit 1
+                            jar tf bee-${BeeVersion}.jar | grep -qx 'bee/Bee.class' || { echo "Failed to obtain a valid bee [${BeeVersion}] jar."; exit 1; }
                             java -cp bee-${BeeVersion}.jar bee.Bee install maven --skip test
                           fi
 
