@@ -182,7 +182,7 @@ public interface CI extends Task {
                                 <p align="center">
                                     <a href="https://docs.oracle.com/en/java/javase/{java}/"><img src="https://img.shields.io/badge/Java-Release%20{java}-green"/></a>
                                     <span>&nbsp;</span>
-                                    <a href="https://jitpack.io/#{owner}/{repo}"><img src="https://img.shields.io/jitpack/v/{name}/{owner}/{repo}?label=Repository&color=green"></a>
+                                    <a href="https://jitpack.io/#{group}/{repo}"><img src="https://img.shields.io/jitpack/v/{name}/{owner}/{repo}?label=Repository&color=green"></a>
                                     <span>&nbsp;</span>
                                     <a href="https://{owner}.github.io/{repo}"><img src="https://img.shields.io/website.svg?down_color=red&down_message=CLOSE&label=Official%20Site&up_color=green&up_message=OPEN&url=https%3A%2F%2F{owner}.github.io%2F{repo}"></a>
                                 </p>
@@ -318,6 +318,14 @@ public interface CI extends Task {
 
                                     case "owner":
                                         return project().getVersionControlSystem().owner;
+
+                                    case "group":
+                                        String group = project().getGroup();
+                                        if (group.startsWith("com.github.") || group.startsWith("io.github")) {
+                                            return group;
+                                        } else {
+                                            return project().getVersionControlSystem().owner;
+                                        }
 
                                     case "repo":
                                         return project().getVersionControlSystem().repo;
@@ -725,10 +733,11 @@ public interface CI extends Task {
 
         // The arguments follow the order in which the placeholders appear in the template above:
         // the description names the version, the version step names the product, the JDK step takes
-        // the java version, the staging path takes the repository layout, the rest of the steps take
+        // the java version, the staging path takes the repository layout, the rest of the steps
+        // take
         // the product and the JitPack trigger takes the owner and the repository.
-        makeFile(".github/workflows/release.yml",
-                String.format(release, version, product, javaVersion, layout, product, product, product, product, vcs.owner, vcs.repo));
+        makeFile(".github/workflows/release.yml", String
+                .format(release, version, product, javaVersion, layout, product, product, product, product, vcs.owner, vcs.repo));
 
         makeFile("jreleaser.yml", String
                 .format(jreleaser, product, group, vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
