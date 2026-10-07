@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="O">
-		<header class="P" date="2026-10-07">
-			<h1 class="q"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="d"><a href="api/main.html" id="API"><svg class="package">
+	<body class="q">
+		<header class="r" date="2026-10-07">
+			<h1 class="P"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="b"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,77 +35,77 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="U"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="R"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="R"></nav>
-		<article class="Q" id="Article">
-			<section class="w"><code class="n">bee.task</code>
-				<h2 class="Interface k"><code class="N">JDK</code></h2>
-				<div class="X">
+		<nav class="t"></nav>
+		<article class="s" id="Article">
+			<section class="d"><code class="CB">bee.task</code>
+				<h2 class="Interface c"><code class="GB">JDK</code></h2>
+				<div class="p">
 					<ul class="E H">
 						<li><code>kiss.Extensible</code></li>
 						<li><code><a aria-label="bee.Task" href="api/bee.Task.html">Task</a></code></li>
 					</ul>
 				</div><span class="A"><p>Manages the JDK used by Bee. The JDKs are downloaded from Adoptium (Temurin) and installed under
 the Bee home directory, so the JDK can be switched without touching the environment path.</p></span></section>
-			<section class="w" id="AVAILABLE">
-				<h2 class="M"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="N">AVAILABLE</code><i class="u"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The endpoint which lists the available releases.</p></span></section>
-			<section class="w" id="SELECTED_LINK">
-				<h2 class="M"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="N">SELECTED_LINK</code><i class="u"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The directory name which links to the selected JDK.</p></span></section>
-			<section class="w" id="select()">
-				<h2 class="M"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="N">select</code><code class="m">()</code><i class="u"><code>void</code></i></h2><span class="A"><p>Select the JDK used by Bee. All the versions available on Adoptium are listed, together with
+			<section class="d" id="AVAILABLE">
+				<h2 class="W"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="GB">AVAILABLE</code><i class="u"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The endpoint which lists the available releases.</p></span></section>
+			<section class="d" id="SELECTED_LINK">
+				<h2 class="W"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="GB">SELECTED_LINK</code><i class="u"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The directory name which links to the selected JDK.</p></span></section>
+			<section class="d" id="select()">
+				<h2 class="W"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="GB">select</code><code class="J">()</code><i class="u"><code>void</code></i></h2><span class="A"><p>Select the JDK used by Bee. All the versions available on Adoptium are listed, together with
 the early access build. The selected JDK is exposed through a stable link, so the configured
 path does not change when another version is selected. The selected one is downloaded,
 installed and configured as the JDK used by Bee.</p></span></section>
-			<section class="w" id="update()">
-				<h2 class="M"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="N">update</code><code class="m">()</code><i class="u"><code>void</code></i></h2><span class="A"><p>Select, install and use the latest general availability JDK. The tip version points to the
+			<section class="d" id="update()">
+				<h2 class="W"><i class="DEFAULT"><i class="PUBLIC"></i></i><code class="GB">update</code><code class="J">()</code><i class="u"><code>void</code></i></h2><span class="A"><p>Select, install and use the latest general availability JDK. The tip version points to the
 early access build, so it is excluded because it is not a stable release. When the latest
 version is already selected nothing changes, and when another version is selected the user
 is asked before the update.</p></span></section>
-			<section class="w" id="install(int)">
-				<h2 class="M"><i class="PUBLIC STATIC"></i><code class="N">install</code><code class="m">(<code>int</code><code class="parameterName">version</code>)</code><i class="u"><code>psychopath.Directory</code></i></h2>
-				<table class="IB">
-					<tr class="CB">
+			<section class="d" id="install(int)">
+				<h2 class="W"><i class="STATIC PUBLIC"></i><code class="GB">install</code><code class="J">(<code>int</code><code class="parameterName">version</code>)</code><i class="u"><code>psychopath.Directory</code></i></h2>
+				<table class="DB">
+					<tr class="KB">
 						<td><code>int</code><code class="parameterName">version</code></td>
 						<td><span><p>A JDK version.</p></span></td>
 					</tr>
-					<tr class="T">
+					<tr class="X">
 						<td><code>psychopath.Directory</code></td>
 						<td><span><p>The installation directory.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Ensure the specified JDK version is installed under the Bee home. The JDK is downloaded from
 Adoptium (Temurin) when it is missing.</p></span></section>
-			<section class="w" id="install(int,boolean)">
-				<h2 class="M"><i class="PUBLIC STATIC"></i><code class="N">install</code><code class="m">(<code>int</code><code class="parameterName">version</code>, <code>boolean</code><code class="parameterName">earlyAccess</code>)</code><i class="u"><code>psychopath.Directory</code></i></h2>
-				<table class="IB">
-					<tr class="CB">
+			<section class="d" id="install(int,boolean)">
+				<h2 class="W"><i class="STATIC PUBLIC"></i><code class="GB">install</code><code class="J">(<code>int</code><code class="parameterName">version</code>, <code>boolean</code><code class="parameterName">earlyAccess</code>)</code><i class="u"><code>psychopath.Directory</code></i></h2>
+				<table class="DB">
+					<tr class="KB">
 						<td><code>int</code><code class="parameterName">version</code></td>
 						<td><span><p>A JDK version.</p></span></td>
 					</tr>
-					<tr class="CB">
+					<tr class="KB">
 						<td><code>boolean</code><code class="parameterName">earlyAccess</code></td>
 						<td><span><p>Whether the version is an early access build.</p></span></td>
 					</tr>
-					<tr class="T">
+					<tr class="X">
 						<td><code>psychopath.Directory</code></td>
 						<td><span><p>The installation directory.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Ensure the specified JDK version is installed under the Bee home. The JDK is downloaded from
 Adoptium (Temurin) when it is missing. An early access version is downloaded from the early
 access channel instead of the general availability one.</p></span></section>
-			<section class="w" id="linkSelected(psychopath.Directory)">
-				<h2 class="M"><i class="PUBLIC STATIC"></i><code class="N">linkSelected</code><code class="m">(<code>psychopath.Directory</code><code class="parameterName">target</code>)</code><i class="u"><code>psychopath.Directory</code></i></h2>
-				<table class="IB">
-					<tr class="CB">
+			<section class="d" id="linkSelected(psychopath.Directory)">
+				<h2 class="W"><i class="STATIC PUBLIC"></i><code class="GB">linkSelected</code><code class="J">(<code>psychopath.Directory</code><code class="parameterName">target</code>)</code><i class="u"><code>psychopath.Directory</code></i></h2>
+				<table class="DB">
+					<tr class="KB">
 						<td><code>psychopath.Directory</code><code class="parameterName">target</code></td>
 						<td><span><p>The installed JDK directory.</p></span></td>
 					</tr>
-					<tr class="T">
+					<tr class="X">
 						<td><code>psychopath.Directory</code></td>
 						<td><span><p>The link directory.</p></span></td>
 					</tr>
@@ -113,27 +113,27 @@ access channel instead of the general availability one.</p></span></section>
 can be created without the administrator privilege, and a symbolic link on the other
 platforms.</p></span></section>
 		</article>
-		<aside class="S">
-			<div class="t">
+		<aside class="K">
+			<div class="V">
 				<h5 class="v">Static Fields</h5>
 				<ul>
-					<li class="c"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.task.JDK.html#AVAILABLE">AVAILABLE</a></code><i class="EB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="c"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.task.JDK.html#SELECTED_LINK">SELECTED_LINK</a></code><i class="EB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="l"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.task.JDK.html#AVAILABLE">AVAILABLE</a></code><i class="o"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="l"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.task.JDK.html#SELECTED_LINK">SELECTED_LINK</a></code><i class="o"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 				</ul>
 				<h5 class="v">Static Methods</h5>
 				<ul>
-					<li class="c"><i class="PUBLIC STATIC"></i><code><a href="api/bee.task.JDK.html#install(int)">install</a></code><code class="m">(<code>int</code><code class="parameterName">version</code>)</code><i class="EB"><code>psychopath.Directory</code></i></li>
-					<li class="c"><i class="PUBLIC STATIC"></i><code><a href="api/bee.task.JDK.html#install(int,boolean)">install</a></code><code class="m">(<code>int</code><code class="parameterName">version</code>, <code>boolean</code><code class="parameterName">earlyAccess</code>)</code><i class="EB"><code>psychopath.Directory</code></i></li>
-					<li class="c"><i class="PUBLIC STATIC"></i><code><a href="api/bee.task.JDK.html#linkSelected(psychopath.Directory)">linkSelected</a></code><code class="m">(<code>psychopath.Directory</code><code class="parameterName">target</code>)</code><i class="EB"><code>psychopath.Directory</code></i></li>
+					<li class="l"><i class="STATIC PUBLIC"></i><code><a href="api/bee.task.JDK.html#install(int)">install</a></code><code class="J">(<code>int</code><code class="parameterName">version</code>)</code><i class="o"><code>psychopath.Directory</code></i></li>
+					<li class="l"><i class="STATIC PUBLIC"></i><code><a href="api/bee.task.JDK.html#install(int,boolean)">install</a></code><code class="J">(<code>int</code><code class="parameterName">version</code>, <code>boolean</code><code class="parameterName">earlyAccess</code>)</code><i class="o"><code>psychopath.Directory</code></i></li>
+					<li class="l"><i class="STATIC PUBLIC"></i><code><a href="api/bee.task.JDK.html#linkSelected(psychopath.Directory)">linkSelected</a></code><code class="J">(<code>psychopath.Directory</code><code class="parameterName">target</code>)</code><i class="o"><code>psychopath.Directory</code></i></li>
 				</ul>
 				<h5 class="v">Methods</h5>
 				<ul>
-					<li class="c"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.JDK.html#select()">select</a></code><code class="m">()</code><i class="EB"><code>void</code></i></li>
-					<li class="c"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.JDK.html#update()">update</a></code><code class="m">()</code><i class="EB"><code>void</code></i></li>
+					<li class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.JDK.html#select()">select</a></code><code class="J">()</code><i class="o"><code>void</code></i></li>
+					<li class="l"><i class="DEFAULT"><i class="PUBLIC"></i></i><code><a href="api/bee.task.JDK.html#update()">update</a></code><code class="J">()</code><i class="o"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="K">
+		<footer class="h">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
