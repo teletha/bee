@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="y">
-		<header class="Q" date="2026-10-07">
-			<h1 class="R"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="S"><a href="api/main.html" id="API"><svg class="package">
+	<body class="g">
+		<header class="h" date="2026-10-07">
+			<h1 class="n"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="r"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,335 +35,335 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="K"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="Q"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="z"></nav>
-		<article class="Z" id="Article">
-			<section class="a"><code class="v">bee.util</code>
-				<h2 class="Class m"><code class="s">Git</code></h2>
-				<div class="w"></div><span class="A"><p>A thin wrapper over the command line git. Every git invocation is centralized here, so that the
+		<nav class="j"></nav>
+		<article class="b" id="Article">
+			<section class="m"><code class="JB">bee.util</code>
+				<h2 class="Class M"><code class="K">Git</code></h2>
+				<div class="t"></div><span class="A"><p>A thin wrapper over the command line git. Every git invocation is centralized here, so that the
 underlying implementation can be replaced (e.g. by JGit) without changing the tasks.</p></span></section>
-			<section class="a" id="at(psychopath.Directory)">
-				<h2 class="GB"><i class="PUBLIC STATIC"></i><code class="s">at</code><code class="KB">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="at(psychopath.Directory)">
+				<h2 class="T"><i class="PUBLIC STATIC"></i><code class="K">at</code><code class="CB">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code>psychopath.Directory</code><code class="parameterName">directory</code></td>
 						<td><span><p>A repository root.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>A git client.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Create a git client for the specified repository.</p></span></section>
-			<section class="a" id="isAvailable()">
-				<h2 class="GB"><i class="PUBLIC STATIC"></i><code class="s">isAvailable</code><code class="KB">()</code><i class="FB"><code>boolean</code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="isAvailable()">
+				<h2 class="T"><i class="PUBLIC STATIC"></i><code class="K">isAvailable</code><code class="CB">()</code><i class="KB"><code>boolean</code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code>boolean</code></td>
 						<td><span><p>A result.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Test whether the git command is available.</p></span></section>
-			<section class="a" id="read(java.lang.String...)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">read</code><code class="KB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="FB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="read(java.lang.String...)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">read</code><code class="CB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="KB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code></td>
 						<td><span><p>A command line after git.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td><span><p>An output.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Execute the specified git command and return its output.</p></span></section>
-			<section class="a" id="read(java.util.List)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">read</code><code class="KB">(<code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="FB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="read(java.util.List)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">read</code><code class="CB">(<code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="KB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code></td>
 						<td><span><p>A command line after git.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td><span><p>An output.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Execute the specified git command and return its output.</p></span></section>
-			<section class="a" id="run(java.lang.String...)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">run</code><code class="KB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="FB"><code>int</code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="run(java.lang.String...)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">run</code><code class="CB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="KB"><code>int</code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code></td>
 						<td><span><p>A command line after git.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code>int</code></td>
 						<td><span><p>An exit code.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Execute the specified git command and return its exit code.</p></span></section>
-			<section class="a" id="exec(java.lang.String...)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">exec</code><code class="KB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="exec(java.lang.String...)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">exec</code><code class="CB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code></td>
 						<td><span><p>A command line after git.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Execute the specified git command and fail when it exits abnormally.</p></span></section>
-			<section class="a" id="branch()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">branch</code><code class="KB">()</code><i class="FB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="branch()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">branch</code><code class="CB">()</code><i class="KB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td><span><p>A branch name.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Resolve the current branch.</p></span></section>
-			<section class="a" id="isClean()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">isClean</code><code class="KB">()</code><i class="FB"><code>boolean</code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="isClean()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">isClean</code><code class="CB">()</code><i class="KB"><code>boolean</code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code>boolean</code></td>
 						<td><span><p>A result.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Test whether the working tree has no tracked change.</p></span></section>
-			<section class="a" id="isSynced()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">isSynced</code><code class="KB">()</code><i class="FB"><code>boolean</code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="isSynced()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">isSynced</code><code class="CB">()</code><i class="KB"><code>boolean</code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code>boolean</code></td>
 						<td><span><p>A result.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Test whether the current branch is synchronized with its remote.</p></span></section>
-			<section class="a" id="tags()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">tags</code><code class="KB">()</code><i class="FB"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="tags()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">tags</code><code class="CB">()</code><i class="KB"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></td>
 						<td><span><p>A list of tags.</p></span></td>
 					</tr>
 				</table><span class="A"><p>List the tags.</p></span></section>
-			<section class="a" id="latestVersionTag()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">latestVersionTag</code><code class="KB">()</code><i class="FB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="latestVersionTag()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">latestVersionTag</code><code class="CB">()</code><i class="KB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td><span><p>The latest version tag, or <code>null</code> when there is none.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Resolve the latest version tag.</p></span></section>
-			<section class="a" id="hasTag(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">hasTag</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="FB"><code>boolean</code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="hasTag(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">hasTag</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="KB"><code>boolean</code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code></td>
 						<td><span><p>A tag name.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code>boolean</code></td>
 						<td><span><p>A result.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Test whether the specified tag exists.</p></span></section>
-			<section class="a" id="conventionalCommits(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">conventionalCommits</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fromExclusive</code>)</code><i class="FB"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.util.ConventionalCommit" href="api/bee.util.ConventionalCommit.html">ConventionalCommit</a></code></code></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="conventionalCommits(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">conventionalCommits</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fromExclusive</code>)</code><i class="KB"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.util.ConventionalCommit" href="api/bee.util.ConventionalCommit.html">ConventionalCommit</a></code></code></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fromExclusive</code></td>
 						<td><span><p>A revision which is excluded, or <code>null</code> to read all.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.util.ConventionalCommit" href="api/bee.util.ConventionalCommit.html">ConventionalCommit</a></code></code></code></td>
 						<td><span><p>A list of commits.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Collect the conventional commits since the specified revision.</p></span></section>
-			<section class="a" id="hasRemote(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">hasRemote</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="FB"><code>boolean</code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="hasRemote(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">hasRemote</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="KB"><code>boolean</code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td><span><p>A remote name.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code>boolean</code></td>
 						<td><span><p>A result.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Test whether the specified remote is configured.</p></span></section>
-			<section class="a" id="remoteUrl(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">remoteUrl</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="FB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="remoteUrl(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">remoteUrl</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="KB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td><span><p>A remote name.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td><span><p>A remote URL.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Resolve the URL of the specified remote.</p></span></section>
-			<section class="a" id="remoteDefaultBranch(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">remoteDefaultBranch</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="FB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="remoteDefaultBranch(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">remoteDefaultBranch</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="KB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code></td>
 						<td><span><p>A remote name.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td><span><p>A default branch name, or <code>null</code> when the remote is empty.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Resolve the default branch of the specified remote.</p></span></section>
-			<section class="a" id="hasCommit()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">hasCommit</code><code class="KB">()</code><i class="FB"><code>boolean</code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="hasCommit()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">hasCommit</code><code class="CB">()</code><i class="KB"><code>boolean</code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code>boolean</code></td>
 						<td><span><p>A result.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Test whether the repository has at least one commit.</p></span></section>
-			<section class="a" id="init()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">init</code><code class="KB">()</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="init()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">init</code><code class="CB">()</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Initialize the repository.</p></span></section>
-			<section class="a" id="add(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">add</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">path</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="add(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">add</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">path</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">path</code></td>
 						<td><span><p>A path.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Stage the specified path.</p></span></section>
-			<section class="a" id="commit(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">commit</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">message</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="commit(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">commit</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">message</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">message</code></td>
 						<td><span><p>A commit message.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Commit the staged changes.</p></span></section>
-			<section class="a" id="tag(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">tag</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="tag(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">tag</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code></td>
 						<td><span><p>A tag name.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Create a tag at the current commit.</p></span></section>
-			<section class="a" id="addRemote(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">addRemote</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="addRemote(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">addRemote</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code></td>
 						<td><span><p>A remote URL.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Add the origin remote.</p></span></section>
-			<section class="a" id="setRemote(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">setRemote</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="setRemote(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">setRemote</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code></td>
 						<td><span><p>A remote URL.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Update the origin remote.</p></span></section>
-			<section class="a" id="fetch()">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">fetch</code><code class="KB">()</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="q">
+			<section class="m" id="fetch()">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">fetch</code><code class="CB">()</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Fetch the tags from the origin. The branches are not pruned because a release does not need
 it. The tags are forced because a release may move an existing tag, which a plain fetch
 rejects as clobbering.</p></span></section>
-			<section class="a" id="fetch(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">fetch</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">remote</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="fetch(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">fetch</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">remote</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">remote</code></td>
 						<td><span><p>A remote name.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Fetch the specified remote.</p></span></section>
-			<section class="a" id="push(java.lang.String)">
-				<h2 class="GB"><i class="PUBLIC"></i><code class="s">push</code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">ref</code>)</code><i class="FB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
-				<table class="x">
-					<tr class="T">
+			<section class="m" id="push(java.lang.String)">
+				<h2 class="T"><i class="PUBLIC"></i><code class="K">push</code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">ref</code>)</code><i class="KB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></h2>
+				<table class="o">
+					<tr class="v">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">ref</code></td>
 						<td><span><p>A ref name.</p></span></td>
 					</tr>
-					<tr class="q">
+					<tr class="a">
 						<td><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></td>
 						<td><span><p>Fluent API.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Push the specified ref to the origin.</p></span></section>
 		</article>
-		<aside class="g">
-			<div class="W">
-				<h5 class="j">Static Methods</h5>
+		<aside class="k">
+			<div class="AB">
+				<h5 class="y">Static Methods</h5>
 				<ul>
-					<li class="o"><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Git.html#at(psychopath.Directory)">at</a></code><code class="KB">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Git.html#isAvailable()">isAvailable</a></code><code class="KB">()</code><i class="JB"><code>boolean</code></i></li>
+					<li class="X"><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Git.html#at(psychopath.Directory)">at</a></code><code class="CB">(<code>psychopath.Directory</code><code class="parameterName">directory</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Git.html#isAvailable()">isAvailable</a></code><code class="CB">()</code><i class="N"><code>boolean</code></i></li>
 				</ul>
-				<h5 class="j">Methods</h5>
+				<h5 class="y">Methods</h5>
 				<ul>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#read(java.lang.String...)">read</a></code><code class="KB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="JB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#read(java.util.List)">read</a></code><code class="KB">(<code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="JB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#run(java.lang.String...)">run</a></code><code class="KB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="JB"><code>int</code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#exec(java.lang.String...)">exec</a></code><code class="KB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#branch()">branch</a></code><code class="KB">()</code><i class="JB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#isClean()">isClean</a></code><code class="KB">()</code><i class="JB"><code>boolean</code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#isSynced()">isSynced</a></code><code class="KB">()</code><i class="JB"><code>boolean</code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#tags()">tags</a></code><code class="KB">()</code><i class="JB"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#latestVersionTag()">latestVersionTag</a></code><code class="KB">()</code><i class="JB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#hasTag(java.lang.String)">hasTag</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="JB"><code>boolean</code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#conventionalCommits(java.lang.String)">conventionalCommits</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fromExclusive</code>)</code><i class="JB"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.util.ConventionalCommit" href="api/bee.util.ConventionalCommit.html">ConventionalCommit</a></code></code></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#hasRemote(java.lang.String)">hasRemote</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="JB"><code>boolean</code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#remoteUrl(java.lang.String)">remoteUrl</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="JB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#remoteDefaultBranch(java.lang.String)">remoteDefaultBranch</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="JB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#hasCommit()">hasCommit</a></code><code class="KB">()</code><i class="JB"><code>boolean</code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#init()">init</a></code><code class="KB">()</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#add(java.lang.String)">add</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">path</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#commit(java.lang.String)">commit</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">message</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#tag(java.lang.String)">tag</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#addRemote(java.lang.String)">addRemote</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#setRemote(java.lang.String)">setRemote</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#fetch()">fetch</a></code><code class="KB">()</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#fetch(java.lang.String)">fetch</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">remote</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
-					<li class="o"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#push(java.lang.String)">push</a></code><code class="KB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">ref</code>)</code><i class="JB"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#read(java.lang.String...)">read</a></code><code class="CB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#read(java.util.List)">read</a></code><code class="CB">(<code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">command</code>)</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#run(java.lang.String...)">run</a></code><code class="CB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="N"><code>int</code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#exec(java.lang.String...)">exec</a></code><code class="CB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">command</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#branch()">branch</a></code><code class="CB">()</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#isClean()">isClean</a></code><code class="CB">()</code><i class="N"><code>boolean</code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#isSynced()">isSynced</a></code><code class="CB">()</code><i class="N"><code>boolean</code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#tags()">tags</a></code><code class="CB">()</code><i class="N"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#latestVersionTag()">latestVersionTag</a></code><code class="CB">()</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#hasTag(java.lang.String)">hasTag</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="N"><code>boolean</code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#conventionalCommits(java.lang.String)">conventionalCommits</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">fromExclusive</code>)</code><i class="N"><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="bee.util.ConventionalCommit" href="api/bee.util.ConventionalCommit.html">ConventionalCommit</a></code></code></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#hasRemote(java.lang.String)">hasRemote</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="N"><code>boolean</code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#remoteUrl(java.lang.String)">remoteUrl</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#remoteDefaultBranch(java.lang.String)">remoteDefaultBranch</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">name</code>)</code><i class="N"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#hasCommit()">hasCommit</a></code><code class="CB">()</code><i class="N"><code>boolean</code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#init()">init</a></code><code class="CB">()</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#add(java.lang.String)">add</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">path</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#commit(java.lang.String)">commit</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">message</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#tag(java.lang.String)">tag</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">tag</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#addRemote(java.lang.String)">addRemote</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#setRemote(java.lang.String)">setRemote</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">url</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#fetch()">fetch</a></code><code class="CB">()</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#fetch(java.lang.String)">fetch</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">remote</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
+					<li class="X"><i class="PUBLIC"></i><code><a href="api/bee.util.Git.html#push(java.lang.String)">push</a></code><code class="CB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">ref</code>)</code><i class="N"><code><a aria-label="bee.util.Git" href="api/bee.util.Git.html">Git</a></code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="O">
+		<footer class="i">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
