@@ -11,6 +11,7 @@ package bee.task;
 
 import static bee.TaskOperations.*;
 
+import bee.Platform;
 import bee.Task;
 import bee.TaskOperations;
 import bee.api.Command;
@@ -37,6 +38,14 @@ public interface Install extends Task {
 
         Repository repository = I.make(Repository.class);
         repository.install(new TemporaryProject(group, product, version), selected);
+
+        if (Platform.isJitPack()) {
+            if (group.startsWith("io.github.")) {
+                repository.install(new TemporaryProject(group.replace("io.github.", "com.github."), product, version), selected);
+            } else if (group.startsWith("com.github.")) {
+                repository.install(new TemporaryProject(group.replace("com.github.", "io.github."), product, version), selected);
+            }
+        }
     }
 
     class TemporaryProject extends Project {
