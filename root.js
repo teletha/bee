@@ -175,6 +175,16 @@ const root = {
 			"type": "Class"
 		},
 		{
+			"name": "Git.Tracking",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
+			"name": "Git.Status",
+			"packageName": "bee.util",
+			"type": "Class"
+		},
+		{
 			"name": "GithubAPI",
 			"packageName": "bee.util",
 			"type": "Class"
