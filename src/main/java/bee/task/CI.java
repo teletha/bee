@@ -74,11 +74,10 @@ public interface CI extends Task {
                     shell: bash
 
                 concurrency:
-                  # A build is cancelable so that a rapid push does not queue behind a stale build.
-                  # The group is separate from the release group, so a build can never cancel a
-                  # release, which must not be interrupted.
-                  group: ${{ github.repository }}-build-${{ github.ref }}
-                  cancel-in-progress: true
+                  # The build and the release share the group and never cancel each other, so a
+                  # release is never interrupted and the two write to the repository one at a time.
+                  group: ${{ github.repository }}-${{ github.ref }}
+                  cancel-in-progress: false
 
                 jobs:
                   build:
@@ -528,12 +527,11 @@ public interface CI extends Task {
                   run:
                     shell: bash
 
-                # A publish must never be cancelled halfway, and a re-dispatch must wait for the
-                # running one rather than deploying the same version at the same time. The version
-                # is part of the group, because a manual run of another version is not the same
-                # deploy.
+                # The build and the release share the group and never cancel each other, so a
+                # release is never interrupted and the two write to the repository one at a time.
+                # A re-dispatch waits for the running one instead of deploying at the same time.
                 concurrency:
-                  group: release-${{ github.event.client_payload.version || inputs.version }}
+                  group: ${{ github.repository }}-${{ github.ref }}
                   cancel-in-progress: false
 
                 jobs:
