@@ -74,7 +74,10 @@ public interface CI extends Task {
                     shell: bash
 
                 concurrency:
-                  group: ${{ github.workflow }}-${{ github.ref }}
+                  # A build is cancelable so that a rapid push does not queue behind a stale build.
+                  # The group is separate from the release group, so a build can never cancel a
+                  # release, which must not be interrupted.
+                  group: ${{ github.repository }}-build-${{ github.ref }}
                   cancel-in-progress: true
 
                 jobs:
@@ -123,9 +126,20 @@ public interface CI extends Task {
 
                     - name: Auto commit
                       if: github.event_name != 'pull_request'
-                      uses: stefanzweifel/git-auto-commit-action@v7
-                      with:
-                        commit_message: update repository info
+                      run: |
+                        git config user.name "github-actions[bot]"
+                        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+                        git add -A
+                        if git diff --cached --quiet; then
+                          echo "No change to commit."
+                          exit 0
+                        fi
+                        git commit -m "update repository info [skip ci]"
+                        # A release may push to the same branch while this job runs, so rebase the
+                        # generated commit onto the latest remote before pushing. Otherwise the push
+                        # is rejected as a non-fast-forward.
+                        git pull --rebase --autostash origin "${GITHUB_REF_NAME}"
+                        git push origin "HEAD:${GITHUB_REF_NAME}"
                 """;
 
         String version = Inputs.normalize(project().getJavaSourceVersion());

@@ -21,6 +21,7 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.Normalizer;
 import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
@@ -273,7 +274,9 @@ public abstract class UserInterface {
                 answer = read();
             }
 
-            switch (answer == null ? "" : answer.trim().toLowerCase()) {
+            // The answer is normalized to the half-width form so that a full-width y or n, which a
+            // Japanese input method produces, is accepted too.
+            switch (answer == null ? "" : Normalizer.normalize(answer, Normalizer.Form.NFKC).trim().toLowerCase()) {
             case "":
             case "n":
             case "no":

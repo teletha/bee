@@ -94,6 +94,10 @@ public interface Release extends Task<Release.Config> {
         /** The branch to release from. The current branch is used when it is empty. */
         @Comment("The branch to release from. The current branch is used when it is empty.")
         public String branch;
+
+        /** Whether untracked files are included without asking when the pending changes are committed. */
+        @Comment("Include untracked files without asking when the pending changes are committed.")
+        public boolean includeUntracked;
     }
 
     /**
@@ -117,21 +121,12 @@ public interface Release extends Task<Release.Config> {
         Git git = Git.at(root);
         String branch = conf.branch == null || conf.branch.isBlank() ? git.branch() : conf.branch;
 
-        if (!git.isClean()) {
-            throw new Fail("The working tree has uncommitted changes.").solve("Commit or stash them before releasing.");
+        if (git.hasChanges(true)) {
+            commitPendingChanges(git, conf, branch);
         }
         git.fetch();
         if (!git.isSynced()) {
-            throw new Fail("The local branch [" + branch + "] is not synchronized with the remote.")
-                    .solve("Push or pull before releasing.");
-        }
-
-        // The latest tag whose GitHub Release is missing means that a previous release did not
-        // finish, so a new one must not start before it is recovered.
-        String unfinished = git.latestVersionTag();
-        if (unfinished != null && !GithubAPI.hasRelease(vcs.owner + "/" + vcs.repo, unfinished)) {
-            throw new Fail("The previous release [" + unfinished + "] has a tag but no GitHub Release.")
-                    .solve("Run [release:publish " + unfinished + "] to finish it before releasing again.");
+            synchronize(git, conf, branch);
         }
 
         File versionFile = root.file("version.txt");
@@ -139,9 +134,27 @@ public interface Release extends Task<Release.Config> {
             throw new Fail("The version file [version.txt] is not found.").solve("Run the [ci] task to generate it.");
         }
         SemanticVersion current = new SemanticVersion(versionFile.text());
+        String repository = vcs.owner + "/" + vcs.repo;
+        String latest = git.latestVersionTag();
+
+        // A tag without a GitHub Release, or a version which is ahead of the latest tag without a
+        // tag, means that the previous release did not finish. Finish it here instead of starting a
+        // new one, otherwise the version number is skipped.
+        if (latest != null && !GithubAPI.hasRelease(repository, latest)) {
+            ui().warn("The previous release [", latest, "] has a tag but no GitHub Release. Finishing it now.");
+            publishVersion(latest);
+            return;
+        }
+        if (latest != null && current.compareTo(new SemanticVersion(latest)) > 0
+                && !git.hasTag(current.toString())
+                && !GithubAPI.hasRelease(repository, current.toString())) {
+            ui().warn("The version [", current, "] has not been released yet. Finishing it now.");
+            publishVersion(current.toString());
+            return;
+        }
 
         // 2. Collect the commits since the latest tag.
-        String previous = git.latestVersionTag();
+        String previous = latest;
         List<ConventionalCommit> commits = git.conventionalCommits(previous);
 
         // 3. Show the context.
@@ -212,6 +225,104 @@ public interface Release extends Task<Release.Config> {
         } else {
             ui().warn("The GitHub Release of [", next, "] was not created. Run [release:publish] to retry.");
         }
+    }
+
+    /**
+     * Help a release which starts from a working tree with uncommitted changes. The changes are
+     * shown and, when the user approves, they are committed and pushed so that the release can
+     * proceed from a clean and synchronized branch.
+     * 
+     * @param git The git client.
+     * @param conf The release configuration.
+     * @param branch The branch to push.
+     */
+    private void commitPendingChanges(Git git, Config conf, String branch) {
+        List<Git.Status> changes = git.status();
+        boolean tracked = false;
+        boolean untracked = false;
+
+        ui().warn("The working tree has uncommitted changes.");
+        for (Git.Status change : changes) {
+            if (change.isUntracked()) {
+                untracked = true;
+            } else {
+                tracked = true;
+            }
+            ui().info("  ", markChange(change), " ", change.path);
+        }
+
+        boolean includeUntracked = false;
+        if (untracked) {
+            includeUntracked = conf.includeUntracked || ui().confirm("Include the untracked files in the commit?");
+        }
+
+        if (!tracked && !includeUntracked) {
+            ui().info("No tracked change to commit. The untracked files are left as they are.");
+            return;
+        }
+
+        if (!conf.push || !ui().confirm("Commit and push them before releasing?")) {
+            throw new Fail("The working tree has uncommitted changes.").solve("Commit or stash them before releasing.");
+        }
+
+        String message = ui().ask("Commit message", "chore: commit the pending changes before release");
+        git.stage(includeUntracked).commit(message).push(branch);
+        ui().info("Committed and pushed the pending changes.");
+    }
+
+    /**
+     * Build the colored one-letter marker of a change. An untracked file is marked with U, and a
+     * tracked change with the kind of the change (M, A, D, R, ...).
+     * 
+     * @param change A change.
+     * @return A colored marker.
+     */
+    private String markChange(Git.Status change) {
+        if (change.isUntracked()) {
+            return ui().color("U", "36");
+        }
+
+        char kind = change.code.charAt(1) != ' ' ? change.code.charAt(1) : change.code.charAt(0);
+        return switch (kind) {
+        case 'M' -> ui().color("M", "33");
+        case 'A' -> ui().color("A", "32");
+        case 'D' -> ui().color("D", "31");
+        case 'R' -> ui().color("R", "35");
+        case 'C' -> ui().color("C", "36");
+        case 'T' -> ui().color("T", "33");
+        default -> ui().color(String.valueOf(kind), "37");
+        };
+    }
+
+    /**
+     * Help a release which starts from a branch that is not synchronized with its remote. A branch
+     * which is only ahead can be pushed, but a branch which is behind must be pulled by the user
+     * before releasing.
+     * 
+     * @param git The git client.
+     * @param conf The release configuration.
+     * @param branch The branch.
+     */
+    private void synchronize(Git git, Config conf, String branch) {
+        Git.Tracking tracking = git.tracking();
+
+        if (0 < tracking.behind) {
+            throw new Fail("The local branch [" + branch + "] is behind the remote by " + tracking.behind + " commit(s).")
+                    .solve("Pull the remote changes before releasing.");
+        }
+
+        if (tracking.ahead == 0) {
+            throw new Fail("The local branch [" + branch + "] is not synchronized with the remote.")
+                    .solve("Push or pull before releasing.");
+        }
+
+        ui().warn("The local branch [" + branch + "] is ahead of the remote by " + tracking.ahead + " commit(s).");
+        if (!conf.push || !ui().confirm("Push them before releasing?")) {
+            throw new Fail("The local branch [" + branch + "] is not synchronized with the remote.")
+                    .solve("Push or pull before releasing.");
+        }
+        git.push(branch);
+        ui().info("Pushed the pending commits.");
     }
 
     /**

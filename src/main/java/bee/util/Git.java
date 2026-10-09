@@ -150,7 +150,82 @@ public class Git {
      * @return A result.
      */
     public boolean isClean() {
-        return read("status", "--porcelain", "--untracked-files=no").isBlank();
+        return !hasChanges(false);
+    }
+
+    /**
+     * Test whether the working tree has changes.
+     * 
+     * @param includeUntracked Whether untracked files count as a change.
+     * @return A result.
+     */
+    public boolean hasChanges(boolean includeUntracked) {
+        return !changes(includeUntracked).isBlank();
+    }
+
+    /**
+     * List the tracked changes of the working tree.
+     * 
+     * @return The porcelain output, one change per line. It is empty when the tree is clean.
+     */
+    public String changes() {
+        return changes(false);
+    }
+
+    /**
+     * List the changes of the working tree.
+     * 
+     * @param includeUntracked Whether untracked files are listed.
+     * @return The porcelain output, one change per line. It is empty when the tree is clean.
+     */
+    public String changes(boolean includeUntracked) {
+        return includeUntracked
+                ? read("status", "--porcelain")
+                : read("status", "--porcelain", "--untracked-files=no");
+    }
+
+    /**
+     * List every change of the working tree, including the untracked files.
+     * 
+     * @return The changes, in the order of the git status.
+     */
+    public List<Status> status() {
+        List<Status> changes = new ArrayList();
+
+        for (String line : read("status", "--porcelain", "--untracked-files=all").split("\\R")) {
+            if (4 <= line.length()) {
+                changes.add(new Status(line.substring(0, 2), line.substring(3).trim()));
+            }
+        }
+        return changes;
+    }
+
+    /** A single change of the working tree. */
+    public static class Status {
+
+        /** The two-character porcelain status code such as " M", "A " or "??". */
+        public final String code;
+
+        /** The path of the change. */
+        public final String path;
+
+        /**
+         * @param code A porcelain status code.
+         * @param path A path.
+         */
+        Status(String code, String path) {
+            this.code = code;
+            this.path = path;
+        }
+
+        /**
+         * Test whether the change is an untracked file.
+         * 
+         * @return A result.
+         */
+        public boolean isUntracked() {
+            return code.equals("??");
+        }
     }
 
     /**
@@ -159,12 +234,58 @@ public class Git {
      * @return A result.
      */
     public boolean isSynced() {
+        Tracking tracking = tracking();
+        return tracking.ahead == 0 && tracking.behind == 0;
+    }
+
+    /**
+     * Resolve the synchronization state of the current branch against its upstream.
+     * 
+     * @return The tracking state.
+     */
+    public Tracking tracking() {
         for (String line : read("status", "--porcelain=v1", "--branch", "--untracked-files=no").split("\\R")) {
             if (line.startsWith("## ")) {
-                return !line.contains("[ahead") && !line.contains("[behind");
+                int ahead = 0;
+                int behind = 0;
+                int open = line.indexOf('[');
+
+                if (open != -1) {
+                    int close = line.indexOf(']', open);
+
+                    for (String part : line.substring(open + 1, close).split(",")) {
+                        part = part.trim();
+
+                        if (part.startsWith("ahead ")) {
+                            ahead = Integer.parseInt(part.substring(6).trim());
+                        } else if (part.startsWith("behind ")) {
+                            behind = Integer.parseInt(part.substring(7).trim());
+                        }
+                    }
+                }
+                return new Tracking(ahead, behind);
             }
         }
-        return true;
+        return new Tracking(0, 0);
+    }
+
+    /** The synchronization state of the current branch against its upstream. */
+    public static class Tracking {
+
+        /** The number of the local commits which the remote does not have. */
+        public final int ahead;
+
+        /** The number of the remote commits which the local branch does not have. */
+        public final int behind;
+
+        /**
+         * @param ahead The number of the local commits which are not pushed.
+         * @param behind The number of the remote commits which are not pulled.
+         */
+        Tracking(int ahead, int behind) {
+            this.ahead = ahead;
+            this.behind = behind;
+        }
     }
 
     /**
@@ -297,6 +418,25 @@ public class Git {
      */
     public Git add(String path) {
         return exec("add", path);
+    }
+
+    /**
+     * Stage every tracked change (modification and deletion).
+     * 
+     * @return Fluent API.
+     */
+    public Git stage() {
+        return stage(false);
+    }
+
+    /**
+     * Stage every change.
+     * 
+     * @param includeUntracked Whether untracked files are staged too.
+     * @return Fluent API.
+     */
+    public Git stage(boolean includeUntracked) {
+        return exec("add", includeUntracked ? "--all" : "--update");
     }
 
     /**
