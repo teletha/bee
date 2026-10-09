@@ -1,6 +1,7 @@
 .*
 !/.gitignore
 !/.github
+!/.gitattributes
 
 # Created by https://www.toptal.com/developers/gitignore/api/Java,Maven,Windows,Linux,Eclipse,IntelliJ
 # Edit at https://www.toptal.com/developers/gitignore?templates=Java,Maven,Windows,Linux,Eclipse,IntelliJ

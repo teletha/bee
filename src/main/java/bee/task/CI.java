@@ -146,6 +146,14 @@ public interface CI extends Task {
         // The output result from the Release-Please action contains a newline,
         // so we will adjust it.
         makeFile("version.txt", List.of(project().getVersion(), "")).text(o -> o.replaceAll("\\R", "\n"));
+        makeFile(".gitattributes", """
+                # Normalize the text files to LF so that the generated files and the CI agree.
+                * text=auto eol=lf
+
+                # The Windows batch and command files keep CRLF.
+                *.bat text eol=crlf
+                *.cmd text eol=crlf
+                """).text(o -> o.replaceAll("\\R", "\n"));
         makeFile(".github/workflows/build.yml", String.format(build, version));
         license();
         readme();
@@ -779,7 +787,7 @@ public interface CI extends Task {
         LinkedList<String> updated = I.http(uri.toString(), String.class)
                 .waitForTerminate()
                 .flatArray(rule -> rule.split("\\R"))
-                .startWith(".*", "!/.gitignore", "!/.github")
+                .startWith(".*", "!/.gitignore", "!/.github", "!/.gitattributes")
                 .startWith(lines)
                 .take(HashSet::new, (set, v) -> v.isBlank() || set.add(v))
                 .toCollection(new LinkedList());
