@@ -1539,6 +1539,15 @@ public abstract class UserInterface {
                     }
                 }
             }
+
+            // Ask the native console when the environment does not provide the width. When the
+            // assumed width is smaller than the real one, a line which actually fits on one row is
+            // counted as two, so the erase of the previous dynamic message moves the cursor up too
+            // far and removes a line which precedes it.
+            int width = Terminal.width();
+            if (0 < width) {
+                return width;
+            }
             return 80;
         }
 

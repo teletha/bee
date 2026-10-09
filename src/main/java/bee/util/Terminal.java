@@ -65,6 +65,30 @@ public class Terminal implements AutoCloseable {
     /** A generous buffer which can hold any termios layout. */
     private static final long TERMIOS_SIZE = 128;
 
+    /** STD_OUTPUT_HANDLE. */
+    private static final int STD_OUTPUT_HANDLE = -11;
+
+    /** The size of the CONSOLE_SCREEN_BUFFER_INFO structure in bytes. */
+    private static final long CONSOLE_SCREEN_BUFFER_INFO_SIZE = 22;
+
+    /** The offset of the left edge of srWindow in CONSOLE_SCREEN_BUFFER_INFO. */
+    private static final long CONSOLE_WINDOW_LEFT = 10;
+
+    /** The offset of the right edge of srWindow in CONSOLE_SCREEN_BUFFER_INFO. */
+    private static final long CONSOLE_WINDOW_RIGHT = 14;
+
+    /** The TIOCGWINSZ request code on Linux. */
+    private static final long LINUX_TIOCGWINSZ = 0x5413L;
+
+    /** The TIOCGWINSZ request code on macOS and BSD. */
+    private static final long BSD_TIOCGWINSZ = 0x40087468L;
+
+    /** The offset of the ws_col field in the winsize structure. */
+    private static final long WINSIZE_COLUMNS = 2;
+
+    /** The size of the winsize structure in bytes. */
+    private static final long WINSIZE_SIZE = 8;
+
     /** The raw mode is active or not. */
     private boolean enabled;
 
@@ -195,6 +219,71 @@ public class Terminal implements AutoCloseable {
         } catch (Exception e) {
             return -1;
         }
+    }
+
+    /**
+     * Resolve the current terminal width in columns. The width is queried from the native console
+     * because Java does not expose it. An accurate width is important for the user interface which
+     * erases a dynamic message by moving the cursor up by the number of the lines the wrapped
+     * message occupies.
+     * 
+     * @return A terminal width, or <code>-1</code> when it can not be detected.
+     */
+    public static int width() {
+        try (Arena arena = Arena.ofConfined()) {
+            return Platform.isWindows() ? windowsWidth(arena) : unixWidth(arena);
+        } catch (Throwable error) {
+            return -1;
+        }
+    }
+
+    /**
+     * Resolve the console width on Windows.
+     * 
+     * @param arena The arena for the native memory.
+     * @return A terminal width, or <code>-1</code> when it can not be detected.
+     */
+    private static int windowsWidth(Arena arena) throws Throwable {
+        SymbolLookup kernel32 = SymbolLookup.libraryLookup("kernel32", arena);
+        Linker linker = Linker.nativeLinker();
+        MethodHandle getStdHandle = linker.downcallHandle(kernel32.find("GetStdHandle")
+                .orElseThrow(), FunctionDescriptor.of(ValueLayout.JAVA_LONG, ValueLayout.JAVA_INT));
+        MethodHandle getConsoleScreenBufferInfo = linker.downcallHandle(kernel32.find("GetConsoleScreenBufferInfo")
+                .orElseThrow(), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.JAVA_LONG));
+
+        long handle = (long) getStdHandle.invoke(STD_OUTPUT_HANDLE);
+        MemorySegment info = arena.allocate(CONSOLE_SCREEN_BUFFER_INFO_SIZE);
+
+        if ((int) getConsoleScreenBufferInfo.invoke(handle, info.address()) == 0) {
+            return -1;
+        }
+
+        int width = info.get(ValueLayout.JAVA_SHORT, CONSOLE_WINDOW_RIGHT) - info
+                .get(ValueLayout.JAVA_SHORT, CONSOLE_WINDOW_LEFT) + 1;
+        return 0 < width ? width : -1;
+    }
+
+    /**
+     * Resolve the terminal width on Linux and macOS.
+     * 
+     * @param arena The arena for the native memory.
+     * @return A terminal width, or <code>-1</code> when it can not be detected.
+     */
+    private static int unixWidth(Arena arena) throws Throwable {
+        Linker linker = Linker.nativeLinker();
+        SymbolLookup libc = SymbolLookup.libraryLookup("c", arena);
+        MethodHandle ioctl = linker.downcallHandle(libc.find("ioctl")
+                .orElseThrow(), FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.JAVA_LONG, ValueLayout.JAVA_LONG));
+
+        MemorySegment winsize = arena.allocate(WINSIZE_SIZE);
+        long request = Platform.isMac() ? BSD_TIOCGWINSZ : LINUX_TIOCGWINSZ;
+
+        if ((int) ioctl.invoke(1, request, winsize.address()) != 0) {
+            return -1;
+        }
+
+        int width = winsize.get(ValueLayout.JAVA_SHORT, WINSIZE_COLUMNS);
+        return 0 < width ? width : -1;
     }
 
     /**

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import bee.util.Terminal;
+
 /**
  * Signals a recoverable failure during the build process.
  * <p>
@@ -189,6 +191,11 @@ public class Fail extends RuntimeException {
                     // ignore and try the next source
                 }
             }
+        }
+
+        int width = Terminal.width();
+        if (0 < width) {
+            return width;
         }
         return 80;
     }
