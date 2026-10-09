@@ -81,7 +81,7 @@ public class Bee {
     public static final Project API = new Project() {
 
         {
-            product("com.github.teletha", "bee-api", version);
+            product("io.github.teletha", "bee-api", version);
         }
     };
 
@@ -89,7 +89,7 @@ public class Bee {
     public static final Project Tool = new Project() {
 
         {
-            product("com.github.teletha", "bee", version);
+            product("io.github.teletha", "bee", version);
         }
     };
 

@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: The released version, such as 0.83.2.
+        description: The released version, such as 0.83.4.
         type: string
         required: true
 
@@ -26,12 +26,11 @@ defaults:
   run:
     shell: bash
 
-# A publish must never be cancelled halfway, and a re-dispatch must wait for the
-# running one rather than deploying the same version at the same time. The version
-# is part of the group, because a manual run of another version is not the same
-# deploy.
+# The build and the release share the group and never cancel each other, so a
+# release is never interrupted and the two write to the repository one at a time.
+# A re-dispatch waits for the running one instead of deploying at the same time.
 concurrency:
-  group: release-${{ github.event.client_payload.version || inputs.version }}
+  group: ${{ github.repository }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -92,7 +91,7 @@ jobs:
       uses: actions/setup-java@v6
       with:
         distribution: zulu
-        java-version: 24
+        java-version: 25
 
     - name: Cache bee local repository
       uses: actions/cache@v6
