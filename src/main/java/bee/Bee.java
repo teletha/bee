@@ -419,12 +419,6 @@ public class Bee {
      * @param tasks Command-line arguments representing tasks and options.
      */
     public static void main(String... tasks) {
-        // Restart this process with the selected JDK when it differs from the running one, so that
-        // the compilation, the test and the native build all use the selected JDK.^
-        if (reexec(tasks)) {
-            return;
-        }
-
         // 1. Measure JVM startup time immediately
         Profiling.measureJVMStartup();
 
@@ -461,68 +455,6 @@ public class Bee {
         int exitCode = new Bee().execute(washed);
         finished = true;
         System.exit(exitCode);
-    }
-
-    /**
-     * Restart this process with the JDK selected by the user when it differs from the JDK which is
-     * currently running. A marker environment variable prevents an infinite restart loop.
-     * 
-     * @param tasks The original command line arguments.
-     * @return Whether the process was restarted or not.
-     */
-    private static boolean reexec(String... tasks) {
-        if (System.getenv("BEE_REEXEC") != null) {
-            return false;
-        }
-
-        Directory jdk = Platform.configuredJava();
-        if (jdk == null) {
-            return false;
-        }
-
-        Directory running = Locator.directory(System.getProperty("java.home"));
-        if (jdk.absolutize().path().equalsIgnoreCase(running.absolutize().path())) {
-            return false;
-        }
-
-        File java = jdk.file(Platform.isWindows() ? "bin/java.exe" : "bin/java");
-        if (java.isAbsent()) {
-            return false;
-        }
-
-        try {
-            List<String> command = new ArrayList();
-            command.add(java.path());
-
-            // Use the AOT cache of the selected JDK. The cache is created automatically when it is
-            // missing, and the aot log is disabled to keep a missing cache from printing an error.
-            // JEP 483 can not create a cache from a directory classpath, so this only applies when
-            // running from a jar.
-            int feature = Locator.locate(Bee.class).isFile() ? Platform.feature(jdk) : -1;
-            if (0 < feature) {
-                command.add("-XX:AOTCache=" + aot(feature));
-                command.add("-Xlog:aot*=off");
-            }
-
-            // Grant native access so that the FFM API (used by the interactive terminal) does not
-            // emit a restricted method warning.
-            command.add("--enable-native-access=ALL-UNNAMED");
-
-            command.add("-cp");
-            command.add(System.getProperty("java.class.path"));
-            command.add(Bee.class.getName());
-            for (String task : tasks) {
-                command.add(task);
-            }
-
-            ProcessBuilder builder = new ProcessBuilder(command).inheritIO();
-            builder.environment().put("BEE_REEXEC", "1");
-
-            System.exit(builder.start().waitFor());
-        } catch (Exception e) {
-            throw I.quiet(e);
-        }
-        return true;
     }
 
     /**
