@@ -176,4 +176,4 @@ jobs:
       run: |
         # JitPack builds the tagged revision on demand. Trigger it now so the
         # artifact is ready before someone requests it. Do not wait for the outcome.
-        curl -sS "https://jitpack.io/api/builds/com.github.teletha/bee/${PRODUCT_VERSION}" > /dev/null || true
+        curl -sS "https://jitpack.io/api/builds/io.github.teletha/bee/${PRODUCT_VERSION}" > /dev/null || true

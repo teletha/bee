@@ -685,7 +685,7 @@ public interface CI extends Task {
                       run: |
                         # JitPack builds the tagged revision on demand. Trigger it now so the
                         # artifact is ready before someone requests it. Do not wait for the outcome.
-                        curl -sS "https://jitpack.io/api/builds/com.github.%s/%s/${PRODUCT_VERSION}" > /dev/null || true
+                        curl -sS "https://jitpack.io/api/builds/%s/%s/${PRODUCT_VERSION}" > /dev/null || true
                 """;
 
         // In a format string, a double brace denotes a single brace, so {{projectVersion}} is
@@ -755,9 +755,9 @@ public interface CI extends Task {
         // the description names the version, the version step names the product, the JDK step takes
         // the java version, the staging path takes the repository layout, the rest of the steps
         // take
-        // the product and the JitPack trigger takes the owner and the repository.
+        // the product and the JitPack trigger takes the group and the product.
         makeFile(".github/workflows/release.yml", String
-                .format(release, version, product, javaVersion, layout, product, product, product, product, vcs.owner, vcs.repo));
+                .format(release, version, product, javaVersion, layout, product, product, product, product, group, product));
 
         makeFile("jreleaser.yml", String
                 .format(jreleaser, product, group, vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));
