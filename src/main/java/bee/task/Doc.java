@@ -120,7 +120,7 @@ public interface Doc extends Task {
         Listener listener = new Listener();
         Directory output = project().getOutput().directory("site");
 
-        new Isolation("com.github.teletha : evergarden") {
+        new Isolation("io.github.teletha : evergarden") {
 
             @Override
             public void isolate() {
