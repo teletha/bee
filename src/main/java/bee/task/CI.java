@@ -182,7 +182,7 @@ public interface CI extends Task {
                                 <p align="center">
                                     <a href="https://docs.oracle.com/en/java/javase/{java}/"><img src="https://img.shields.io/badge/Java-Release%20{java}-green"/></a>
                                     <span>&nbsp;</span>
-                                    <a href="https://jitpack.io/#{group}/{repo}"><img src="https://img.shields.io/jitpack/v/{name}/{owner}/{repo}?label=Repository&color=green"></a>
+                                    <a href="https://jitpack.io/#{group}/{repo}"><img src="https://img.shields.io/jitpack/version/{group}/{repo}?label=Repository&color=green"></a>
                                     <span>&nbsp;</span>
                                     <a href="https://{owner}.github.io/{repo}"><img src="https://img.shields.io/website.svg?down_color=red&down_message=CLOSE&label=Official%20Site&up_color=green&up_message=OPEN&url=https%3A%2F%2F{owner}.github.io%2F{repo}"></a>
                                 </p>
