@@ -438,7 +438,7 @@ public interface CI extends Task {
 
     @Command("Generate CI/CD configuration files for JitPack.")
     default void jitpack() {
-        String javaVersion = Inputs.normalize(project().getJavaSourceVersion());
+        String javaVersion = Inputs.normalize(project().getJavaRequiredVersion());
 
         makeFile("jitpack.yml", String
                 .format("""
