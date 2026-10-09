@@ -1,6 +1,6 @@
 <project>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.github.teletha</groupId>
+	<groupId>io.github.teletha</groupId>
 	<artifactId>bee</artifactId>
 	<version>0.85.2</version>
 	<packaging>jar</packaging>
