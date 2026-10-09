@@ -440,6 +440,16 @@ const root = {
 			"type": "Interface"
 		},
 		{
+			"name": "Jitpack",
+			"packageName": "bee.task",
+			"type": "Interface"
+		},
+		{
+			"name": "Jitpack.Config",
+			"packageName": "bee.task",
+			"type": "Class"
+		},
+		{
 			"name": "CI",
 			"packageName": "bee.task",
 			"type": "Interface"

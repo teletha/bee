@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="LB">
-		<header class="N" date="2026-10-09">
-			<h1 class="O"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="P"><a href="api/main.html" id="API"><svg class="package">
+	<body class="i">
+		<header class="c" date="2026-10-09">
+			<h1 class="d"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="e"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,18 +35,18 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="Q"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="L"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="V"></nav>
-		<article class="r" id="Article">
-			<section class="t"><code class="h">bee</code>
-				<h2 class="Exception M"><code class="JB">Fail</code></h2>
-				<div class="J">
+		<nav class="g"></nav>
+		<article class="K" id="Article">
+			<section class="Z"><code class="S">bee</code>
+				<h2 class="Exception R"><code class="X">Fail</code></h2>
+				<div class="LB">
 					<ul class="E G">
 						<li><code><a aria-label="java.lang.RuntimeException 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/RuntimeException.html">RuntimeException</a></code></li>
 						<li><code><a aria-label="java.lang.Exception 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Exception.html">Exception</a></code></li>
@@ -56,60 +56,59 @@
 						<li><code><a aria-label="java.io.Serializable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/io/Serializable.html">Serializable</a></code></li>
 					</ul>
 				</div><span class="A"><p>Signals a recoverable failure during the build process.</p><p>
- This exception is thrown when a build-related operation fails in a way that should be reported
- to the user, such as misconfiguration, missing dependencies, or unsupported environments.
- 
+This exception is thrown when a build-related operation fails in a way that should be reported
+to the user, such as misconfiguration, missing dependencies, or unsupported environments.
+
 						<p>
- Unlike critical runtime errors, this exception is <strong>unchecked</strong> (extends
- <code><a aria-label="java.lang.RuntimeException 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/RuntimeException.html">RuntimeException</a></code>) and intended to be handled by the build infrastructure
- or surfaced to the user with actionable context.
- 
+Unlike critical runtime errors, this exception is <strong>unchecked</strong> (extends
+<code><a aria-label="java.lang.RuntimeException 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/RuntimeException.html">RuntimeException</a></code>) and intended to be handled by the build infrastructure
+or surfaced to the user with actionable context.
+
 							<p>
- Each <code>Fail</code> instance includes:
- 
+Each <code>Fail</code> instance includes:
+
 								<ul>
 									<li>A <strong>mandatory reason</strong> message that describes what went wrong.</li>
 									<li>An optional list of <strong>suggested solutions</strong> that help resolve the issue.</li>
 									<li>An optional <strong>underlying cause</strong> (wrapped Throwable).</li>
 								</ul>
 								<p>
- Example:
- 
-									<pre><code>
- throw new Fail(&quot;Missing JDK installation&quot;)
-     .solve(&quot;Install JDK 21 or later&quot;)
-     .solve(&quot;Ensure JAVA_HOME is set correctly&quot;)
-     .reason(e);
- </code></pre>
+Example:
+
+									<pre><code>throw new Fail(&quot;Missing JDK installation&quot;)
+    .solve(&quot;Install JDK 21 or later&quot;)
+    .solve(&quot;Ensure JAVA_HOME is set correctly&quot;)
+    .reason(e);
+</code></pre>
 								</p>
 							</p>
 						</p>
 					</p>
 				</span></section>
-			<section class="t" id="reason">
-				<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="JB">reason</code><i class="HB"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The mandatory, human-readable reason explaining the cause of the failure.
+			<section class="Z" id="reason">
+				<h2 class="U"><i class="FINAL"><i class="PUBLIC"></i></i><code class="X">reason</code><i class="r"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2><span class="A"><p>The mandatory, human-readable reason explaining the cause of the failure.
 This field should clearly describe the problem encountered.</p></span></section>
-			<section class="t" id="solutions">
-				<h2 class="S"><i class="FINAL"><i class="PUBLIC"></i></i><code class="JB">solutions</code><i class="HB"><code class="return"><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2><span class="A"><p>An optional list of messages suggesting potential solutions or next steps
+			<section class="Z" id="solutions">
+				<h2 class="U"><i class="FINAL"><i class="PUBLIC"></i></i><code class="X">solutions</code><i class="r"><code class="return"><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></h2><span class="A"><p>An optional list of messages suggesting potential solutions or next steps
 to resolve the failure. This list can be modified after creation using the
 <code><a aria-label="bee.Fail" href="api/bee.Fail.html#solve(java.lang.Object)">#solve(Object)</a></code> method.</p></span></section>
-			<section class="t" id="Fail(java.lang.String)">
-				<h2 class="S"><i class="PUBLIC"></i><code class="JB">Fail</code><code class="AB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>)</code></h2>
-				<table class="W">
-					<tr class="p">
+			<section class="Z" id="Fail(java.lang.String)">
+				<h2 class="U"><i class="PUBLIC"></i><code class="X">Fail</code><code class="V">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>)</code></h2>
+				<table class="v">
+					<tr class="u">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code></td>
 						<td><span><p>The detail message explaining the reason for the failure. Must not be null.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Constructs a new <code>Fail</code> exception with the specified reason message.
 No solutions are added initially.</p></span></section>
-			<section class="t" id="Fail(java.lang.String,java.util.List)">
-				<h2 class="S"><i class="PUBLIC"></i><code class="JB">Fail</code><code class="AB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>, <code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">solutions</code>)</code></h2>
-				<table class="W">
-					<tr class="p">
+			<section class="Z" id="Fail(java.lang.String,java.util.List)">
+				<h2 class="U"><i class="PUBLIC"></i><code class="X">Fail</code><code class="V">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>, <code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">solutions</code>)</code></h2>
+				<table class="v">
+					<tr class="u">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code></td>
 						<td><span><p>The detail message explaining the reason for the failure. Must not be null.</p></span></td>
 					</tr>
-					<tr class="p">
+					<tr class="u">
 						<td><code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">solutions</code></td>
 						<td><span><p>A list of suggested solutions. May be null or empty.</p></span></td>
 					</tr>
@@ -117,88 +116,88 @@ No solutions are added initially.</p></span></section>
 of solutions. If the provided list of solutions is null, an empty list is used internally.
 The provided list is copied, so subsequent modifications to the original list will not affect
 this instance.</p></span></section>
-			<section class="t" id="reason(java.lang.Throwable)">
-				<h2 class="S"><i class="PUBLIC"></i><code class="JB">reason</code><code class="AB">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">reason</code>)</code><i class="HB"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></h2>
-				<table class="W">
-					<tr class="p">
+			<section class="Z" id="reason(java.lang.Throwable)">
+				<h2 class="U"><i class="PUBLIC"></i><code class="X">reason</code><code class="V">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">reason</code>)</code><i class="r"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></h2>
+				<table class="v">
+					<tr class="u">
 						<td><code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">reason</code></td>
 						<td><span><p>The throwable that represents the underlying cause of this failure.</p></span></td>
 					</tr>
-					<tr class="b">
+					<tr class="l">
 						<td><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></td>
 						<td><span><p>This <code>Fail</code> instance, allowing for method chaining.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Sets the underlying cause of this failure.</p></span></section>
-			<section class="t" id="solve(java.lang.Object)">
-				<h2 class="S"><i class="PUBLIC"></i><code class="JB">solve</code><code class="AB">(<code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">solution</code>)</code><i class="HB"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></h2>
-				<table class="W">
-					<tr class="p">
+			<section class="Z" id="solve(java.lang.Object)">
+				<h2 class="U"><i class="PUBLIC"></i><code class="X">solve</code><code class="V">(<code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">solution</code>)</code><i class="r"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></h2>
+				<table class="v">
+					<tr class="u">
 						<td><code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">solution</code></td>
 						<td><span><p>An object representing a potential solution.</p></span></td>
 					</tr>
-					<tr class="b">
+					<tr class="l">
 						<td><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></td>
 						<td><span><p>This <code>Fail</code> instance, allowing for method chaining.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Adds a suggested solution to the list associated with this failure.</p></span></section>
-			<section class="t" id="getMessage()">
-				<h2 class="S"><i class="OVERRIDE PUBLIC"></i><code class="JB">getMessage</code><code class="AB">()</code><i class="HB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="W">
-					<tr class="b">
+			<section class="Z" id="getMessage()">
+				<h2 class="U"><i class="OVERRIDE PUBLIC"></i><code class="X">getMessage</code><code class="V">()</code><i class="r"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="v">
+					<tr class="l">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
-			<section class="t" id="toString()">
-				<h2 class="S"><i class="OVERRIDE PUBLIC"></i><code class="JB">toString</code><code class="AB">()</code><i class="HB"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
-				<table class="W">
-					<tr class="b">
+			<section class="Z" id="toString()">
+				<h2 class="U"><i class="OVERRIDE PUBLIC"></i><code class="X">toString</code><code class="V">()</code><i class="r"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></h2>
+				<table class="v">
+					<tr class="l">
 						<td><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></td>
 						<td></td>
 					</tr>
 				</table>
 			</section>
-			<section class="t" id="strip(java.lang.Throwable)">
-				<h2 class="S"><i class="PUBLIC STATIC"></i><code class="JB">strip</code><code class="AB">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">error</code>)</code><i class="HB"><code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code></i></h2>
-				<table class="W">
-					<tr class="p">
+			<section class="Z" id="strip(java.lang.Throwable)">
+				<h2 class="U"><i class="STATIC PUBLIC"></i><code class="X">strip</code><code class="V">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">error</code>)</code><i class="r"><code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code></i></h2>
+				<table class="v">
+					<tr class="u">
 						<td><code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">error</code></td>
 						<td><span><p>The initial throwable, which might be a wrapper exception. Must not be null.</p></span></td>
 					</tr>
-					<tr class="b">
+					<tr class="l">
 						<td><code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code></td>
 						<td><span><p>The unwrapped root cause throwable, or the original throwable if it&apos;s not one of the
 known wrappers or has no cause.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Utility method to unwrap common wrapper exceptions and reveal the underlying root cause.</p></span></section>
 		</article>
-		<aside class="i">
-			<div class="c">
-				<h5 class="T">Constructors</h5>
+		<aside class="k">
+			<div class="Q">
+				<h5 class="n">Constructors</h5>
 				<ul>
-					<li class="j"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#Fail(java.lang.String)">Fail</a></code><code class="AB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>)</code></li>
-					<li class="j"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#Fail(java.lang.String,java.util.List)">Fail</a></code><code class="AB">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>, <code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">solutions</code>)</code></li>
+					<li class="s"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#Fail(java.lang.String)">Fail</a></code><code class="V">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>)</code></li>
+					<li class="s"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#Fail(java.lang.String,java.util.List)">Fail</a></code><code class="V">(<code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">reason</code>, <code><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code><code class="parameterName">solutions</code>)</code></li>
 				</ul>
-				<h5 class="T">Fields</h5>
+				<h5 class="n">Fields</h5>
 				<ul>
-					<li class="j"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Fail.html#reason">reason</a></code><i class="z"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="j"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Fail.html#solutions">solutions</a></code><i class="z"><code class="return"><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
+					<li class="s"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Fail.html#reason">reason</a></code><i class="f"><code class="return"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="s"><i class="FINAL"><i class="PUBLIC"></i></i><code><a href="api/bee.Fail.html#solutions">solutions</a></code><i class="f"><code class="return"><a aria-label="java.util.List 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/util/List.html">List</a><code class="parameters"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></code></code></i></li>
 				</ul>
-				<h5 class="T">Static Methods</h5>
+				<h5 class="n">Static Methods</h5>
 				<ul>
-					<li class="j"><i class="PUBLIC STATIC"></i><code><a href="api/bee.Fail.html#strip(java.lang.Throwable)">strip</a></code><code class="AB">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">error</code>)</code><i class="z"><code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code></i></li>
+					<li class="s"><i class="STATIC PUBLIC"></i><code><a href="api/bee.Fail.html#strip(java.lang.Throwable)">strip</a></code><code class="V">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">error</code>)</code><i class="f"><code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code></i></li>
 				</ul>
-				<h5 class="T">Methods</h5>
+				<h5 class="n">Methods</h5>
 				<ul>
-					<li class="j"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#reason(java.lang.Throwable)">reason</a></code><code class="AB">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">reason</code>)</code><i class="z"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></li>
-					<li class="j"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#solve(java.lang.Object)">solve</a></code><code class="AB">(<code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">solution</code>)</code><i class="z"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></li>
-					<li class="j"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.Fail.html#getMessage()">getMessage</a></code><code class="AB">()</code><i class="z"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
-					<li class="j"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.Fail.html#toString()">toString</a></code><code class="AB">()</code><i class="z"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="s"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#reason(java.lang.Throwable)">reason</a></code><code class="V">(<code><a aria-label="java.lang.Throwable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Throwable.html">Throwable</a></code><code class="parameterName">reason</code>)</code><i class="f"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></li>
+					<li class="s"><i class="PUBLIC"></i><code><a href="api/bee.Fail.html#solve(java.lang.Object)">solve</a></code><code class="V">(<code><a aria-label="java.lang.Object 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/Object.html">Object</a></code><code class="parameterName">solution</code>)</code><i class="f"><code><a aria-label="bee.Fail" href="api/bee.Fail.html">Fail</a></code></i></li>
+					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.Fail.html#getMessage()">getMessage</a></code><code class="V">()</code><i class="f"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
+					<li class="s"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.Fail.html#toString()">toString</a></code><code class="V">()</code><i class="f"><code><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="R">
+		<footer class="j">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
