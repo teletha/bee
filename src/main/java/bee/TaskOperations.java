@@ -486,7 +486,7 @@ public class TaskOperations {
             } finally {
                 ui.finish();
             }
-        }).waitForTerminate().to().v;
+        }).waitForTerminate().to().get();
     }
 
     private static class ParallelInterface extends UserInterface {

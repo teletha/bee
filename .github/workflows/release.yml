@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: The released version, such as 0.83.4.
+        description: The released version, such as 0.84.0.
         type: string
         required: true
 
@@ -117,7 +117,7 @@ jobs:
         # Maven Central requires a jar, a sources jar, a javadoc jar and a POM file
         # arranged under the group path. JReleaser signs, checksums and bundles
         # whatever it finds in this directory.
-        directory=target/staging-deploy/com/github/teletha/bee/${PRODUCT_VERSION}
+        directory=target/staging-deploy/io/github/teletha/bee/${PRODUCT_VERSION}
         mkdir -p ${directory}
         cp target/bee-${PRODUCT_VERSION}.jar ${directory}/
         cp target/bee-${PRODUCT_VERSION}-sources.jar ${directory}/

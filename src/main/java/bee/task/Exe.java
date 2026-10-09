@@ -79,7 +79,7 @@ public interface Exe extends Task<Exe.Config> {
             Manifest manifest = new Manifest(file.newInputStream());
             try (OutputStream out = file.newOutputStream()) {
                 manifest.getMainAttributes().putValue(Name.MANIFEST_VERSION.toString(), "1.0");
-                manifest.getMainAttributes().putValue(Name.MAIN_CLASS.toString(), main.v);
+                manifest.getMainAttributes().putValue(Name.MAIN_CLASS.toString(), main.get());
                 manifest.write(out);
             }
         } catch (IOException e) {

@@ -40,12 +40,12 @@ public interface Wrapper extends Task<Wrapper.Config> {
 
     @Command(defaults = true, value = "Build local bee environment using the stable version.")
     default void stable() {
-        build(I.http("https://git.io/stable-bee", String.class).waitForTerminate().to().v);
+        build(I.http("https://git.io/stable-bee", String.class).waitForTerminate().to().get());
     }
 
     @Command("Build local bee environment using the latest version.")
     default void latest() {
-        build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().v);
+        build(I.http("https://git.io/latest-bee", String.class).waitForTerminate().to().get());
     }
 
     @Command("Build local bee environment using the selected version.")

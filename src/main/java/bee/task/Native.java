@@ -145,10 +145,11 @@ public interface Native extends Task<Native.Config> {
         command.add(I.signal(project().getClasspath())
                 .sort(Comparator.naturalOrder())
                 .scan(Collectors.joining(java.io.File.pathSeparator))
-                .to().v);
+                .to()
+                .get());
 
         // entry point
-        command.add(main.v);
+        command.add(main.get());
 
         if (bee.util.Process.with().run(command) == 0) {
             pack(conf.output, conf.archive, o -> o.glob("*"));

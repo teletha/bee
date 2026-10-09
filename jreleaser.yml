@@ -4,7 +4,7 @@ project:
   # default is only a placeholder.
   version: '0.0.0'
   java:
-    groupId: com.github.teletha
+    groupId: io.github.teletha
   links:
     homepage: https://github.com/teletha/bee
 release:
@@ -54,5 +54,5 @@ deploy:
         stagingRepositories:
           - target/staging-deploy
         # The registered namespace of the Sonatype Central Portal account.
-        namespace: com.github.teletha
+        namespace: io.github.teletha
         applyMavenCentralRules: true

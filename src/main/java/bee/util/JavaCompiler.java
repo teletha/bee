@@ -599,8 +599,8 @@ public class JavaCompiler {
             listener = new Listener();
         }
 
-        StandardJavaFileManager manager = compiler.v.getStandardFileManager(listener, null, encoding);
-        CompilationTask task = compiler.v.getTask(null, manager, listener, options, null, sources);
+        StandardJavaFileManager manager = compiler.get().getStandardFileManager(listener, null, encoding);
+        CompilationTask task = compiler.get().getTask(null, manager, listener, options, null, sources);
 
         if (processors.size() != 0) {
             task.setProcessors(processors);
