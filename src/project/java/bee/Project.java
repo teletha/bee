@@ -18,7 +18,7 @@ import bee.task.FindMain;
 public class Project extends bee.api.Project {
 
     {
-        product(Bee.Tool.getGroup(), Bee.Tool.getProduct(), ref("version.txt"));
+        product("io.github.teletha", "bee", ref("version.txt"));
         license(MIT);
         versionControlSystem("https://github.com/teletha/bee");
         // developer("Teletha", "Teletha@users.noreply.github.com", "https://github.com/teletha");
