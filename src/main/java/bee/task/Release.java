@@ -53,6 +53,9 @@ public interface Release extends Task<Release.Config> {
     /** The GitHub Actions event name of the dispatched run. */
     String RUN_EVENT = "repository_dispatch";
 
+    /** The GitHub Actions event name of the build run which the release commit starts. */
+    String BUILD_EVENT = "push";
+
     /** The maximum number of the commits to show in the release plan. */
     int MAX_COMMITS = 20;
 
@@ -403,7 +406,7 @@ public interface Release extends Task<Release.Config> {
         while (!"completed".equals(run.status)) {
             // The spinner overwrites the previous message in place. A multi-line message shows the
             // whole step list with the current position marked.
-            ui().spinner(describe(repository, run, nonce));
+            ui().spinner(progress(repository, run, nonce));
             sleep(POLL_INTERVAL);
 
             for (GithubAPI.Run current : GithubAPI.runs(repository, RUN_EVENT)) {
@@ -472,6 +475,62 @@ public interface Release extends Task<Release.Config> {
             }
         }
         return builder.toString();
+    }
+
+    /**
+     * Describe the progress to show while the release run is watched. The release run is queued
+     * while the build workflow which the release commit started holds the shared concurrency, and
+     * such a queued run has no job yet, so the build run is shown to keep its progress visible
+     * instead of an empty spinner.
+     * 
+     * @param repository The owner/name of the repository.
+     * @param run A workflow run.
+     * @param nonce The dispatch nonce.
+     * @return A description.
+     */
+    private String progress(String repository, GithubAPI.Run run, String nonce) {
+        if (!"in_progress".equals(run.status)) {
+            // The run is queued because the build workflow which the release commit started holds
+            // the shared concurrency. Show that run so its progress stays visible.
+            GithubAPI.Run blocker = blockingRun(repository, run);
+            if (blocker != null) {
+                return "Waiting for the build workflow : " + blocker.html_url + Platform.EOL + describe(repository, blocker, null);
+            }
+        }
+
+        String description = describe(repository, run, nonce);
+        return description.isBlank() ? "Waiting for the release workflow to start..." : description;
+    }
+
+    /**
+     * Resolve the run which holds the shared concurrency and blocks the specified run. The build
+     * workflow is started by the push of the release commit, so the runs of the push event are
+     * searched on the same branch.
+     * 
+     * @param repository The owner/name of the repository.
+     * @param run A workflow run.
+     * @return A blocking run, or <code>null</code> when none is found.
+     */
+    private GithubAPI.Run blockingRun(String repository, GithubAPI.Run run) {
+        GithubAPI.Run queued = null;
+
+        for (GithubAPI.Run candidate : GithubAPI.runs(repository, BUILD_EVENT)) {
+            if (candidate.id == run.id || "completed".equals(candidate.status)) {
+                continue;
+            }
+            if (run.head_branch != null && !run.head_branch.equals(candidate.head_branch)) {
+                continue;
+            }
+
+            // The run which is in progress holds the concurrency, so prefer it over a queued one.
+            if ("in_progress".equals(candidate.status)) {
+                return candidate;
+            }
+            if (queued == null) {
+                queued = candidate;
+            }
+        }
+        return queued;
     }
 
     /**

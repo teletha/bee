@@ -357,13 +357,20 @@ public interface Eclipse extends Task, IDESupport {
     }
 
     /**
-     * Resolve the JDK whose feature version matches the Java version required by the project. The JDK
-     * currently used by Bee has the highest priority, then the JDKs installed under the Bee home.
+     * Resolve the JDK to register in Eclipse. The JDK selected in Bee has the highest priority, so
+     * that Eclipse uses the same JDK as Bee. The selected link is used as-is, so switching the
+     * selected JDK also switches the registered JRE. When it is absent, the JDK whose feature
+     * version matches the Java version required by the project is used.
      * 
      * @param feature The required Java feature version.
      * @return A JDK, or <code>null</code> when no matching JDK is installed.
      */
     private Directory resolveJDK(int feature) {
+        Directory selected = Platform.BeeHome.directory("jdk").directory(JDK.SELECTED_LINK);
+        if (Platform.feature(selected) != -1) {
+            return selected;
+        }
+
         if (Platform.feature(Platform.JavaHome) == feature) {
             return Platform.JavaHome;
         }
