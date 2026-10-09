@@ -110,7 +110,7 @@ public interface Wrapper extends Task<Wrapper.Config> {
     private void build(String version) {
         version = version.strip();
 
-        Ⅱ<String, String> context = I.pair(version, "https://jitpack.io/com/github/teletha/bee/" + version + "/bee-" + version + ".jar");
+        Ⅱ<String, String> context = I.pair(version, "https://jitpack.io/io/github/teletha/bee/" + version + "/bee-" + version + ".jar");
 
         String bat = I
                 .express("""
@@ -131,7 +131,7 @@ public interface Wrapper extends Task<Wrapper.Config> {
 
                             if not exist !bee! (
                                 echo bee is not found locally, try to download it from network.
-                                curl -#L -o !bee! --create-dirs https://jitpack.io/com/github/teletha/bee/%version%/bee-%version%.jar
+                                curl -#L -o !bee! --create-dirs https://jitpack.io/io/github/teletha/bee/%version%/bee-%version%.jar
                             )
                         )
                         java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:AOTCache=bee.aot -XX:+IgnoreUnrecognizedVMOptions -cp %bee% bee.Bee %* & call :exitWithErrorLevel

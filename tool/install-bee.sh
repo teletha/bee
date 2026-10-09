@@ -5,7 +5,7 @@
   # curl -Ls https://git.io/install-bee | bash
   #
   version=$(curl -SsL https://git.io/stable-bee)
-  curl -#L -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+  curl -#L -o bee-${version}.jar https://jitpack.io/io/github/teletha/bee/${version}/bee-${version}.jar
   java -javaagent:bee-${version}.jar -cp bee-${version}.jar bee.BeeInstaller
 }
 @goto $@
@@ -19,7 +19,7 @@ exit
 :: curl -Ls https://git.io/install-bee -o install.bat && install
 ::
 for /f "delims=" %%i in ('curl -SsL https://git.io/stable-bee') do set version=%%i
-curl -#L -o bee-%version%.jar https://jitpack.io/com/github/teletha/bee/%version%/bee-%version%.jar
+curl -#L -o bee-%version%.jar https://jitpack.io/io/github/teletha/bee/%version%/bee-%version%.jar
 java -javaagent:bee-%version%.jar -cp bee-%version%.jar bee.BeeInstaller
 
 :: delete myself

@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: The released version, such as 0.85.3.
+        description: The released version, such as 1.2.3.
         type: string
         required: true
 
@@ -106,7 +106,7 @@ jobs:
           source bee install
         else
           version=$(curl -SsL https://git.io/stable-bee)
-          curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+          curl -SsL -o bee-${version}.jar https://jitpack.io/io/github/teletha/bee/${version}/bee-${version}.jar
           java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install
         fi
 

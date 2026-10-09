@@ -464,7 +464,7 @@ public interface CI extends Task {
                             # opening the jar through ZipFile, which is the call that fails.
                             valid=""
                             for attempt in 1 2 3 4 5; do
-                              if curl -fsSL -o bee-${BeeVersion}.jar https://github.com/teletha/bee/releases/download/${BeeVersion}/bee-${BeeVersion}.jar || curl -fsSL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar; then
+                              if curl -fsSL -o bee-${BeeVersion}.jar https://github.com/teletha/bee/releases/download/${BeeVersion}/bee-${BeeVersion}.jar || curl -fsSL -o bee-${BeeVersion}.jar https://jitpack.io/io/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar; then
                                 if [ "$(head -c 2 bee-${BeeVersion}.jar)" = "PK" ] && java -cp bee-${BeeVersion}.jar bee.Bee --version >/dev/null 2>&1; then
                                   valid="yes"
                                   break
@@ -520,10 +520,6 @@ public interface CI extends Task {
         // namespace separates it with dots.
         String layout = group.replace('.', '/') + "/" + product;
 
-        // The version which the release task writes. It follows the tag format of the publishing
-        // workflows, hence no v prefix and the same shape as version.txt.
-        String version = project().getVersion();
-
         String release = """
                 name: Release
 
@@ -539,7 +535,7 @@ public interface CI extends Task {
                   workflow_dispatch:
                     inputs:
                       version:
-                        description: The released version, such as %s.
+                        description: The released version, such as 1.2.3.
                         type: string
                         required: true
 
@@ -633,7 +629,7 @@ public interface CI extends Task {
                           source bee install
                         else
                           version=$(curl -SsL https://git.io/stable-bee)
-                          curl -SsL -o bee-${version}.jar https://jitpack.io/com/github/teletha/bee/${version}/bee-${version}.jar
+                          curl -SsL -o bee-${version}.jar https://jitpack.io/io/github/teletha/bee/${version}/bee-${version}.jar
                           java -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -cp bee-${version}.jar bee.Bee install
                         fi
 
@@ -770,12 +766,11 @@ public interface CI extends Task {
                 """;
 
         // The arguments follow the order in which the placeholders appear in the template above:
-        // the description names the version, the version step names the product, the JDK step takes
-        // the java version, the staging path takes the repository layout, the rest of the steps
-        // take
-        // the product and the JitPack trigger takes the group and the product.
+        // the version step names the product, the JDK step takes the java version, the staging path
+        // takes the repository layout, the rest of the steps take the product and the JitPack
+        // trigger takes the group and the product.
         makeFile(".github/workflows/release.yml", String
-                .format(release, version, product, javaVersion, layout, product, product, product, product, group, product));
+                .format(release, product, javaVersion, layout, product, product, product, product, group, product));
 
         makeFile("jreleaser.yml", String
                 .format(jreleaser, product, group, vcs.uri(), vcs.owner, vcs.repo, product, product, product, group));

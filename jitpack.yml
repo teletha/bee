@@ -20,7 +20,7 @@ install: |
     # opening the jar through ZipFile, which is the call that fails.
     valid=""
     for attempt in 1 2 3 4 5; do
-      if curl -fsSL -o bee-${BeeVersion}.jar https://github.com/teletha/bee/releases/download/${BeeVersion}/bee-${BeeVersion}.jar || curl -fsSL -o bee-${BeeVersion}.jar https://jitpack.io/com/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar; then
+      if curl -fsSL -o bee-${BeeVersion}.jar https://github.com/teletha/bee/releases/download/${BeeVersion}/bee-${BeeVersion}.jar || curl -fsSL -o bee-${BeeVersion}.jar https://jitpack.io/io/github/teletha/bee/${BeeVersion}/bee-${BeeVersion}.jar; then
         if [ "$(head -c 2 bee-${BeeVersion}.jar)" = "PK" ] && java -cp bee-${BeeVersion}.jar bee.Bee --version >/dev/null 2>&1; then
           valid="yes"
           break
