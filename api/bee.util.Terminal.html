@@ -19,10 +19,10 @@
 		<link href="https://cdn.jsdelivr.net/npm/ress@4.0.0/dist/ress.min.css" rel="stylesheet"/>
 		<link href="main.css" rel="stylesheet"/>
 	</head>
-	<body class="T">
-		<header class="U" date="2026-10-10">
-			<h1 class="g"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="M"><a href="api/main.html" id="API"><svg class="package">
+	<body class="p">
+		<header class="g" date="2026-10-10">
+			<h1 class="h"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="U"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,17 +35,17 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="h"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="X"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="X"></nav>
-		<article class="V" id="Article">
-			<section class="c"><code class="l">bee.util</code>
-				<h2 class="Class Z"><code class="j">Terminal</code></h2>
+		<nav class="r"></nav>
+		<article class="q" id="Article">
+			<section class="u"><code class="v">bee.util</code>
+				<h2 class="Class W"><code class="K">Terminal</code></h2>
 				<div class="L">
 					<ul class="E H">
 						<li><code><a aria-label="java.lang.AutoCloseable 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/AutoCloseable.html">AutoCloseable</a></code></li>
@@ -55,37 +55,37 @@ the raw mode. In the raw mode the arrow keys are delivered to the program immedi
 user can navigate a list without pushing the enter key.</p><p>
 This class uses the FFM API to call the platform native function directly.
 </p></span></section>
-			<section class="c" id="Terminal()">
-				<h2 class="w"><i class="PROTECTED"></i><code class="j">Terminal</code><code class="f">()</code></h2><span class="A"><p>Hide the constructor.</p></span></section>
-			<section class="c" id="raw()">
-				<h2 class="w"><i class="PUBLIC STATIC"></i><code class="j">raw</code><code class="f">()</code><i class="J"><code><a aria-label="bee.util.Terminal" href="api/bee.util.Terminal.html">Terminal</a></code></i></h2>
-				<table class="q">
-					<tr class="a">
+			<section class="u" id="Terminal()">
+				<h2 class="N"><i class="PROTECTED"></i><code class="K">Terminal</code><code class="HB">()</code></h2><span class="A"><p>Hide the constructor.</p></span></section>
+			<section class="u" id="raw()">
+				<h2 class="N"><i class="STATIC PUBLIC"></i><code class="K">raw</code><code class="HB">()</code><i class="LB"><code><a aria-label="bee.util.Terminal" href="api/bee.util.Terminal.html">Terminal</a></code></i></h2>
+				<table class="c">
+					<tr class="w">
 						<td><code><a aria-label="bee.util.Terminal" href="api/bee.util.Terminal.html">Terminal</a></code></td>
 						<td><span><p>A terminal controller.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Enter the raw mode. If the terminal can not be switched to the raw mode, the returned
 instance is disabled and <code><a aria-label="bee.util.Terminal" href="api/bee.util.Terminal.html#isEnabled()">#isEnabled()</a></code> returns <code>false</code>.</p></span></section>
-			<section class="c" id="isEnabled()">
-				<h2 class="w"><i class="PUBLIC"></i><code class="j">isEnabled</code><code class="f">()</code><i class="J"><code>boolean</code></i></h2>
-				<table class="q">
-					<tr class="a">
+			<section class="u" id="isEnabled()">
+				<h2 class="N"><i class="PUBLIC"></i><code class="K">isEnabled</code><code class="HB">()</code><i class="LB"><code>boolean</code></i></h2>
+				<table class="c">
+					<tr class="w">
 						<td><code>boolean</code></td>
 						<td><span><p>A result.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Check whether the raw mode is active or not.</p></span></section>
-			<section class="c" id="read()">
-				<h2 class="w"><i class="PUBLIC"></i><code class="j">read</code><code class="f">()</code><i class="J"><code>int</code></i></h2>
-				<table class="q">
-					<tr class="a">
+			<section class="u" id="read()">
+				<h2 class="N"><i class="PUBLIC"></i><code class="K">read</code><code class="HB">()</code><i class="LB"><code>int</code></i></h2>
+				<table class="c">
+					<tr class="w">
 						<td><code>int</code></td>
 						<td><span><p>A read byte, or <code>-1</code> when the input is closed.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Read one byte from the console. This method blocks until a byte is available.</p></span></section>
-			<section class="c" id="width()">
-				<h2 class="w"><i class="PUBLIC STATIC"></i><code class="j">width</code><code class="f">()</code><i class="J"><code>int</code></i></h2>
-				<table class="q">
-					<tr class="a">
+			<section class="u" id="width()">
+				<h2 class="N"><i class="STATIC PUBLIC"></i><code class="K">width</code><code class="HB">()</code><i class="LB"><code>int</code></i></h2>
+				<table class="c">
+					<tr class="w">
 						<td><code>int</code></td>
 						<td><span><p>A terminal width, or <code>-1</code> when it can not be detected.</p></span></td>
 					</tr>
@@ -93,33 +93,33 @@ instance is disabled and <code><a aria-label="bee.util.Terminal" href="api/bee.u
 because Java does not expose it. An accurate width is important for the user interface which
 erases a dynamic message by moving the cursor up by the number of the lines the wrapped
 message occupies.</p></span></section>
-			<section class="c" id="restore()">
-				<h2 class="w"><i class="SYNCHRONIZED"><i class="PUBLIC"></i></i><code class="j">restore</code><code class="f">()</code><i class="J"><code>void</code></i></h2><span class="A"><p>Restore the original console mode.</p></span></section>
-			<section class="c" id="close()">
-				<h2 class="w"><i class="OVERRIDE PUBLIC"></i><code class="j">close</code><code class="f">()</code><i class="J"><code>void</code></i></h2>
+			<section class="u" id="restore()">
+				<h2 class="N"><i class="SYNCHRONIZED"><i class="PUBLIC"></i></i><code class="K">restore</code><code class="HB">()</code><i class="LB"><code>void</code></i></h2><span class="A"><p>Restore the original console mode.</p></span></section>
+			<section class="u" id="close()">
+				<h2 class="N"><i class="OVERRIDE PUBLIC"></i><code class="K">close</code><code class="HB">()</code><i class="LB"><code>void</code></i></h2>
 			</section>
 		</article>
-		<aside class="Y">
-			<div class="s">
-				<h5 class="i">Constructors</h5>
+		<aside class="s">
+			<div class="AB">
+				<h5 class="j">Constructors</h5>
 				<ul>
-					<li class="DB"><i class="PROTECTED"></i><code><a href="api/bee.util.Terminal.html#Terminal()">Terminal</a></code><code class="f">()</code></li>
+					<li class="IB"><i class="PROTECTED"></i><code><a href="api/bee.util.Terminal.html#Terminal()">Terminal</a></code><code class="HB">()</code></li>
 				</ul>
-				<h5 class="i">Static Methods</h5>
+				<h5 class="j">Static Methods</h5>
 				<ul>
-					<li class="DB"><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Terminal.html#raw()">raw</a></code><code class="f">()</code><i class="P"><code><a aria-label="bee.util.Terminal" href="api/bee.util.Terminal.html">Terminal</a></code></i></li>
-					<li class="DB"><i class="PUBLIC STATIC"></i><code><a href="api/bee.util.Terminal.html#width()">width</a></code><code class="f">()</code><i class="P"><code>int</code></i></li>
+					<li class="IB"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Terminal.html#raw()">raw</a></code><code class="HB">()</code><i class="KB"><code><a aria-label="bee.util.Terminal" href="api/bee.util.Terminal.html">Terminal</a></code></i></li>
+					<li class="IB"><i class="STATIC PUBLIC"></i><code><a href="api/bee.util.Terminal.html#width()">width</a></code><code class="HB">()</code><i class="KB"><code>int</code></i></li>
 				</ul>
-				<h5 class="i">Methods</h5>
+				<h5 class="j">Methods</h5>
 				<ul>
-					<li class="DB"><i class="PUBLIC"></i><code><a href="api/bee.util.Terminal.html#isEnabled()">isEnabled</a></code><code class="f">()</code><i class="P"><code>boolean</code></i></li>
-					<li class="DB"><i class="PUBLIC"></i><code><a href="api/bee.util.Terminal.html#read()">read</a></code><code class="f">()</code><i class="P"><code>int</code></i></li>
-					<li class="DB"><i class="SYNCHRONIZED"><i class="PUBLIC"></i></i><code><a href="api/bee.util.Terminal.html#restore()">restore</a></code><code class="f">()</code><i class="P"><code>void</code></i></li>
-					<li class="DB"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.util.Terminal.html#close()">close</a></code><code class="f">()</code><i class="P"><code>void</code></i></li>
+					<li class="IB"><i class="PUBLIC"></i><code><a href="api/bee.util.Terminal.html#isEnabled()">isEnabled</a></code><code class="HB">()</code><i class="KB"><code>boolean</code></i></li>
+					<li class="IB"><i class="PUBLIC"></i><code><a href="api/bee.util.Terminal.html#read()">read</a></code><code class="HB">()</code><i class="KB"><code>int</code></i></li>
+					<li class="IB"><i class="SYNCHRONIZED"><i class="PUBLIC"></i></i><code><a href="api/bee.util.Terminal.html#restore()">restore</a></code><code class="HB">()</code><i class="KB"><code>void</code></i></li>
+					<li class="IB"><i class="OVERRIDE PUBLIC"></i><code><a href="api/bee.util.Terminal.html#close()">close</a></code><code class="HB">()</code><i class="KB"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="W">
+		<footer class="T">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
