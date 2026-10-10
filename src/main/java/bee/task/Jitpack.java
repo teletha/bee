@@ -31,13 +31,14 @@ import kiss.JSON;
  * failed, the failed build state is deleted and a new build is triggered.
  * <p>
  * The deletion requires the JitPack API token, which is read from the {@code JITPACK_TOKEN}
- * environment variable or the {@code jitpack.token} entry of the Bee user configuration. Without the
+ * environment variable or the {@code jitpack.token} entry of the Bee user configuration. Without
+ * the
  * token the build is only retriggered.
  */
 public interface Jitpack extends Task<Jitpack.Config> {
 
     /** The interval (ms) between the build status polls. */
-    long POLL_INTERVAL = 3000;
+    long POLL_INTERVAL = 20000;
 
     /** The maximum time (ms) to wait for the build. */
     long TIMEOUT = 30 * 60 * 1000;
@@ -106,7 +107,8 @@ public interface Jitpack extends Task<Jitpack.Config> {
     }
 
     /**
-     * Wait until the asynchronous deletion clears the previous build state. The watch can only judge
+     * Wait until the asynchronous deletion clears the previous build state. The watch can only
+     * judge
      * the result of the new build after the old record is gone.
      * 
      * @param group A JitPack group.
@@ -203,7 +205,8 @@ public interface Jitpack extends Task<Jitpack.Config> {
      * @param version A version.
      */
     private void trigger(String group, String artifact, String version) {
-        String jar = "https://jitpack.io/" + group.replace('.', '/') + "/" + artifact + "/" + version + "/" + artifact + "-" + version + ".jar";
+        String jar = "https://jitpack.io/" + group
+                .replace('.', '/') + "/" + artifact + "/" + version + "/" + artifact + "-" + version + ".jar";
 
         // Requesting the artifact starts the on-demand build, so only the transfer is started and
         // the result is discarded.
@@ -234,8 +237,7 @@ public interface Jitpack extends Task<Jitpack.Config> {
                 sleep(POLL_INTERVAL);
                 continue;
             }
-            throw new Fail("The JitPack build of [" + version + "] failed.")
-                    .solve("Build log : " + log(group, artifact, version));
+            throw new Fail("The JitPack build of [" + version + "] failed.").solve("Build log : " + log(group, artifact, version));
         }
 
         throw new Fail("Timed out while waiting for the JitPack build of [" + version + "].")
