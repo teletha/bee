@@ -20,9 +20,9 @@
 		<link href="main.css" rel="stylesheet"/>
 	</head>
 	<body class="p">
-		<header class="g" date="2026-10-10">
-			<h1 class="h"><a href="index.html"><code>Bee</code></a></h1>
-			<nav class="U"><a href="api/main.html" id="API"><svg class="package">
+		<header class="q" date="2026-10-10">
+			<h1 class="Q"><a href="index.html"><code>Bee</code></a></h1>
+			<nav class="m"><a href="api/main.html" id="API"><svg class="package">
 						<use href="main.svg#package"/>
 					</svg>
 				</a><a href="doc/changelog.html" id="Activity"><svg class="activity">
@@ -35,37 +35,37 @@
 						<use href="main.svg#github"/>
 					</svg>
 				</a></nav>
-			<div class="X"><a aria-label="Change color scheme" id="theme"><svg class="sun">
+			<div class="i"><a aria-label="Change color scheme" id="theme"><svg class="sun">
 						<use href="main.svg#sun"/>
 					</svg><svg class="moon">
 						<use href="main.svg#moon"/>
 					</svg>
 				</a></div>
 		</header>
-		<nav class="r"></nav>
-		<article class="q" id="Article">
-			<section class="u"><code class="v">bee</code>
-				<h2 class="Class W"><code class="K">BeeInstaller</code></h2>
-				<div class="L"></div><span class="A"><p>Handles the installation process for the Bee build tool.
+		<nav class="s"></nav>
+		<article class="Z" id="Article">
+			<section class="T"><code class="EB">bee</code>
+				<h2 class="Class FB"><code class="O">BeeInstaller</code></h2>
+				<div class="X"></div><span class="A"><p>Handles the installation process for the Bee build tool.
 This includes installing the Bee executable JAR, creating launcher scripts,
 installing the Bee API into the local repository, and displaying a welcome message.</p></span></section>
-			<section class="u" id="BeeInstaller()">
-				<h2 class="N"><i class="PUBLIC"></i><code class="K">BeeInstaller</code><code class="HB">()</code></h2>
+			<section class="T" id="BeeInstaller()">
+				<h2 class="CB"><i class="PUBLIC"></i><code class="O">BeeInstaller</code><code class="o">()</code></h2>
 			</section>
-			<section class="u" id="main(java.lang.String...)">
-				<h2 class="N"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="K">main</code><code class="HB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="LB"><code>void</code></i></h2>
-				<table class="c">
-					<tr class="m">
+			<section class="T" id="main(java.lang.String...)">
+				<h2 class="CB"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="O">main</code><code class="o">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="BB"><code>void</code></i></h2>
+				<table class="P">
+					<tr class="y">
 						<td><code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code></td>
 						<td><span><p>Command line arguments (not used).</p></span></td>
 					</tr>
 				</table><span class="A"><p>The main entry point for launching the Bee installation process.
 Loads the Bee core and then calls <code><a aria-label="bee.BeeInstaller" href="api/bee.BeeInstaller.html#install(boolean,boolean,boolean)">#install(boolean, boolean, boolean)</a></code>
 with default options (install launcher, install API, show welcome message).</p></span></section>
-			<section class="u" id="install(boolean,boolean,boolean)">
-				<h2 class="N"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code class="K">install</code><code class="HB">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="LB"><code>void</code></i></h2>
-				<table class="c">
-					<tr class="m">
+			<section class="T" id="install(boolean,boolean,boolean)">
+				<h2 class="CB"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code class="O">install</code><code class="o">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="BB"><code>void</code></i></h2>
+				<table class="P">
+					<tr class="y">
 						<td><code>boolean</code><code class="parameterName">installLauncher</code></td>
 						<td><span><p>If <code>true</code>, installs the Bee executable JAR (with version and
 timestamp) into the Bee home directory (<code><a aria-label="bee.Platform" href="api/bee.Platform.html#BeeHome">Platform#BeeHome</a></code>) and creates or
@@ -73,34 +73,34 @@ updates the native launcher script (<code>bee</code> or <code>bee.bat</code>). O
 timestamped JARs are removed. Installation only proceeds if the source JAR is
 newer than the potentially existing destination JAR.</p></span></td>
 					</tr>
-					<tr class="m">
+					<tr class="y">
 						<td><code>boolean</code><code class="parameterName">installAPI</code></td>
 						<td><span><p>If <code>true</code>, installs the Bee API library (extracted from the source
 JAR) into the local Maven repository. Installation only proceeds if the API JAR in
 the repository is older than the source JAR.</p></span></td>
 					</tr>
-					<tr class="m">
+					<tr class="y">
 						<td><code>boolean</code><code class="parameterName">showWelcome</code></td>
 						<td><span><p>If <code>true</code>, executes the <code>bee help:welcome</code> command to display
 a welcome message to the user after installation steps.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Installs Bee components into the user&apos;s system based on the provided flags.</p></span></section>
-			<section class="u" id="executorJar()">
-				<h2 class="N"><i class="STATIC PUBLIC"></i><code class="K">executorJar</code><code class="HB">()</code><i class="LB"><code>psychopath.File</code></i></h2>
-				<table class="c">
-					<tr class="w">
+			<section class="T" id="executorJar()">
+				<h2 class="CB"><i class="PUBLIC STATIC"></i><code class="O">executorJar</code><code class="o">()</code><i class="BB"><code>psychopath.File</code></i></h2>
+				<table class="P">
+					<tr class="AB">
 						<td><code>psychopath.File</code></td>
 						<td><span><p>The installed executor jar.</p></span></td>
 					</tr>
 				</table><span class="A"><p>Resolve the executor jar which the launcher starts.</p></span></section>
-			<section class="u" id="writeLauncher(psychopath.File,psychopath.Directory)">
-				<h2 class="N"><i class="STATIC PUBLIC"></i><code class="K">writeLauncher</code><code class="HB">(<code>psychopath.File</code><code class="parameterName">jar</code>, <code>psychopath.Directory</code><code class="parameterName">javaHome</code>)</code><i class="LB"><code>void</code></i></h2>
-				<table class="c">
-					<tr class="m">
+			<section class="T" id="writeLauncher(psychopath.File,psychopath.Directory)">
+				<h2 class="CB"><i class="PUBLIC STATIC"></i><code class="O">writeLauncher</code><code class="o">(<code>psychopath.File</code><code class="parameterName">jar</code>, <code>psychopath.Directory</code><code class="parameterName">javaHome</code>)</code><i class="BB"><code>void</code></i></h2>
+				<table class="P">
+					<tr class="y">
 						<td><code>psychopath.File</code><code class="parameterName">jar</code></td>
 						<td><span><p>The executor jar.</p></span></td>
 					</tr>
-					<tr class="m">
+					<tr class="y">
 						<td><code>psychopath.Directory</code><code class="parameterName">javaHome</code></td>
 						<td><span><p>The JDK used by the launcher.</p></span></td>
 					</tr>
@@ -108,22 +108,22 @@ a welcome message to the user after installation steps.</p></span></td>
 resolved to its real directory and hardcoded, so the launcher never depends on the mutable
 &quot;selected&quot; link.</p></span></section>
 		</article>
-		<aside class="s">
-			<div class="AB">
-				<h5 class="j">Constructors</h5>
+		<aside class="Y">
+			<div class="M">
+				<h5 class="h">Constructors</h5>
 				<ul>
-					<li class="IB"><i class="PUBLIC"></i><code><a href="api/bee.BeeInstaller.html#BeeInstaller()">BeeInstaller</a></code><code class="HB">()</code></li>
+					<li class="IB"><i class="PUBLIC"></i><code><a href="api/bee.BeeInstaller.html#BeeInstaller()">BeeInstaller</a></code><code class="o">()</code></li>
 				</ul>
-				<h5 class="j">Static Methods</h5>
+				<h5 class="h">Static Methods</h5>
 				<ul>
-					<li class="IB"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeInstaller.html#main(java.lang.String...)">main</a></code><code class="HB">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="KB"><code>void</code></i></li>
-					<li class="IB"><i class="FINAL"><i class="STATIC PUBLIC"></i></i><code><a href="api/bee.BeeInstaller.html#install(boolean,boolean,boolean)">install</a></code><code class="HB">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="KB"><code>void</code></i></li>
-					<li class="IB"><i class="STATIC PUBLIC"></i><code><a href="api/bee.BeeInstaller.html#executorJar()">executorJar</a></code><code class="HB">()</code><i class="KB"><code>psychopath.File</code></i></li>
-					<li class="IB"><i class="STATIC PUBLIC"></i><code><a href="api/bee.BeeInstaller.html#writeLauncher(psychopath.File,psychopath.Directory)">writeLauncher</a></code><code class="HB">(<code>psychopath.File</code><code class="parameterName">jar</code>, <code>psychopath.Directory</code><code class="parameterName">javaHome</code>)</code><i class="KB"><code>void</code></i></li>
+					<li class="IB"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeInstaller.html#main(java.lang.String...)">main</a></code><code class="o">(<code array="var"><a aria-label="java.lang.String 🚀" href="https://docs.oracle.com/en/java/javase/24/docs/api/java.base/java/lang/String.html">String</a></code><code class="parameterName">args</code>)</code><i class="u"><code>void</code></i></li>
+					<li class="IB"><i class="FINAL"><i class="PUBLIC STATIC"></i></i><code><a href="api/bee.BeeInstaller.html#install(boolean,boolean,boolean)">install</a></code><code class="o">(<code>boolean</code><code class="parameterName">installLauncher</code>, <code>boolean</code><code class="parameterName">installAPI</code>, <code>boolean</code><code class="parameterName">showWelcome</code>)</code><i class="u"><code>void</code></i></li>
+					<li class="IB"><i class="PUBLIC STATIC"></i><code><a href="api/bee.BeeInstaller.html#executorJar()">executorJar</a></code><code class="o">()</code><i class="u"><code>psychopath.File</code></i></li>
+					<li class="IB"><i class="PUBLIC STATIC"></i><code><a href="api/bee.BeeInstaller.html#writeLauncher(psychopath.File,psychopath.Directory)">writeLauncher</a></code><code class="o">(<code>psychopath.File</code><code class="parameterName">jar</code>, <code>psychopath.Directory</code><code class="parameterName">javaHome</code>)</code><i class="u"><code>void</code></i></li>
 				</ul>
 			</div>
 		</aside>
-		<footer class="T">
+		<footer class="r">
 			<p>Powered by <a href="https://github.com/teletha/evergarden" target="_">Evergarden</a></p>
 		</footer>
 	</body>
