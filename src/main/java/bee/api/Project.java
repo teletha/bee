@@ -977,7 +977,7 @@ public class Project {
         // =================================================
         XML plugins = pom.child("build").child("plugins");
 
-        ////////////////////   Compiler Plugin      ////////////////////
+        //////////////////// Compiler Plugin
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-compiler-plugin : 3.14.0");
             p.child("configuration", conf -> {
@@ -993,11 +993,13 @@ public class Project {
                     if (ecj) args.child("arg").text("-preserveAllLocals");
                     if (apt) args.child("arg").text("-proc:none");
                 });
-                if (ecj) p.append(deps("org.codehaus.plexus : plexus-compiler-eclipse", "org.eclipse.jdt : ecj"));
+                if (ecj) {
+                    p.append(deps("org.codehaus.plexus : plexus-compiler-eclipse", "org.eclipse.jdt : ecj", "org.codehaus.plexus : plexus-compiler-api"));
+                }
             });
         });
 
-        ////////////////////   Surefire Plugin      ////////////////////
+        //////////////////// Surefire Plugin
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-surefire-plugin : 3.5.2");
             p.child("configuration", conf -> {
@@ -1012,7 +1014,7 @@ public class Project {
             p.append(deps("me.fabriciorby : maven-surefire-junit5-tree-reporter : 1.4.0"));
         });
 
-        ////////////////////   Source Plugin      ////////////////////
+        //////////////////// Source Plugin
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-source-plugin : 3.3.1");
             p.child("executions", exes -> {
@@ -1025,7 +1027,7 @@ public class Project {
             });
         });
 
-        ////////////////////   Javadoc Plugin      ////////////////////
+        //////////////////// Javadoc Plugin
         plugins.child("plugin", p -> {
             lib(p, "org.apache.maven.plugins : maven-javadoc-plugin : 3.11.2");
             p.child("executions", exes -> {
