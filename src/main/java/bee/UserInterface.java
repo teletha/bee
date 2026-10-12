@@ -863,7 +863,7 @@ public abstract class UserInterface {
             switch (type) {
             case TITLE:
                 blank = false;
-                String rule = rule(WIDTH);
+                String rule = rule(80);
                 write(rule, true);
                 write(stain(message, "Build SUCCESS", "76", "Build FAILURE", "1"), true);
                 write(rule, true);
