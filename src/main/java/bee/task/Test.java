@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.junit.platform.engine.TestExecutionResult;
+import org.junit.platform.engine.discovery.ClassNameFilter;
 import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -57,6 +58,9 @@ public interface Test extends Task<Test.Config> {
 
         @Comment("The additional paramters for the test execution JVM.")
         public List<String> params = new ArrayList();
+
+        @Comment("Run only the tests which match the value, like Maven's -Dtest. A comma separated list of class names (FooTest, com.example.*Test) or Class#method is accepted.")
+        public String include;
     }
 
     @Command("Test product codes.")
@@ -71,6 +75,16 @@ public interface Test extends Task<Test.Config> {
         } else {
             Config conf = config();
             List<String> params = nativeAccess(conf.params);
+
+            // The tests can be restricted like Maven's -Dtest. The task setting has the priority
+            // over the system property.
+            final String include;
+            if (conf.include != null && !conf.include.isBlank()) {
+                include = conf.include.trim();
+            } else {
+                String property = System.getProperty("test");
+                include = property == null ? "" : property.trim();
+            }
 
             new Isolation("org.junit.platform : junit-platform-engine", "org.junit.platform : junit-platform-launcher") {
 
@@ -89,7 +103,7 @@ public interface Test extends Task<Test.Config> {
                             .encoding(project().getEncoding())
                             .workingDirectory(project().getRoot())
                             .run(Junit.class, project()
-                                    .getTestClasses(), project().getOutput().directory("test-reports").create(), conf.longRun);
+                                    .getTestClasses(), project().getOutput().directory("test-reports").create(), conf.longRun, include);
                 }
             };
         }
@@ -115,6 +129,9 @@ public interface Test extends Task<Test.Config> {
         /** The threshold time (ns) to show the prolonged test. */
         private long showProlongedTime;
 
+        /** The test restriction which Maven's -Dtest specifies. */
+        private String include = "";
+
         /**
          * {@inheritDoc}
          */
@@ -128,13 +145,47 @@ public interface Test extends Task<Test.Config> {
 
             Set<Path> classes = I.set(Path.of(args[0]));
             showProlongedTime = Long.parseLong(args[2]) * 1000 * 1000;
+            include = 3 < args.length ? args[3].trim() : "";
 
-            LauncherDiscoveryRequest request = LauncherDiscoveryRequestBuilder.request()
-                    .selectors(DiscoverySelectors.selectClasspathRoots(classes))
-                    .build();
+            LauncherDiscoveryRequestBuilder builder = LauncherDiscoveryRequestBuilder.request()
+                    .selectors(DiscoverySelectors.selectClasspathRoots(classes));
+
+            // Restrict the tests like Maven's -Dtest. A Class#method spec selects the method, and
+            // the other specs are converted to the class name patterns.
+            if (!include.isBlank()) {
+                List<String> patterns = new ArrayList();
+
+                for (String spec : include.split(",")) {
+                    spec = spec.trim();
+                    int hash = spec.indexOf('#');
+
+                    if (0 < hash && hash < spec.length() - 1) {
+                        builder.selectors(DiscoverySelectors.selectMethod(spec.substring(0, hash), spec.substring(hash + 1)));
+                    } else if (!spec.isEmpty()) {
+                        patterns.add(mavenPattern(spec));
+                    }
+                }
+                if (!patterns.isEmpty()) {
+                    builder.filters(ClassNameFilter.includeClassNamePatterns(patterns.toArray(new String[0])));
+                }
+            }
+
+            LauncherDiscoveryRequest request = builder.build();
 
             Summary summary = new Summary();
             LauncherFactory.create().execute(request, summary);
+        }
+
+        /**
+         * Convert a Maven test spec to a class name pattern. A simple name matches the class name
+         * suffix, and a wildcard star matches any characters.
+         * 
+         * @param spec A class name or a pattern.
+         * @return A regular expression which matches the fully qualified class name.
+         */
+        private String mavenPattern(String spec) {
+            String regex = spec.replace(".", "\\.").replace("*", ".*");
+            return spec.indexOf('.') == -1 && !spec.startsWith("*") ? ".*" + regex : regex;
         }
 
         /**
@@ -186,6 +237,15 @@ public interface Test extends Task<Test.Config> {
                 if (shows) showHeader();
 
                 ui.info(buildResult(runs, fails.size(), errors.size(), skips, times, "TOTAL (" + suites + " suites)"));
+
+                // A restriction which matches nothing is a mistake which must not be swallowed,
+                // just like Maven Surefire fails when -Dtest matches no test.
+                if (!include.isBlank() && runs == 0 && skips == 0) {
+                    Fail noMatch = new Fail("No tests were executed by the pattern [" + include + "].");
+                    noMatch.setStackTrace(new StackTraceElement[0]);
+                    ui.error(noMatch);
+                }
+
                 if (fails.size() != 0 || errors.size() != 0) {
                     Fail fail = new Fail("Test has failed.");
                     // The stack trace created here is useless and should be deleted. (Since it is
