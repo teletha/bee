@@ -204,8 +204,11 @@ public interface Native extends Task<Native.Config> {
 
             @Override
             public void isolate() {
-                try (ScanResult scan = new ClassGraph().enableAllInfo().overrideClasspath(project().getClasspath()).scan()) {
-                    String extensions = scan.getClassesImplementing(Extensible.class)
+                try (ScanResult scan = new ClassGraph().enableClassInfo()
+                        .enableMethodInfo()
+                        .enableClasspathEntries(project().getClasspath())
+                        .scan()) {
+                    String extensions = scan.getAllClassesImplementing(Extensible.class)
                             .stream()
                             .map(ClassInfo::getName)
                             .collect(Collectors.joining(","));
