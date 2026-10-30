@@ -354,7 +354,7 @@ Configuration
 		<dependency>
 			<groupId>io.github.classgraph</groupId>
 			<artifactId>classgraph</artifactId>
-			<version>4.8.198</version>
+			<version>6.0.1</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
