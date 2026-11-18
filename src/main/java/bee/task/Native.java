@@ -200,32 +200,46 @@ public interface Native extends Task<Native.Config> {
     }
 
     private void buildRuntimeInfo(Config conf) {
-        new Isolation("io.github.classgraph:classgraph") {
+        // The isolated code runs on a deserialized copy of this object graph, so mutations to
+        // the captured conf are not visible here. Return the collected items through bridge().
+        List<Item> lambdas = new Isolation<List<Item>>("io.github.classgraph:classgraph") {
 
             @Override
-            public void isolate() {
+            protected List<Item> bridge() {
+                List<Item> items = new ArrayList();
+
                 try (ScanResult scan = new ClassGraph().enableClassInfo()
                         .enableMethodInfo()
                         .enableClasspathEntries(project().getClasspath())
                         .scan()) {
-                    String extensions = scan.getAllClassesImplementing(Extensible.class)
-                            .stream()
-                            .map(ClassInfo::getName)
-                            .collect(Collectors.joining(","));
+                    // Don't use lambdas or method references here. Isolation serializes this
+                    // anonymous class, and ObjectStreamClass inspects every declared method,
+                    // resolving their signatures with the host classloader. The host doesn't
+                    // have classgraph (it is a provided dependency), so synthetic lambda methods
+                    // taking ClassInfo would cause NoClassDefFoundError during serialization.
+                    StringBuilder extensions = new StringBuilder();
+                    for (ClassInfo info : scan.getAllClassesImplementing(Extensible.class)) {
+                        if (extensions.length() != 0) extensions.append(',');
+                        extensions.append(info.getName());
+                    }
 
-                    conf.serialization.lambdaCapturingTypes.addAll(scan.getAllClasses()
-                            .stream()
-                            .filter(x -> x.hasDeclaredMethod("$deserializeLambda$"))
-                            .map(info -> new Item(info.getName()))
-                            .toList());
+                    for (ClassInfo info : scan.getAllClasses()) {
+                        if (info.hasDeclaredMethod("$deserializeLambda$")) {
+                            items.add(new Item(info.getName()));
+                        }
+                    }
 
                     StringBuilder builder = new StringBuilder();
                     builder.append(Extensible.class.getName()).append("=").append(extensions).append("\n");
 
                     makeFile(conf.output.file(".env"), builder.toString());
                 }
+
+                return items;
             }
-        };
+        }.result();
+
+        conf.serialization.lambdaCapturingTypes.addAll(lambdas);
     }
 
     private static String detectOS() {

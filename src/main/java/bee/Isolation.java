@@ -79,6 +79,7 @@ public abstract class Isolation<V> implements Serializable {
             loader.addClassPath(require.getLocalJar());
 
             for (Library library : I.make(Repository.class).collectDependency(require, Scope.Runtime)) {
+                System.out.println("Load lib " + library.getLocalJar());
                 loader.addClassPath(library.getLocalJar());
             }
         }
