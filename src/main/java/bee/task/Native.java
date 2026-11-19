@@ -202,6 +202,10 @@ public interface Native extends Task<Native.Config> {
     private void buildRuntimeInfo(Config conf) {
         // The isolated code runs on a deserialized copy of this object graph, so mutations to
         // the captured conf are not visible here. Return the collected items through bridge().
+        // Capture only the target file instead of the whole conf; the isolated class is loaded by
+        // another class loader, so it cannot access Config's private members (nestmates must share
+        // the same class loader).
+        File env = conf.output.file(".env");
         List<Item> lambdas = new Isolation<List<Item>>("io.github.classgraph:classgraph") {
 
             @Override
@@ -232,7 +236,7 @@ public interface Native extends Task<Native.Config> {
                     StringBuilder builder = new StringBuilder();
                     builder.append(Extensible.class.getName()).append("=").append(extensions).append("\n");
 
-                    makeFile(conf.output.file(".env"), builder.toString());
+                    makeFile(env, builder.toString());
                 }
 
                 return items;
@@ -270,13 +274,15 @@ public interface Native extends Task<Native.Config> {
         }
     }
 
-    static class Serialization {
+    static class Serialization implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         public List<Item> types = new ArrayList();
 
         public List<Item> lambdaCapturingTypes = new ArrayList();
     }
 
-    record Item(String name) {
+    record Item(String name) implements Serializable {
     }
 }
